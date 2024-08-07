@@ -1,5 +1,6 @@
 # WoD20th Stats Loader
 
+
 This Django management command allows you to load World of Darkness 20th Anniversary Edition (WoD20th) stats from a JSON file into your Django database.
 
 ## Overview
@@ -16,10 +17,10 @@ The `load_wod20th_stats` command reads a JSON file containing stat data for the 
 To use this command, run:
 
 ```shell
-python manage.py load_wod20th_stats <path_to_json_file>
+python manage.py load_wod20th_stats <path_to_folder>
 ```
 
-Replace `<path_to_json_file>` with the actual path to your JSON file containing the stat data.
+Replace `<path_to_folder>` with the actual path to your folder containing the JSON files.
 
 ## JSON File Format
 

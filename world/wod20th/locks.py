@@ -1,21 +1,32 @@
-# world/wod20th/locks.py
-from evennia.locks.lockfuncs import _TRUE, _FALSE
+# mygame/locks.py
 
-def is_splat(character, splat_name):
-    """
-    Checks if the character belongs to a specific splat.
-    """
-    return character.db.splat == splat_name
 
-def has_stat_value(character, stat_name, value):
-    """
-    Checks if the character's stat is at least a specific value.
-    """
-    stat_value = character.get_stat(stat_name)
-    if stat_value is None:
-        return _FALSE
-    return stat_value >= value
+from world.wod20th.models import Stat
 
-# Register these functions in Evennia
-from evennia.locks.lockhandler import LOCK_FUNC_MODULES
-LOCK_FUNC_MODULES.append("world.wod20th.locks")
+
+def is_splat(accessing_obj, accessed_obj, *args, **kwargs):
+    """
+    Check if the accessing_obj has the same splat as the accessed_obj.
+    """
+    splat = args[0]
+    
+    if splat:
+        return accessing_obj.get_stat('other', 'splat', 'Splat') == splat
+    return False
+
+
+def has_stat(accessing_obj, accessed_obj, *args, **kwargs):
+    """
+    Check if the accessing_obj has a specified stat.
+        has_stat(<stat_name>, <stat_value>)
+      """
+    
+   # We're going ot use the Stat db for this one to look  up the stat
+   # Going to use args to pass in the stat name and value
+
+    stat_name = args[0]
+    stat_value = args[1]
+    stat = Stat.objects.get(name_icontains=stat_name)
+    
+    
+    return accessing_obj.get_stat(stat.category, stat.stat_type, stat.name) == stat_value

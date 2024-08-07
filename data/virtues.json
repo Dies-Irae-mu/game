@@ -1,0 +1,42 @@
+[
+    {
+        "name": "Conscience",
+        "description": "Moral judgment and ability to evaluate right from wrong.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "virtues",
+        "stat_type": "moral",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Self-Control",
+        "description": "Discipline and mastery over one's emotions and impulses.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "virtues",
+        "stat_type": "moral",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Courage",
+        "description": "Gumption and ability to withstand fear and danger.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "virtues",
+        "stat_type": "moral",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Conviction",
+        "description": "Ability to maintain reason and reconcile predatory urges with capacity for atrocity.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "virtues",
+        "stat_type": "inhuman",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Instinct",
+        "description": "Ability to control the Beast by familiarity, harnessing destructive power.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "virtues",
+        "stat_type": "inhuman",
+        "values": [1, 2, 3, 4, 5]
+    }
+]

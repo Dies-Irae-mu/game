@@ -1,0 +1,242 @@
+[
+    {
+        "name": "Alertness",
+        "description": "This is your basic knack for noticing things that go on around you, even when you’re not actively looking for them. Alertness describes the attention you pay to the outside world, whether otherwise occupied or not. This Talent is typically paired with Perception, and is best used when sensing physical stimuli (as opposed to moods or clues).",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "talent",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Athletics",
+        "description": "This Talent represents your basic athletic ability, as well as any training you might have had in sports or other rigorous activities. Athletics concerns all forms of running, jumping, throwing, swimming, sports, and the like. However, Athletics doesn’t cover basic motor actions such as lifting weights, nor does it govern athletic feats covered by another Ability (such as Melee).",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "talent",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Awareness",
+        "description": "Awareness is an instinctual reaction to the presence of the supernatural. It differs from Alertness (which measures sensitivity to mundane events) and Occult.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "talent",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Brawl",
+        "description": "The Brawl Talent represents how well a character can fight in unarmed combat. While a high Strength Trait reflects how hard a character can hit, Brawl determines how well she can deliver those blows.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "talent",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Empathy",
+        "description": "You understand the emotions of others, and can sympathize with, feign sympathy for, or play on such emotions as you see fit. Empathy goes beyond mere Manipulation, which is based on knowing what buttons to push: With Empathy, you can actually sense what those buttons are.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "talent",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Expression",
+        "description": "This is your ability to get your point across, whether through conversation, poetry, or even the written word. Characters with high Expression can be powerful orators and effective leaders.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "talent",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Intimidation",
+        "description": "Intimidation Talent represents your ability to inspire fear. This can be anything from subtle threats to outright physical violence.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "talent",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Leadership",
+        "description": "Leadership Talent represents your ability to motivate and guide others.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "talent",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Streetwise",
+        "description": "You know how life on the streets works, and you can get by in rough-and-tumble environments. This Talent allows you to find out where to get black-market goods and services, as well as how to behave and survive in a gang, gangland, or criminal underworld.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "talent",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Subterfuge",
+        "description": "You know how to conceal your own motives and project what you wish. Furthermore, if you can root out other people’s motives, you can then use those motives against them. This Talent defines your talent for intrigue, secrets, and double-dealing. Mastery of Subterfuge can make you the ultimate seducer or a brilliant spy.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "talent",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Animal Ken",
+        "description": "You can understand animals’ behavior patterns. This Skill allows you to predict how an animal might react in a given situation, train a domesticated creature, or even try to calm or enrage animals.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "skill",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Crafts",
+        "description": "This Skill covers your ability to make or fix things with your hands. Crafts allows you to work in fields such as carpentry, leatherworking, weaving, or even mechanical expertise such as car repair. You can even create lasting works of art with this Skill, depending on the number of successes you achieve. You must always choose a specialization in Crafts, even though you retain some skill in multiple fields.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "skill",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Drive",
+        "description": "You can drive a car, and maybe other vehicles as well. This Skill does not automatically entail familiarity with complicated vehicles such as tanks or 18-wheelers, and difficulties may vary depending on your experience with individual automobiles. After all, helming a station wagon doesn’t prepare you for double-clutching a Maserati at 100 miles per hour.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "skill",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Etiquette",
+        "description": "Etiquette covers the social niceties, your ability to interact with people from all walks of life and to present yourself in the best possible light. Whether it’s hobnobbing with high society, cutting a business deal, or simply knowing how to behave in a given situation, Etiquette ensures that you won’t embarrass yourself or your allies.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "skill",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Firearms",
+        "description": "The Firearms Skill measures your ability to handle, maintain, and shoot any sort of gun. This ranges from pistols to rifles to shotguns.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "skill",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Larceny",
+        "description": "Larceny Skill represents your ability to pick locks, steal cars, and engage in other criminal activities involving manual dexterity and stealth.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "skill",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Melee",
+        "description": "Melee Skill represents your proficiency in hand-to-hand combat using weapons such as swords, clubs, and knives.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "skill",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Performance",
+        "description": "The Performance Skill represents your ability to entertain an audience, whether through music, acting, dance, or other forms of art.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "skill",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Stealth",
+        "description": "The Stealth Skill measures your ability to avoid being seen or heard. It’s used for sneaking, hiding, and evading detection.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "skill",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Survival",
+        "description": "Survival Skill measures your ability to find shelter, food, and water in the wilderness, as well as your ability to navigate and track.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "skill",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Academics",
+        "description": "This catchall Knowledge covers the character’s erudition in the humanities: literature, history, art, philosophy, and other 'liberal' arts and sciences. A character with dots in Academics is generally well rounded in these fields, and at high levels may be considered an expert in one or more areas of study. Not only can this Knowledge impress at salons and other Elysium functions, but it can also offer valuable clues to certain past — and future — movements in the Jyhad.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "knowledge",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Computer",
+        "description": "This Knowledge represents the ability to operate and program computers, including mobile devices. Most Computer use also imparts a degree of Internet awareness (if not savvy).",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "knowledge",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Finance",
+        "description": "You know the ins and outs of commerce, from evaluating an item’s relative worth to understanding the vagaries of the market. This Knowledge can be invaluable when you’re trying to run a business, handle investments, or keep your resources up and running.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "knowledge",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Investigation",
+        "description": "Investigation Knowledge represents your ability to gather information and solve mysteries through logical deduction and analysis.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "knowledge",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Law",
+        "description": "You know the basics of the legal system, as well as the rules and precedents of various forms of law. This Knowledge can help you navigate legal challenges or manipulate the system to your advantage.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "knowledge",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Medicine",
+        "description": "You have an understanding of how the human body — and to a lesser extent the vampiric body — works. This Ability covers knowledge of medicines, ailments, first-aid procedures, and diagnosis or treatment of disease. Medicine is of great use to those Kindred with an interest in repairing, damaging, or reworking the human body.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "knowledge",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Occult",
+        "description": "You are knowledgeable in occult areas such as mysticism, curses, magic, folklore, and particularly vampire lore. Unlike most other Knowledges, Occult does not imply a command of hard facts. Much of what you know may well be rumor, myth, speculation, or hearsay. However, the secrets to be learned in this field are worth centuries of sifting legend from fact. High levels of Occult imply a deep understanding of vampire lore, as well as a good grounding in other aspects of the occult.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "knowledge",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Politics",
+        "description": "You are familiar with the politics of the moment, including the people in charge and how they got there. This Knowledge can aid you in dealing with or influencing mortal politicians, or even offer some insight into the local Cainite power structure. The Politics Knowledge includes the ability to practically navigate various bureaucracies, as it assumes that certain organizational structures and relationship currencies are universal.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "knowledge",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Science",
+        "description": "You have at least a basic understanding of most of the physical sciences, such as chemistry, biology, physics, and geology. This Knowledge can be put to all forms of practical use. In most cases, a player should select a specialty to reflect a focus for her character’s scientific studies, but this isn’t strictly necessary.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "knowledge",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Technology",
+        "description": "The Technology Knowledge represents a broad acumen with electronics, computer hardware, and devices more elaborate than “machines,” which fall under the Crafts Skill. If it has a processor, a transistor, or an integrated circuit — if it’s electronic rather than electrical — manipulating it uses the Technology Knowledge. This is the wide-ranging Ability used to build one’s own computer, install (or subvert) a security system, repair a mobile phone, or kitbash a shortwave radio. You must always choose a specialization in Technology, even though you possess some skill in multiple fields.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "abilities",
+        "stat_type": "knowledge",
+        "values": [1, 2, 3, 4, 5]
+    }
+]

@@ -1,0 +1,34 @@
+[
+    {
+        "name": "Willpower",
+        "description": "Willpower measures a character's inner drive and competence at overcoming unfavorable odds. Unlike other Traits, Willpower has both a permanent rating and a temporary pool of points. The rating is rolled or tested, while the pool is spent. A character's Willpower pool will likely fluctuate during the course of a story or chronicle. It decreases by one point every time a player uses a Willpower point to enable their character to do something extraordinary, like maintain self-control or gain an automatic success. Willpower points can be regained during the course of a story.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "pools",
+        "stat_type": "temporary",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    {
+        "name": "Blood",
+        "description": "A character's blood pool measures how much vitae the vampire has in their system. Each blood point corresponds roughly to one-tenth of the blood in an average adult mortal. The maximum number of blood points a vampire may ingest is dictated by their Generation, as is the number of blood points they may spend in a single turn. A vampire with zero blood points in their system is ravenously hungry and likely in the throes of frenzy.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "pools",
+        "stat_type": "temporary",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 30, 40, 50]
+    },
+    {
+        "name": "Road",
+        "description": "A Kindred's Humanity rating reflects how much of a character's mortal nature remains despite the curse of Caine. It influences how well a character may deny her vampiric state, as well as how effectively she may pass for mortal. Alternatively, Kindred may follow Paths of Enlightenment, abandoning mortal concerns and adopting inhuman codes to anchor themselves against the Beast.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "pools",
+        "stat_type": "moral",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    {
+        "name": "Health",
+        "description": "A vampire's health pool measures how much damage they can take before they are incapacitated. It is also used to determine how much damage a vampire can inflict on others.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "other",
+        "stat_type": "other",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    }
+]
