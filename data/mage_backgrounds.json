@@ -1,0 +1,234 @@
+[
+    {
+        "name": "Familiar",
+        "description": "A non-human helper with special abilities.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Legend",
+        "description": "A potent archetype connected to you.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]   
+    },
+    {
+        "name": "Library",
+        "description": "Access to special information.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Node",
+        "description": "A place of power that's more or less in your control.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Past Lives",
+        "description": "Helpful memories from prior incarnations.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Avatar",
+        "description": "Embodiment of the Awakened/ Enlightened Self.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Genius",
+        "description": "Embodiment of the Awakened/ Enlightened Self.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Backup",
+        "description": "Agents you can call upon in emergencies.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Certification",
+        "description": "Special permits for special things.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Chantry",
+        "description": "Mystic stronghold.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Construct",
+        "description": "Technocratic stronghold.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Cult",
+        "description": "Group of dedicated believers.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Enhancement",
+        "description": "Cybernetic or biotech improvements to your body.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Patron",
+        "description": "Influential benefactor with helpful resources.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Secret Weapons",
+        "description": "Guinea-pig status with Technocratic inventors.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Alternate Identity",
+        "description": "An established alias.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Arcane",
+        "description": "Mysterious ability to remain unrecognized.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Cloaking",
+        "description": "Mysterious ability to remain unrecognized.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Demesne",
+        "description": "Personal inner dream-space.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Destiny",
+        "description": "Inspiring sense of great purpose.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Dream",
+        "description": "Ability to tap into Abilities you don't normally possess.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Hypercram",
+        "description": "Technocratic ability to tap into Abilities you don't normally possess.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Laboratory",
+        "description": "Special place to work your arts.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Requisitions",
+        "description": "Access to Technocratic hardware.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Rank",
+        "description": "A title of importance among the Masses.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Sanctum",
+        "description": "Special place to work your arts.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Spies",
+        "description": "Information networks.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Totem",
+        "description": "A powerful spirit ally.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Wonder",
+        "description": "A Talisman, Fetish, or Device that contains its own reality-bending power.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    }
+]

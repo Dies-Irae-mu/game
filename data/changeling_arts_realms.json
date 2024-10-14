@@ -1,0 +1,194 @@
+[
+    {
+        "name": "Chicanery",
+        "description": "Perception, memory, and trickery.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Legerdemain",
+        "description": "Illusion, sleight of hand, and telekinesis.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Primal",
+        "description": "Mastery of the elements and the natural world.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Pyretics",
+        "description": "Fire, heat, and purification.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Soothsay",
+        "description": "Clairvoyance, prophecy, and fate.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Sovereign",
+        "description": "Leadership, command, and obedience.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Spring",
+        "description": "Growth, life, and protection.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Summer",
+        "description": "Energy, passion, and light.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Autumn",
+        "description": "Fear, shadows, and decay.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Winter",
+        "description": "Cold, ice, and the death of emotion.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Wayfare",
+        "description": "Movement, freedom, and journeys.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Naming",
+        "description": "Mastery of the fundamental essence of things.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Oneiromancy",
+        "description": "Dreams and slumber.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Skycraft",
+        "description": "Weather manipulation and control.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Tale Craft",
+        "description": "Storytelling and narrative.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Chronos",
+        "description": "Tempo, history, and time control.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Dragon's Ire",
+        "description": "Superhuman feats of physical prowess.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Metamorphosis",
+        "description": "Shapeshifting and transformation.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Actor",
+        "description": "Manipulate humans and non-fae creatures.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "realm",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Fae",
+        "description": "Manipulate fae creatures and their realms.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "realm",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Nature",
+        "description": "Manipulate natural elements and creatures.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "realm",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Prop",
+        "description": "Manipulate objects and their properties.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "realm",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Scene",
+        "description": "Manipulate scenes and their properties.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "realm",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Time",
+        "description": "Manipulate time and its flow.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "realm",
+        "values": [1, 2, 3, 4, 5]
+    }
+]

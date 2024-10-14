@@ -1,0 +1,114 @@
+[
+    {
+        "name": "Ancestors",
+        "description": "The ability to channel the knowledge and skills of those Garou who have gone before.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Fate",
+        "description": "A prophecy surrounding you and your pack that you will fulfill.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Fetish",
+        "description": "You have an item of some sort with a spirit bound within it, giving it supernatural powers.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Kinfolk",
+        "description": "Relatives who you are in touch with, human and wolf, who are immune to the Delirium.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Pure Breed",
+        "description": "You have the blood of a Garou hero in your veins, and others can see it within you.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Rites",
+        "description": "You know a number of rites, rituals empowered with spirit magic.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Spirit Heritage",
+        "description": "You have the touch of a particular type of spirit on you, and they treat you as their own.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Den-Realm",
+        "description": "A supernatural pocket realm in the Umbra that a Bastet has access to.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Umbral Glade",
+        "description": "A 'mini-Caern' that a Gurahl maintains.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Mnesis",
+        "description": "A supernatural ability to recall past lives and experiences held by the Mokole.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Wallow",
+        "description": "Ties to a Mokole wallow homestead where others of your kind live.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Ananta",
+        "description": "A Nagah's supernatural Den-Realm that exists in the Umbra, containing everything that the Nagah requires.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Secrets",
+        "description": "Information that would be considered desireable - or damaging - to someone else.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Umbral Maps",
+        "description": "A wealth of experience and received information about Umbral navigation, dangers, and travel.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    }
+]

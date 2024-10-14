@@ -1,0 +1,97 @@
+[
+
+    {
+        "name": "Full Name",
+        "description": "The 'character's' name — this may be anything from the 'character's' birth name to a pseudonym.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "identity",
+        "stat_type": "personal",
+        "values": []
+    },{
+        "name": "Splat",
+        "description": "What spehre does the character belong to?",
+        "game_line": "Various",
+        "category": "other",
+        "stat_type": "splat",
+        "values": ["Vampire", "Shifter", "Mortal", "Mage", "Changeling"]
+    },
+        {
+        "name": "Date of Birth",
+        "description": "The character's DoB.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "identity",
+        "stat_type": "personal",
+        "values": []
+    },
+    {
+        "name": "Date of Embrace",
+        "description": "The character's DoE.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "identity",
+        "stat_type": "personal",
+        "values": []
+    },
+        {
+        "name": "Nature Archetype",
+        "description": "This is the 'true' personality of your character — who she is deep down.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "archetype",
+        "stat_type": "personal",
+        "values": []
+    },
+        {
+        "name": "Demeanor Archetype",
+        "description": "This is the personality your character presents to the world. Often different from Nature.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "archetype",
+        "stat_type": "personal",
+        "values": []
+    },
+        {
+        "name": "Concept",
+        "description": "Your 'character's' concept is a brief 'sketch' of who they are.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "identity",
+        "stat_type": "personal",
+        "values": []
+    },
+        {
+        "name": "Clan",
+        "description": "The vampiric 'family' into which the character was Embraced.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Gangrel", "Malkavian", "Nosferatu", "Toreador", "Tremere", "Ventrue", "Caitiff", "Assamite", "Lasombra", "Ravnos", "Tzimisce", "Setite"],
+        "splat": "Vampire"
+    },
+        {
+        "name": "Generation",
+        "description": "Indicates how far the vampire is removed from Caine, the original vampire.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["8th", "9th", "10th", "11th", "12th", "13th", "14th", "15th"],
+        "splat": "Vampire"
+    },
+        {
+        "name": "Sire",
+        "description": "The vampire who Embraced the character.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": [],
+        "splat": "Vampire"
+
+    },
+    {
+        "name": "Enlightenment",
+        "description": "The character's path of enlightenment.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "identity",
+        "stat_type": "personal",
+        "values": ["Night", "Metamorphosis", "Beast", "Harmony", "Evil Revelations", "Self-Focus", "Scorched Heart", 
+                   "Entelechy", "Sharia El-Sama", "Asakku", "Death and the Soul", "Honorable Accord", "Feral Heart", 
+                   "Orion", "Power and the Inner Voice", "Lilith", "Caine", "Cathari", "Redemption", "Bones", "Typhon", 
+                   "Paradox", "Blood", "Hive", "Humanity"]
+    }
+]

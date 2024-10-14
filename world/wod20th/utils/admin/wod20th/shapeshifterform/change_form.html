@@ -1,0 +1,78 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls static admin_modify %}
+
+{% block extrahead %}
+{{ block.super }}
+<script type="text/javascript" src="{% static 'admin/js/shifter_form_admin.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>{% csrf_token %}
+    {% block form_top %}{% endblock %}
+    {% if errors %}
+        <p class="errornote">
+        {% blocktrans count counter=errors|length %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
+        </p>
+        {{ adminform.form.non_field_errors }}
+    {% endif %}
+
+    {% block field_sets %}
+    {% for fieldset in adminform %}
+      {% include "admin/includes/fieldset.html" %}
+    {% endfor %}
+    {% endblock %}
+
+    <fieldset class="module aligned">
+        <h2>Stat Modifiers</h2>
+        <div id="stat_modifiers-group">
+            {% for form in stat_modifier_forms %}
+                <div class="dynamic-form inline-related">
+                    <h3><b>Stat Modifier:</b></h3>
+                    <div class="form-row">
+                        <div>
+                            <label for="id_stat_modifier_{{ forloop.counter0 }}_stat_name">Stat Name:</label>
+                            <input type="text" name="stat_modifier_{{ forloop.counter0 }}_stat_name" id="id_stat_modifier_{{ forloop.counter0 }}_stat_name" value="{{ form.stat_name }}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div>
+                            <label for="id_stat_modifier_{{ forloop.counter0 }}_modifier">Modifier:</label>
+                            <input type="number" name="stat_modifier_{{ forloop.counter0 }}_modifier" id="id_stat_modifier_{{ forloop.counter0 }}_modifier" value="{{ form.modifier }}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div>
+                            <a href="#" class="delete-form-row">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="form-row">
+            <div>
+                <a href="#" class="add-form-row">Add another Stat Modifier</a>
+            </div>
+        </div>
+    </fieldset>
+
+    {% block after_related_objects %}{% endblock %}
+
+    {% block submit_buttons_bottom %}{% submit_row %}{% endblock %}
+
+    {% block admin_change_form_document_ready %}
+        <script type="text/javascript"
+                id="django-admin-form-add-constants"
+                src="{% static 'admin/js/shifter_form_admin.js' %}"
+                {% if adminform and add %}
+                    data-model-name="{{ opts.model_name }}"
+                {% endif %}>
+        </script>
+    {% endblock %}
+
+    {# JavaScript for prepopulated fields #}
+    {% prepopulated_fields_js %}
+
+    </form>
+</div>
+{% endblock %}

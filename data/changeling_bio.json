@@ -1,0 +1,47 @@
+[
+    {
+        "name": "Kith",
+        "description": "Kith is the type of Changeling one is. It indicates the Changeling's lineage.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Boggan", "Clurichan", "Eshu", "Nocker", "Piskey", "Pooka", "Redcap", "Satyr", "Selkie", "Autumn Sidhe", "Arcadian Sidhe", "Sluagh", "Troll"],
+        "splat": "Changeling"
+    },
+    {
+        "name": "Seeming",
+        "description": "The Seeming, or physical form, of a particular Changeling.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Childing", "Wilder", "Grump"],
+        "splat": "Changeling"
+    },
+    {
+        "name": "House",
+        "description": "The noble house of a particular Changeling.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Beaumayn", "Dougal", "Eiluned", "Fiona", "Gwydion", "Liam", "Scathach", "Aesin", "Ailil", "Balor", "Danaan", "Daireann", "Leanhaun", "Varich"],
+        "splat": "Changeling"
+    },
+    {
+        "name": "Seelie Legacy",
+        "description": "The fae personality archetypes of a Changeling. A Changeling has both a Seelie and Unseelie Legacy.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "identity",
+        "stat_type": "legacy",
+        "values": ["Bumpkin", "Courtier", "Crafter", "Dandy", "Hermit", "Orchid", "Paladin", "Panderer", "Regent", "Sage", "Saint", "Squire", "Troubadour", "Wayfarer"],
+        "splat": "Changeling"
+    },
+    {
+        "name": "Unseelie Legacy",
+        "description": "The fae personality archetypes of a Changeling. A Changeling has both a Seelie and Unseelie Legacy.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "identity",
+        "stat_type": "legacy",
+        "values": ["Beast", "Fatalist", "Fool", "Grotesque", "Knave", "Outlaw", "Pandora", "Peacock", "Rake", "Riddler", "Ringleader", "Rogue", "Savage", "Wretch"],
+        "splat": "Changeling"
+    }
+]

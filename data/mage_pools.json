@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Quintessence",
+        "description": "Quintessence is the measure of power related to pure magickal energy. It can be used to power casting or fuel effects.",
+        "game_line": "Mage: The Ascension",
+        "category": "pools",
+        "stat_type": "dual",
+        "values": {
+            "permanent": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+            "temporary": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+        }
+    },
+    {
+        "name": "Paradox",
+        "description": "Paradox is the degree to which reality has been warped by the mage's actions. It is a negative trait, and its rating is used to determine how powerful a backlash from breaking the laws of magic will be.",
+        "game_line": "Mage: The Ascension",
+        "category": "pools",
+        "stat_type": "dual",
+        "values": {
+            "permanent": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+            "temporary": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+        }
+    },
+    {
+        "name": "Arete",
+        "description": "Arete is the measure of a mage's skill at magic.",
+        "game_line": "Mage: The Ascension",
+        "category": "other",
+        "stat_type": "advantage",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    }
+]

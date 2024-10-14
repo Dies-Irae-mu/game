@@ -1,0 +1,98 @@
+[
+    {
+        "name": "Correspondence",
+        "description": "Understanding of the connections between places, spaces, and things.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "sphere",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Entropy",
+        "description": "Study of mortality, probability, and chaos.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "sphere",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Forces",
+        "description": "Command over elemental energies.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "sphere",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Life",
+        "description": "Influence over organic beings and the physical structures of living bodies.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "sphere",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Matter",
+        "description": "Control of inert materials, objects, and solid elemental structures.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "sphere",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Mind",
+        "description": "Influence over emotions and thoughts, including the ability to project consciousness from one's physical body.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "sphere",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Prime",
+        "description": "Control over primordial energies.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "sphere",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Spirit",
+        "description": "Contact with Otherworldly spaces and entities; considered an Art by mystics and a Science by Technocrats, though in game terms it's all the same thing.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "sphere",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Time",
+        "description": "Perception of, and influence over, temporal states and time-based phenomena.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "sphere",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Data",
+        "description": "The manipulation of information and its connections.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "sphere",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Dimensional Science",
+        "description": "The manipulation of alternate dimensions and their properties.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "sphere",
+        "values": [1, 2, 3, 4, 5]
+    },   
+    {
+        "name": "Primal Utility",
+        "description": "The manipulation of quantum valuation energies.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "sphere",
+        "values": [1, 2, 3, 4, 5]
+    }
+]

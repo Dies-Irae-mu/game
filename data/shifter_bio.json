@@ -1,0 +1,119 @@
+[
+    {
+        "name": "Tribe",
+        "description": "The Tribe of a particular Werewolf, Rokea, or Gurahl character.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Shadow Lord", "Glass Walker", "Uktena", "Bone Gnawer", "Children of Gaia", "Black Fury", "Silver Fang", "Get of Fenris", "Silent Strider", "Fianna", "Wendigo", "Stargazer", "Hakken", "Black Spiral Dancer", "Traditionalist", "Betweener", "Same-Bito", "Forest Walkers", "Ice Stalkers", "Mountain Guardians", "River Keepers", "Okuma"],
+        "splat": "Shifter"
+    },
+    {
+        "name": "Breed",
+        "description": "What a shifter character was born as, defaulting 'animal-born' for all characters born in animal types (lupus, corvid, etc)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Homid", "Metis", "Animal-Born"],
+        "splat": "Shifter"
+    },
+    {
+        "name": "Type",
+        "description": "The type of the shifter character (Garou, Gurahl, etc).",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Garou", "Ajaba", "Bastet", "Rokea", "Ananasi", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Nuwisha", "Ratkin", "Nagah"],
+        "splat": "Shifter"
+    },
+    {
+        "name": "Auspice",
+        "description": "The Auspice of a particular Garou, Rokea, Gurahl, Nagah, or Mokole character.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Ragabash", "Theurge", "Philodox", "Galliard", "Ahroun", "Kamakshi", "Kartikeya", "Kamsa", "Kali", "Rising Sun", "Noonday Sun", "Shrouded Sun", "Midnight Sun", "Decorated Sun", "Solar Eclipse", "Arcas", "Uzmati", "Kojubat", "Kieh", "Rishi", "Brightwater", "Dimwater", "Darkwater"],
+        "splat": "Shifter"
+    },
+    {
+        "name": "Aspect",
+        "description": "The Aspect of a particular Ajaba, Ananasi, or Ratkin character.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Dawn", "Midnight", "Dusk", "Tenere", "Hatar", "Kumoti", "Knife Skulkers", "Shadow Seers", "Tunnel Runners", "Warriors"],
+        "splat": "Shifter"
+    },
+    {
+        "name": "Kitsune Path",
+        "description": "The Path of a particular Kitsune character.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Eji", "Doshi", "Gukutsushi", "Kataribe"],
+        "splat": "Shifter"
+    },
+    {
+        "name": "Kitsune Faction",
+        "description": "The Faction of a particular Kitsune character.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Emerald Courts", "Western Courts"],
+        "splat": "Shifter"
+    },
+    {
+        "name": "Plague",
+        "description": "The Plague of a particular Ratkin character.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Borrachon Wererats", "De La Poer's Disciples", "Gamine", "Horde", "Nezumi", "Ratkin Ronin", "Rat Race", "Rattus Typhus", "Thuggees"],
+        "splat": "Shifter"
+    },
+    {
+        "name": "Varnas",
+        "description": "The Varna of a particular Mokole character.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Champsa", "Halpatee", "Piasa", "Syrta", "Unktehi", "Karna", "Ora", "Gharial", "Karna", "Makara", "Lung"],
+        "splat": "Shifter"
+    },
+    {
+        "name": "Stream",
+        "description": "The Stream of a particular Mokole character.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Gumagan", "Mokole-mbembe", "Zhong Lung", "Makara"],
+        "splat": "Shifter"
+    },
+    {
+        "name": "Crown",
+        "description": "The Crown of a particular Nagah character.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Nemontana", "Zuzeka", "Jurlungur", "Vritra", "Yamilka", "Sayidi"],
+        "splat": "Shifter"
+    },
+    {
+        "name": "Ananasi Faction",
+        "description": "The Faction of a particular Ananasi character.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Myrmidon", "Viskr", "Wyrsta"],
+        "splat": "Shifter"
+    },
+    {
+        "name": "Ananasi Cabal",
+        "description": "The Cabal of a particular Ananasi character.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Secean", "Plicare", "Gaderin", "Agrere", "Anomia", "Malum", "Kar", "Amari Aliquid", "Chymos", "Kumo", "Antara", "Kumatai", "Padrone"],
+        "splat": "Shifter"
+    }
+]
