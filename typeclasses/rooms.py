@@ -272,7 +272,7 @@ class RoomParent(DefaultRoom):
         difficulty = self.get_gauntlet_difficulty() + 2
         success = self.roll_gnosis(character, difficulty)
         
-        if success:
+        if success[0] > 0:
             if self.db.umbra_desc:
                 # Format the Umbra description
                 umbra_header = header("Umbra Vision", width=78, fillchar=ANSIString("|r-|n"))
@@ -289,7 +289,8 @@ class RoomParent(DefaultRoom):
         """
         Format the description with proper paragraph handling and indentation.
         """
-        paragraphs = desc.split('%r', '%R')
+        desc = desc.replace('%r', '%R')
+        paragraphs = desc.split('%R')
         formatted_paragraphs = []
         for i, p in enumerate(paragraphs):
             if not p.strip():
