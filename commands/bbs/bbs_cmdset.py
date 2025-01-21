@@ -4,8 +4,7 @@ from evennia import CmdSet
 from commands.bbs.bbs_admin_commands import CmdResetBBS
 
 from commands.bbs.bbs_all_commands import (
-    CmdPost, CmdReadBBS, CmdEditPost, 
-    CmdDeletePost
+    CmdBBS
 )
 
 from commands.bbs.bbs_builder_commands import (
@@ -25,10 +24,7 @@ class BBSCmdSet(CmdSet):
     def at_cmdset_creation(self):
         # Add BBS commands
         self.add(CmdCreateBoard())
-        self.add(CmdPost())
-        self.add(CmdReadBBS())
-        self.add(CmdEditPost())
-        self.add(CmdDeletePost())
+        self.add(CmdBBS())
         self.add(CmdDeleteBoard())
         self.add(CmdRevokeAccess())
         self.add(CmdListAccess())

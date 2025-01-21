@@ -125,14 +125,36 @@ class Exit(DefaultExit):
             return []
         return super().get_aliases(looker, **kwargs)
     
-    def format_appearance(self, looker, **kwargs):
+    def format_appearance(self, looker, appearance_type="normal", **kwargs):
         """
         Format the appearance of the exit.
         Only show if the looker passes the view lock.
+        
+        Args:
+            looker (Object): The object looking at this exit.
+            appearance_type (str): The type of appearance to return.
+            **kwargs: Arbitrary keyword arguments.
+            
+        Returns:
+            str: The formatted appearance string
         """
         if not self.access(looker, "view"):
             return ""
-        return super().format_appearance(looker, **kwargs)
+            
+        # Get the destination name
+        destination = self.destination
+        if destination:
+            try:
+                dest_name = destination.get_display_name(looker)
+            except (AttributeError, TypeError):
+                # Fallback if looker isn't a proper object or get_display_name fails
+                dest_name = destination.name if hasattr(destination, 'name') else str(destination)
+                
+            desc = f"Exit to {dest_name}"
+            if self.db.desc:
+                desc = f"{desc}\n{self.db.desc}"
+            return desc
+        return "Exit to nowhere"
     
     def get_extra_info(self, looker, **kwargs):
         """
@@ -167,39 +189,6 @@ class Exit(DefaultExit):
         """
         Called when an object wants to traverse this exit.
         """
-        # Add more detailed debug output
-        if hasattr(traversing_object, 'msg'):
-            traversing_object.msg(f"DEBUG: Attempting to traverse {self.key}")
-            traversing_object.msg(f"DEBUG: Current locks: {self.locks}")
-            
-            # Get all available lock functions from the handler
-            from evennia.locks import lockfuncs
-            from world.wod20th.locks import LOCK_FUNCS
-            
-            traversing_object.msg(f"DEBUG: Built-in lock functions: {[func for func in dir(lockfuncs) if not func.startswith('_')]}")
-            traversing_object.msg(f"DEBUG: Custom WoD lock functions: {list(LOCK_FUNCS.keys())}")
-            traversing_object.msg(f"DEBUG: Lock types: {self.locks.all()}")
-            
-            # Test the lock directly
-            result = self.access(traversing_object, "traverse")
-            traversing_object.msg(f"DEBUG: Traverse access check result: {result}")
-            
-            # If it failed, let's see why
-            if not result:
-                # Get the actual lock string
-                lock_str = self.locks.get("traverse")
-                traversing_object.msg(f"DEBUG: Traverse lock string: {lock_str}")
-                
-                # Test each component
-                if hasattr(traversing_object, 'character'):
-                    char = traversing_object.character
-                else:
-                    char = traversing_object
-                    
-                from world.wod20th.locks import has_mage_faction
-                direct_test = has_mage_faction(char, None, "Traditions")
-                traversing_object.msg(f"DEBUG: Direct function test: {direct_test}")
-        
         # Check if object has permission to pass
         if not self.access(traversing_object, "traverse"):
             if hasattr(traversing_object, 'msg'):
@@ -251,3 +240,39 @@ class Exit(DefaultExit):
         if caller and not self.access(caller, "view"):
             return None
         return super().search(searchdata, caller=caller, **kwargs)
+
+class ApartmentExit(Exit):
+    """
+    Custom exit class for apartment entrances and exits.
+    This class handles special functionality for apartment access.
+    """
+    
+    def at_object_creation(self):
+        """
+        Called when exit is first created.
+        """
+        super().at_object_creation()
+        # Set default locks for apartments - allow tenants, admin, builders, and staff
+        self.locks.add("view:all();traverse:perm(Admin) or perm(Builder) or perm(Staff) or tenant()")
+        
+    def at_traverse(self, traversing_object, target_location, **kwargs):
+        """
+        Called when someone attempts to traverse this exit.
+        Checks if the traversing object has permission to enter the apartment.
+        """
+        # Check if object has permission to pass
+        if not self.access(traversing_object, "traverse"):
+            if hasattr(traversing_object, 'msg'):
+                traversing_object.msg("You don't have permission to enter this apartment.")
+            return False
+            
+        # Call parent's at_traverse
+        return super().at_traverse(traversing_object, target_location, **kwargs)
+    
+    def at_failed_traverse(self, traversing_object, **kwargs):
+        """
+        Called when traversal fails.
+        """
+        if hasattr(traversing_object, 'msg'):
+            traversing_object.msg("You don't have permission to enter this apartment.")
+        return False

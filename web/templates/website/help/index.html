@@ -1,0 +1,543 @@
+{% extends "website/base_custom.html" %}
+{% load static %}
+
+{% block titleblock %}Help Index{% endblock %}
+
+{% block header_ext %}
+<style>
+    /* Import fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+    @font-face {
+        font-family: 'impact_label_reversed';
+        src: local('Impact Label Reversed'),
+             url('/static/wiki/fonts/impact_label_reversed.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: 'punktype';
+        src: url('/static/wiki/fonts/punktype.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    /* Update hamburger menu styles */
+    .hamburger-menu {
+        display: none;
+        top: 5%;
+        cursor: pointer;
+        z-index: 10003;
+        padding: 15px;
+        background: transparent;
+        border: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .hamburger-icon {
+        width: 30px;
+        height: 30px;
+        filter: invert(1);
+        display: block;
+        pointer-events: none;
+    }
+
+    .sliding-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.95);
+        z-index: 10001;
+        transition: transform 0.3s ease-out;
+        transform: translateX(100%);
+        padding-top: 90px;
+        visibility: visible;
+        display: none;
+    }
+
+    .sliding-menu.open {
+        transform: translateX(0);
+        right: 0;
+        display: block;
+    }
+
+    .menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease-out;
+        display: none;
+    }
+
+    .menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
+        display: block;
+    }
+
+    .menu-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: rgba(255, 255, 255, 0.9);
+        padding: 10px 15px;
+        cursor: pointer;
+        font-family: 'impact_label_reversed', Arial, sans-serif;
+        font-size: 14px;
+        letter-spacing: 2px;
+        transition: all 0.3s ease;
+        z-index: 10002;
+    }
+
+    .menu-close:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+
+    @media (max-width: 1530px) {
+        .hamburger-menu {
+            display: block;
+        }
+
+        .nav-menu {
+            display: none;
+        }
+
+        .nav-search {
+            display: none;
+        }
+
+        .nav-right {
+            margin-left: auto;
+        }
+
+        .nav-wrapper {
+            margin: 0 20px;
+        }
+
+        .sliding-menu {
+            display: block;
+        }
+
+        .sliding-menu .menu-items {
+            height: calc(100vh - 90px);
+            overflow-y: auto;
+            padding: 20px 40px;
+        }
+
+        .sliding-menu .menu-items ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sliding-menu .menu-items li {
+            margin: 20px 0;
+        }
+
+        .sliding-menu .menu-items a {
+            font-family: 'impact_label_reversed', Arial, sans-serif;
+            font-size: 24px;
+            letter-spacing: 5px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .sliding-menu .menu-items a:hover {
+            color: rgba(255, 255, 255, 1);
+        }
+    }
+
+    /* Core styles */
+    body {
+        background-color: #000;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+        font-family: 'roboto mono', monospace;
+    }
+
+    .container {
+        max-width: 1728px;
+        margin: 0 auto;
+        padding: 0 40px;
+    }
+
+    /* Help index specific styles */
+    .help-index {
+        margin-top: 90px;
+        padding: 40px 0;
+    }
+
+    .help-grid {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        gap: 40px;
+    }
+
+    .help-content {
+        background: rgba(0, 0, 0, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        padding: 30px;
+    }
+
+    .help-category {
+        margin-bottom: 40px;
+    }
+
+    .category-title {
+        font-family: 'impact_label_reversed', Arial, sans-serif;
+        font-size: 24px;
+        letter-spacing: 5px;
+        color: #fff;
+        margin-bottom: 15px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+    }
+
+    .help-links {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+        padding: 0 10px;
+    }
+
+    .help-link {
+        font-family: 'roboto mono', monospace;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        padding: 8px;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .help-link:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.1);
+        text-decoration: none;
+    }
+
+    .help-sidebar {
+        background: rgba(0, 0, 0, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        padding: 20px;
+        position: sticky;
+        top: 100px;
+    }
+
+    .sidebar-title {
+        font-family: 'impact_label_reversed', Arial, sans-serif;
+        font-size: 20px;
+        letter-spacing: 5px;
+        color: #fff;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .category-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .category-list li {
+        margin-bottom: 5px;
+    }
+
+    .category-list a {
+        font-family: 'roboto mono', monospace;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        display: block;
+        padding: 5px 10px;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .category-list a:hover,
+    .category-list a.active {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.1);
+        text-decoration: none;
+    }
+
+    @media (max-width: 1024px) {
+        .help-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 0 20px;
+        }
+    }
+
+    .sliding-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.95);
+        z-index: 10001;
+        transition: transform 0.3s ease-out;
+        transform: translateX(100%);
+        padding-top: 90px;
+        visibility: visible;
+        display: none;
+    }
+
+    .sliding-menu.open {
+        transform: translateX(0);
+        right: 0;
+        display: block;
+    }
+
+    /* Update hamburger menu position */
+    .hamburger-menu {
+        display: none;
+        cursor: pointer;
+        z-index: 10003;
+        padding: 15px;
+        background: transparent;
+        border: none;
+        position: absolute;
+        right: 40px;
+        top: 50%;
+        transform: translateY(-50%);
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .hamburger-icon {
+        width: 30px;
+        height: 30px;
+        filter: invert(1);
+        display: block;
+        pointer-events: none;
+    }
+
+    .menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease-out;
+        display: none;
+    }
+
+    .menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
+        display: block;
+    }
+
+    @media (max-width: 1530px) {
+        .hamburger-menu {
+            display: block;
+        }
+
+        .nav-menu {
+            display: none;
+        }
+
+        .nav-search {
+            display: none;
+        }
+
+        .nav-wrapper {
+            margin: 0 20px;
+        }
+
+        .sliding-menu {
+            display: block;
+        }
+
+        .sliding-menu .menu-items {
+            height: calc(100vh - 90px);
+            overflow-y: auto;
+            padding: 20px 40px;
+        }
+
+        .sliding-menu .menu-items ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sliding-menu .menu-items li {
+            margin: 20px 0;
+        }
+
+        .sliding-menu .menu-items a {
+            font-family: 'impact_label_reversed', Arial, sans-serif;
+            font-size: 24px;
+            letter-spacing: 5px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .sliding-menu .menu-items a:hover {
+            color: rgba(255, 255, 255, 1);
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger-menu');
+    const slidingMenu = document.querySelector('.sliding-menu');
+    const menuOverlay = document.querySelector('.menu-overlay');
+
+    function toggleMenu(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        const isCurrentlyOpen = slidingMenu.classList.contains('open');
+
+        if (!isCurrentlyOpen) {
+            slidingMenu.style.display = 'block';
+            menuOverlay.style.display = 'block';
+            slidingMenu.offsetHeight;
+            menuOverlay.offsetHeight;
+            
+            slidingMenu.classList.add('open');
+            menuOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        } else {
+            slidingMenu.classList.remove('open');
+            menuOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+            
+            setTimeout(() => {
+                if (!slidingMenu.classList.contains('open')) {
+                    slidingMenu.style.display = 'none';
+                    menuOverlay.style.display = 'none';
+                }
+            }, 300);
+        }
+    }
+
+    if (hamburger) {
+        const newHamburger = hamburger.cloneNode(true);
+        hamburger.parentNode.replaceChild(newHamburger, hamburger);
+        
+        newHamburger.addEventListener('click', toggleMenu, { passive: false });
+        newHamburger.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            toggleMenu(e);
+        }, { passive: false });
+    }
+
+    if (menuOverlay) {
+        menuOverlay.addEventListener('click', toggleMenu);
+        menuOverlay.addEventListener('touchend', toggleMenu);
+    }
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Remove hamburger button from here since it's now in the nav -->
+<div class="sliding-menu">
+    <button class="menu-close">CLOSE</button>
+    <div class="menu-items">
+        <ul>
+            <li><a href="/">HOME</a></li>
+            <li><a href="/characters/">CHARACTERS</a></li>
+            <li><a href="/wiki/">WIKI</a></li>
+            <li><a href="/channels/">CHANNELS</a></li>
+            <li><a href="/help/">HELP</a></li>
+            <li><a href="/webclient/">PLAY ONLINE</a></li>
+        </ul>
+    </div>
+</div>
+<div class="menu-overlay"></div>
+
+<nav class="main-nav">
+    <div class="nav-wrapper">
+        <a href="/" class="nav-logo">Dies Irae</a>
+        <div class="nav-menu">
+            <a href="/" {% if request.path == '/' %}class="active"{% endif %}>HOME</a>
+            <a href="/characters/" {% if '/characters/' in request.path %}class="active"{% endif %}>CHARACTERS</a>
+            <a href="/wiki/" {% if '/wiki/' in request.path %}class="active"{% endif %}>WIKI</a>
+            <a href="/channels/" {% if '/channels/' in request.path %}class="active"{% endif %}>CHANNELS</a>
+            <a href="/help/" {% if '/help/' in request.path %}class="active"{% endif %}>HELP</a>
+            <a href="/play/" {% if '/play/' in request.path %}class="active"{% endif %}>PLAY ONLINE</a>
+        </div>
+        <div class="nav-right">
+            <div class="nav-search">
+                <input type="text" placeholder="Search wiki...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </div>
+            <button class="hamburger-menu">
+                <img src="/static/wiki/imgs/menu.svg" alt="Menu" class="hamburger-icon">
+            </button>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="help-index">
+        <div class="help-grid">
+            <div class="help-content">
+                {% for category in categories %}
+                <div class="help-category" id="{{ category.name|lower }}">
+                    <h2 class="category-title">{{ category.name }}</h2>
+                    <div class="help-links">
+                        {% for topic in category.topics %}
+                        <a href="{% url 'help-topic' category=category.name|lower topic=topic.key %}" class="help-link" title="{{ topic.name }}">
+                            {{ topic.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="help-sidebar">
+                <h3 class="sidebar-title">Category Index</h3>
+                <ul class="category-list">
+                    {% for category in categories %}
+                    <li>
+                        <a href="#{{ category.name|lower }}" {% if category.name == active_category %}class="active"{% endif %}>
+                            {{ category.name }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

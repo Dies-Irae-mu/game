@@ -7,6 +7,7 @@ from evennia import Command
 from evennia.utils import search
 from evennia.commands.default.muxcommand import MuxCommand
 from evennia.locks import lockfuncs
+from world.wod20th.scripts.puppet_freeze import start_puppet_freeze_script, PuppetFreezeScript
 
 
 class CmdApprove(AdminCommand):
@@ -316,3 +317,94 @@ class CmdTestLock(MuxCommand):
             import traceback
             self.caller.msg(traceback.format_exc())
 
+class CmdPuppetFreeze(MuxCommand):
+    """
+    Manage the puppet freeze checking system.
+    
+    Usage:
+        puppetfreeze start     - Start the freeze checking script
+        puppetfreeze stop      - Stop the freeze checking script
+        puppetfreeze status    - Check if script is running
+        puppetfreeze check     - Run a check immediately
+        puppetfreeze <name> = <reason>  - Freeze specific character
+        
+    This command manages the automatic freezing of inactive puppets.
+    Puppets that haven't logged in for 60 days will be unapproved
+    and their owners notified. You can also freeze specific characters
+    with a custom reason.
+    """
+    
+    key = "puppetfreeze"
+    aliases = ["pfreeze"]
+    locks = "cmd:perm(Admin)"
+    help_category = "Admin"
+    
+    def func(self):
+        if not self.args:
+            self.caller.msg("Usage: puppetfreeze <start|stop|status|check|name=reason>")
+            return
+            
+        # Check if it's a manual freeze with reason
+        if "=" in self.args:
+            name, reason = self.args.split("=", 1)
+            name = name.strip()
+            reason = reason.strip()
+            
+            # Find the character
+            char = self.caller.search(name)
+            if not char:
+                return
+                
+            # Get the script
+            scripts = search.search_script("puppet_freeze_check")
+            if not scripts:
+                self.caller.msg("Error: Puppet freeze script not running. Starting it...")
+                success, msg = start_puppet_freeze_script()
+                if not success:
+                    self.caller.msg(msg)
+                    return
+                scripts = search.search_script("puppet_freeze_check")
+            
+            # Freeze the character
+            script = scripts[0]
+            script.freeze_puppet(char, reason=reason, admin=self.caller)
+            self.caller.msg(f"Character {char.name} has been frozen. Reason: {reason}")
+            return
+            
+        option = self.args.strip().lower()
+        
+        if option == "start":
+            success, msg = start_puppet_freeze_script()
+            self.caller.msg(msg)
+            
+        elif option == "stop":
+            # Find and stop the script
+            scripts = search.search_script("puppet_freeze_check")
+            if scripts:
+                for script in scripts:
+                    script.stop()
+                self.caller.msg("Puppet freeze checking script stopped.")
+            else:
+                self.caller.msg("No puppet freeze checking script was running.")
+                
+        elif option == "status":
+            # Check if script is running
+            scripts = search.search_script("puppet_freeze_check")
+            if scripts:
+                script = scripts[0]
+                self.caller.msg(f"Puppet freeze script is running. Next check in {script.time_until_next_repeat()} seconds.")
+            else:
+                self.caller.msg("Puppet freeze script is not running.")
+                
+        elif option == "check":
+            # Run a check immediately
+            scripts = search.search_script("puppet_freeze_check")
+            if scripts:
+                script = scripts[0]
+                script.at_repeat()
+                self.caller.msg("Puppet freeze check completed.")
+            else:
+                self.caller.msg("No puppet freeze script is running. Start it first.")
+                
+        else:
+            self.caller.msg("Invalid option. Use: puppetfreeze <start|stop|status|check|name=reason>")

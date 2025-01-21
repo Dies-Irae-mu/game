@@ -276,12 +276,14 @@ class CmdNotes(MuxCommand):
             return
 
         # Check permissions
-        if target != self.caller and not (note.is_public or self.caller.check_permstring("Builders")):
+        if target != self.caller and not (note.is_public or 
+            self.caller.check_permstring("builders") or 
+            self.caller.check_permstring("storyteller")):
             self.caller.msg("You don't have permission to view this note.")
             return
 
         self.display_note(note)
-
+    
     def list_character_notes(self, target):
         """List all viewable notes for a character."""
         notes_dict = target.attributes.get('notes', {})
@@ -291,7 +293,8 @@ class CmdNotes(MuxCommand):
 
         width = 78
         notes_by_category = defaultdict(list)
-        is_staff = self.caller.check_permstring("Builders")
+        is_staff = (self.caller.check_permstring("builders") or 
+                   self.caller.check_permstring("storyteller"))
         
         try:
             # Process each note from the dictionary
@@ -427,7 +430,8 @@ class CmdNotes(MuxCommand):
             return
 
         # Check permissions
-        if target != self.caller and not self.caller.check_permstring("Builders"):
+        if target != self.caller and not (self.caller.check_permstring("builders") or 
+            self.caller.check_permstring("storyteller")):
             self.caller.msg("You don't have permission to decompile this note.")
             return
 
@@ -486,7 +490,8 @@ class CmdNotes(MuxCommand):
             return
 
         # Check permissions if trying to modify another character's notes
-        if target != self.caller and not self.caller.check_permstring("Builders"):
+        if target != self.caller and not (self.caller.check_permstring("builders") or 
+            self.caller.check_permstring("storyteller")):
             self.caller.msg("You don't have permission to modify notes on other characters.")
             return
 
@@ -521,7 +526,8 @@ class CmdNotes(MuxCommand):
 
     def approve_note(self):
         """Approve a note (staff only)."""
-        if not self.caller.check_permstring("Builders"):
+        if not (self.caller.check_permstring("builders") or 
+            self.caller.check_permstring("storyteller")):
             self.caller.msg("You don't have permission to approve notes.")
             return
 
@@ -554,7 +560,7 @@ class CmdNotes(MuxCommand):
 
     def unapprove_note(self):
         """Unapprove a note (staff only)."""
-        if not self.caller.check_permstring("Builders"):
+        if not self.caller.check_permstring("builders"):
             self.caller.msg("You don't have permission to unapprove notes.")
             return
 
@@ -608,7 +614,8 @@ class CmdNotes(MuxCommand):
             output += format_stat("Approved:", "No", width=width) + "\n"
 
         # Show creation and update times for staff
-        if self.caller.check_permstring("Builders"):
+        if (self.caller.check_permstring("builders") or 
+            self.caller.check_permstring("storyteller")):
             output += format_stat("Created:", note.created_at.strftime("%Y-%m-%d %H:%M:%S"), width=width) + "\n"
             output += format_stat("Updated:", note.updated_at.strftime("%Y-%m-%d %H:%M:%S"), width=width) + "\n"
 
@@ -637,7 +644,7 @@ class CmdNotes(MuxCommand):
             return
 
         # Handle staff deleting other player's notes
-        if "=" in self.args and self.caller.check_permstring("Builders"):
+        if "=" in self.args and self.caller.check_permstring("builders"):
             target_name, note_id = self.args.split("=", 1)
             target = self.search_for_character(target_name)
             if not target:
@@ -655,7 +662,7 @@ class CmdNotes(MuxCommand):
             return
 
         # Check permissions
-        if target != self.caller and not self.caller.check_permstring("Builders"):
+        if target != self.caller and not self.caller.check_permstring("builders"):
             self.caller.msg("You don't have permission to delete notes from other characters.")
             return
 

@@ -1183,9 +1183,13 @@ class Character(DefaultCharacter):
 
         # Calculate base cost based on stat type
         if category == 'attributes':
-            cost = sum(i * 4 for i in range(current_rating + 1, new_rating + 1))
+            # First dot is free, then current rating × 4
+            if current_rating == 0:
+                cost = sum(i * 4 for i in range(1, new_rating))
+            else:
+                cost = sum(i * 4 for i in range(current_rating, new_rating))
             requires_approval = new_rating > 3
-            
+
         elif category == 'abilities':
             if subcategory in ['talent', 'skill', 'knowledge', 'secondary_talent', 'secondary_skill', 'secondary_knowledge']:
                 if current_rating == 0:
@@ -1241,9 +1245,78 @@ class Character(DefaultCharacter):
                 new_rating > 2
             )
 
-        else:
-            # Unknown stat type
-            return (0, True)
+        elif category == 'powers':
+            if splat == 'Vampire':
+                clan = self.db.stats.get('identity', {}).get('lineage', {}).get('Clan', {}).get('perm', '')
+                
+                # Determine if discipline is in-clan
+                is_in_clan = self._is_discipline_in_clan(stat_name, clan)
+                is_caitiff = clan == 'Caitiff'
+                
+                # First dot costs 10 XP for all types
+                if current_rating == 0:
+                    cost = 10
+                    if new_rating > 1:
+                        # Add costs for additional dots
+                        if is_in_clan:
+                            cost += sum(i * 5 for i in range(1, new_rating))
+                        elif is_caitiff:
+                            cost += sum(i * 6 for i in range(1, new_rating))
+                        else:  # Out of clan
+                            cost += sum(i * 7 for i in range(1, new_rating))
+                else:
+                    # Just adding dots beyond the first
+                    if is_in_clan:
+                        cost = sum(i * 5 for i in range(current_rating, new_rating))
+                    elif is_caitiff:
+                        cost = sum(i * 6 for i in range(current_rating, new_rating))
+                    else:  # Out of clan
+                        cost = sum(i * 7 for i in range(current_rating, new_rating))
+                
+                requires_approval = new_rating > 2
+
+            elif splat == 'Mage':
+                # Check if it's an affinity sphere
+                is_affinity = self._is_affinity_sphere(stat_name)
+                
+                if current_rating == 0:
+                    cost = 10  # First dot always costs 10
+                    if new_rating > 1:
+                        # Add costs for additional dots
+                        if is_affinity:
+                            cost += sum(i * 7 for i in range(1, new_rating))
+                        else:
+                            cost += sum(i * 8 for i in range(1, new_rating))
+                else:
+                    # Just adding dots beyond the first
+                    if is_affinity:
+                        cost = sum(i * 7 for i in range(current_rating, new_rating))
+                    else:
+                        cost = sum(i * 8 for i in range(current_rating, new_rating))
+                
+                requires_approval = new_rating > 2
+
+            elif splat == 'Changeling':
+                is_art = stat_name.startswith('Art:')
+                is_realm = stat_name.startswith('Realm:')
+                
+                if is_art:
+                    if current_rating == 0:
+                        cost = 3  # First dot costs 3
+                        if new_rating > 1:
+                            cost += sum(i * 4 for i in range(1, new_rating))
+                    else:
+                        cost = sum(i * 4 for i in range(current_rating, new_rating))
+                
+                elif is_realm:
+                    if current_rating == 0:
+                        cost = 5  # First dot costs 5
+                        if new_rating > 1:
+                            cost += sum(i * 3 for i in range(1, new_rating))
+                    else:
+                        cost = sum(i * 3 for i in range(current_rating, new_rating))
+                
+                requires_approval = new_rating > 2
 
         return (cost, requires_approval)
 

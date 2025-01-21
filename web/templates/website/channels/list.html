@@ -1,0 +1,641 @@
+{% extends "website/base_custom.html" %}
+{% load static %}
+
+{% block titleblock %}Channels{% endblock %}
+
+{% block header_ext %}
+<style>
+    /* Import fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+    @font-face {
+        font-family: 'impact_label_reversed';
+        src: local('Impact Label Reversed'),
+             url('/static/wiki/fonts/impact_label_reversed.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: 'punktype';
+        src: url('/static/wiki/fonts/punktype.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    /* Core styles */
+    body {
+        background-color: #000;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 1728px;
+        margin: 0 auto;
+        padding: 0 40px;
+    }
+
+    /* Navigation styles */
+    .main-nav {
+        position: fixed;
+        z-index: 10000;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 90px;
+        color: #fff;
+        transition: background-color 0.5s ease;
+        background-color: rgba(0, 0, 0, 0.95);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 1728px;
+        margin: 0 40px;
+    }
+
+    .nav-logo {
+        font-family: 'punktype', Arial, sans-serif;
+        font-size: 28px;
+        letter-spacing: 5px;
+        font-weight: normal;
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .nav-menu {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .nav-menu a {
+        font-family: 'impact_label_reversed', Arial, sans-serif;
+        font-size: 20px;
+        letter-spacing: 5px;
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        transition: color 0.3s ease;
+        padding: 10px;
+    }
+
+    .nav-menu a:hover {
+        color: rgba(255, 255, 255, 1);
+    }
+
+    .nav-menu .active a {
+        color: rgba(255, 255, 255, 1);
+        text-decoration: underline;
+    }
+
+    .nav-search {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .nav-search input {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #fff;
+        padding: 5px 10px;
+        font-family: 'roboto mono', monospace;
+        font-size: 14px;
+        width: 200px;
+    }
+
+    .nav-search button {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #fff;
+        padding: 5px 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .nav-search button:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Channel list specific styles */
+    .channel-list {
+        margin-top: 90px;
+        padding: 40px 0;
+    }
+
+    .channel-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .channel-card {
+        background: rgba(0, 0, 0, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        padding: 20px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .channel-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .channel-card:hover {
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .channel-card:hover::before {
+        opacity: 1;
+    }
+
+    .channel-name {
+        font-family: 'impact_label_reversed', Arial, sans-serif;
+        font-size: 24px;
+        letter-spacing: 3px;
+        color: #fff;
+        margin-bottom: 10px;
+        position: relative;
+    }
+
+    .channel-description {
+        font-family: 'roboto mono', monospace;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 15px;
+        line-height: 1.4;
+        position: relative;
+    }
+
+    .channel-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: 'roboto mono', monospace;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.5);
+        position: relative;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .channel-subscribers {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .channel-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .channel-link:hover {
+        text-decoration: none;
+    }
+
+    .page-title {
+        font-family: 'impact_label_reversed', Arial, sans-serif;
+        font-size: 48px;
+        letter-spacing: 5px;
+        color: #fff;
+        margin-bottom: 20px;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    .page-description {
+        font-family: 'roboto mono', monospace;
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 40px;
+        max-width: 800px;
+        line-height: 1.6;
+    }
+
+    .channel-status {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 8px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.1);
+        font-size: 12px;
+    }
+
+    .channel-status.subscribed {
+        background: rgba(40, 167, 69, 0.2);
+        color: rgba(40, 167, 69, 0.9);
+    }
+
+    .channel-type {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-family: 'roboto mono', monospace;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .channel-filters {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .filter-label {
+        font-family: 'impact_label_reversed', Arial, sans-serif;
+        font-size: 14px;
+        letter-spacing: 2px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .filter-select {
+        background: rgba(0, 0, 0, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.7);
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-family: 'roboto mono', monospace;
+        font-size: 14px;
+    }
+
+    @media (max-width: 1024px) {
+        .channel-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 0 20px;
+        }
+        .channel-filters {
+            flex-direction: column;
+        }
+    }
+
+    /* Update hamburger menu styles */
+    .hamburger-menu {
+        display: none;
+        top: 5%;
+        cursor: pointer;
+        z-index: 10003;
+        padding: 15px;
+        background: transparent;
+        border: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .hamburger-icon {
+        width: 30px;
+        height: 30px;
+        filter: invert(1);
+        display: block;
+        pointer-events: none;
+    }
+
+    .sliding-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.95);
+        z-index: 10001;
+        transition: transform 0.3s ease-out;
+        transform: translateX(100%);
+        padding-top: 90px;
+        visibility: visible;
+        display: none;
+    }
+
+    .sliding-menu.open {
+        transform: translateX(0);
+        right: 0;
+        display: block;
+    }
+
+    .menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease-out;
+        display: none;
+    }
+
+    .menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
+        display: block;
+    }
+
+    .menu-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: rgba(255, 255, 255, 0.9);
+        padding: 10px 15px;
+        cursor: pointer;
+        font-family: 'impact_label_reversed', Arial, sans-serif;
+        font-size: 14px;
+        letter-spacing: 2px;
+        transition: all 0.3s ease;
+        z-index: 10002;
+    }
+
+    .menu-close:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+
+    @media (max-width: 1530px) {
+        .hamburger-menu {
+            display: block;
+        }
+
+        .nav-menu {
+            display: none;
+        }
+
+        .nav-search {
+            display: none;
+        }
+
+        .nav-right {
+            margin-left: auto;
+        }
+
+        .nav-wrapper {
+            margin: 0 20px;
+        }
+
+        .sliding-menu {
+            display: block;
+        }
+
+        .sliding-menu .menu-items {
+            height: calc(100vh - 90px);
+            overflow-y: auto;
+            padding: 20px 40px;
+        }
+
+        .sliding-menu .menu-items ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sliding-menu .menu-items li {
+            margin: 20px 0;
+        }
+
+        .sliding-menu .menu-items a {
+            font-family: 'impact_label_reversed', Arial, sans-serif;
+            font-size: 24px;
+            letter-spacing: 5px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .sliding-menu .menu-items a:hover {
+            color: rgba(255, 255, 255, 1);
+        }
+    }
+
+    @media (max-width: 1530px) {
+        .hamburger-menu {
+            display: block;
+        }
+
+        .nav-menu {
+            display: none;
+        }
+
+        .sliding-menu {
+            display: block;
+        }
+
+        .sliding-menu .menu-items {
+            height: calc(100vh - 90px);
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block navigation %}
+<nav class="main-nav">
+    <div class="nav-wrapper">
+        <a href="/" class="nav-logo">Dies Irae</a>
+        <div class="nav-menu">
+            <a href="/" {% if request.path == '/' %}class="active"{% endif %}>HOME</a>
+            <a href="/characters/" {% if '/characters/' in request.path %}class="active"{% endif %}>CHARACTERS</a>
+            <a href="/wiki/" {% if '/wiki/' in request.path %}class="active"{% endif %}>WIKI</a>
+            <a href="/channels/" {% if '/channels/' in request.path %}class="active"{% endif %}>CHANNELS</a>
+            <a href="/help/" {% if '/help/' in request.path %}class="active"{% endif %}>HELP</a>
+            <a href="/play/" {% if '/play/' in request.path %}class="active"{% endif %}>PLAY ONLINE</a>
+        </div>
+        <div class="nav-search">
+            <input type="text" placeholder="Search wiki...">
+            <button type="submit"><i class="fas fa-search"></i></button>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<!-- Add hamburger menu elements -->
+<button class="hamburger-menu">
+    <img src="/static/wiki/imgs/menu.svg" alt="Menu" class="hamburger-icon">
+</button>
+<div class="sliding-menu">
+    <button class="menu-close">CLOSE</button>
+    <div class="menu-items">
+        <ul>
+            <li><a href="/">HOME</a></li>
+            <li><a href="/characters/">CHARACTERS</a></li>
+            <li><a href="/wiki/">WIKI</a></li>
+            <li><a href="/channels/">CHANNELS</a></li>
+            <li><a href="/help/">HELP</a></li>
+            <li><a href="/webclient/">PLAY ONLINE</a></li>
+        </ul>
+    </div>
+</div>
+<div class="menu-overlay"></div>
+
+<div class="container">
+    <div class="channel-list">
+        <h1 class="page-title">Communication Channels</h1>
+        <p class="page-description">
+            Browse and join available communication channels. Each channel serves a specific purpose and community within Dies Irae.
+        </p>
+
+        <div class="channel-filters">
+            <div class="filter-group">
+                <span class="filter-label">SHOW:</span>
+                <select class="filter-select">
+                    <option value="all">All Channels</option>
+                    <option value="subscribed">Subscribed Only</option>
+                    <option value="available">Available to Join</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <span class="filter-label">SORT BY:</span>
+                <select class="filter-select">
+                    <option value="name">Name</option>
+                    <option value="subscribers">Most Active</option>
+                    <option value="recent">Recently Active</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="channel-grid">
+            {% for channel in channels %}
+            <a href="{% url 'channel-detail' channel_name=channel.db_key %}" class="channel-link">
+                <div class="channel-card">
+                    <span class="channel-type">{{ channel.db.channel_type|default:"General" }}</span>
+                    <h2 class="channel-name">{{ channel.db_key }}</h2>
+                    <p class="channel-description">
+                        {% if channel.db.desc %}
+                            {{ channel.db.desc }}
+                        {% else %}
+                            {{ channel.db_key }} channel
+                        {% endif %}
+                    </p>
+                    <div class="channel-meta">
+                        <div class="channel-subscribers">
+                            <i class="fas fa-users"></i>
+                            <span>{{ channel.db.subscriptions|length }}</span>
+                        </div>
+                        {% if request.user in channel.db.subscriptions %}
+                        <div class="channel-status subscribed">
+                            <i class="fas fa-check"></i>
+                            <span>Subscribed</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterSelect = document.querySelector('select[class="filter-select"]');
+    const channelGrid = document.querySelector('.channel-grid');
+    const channelCards = document.querySelectorAll('.channel-card');
+
+    filterSelect.addEventListener('change', function() {
+        const value = this.value;
+        
+        channelCards.forEach(card => {
+            const isSubscribed = card.querySelector('.channel-status.subscribed') !== null;
+            
+            switch(value) {
+                case 'subscribed':
+                    card.parentElement.style.display = isSubscribed ? 'block' : 'none';
+                    break;
+                case 'available':
+                    card.parentElement.style.display = !isSubscribed ? 'block' : 'none';
+                    break;
+                default:
+                    card.parentElement.style.display = 'block';
+            }
+        });
+    });
+
+    const hamburger = document.querySelector('.hamburger-menu');
+    const slidingMenu = document.querySelector('.sliding-menu');
+    const menuOverlay = document.querySelector('.menu-overlay');
+
+    function toggleMenu(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        const isCurrentlyOpen = slidingMenu.classList.contains('open');
+
+        if (!isCurrentlyOpen) {
+            slidingMenu.style.display = 'block';
+            menuOverlay.style.display = 'block';
+            slidingMenu.offsetHeight;
+            menuOverlay.offsetHeight;
+            
+            slidingMenu.classList.add('open');
+            menuOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        } else {
+            slidingMenu.classList.remove('open');
+            menuOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+            
+            setTimeout(() => {
+                if (!slidingMenu.classList.contains('open')) {
+                    slidingMenu.style.display = 'none';
+                    menuOverlay.style.display = 'none';
+                }
+            }, 300);
+        }
+    }
+
+    if (hamburger) {
+        const newHamburger = hamburger.cloneNode(true);
+        hamburger.parentNode.replaceChild(newHamburger, hamburger);
+        
+        newHamburger.addEventListener('click', toggleMenu, { passive: false });
+        newHamburger.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            toggleMenu(e);
+        }, { passive: false });
+    }
+
+    if (menuOverlay) {
+        menuOverlay.addEventListener('click', toggleMenu);
+        menuOverlay.addEventListener('touchend', toggleMenu);
+    }
+});
+</script>
+{% endblock %} 

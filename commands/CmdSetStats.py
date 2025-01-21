@@ -582,7 +582,6 @@ class CmdStats(default_cmds.MuxCommand):
                 self.caller.msg(f"|gRecalculated Willpower to {courage} and Humanity to {humanity}.|n")
                 character.msg(f"|gYour Willpower has been set to {courage} and Humanity to {humanity}.|n")
 
-
     def update_virtues_for_enlightenment(self, character):
         """Update virtues based on enlightenment path"""
         # Initialize virtues if they don't exist

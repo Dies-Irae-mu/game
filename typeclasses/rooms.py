@@ -13,19 +13,25 @@ class RoomParent(DefaultRoom):
  
     def get_display_name(self, looker, **kwargs):
         """
-        Get the name to display for the character.
-        """
+        Get the name to display for the room.
         
+        Args:
+            looker (Object or str): The object or string looking at this room.
+            **kwargs: Arbitrary keyword arguments.
+            
+        Returns:
+            str: The display name of the room.
+        """
         name = self.key
         
         if self.db.gradient_name:
             name = ANSIString(self.db.gradient_name)
-            if looker.check_permstring("builders"):
+            if hasattr(looker, 'check_permstring') and looker.check_permstring("builders"):
                 name += f"({self.dbref})"
             return name
         
         # If the looker is builder+ show the dbref
-        if looker.check_permstring("builders"):
+        if hasattr(looker, 'check_permstring') and looker.check_permstring("builders"):
             name += f"({self.dbref})"
 
         return name
@@ -54,51 +60,10 @@ class RoomParent(DefaultRoom):
         
         # Process room description
         if desc:
-            # Process description while preserving ANSI codes
-            desc = str(desc)  # Start with raw string to preserve all codes
-            
-            # Split description into paragraphs using %R or %r while preserving ANSI
-            paragraphs = []
-            for p in desc.split('%R'):
-                paragraphs.extend(p.split('%r'))
-            
-            formatted_paragraphs = []
-            for paragraph in paragraphs:
-                if not paragraph.strip():
-                    continue
-                
-                # Split paragraph into lines by tabs
-                tab_lines = []
-                for line in paragraph.split('%t'):
-                    tab_lines.extend(line.split('%T'))
-                
-                formatted_lines = []
-                for i, line in enumerate(tab_lines):
-                    line = line.strip()
-                    if i > 0:  # Add indentation for tabbed lines
-                        # Check if line starts with a color code
-                        if line.startswith('|'):
-                            color_end = line.find(' ')
-                            if color_end > 0:
-                                # Preserve color code and add indentation after it
-                                color_code = line[:color_end]
-                                rest_of_line = line[color_end:].strip()
-                                line = f"{color_code}    {rest_of_line}"
-                            else:
-                                line = "    " + line
-                        else:
-                            line = "    " + line
-                    
-                    # Process line for word wrapping while preserving ANSI
-                    wrapped = wrap_ansi(line, width=78)
-                    if wrapped:
-                        formatted_lines.append(wrapped)
-                
-                if formatted_lines:
-                    formatted_paragraphs.append("\n".join(formatted_lines))
-            
-            # Join all paragraphs with single newlines
-            string += "\n".join(formatted_paragraphs) + "\n"
+            # Use format_description to handle the formatting
+            formatted_desc = self.format_description(desc)
+            if formatted_desc:
+                string += formatted_desc + "\n"
 
         # List all characters in the room
         characters = []
@@ -120,15 +85,19 @@ class RoomParent(DefaultRoom):
                 if shortdesc:
                     shortdesc_str = f"{shortdesc}"
                 else:
-                    shortdesc_str ="|h|xType '|n+shortdesc <desc>|h|x' to set a short description.|n"
+                    shortdesc_str = "|h|xType '+shortdesc <desc>' to set a short description.|n"
 
-                if len(ANSIString(shortdesc_str).strip()) > 55:
-                    shortdesc_str = ANSIString(shortdesc_str)[:55]
-                    shortdesc_str = ANSIString(shortdesc_str[:-3] + "...|n")
-                else:
-                    shortdesc_str = ANSIString(shortdesc_str).ljust(55, ' ')
+                # Format name and idle time with fixed widths
+                name_part = ANSIString(f" {character.get_display_name(looker)}").ljust(20)
+                idle_part = ANSIString(idle_time).rjust(4)
                 
-                string += ANSIString(f" {character.get_display_name(looker).ljust(12)} {ANSIString(idle_time).rjust(7)}|n {shortdesc_str}\n")
+                # Ensure shortdesc doesn't exceed remaining space
+                max_shortdesc_length = 52  # 78 - 20 (name) - 4 (idle) - 2 (spaces)
+                if len(ANSIString(shortdesc_str)) > max_shortdesc_length:
+                    shortdesc_str = ANSIString(shortdesc_str)[:max_shortdesc_length-3] + "..."
+                
+                # Combine all parts with proper spacing
+                string += f"{name_part}{idle_part} {ANSIString(shortdesc_str)}\n"
 
         # List all objects in the room
         objects = [obj for obj in self.contents if not obj.has_account and not obj.destination]
@@ -277,17 +246,8 @@ class RoomParent(DefaultRoom):
         """
         self.db.temp_gauntlet_modifier = modifier
         
-
-        if success[0] > 0:
-            if self.db.umbra_desc:
-                # Format the Umbra description
-                umbra_header = header("Umbra Vision", width=78, fillchar=ANSIString("|r-|n"))
-                formatted_desc = self.format_description(self.db.umbra_desc)
-                umbra_footer = footer(width=78, fillchar=ANSIString("|r-|n"))
-                
-                return f"You successfully pierce the Gauntlet and glimpse into the Umbra:\n\n{umbra_header}\n{formatted_desc}\n{umbra_footer}"
-            else:
-                return "You successfully pierce the Gauntlet, but there's nothing unusual to see in the Umbra here."
+        if duration > 0:
+            self.db.temp_gauntlet_expiry = datetime.now().timestamp() + duration
         else:
             self.db.temp_gauntlet_expiry = None
         
@@ -319,34 +279,52 @@ class RoomParent(DefaultRoom):
         """
         Format the description with proper paragraph handling and indentation.
         """
-        desc = desc.replace('%r', '%R')
-        paragraphs = desc.split('%R')
-        formatted_paragraphs = []
-        for i, p in enumerate(paragraphs):
-            if not p.strip():
-                if i > 0 and not paragraphs[i-1].strip():
-                    formatted_paragraphs.append('')  # Add blank line for double %r
-                continue
+        if not desc:
+            return ""
             
-            lines = p.split('%t')
-            formatted_lines = []
-            for j, line in enumerate(lines):
-                if j == 0 and line.strip():
-                    formatted_lines.append(wrap_ansi(line.strip(), width=76))
-                elif line.strip():
-                    formatted_lines.append(wrap_ansi('    ' + line.strip(), width=76))
-            
-            formatted_paragraphs.append('\n'.join(formatted_lines))
-
-        
-        # Rejoin lines and handle other formatting
-        desc = '\n'.join(lines)
+        # First normalize all line breaks and tabs
+        desc = desc.replace('%T', '%t')
+        desc = desc.replace('%R%R', '\n\n')  # Double line breaks first
+        desc = desc.replace('%r%r', '\n\n')
         desc = desc.replace('%R', '\n')
         desc = desc.replace('%r', '\n')
         
-        # Split into paragraphs and rejoin with proper spacing
-        paragraphs = [p.strip() for p in desc.split('\n') if p.strip()]
-        return '\n\n'.join(paragraphs)
+        # Process each paragraph
+        paragraphs = []
+        for paragraph in desc.split('\n'):
+            # Skip completely empty paragraphs
+            if not paragraph.strip():
+                paragraphs.append('')
+                continue
+                
+            # Handle tabs at start of paragraph
+            tab_count = 0
+            working_paragraph = paragraph
+            while working_paragraph.startswith('%t'):
+                tab_count += 1
+                working_paragraph = working_paragraph[2:]  # Remove just the %t
+            
+            # Apply indentation and handle the rest of the paragraph
+            if tab_count > 0:
+                working_paragraph = '    ' * tab_count + working_paragraph
+            
+            # Wrap the paragraph while preserving ANSI codes
+            wrapped = wrap_ansi(working_paragraph, width=76)
+            paragraphs.append(wrapped)
+        
+        # Clean up multiple consecutive empty lines
+        result = []
+        last_empty = False
+        for p in paragraphs:
+            if not p:
+                if not last_empty:
+                    result.append(p)
+                last_empty = True
+            else:
+                result.append(p)
+                last_empty = False
+        
+        return '\n'.join(result)
 
     def msg_contents(self, text=None, exclude=None, from_obj=None, mapping=None, **kwargs):
         """
@@ -507,13 +485,25 @@ class RoomParent(DefaultRoom):
         Called when the room is first created.
         """
         super().at_object_creation()
-        self.db.unfindable = False  # Add this line
+        self.db.unfindable = False
         self.db.fae_desc = ""
         self.db.roll_log = []  # Initialize empty roll log
         self.db.home_data = {
             'locked': False,
             'keyholders': set(),
             'owner': None
+        }
+        # Initialize housing data
+        self.db.housing_data = {
+            'is_housing': False,
+            'max_apartments': 0,
+            'current_tenants': {},
+            'apartment_numbers': set(),
+            'required_resources': 0,
+            'building_zone': None,
+            'connected_rooms': set(),
+            'is_lobby': False,
+            'available_types': []
         }
 
     def set_as_district(self):
@@ -701,8 +691,25 @@ class RoomParent(DefaultRoom):
         """Set the fae description of the room."""
         self.db.fae_desc = description
 
+    def ensure_housing_data(self):
+        """Ensure housing data exists and is properly initialized."""
+        if not self.db.housing_data:
+            self.db.housing_data = {
+                'is_housing': False,
+                'max_apartments': 0,
+                'current_tenants': {},
+                'apartment_numbers': set(),
+                'required_resources': 0,
+                'building_zone': None,
+                'connected_rooms': set(),
+                'is_lobby': False,
+                'available_types': []
+            }
+        return self.db.housing_data
+
     def is_housing_area(self):
         """Check if this is a housing area."""
+        self.ensure_housing_data()  # Ensure housing data exists
         return (hasattr(self.db, 'roomtype') and 
                 self.db.roomtype in [
                     "Apartment Building", "Apartments", 
@@ -713,6 +720,7 @@ class RoomParent(DefaultRoom):
 
     def is_apartment_building(self):
         """Check if this is an apartment building."""
+        self.ensure_housing_data()
         return (hasattr(self.db, 'roomtype') and 
                 self.db.roomtype in [
                     "Apartment Building", "Apartments", 
@@ -721,6 +729,7 @@ class RoomParent(DefaultRoom):
 
     def is_residential_area(self):
         """Check if this is a residential neighborhood."""
+        self.ensure_housing_data()
         return (hasattr(self.db, 'roomtype') and 
                 self.db.roomtype in [
                     "Residential Area", "Residential Neighborhood", 
@@ -733,19 +742,22 @@ class RoomParent(DefaultRoom):
         self.db.roomtype = housing_type
         
         # Initialize housing data
-        self.db.housing_data = {
+        housing_data = self.ensure_housing_data()
+        housing_data.update({
             'is_housing': True,
             'max_apartments': max_units,
             'current_tenants': {},
             'apartment_numbers': set(),
-            'is_lobby': True
-        }
+            'is_lobby': True,
+            'available_types': []
+        })
         
         # Force room appearance update
         self.at_object_creation()
 
     def get_available_housing_types(self):
         """Get available housing types based on area type."""
+        self.ensure_housing_data()
         from commands.housing import CmdRent
         if self.is_apartment_building():
             return CmdRent.APARTMENT_TYPES
@@ -755,6 +767,7 @@ class RoomParent(DefaultRoom):
 
     def get_housing_cost(self, unit_type):
         """Calculate housing cost based on area resources and unit type."""
+        self.ensure_housing_data()
         housing_types = self.get_available_housing_types()
         if unit_type in housing_types:
             base_resources = self.db.resources or 0
@@ -763,6 +776,7 @@ class RoomParent(DefaultRoom):
 
     def list_available_units(self):
         """Return formatted list of available units and their costs."""
+        self.ensure_housing_data()
         if not self.is_housing_area():
             return "This is not a housing area."
             

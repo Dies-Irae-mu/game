@@ -252,7 +252,7 @@ class CmdSummon(AdminCommand):
     """
 
     key = "+summon"
-    locks = "cmd:perm(admin)"
+    locks = "cmd:perm(builders) or perm(storyteller)"
     help_category = "Admin"
 
     def func(self):
@@ -327,7 +327,7 @@ class CmdJoin(AdminCommand):
     """
 
     key = "+join"
-    locks = "cmd:perm(admin)"
+    locks = "cmd:perm(builders) or perm(storyteller)"
     help_category = "Admin"
 
     def func(self):

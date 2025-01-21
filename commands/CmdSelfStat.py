@@ -4,7 +4,6 @@ from evennia.utils import search
 import re
 from commands.CmdLanguage import CmdLanguage
 
-
 PATH_VIRTUES = {
     'Humanity': ('Conscience', 'Self-Control'),
     'Night': ('Conviction', 'Instinct'),
@@ -32,7 +31,6 @@ PATH_VIRTUES = {
     'Blood': ('Conviction', 'Self-Control'),
     'Hive': ('Conviction', 'Instinct')
 }
-
 
 class CmdSelfStat(default_cmds.MuxCommand):
     """
@@ -230,13 +228,6 @@ class CmdSelfStat(default_cmds.MuxCommand):
                 stat.category = 'identity'
                 stat.stat_type = 'lineage'
 
-        # Special handling for Shifter Rank
-        if stat.name == 'Rank':
-            splat = self.caller.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
-            if splat and splat == 'Shifter':
-                stat.category = 'identity'
-                stat.stat_type = 'lineage'
-
         # Check if the character can have this ability
         if stat.stat_type == 'ability' and not self.caller.can_have_ability(stat.name):
             self.caller.msg(f"|rYour character cannot have the {stat.name} ability.|n")
@@ -308,7 +299,6 @@ class CmdSelfStat(default_cmds.MuxCommand):
                 
                 # Validate splat type
                 valid_splats = ['changeling', 'vampire', 'shifter', 'mage', 'mortal', 'mortal+']
-
                 if self.value_change.lower() not in valid_splats:
                     self.caller.msg(f"|rInvalid splat type. Must be one of: {', '.join(valid_splats).title()}|n")
                     return
@@ -338,12 +328,10 @@ class CmdSelfStat(default_cmds.MuxCommand):
                         self.caller.msg(f"|rType setting not applicable for {splat} characters.|n")
                         return
             
-
             # Set the stat
             self.caller.set_stat(stat.category, stat.stat_type, full_stat_name, new_value, temp=False)
             self.caller.set_stat(stat.category, stat.stat_type, full_stat_name, new_value, temp=True)
             
-
             self.caller.msg(f"|gUpdated {full_stat_name} to {new_value} (both permanent and temporary).|n")
 
         except ValueError as e:
@@ -382,7 +370,6 @@ class CmdSelfStat(default_cmds.MuxCommand):
                 self.caller.set_stat('virtues', 'moral', 'Humanity', humanity, temp=True)
                 
                 self.caller.msg(f"|gRecalculated Willpower to {courage} and Humanity to {humanity}.|n")
-
 
     def apply_shifter_stats(self, character):
         """Apply shifter-specific stats"""

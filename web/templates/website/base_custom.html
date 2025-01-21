@@ -1,0 +1,417 @@
+{% load static sekizai_tags %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Dies Irae" />
+    <meta name="generator" content="Evennia" />
+
+    <link rel="icon" type="image/png" href="{% static 'wiki/imgs/favicon.png' %}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        /* Import fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+        @font-face {
+            font-family: 'impact_label_reversed';
+            src: local('Impact Label Reversed'),
+                 url('/static/wiki/fonts/impact_label_reversed.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'punktype';
+            src: url('/static/wiki/fonts/punktype.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* Navigation styles */
+        .main-nav {
+            position: fixed;
+            z-index: 10000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 90px;
+            color: #fff;
+            transition: background-color 0.5s ease;
+            background-color: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1728px;
+            margin: 0 40px;
+        }
+
+        .nav-logo {
+            font-family: 'punktype', Arial, sans-serif;
+            font-size: 28px;
+            letter-spacing: 5px;
+            font-weight: normal;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-menu a {
+            font-family: 'impact_label_reversed', Arial, sans-serif;
+            font-size: 20px;
+            letter-spacing: 5px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            padding: 10px;
+        }
+
+        .nav-menu a:hover {
+            color: rgba(255, 255, 255, 1);
+        }
+
+        .nav-menu .active a {
+            color: rgba(255, 255, 255, 1);
+            text-decoration: underline;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-search {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-search form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-search input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 5px 10px;
+            font-family: 'roboto mono', monospace;
+            font-size: 14px;
+            width: 200px;
+        }
+
+        .nav-search button {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-search button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Hamburger menu styles */
+        .hamburger-menu {
+            display: none;
+            cursor: pointer;
+            z-index: 10003;
+            padding: 15px;
+            background: transparent;
+            border: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .hamburger-icon {
+            width: 30px;
+            height: 30px;
+            filter: invert(1);
+            display: block;
+            pointer-events: none;
+        }
+
+        .sliding-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 10001;
+            transition: transform 0.3s ease-out;
+            transform: translateX(100%);
+            padding-top: 90px;
+            visibility: visible;
+            display: none;
+        }
+
+        .sliding-menu.open {
+            transform: translateX(0);
+            right: 0;
+            display: block;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-out;
+            display: none;
+        }
+
+        .menu-overlay.open {
+            opacity: 1;
+            visibility: visible;
+            display: block;
+        }
+
+        .menu-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            cursor: pointer;
+            font-family: 'impact_label_reversed', Arial, sans-serif;
+            font-size: 14px;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            z-index: 10002;
+        }
+
+        .menu-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        @media (max-width: 1530px) {
+            .hamburger-menu {
+                display: block;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .nav-search {
+                display: none;
+            }
+
+            .nav-right {
+                margin-left: auto;
+            }
+
+            .nav-wrapper {
+                margin: 0 20px;
+            }
+
+            .sliding-menu {
+                display: block;
+            }
+
+            .sliding-menu .menu-items {
+                height: calc(100vh - 90px);
+                overflow-y: auto;
+                padding: 20px 40px;
+            }
+
+            .sliding-menu .menu-items ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .sliding-menu .menu-items li {
+                margin: 20px 0;
+            }
+
+            .sliding-menu .menu-items a {
+                font-family: 'impact_label_reversed', Arial, sans-serif;
+                font-size: 24px;
+                letter-spacing: 5px;
+                color: rgba(255, 255, 255, 0.7);
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+            .sliding-menu .menu-items a:hover {
+                color: rgba(255, 255, 255, 1);
+            }
+        }
+
+        .mobile-search {
+            margin-top: 20px;
+            padding: 0 20px;
+        }
+
+        .mobile-search form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .mobile-search input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 10px;
+            font-family: 'roboto mono', monospace;
+            font-size: 14px;
+        }
+
+        .mobile-search button {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-search button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+
+    {% block header_ext %}
+    {% endblock %}
+
+    <title>{{game_name}} - {% if flatpage %}{{flatpage.title}}{% else %}{% block titleblock %}{{page_title}}{% endblock %}{% endif %}</title>
+  </head>
+  <body>
+    {% block body %}
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-wrapper">
+            <a href="/" class="nav-logo">Dies Irae</a>
+            <div class="nav-menu">
+                <a href="/" {% if request.path == '/' %}class="active"{% endif %}>HOME</a>
+                <a href="/characters/" {% if '/characters/' in request.path %}class="active"{% endif %}>CHARACTERS</a>
+                <a href="/wiki/" {% if '/wiki/' in request.path %}class="active"{% endif %}>WIKI</a>
+                <a href="/channels/" {% if '/channels/' in request.path %}class="active"{% endif %}>CHANNELS</a>
+                <a href="/help/" {% if '/help/' in request.path %}class="active"{% endif %}>HELP</a>
+                <a href="/webclient/" {% if '/webclient/' in request.path %}class="active"{% endif %}>PLAY ONLINE</a>
+            </div>
+            <div class="nav-right">
+                <div class="nav-search">
+                    <form action="{% url 'wiki:search' %}" method="get">
+                        <input type="text" name="q" placeholder="Search wiki...">
+                        <button type="submit"><i class="fas fa-search"></i></button>
+                    </form>
+                </div>
+                <button class="hamburger-menu">
+                    <img src="{% static 'wiki/imgs/hamburger.svg' %}" alt="Menu" class="hamburger-icon">
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sliding Menu -->
+    <div class="sliding-menu">
+        <button class="menu-close">CLOSE</button>
+        <div class="menu-items">
+            <ul>
+                <li><a href="/">HOME</a></li>
+                <li><a href="/characters/">CHARACTERS</a></li>
+                <li><a href="/wiki/">WIKI</a></li>
+                <li><a href="/channels/">CHANNELS</a></li>
+                <li><a href="/help/">HELP</a></li>
+                <li><a href="/webclient/">PLAY ONLINE</a></li>
+                
+                <!-- Mobile Search -->
+                <li class="mobile-search">
+                    <form action="{% url 'wiki:search' %}" method="get">
+                        <input type="text" name="q" placeholder="Search wiki...">
+                        <button type="submit"><i class="fas fa-search"></i></button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="menu-overlay"></div>
+
+    <div class="container main-content" id="main-copy">
+      {% include 'website/messages.html' %}
+
+      {% block content %}
+      {% endblock %}
+
+      {% include 'website/pagination.html' %}
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const hamburgerBtn = document.querySelector('.hamburger-menu');
+        const slidingMenu = document.querySelector('.sliding-menu');
+        const menuOverlay = document.querySelector('.menu-overlay');
+        const closeBtn = document.querySelector('.menu-close');
+
+        function openMenu() {
+            slidingMenu.classList.add('active');
+            menuOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            slidingMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        if (hamburgerBtn) {
+            hamburgerBtn.addEventListener('click', openMenu);
+        }
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeMenu);
+        }
+
+        if (menuOverlay) {
+            menuOverlay.addEventListener('click', closeMenu);
+        }
+
+        // Close menu on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMenu();
+            }
+        });
+    });
+    </script>
+
+    {% endblock %}
+
+    <!-- jQuery first, then Bootstrap JS. -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  </body>
+</html> 

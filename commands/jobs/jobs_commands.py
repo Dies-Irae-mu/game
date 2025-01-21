@@ -23,10 +23,12 @@ class CmdJobs(MuxCommand):
 
     Usage:
       +jobs                      - List all jobs
+      +myjobs                    - List jobs you created or are assigned to
       +jobs <#>                  - View details of a specific job
       +jobs/create <category>/<title>=<text> [= <template>] <args>
       +jobs/comment <#>=<text>   - Add a comment to a job
       +jobs/close <#>           - Close a job
+      +jobs/reopen <#>          - Reopen an archived job
       +jobs/addplayer <#>=<player>
       +jobs/removeplayer <#>=<player>
       +jobs/assign <#>=<staff>
@@ -54,10 +56,12 @@ class CmdJobs(MuxCommand):
 
     Examples:
       +jobs
+      +myjobs
       +jobs 5
       +jobs/create REQ/New Character=Please review my character sheet
       +jobs/comment 5=Added background story
       +jobs/approve 5
+      +jobs/reopen 5
     """
 
     key = "+jobs"
@@ -77,7 +81,10 @@ class CmdJobs(MuxCommand):
 
     def func(self):
         if not self.args and not self.switches:
-            self.list_jobs()
+            if self.cmdstring == "+myjobs":
+                self.list_my_jobs()
+            else:
+                self.list_jobs()
         elif self.args and not self.switches:
             self.view_job()
         elif "archive" in self.switches:
@@ -88,6 +95,8 @@ class CmdJobs(MuxCommand):
             self.add_comment()
         elif "close" in self.switches:
             self.close_job()
+        elif "reopen" in self.switches:
+            self.reopen_job()
         elif "addplayer" in self.switches:
             self.add_player()
         elif "removeplayer" in self.switches:
@@ -114,8 +123,6 @@ class CmdJobs(MuxCommand):
             self.view_queue_jobs()
         elif "list_with_object" in self.switches:
             self.list_jobs_with_object()
-        elif "archive" in self.switches:
-            self.view_archived_job()
         elif "complete" in self.switches:
             self.complete_job()
         elif "cancel" in self.switches:
@@ -1011,6 +1018,112 @@ class CmdJobs(MuxCommand):
         
         output += footer(width=width, fillchar="|r=|n")
         self.caller.msg(output)
+
+    def list_my_jobs(self):
+        """List jobs that are relevant to the caller."""
+        if self.caller.check_permstring("Admin"):
+            # For staff, show jobs they created or are assigned to
+            jobs = Job.objects.filter(
+                models.Q(requester=self.caller.account) |
+                models.Q(assignee=self.caller.account),
+                status__in=['open', 'claimed']
+            ).distinct().order_by('-created_at')
+        else:
+            # For players, show only jobs they created
+            jobs = Job.objects.filter(
+                requester=self.caller.account,
+                status__in=['open', 'claimed']
+            ).order_by('-created_at')
+
+        if not jobs:
+            self.caller.msg("You have no open jobs.")
+            return
+
+        output = header("My Dies Irae Jobs", width=78, fillchar="|r-|n") + "\n"
+        
+        # Create the header row
+        header_row = "|cJob #  Queue      Job Title                 Started  Assignee          Status|n"
+        output += header_row + "\n"
+        output += ANSIString("|r" + "-" * 78 + "|n") + "\n"
+
+        # Add each job as a row
+        for job in jobs:
+            assignee = job.assignee.username if job.assignee else "-----"
+            row = (
+                f"{job.id:<6}"
+                f"{crop(job.queue.name, width=10):<11}"
+                f"{crop(job.title, width=25):<25}"
+                f"{job.created_at.strftime('%m/%d/%y'):<9}"
+                f"{crop(assignee, width=17):<18}"
+                f"{job.status}"
+            )
+            output += row + "\n"
+
+        output += footer(width=78, fillchar="|r-|n")
+        self.caller.msg(output)
+
+    def reopen_job(self):
+        """Reopen an archived job."""
+        if not self.args:
+            self.caller.msg("Usage: +jobs/reopen <#>")
+            return
+
+        try:
+            job_id = int(self.args)
+            archived_job = ArchivedJob.objects.get(original_id=job_id)
+
+            # Check permissions
+            if not (self.caller.check_permstring("Admin") or archived_job.requester == self.caller.account):
+                self.caller.msg("You don't have permission to reopen this job.")
+                return
+
+            # Create a new job with the archived information
+            new_job = Job.objects.create(
+                title=archived_job.title,
+                description=archived_job.description,
+                requester=archived_job.requester,
+                assignee=archived_job.assignee,
+                queue=archived_job.queue,
+                status='open',
+                comments=[]  # Start with empty comments
+            )
+
+            # Add a system comment about reopening
+            new_job.comments.append({
+                'author': 'System',
+                'text': f"Job reopened by {self.caller.name} (Previous job #{job_id})",
+                'created_at': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+            })
+
+            # If there were previous comments, add them with a header
+            if archived_job.comments:
+                new_job.comments.append({
+                    'author': 'System',
+                    'text': "--- Previous Comments ---",
+                    'created_at': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+                })
+                new_job.comments.append({
+                    'author': 'System',
+                    'text': archived_job.comments,
+                    'created_at': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+                })
+
+            new_job.save()
+
+            self.caller.msg(f"Job #{job_id} has been reopened as Job #{new_job.id}.")
+            self.post_to_jobs_channel(self.caller.name, new_job.id, f"reopened (was Job #{job_id})")
+
+            # Notify the original requester if different from the reopener
+            if archived_job.requester != self.caller.account:
+                self.send_mail_notification(
+                    new_job,
+                    f"Your job '{archived_job.title}' (#{job_id}) has been reopened as Job #{new_job.id} by {self.caller.name}."
+                )
+
+        except ValueError:
+            self.caller.msg("Invalid job ID.")
+        except ArchivedJob.DoesNotExist:
+            self.caller.msg(f"Archived job #{job_id} not found.")
 
 def create_jobs_help_entry():
     """Create or update the jobs help entry."""

@@ -35,23 +35,45 @@ class CmdInfo(MuxCommand):
     help_category = "Chargen"
     
     valid_types = [
-        "attribute", "ability", "secondary ability", 
-        "power", "advantage", "supernatural",
-        "merit", "flaw", "identity", "other",
-        "gift", "discipline", "combodiscipline"
+        # Core types
+        'attribute', 'ability', 'secondary_ability', 'advantage', 'background',
+        'lineage', 'discipline', 'combodiscipline', 'thaumaturgy', 'gift',
+        'rite', 'sphere', 'rote', 'art', 'splat', 'edge', 'bygone_power',
+        'realm', 'path', 'sorcery', 'faith', 'numina', 'enlightenment',
+        'power', 'virtue', 'vice', 'merit', 'flaw', 'trait',
+        # Ability subtypes
+        'skill', 'knowledge', 'talent',
+        'secondary_knowledge', 'secondary_talent', 'secondary_skill',
+        # Attribute types
+        'physical', 'social', 'mental',
+        # Other categories
+        'personal', 'supernatural', 'moral', 'temporary', 'dual',
+        # Game-specific
+        'renown', 'arete', 'banality', 'glamour', 'essence',
+        'quintessence', 'paradox',
+        # Identity/Social
+        'kith', 'seeming', 'house', 'seelie-legacy', 'unseelie-legacy',
+        'court', 'mortalplus_type', 'varna'
     ]
     
-    # Group similar stat types together
+    # Group similar stat types together based on CATEGORIES
     DISPLAY_CATEGORIES = {
-        'Attributes': ['physical', 'social', 'mental'],
+        'Attributes': ['physical', 'social', 'mental', 'attribute'],
         'Abilities': ['skill', 'knowledge', 'talent', 'ability'],
         'Secondary Abilities': ['secondary_knowledge', 'secondary_talent', 'secondary_skill', 'secondary_ability'],
-        'Powers': ['discipline', 'gift', 'art', 'sphere', 'bygone_power', 'combodiscipline'],
         'Advantages': ['advantage', 'background'],
-        'Supernatural': ['lineage', 'enlightenment', 'path'],
+        'Powers': [
+            'discipline', 'combodiscipline', 'thaumaturgy', 'gift', 'rite',
+            'sphere', 'rote', 'art', 'edge', 'bygone_power', 'realm',
+            'path', 'sorcery', 'faith', 'numina', 'power'
+        ],
+        'Supernatural': ['lineage', 'enlightenment', 'supernatural'],
         'Merits & Flaws': ['merit', 'flaw'],
-        'Identity': ['splat', 'kith', 'seeming', 'house'],
-        'Other': ['other', 'specialty', 'trait']
+        'Traits': ['trait', 'personal', 'moral', 'temporary', 'dual'],
+        'Identity': ['splat', 'kith', 'seeming', 'house', 'seelie-legacy', 'unseelie-legacy', 'court', 'mortalplus_type', 'varna'],
+        'Virtues & Vices': ['virtue', 'vice'],
+        'Pools': ['renown', 'arete', 'banality', 'glamour', 'essence', 'quintessence', 'paradox'],
+        'Other': ['other']
     }
     
     ignore_categories = {'other', 'specialty'}  # Categories to ignore in searches
@@ -102,27 +124,39 @@ class CmdInfo(MuxCommand):
         """Match category and return tuple of (key, display_name)."""
         input_str_lower = input_str.lower()
         
-
-        # Handle common singular/plural forms
+        # Handle common singular/plural forms and aliases
         category_mappings = {
-            'merit': ('merit', 'Merits & Flaws'),
-            'merits': ('merit', 'Merits & Flaws'),
-            'flaw': ('flaw', 'Merits & Flaws'),
-            'flaws': ('flaw', 'Merits & Flaws'),
-            'discipline': ('discipline', 'Powers'),
-            'disciplines': ('discipline', 'Powers'),
-            'gift': ('gift', 'Powers'),
-            'gifts': ('gift', 'Powers'),
-            'power': ('power', 'Powers'),
-            'powers': ('power', 'Powers'),
+            'merit': (['merit', 'merits'], 'Merits & Flaws'),
+            'merits': (['merit', 'merits'], 'Merits & Flaws'),
+            'flaw': (['flaw', 'flaws'], 'Merits & Flaws'),
+            'flaws': (['flaw', 'flaws'], 'Merits & Flaws'),
+            'merits & flaws': (['merit', 'merits', 'flaw', 'flaws'], 'Merits & Flaws'),
+            'merits and flaws': (['merit', 'merits', 'flaw', 'flaws'], 'Merits & Flaws'),
+            'discipline': (['discipline', 'combodiscipline', 'thaumaturgy'], 'Powers'),
+            'disciplines': (['discipline', 'combodiscipline', 'thaumaturgy'], 'Powers'),
+            'gift': (['gift'], 'Powers'),
+            'gifts': (['gift'], 'Powers'),
+            'power': (['power', 'bygone_power'], 'Powers'),
+            'powers': (['power', 'bygone_power'], 'Powers'),
+            'art': (['art'], 'Powers'),
+            'arts': (['art'], 'Powers'),
+            'sphere': (['sphere'], 'Powers'),
+            'spheres': (['sphere'], 'Powers'),
+            'path': (['path'], 'Powers'),
+            'paths': (['path'], 'Powers'),
+            'virtue': (['virtue'], 'Virtues & Vices'),
+            'virtues': (['virtue'], 'Virtues & Vices'),
+            'vice': (['vice'], 'Virtues & Vices'),
+            'vices': (['vice'], 'Virtues & Vices'),
+            'pool': (['renown', 'arete', 'banality', 'glamour', 'essence', 'quintessence', 'paradox'], 'Pools'),
+            'pools': (['renown', 'arete', 'banality', 'glamour', 'essence', 'quintessence', 'paradox'], 'Pools'),
         }
         
         # Check direct mappings first
         if input_str_lower in category_mappings:
-            return ([category_mappings[input_str_lower][0]], category_mappings[input_str_lower][1])
+            return (category_mappings[input_str_lower][0], category_mappings[input_str_lower][1])
         
         # Check display categories next
-
         for display_name, stat_types in self.DISPLAY_CATEGORIES.items():
             if input_str_lower == display_name.lower():
                 return (stat_types, display_name)
@@ -190,11 +224,17 @@ class CmdInfo(MuxCommand):
         string = self.format_header(f"+Info {display_name}", width=78)
         
         # Build the base query
-        query = Q(stat_type__in=stat_types)
+        if display_name == "Merits & Flaws":
+            query = Q(stat_type__in=['merit', 'flaw']) | Q(category__in=['merits', 'flaws'])
+        else:
+            query = Q(stat_type__in=stat_types) | Q(category__in=stat_types)
         
         # Apply splat filter if specified
         if only_splat:
-            query &= Q(splat__iexact=only_splat)
+            splat_query = (Q(splat__iexact=only_splat) | 
+                         Q(game_line__icontains=only_splat) |
+                         Q(splat__isnull=True, game_line__isnull=True))
+            query &= splat_query
             
         # Get results ordered by name
         results = Stat.objects.filter(query).order_by('name')
@@ -204,21 +244,22 @@ class CmdInfo(MuxCommand):
             if only_splat:
                 string += f" for {only_splat}"
             string += ".\r\n"
-        elif display_name == "Merits & Flaws":
-            # Merit/flaw table formatting
-            table = EvTable("|wName|n", "|wSplat|n", "|wType|n", "|wValues|n", border="none")
+        elif display_name in ["Merits & Flaws", "Traits", "Virtues & Vices"]:
+            # Merit/flaw/trait table formatting
+            table = EvTable("|wName|n", "|wGame Line|n", "|wType|n", "|wValues|n", border="none")
             table.reformat_column(0, width=30, align="l")
             table.reformat_column(1, width=18, align="l")
             table.reformat_column(2, width=12, align="l")
             table.reformat_column(3, width=18, align="l")
-
             for result in results:
                 formatted_values = "None" if not result.values else str(result.values[0]) if len(result.values) == 1 else ", ".join(map(str, result.values[:-1])) + f", or {result.values[-1]}"
-                table.add_row(result.name, result.splat or "Any", result.stat_type.title(), formatted_values)
+                game_line = result.game_line or result.splat or "Any"
+                stat_type = result.stat_type.title() if result.stat_type else result.category.title()
+                table.add_row(result.name, game_line, stat_type, formatted_values)
             string += ANSIString(table)
         elif display_name == "Powers":
             # Powers table formatting with type-specific columns
-            table = EvTable("|wName|n", "|wSplat|n", "|wType|n", "|wDetails|n", border="none")
+            table = EvTable("|wName|n", "|wGame Line|n", "|wType|n", "|wDetails|n", border="none")
             table.reformat_column(0, width=25, align="l")
             table.reformat_column(1, width=15, align="l")
             table.reformat_column(2, width=15, align="l")
@@ -228,32 +269,51 @@ class CmdInfo(MuxCommand):
                 if result.stat_type == 'gift':
                     if result.values:
                         details = f"Rank {result.values[0]}"
-                    if result.auspice and result.auspice != 'none':
+                    if hasattr(result, 'auspice') and result.auspice and result.auspice != 'none':
                         details += f" ({result.auspice})"
-                elif result.stat_type in ['discipline', 'combodiscipline']:
+                elif result.stat_type in ['discipline', 'combodiscipline', 'thaumaturgy']:
                     if hasattr(result, 'xp_cost'):
                         details = f"XP: {result.xp_cost}"
+                elif result.values:
+                    details = f"Level {result.values[0]}" if len(result.values) == 1 else f"Levels {', '.join(map(str, result.values))}"
+                
+                game_line = result.game_line or result.splat or "Any"
                 table.add_row(
                     result.name,
-                    result.splat or "Any",
+                    game_line,
                     result.stat_type.title(),
                     details
                 )
             string += ANSIString(table)
-        else:
-            # Default two-column format for other categories
-            table = EvTable("|wName|n", "|wSplat|n", border="none")
-            table.reformat_column(0, width=39, align="l")
-            table.reformat_column(1, width=39, align="l")
+        elif display_name in ["Pools", "Attributes", "Abilities"]:
+            # Stat-based table format
+            table = EvTable("|wName|n", "|wGame Line|n", "|wType|n", "|wRange|n", border="none")
+            table.reformat_column(0, width=25, align="l")
+            table.reformat_column(1, width=20, align="l")
+            table.reformat_column(2, width=15, align="l")
+            table.reformat_column(3, width=18, align="l")
             for result in results:
-                table.add_row(result.name, result.splat or "Any")
+                formatted_range = "None" if not result.values else f"{result.values[0]}-{result.values[-1]}"
+                game_line = result.game_line or result.splat or "Any"
+                stat_type = result.stat_type.title() if result.stat_type else result.category.title()
+                table.add_row(result.name, game_line, stat_type, formatted_range)
+            string += ANSIString(table)
+        else:
+            # Default format for other categories
+            table = EvTable("|wName|n", "|wGame Line|n", "|wType|n", border="none")
+            table.reformat_column(0, width=30, align="l")
+            table.reformat_column(1, width=25, align="l")
+            table.reformat_column(2, width=23, align="l")
+            for result in results:
+                game_line = result.game_line or result.splat or "Any"
+                stat_type = result.stat_type.title() if result.stat_type else result.category.title()
+                table.add_row(result.name, game_line, stat_type)
             string += ANSIString(table)
             
         string += f"\r\n    Found |w{len(results)}|n entries"
         if only_splat:
             string += f" for {only_splat}"
         string += ".\r\n"
-
         string += self.format_footer(width=78)
         self.caller.msg(string)
 
@@ -274,12 +334,13 @@ class CmdInfo(MuxCommand):
             
         # Power-specific info
         if subject.stat_type == 'gift':
-            if subject.shifter_type:
+            if hasattr(subject, 'shifter_type') and subject.shifter_type:
                 if isinstance(subject.shifter_type, list):
                     shifter_types = ", ".join(stype for stype in subject.shifter_type)
                 else:
                     shifter_types = subject.shifter_type
-                string += f"  |wShifter Type(s):|n {shifter_types}\r\n"
+                if shifter_types and shifter_types.lower() != 'none':
+                    string += f"  |wShifter Type(s):|n {shifter_types}\r\n"
             if subject.auspice and subject.auspice != 'none':
                 if isinstance(subject.auspice, list):
                     auspices = ", ".join(auspice for auspice in subject.auspice)
@@ -309,7 +370,6 @@ class CmdInfo(MuxCommand):
                 string += f"  |wPrerequisites:|n {prereqs}\r\n"
         
         # Description and system
-
         string += "\r\n"
         if subject.description:
             string += f"{subject.description}\r\n"
@@ -327,7 +387,6 @@ class CmdInfo(MuxCommand):
         
         # Remove ignored categories
         valid_stat_types = [st for st in valid_stat_types if st not in self.ignore_categories]
-
         
         # First try exact name match
         exact_matches = Stat.objects.filter(
@@ -379,7 +438,6 @@ class CmdInfo(MuxCommand):
         if len(matches) > 10:
             matches_string += " (showing first 10)"
         string += matches_string + "\r\n"
-
         string += self.format_footer(width=78)
         self.caller.msg(string)
                     
@@ -389,11 +447,18 @@ class CmdInfo(MuxCommand):
         if stat_type.lower() in ['combo', 'combo discipline', 'combodiscipline']:
             stat_type = 'combodiscipline'
             
-        if stat_type not in self.valid_types:
-            self.caller.msg(f"No stat type found matching '{stat_type}'.")
-            return
+        # Handle merits and flaws special cases
+        if stat_type.lower() in ['merit', 'merits']:
+            query = Q(stat_type='merit') | Q(category='merits')
+        elif stat_type.lower() in ['flaw', 'flaws']:
+            query = Q(stat_type='flaw') | Q(category='flaws')
+        else:
+            if stat_type not in self.valid_types:
+                self.caller.msg(f"No stat type found matching '{stat_type}'.")
+                return
+            query = Q(stat_type=stat_type)
             
-        results = Stat.objects.filter(stat_type__iexact=stat_type).order_by('name')
+        results = Stat.objects.filter(query).order_by('name')
         if not results.exists():
             self.caller.msg(f"No entries found of type '{stat_type}'.")
             return
@@ -405,28 +470,73 @@ class CmdInfo(MuxCommand):
                     
     def show_shifter_gifts(self, shifter_type):
         """Show all gifts for a specific shifter type."""
-        # Get all gifts for the specified shifter type
-        results = Stat.objects.filter(
-            stat_type='gift',
-            shifter_type__iexact=shifter_type
-        ).order_by('name')
+        # Normalize the input
+        shifter_type_lower = shifter_type.lower()
+        
+        # First, let's check what we have in the database
+        all_gifts = Stat.objects.filter(stat_type='gift')
+        if not all_gifts.exists():
+            return self.caller.msg("No gifts found in the database.")
+            
+        # Build a comprehensive query
+        query = Q(stat_type='gift') & (
+            Q(shifter_type=shifter_type_lower) |  # Exact match
+            Q(breed=shifter_type_lower) |
+            Q(tribe=shifter_type_lower) |
+            Q(auspice=shifter_type_lower) |
+            # Search in description for references to the shifter type
+            Q(description__icontains=f" {shifter_type_lower} ") |  # Full word match
+            Q(description__icontains=f"{shifter_type_lower}'s") |  # Possessive form
+            Q(description__icontains=f"{shifter_type_lower}.") |   # End of sentence
+            Q(description__icontains=f"{shifter_type_lower},") |   # In a list
+            Q(description__icontains=f"{shifter_type_lower}s")     # Plural form
+        )
+        
+        results = Stat.objects.filter(query).order_by('name')
         
         if not results.exists():
-            return self.caller.msg(f"No gifts found for shifter type '{shifter_type}'.")
+            # Show the actual SQL query for debugging
+            str_query = str(Stat.objects.filter(query).query)
+            return self.caller.msg(f"No gifts found for shifter type '{shifter_type}'.\nDebug - SQL Query: {str_query}")
         
         string = self.format_header(f"+Info {shifter_type.title()} Gifts", width=78)
         
         # Use table format for better organization
-        table = EvTable("|wName|n", "|wValues|n", "|wDescription|n", border="none")
-        table.reformat_column(0, width=25, align="l")
-        table.reformat_column(1, width=10, align="l")
-        table.reformat_column(2, width=43, align="l")
+        # Adjust column widths to total 78 characters including borders
+        table = EvTable("|wName|n", "|wRank|n", "|wDetails|n", "|wDescription|n", border="none")
+        table.reformat_column(0, width=20, align="l")  # Name
+        table.reformat_column(1, width=6, align="l")   # Rank
+        table.reformat_column(2, width=15, align="l")  # Details
+        table.reformat_column(3, width=37, align="l")  # Description (remaining space)
         
         for result in results:
-            formatted_values = str(result.values[0]) if result.values else "N/A"
-            # Truncate description if too long
-            desc = result.description[:40] + "..." if len(result.description) > 40 else result.description
-            table.add_row(result.name, formatted_values, desc)
+            rank = str(result.values[0]) if result.values else "N/A"
+            
+            details = []
+            if result.auspice and result.auspice != 'none':
+                details.append(result.auspice)
+            if result.breed and result.breed != 'none':
+                details.append(result.breed)
+            if result.tribe and result.tribe != 'none':
+                if isinstance(result.tribe, list):
+                    details.extend(result.tribe)
+                else:
+                    details.append(result.tribe)
+            if result.shifter_type and result.shifter_type != 'none':
+                details.append(result.shifter_type)
+            
+            # Truncate details if too long
+            details_str = ", ".join(str(d) for d in details) if details else ""
+            if len(details_str) > 15:
+                details_str = details_str[:12] + "..."
+            
+            # Truncate description to fit in column
+            desc = result.description if result.description else ""
+            if len(desc) > 34:  # 37 - 3 for "..."
+                # Try to break at a word boundary
+                desc = desc[:34].rsplit(' ', 1)[0] + "..."
+            
+            table.add_row(result.name, rank, details_str, desc)
             
         string += ANSIString(table)
         string += f"\r\n    Found |w{len(results)}|n gifts for {shifter_type.title()}.\r\n"

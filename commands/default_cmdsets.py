@@ -37,14 +37,14 @@ from commands.building import (
 
 from commands.CmdUmbraInteraction import CmdUmbraInteraction
 from commands.communication import CmdMeet, CmdPlusIc, CmdPlusOoc, CmdOOC, CmdSummon, CmdJoin
-from commands.admin import CmdApprove, CmdUnapprove, CmdAdminLook, CmdTestLock
+from commands.admin import CmdApprove, CmdUnapprove, CmdAdminLook, CmdTestLock, CmdPuppetFreeze
 from commands.CmdPump import CmdPump
 from commands.CmdSpendGain import CmdSpendGain
 from commands.where import CmdWhere
 from commands.chargen import CmdSubmit
 from commands.CmdSelfStat import CmdSelfStat
 from commands.CmdShift import CmdShift
-from commands.CmdStaff import CmdStaff
+from commands.CmdStaff import CmdStaff, CmdPST
 from commands.unfindable import CmdUnfindable
 from commands.CmdChangelingInteraction import CmdChangelingInteraction
 
@@ -68,6 +68,7 @@ from commands.CmdWho import CmdWho
 from evennia.commands.default import comms
 from commands.housing import CmdRent, CmdVacate, CmdSetApartmentDesc, CmdSetApartmentExit, CmdManageHome, CmdUpdateApartments, CmdListApartments, CmdUpdateExits
 from commands.comms import CustomCmdChannel
+from commands.CmdCheck import CmdCheck
 
 class CharacterCmdSet(cmdset_character.CharacterCmdSet):
     """
@@ -91,7 +92,8 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(OssCmdSet)
         self.add(CmdFaeDesc())
         self.add(CmdStats())
-
+        self.add(CmdPST())
+        
         self.add(CmdSheet())
         self.add(CmdInfo())
         self.add(CmdHurt())
@@ -138,6 +140,8 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdSetApartmentExit())
         self.add(CmdManageHome())
         self.add(CmdSetLock())
+        self.add(CmdPuppetFreeze())
+        self.add(CmdCheck())
         
 class AccountCmdSet(cmdset_account.AccountCmdSet):
     """

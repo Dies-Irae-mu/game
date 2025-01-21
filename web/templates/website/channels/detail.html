@@ -1,0 +1,341 @@
+{% extends "website/base_custom.html" %}
+{% load static %}
+
+{% block titleblock %}{{ channel.key }} - Channel{% endblock %}
+
+{% block header_ext %}
+<style>
+
+    /* Update hamburger menu styles */
+    .hamburger-menu {
+        display: none;
+        top: 5%;
+        cursor: pointer;
+        z-index: 10003;
+        padding: 15px;
+        background: transparent;
+        border: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .hamburger-icon {
+        width: 30px;
+        height: 30px;
+        filter: invert(1);
+        display: block;
+        pointer-events: none;
+    }
+
+    .sliding-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.95);
+        z-index: 10001;
+        transition: transform 0.3s ease-out;
+        transform: translateX(100%);
+        padding-top: 90px;
+        visibility: visible;
+        display: none;
+    }
+
+    .sliding-menu.open {
+        transform: translateX(0);
+        right: 0;
+        display: block;
+    }
+
+    .menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease-out;
+        display: none;
+    }
+
+    .menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
+        display: block;
+    }
+
+    .menu-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: rgba(255, 255, 255, 0.9);
+        padding: 10px 15px;
+        cursor: pointer;
+        font-family: 'impact_label_reversed', Arial, sans-serif;
+        font-size: 14px;
+        letter-spacing: 2px;
+        transition: all 0.3s ease;
+        z-index: 10002;
+    }
+
+    .menu-close:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+
+    @media (max-width: 1530px) {
+        .hamburger-menu {
+            display: block;
+            top: 5%;
+        }
+
+        .nav-menu {
+            display: none;
+        }
+
+        .nav-search {
+            display: none;
+        }
+
+        .nav-right {
+            margin-left: auto;
+        }
+
+        .nav-wrapper {
+            margin: 0 20px;
+        }
+
+        .sliding-menu {
+            display: block;
+        }
+
+        .sliding-menu .menu-items {
+            height: calc(100vh - 90px);
+            overflow-y: auto;
+            padding: 20px 40px;
+        }
+
+        .sliding-menu .menu-items ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sliding-menu .menu-items li {
+            margin: 20px 0;
+        }
+
+        .sliding-menu .menu-items a {
+            font-family: 'impact_label_reversed', Arial, sans-serif;
+            font-size: 24px;
+            letter-spacing: 5px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .sliding-menu .menu-items a:hover {
+            color: rgba(255, 255, 255, 1);
+        }
+    }
+/* Channel detail specific styles */
+    .channel-detail {
+        margin-top: 90px;
+        padding: 40px 0;
+    }
+
+    .channel-header {
+        background: rgba(0, 0, 0, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        padding: 30px;
+        margin-bottom: 20px;
+    }
+
+    .channel-name {
+        font-family: 'impact_label_reversed', Arial, sans-serif;
+        font-size: 48px;
+        letter-spacing: 5px;
+        color: #fff;
+        margin-bottom: 15px;
+    }
+
+    .channel-description {
+        font-family: 'roboto mono', monospace;
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }
+
+    .channel-meta {
+        display: flex;
+        gap: 20px;
+        font-family: 'roboto mono', monospace;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .channel-messages {
+        background: rgba(0, 0, 0, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        padding: 20px;
+    }
+
+    .message {
+        padding: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .message:last-child {
+        border-bottom: none;
+    }
+
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-family: 'roboto mono', monospace;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .message-sender {
+        font-weight: bold;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .message-content {
+        font-family: 'roboto mono', monospace;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.6;
+    }
+
+    .channel-actions {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .channel-button {
+        font-family: 'impact_label_reversed', Arial, sans-serif;
+        font-size: 14px;
+        letter-spacing: 2px;
+        color: rgba(255, 255, 255, 0.9);
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .channel-button:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .channel-button i {
+        margin-right: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Add hamburger menu elements -->
+<button class="hamburger-menu">
+    <img src="/static/wiki/imgs/menu.svg" alt="Menu" class="hamburger-icon">
+</button>
+<div class="sliding-menu">
+    <button class="menu-close">CLOSE</button>
+    <div class="menu-items">
+        <ul>
+            <li><a href="/">HOME</a></li>
+            <li><a href="/characters/">CHARACTERS</a></li>
+            <li><a href="/wiki/">WIKI</a></li>
+            <li><a href="/channels/">CHANNELS</a></li>
+            <li><a href="/help/">HELP</a></li>
+            <li><a href="/webclient/">PLAY ONLINE</a></li>
+        </ul>
+    </div>
+</div>
+<div class="menu-overlay"></div>
+<div class="container">
+    <div class="channel-detail">
+        <div class="channel-header">
+            <h1 class="channel-name">{{ channel.key }}</h1>
+            <p class="channel-description">
+                {% if channel.db.desc %}
+                    {{ channel.db.desc }}
+                {% else %}
+                    {{ channel.key }} channel
+                {% endif %}
+            </p>
+            <div class="channel-meta">
+                <div class="meta-item">
+                    <i class="fas fa-users"></i>
+                    <span>{{ channel.subscriptions.count }} subscribers</span>
+                </div>
+                {% if channel.access(request.user, 'listen') %}
+                <div class="meta-item">
+                    <i class="fas fa-check"></i>
+                    <span>Subscribed</span>
+                </div>
+                {% endif %}
+            </div>
+            <div class="channel-actions">
+                {% if not channel.access(request.user, 'listen') %}
+                <button class="channel-button">
+                    <i class="fas fa-plus"></i>
+                    Subscribe
+                </button>
+                {% else %}
+                <button class="channel-button">
+                    <i class="fas fa-minus"></i>
+                    Unsubscribe
+                </button>
+                {% endif %}
+                {% if channel.access(request.user, 'control') %}
+                <button class="channel-button">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="channel-messages">
+            {% for msg in messages %}
+            <div class="message">
+                <div class="message-header">
+                    <span class="message-sender">{{ msg.senders.0.key }}</span>
+                    <span class="message-time">{{ msg.date_created|date:"d-m-y H:i:s" }}</span>
+                </div>
+                <div class="message-content">
+                    {{ msg.message }}
+                </div>
+            </div>
+            {% empty %}
+            <div class="message">
+                <div class="message-content">
+                    No messages yet.
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

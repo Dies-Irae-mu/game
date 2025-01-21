@@ -9,25 +9,46 @@
     
     <div class="search-form">
         <form action="{% url 'wiki:search' %}" method="get">
-            <input type="text" name="q" value="{{ query }}" placeholder="Search wiki pages...">
+            <input type="text" name="q" value="{{ query }}" placeholder="Search wiki pages and characters...">
             <button type="submit">Search</button>
         </form>
     </div>
 
     {% if search_performed %}
-        {% if results %}
+        {% if error %}
+            <div class="search-error">
+                <p>{{ error }}</p>
+                <p>Please try again or contact an administrator if the problem persists.</p>
+            </div>
+        {% elif results %}
             <p>Found {{ results|length }} result{{ results|length|pluralize }} for "{{ query }}":</p>
             <div class="search-results">
-                {% for page in results %}
-                    <div class="search-result">
-                        <h2><a href="{% url 'wiki:page_detail' page.slug %}">{{ page.title }}</a></h2>
-                        <div class="meta">
-                            Last edited by {{ page.last_editor|default:"Unknown" }} 
-                            on {{ page.updated_at|date:"F j, Y" }}
-                        </div>
-                        <div class="excerpt">
-                            {{ page.content|truncatewords:50|safe }}
-                        </div>
+                {% for result in results %}
+                    <div class="search-result {% if result.result_type == 'character' %}character-result{% endif %}">
+                        {% if result.result_type == 'wiki' %}
+                            <h2><a href="{% url 'wiki:page_detail' result.slug %}">{{ result.title }}</a></h2>
+                            <div class="meta">
+                                Last edited by {{ result.last_editor|default:"Unknown" }} 
+                                on {{ result.updated_at|date:"F j, Y" }}
+                            </div>
+                            <div class="excerpt">
+                                {{ result.content|truncatewords:50|safe }}
+                            </div>
+                        {% else %}
+                            <h2><a href="/characters/detail/{{ result.key }}/{{ result.id }}/">{{ result.key }}</a></h2>
+                            <div class="meta">
+                                {% if result.db.full_name %}Full Name: {{ result.db.full_name }}{% endif %}
+                                {% if result.db.appears_as %} • Appears As: {{ result.db.appears_as }}{% endif %}
+                                {% if result.db.affiliation %} • {{ result.db.affiliation }}{% endif %}
+                            </div>
+                            <div class="excerpt">
+                                {% if result.db.biography %}
+                                    {{ result.db.biography|truncatewords:50|safe }}
+                                {% elif result.db.rp_hooks %}
+                                    {{ result.db.rp_hooks|truncatewords:50|safe }}
+                                {% endif %}
+                            </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>
@@ -59,18 +80,141 @@
             </div>
         {% endif %}
     {% else %}
-        <p>Enter a search term above to find wiki pages.</p>
-    {% endif %}
-    
-    {% if debug %}
-        <div class="debug-info">
-            <h3>Debug Information</h3>
-            <pre>
-Query: {{ query }}
-Results count: {{ results|length }}
-Search performed: {{ search_performed }}
-            </pre>
-        </div>
+        <p>Enter a search term above to find wiki pages and characters.</p>
     {% endif %}
 </div>
+
+<style>
+    .search-form {
+        margin-bottom: 30px;
+    }
+    
+    .search-form input[type="text"] {
+        width: 100%;
+        max-width: 500px;
+        padding: 10px;
+        font-size: 16px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #fff;
+        margin-right: 10px;
+    }
+    
+    .search-form button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: rgba(255, 255, 255, 0.9);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .search-form button:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+    
+    .search-results {
+        margin-top: 20px;
+    }
+    
+    .search-result {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .search-result h2 {
+        margin: 0 0 10px 0;
+        font-family: 'impact_label_reversed', Arial, sans-serif;
+        font-size: 24px;
+        letter-spacing: 3px;
+    }
+    
+    .search-result h2 a {
+        color: #fff;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .search-result h2 a:hover {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .search-result .meta {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 14px;
+        margin-bottom: 10px;
+        font-family: 'roboto mono', monospace;
+    }
+    
+    .search-result .excerpt {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 14px;
+        line-height: 1.6;
+        font-family: 'roboto mono', monospace;
+    }
+    
+    .character-result {
+        background: rgba(0, 0, 0, 0.3);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .pagination {
+        margin-top: 30px;
+        text-align: center;
+    }
+    
+    .pagination a {
+        display: inline-block;
+        padding: 5px 15px;
+        margin: 0 5px;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .pagination a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+    
+    .pagination .current {
+        display: inline-block;
+        padding: 5px 15px;
+        margin: 0 5px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .no-results {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        padding: 20px;
+    }
+    
+    .no-results .suggestion {
+        margin-top: 20px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .no-results ul {
+        margin: 10px 0 0 20px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .search-error {
+        background: rgba(255, 0, 0, 0.1);
+        border: 1px solid rgba(255, 0, 0, 0.3);
+        border-radius: 4px;
+        padding: 20px;
+        margin: 20px 0;
+        color: rgba(255, 255, 255, 0.9);
+    }
+</style>
 {% endblock %} 

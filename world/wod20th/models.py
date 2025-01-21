@@ -850,3 +850,27 @@ def can_learn_power(character, power_category, power_name, value):
         
     return True, ""
 
+class CharacterImage(SharedMemoryModel):
+    """Model for storing character images."""
+    character = models.ForeignKey('objects.ObjectDB', on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='character_images/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    is_primary = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-is_primary', '-uploaded_at']
+
+    def save(self, *args, **kwargs):
+        """Ensure only one primary image per character."""
+        if self.is_primary:
+            # Set all other images of this character to not primary
+            CharacterImage.objects.filter(
+                character=self.character,
+                is_primary=True
+            ).exclude(id=self.id).update(is_primary=False)
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """Clean up the image file when deleting the model."""
+        self.image.delete(save=False)
+        super().delete(*args, **kwargs) 

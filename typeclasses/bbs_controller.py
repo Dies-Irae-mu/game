@@ -22,6 +22,22 @@ class BBSController(DefaultObject):
         self.db.boards = {}  # Dictionary to store all boards
         self.db.next_board_id = 1  # Start board numbering from 1
 
+    def _find_next_available_board_id(self):
+        """
+        Find the next available board ID by looking for gaps in the sequence
+        or returning the next number after the highest existing ID.
+        """
+        if not self.db.boards:
+            return 1
+            
+        existing_ids = sorted(self.db.boards.keys())
+        # Look for gaps in the sequence
+        for i, board_id in enumerate(existing_ids, 1):
+            if i != board_id:
+                return i
+        # If no gaps found, return next number after highest
+        return existing_ids[-1] + 1
+
     def create_board(self, name, description, public=True, read_only=False):
         """
         Create a new board.
@@ -29,7 +45,8 @@ class BBSController(DefaultObject):
         if any(board['name'].lower() == name.lower() for board in self.db.boards.values()):
             raise ValueError("A board with this name already exists.")
         
-        board_id = self.db.next_board_id
+        # Use next available ID instead of next_board_id
+        board_id = self._find_next_available_board_id()
         board = {
             'id': board_id,
             'name': name,
@@ -41,7 +58,7 @@ class BBSController(DefaultObject):
             'locked': False
         }
         self.db.boards[board_id] = board
-        self.db.next_board_id += 1
+        self.db.next_board_id = self._find_next_available_board_id()
 
     def get_board(self, reference):
         """
@@ -171,6 +188,8 @@ class BBSController(DefaultObject):
         board = self.get_board(board_reference)
         if board:
             del self.db.boards[board['id']]
+            # Update next_board_id to recycle IDs
+            self.db.next_board_id = self._find_next_available_board_id()
             return f"Board '{board['name']}' and all its posts have been deleted."
         return "Board not found"
 
