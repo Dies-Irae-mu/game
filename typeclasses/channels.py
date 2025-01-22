@@ -82,12 +82,18 @@ class Channel(DefaultChannel):
         else:
             receivers = self.subscriptions.all()
             
-        # Filter receivers based on permissions and mute status
-        receivers = [
-            receiver for receiver in receivers 
-            if (bypass_mute or receiver not in self.mutelist)
-            and self.access(receiver, "listen")  # Check listen permission
-        ]
+        # Filter receivers based on permissions and mute status, ensuring uniqueness
+        seen_receivers = set()
+        filtered_receivers = []
+        for receiver in receivers:
+            # Skip if we've already processed this receiver
+            if receiver.id in seen_receivers:
+                continue
+                
+            if ((bypass_mute or receiver not in self.mutelist)
+                and self.access(receiver, "listen")):
+                filtered_receivers.append(receiver)
+                seen_receivers.add(receiver.id)
 
         send_kwargs = {"senders": senders, "bypass_mute": bypass_mute, **kwargs}
 
@@ -96,7 +102,7 @@ class Channel(DefaultChannel):
         if message in (None, False):
             return
 
-        for receiver in receivers:
+        for receiver in filtered_receivers:
             try:
                 recv_message = receiver.at_pre_channel_msg(message, self, **send_kwargs)
                 if recv_message in (None, False):
