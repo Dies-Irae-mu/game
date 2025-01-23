@@ -177,7 +177,7 @@ class CmdSheet(MuxCommand):
                             splat_specific_stats.append('Camp')
         elif splat.lower() == 'mage':
             mage_faction = character.db.stats.get('identity', {}).get('lineage', {}).get('Mage Faction', {}).get('perm', '')
-            splat_specific_stats = ['Essence', 'Mage Faction']
+            splat_specific_stats = ['Essence', 'Mage Faction', 'Signature', 'Affinity Sphere']
 
             if mage_faction.lower() == 'traditions':
                 traditions = character.db.stats.get('identity', {}).get('lineage', {}).get('Tradition', {}).get('perm', '')
@@ -627,7 +627,19 @@ class CmdSheet(MuxCommand):
 
         elif character_splat == 'Mage':
             powers.append(divider("Spheres", width=38, color="|b"))
-            spheres = ['Correspondence', 'Entropy', 'Forces', 'Life', 'Matter', 'Mind', 'Prime', 'Spirit', 'Time', 'Data', 'Primal Utility', 'Dimensional Science']
+            mage_faction = character.db.stats.get('identity', {}).get('lineage', {}).get('Mage Faction', {}).get('perm', '')
+            
+            # Define sphere lists based on faction
+            if mage_faction.lower() == 'technocracy':
+                # Technocrats get their unique spheres plus standard ones (except Prime and Spirit)
+                spheres = [
+                    'Data', 'Primal Utility', 'Dimensional Science',  # Technocracy-specific
+                    'Correspondence', 'Entropy', 'Forces', 'Life',    # Standard spheres
+                    'Prime', 'Matter', 'Mind', 'Time'
+                ]
+            else:  # Traditions and Nephandi use the standard spheres
+                spheres = ['Correspondence', 'Entropy', 'Forces', 'Life', 'Matter', 'Mind', 'Prime', 'Spirit', 'Time']
+            
             for sphere in spheres:
                 sphere_value = character.db.stats.get('powers', {}).get('sphere', {}).get(sphere, {}).get('perm', 0)
                 powers.append(format_stat(sphere, sphere_value, default=0, width=38))
@@ -803,23 +815,29 @@ class CmdSheet(MuxCommand):
                     renown_value = character.get_stat('virtues', 'moral', renown, temp=False) or 0
                     dots = "." * (19 - len(renown))
                     self.virtues_list.append(f" {renown}{dots}{renown_value}".ljust(25))
+        elif splat.lower() == 'mage':
+            # Handle Mage-specific virtues
+            synergy_virtues = ['Dynamic', 'Entropic', 'Static']
+            for virtue in synergy_virtues:
+                virtue_value = character.get_stat('virtues', 'synergy', virtue, temp=False) or 0
+                dots = "." * (19 - len(virtue))
+                self.virtues_list.append(f" {virtue}{dots}{virtue_value}".ljust(25))
+            
+            # Add Resonance
+            resonance_value = character.get_stat('pools', 'resonance', 'Resonance', temp=False) or 0
+            dots = "." * (19 - len('Resonance'))
+            self.virtues_list.append(f" Resonance{dots}{resonance_value}".ljust(25))
+            
+            # Update Quintessence based on Avatar background
+            avatar_value = character.get_stat('backgrounds', 'background', 'Avatar', temp=False) or 0
+            character.set_stat('pools', 'dual', 'Quintessence', avatar_value, temp=False)
+            character.set_stat('pools', 'dual', 'Quintessence', avatar_value, temp=True)
         else:
             # Handle other splat virtues
             virtues = character.db.stats.get('virtues', {}).get('moral', {})
             
-            # Default virtues for Mortal and Mortal+
-            if splat.lower() in ['mortal', 'mortal+']:
-                mortal_virtues = ['Conscience', 'Self-Control', 'Courage']
-                for virtue in mortal_virtues:
-                    virtue_value = virtues.get(virtue, {}).get('perm', 0)
-                    dots = "." * (19 - len(virtue))
-                    self.virtues_list.append(f" {virtue}{dots}{virtue_value}".ljust(25))
-                
-                # Add Humanity
-                humanity_value = calculate_road(character)
-                dots = "." * (19 - len("Humanity"))
-                self.virtues_list.append(f" Humanity{dots}{humanity_value}".ljust(25))
-            else:
+            # Only Vampires, Mortals, and Mortal+ should have these virtues
+            if splat.lower() in ['vampire', 'mortal', 'mortal+']:
                 path = character.get_stat('identity', 'personal', 'Enlightenment')
                 path_virtues = PATH_VIRTUES.get(path, ['Conscience', 'Self-Control', 'Courage'])
                 
@@ -829,8 +847,12 @@ class CmdSheet(MuxCommand):
                     dots = "." * (19 - len("Road"))
                     self.virtues_list.append(f" Road{dots}{road_value}".ljust(25))
                 
+                # Display virtues in order
                 for virtue in path_virtues:
                     virtue_value = virtues.get(virtue, {}).get('perm', 0)
+                    # For non-Humanity paths, show 0 for Conviction/Instinct if not set
+                    if path != 'Humanity' and virtue in ['Conviction', 'Instinct']:
+                        virtue_value = virtue_value or 0
                     dots = "." * (19 - len(virtue))
                     self.virtues_list.append(f" {virtue}{dots}{virtue_value}".ljust(25))
 

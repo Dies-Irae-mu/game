@@ -126,6 +126,16 @@ class CmdSelfStat(default_cmds.MuxCommand):
             for attr in attrs:
                 base_stats['attributes'][category][attr] = {'perm': 1, 'temp': 1}
 
+        # Initialize virtues for vampires with default values
+        if splat.lower() == 'vampire':
+            # Initialize with Humanity virtues by default
+            base_stats['virtues']['moral'] = {
+                'Conscience': {'perm': 1, 'temp': 1},
+                'Self-Control': {'perm': 1, 'temp': 1},
+                'Courage': {'perm': 1, 'temp': 1}
+            }
+            base_stats['pools']['moral']['Road'] = {'perm': 3, 'temp': 3}  # Sum of starting virtues
+
         # Splat-specific additions
         if splat.lower() == 'shifter':
             base_stats['powers']['gift'] = {}
@@ -146,8 +156,24 @@ class CmdSelfStat(default_cmds.MuxCommand):
         elif splat.lower() == 'mage':
             base_stats['powers']['sphere'] = {}
             base_stats['pools']['dual']['Arete'] = {'perm': 1, 'temp': 1}
-            base_stats['pools']['dual']['Quintessence'] = {'perm': 1, 'temp': 1}
-            base_stats['pools']['dual']['Willpower'] = {'perm': 1, 'temp': 1}
+            base_stats['pools']['dual']['Willpower'] = {'perm': 5, 'temp': 5}
+            base_stats['pools']['dual']['Quintessence'] = {'perm': 0, 'temp': 0}
+            base_stats['virtues']['synergy'] = {
+                'Dynamic': {'perm': 0, 'temp': 0},
+                'Entropic': {'perm': 0, 'temp': 0},
+                'Static': {'perm': 0, 'temp': 0}
+            }
+            base_stats['pools']['resonance'] = {'Resonance': {'perm': 0, 'temp': 0}}
+            base_stats['identity']['lineage']['Signature'] = {'perm': '', 'temp': ''}
+            base_stats['identity']['lineage']['Affinity Sphere'] = {'perm': '', 'temp': ''}
+            
+            # Initialize all spheres to 0
+            technocracy_spheres = ['Data', 'Primal Utility', 'Dimensional Science', 'Forces', 'Life', 'Matter', 'Mind', 'Time']
+            tradition_spheres = ['Correspondence', 'Entropy', 'Forces', 'Life', 'Matter', 'Mind', 'Prime', 'Spirit', 'Time']
+            
+            # Initialize all possible spheres to 0
+            for sphere in set(technocracy_spheres + tradition_spheres):
+                base_stats['powers']['sphere'][sphere] = {'perm': 0, 'temp': 0}
 
         elif splat.lower() == 'changeling':
             base_stats['powers']['art'] = {}
@@ -289,6 +315,32 @@ class CmdSelfStat(default_cmds.MuxCommand):
         except (ValueError, TypeError):
             new_value = self.value_change
 
+        # Special handling for Enlightenment changes
+        if stat.name == 'Enlightenment':
+            old_path = self.caller.db.stats.get('identity', {}).get('personal', {}).get('Enlightenment', {}).get('perm', 'Humanity')
+            
+            # Get the virtues for both old and new paths
+            old_virtues = PATH_VIRTUES.get(old_path, PATH_VIRTUES['Humanity'])
+            new_virtues = PATH_VIRTUES.get(new_value, PATH_VIRTUES['Humanity'])
+            
+            # Remove old virtues that aren't in the new path
+            for virtue in old_virtues:
+                if virtue not in new_virtues:
+                    if 'virtues' in self.caller.db.stats and 'moral' in self.caller.db.stats['virtues']:
+                        if virtue in self.caller.db.stats['virtues']['moral']:
+                            del self.caller.db.stats['virtues']['moral'][virtue]
+            
+            # Initialize new virtues
+            for virtue in new_virtues:
+                if virtue not in old_virtues:
+                    # Conviction and Instinct start at 0 for non-Humanity paths
+                    if new_value != 'Humanity' and virtue in ['Conviction', 'Instinct']:
+                        self.caller.set_stat('virtues', 'moral', virtue, 0, temp=False)
+                        self.caller.set_stat('virtues', 'moral', virtue, 0, temp=True)
+                    else:  # Conscience, Self-Control, and Courage always start at 1
+                        self.caller.set_stat('virtues', 'moral', virtue, 1, temp=False)
+                        self.caller.set_stat('virtues', 'moral', virtue, 1, temp=True)
+
         # Update the stat
         try:
             # When setting splat for the first time
@@ -340,36 +392,33 @@ class CmdSelfStat(default_cmds.MuxCommand):
         # After setting virtues, update Willpower and Road/Humanity
         if self.stat_name in ['Courage', 'Self-Control', 'Conscience', 'Conviction', 'Instinct']:
             splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
-            if splat and splat.lower() == 'vampire':
+            
+            # Only update Willpower based on Courage for these splats
+            if splat and splat.lower() in ['vampire', 'mortal', 'mortal+']:
                 # Set Willpower equal to Courage
                 courage = self.caller.get_stat('virtues', 'moral', 'Courage', temp=False) or 0
                 self.caller.set_stat('pools', 'dual', 'Willpower', courage, temp=False)
                 self.caller.set_stat('pools', 'dual', 'Willpower', courage, temp=True)
                 
-                # Calculate Road based on Path
-                enlightenment = self.caller.get_stat('identity', 'personal', 'Enlightenment', temp=False)
-                if enlightenment in PATH_VIRTUES:
-                    virtue1, virtue2 = PATH_VIRTUES[enlightenment]
-                    value1 = self.caller.get_stat('virtues', 'moral', virtue1, temp=False) or 0
-                    value2 = self.caller.get_stat('virtues', 'moral', virtue2, temp=False) or 0
-                    road = value1 + value2
-                    self.caller.set_stat('pools', 'moral', 'Road', road, temp=False)
-                    self.caller.set_stat('pools', 'moral', 'Road', road, temp=True)
-                    self.caller.msg(f"|gRecalculated Willpower to {courage} and Road to {road}.|n")
-                    
-            elif splat and splat.lower() in ['mortal', 'mortal+']:
-                # Original Humanity calculation for mortals
-                courage = self.caller.get_stat('virtues', 'moral', 'Courage', temp=False) or 0
-                self.caller.set_stat('pools', 'dual', 'Willpower', courage, temp=False)
-                self.caller.set_stat('pools', 'dual', 'Willpower', courage, temp=True)
-                
-                conscience = self.caller.get_stat('virtues', 'moral', 'Conscience', temp=False) or 0
-                self_control = self.caller.get_stat('virtues', 'moral', 'Self-Control', temp=False) or 0
-                humanity = conscience + self_control
-                self.caller.set_stat('virtues', 'moral', 'Humanity', humanity, temp=False)
-                self.caller.set_stat('virtues', 'moral', 'Humanity', humanity, temp=True)
-                
-                self.caller.msg(f"|gRecalculated Willpower to {courage} and Humanity to {humanity}.|n")
+                if splat.lower() == 'vampire':
+                    # Calculate Road based on Path's virtues
+                    enlightenment = self.caller.get_stat('identity', 'personal', 'Enlightenment', temp=False)
+                    if enlightenment in PATH_VIRTUES:
+                        virtue1, virtue2 = PATH_VIRTUES[enlightenment]
+                        value1 = self.caller.get_stat('virtues', 'moral', virtue1, temp=False) or 0
+                        value2 = self.caller.get_stat('virtues', 'moral', virtue2, temp=False) or 0
+                        road = value1 + value2
+                        self.caller.set_stat('pools', 'moral', 'Road', road, temp=False)
+                        self.caller.set_stat('pools', 'moral', 'Road', road, temp=True)
+                        self.caller.msg(f"|gRecalculated Willpower to {courage} and Road to {road}.|n")
+                else:  # mortal or mortal+
+                    # Calculate Humanity
+                    conscience = self.caller.get_stat('virtues', 'moral', 'Conscience', temp=False) or 0
+                    self_control = self.caller.get_stat('virtues', 'moral', 'Self-Control', temp=False) or 0
+                    humanity = conscience + self_control
+                    self.caller.set_stat('virtues', 'moral', 'Humanity', humanity, temp=False)
+                    self.caller.set_stat('virtues', 'moral', 'Humanity', humanity, temp=True)
+                    self.caller.msg(f"|gRecalculated Willpower to {courage} and Humanity to {humanity}.|n")
 
     def apply_shifter_stats(self, character):
         """Apply shifter-specific stats"""
@@ -387,9 +436,9 @@ class CmdSelfStat(default_cmds.MuxCommand):
         self.caller.msg(f"Debug: Applying stats for shifter type: {shifter_type}")
 
         if shifter_type == 'Garou':
-            auspice = character.get_stat('identity', 'lineage', 'Auspice') or ''
+            auspice = character.get_stat('identity', 'lineage', 'Auspice')
             auspice = auspice.lower()
-            tribe = character.get_stat('identity', 'lineage', 'Tribe') or ''
+            tribe = character.get_stat('identity', 'lineage', 'Tribe')
             tribe = tribe.lower()
             
             # Set Auspice-based Rage

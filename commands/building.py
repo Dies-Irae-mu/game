@@ -7,6 +7,22 @@ from evennia import Command
 from evennia.utils.evtable import EvTable
 from evennia import CmdSet, Command, logger
 from evennia.commands.default.muxcommand import MuxCommand
+from evennia.utils.eveditor import EvEditor
+
+def _desc_load(caller):
+    """Return the description."""
+    return caller.db.evmenu_target.db.desc or ""
+
+def _desc_save(caller, buf):
+    """Save the description."""
+    caller.db.evmenu_target.db.desc = buf
+    caller.msg("Description saved.")
+    return True
+
+def _desc_quit(caller):
+    """Called when the editor exits."""
+    caller.msg("Exiting editor.")
+    del caller.db.evmenu_target
 
 class CmdSetRoomResources(ObjManipCommand):
     """
@@ -752,8 +768,89 @@ class CmdSetLock(MuxCommand):
         except Exception as e:
             self.caller.msg(f"Error setting lock: {str(e)}")
 
+class CmdDesc(MuxCommand):
+    """
+    describe yourself or another object
+
+    Usage:
+      desc <description>
+      desc <obj> = <description>
+      @desc/edit [<obj>]        - Edit description in a line editor
+
+    Sets the "desc" attribute on an object. If no object is given,
+    describe yourself. You can always describe yourself, but need
+    appropriate permissions to describe other objects.
+
+    Special characters:
+      %r or %R - New line
+      %t or %T - Tab
+    """
+
+    key = "@desc"
+    aliases = ["@desc/edit"]
+    switch_options = ("edit",)
+    locks = "cmd:perm(desc) or perm(Builder) or self()"
+    help_category = "Building"
+
+    def edit_handler(self):
+        if self.rhs:
+            self.msg("|rYou may specify a value, or use the edit switch, but not both.|n")
+            return
+        if self.args:
+            obj = self.caller.search(self.args)
+        else:
+            obj = self.caller.location or self.msg("|rYou can't describe oblivion.|n")
+        if not obj:
+            return
+
+        if not (obj.access(self.caller, "control") or obj.access(self.caller, "edit")):
+            self.msg(f"You don't have permission to edit the description of {obj.key}.")
+            return
+
+        self.caller.db.evmenu_target = obj
+        # launch the editor
+        EvEditor(
+            self.caller,
+            loadfunc=_desc_load,
+            savefunc=_desc_save,
+            quitfunc=_desc_quit,
+            key="desc",
+            persistent=True,
+        )
+        return
+
+    def func(self):
+        """Define command"""
+
+        caller = self.caller
+        if not self.args and "edit" not in self.switches:
+            caller.msg("Usage: desc [<obj> =] <description>")
+            return
+
+        if "edit" in self.switches:
+            self.edit_handler()
+            return
+
+        if "=" in self.args:
+            # We have an =
+            obj = caller.search(self.lhs)
+            if not obj:
+                return
+            desc = self.rhs or ""
+        else:
+            # No = means we're trying to desc ourselves
+            obj = caller
+            desc = self.args
+            
+        if obj == caller or obj.access(self.caller, "control") or obj.access(self.caller, "edit"):
+            obj.db.desc = desc
+            caller.msg(f"The description was set on {obj.get_display_name(caller)}.")
+        else:
+            caller.msg(f"You don't have permission to edit the description of {obj.key}.")
+
 class BuildingCmdSet(CmdSet):
     def at_cmdset_creation(self):
+        self.priority = 1 #fuck them og commands
         self.add(CmdSetRoomResources())
         self.add(CmdSetRoomType())
         self.add(CmdSetUmbraDesc())
@@ -762,3 +859,4 @@ class BuildingCmdSet(CmdSet):
         self.add(CmdSetHousing())
         self.add(CmdManageBuilding())
         self.add(CmdSetLock())
+        self.add(CmdDesc())

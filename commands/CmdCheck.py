@@ -246,7 +246,7 @@ class CmdCheck(MuxCommand):
             # Check regular abilities
             abilities = character.db.stats.get('abilities', {}).get(category, {})
             for ability, values in abilities.items():
-                ability_value = values.get('perm', 0)
+                ability_value = min(values.get('perm', 0), 3)  # Cap at 3 for initial point allocation
                 if ability_value > 0:
                     # If it's a secondary ability, count it as half points
                     if ability in secondary_abilities.get(category, set()):
@@ -258,7 +258,7 @@ class CmdCheck(MuxCommand):
             secondary_category = f'secondary_{category}'
             secondary_abilities_dict = character.db.stats.get('secondary_abilities', {}).get(secondary_category, {})
             for ability, values in secondary_abilities_dict.items():
-                ability_value = values.get('perm', 0)
+                ability_value = min(values.get('perm', 0), 3)  # Cap at 3 for initial point allocation
                 if ability_value > 0:
                     category_total += ability_value * 0.5  # All abilities in secondary_abilities are secondary abilities
 
@@ -351,30 +351,63 @@ class CmdCheck(MuxCommand):
                     if dots > 0:
                         results['errors'].append(f"- {disc}: {dots} dots")
 
-            # Get character's Road/Path
-            road_name = character.db.stats.get('identity', {}).get('path', {}).get('Path', {}).get('perm', 'Humanity')
+            # Get character's Enlightenment path
+            enlightenment = character.db.stats.get('identity', {}).get('personal', {}).get('Enlightenment', {}).get('perm')
+            if not enlightenment:
+                results['errors'].append("Missing required identity attribute for Vampire: Enlightenment")
+                return
             
-            # Get required virtues for the Road/Path
-            required_virtues = self.PATH_VIRTUES.get(road_name, self.PATH_VIRTUES['Humanity'])
+            # Get required virtues for the Enlightenment path
+            required_virtues = self.PATH_VIRTUES.get(enlightenment)
+            if not required_virtues:
+                results['errors'].append(f"Invalid Enlightenment path: {enlightenment}")
+                return
             
             # Check virtues and calculate total
             virtues = character.db.stats.get('virtues', {}).get('moral', {})
             virtue_total = 0
             missing_virtues = []
+            total_virtue_dots = 0
+            freebies_spent_on_virtues = 0
+            
+            # Each character gets 7 dots to distribute among virtues at character creation
+            remaining_free_dots = 7
             
             for virtue in required_virtues:
                 value = virtues.get(virtue, {}).get('perm', 0)
                 if value == 0:
                     missing_virtues.append(virtue)
+                else:
+                    # For non-Humanity paths, Conviction and Instinct start at 0
+                    if enlightenment != 'Humanity' and virtue in ['Conviction', 'Instinct']:
+                        if value > remaining_free_dots:
+                            freebies_spent_on_virtues += (value - remaining_free_dots) * self.FREEBIE_COSTS['virtue']
+                            remaining_free_dots = 0
+                        else:
+                            remaining_free_dots -= value
+                    else:  # Humanity virtues or Courage start at 1
+                        if (value - 1) > remaining_free_dots:
+                            freebies_spent_on_virtues += (value - 1 - remaining_free_dots) * self.FREEBIE_COSTS['virtue']
+                            remaining_free_dots = 0
+                        else:
+                            remaining_free_dots -= (value - 1)
                 virtue_total += value
 
             if missing_virtues:
-                results['errors'].append(f"Missing required virtues for {road_name}: {', '.join(missing_virtues)}")
+                results['errors'].append(f"Missing required virtues for {enlightenment}: {', '.join(missing_virtues)}")
 
-            # Check Road rating against virtue total
+            # Check Road rating against virtue total and cap for non-Humanity paths
             road = character.get_stat('pools', 'moral', 'Road', temp=False)
-            if road != virtue_total:
-                results['errors'].append(f"Road rating should equal sum of virtues ({virtue_total}) but is {road}")
+            if enlightenment != 'Humanity' and road > 5:
+                results['errors'].append(f"Non-Humanity paths cannot have Road rating above 5 at character creation (currently {road})")
+            if road > virtue_total:
+                results['errors'].append(f"Road rating cannot exceed sum of virtues ({virtue_total}) but is {road}")
+            
+            # Calculate freebie points spent on Road
+            freebies_spent_on_road = (road - virtue_total) * self.FREEBIE_COSTS['road'] if road > virtue_total else 0
+            
+            # Add virtue and road freebie costs to total
+            results['freebies_spent'] = results.get('freebies_spent', 0) + freebies_spent_on_virtues + freebies_spent_on_road
 
             # Check Willpower against Courage
             willpower = character.get_stat('pools', 'dual', 'Willpower', temp=False)
@@ -550,56 +583,34 @@ class CmdCheck(MuxCommand):
         # Get secondary abilities for this character's splat
         secondary_abilities = self.get_secondary_abilities(splat)
 
-        # Calculate attribute freebies
+        # Calculate attribute freebies (only for values above 5)
         for category in ['physical', 'social', 'mental']:
             attributes = character.db.stats.get('attributes', {}).get(category, {})
             for attr, values in attributes.items():
                 attr_value = values.get('perm', 0)
-                if attr_value > 3:  # Assuming anything above 3 was bought with freebies
-                    spent_freebies += (attr_value - 3) * self.FREEBIE_COSTS['attribute']
+                if attr_value > 5:  # Only charge freebies for dots above 5
+                    spent_freebies += (attr_value - 5) * self.FREEBIE_COSTS['attribute']
 
-        # First, collect all ability points across all categories to determine primary/secondary/tertiary
-        category_totals = {}
+        # Calculate ability freebies (any dots above 3)
         for category in ['talent', 'skill', 'knowledge']:
-            total = 0
             # Check regular abilities
             abilities = character.db.stats.get('abilities', {}).get(category, {})
             for ability, values in abilities.items():
                 ability_value = values.get('perm', 0)
-                if ability_value > 0:
-                    # If it's a secondary ability, count it as half points
+                if ability_value > 3:
+                    # If it's a secondary ability, charge half cost
                     if ability in secondary_abilities.get(category, set()):
-                        total += ability_value * 0.5
+                        spent_freebies += (ability_value - 3) * (self.FREEBIE_COSTS['ability'] / 2)
                     else:
-                        total += ability_value
+                        spent_freebies += (ability_value - 3) * self.FREEBIE_COSTS['ability']
 
             # Check secondary abilities
             secondary_category = f'secondary_{category}'
             secondary_abilities_dict = character.db.stats.get('secondary_abilities', {}).get(secondary_category, {})
             for ability, values in secondary_abilities_dict.items():
                 ability_value = values.get('perm', 0)
-                if ability_value > 0:
-                    total += ability_value * 0.5  # All abilities in secondary_abilities are secondary abilities
-
-            category_totals[category] = total
-
-        # Sort categories by their totals to determine primary/secondary/tertiary
-        sorted_categories = sorted(category_totals.items(), key=lambda x: x[1], reverse=True)
-        category_limits = {
-            sorted_categories[0][0]: 13,  # Primary
-            sorted_categories[1][0]: 9,   # Secondary
-            sorted_categories[2][0]: 5    # Tertiary
-        }
-
-        # Calculate ability freebies based on exceeding category limits
-        for category in ['talent', 'skill', 'knowledge']:
-            category_limit = category_limits[category]
-            total_in_category = category_totals[category]
-            
-            if total_in_category > category_limit:
-                # Only charge freebie points for points above the category limit
-                excess_points = total_in_category - category_limit
-                spent_freebies += excess_points * self.FREEBIE_COSTS['ability']
+                if ability_value > 3:
+                    spent_freebies += (ability_value - 3) * (self.FREEBIE_COSTS['ability'] / 2)
 
         # Calculate background freebies
         backgrounds = character.db.stats.get('backgrounds', {}).get('background', {})
@@ -673,7 +684,7 @@ class CmdCheck(MuxCommand):
         return True
 
     def check_required_notes(self, character, results):
-        """Check if character has all required notes."""
+        """Check if character has all required notes and identity attributes."""
         # Get all notes for the character
         notes = character.db.notes if hasattr(character.db, 'notes') else {}
         notes = notes or {}  # Convert None to empty dict
@@ -690,34 +701,136 @@ class CmdCheck(MuxCommand):
         if 'Freebie Spends' not in notes:
             results['errors'].append("Missing required 'Freebie Spends' note")
 
-        # Check Mage-specific notes
-        splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
-        if splat.lower() == 'mage':
+        # Check common identity attributes for all splats
+        required_personal = {
+            'Full Name': 'identity/personal',
+            'Date of Birth': 'identity/personal',
+            'Concept': 'identity/personal'
+        }
+        required_archetype = {
+            'Nature': 'archetype/personal',
+            'Demeanor': 'archetype/personal'
+        }
+
+        for attr, path in required_personal.items():
+            if not character.db.stats.get('identity', {}).get('personal', {}).get(attr, {}).get('perm'):
+                results['errors'].append(f"Missing required identity attribute: {attr}")
+
+        for attr, path in required_archetype.items():
+            if not character.db.stats.get('archetype', {}).get('personal', {}).get(attr, {}).get('perm'):
+                results['errors'].append(f"Missing required archetype attribute: {attr}")
+
+        # Get character's splat
+        splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '').lower()
+
+        # Splat-specific checks
+        if splat == 'shifter':
+            required_lineage = ['Deed Name', 'Type', 'Rank', 'Breed']
+            optional_lineage = ['Aspect', 'Auspice', 'Tribe', 'Crown', 'Varna', 'Cabal', 'Kitsune Path', 'Stream', 'Plague']
+            
+            for attr in required_lineage:
+                if not character.db.stats.get('identity', {}).get('lineage', {}).get(attr, {}).get('perm'):
+                    results['errors'].append(f"Missing required lineage attribute for Shifter: {attr}")
+
+            # Check if optional attributes exist and are set
+            lineage = character.db.stats.get('identity', {}).get('lineage', {})
+            for attr in optional_lineage:
+                if attr in lineage and not lineage[attr].get('perm'):
+                    results['errors'].append(f"Optional lineage attribute {attr} exists but is not set")
+
+        elif splat == 'mage':
+            # Check required Mage attributes
+            required_mage = ['Mage Faction', 'Essence']
+            for attr in required_mage:
+                if not character.db.stats.get('identity', {}).get('lineage', {}).get(attr, {}).get('perm'):
+                    results['errors'].append(f"Missing required lineage attribute for Mage: {attr}")
+
+            # Get Mage Faction
+            mage_faction = character.db.stats.get('identity', {}).get('lineage', {}).get('Mage Faction', {}).get('perm')
+            if mage_faction:
+                if mage_faction == 'Traditions' and not character.db.stats.get('identity', {}).get('lineage', {}).get('Tradition', {}).get('perm'):
+                    results['errors'].append("Traditions Mage must have a Tradition set")
+                elif mage_faction == 'Technocracy' and not character.db.stats.get('identity', {}).get('lineage', {}).get('Convention', {}).get('perm'):
+                    results['errors'].append("Technocratic Mage must have a Convention set")
+                elif mage_faction == 'Nephandi' and not character.db.stats.get('identity', {}).get('lineage', {}).get('Nephandi Faction', {}).get('perm'):
+                    results['errors'].append("Nephandi Mage must have a Nephandi Faction set")
+
+            # Check Mage-specific notes
             required_mage_notes = ['Paradigm', 'Practices', 'Instruments', 'Avatar']
             for note_name in required_mage_notes:
                 if note_name not in notes:
                     results['errors'].append(f"Mage character missing required '{note_name}' note")
 
-        # Check for merit/flaw explanation notes
-        merit_categories = ['merit', 'physical', 'social', 'mental', 'supernatural']
-        flaw_categories = ['flaw', 'physical', 'social', 'mental', 'supernatural']
-        
-        merits = character.db.stats.get('merits', {})
-        flaws = character.db.stats.get('flaws', {})
-        
-        # Check merit notes
-        for category in merit_categories:
-            category_merits = merits.get(category, {})
-            for merit in category_merits:
-                if merit not in notes:
-                    results['errors'].append(f"Missing explanation note for merit: {merit}")
-        
-        # Check flaw notes
-        for category in flaw_categories:
-            category_flaws = flaws.get(category, {})
-            for flaw in category_flaws:
-                if flaw not in notes:
-                    results['errors'].append(f"Missing explanation note for flaw: {flaw}")
+        elif splat == 'changeling':
+            # Check required Changeling attributes
+            required_changeling = ['Kith', 'Seeming']
+            required_legacy = ['Seelie Legacy', 'Unseelie Legacy']
+            
+            for attr in required_changeling:
+                if not character.db.stats.get('identity', {}).get('lineage', {}).get(attr, {}).get('perm'):
+                    results['errors'].append(f"Missing required lineage attribute for Changeling: {attr}")
+
+            for attr in required_legacy:
+                if not character.db.stats.get('identity', {}).get('legacy', {}).get(attr, {}).get('perm'):
+                    results['errors'].append(f"Missing required legacy attribute for Changeling: {attr}")
+
+            # Check Seeming-specific requirements
+            seeming = character.db.stats.get('identity', {}).get('lineage', {}).get('Seeming', {}).get('perm')
+            if seeming:
+                willpower = character.get_stat('pools', 'dual', 'Willpower', temp=False)
+                glamour = character.get_stat('pools', 'dual', 'Glamour', temp=False)
+                
+                if seeming == 'Grump' and willpower < 5:
+                    results['errors'].append("Grump Changelings must have Willpower >= 5")
+                elif seeming == 'Wilder' and willpower < 5 and glamour < 5:
+                    results['errors'].append("Wilder Changelings must have either Willpower >= 5 or Glamour >= 5")
+                elif seeming == 'Childling' and glamour < 5:
+                    results['errors'].append("Childling Changelings must have Glamour >= 5")
+
+            # Check Banality requirement
+            banality = character.get_stat('pools', 'dual', 'Banality', temp=False)
+            if banality < 3:
+                results['errors'].append("All Changelings must have Banality >= 3")
+
+            # Check required Changeling notes
+            required_changeling_notes = ['Frailties', 'Birthrights', 'Musing Threshold', 'Ravaging Threshold', 'Antithesis']
+            for note_name in required_changeling_notes:
+                if note_name not in notes:
+                    results['errors'].append(f"Changeling character missing required '{note_name}' note")
+
+        elif splat == 'vampire':
+            # Check required Vampire attributes
+            required_vampire_lineage = ['Clan', 'Generation', 'Sire']
+            required_vampire_identity = ['Date of Embrace']
+            
+            for attr in required_vampire_lineage:
+                if not character.db.stats.get('identity', {}).get('lineage', {}).get(attr, {}).get('perm'):
+                    results['errors'].append(f"Missing required lineage attribute for Vampire: {attr}")
+
+            for attr in required_vampire_identity:
+                if not character.db.stats.get('identity', {}).get('personal', {}).get(attr, {}).get('perm'):
+                    results['errors'].append(f"Missing required identity attribute for Vampire: {attr}")
+
+            # Check merit/flaw explanation notes
+            merit_categories = ['merit', 'physical', 'social', 'mental', 'supernatural']
+            flaw_categories = ['flaw', 'physical', 'social', 'mental', 'supernatural']
+            
+            merits = character.db.stats.get('merits', {})
+            flaws = character.db.stats.get('flaws', {})
+            
+            # Check merit notes
+            for category in merit_categories:
+                category_merits = merits.get(category, {})
+                for merit in category_merits:
+                    if merit not in notes:
+                        results['errors'].append(f"Missing explanation note for merit: {merit}")
+            
+            # Check flaw notes
+            for category in flaw_categories:
+                category_flaws = flaws.get(category, {})
+                for flaw in category_flaws:
+                    if flaw not in notes:
+                        results['errors'].append(f"Missing explanation note for flaw: {flaw}")
 
     def calculate_xp(self, character, results):
         """Calculate XP expenditure if character has starting XP."""
@@ -832,74 +945,6 @@ class CmdCheck(MuxCommand):
             if arete_xp > 0:
                 xp_breakdown['Arete'] = arete_xp
                 spent_xp += arete_xp
-
-        elif splat.lower() == 'vampire':
-            # Calculate Discipline XP
-            discipline_xp = 0
-            disciplines = character.db.stats.get('powers', {}).get('discipline', {})
-            for discipline, values in disciplines.items():
-                discipline_value = values.get('perm', 0)
-                if discipline_value > 0:
-                    discipline_xp += discipline_value * self.XP_COSTS['discipline']
-            if discipline_xp > 0:
-                xp_breakdown['Disciplines'] = discipline_xp
-                spent_xp += discipline_xp
-
-            # Calculate Combo Discipline XP
-            combo_xp = 0
-            combo_disciplines = character.db.stats.get('powers', {}).get('combodiscipline', {})
-            if combo_disciplines:
-                for combo_name, values in combo_disciplines.items():
-                    combo_value = values.get('perm', 0)
-                    if combo_value > 0 and combo_name in self.COMBO_DISCIPLINES:
-                        if self.check_combo_prerequisites(character, combo_name):
-                            combo_xp += self.COMBO_DISCIPLINES[combo_name]['cost']
-                        else:
-                            results['errors'].append(f"Character has combo discipline '{combo_name}' but doesn't meet prerequisites: {', '.join(self.COMBO_DISCIPLINES[combo_name]['prerequisites'])}")
-            if combo_xp > 0:
-                xp_breakdown['Combo Disciplines'] = combo_xp
-                spent_xp += combo_xp
-
-            # Calculate Road XP
-            road_xp = 0
-            road = character.get_stat('pools', 'moral', 'Road', temp=False)
-            if road > 3:  # Assuming max of 3 from freebies
-                road_xp += (road - 3) * self.XP_COSTS['road']
-            if road_xp > 0:
-                xp_breakdown['Road'] = road_xp
-                spent_xp += road_xp
-
-        elif splat.lower() == 'changeling':
-            # Calculate Art XP
-            art_xp = 0
-            arts = character.db.stats.get('powers', {}).get('art', {})
-            for art, values in arts.items():
-                art_value = values.get('perm', 0)
-                if art_value > 3:  # Assuming max of 3 from freebies
-                    art_xp += (art_value - 3) * self.XP_COSTS['art']
-            if art_xp > 0:
-                xp_breakdown['Arts'] = art_xp
-                spent_xp += art_xp
-
-            # Calculate Realm XP
-            realm_xp = 0
-            realms = character.db.stats.get('powers', {}).get('realm', {})
-            for realm, values in realms.items():
-                realm_value = values.get('perm', 0)
-                if realm_value > 3:  # Assuming max of 3 from freebies
-                    realm_xp += (realm_value - 3) * self.XP_COSTS['realm']
-            if realm_xp > 0:
-                xp_breakdown['Realms'] = realm_xp
-                spent_xp += realm_xp
-
-            # Calculate Glamour XP
-            glamour_xp = 0
-            glamour = character.get_stat('pools', 'dual', 'Glamour', temp=False)
-            if glamour > 3:  # Assuming max of 3 from freebies
-                glamour_xp += (glamour - 3) * self.XP_COSTS['glamour']
-            if glamour_xp > 0:
-                xp_breakdown['Glamour'] = glamour_xp
-                spent_xp += glamour_xp
 
         results['xp_spent'] = spent_xp
         results['total_xp'] = float(starting_xp)  # Convert Decimal to float
@@ -1061,21 +1106,6 @@ class CmdCheck(MuxCommand):
                 for category, amount in results.get('xp_breakdown', {}).items():
                     if amount > 0:
                         output.append(f"- {category}: {amount} XP")
-
-            # If character is a vampire, show available combo disciplines
-            if splat == 'vampire':
-                available_combos = [
-                    combo for combo in self.COMBO_DISCIPLINES
-                    if self.check_combo_prerequisites(character, combo)
-                ]
-                if available_combos:
-                    output.extend([
-                        "",
-                        "|yAvailable Combo Disciplines:|n"
-                    ])
-                    for combo in available_combos:
-                        prereqs = ', '.join(self.COMBO_DISCIPLINES[combo]['prerequisites'])
-                        output.append(f"- {combo} ({self.COMBO_DISCIPLINES[combo]['cost']} XP) - Requires: {prereqs}")
 
         output.append("")
 
