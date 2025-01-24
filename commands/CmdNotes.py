@@ -153,36 +153,35 @@ class CmdNotes(MuxCommand):
                 self.caller.msg("You don't have any valid notes.")
                 return
 
-            output = header(f"Notes for {self.caller.name}", width=width, color="|y", fillchar="|r=|n", bcolor="|b")
+            # Calculate column width for the tabular display
+            col_width = 25  # Width for each note column
+            cols_per_row = 3  # Number of columns per row
+
+            output = header(f"{self.caller.name}'s Notes", width=width, color="|y", fillchar="|b=|n", bcolor="|b")
 
             # Sort categories alphabetically
             for category in sorted(notes_by_category.keys()):
                 category_notes = notes_by_category[category]
-                # Sort notes by ID within each category
-                category_notes.sort(key=lambda x: int(x.note_id))
+                # Sort notes by name within each category
+                category_notes.sort(key=lambda x: x.name.lower())
                 
-                # Category header in white
-                output += f"\n|w{category}|n ({len(category_notes)})\n"
+                # Category header with equals
+                output += f"\n|b==> |y{category}|n |b<==|n" + "|b=|n" * (width - len(category) - 7) + "\n"
                 
-                for note in category_notes:
-                    # Note header with ID
-                    output += f"* #{note.note_id} {note.name}"
-                    
-                    # Add status if private/pending
-                    if not note.is_public:
-                        output += " (PRIVATE"
-                        if not note.is_approved:
-                            output += ", PENDING"
-                        output += ")"
-                    output += "\n"
-                    
-                    # Note text indented and truncated
-                    text_preview = note.text[:60] + "..." if len(note.text) > 60 else note.text
-                    text_lines = text_preview.split('\n')
-                    for line in text_lines:
-                        output += "    " + line + "\n"
+                # Process notes in rows of cols_per_row columns
+                for i in range(0, len(category_notes), cols_per_row):
+                    row_notes = category_notes[i:i + cols_per_row]
+                    row = ""
+                    for note in row_notes:
+                        # Format note name with ID, truncate if too long
+                        note_display = note.name
+                        if len(note_display) > col_width - 2:
+                            note_display = note_display[:col_width - 3] + "…"
+                        # Pad with spaces to maintain column width
+                        row += f"{note_display:<{col_width}}"
+                    output += " " + row.rstrip() + "\n"
 
-            output += footer(width=width, fillchar="|r=|n")
+            output += "|b=" + "=" * (width - 2) + "=|n"
             self.caller.msg(output)
             
         except Exception as e:
@@ -228,6 +227,24 @@ class CmdNotes(MuxCommand):
         else:
             self.caller.msg(f"Note '{note_id}' not found.")
 
+    def get_note_by_name_or_id(self, target, note_identifier):
+        """Helper method to find a note by either name or ID."""
+        notes_dict = target.attributes.get('notes', {})
+        
+        # First try to find by ID
+        if note_identifier in notes_dict:
+            note_data = notes_dict[note_identifier]
+            if note_data:
+                return note_identifier, note_data
+        
+        # If not found by ID, try to find by name (case-insensitive)
+        note_identifier_lower = note_identifier.lower()
+        for note_id, note_data in notes_dict.items():
+            if note_data and note_data.get('name', '').lower() == note_identifier_lower:
+                return note_id, note_data
+        
+        return None, None
+
     def view_note(self):
         """View a specific note."""
         if not self.args:
@@ -235,25 +252,24 @@ class CmdNotes(MuxCommand):
             return
 
         if "/" in self.args:
-            target_name, note_id = self.args.split("/", 1)
+            target_name, note_identifier = self.args.split("/", 1)
             target = self.search_for_character(target_name)
             if not target:
                 return
             
             # Handle wildcard to show all notes
-            if note_id == "*":
+            if note_identifier == "*":
                 self.list_character_notes(target)
                 return
         else:
             target = self.caller
-            note_id = self.args
+            note_identifier = self.args
 
-        # Get notes dictionary
-        notes_dict = target.attributes.get('notes', {})
-        note_data = notes_dict.get(str(note_id))
+        # Try to find note by name or ID
+        note_id, note_data = self.get_note_by_name_or_id(target, note_identifier)
         
         if not note_data:
-            self.caller.msg("No note with that ID exists.")
+            self.caller.msg(f"Could not find a note matching '{note_identifier}'.")
             return
 
         # Create Note object
@@ -330,36 +346,70 @@ class CmdNotes(MuxCommand):
                 self.caller.msg(f"No viewable notes found for {target.name}.")
                 return
 
-            output = header(f"Notes for {target.name}", width=width, color="|y", fillchar="|r=|n", bcolor="|b")
+            # Calculate column width for the tabular display
+            col_width = 25  # Width for each note column
+            cols_per_row = 3  # Number of columns per row
 
-            # Sort categories alphabetically
-            for category in sorted(notes_by_category.keys()):
-                category_notes = notes_by_category[category]
-                # Sort notes by ID within each category
-                category_notes.sort(key=lambda x: int(x.note_id))
-                
-                # Category header in white
-                output += f"\n|w{category}|n ({len(category_notes)})\n"
-                
-                for note in category_notes:
-                    # Note header with ID
-                    output += f"* #{note.note_id} {note.name}"
-                    
-                    # Add status if private/pending
-                    if not note.is_public:
-                        output += " (PRIVATE"
-                        if not note.is_approved:
-                            output += ", PENDING"
-                        output += ")"
-                    output += "\n"
-                    
-                    # Note text indented and truncated
-                    text_preview = note.text[:60] + "..." if len(note.text) > 60 else note.text
-                    text_lines = text_preview.split('\n')
-                    for line in text_lines:
-                        output += "    " + line + "\n"
+            if is_staff:
+                # Staff view with detailed information
+                output = header(f"Notes for {target.name}", width=width, color="|y", fillchar="|b=|n", bcolor="|b")
 
-            output += footer(width=width, fillchar="|r=|n")
+                # Sort categories alphabetically
+                for category in sorted(notes_by_category.keys()):
+                    category_notes = notes_by_category[category]
+                    # Sort notes by name within each category
+                    category_notes.sort(key=lambda x: x.name.lower())
+                    
+                    # Category header with equals
+                    output += f"\n|b==> |y{category}|n |b<==|n" + "|b=|n" * (width - len(category) - 7) + "\n"
+                    
+                    # Process notes in rows of cols_per_row columns
+                    for i in range(0, len(category_notes), cols_per_row):
+                        row_notes = category_notes[i:i + cols_per_row]
+                        row = ""
+                        for note in row_notes:
+                            # Format note name with ID and status
+                            note_display = f"{note.name}"
+                            if not note.is_public:
+                                note_display += "*"  # Add asterisk for private notes
+                            if not note.is_approved:
+                                note_display += "!"  # Add exclamation for pending notes
+                            note_display += f" (#{note.note_id})"
+                            
+                            if len(note_display) > col_width - 2:
+                                note_display = note_display[:col_width - 3] + "…"
+                            # Pad with spaces to maintain column width
+                            row += f"{note_display:<{col_width}}"
+                        output += " " + row.rstrip() + "\n"
+
+                output += "|b=" + "=" * (width - 2) + "=|n"
+            else:
+                # Regular user view with tabular format
+                output = header(f"{target.name}'s Notes", width=width, color="|y", fillchar="|b=|n", bcolor="|b")
+
+                # Sort categories alphabetically
+                for category in sorted(notes_by_category.keys()):
+                    category_notes = notes_by_category[category]
+                    category_notes.sort(key=lambda x: x.name.lower())
+                    
+                    # Category header with dots
+                    output += f"\n|b==> |y{category}|n |b<==|n" + "." * (width - len(category) - 7) + "\n"
+                    
+                    # Process notes in rows of cols_per_row columns
+                    for i in range(0, len(category_notes), cols_per_row):
+                        row_notes = category_notes[i:i + cols_per_row]
+                        row = ""
+                        for note in row_notes:
+                            # Format note name, truncate if too long
+                            note_display = note.name
+                            if len(note_display) > col_width - 2:
+                                note_display = note_display[:col_width - 3] + "…"
+                            # Pad with spaces to maintain column width
+                            row += f"{note_display:<{col_width}}"
+                        output += " " + row.rstrip() + "\n"
+
+                output += "|b=" + "=" * (width - 2) + "=|n"
+
             self.caller.msg(output)
             
         except Exception as e:

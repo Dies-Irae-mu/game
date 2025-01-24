@@ -28,16 +28,16 @@ class CustomCmdChannel(MuxCommand):
       /history    - show channel history
       /mute       - mute a channel
       /unmute     - unmute a channel
-      /create     - create a new channel
-      /destroy    - remove a channel
-      /desc       - set channel description
-      /lock       - add lock strings to a channel
-      /unlock     - remove lock strings from a channel
-      /ban       - ban user from channel
-      /unban     - remove ban from user
-      /boot      - remove user from channel
+      /create     - create a new channel (staff only)
+      /destroy    - remove a channel (staff only)
+      /desc       - set channel description (staff only)
+      /lock       - add lock strings to a channel (staff only)
+      /unlock     - remove lock strings from a channel (staff only)
+      /ban       - ban user from channel (staff only)
+      /unban     - remove ban from user (staff only)
+      /boot      - remove user from channel (staff only)
+      /view       - show detailed channel information (staff only)
       /purge      - purge all channel aliases
-      /view       - show detailed channel information
 
     Example:
       channel public = Hello!
@@ -417,6 +417,13 @@ class CustomCmdChannel(MuxCommand):
             # No args, no switches - show help
             caller.msg(self.__doc__)
             return
+
+        # Staff-only switches check
+        staff_switches = ["create", "destroy", "desc", "lock", "unlock", "ban", "unban", "boot", "view"]
+        if any(switch in self.switches for switch in staff_switches):
+            if not caller.check_permstring("Builder"):
+                caller.msg("You must have |wBuilder|n or higher permission to use this command.")
+                return
 
         if "create" in self.switches:
             # Create a new channel

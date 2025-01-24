@@ -2,19 +2,19 @@
 
 from evennia import Command
 from evennia.utils.evmenu import EvMenu
-from world.wod20th.models import Stat, SHIFTER_IDENTITY_STATS, SHIFTER_RENOWN, SHIFTER_RENOWN, CLAN, MAGE_FACTION, MAGE_SPHERES, TRADITION, TRADITION_SUBFACTION, CONVENTION, METHODOLOGIES, NEPHANDI_FACTION, SEEMING, KITH, SEELIE_LEGACIES, UNSEELIE_LEGACIES, ARTS, REALMS, calculate_willpower, calculate_road
+from world.wod20th.models import Stat, SHIFTER_IDENTITY_STATS, SHIFTER_RENOWN, SHIFTER_RENOWN, CLAN, MAGE_FACTION, MAGE_SPHERES, TRADITION, TRADITION_SUBFACTION, CONVENTION, METHODOLOGIES, NEPHANDI_FACTION, SEEMING, KITH, SEELIE_LEGACIES, UNSEELIE_LEGACIES, ARTS, REALMS, calculate_willpower, calculate_road, MORTALPLUS_TYPES
 from typeclasses.characters import Character
 from evennia.commands.default.muxcommand import MuxCommand
 from world.jobs.models import Job, Queue
 from django.utils import timezone
-
+"""
 class CmdCharGen(Command):
-    """
+    
     Start the character generation process.
 
     Usage:
       chargen
-    """
+    
 
     key = "chargen"
     locks = "cmd:all()"
@@ -28,9 +28,9 @@ class CmdCharGen(Command):
         EvMenu(self.caller, "commands.chargen", startnode="node_start", cmd_on_exit=self.finish_chargen)
 
     def finish_chargen(self, caller, menu):
-        """
+        
         Called when character generation is complete.
-        """
+        
         try:
             _apply_chargen_data(caller)
             caller.msg("Character generation complete! Your character has been created and is ready to play.")
@@ -39,10 +39,10 @@ class CmdCharGen(Command):
             caller.msg("Please contact an admin for assistance.")
 
     def at_post_cmd(self):
-        """
+        
         This hook is called after the command has finished executing 
         (after self.func()).
-        """
+        
         if hasattr(self.caller, "ndb._menutree"):
             self.caller.msg("|wUse 'look' to see the character creation menu again.")
             self.caller.msg("Use 'quit' to exit character creation.")
@@ -664,9 +664,9 @@ def get_attributes_for_category(category):
         return ['Perception', 'Intelligence', 'Wits']
 
 def node_abilities(caller):
-    """
+    
     Show available abilities based on character's splat
-    """
+    
     if 'ability_order' not in caller.db.chargen:
         caller.db.chargen['ability_order'] = []
     
@@ -676,7 +676,7 @@ def node_abilities(caller):
         return node_distribute_ability_points(caller)
 
 def get_available_abilities(character, category):
-    """Get both basic and splat-specific abilities for the category"""
+    Get both basic and splat-specific abilities for the category
     splat = character.db.chargen.get('splat', '')
     
     # Get basic abilities
@@ -1168,6 +1168,10 @@ def _finish_chargen(caller):
     _apply_chargen_data(caller)
     caller.msg("Character creation complete! Your character has been created and is ready to play.")
     return None
+
+"""
+ATTRIBUTE_CATEGORIES = ['Physical', 'Social', 'Mental']
+ABILITY_CATEGORIES = ['Talents', 'Skills', 'Knowledges']
 
 class CmdSubmit(MuxCommand):
     """

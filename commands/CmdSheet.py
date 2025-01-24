@@ -157,7 +157,7 @@ class CmdSheet(MuxCommand):
             splat_specific_stats = ['Clan', 'Date of Embrace', 'Generation', 'Sire', 'Enlightenment']
         elif splat.lower() == 'shifter':
             shifter_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
-            splat_specific_stats = ['Type', 'Deed Name', 'Rank']
+            splat_specific_stats = ['Type']
             
             # Add type-specific stats from the SHIFTER_IDENTITY_STATS dictionary
             if shifter_type:
@@ -810,9 +810,10 @@ class CmdSheet(MuxCommand):
                     dots = "." * (19 - len(renown))
                     self.virtues_list.append(f" {renown}{dots}{renown_value}".ljust(25))
             else:
+                # Default to Garou renown if type not found or not set
                 default_renown = ['Glory', 'Honor', 'Wisdom']
                 for renown in default_renown:
-                    renown_value = character.get_stat('virtues', 'moral', renown, temp=False) or 0
+                    renown_value = character.get_stat('advantages', 'renown', renown, temp=False) or 0
                     dots = "." * (19 - len(renown))
                     self.virtues_list.append(f" {renown}{dots}{renown_value}".ljust(25))
         elif splat.lower() == 'mage':

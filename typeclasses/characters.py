@@ -378,45 +378,73 @@ class Character(DefaultCharacter):
         self.location.msg_contents(f"{self.name} shimmers into view as they return from the Umbra.", exclude=[self])
         return True
 
+    def format_description(self, desc):
+        """
+        Format the description with proper paragraph handling and indentation.
+        """
+        if not desc:
+            return ""
+            
+        # First normalize all line breaks and tabs
+        desc = desc.replace('%T', '%t')
+        desc = desc.replace('%R%R', '\n\n')  # Double line breaks first
+        desc = desc.replace('%r%r', '\n\n')
+        desc = desc.replace('%R', '\n')
+        desc = desc.replace('%r', '\n')
+        
+        # Process each paragraph
+        paragraphs = []
+        for paragraph in desc.split('\n'):
+            # Skip completely empty paragraphs
+            if not paragraph.strip():
+                paragraphs.append('')
+                continue
+                
+            # Handle tabs at start of paragraph
+            tab_count = 0
+            working_paragraph = paragraph
+            while working_paragraph.startswith('%t'):
+                tab_count += 1
+                working_paragraph = working_paragraph[2:]  # Remove just the %t
+            
+            # Apply indentation and handle the rest of the paragraph
+            if tab_count > 0:
+                working_paragraph = '    ' * tab_count + working_paragraph
+            
+            # Wrap the paragraph while preserving ANSI codes
+            wrapped = wrap_ansi(working_paragraph, width=76)
+            paragraphs.append(wrapped)
+        
+        # Clean up multiple consecutive empty lines
+        result = []
+        last_empty = False
+        for p in paragraphs:
+            if not p:
+                if not last_empty:
+                    result.append(p)
+                last_empty = True
+            else:
+                result.append(p)
+                last_empty = False
+        
+        return '\n'.join(result)
+
     def return_appearance(self, looker, **kwargs):
         """
-        This formats a description for any object looking at this object.
+        This formats a description. It is the hook a 'look' command
+        should call.
         """
         if not looker:
             return ""
-        
-        # Get the description
-        desc = self.db.desc
-
+            
         # Start with the name
         string = f"|c{self.get_display_name(looker)}|n\n"
 
-        # Process character description
+        # Get and format the description
+        desc = self.db.desc
         if desc:
-            # Replace both %t and |- with a consistent tab marker
-            desc = desc.replace('%t', '|t').replace('|-', '|t')
-            
-            paragraphs = desc.split('%r')
-            formatted_paragraphs = []
-            for p in paragraphs:
-                if not p.strip():
-                    formatted_paragraphs.append('')  # Add blank line for empty paragraph
-                    continue
-                
-                # Handle tabs manually
-                lines = p.split('|t')
-                indented_lines = [line.strip() for line in lines]
-                indented_text = '\n    '.join(indented_lines)
-                
-                # Wrap each line individually
-                wrapped_lines = [wrap_ansi(line, width=78) for line in indented_text.split('\n')]
-                formatted_paragraphs.append('\n'.join(wrapped_lines))
-            
-            # Join paragraphs with a single newline, and remove any consecutive newlines
-            joined_paragraphs = '\n'.join(formatted_paragraphs)
-            joined_paragraphs = re.sub(r'\n{3,}', '\n\n', joined_paragraphs)
-            
-            string += joined_paragraphs + "\n"
+            desc = self.format_description(desc)
+            string += desc + "\n"
 
         # Add any other details you want to include in the character's appearance
         # For example, you might want to add information about their equipment, stats, etc.

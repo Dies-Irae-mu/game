@@ -38,22 +38,22 @@ class CmdInfo(MuxCommand):
         # Core types
         'attribute', 'ability', 'secondary_ability', 'advantage', 'background',
         'lineage', 'discipline', 'combodiscipline', 'thaumaturgy', 'gift',
-        'rite', 'sphere', 'rote', 'art', 'splat', 'edge', 'bygone_power',
+        'rite', 'sphere', 'rote', 'art', 'splat', 'bygone_power',
         'realm', 'path', 'sorcery', 'faith', 'numina', 'enlightenment',
-        'power', 'virtue', 'vice', 'merit', 'flaw', 'trait',
+        'power', 'merit', 'flaw', 'trait',
         # Ability subtypes
         'skill', 'knowledge', 'talent',
         'secondary_knowledge', 'secondary_talent', 'secondary_skill',
         # Attribute types
         'physical', 'social', 'mental',
         # Other categories
-        'personal', 'supernatural', 'moral', 'temporary', 'dual',
+        'personal', 'supernatural', 'moral'
         # Game-specific
         'renown', 'arete', 'banality', 'glamour', 'essence',
         'quintessence', 'paradox',
         # Identity/Social
         'kith', 'seeming', 'house', 'seelie-legacy', 'unseelie-legacy',
-        'court', 'mortalplus_type', 'varna'
+        'court', 'mortalplus_type', 'varna', 'archetype'
     ]
     
     # Group similar stat types together based on CATEGORIES
@@ -69,11 +69,9 @@ class CmdInfo(MuxCommand):
         ],
         'Supernatural': ['lineage', 'enlightenment', 'supernatural'],
         'Merits & Flaws': ['merit', 'flaw'],
-        'Traits': ['trait', 'personal', 'moral', 'temporary', 'dual'],
+        'Traits': ['trait', 'personal', 'moral', 'archetype'],
         'Identity': ['splat', 'kith', 'seeming', 'house', 'seelie-legacy', 'unseelie-legacy', 'court', 'mortalplus_type', 'varna'],
-        'Virtues & Vices': ['virtue', 'vice'],
         'Pools': ['renown', 'arete', 'banality', 'glamour', 'essence', 'quintessence', 'paradox'],
-        'Other': ['other']
     }
     
     ignore_categories = {'other', 'specialty'}  # Categories to ignore in searches
@@ -144,10 +142,8 @@ class CmdInfo(MuxCommand):
             'spheres': (['sphere'], 'Powers'),
             'path': (['path'], 'Powers'),
             'paths': (['path'], 'Powers'),
-            'virtue': (['virtue'], 'Virtues & Vices'),
-            'virtues': (['virtue'], 'Virtues & Vices'),
-            'vice': (['vice'], 'Virtues & Vices'),
-            'vices': (['vice'], 'Virtues & Vices'),
+            'virtue': (['virtue'], 'Virtues'),
+            'virtues': (['virtue'], 'Virtues'),
             'pool': (['renown', 'arete', 'banality', 'glamour', 'essence', 'quintessence', 'paradox'], 'Pools'),
             'pools': (['renown', 'arete', 'banality', 'glamour', 'essence', 'quintessence', 'paradox'], 'Pools'),
         }

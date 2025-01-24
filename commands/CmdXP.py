@@ -390,8 +390,8 @@ class CmdXP(default_cmds.MuxCommand):
         """Displays XP information for a character."""
         xp = character.db.xp
         
-        if not xp:
-            # Initialize XP if it doesn't exist
+        if not xp or not isinstance(xp, dict):
+            # Initialize XP if it doesn't exist or isn't a dict
             xp = {
                 'total': Decimal('0.00'),
                 'current': Decimal('0.00'),
@@ -488,23 +488,30 @@ class CmdXP(default_cmds.MuxCommand):
         
         # Add scene tracking status
         scene_data = character.db.scene_data
-        if scene_data:
+        if scene_data and isinstance(scene_data, dict):  # Verify it's a dictionary
             scene_title = "|y Scene Status |n"
             scene_title_len = len(scene_title)
             scene_dash_count = (total_width - scene_title_len) // 2
             scene_header = f"{'|b-|n' * scene_dash_count}{scene_title}{'|b-|n' * (total_width - scene_dash_count - scene_title_len)}\n"
             
             scene_section = ""
-            if scene_data['current_scene']:
-                duration = (datetime.now() - scene_data['current_scene']).total_seconds() / 60
+            # Safely check for current_scene
+            current_scene = scene_data.get('current_scene')
+            if current_scene and isinstance(current_scene, datetime):
+                duration = (datetime.now() - current_scene).total_seconds() / 60
                 scene_section += f"Current scene duration: {int(duration)} minutes\n"
-                if scene_data['last_activity']:
-                    last_activity = (datetime.now() - scene_data['last_activity']).total_seconds() / 60
-                    scene_section += f"Last activity: {int(last_activity)} minutes ago\n"
+                
+                # Safely check for last_activity
+                last_activity = scene_data.get('last_activity')
+                if last_activity and isinstance(last_activity, datetime):
+                    last_activity_delta = (datetime.now() - last_activity).total_seconds() / 60
+                    scene_section += f"Last activity: {int(last_activity_delta)} minutes ago\n"
             else:
                 scene_section += "No active scene\n"
             
-            scene_section += f"Completed scenes this week: {scene_data['completed_scenes']}\n"
+            # Safely get completed_scenes with default value
+            completed_scenes = scene_data.get('completed_scenes', 0)
+            scene_section += f"Completed scenes this week: {completed_scenes}\n"
             
             display = (
                 header +
@@ -517,6 +524,14 @@ class CmdXP(default_cmds.MuxCommand):
                 footer
             )
         else:
+            # Initialize scene_data if it doesn't exist or isn't a dict
+            scene_data = {
+                'current_scene': None,
+                'last_activity': None,
+                'completed_scenes': 0
+            }
+            character.db.scene_data = scene_data
+            
             display = (
                 header +
                 exp_header +

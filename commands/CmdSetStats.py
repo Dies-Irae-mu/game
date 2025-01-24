@@ -582,6 +582,16 @@ class CmdStats(default_cmds.MuxCommand):
                 self.caller.msg(f"|gRecalculated Willpower to {courage} and Humanity to {humanity}.|n")
                 character.msg(f"|gYour Willpower has been set to {courage} and Humanity to {humanity}.|n")
 
+        # After setting a stat, check if we need to update shifter stats
+        if character.get_stat('other', 'splat', 'Splat', temp=False) == 'Shifter':
+            shifter_type = character.get_stat('identity', 'lineage', 'Type')
+            if shifter_type:
+                # List of stats that should trigger a shifter stats update
+                shifter_trigger_stats = ['Breed', 'Tribe', 'Aspect', 'Path', 'Auspice', 'Varna']
+                if stat.name in shifter_trigger_stats:
+                    self.caller.msg(f"Debug: Updating shifter stats after {stat.name} change...")
+                    self.apply_shifter_stats(character)
+
     def update_virtues_for_enlightenment(self, character):
         """Update virtues based on enlightenment path"""
         # Initialize virtues if they don't exist

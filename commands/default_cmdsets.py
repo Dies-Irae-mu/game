@@ -34,6 +34,7 @@ from commands.building import (
     CmdSetGauntlet, CmdUmbraInfo, CmdSetHousing, CmdManageBuilding, 
     CmdSetLock
 )
+from commands.CmdInit import CmdInit
 
 from commands.CmdUmbraInteraction import CmdUmbraInteraction
 from commands.communication import CmdMeet, CmdPlusIc, CmdPlusOoc, CmdOOC, CmdSummon, CmdJoin
@@ -59,16 +60,16 @@ from commands.CmdUnpuppet import CmdUnpuppet
 from commands.CmdPage import CmdPage
 from commands.CmdFinger import CmdFinger
 from commands.CmdAlias import CmdAlias
-from commands.CmdInfo import CmdInfo
 from commands.CmdLFRP import CmdLFRP
 from evennia.commands.default import cmdset_character, cmdset_account
 from commands.CmdXP import CmdXP
 from commands.CmdXPCost import CmdXPCost
 from commands.CmdWho import CmdWho
-from evennia.commands.default import comms
 from commands.housing import CmdRent, CmdVacate, CmdSetApartmentDesc, CmdSetApartmentExit, CmdManageHome, CmdUpdateApartments, CmdListApartments, CmdUpdateExits
 from commands.comms import CustomCmdChannel
 from commands.CmdCheck import CmdCheck
+from commands.CmdPlots import CmdPlots
+from commands.CmdHangouts import CmdHangout, CmdSetHangout
 
 class CharacterCmdSet(cmdset_character.CharacterCmdSet):
     """
@@ -87,6 +88,8 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         #
         # any commands you add below will overload the default ones.
         #
+        self.add(CustomCmdChannel())
+        
         self.add(CmdGradientName())
         self.add(BBSCmdSet)
         self.add(OssCmdSet)
@@ -142,7 +145,11 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdSetLock())
         self.add(CmdPuppetFreeze())
         self.add(CmdCheck())
-        
+        self.add(CmdPlots())
+        self.add(CmdInit())
+        self.add(CmdHangout())
+        self.add(CmdSetHangout())
+
 class AccountCmdSet(cmdset_account.AccountCmdSet):
     """
     This is the cmdset available to the Account at all times. It is
@@ -158,22 +165,21 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         Populates the cmdset
         """
         super().at_cmdset_creation()
-        #
-        # any commands you add below will overload the default ones.
-        #
+        
+        # Add our custom channel command
+        self.add(CustomCmdChannel())
+        
         self.add(CmdSetRoomResources())
         self.add(CmdSetRoomType())
         self.add(CmdSetUmbraDesc())
         self.add(CmdSetGauntlet())
         self.add(CmdUmbraInfo())
         self.add(CmdNotes())
-        #self.add(CmdRequests())
         self.add(CmdSummon())
         self.add(CmdJoin())
         self.add(CmdApprove())
         self.add(CmdUnapprove())
         self.add(CmdUnpuppet())
-        self.add(CustomCmdChannel())
         self.add(CmdSetHousing())
         self.add(CmdManageBuilding())
         self.add(CmdUpdateApartments())
