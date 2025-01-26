@@ -32,7 +32,7 @@ class CmdInfo(MuxCommand):
     key = "+info"
     aliases = ["info"]
     locks = "cmd:all()"
-    help_category = "Chargen"
+    help_category = "Chargen & Character Info"
     
     valid_types = [
         # Core types
@@ -221,15 +221,21 @@ class CmdInfo(MuxCommand):
         
         # Build the base query
         if display_name == "Merits & Flaws":
-            query = Q(stat_type__in=['merit', 'flaw']) | Q(category__in=['merits', 'flaws'])
+            # Split merits and flaws based on the input stat_types
+            if 'merit' in stat_types and 'flaw' not in stat_types:
+                query = Q(stat_type='merit') | Q(category='merits')
+            elif 'flaw' in stat_types and 'merit' not in stat_types:
+                query = Q(stat_type='flaw') | Q(category='flaws')
+            else:
+                query = Q(stat_type__in=['merit', 'flaw']) | Q(category__in=['merits', 'flaws'])
         else:
             query = Q(stat_type__in=stat_types) | Q(category__in=stat_types)
         
         # Apply splat filter if specified
         if only_splat:
             splat_query = (Q(splat__iexact=only_splat) | 
-                         Q(game_line__icontains=only_splat) |
-                         Q(splat__isnull=True, game_line__isnull=True))
+                          Q(game_line__icontains=only_splat) |
+                          Q(splat__isnull=True, game_line__isnull=True))
             query &= splat_query
             
         # Get results ordered by name

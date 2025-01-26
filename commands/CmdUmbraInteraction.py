@@ -20,7 +20,7 @@ class CmdUmbraInteraction(MuxCommand):
     key = "+step"
     aliases = ["+peek", "+gauntlet"]
     locks = "cmd:all()"
-    help_category = "Werewolf"
+    help_category = "Shifter"
 
     def func(self):
         """Execute command."""
@@ -44,6 +44,8 @@ class CmdUmbraInteraction(MuxCommand):
         # If already in Umbra, just return to material world
         if self.caller.tags.get("in_umbra", category="state"):
             if self.caller.location.return_from_umbra(self.caller):
+                self.caller.tags.remove("in_umbra", category="state")
+                self.caller.tags.add("in_material", category="state")
                 self.caller.msg("You have returned to the material world.")
             else:
                 self.caller.msg("You failed to return from the Umbra.")
@@ -68,6 +70,7 @@ class CmdUmbraInteraction(MuxCommand):
             
             # Attempt to step sideways
             if room.step_sideways(self.caller):
+                self.caller.tags.remove("in_material", category="state")
                 self.caller.tags.add("in_umbra", category="state")
                 self.caller.msg("You have stepped sideways into the Umbra.")
             else:

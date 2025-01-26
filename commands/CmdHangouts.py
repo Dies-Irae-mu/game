@@ -49,7 +49,7 @@ class CmdHangout(MuxCommand):
     key = "+hangout"
     aliases = ["+hangouts", "+hideout", "+hideouts", "+hotspot", "+hotspots",
               "+dir", "+directory", "+yp", "+yellowpages"]
-    help_category = "Social"
+    help_category = "RP Commands"
     
     def get_hangouts_by_district(self, character, show_occupied=False):
         """Get all visible hangouts grouped by district."""
@@ -340,7 +340,7 @@ class CmdSetHangout(MuxCommand):
     
     key = "+sethangout"
     locks = "cmd:perm(Builder)"
-    help_category = "Building"
+    help_category = "Building and Housing"
     
     def func(self):
         """Execute command."""

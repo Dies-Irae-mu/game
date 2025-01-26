@@ -15,7 +15,7 @@ class CmdHurt(Command):
     """
     key = "+hurt"
     locks = "cmd:all()"
-    
+    help_category = "RP Commands"
     def parse(self):
         args = self.args.strip().split("=")
         if len(args) == 2:
@@ -52,20 +52,41 @@ class CmdHurt(Command):
             return
 
         damage_type_full = {'b': 'bashing', 'l': 'lethal', 'a': 'aggravated'}[damage_type]
-        health = target.get_stat('other', 'other', 'Health') or 7
-        if health == 0 and damage_type != 'a':
-            self.caller.msg(f"{target.name} is already dead and cannot take more bashing or lethal damage.")
-            return
+        
+        # Calculate total health levels including bonuses
+        base_health = 7
+        
+        # Check for Huge Size merit
+        huge_size = target.get_stat('merits', 'physical', 'Huge Size', temp=False)
+        if not huge_size:
+            huge_size = target.get_stat('merits', 'merit', 'Huge Size', temp=False)
+        if huge_size:
+            base_health += 1
+        
+        # Check for Glome phyla
+        glome_phyla = target.get_stat('identity', 'lineage', 'Phyla') == 'Glome'
+        if not glome_phyla:
+            glome_phyla = target.get_stat('identity', 'phyla', 'Phyla') == 'Glome'
+        if glome_phyla:
+            base_health += 2
+        
+        # Check for Troll kith
+        if target.get_stat('identity', 'lineage', 'Kith') == 'Troll':
+            base_health += 1
 
+        # Add vampire health levels if applicable
+        if target.get_stat('other', 'splat', 'Splat') == 'Vampire':
+            base_health += 2
+
+        # Apply damage
         apply_damage_or_healing(target, damage, damage_type_full)
-        # if the character's character.db.agg is greater than 
         if target.get_stat('Other', 'Splat', 'Splat') == 'Vampire':
             health = health + 2
         else:
             health = health + 1
-
-        if target.db.agg > health:
-            target.db.agg = health
+        # Ensure damage doesn't exceed maximum health
+        if target.db.agg > base_health:
+            target.db.agg = base_health
 
         # Get the green gradient_name of th target
         target_gradient = target.db.gradient_name or target.key

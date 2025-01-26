@@ -222,7 +222,7 @@ class CmdPST(default_cmds.MuxCommand):
     key = "+pst"
     aliases = ["pst"]
     locks = "cmd:all()"
-    help_category = "General"
+    help_category = "Storyteller Commands"
 
     def format_header(self, text, width=78):
         return f"|r{'=' * 5}< |w{text}|r >{'=' * (width - len(text) - 9)}|n\n"

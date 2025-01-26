@@ -1,5 +1,6 @@
 from evennia import Command, default_cmds
-from world.wod20th.models import Stat, SHIFTER_IDENTITY_STATS, SHIFTER_RENOWN, calculate_willpower, calculate_road
+from world.wod20th.models import (Stat, SHIFTER_IDENTITY_STATS, SHIFTER_RENOWN, 
+                                calculate_willpower, calculate_road, PHYLA, INANIMAE_POWERS)
 from evennia.utils import search
 import re
 from commands.CmdLanguage import CmdLanguage
@@ -37,22 +38,52 @@ class CmdSelfStat(default_cmds.MuxCommand):
     Usage:
       +selfstat <stat>[(<instance>)]/<category>=[+-]<value>
       +selfstat <stat>[(<instance>)]/<category>=
+      +selfstat/specialty <stat>=<specialty>
 
     Examples:
       +selfstat Strength/Physical=+1
       +selfstat Firearms/Skill=-1
       +selfstat Status(Ventrue)/Social=
+      +selfstat/specialty Firearms=Sniping
     """
 
     key = "+selfstat"
     aliases = ["selfstat"]
     locks = "cmd:all()"  # All players can use this command
-    help_category = "Character"
+    help_category = "Chargen & Character Info"
+
+    def __init__(self):
+        """Initialize the command."""
+        super().__init__()
+        self.switches = []  # Initialize switches
+        self.is_specialty = False
+        self.stat_name = ""
+        self.instance = None
+        self.category = None
+        self.value_change = None
+        self.temp = False
 
     def parse(self):
         """
         Parse the arguments.
         """
+        # Check for specialty switch
+        if self.switches and "specialty" in self.switches:
+            self.is_specialty = True
+            self.stat_name = ""
+            self.specialty = ""
+
+            try:
+                args = self.args.strip()
+                self.stat_name, self.specialty = args.split('=', 1)
+                self.stat_name = self.stat_name.strip()
+                self.specialty = self.specialty.strip()
+            except ValueError:
+                self.stat_name = self.specialty = None
+            return
+
+        # Regular stat parsing
+        self.is_specialty = False
         self.stat_name = ""
         self.instance = None
         self.category = None
@@ -181,6 +212,10 @@ class CmdSelfStat(default_cmds.MuxCommand):
             base_stats['pools']['dual']['Glamour'] = {'perm': 1, 'temp': 1}
             base_stats['pools']['dual']['Banality'] = {'perm': 1, 'temp': 1}
             base_stats['pools']['dual']['Willpower'] = {'perm': 1, 'temp': 1}
+            
+            # Initialize Changeling-specific abilities
+            base_stats['abilities']['talent']['Kenning'] = {'perm': 0, 'temp': 0}
+            base_stats['abilities']['knowledge']['Gremayre'] = {'perm': 0, 'temp': 0}
 
         elif splat.lower() == 'mortal+':
             base_stats['powers'] = {
@@ -198,6 +233,19 @@ class CmdSelfStat(default_cmds.MuxCommand):
             
             return base_stats
 
+        elif splat.lower() == 'companion':
+            base_stats['powers'] = {
+                'special_advantage': {},
+                'charm': {}
+            }
+            base_stats['pools']['dual']['Willpower'] = {'perm': 3, 'temp': 3}
+            base_stats['pools']['dual']['Essence'] = {'perm': 15, 'temp': 15}
+            base_stats['pools']['dual']['Paradox'] = {'perm': 0, 'temp': 0}
+            base_stats['identity']['lineage']['Companion Type'] = {'perm': '', 'temp': ''}
+            base_stats['identity']['lineage']['Mage Faction'] = {'perm': '', 'temp': ''}
+            base_stats['identity']['personal']['Motivation'] = {'perm': '', 'temp': ''}
+            base_stats['identity']['personal']['Form'] = {'perm': '', 'temp': ''}
+
         else:  # Mortal or other
             base_stats['pools']['dual']['Willpower'] = {'perm': 1, 'temp': 1}
 
@@ -208,6 +256,39 @@ class CmdSelfStat(default_cmds.MuxCommand):
         # Check if character is approved
         if self.caller.db.approved:
             self.caller.msg("|rError: Approved characters cannot use chargen commands. Please contact staff for any needed changes.|n")
+            return
+
+        # Handle specialty command
+        if self.is_specialty:
+            if not self.stat_name or not self.specialty:
+                self.caller.msg("|rUsage: +selfstat/specialty <stat>=<specialty>|n")
+                return
+
+            # Fetch the stat definition from the database
+            try:
+                matching_stats = Stat.objects.filter(name__icontains=self.stat_name.strip())
+            except Exception as e:
+                self.caller.msg(f"|rError fetching stats: {e}|n")
+                return
+
+            if not matching_stats.exists():
+                self.caller.msg(f"|rNo stats matching '{self.stat_name}' found in the database.|n")
+                return
+
+            if len(matching_stats) > 1:
+                self.caller.msg(f"|rMultiple stats matching '{self.stat_name}' found: {[stat.name for stat in matching_stats]}. Please be more specific.|n")
+                return
+
+            stat = matching_stats.first()
+            stat_name = stat.name
+
+            specialties = self.caller.db.specialties or {}
+            if not specialties.get(stat_name):
+                specialties[stat_name] = []
+            specialties[stat_name].append(self.specialty)
+            self.caller.db.specialties = specialties
+
+            self.caller.msg(f"|gAdded specialty '{self.specialty}' to {stat_name}.|n")
             return
 
         if not self.stat_name:
@@ -341,6 +422,54 @@ class CmdSelfStat(default_cmds.MuxCommand):
                         self.caller.set_stat('virtues', 'moral', virtue, 1, temp=False)
                         self.caller.set_stat('virtues', 'moral', virtue, 1, temp=True)
 
+        # Special handling for Kith changes for Inanimae
+        if stat.name == 'Kith' and new_value.lower() == 'inanimae':
+            # Initialize Phyla field if it doesn't exist
+            if 'identity' not in self.caller.db.stats:
+                self.caller.db.stats['identity'] = {}
+            if 'lineage' not in self.caller.db.stats['identity']:
+                self.caller.db.stats['identity']['lineage'] = {}
+            
+            # Add Phyla field in lineage
+            self.caller.set_stat('identity', 'lineage', 'Phyla', '', temp=False)
+            self.caller.set_stat('identity', 'lineage', 'Phyla', '', temp=True)
+            
+            # Initialize powers structure for Slivers if it doesn't exist
+            if 'powers' not in self.caller.db.stats:
+                self.caller.db.stats['powers'] = {}
+            if 'sliver' not in self.caller.db.stats['powers']:
+                self.caller.db.stats['powers']['sliver'] = {}
+
+        # Special handling for Phyla changes
+        if stat.name == 'Phyla' and new_value in PHYLA:
+            # Validate that character is an Inanimae
+            kith = self.caller.get_stat('identity', 'lineage', 'Kith')
+            if kith != 'Inanimae':
+                self.caller.msg("|rError: Only Inanimae can have a Phyla.|n")
+                return
+
+            # Set up appropriate powers based on Phyla
+            if new_value in INANIMAE_POWERS:
+                # Clear existing powers first
+                if 'powers' in self.caller.db.stats:
+                    if 'sliver' in self.caller.db.stats['powers']:
+                        self.caller.db.stats['powers']['sliver'] = {}
+                    # Only initialize art category for Mannikins
+                    if new_value == 'Mannikins':
+                        if 'art' not in self.caller.db.stats['powers']:
+                            self.caller.db.stats['powers']['art'] = {}
+                    # Remove art category for non-Mannikins
+                    elif 'art' in self.caller.db.stats['powers']:
+                        del self.caller.db.stats['powers']['art']
+
+                # Set Phyla in lineage
+                self.caller.set_stat('identity', 'lineage', 'Phyla', new_value, temp=False)
+                self.caller.set_stat('identity', 'lineage', 'Phyla', new_value, temp=True)
+                
+                # Remove old Phyla location if it exists
+                if 'phyla' in self.caller.db.stats.get('identity', {}):
+                    del self.caller.db.stats['identity']['phyla']
+
         # Update the stat
         try:
             # When setting splat for the first time
@@ -350,7 +479,7 @@ class CmdSelfStat(default_cmds.MuxCommand):
                     return
                 
                 # Validate splat type
-                valid_splats = ['changeling', 'vampire', 'shifter', 'mage', 'mortal', 'mortal+']
+                valid_splats = ['changeling', 'vampire', 'shifter', 'companion', 'mage', 'mortal', 'mortal+']
                 if self.value_change.lower() not in valid_splats:
                     self.caller.msg(f"|rInvalid splat type. Must be one of: {', '.join(valid_splats).title()}|n")
                     return
@@ -432,9 +561,12 @@ class CmdSelfStat(default_cmds.MuxCommand):
     def apply_shifter_stats(self, character):
         """Apply shifter-specific stats"""
         shifter_type = character.get_stat('identity', 'lineage', 'Type')
-        breed = character.get_stat('identity', 'lineage', 'Breed') or ''
-        breed = breed.lower()
-        
+        if not shifter_type:
+            return
+
+        # Convert shifter_type to lowercase for comparison
+        shifter_type = shifter_type.lower()
+
         # Common Breed-based Gnosis values
         COMMON_BREED_GNOSIS = {
             'homid': 1,
@@ -443,12 +575,17 @@ class CmdSelfStat(default_cmds.MuxCommand):
             'animal-born': 5
         }
 
-        if shifter_type == 'Garou':
-            auspice = character.get_stat('identity', 'lineage', 'Auspice')
-            auspice = auspice.lower()
-            tribe = character.get_stat('identity', 'lineage', 'Tribe')
-            tribe = tribe.lower()
+        if shifter_type == 'garou':
+            # Get the values and ensure they're not None before converting to lowercase
+            breed = character.get_stat('identity', 'lineage', 'Breed')
+            breed = breed.lower() if breed else ''
             
+            auspice = character.get_stat('identity', 'lineage', 'Auspice')
+            auspice = auspice.lower() if auspice else ''
+            
+            tribe = character.get_stat('identity', 'lineage', 'Tribe')
+            tribe = tribe.lower() if tribe else ''
+
             # Set Auspice-based Rage
             GAROU_AUSPICE_RAGE = {
                 'ahroun': 5,
@@ -469,24 +606,16 @@ class CmdSelfStat(default_cmds.MuxCommand):
             # Set Tribe-based Willpower
             GAROU_TRIBE_WILLPOWER = {
                 'black furies': 3,
-                'black fury': 3,
                 'bone gnawers': 4,
-                'bone gnawer': 4,
                 'children of gaia': 4,
                 'fianna': 3,
                 'get of fenris': 3,
                 'glass walkers': 3,
-                'glass walker': 3,
                 'red talons': 3,
-                'red talon': 3,
                 'shadow lords': 3,
-                'shadow lord': 3,
                 'silent striders': 3,
-                'silent strider': 3,
                 'silver fangs': 3,
-                'silver fang': 3,
                 'stargazers': 4,
-                'stargazer': 4,
                 'uktena': 3,
                 'wendigo': 4
             }
@@ -494,8 +623,17 @@ class CmdSelfStat(default_cmds.MuxCommand):
                 character.set_stat('pools', 'dual', 'Willpower', GAROU_TRIBE_WILLPOWER[tribe], temp=False)
                 character.set_stat('pools', 'dual', 'Willpower', GAROU_TRIBE_WILLPOWER[tribe], temp=True)
 
+            # Initialize Renown
+            if 'advantages' not in character.db.stats:
+                character.db.stats['advantages'] = {}
+            if 'renown' not in character.db.stats['advantages']:
+                character.db.stats['advantages']['renown'] = {}
             
-        elif shifter_type == 'Ajaba':
+            for renown in ['Glory', 'Honor', 'Wisdom']:
+                character.set_stat('advantages', 'renown', renown, 0, temp=False)
+                character.set_stat('advantages', 'renown', renown, 0, temp=True)
+
+        elif shifter_type == 'ajaba':
             aspect = character.get_stat('identity', 'lineage', 'Aspect')
             
             AJABA_ASPECT_STATS = {
@@ -517,7 +655,7 @@ class CmdSelfStat(default_cmds.MuxCommand):
                 character.set_stat('pools', 'dual', 'Gnosis', stats['gnosis'], temp=False)
                 character.set_stat('pools', 'dual', 'Gnosis', stats['gnosis'], temp=True)
 
-        elif shifter_type == 'Ananasi':
+        elif shifter_type == 'ananasi':
             breed = character.get_stat('identity', 'lineage', 'Breed')
             # Remove Rage if it exists
             if 'Rage' in character.db.stats.get('pools', {}).get('dual', {}):
@@ -537,7 +675,7 @@ class CmdSelfStat(default_cmds.MuxCommand):
                 character.set_stat('pools', 'dual', 'Gnosis', 5, temp=False)
                 character.set_stat('pools', 'dual', 'Gnosis', 5, temp=True)
 
-        elif shifter_type == 'Bastet':
+        elif shifter_type == 'bastet':
             breed = character.get_stat('identity', 'lineage', 'Breed')
             tribe = character.get_stat('identity', 'lineage', 'Tribe')
             
@@ -587,7 +725,7 @@ class CmdSelfStat(default_cmds.MuxCommand):
                 character.set_stat('advantages', 'renown', renown, 0, temp=False)
                 character.set_stat('advantages', 'renown', renown, 0, temp=True)
 
-        elif shifter_type == 'Corax':
+        elif shifter_type == 'corax':
             character.set_stat('pools', 'dual', 'Rage', 1, temp=False)
             character.set_stat('pools', 'dual', 'Rage', 1, temp=True)
             character.set_stat('pools', 'dual', 'Gnosis', 6, temp=False)
@@ -595,7 +733,7 @@ class CmdSelfStat(default_cmds.MuxCommand):
             character.set_stat('pools', 'dual', 'Willpower', 3, temp=False)
             character.set_stat('pools', 'dual', 'Willpower', 3, temp=True)
 
-        elif shifter_type == 'Gurahl':
+        elif shifter_type == 'gurahl':
             breed = character.get_stat('identity', 'lineage', 'Breed')
             character.set_stat('pools', 'dual', 'Willpower', 6, temp=False)
             character.set_stat('pools', 'dual', 'Willpower', 6, temp=True)
@@ -611,7 +749,7 @@ class CmdSelfStat(default_cmds.MuxCommand):
                 character.set_stat('pools', 'dual', 'Gnosis', 5, temp=False)
                 character.set_stat('pools', 'dual', 'Gnosis', 5, temp=True)
 
-        elif shifter_type == 'Kitsune':
+        elif shifter_type == 'kitsune':
             breed = character.get_stat('identity', 'lineage', 'Breed')
             path = character.get_stat('identity', 'lineage', 'Kitsune Path')
             
@@ -654,7 +792,7 @@ class CmdSelfStat(default_cmds.MuxCommand):
                 character.set_stat('advantages', 'renown', renown, 0, temp=False)
                 character.set_stat('advantages', 'renown', renown, 0, temp=True)
 
-        elif shifter_type == 'Mokole':
+        elif shifter_type == 'mokole':
             breed = character.get_stat('identity', 'lineage', 'Breed')
             auspice = character.get_stat('identity', 'lineage', 'Auspice')
             # Try both 'Varna' and 'Varnas' before lowercasing
@@ -721,7 +859,56 @@ class CmdSelfStat(default_cmds.MuxCommand):
                 character.set_stat('advantages', 'renown', renown, 0, temp=False)
                 character.set_stat('advantages', 'renown', renown, 0, temp=True)
 
-        elif shifter_type == 'Nagah':
+        elif shifter_type == 'nuwisha':
+            breed = character.get_stat('identity', 'lineage', 'Breed')
+            
+            # Remove Rage if it exists
+            if 'Rage' in character.db.stats.get('pools', {}).get('dual', {}):
+                del character.db.stats['pools']['dual']['Rage']
+            
+            # Set base Willpower
+            character.set_stat('pools', 'dual', 'Willpower', 4, temp=False)
+            character.set_stat('pools', 'dual', 'Willpower', 4, temp=True)
+            
+            # Set Breed-based Gnosis
+            NUWISHA_BREED_GNOSIS = {
+                'homid': 1,
+                'animal-born': 5,
+                'latrani': 5  # Alternative name for animal-born
+            }
+            if breed in NUWISHA_BREED_GNOSIS:
+                character.set_stat('pools', 'dual', 'Gnosis', NUWISHA_BREED_GNOSIS[breed], temp=False)
+                character.set_stat('pools', 'dual', 'Gnosis', NUWISHA_BREED_GNOSIS[breed], temp=True)
+
+        elif shifter_type == 'ratkin':
+            breed = character.get_stat('identity', 'lineage', 'Breed')
+            aspect = character.get_stat('identity', 'lineage', 'Aspect')
+            
+            # Set base Willpower
+            character.set_stat('pools', 'dual', 'Willpower', 3, temp=False)
+            character.set_stat('pools', 'dual', 'Willpower', 3, temp=True)
+            
+            # Set Breed-based Gnosis
+            if breed in COMMON_BREED_GNOSIS:
+                character.set_stat('pools', 'dual', 'Gnosis', COMMON_BREED_GNOSIS[breed], temp=False)
+                character.set_stat('pools', 'dual', 'Gnosis', COMMON_BREED_GNOSIS[breed], temp=True)
+            
+            # Set Aspect-based Rage
+            RATKIN_ASPECT_RAGE = {
+                'tunnel runner': 1,
+                'shadow seer': 2,
+                'knife skulker': 3,
+                'warrior': 5,
+                'engineer': 2,
+                'plague lord': 3,
+                'munchmausen': 4,
+                'twitcher': 5
+            }
+            if aspect in RATKIN_ASPECT_RAGE:
+                character.set_stat('pools', 'dual', 'Rage', RATKIN_ASPECT_RAGE[aspect], temp=False)
+                character.set_stat('pools', 'dual', 'Rage', RATKIN_ASPECT_RAGE[aspect], temp=True)
+
+        elif shifter_type == 'nagah':
             breed = character.get_stat('identity', 'lineage', 'Breed')
             auspice = character.get_stat('identity', 'lineage', 'Auspice')
             
@@ -753,56 +940,7 @@ class CmdSelfStat(default_cmds.MuxCommand):
                 character.set_stat('pools', 'dual', 'Rage', NAGAH_AUSPICE_RAGE[auspice], temp=False)
                 character.set_stat('pools', 'dual', 'Rage', NAGAH_AUSPICE_RAGE[auspice], temp=True)
 
-        elif shifter_type == 'Nuwisha':
-            breed = character.get_stat('identity', 'lineage', 'Breed')
-            
-            # Remove Rage if it exists
-            if 'Rage' in character.db.stats.get('pools', {}).get('dual', {}):
-                del character.db.stats['pools']['dual']['Rage']
-            
-            # Set base Willpower
-            character.set_stat('pools', 'dual', 'Willpower', 4, temp=False)
-            character.set_stat('pools', 'dual', 'Willpower', 4, temp=True)
-            
-            # Set Breed-based Gnosis
-            NUWISHA_BREED_GNOSIS = {
-                'homid': 1,
-                'animal-born': 5,
-                'latrani': 5  # Alternative name for animal-born
-            }
-            if breed in NUWISHA_BREED_GNOSIS:
-                character.set_stat('pools', 'dual', 'Gnosis', NUWISHA_BREED_GNOSIS[breed], temp=False)
-                character.set_stat('pools', 'dual', 'Gnosis', NUWISHA_BREED_GNOSIS[breed], temp=True)
-
-        elif shifter_type == 'Ratkin':
-            breed = character.get_stat('identity', 'lineage', 'Breed')
-            aspect = character.get_stat('identity', 'lineage', 'Aspect')
-            
-            # Set base Willpower
-            character.set_stat('pools', 'dual', 'Willpower', 3, temp=False)
-            character.set_stat('pools', 'dual', 'Willpower', 3, temp=True)
-            
-            # Set Breed-based Gnosis
-            if breed in COMMON_BREED_GNOSIS:
-                character.set_stat('pools', 'dual', 'Gnosis', COMMON_BREED_GNOSIS[breed], temp=False)
-                character.set_stat('pools', 'dual', 'Gnosis', COMMON_BREED_GNOSIS[breed], temp=True)
-            
-            # Set Aspect-based Rage
-            RATKIN_ASPECT_RAGE = {
-                'tunnel runner': 1,
-                'shadow seer': 2,
-                'knife skulker': 3,
-                'warrior': 5,
-                'engineer': 2,
-                'plague lord': 3,
-                'munchmausen': 4,
-                'twitcher': 5
-            }
-            if aspect in RATKIN_ASPECT_RAGE:
-                character.set_stat('pools', 'dual', 'Rage', RATKIN_ASPECT_RAGE[aspect], temp=False)
-                character.set_stat('pools', 'dual', 'Rage', RATKIN_ASPECT_RAGE[aspect], temp=True)
-
-        elif shifter_type == 'Rokea':
+        elif shifter_type == 'rokea':
             breed = character.get_stat('identity', 'lineage', 'Breed')
             auspice = character.get_stat('identity', 'lineage', 'Auspice')
             
@@ -829,16 +967,6 @@ class CmdSelfStat(default_cmds.MuxCommand):
             if auspice in ROKEA_AUSPICE_RAGE:
                 character.set_stat('pools', 'dual', 'Rage', ROKEA_AUSPICE_RAGE[auspice], temp=False)
                 character.set_stat('pools', 'dual', 'Rage', ROKEA_AUSPICE_RAGE[auspice], temp=True)
-
-        elif shifter_type == 'Garou':
-            breed = character.get_stat('identity', 'lineage', 'Breed')
-            auspice = character.get_stat('identity', 'lineage', 'Auspice')
-            tribe = character.get_stat('identity', 'lineage', 'Tribe')
-
-            # Initialize the stats structure based on splat
-            self.caller.db.stats = self.initialize_stats(self.value_change)
-            self.caller.msg(f"|gInitialized character as {self.value_change} with basic stats.|n")
-            return
 
     def apply_mortalplus_stats(self, character):
         """Apply specific stats based on Mortal+ subtype."""

@@ -194,8 +194,12 @@ class Exit(DefaultExit):
             if hasattr(traversing_object, 'msg'):
                 traversing_object.msg(f"You cannot traverse {self.key}.")
             return False
-        
-        # Call parent's at_traverse
+        """Called when an object tries to use the exit."""
+        # Check if current location prevents exit use
+        if hasattr(traversing_object.location, "prevent_exit_use"):
+            if traversing_object.location.prevent_exit_use(self, traversing_object):
+                return False        
+            
         return super().at_traverse(traversing_object, target_location, **kwargs)
     
     def at_failed_traverse(self, traversing_object, **kwargs):

@@ -190,5 +190,45 @@
         "category": "powers",
         "stat_type": "realm",
         "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Aquis",
+        "description": "Aquis is the Sliver particularly practiced by the Ondines. The Inanimae who practices its arts learns to control water and tie into its connections to the mind, time, and keeping the peace. Those who learn its ways immediately learn to breathe and travel underwater as easily as they do on land.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "sliver",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Petros",
+        "description": "Petros is the Sliver particularly practiced by the Glomes. It allows the Inanimae wielding it to master stone, earth, and ores as well as the concepts of Strength and Endurance. Any Inanimae learning this Sliver immediately gains the ability to climb any rocky surface so long as their is at least a hint of hand or toe holds. (Difficulty reduced by 4).",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "sliver",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Pyros",
+        "description": "Pyros is the Sliver of Fire and the plaything of the Solimonds. Its wielders also gain the ability to manipulate emotions and even create them at higher levels. Those who learn this way of magic gain the ability to create small fires with the snap of a finger.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "sliver",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Stratus",
+        "description": "The specialty of the Parosemes, Stratus is the Sliver of the Air as well as travel and illusions. The Fae learning its ways learns to predict the weather with a Perception + Kenning roll with a difficulty of 5, knowing the weather 1 day in advance per success.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "sliver",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Verdage",
+        "description": "Verdage is the Sliver particularly practiced by the Kuberas. It is about the nurture and control of the natural environment and the ties that bind all of life together. Any Inanimae learning this Sliver can identify any plant species and know a little about it by rolling Perception + Verdage.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "sliver",
+        "values": [1, 2, 3, 4, 5]
     }
 ]

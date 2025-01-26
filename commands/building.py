@@ -41,7 +41,7 @@ class CmdSetRoomResources(ObjManipCommand):
 
     key = "+res"
     locks = "cmd:perm(Builder)"
-    help_category = "Building"
+    help_category = "Building and Housing"
 
     def func(self):
         if not self.args:
@@ -90,7 +90,7 @@ class CmdSetRoomType(ObjManipCommand):
 
     key = "+roomtype"
     locks = "cmd:perm(Builder)"
-    help_category = "Building"
+    help_category = "Building and Housing"
 
     def func(self):
         if not self.args:
@@ -130,7 +130,7 @@ class CmdSetUmbraDesc(Command):
 
     key = "@umbradesc"
     locks = "cmd:perm(Builders)"
-    help_category = "Building"
+    help_category = "Building and Housing"
 
     def func(self):
         """Execute command."""
@@ -159,7 +159,7 @@ class CmdSetGauntlet(Command):
 
     key = "@setgauntlet"
     locks = "cmd:perm(Builders)"
-    help_category = "Building"
+    help_category = "Building and Housing"
 
     def func(self):
         """Execute command."""
@@ -193,7 +193,7 @@ class CmdUmbraInfo(Command):
 
     key = "@umbrainfo"
     locks = "cmd:perm(Builders)"
-    help_category = "Building"
+    help_category = "Building and Housing"
 
     def func(self):
         """Execute command."""
@@ -230,7 +230,7 @@ class CmdSetHousing(MuxCommand):
     
     key = "+sethousing"
     locks = "cmd:perm(builders)"
-    help_category = "Building"
+    help_category = "Building and Housing"
     
     def func(self):
         location = self.caller.location
@@ -317,7 +317,7 @@ class CmdManageBuilding(MuxCommand):
     
     key = "+building"
     locks = "cmd:perm(builders)"
-    help_category = "Building"
+    help_category = "Building and Housing"
     
     def initialize_housing_data(self, location):
         """Helper method to initialize housing data"""
@@ -639,7 +639,7 @@ class CmdSetLock(MuxCommand):
     key = "+lock"
     aliases = ["+locks"]
     locks = "cmd:perm(builders)"
-    help_category = "Building"
+    help_category = "Building and Housing"
     
     def format_lock_table(self, target):
         """Helper method to format lock table consistently"""
@@ -790,7 +790,7 @@ class CmdDesc(MuxCommand):
     aliases = ["@desc/edit"]
     switch_options = ("edit",)
     locks = "cmd:perm(desc) or perm(Builder) or self()"
-    help_category = "Building"
+    help_category = "Building and Housing"
 
     def edit_handler(self):
         if self.rhs:

@@ -46,7 +46,7 @@ STAT_TYPES = [
     ('art', 'Art'),
     ('splat', 'Splat'),
     ('edge', 'Edge'),
-    ('bygone_power', 'Bygone Power'),
+    ('special_advantage', 'Special Advantage'),
     ('discipline', 'Discipline'),
     ('realm', 'Realm'),
     ('sphere', 'Sphere'),
@@ -93,11 +93,17 @@ STAT_TYPES = [
     ('synergy', 'Synergy'),
     ('paradox', 'Paradox'),
     ('kith', 'Kith'),
+    ('phyla', 'Phyla'),
     ('seeming', 'Seeming'),
     ('house', 'House'),
     ('seelie-legacy', 'Seelie Legacy'),
     ('unseelie-legacy', 'Unseelie Legacy'),
     ('court', 'Court'),
+    ('tribe', 'Tribe'),
+    ('camp', 'Camp'),
+    ('breed', 'Breed'),
+    ('clan', 'Clan'),
+    ('companion_type', 'Companion Type'),
     ('mortalplus_type', 'Mortal+ Type'),
     ('varna', 'Varna'),
 ]
@@ -674,7 +680,7 @@ SEEMING = {
 
 KITH = {
     'Boggan', 'Clurichaun', 'Eshu', 'Nocker', 'Piskie', 'Pooka', 'Redcap', 'Satyr', 
-    'Selkie', 'Arcadian Sidhe', 'Autumn Sidhe', 'Sluagh', 'Troll'
+    'Selkie', 'Arcadian Sidhe', 'Autumn Sidhe', 'Sluagh', 'Troll', 'Inanimae'
 }
 
 SEELIE_LEGACIES = {
@@ -688,7 +694,7 @@ UNSEELIE_LEGACIES = {
 }
 
 ARTS = {
-    'Autumn', 'Chicanery', 'Chronos', 'Contract', 'Dragon’s Ire', 'Legerdemain', 'Metamorphosis', 'Naming', 
+    'Autumn', 'Chicanery', 'Chronos', 'Contract', "Dragon's Ire", 'Legerdemain', 'Metamorphosis', 'Naming', 
     'Oneiromancy', 'Primal', 'Pyretics', 'Skycraft', 'Soothsay', 'Sovereign', 'Spring', 'Summer', 'Wayfare', 'Winter'
 }
 
@@ -880,3 +886,43 @@ class CharacterImage(SharedMemoryModel):
         """Clean up the image file when deleting the model."""
         self.image.delete(save=False)
         super().delete(*args, **kwargs) 
+
+COMPANION_TYPES = {
+    'Alien', 'Animal', 'Bygone', 'Construct', 'Familiar', 
+    'Object', 'Reanimate', 'Robot', 'Spirit'
+}
+
+POWER_SOURCE_TYPES = {'Construct', 'Object', 'Robot'}
+
+# Add to existing MORTALPLUS_TYPES or create new constant
+COMPANION_POWERS = {
+    'special_advantage': ['Alacrity', 'Human Guise'],
+    'charm': ['Blast']
+}
+
+# Add after REALMS constant
+PHYLA = {
+    'Kuberas',    # Plants
+    'Ondines',    # Water
+    'Parosemes',  # Air
+    'Glomes',     # Earth
+    'Solimonds',  # Fire
+    'Mannikins'   # Human-shaped objects
+}
+
+INANIMAE_POWERS = {
+    'Kuberas': ['Sliver'],
+    'Ondines': ['Sliver'],
+    'Parosemes': ['Sliver'],
+    'Glomes': ['Sliver'],
+    'Solimonds': ['Sliver'],
+    'Mannikins': ['Sliver', 'Art']
+} 
+
+SLIVERS = {
+    'verdage': ['Verdage'],
+    'aquis': ['Aquis'],
+    'stratus': ['Stratus'],
+    'petros': ['Petros'],
+    'pyros': ['Pyros']
+}

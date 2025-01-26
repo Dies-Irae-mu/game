@@ -17,7 +17,7 @@ class CmdShortDesc(MuxCommand):
       shortdesc Bob=Short and stocky
     """
     key = "shortdesc"
-    help_category = "General"
+    help_category = "Chargen & Character Info"
 
     def parse(self):
         """

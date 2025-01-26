@@ -40,7 +40,7 @@ class CmdOOC(MuxCommand):
     """
     key = "ooc"
     locks = "cmd:all()"
-    help_category = "Communication"
+    help_category = "Communications"
 
     def func(self):
         if not self.args:
@@ -253,7 +253,7 @@ class CmdSummon(AdminCommand):
 
     key = "+summon"
     locks = "cmd:perm(builders) or perm(storyteller)"
-    help_category = "Admin"
+    help_category = "Staff"
 
     def func(self):
         caller = self.caller
@@ -328,7 +328,7 @@ class CmdJoin(AdminCommand):
 
     key = "+join"
     locks = "cmd:perm(builders) or perm(storyteller)"
-    help_category = "Admin"
+    help_category = "Staff"
 
     def func(self):
         caller = self.caller

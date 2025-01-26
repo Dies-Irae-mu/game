@@ -1,3 +1,4 @@
+from world.wod20th.models import POWER_SOURCE_TYPES
 from evennia.commands.default.muxcommand import MuxCommand
 from world.wod20th.models import Stat
 
@@ -17,7 +18,7 @@ class CmdCheck(MuxCommand):
     key = "+check"
     aliases = ["check"]
     locks = "cmd:all() or perm(Builder) or perm(Admin) or perm(Developer)"
-    help_category = "Character"
+    help_category = "Chargen & Character Info"
 
     # Define Combo Disciplines and their prerequisites
     COMBO_DISCIPLINES = {
@@ -831,6 +832,28 @@ class CmdCheck(MuxCommand):
                 for flaw in category_flaws:
                     if flaw not in notes:
                         results['errors'].append(f"Missing explanation note for flaw: {flaw}")
+
+        elif splat == 'companion':
+            # Check required Companion attributes
+            required_companion = ['Companion Type', 'Mage Faction', 'Motivation']
+            for attr in required_companion:
+                if not character.db.stats.get('identity', {}).get('lineage', {}).get(attr, {}).get('perm'):
+                    results['errors'].append(f"Missing required lineage attribute for Companion: {attr}")
+
+            # Verify companion type and appropriate flaw
+            companion_type = character.get_stat('identity', 'lineage', 'Companion Type', '').lower()
+            if companion_type in POWER_SOURCE_TYPES:
+                if not character.get_stat('flaws', 'flaw', 'Power Source'):
+                    results['errors'].append(f"Companion of type {companion_type} must have Power Source flaw")
+            else:
+                if not character.get_stat('flaws', 'flaw', 'Thaumivore'):
+                    results['errors'].append(f"Companion must have Thaumivore flaw")
+
+            # Check required notes
+            required_companion_notes = ['Origin', 'Description']
+            for note_name in required_companion_notes:
+                if note_name not in notes:
+                    results['errors'].append(f"Companion character missing required '{note_name}' note")
 
     def calculate_xp(self, character, results):
         """Calculate XP expenditure if character has starting XP."""

@@ -35,7 +35,8 @@ class CmdLanguage(MuxCommand):
     key = "+language"
     aliases = ["+lang", "+languages"]
     locks = "cmd:all()"
-
+    help_category = "RP Commands"
+    
     def func(self):
         """Execute command."""
         if "check" in self.switches:
@@ -364,6 +365,11 @@ class CmdLanguage(MuxCommand):
         """Display all available languages organized by region."""
         # Define categories and their languages
         categories = {
+            "San Diego Common Languages": [
+                "Spanish", "Filipino/Tagalog", "Chinese", "Vietnamese", "Korean", "Japanese", 
+                "Mon-Khmer (Cambodian)", "Hmong", "Thai", "Laotian"
+            ],
+
             "Major World Languages": [
                 "Arabic", "Bengali", "Mandarin", "English", "French", 
                 "German", "Hindi", "Indonesian", "Italian", "Japanese", "Korean",

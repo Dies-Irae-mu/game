@@ -46,7 +46,7 @@ class CmdNotes(MuxCommand):
     key = "+note"
     aliases = ["+notes"]
     locks = "cmd:all()"
-    help_category = "Character"
+    help_category = "Chargen & Character Info"
 
     def search_for_character(self, search_string):
         # First, try to find by exact name match

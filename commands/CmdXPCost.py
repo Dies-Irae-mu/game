@@ -22,7 +22,7 @@ class CmdXPCost(default_cmds.MuxCommand):
     key = "+costs"
     aliases = ["costs"]
     locks = "cmd:all()"
-    help_category = "Character"
+    help_category = "General"
 
     def func(self):
         """Execute command"""

@@ -29,6 +29,7 @@ class CmdPage(DefaultCmdPage):
     """
     key = "page"
     aliases = ["tell", "p"]
+    help_category = "Communications"
 
     def func(self):
         """Implement function using the parent"""

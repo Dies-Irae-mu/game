@@ -31,7 +31,7 @@ class CmdRoll(default_cmds.MuxCommand):
     key = "+roll"
     aliases = ["roll"]
     locks = "cmd:all()"
-    help_category = "Game"
+    help_category = "RP Commands"
 
     def func(self):
         if self.switches and "log" in self.switches:
@@ -307,15 +307,43 @@ class CmdRoll(default_cmds.MuxCommand):
         Calculate dice penalty based on character's health levels.
         Returns the number of dice to subtract from the pool.
         """
-        # Get injury level directly
-        injury_level = character.db.injury_level
+        # Get current damage levels
+        bashing = character.db.bash or 0
+        lethal = character.db.leth or 0
+        aggravated = character.db.agg or 0
+        
+        # Calculate total damage
+        total_damage = bashing + lethal + aggravated
+        
+        # Get base health levels (7) plus any bonuses
+        base_health = 7
+        
+        # Check for Huge Size merit
+        huge_size = character.get_stat('merits', 'physical', 'Huge Size', temp=False)
+        if not huge_size:
+            huge_size = character.get_stat('merits', 'merit', 'Huge Size', temp=False)
+        if huge_size:
+            base_health += 1
+        
+        # Check for Glome phyla
+        glome_phyla = character.get_stat('identity', 'lineage', 'Phyla') == 'Glome'
+        if not glome_phyla:
+            glome_phyla = character.get_stat('identity', 'phyla', 'Phyla') == 'Glome'
+        if glome_phyla:
+            base_health += 2
+        
+        # Check for Troll kith
+        if character.get_stat('identity', 'lineage', 'Kith') == 'Troll':
+            base_health += 1
 
-        # Calculate penalty based on injury level
-        if injury_level == 'Hurt' or injury_level == 'Injured':
+        # Calculate penalty based on damage relative to total health
+        if total_damage <= 2:  # First two health levels (Bruised)
+            return 0
+        elif total_damage <= 4:  # Hurt/Injured (-1)
             return 1
-        elif injury_level == 'Wounded' or injury_level == 'Mauled':
+        elif total_damage <= 6:  # Wounded/Mauled (-2)
             return 2
-        elif injury_level == 'Crippled':
+        elif total_damage <= base_health - 2:  # Crippled (-5)
             return 5
         
         return 0

@@ -4,6 +4,8 @@ from evennia.utils.evtable import EvTable
 from datetime import datetime
 from decimal import Decimal, ROUND_DOWN, InvalidOperation
 from typeclasses.characters import Character
+from django.db import transaction
+from evennia.utils import logger
 
 class CmdXP(default_cmds.MuxCommand):
     """
@@ -29,10 +31,44 @@ class CmdXP(default_cmds.MuxCommand):
     key = "+xp"
     aliases = ["xp"]
     locks = "cmd:all()"
-    help_category = "Character"
+    help_category = "General"
+    
     # show my xp    
     def func(self):
         """Execute command"""
+        if not self.args:
+            # Display own XP info
+            self._display_xp(self.caller)
+            return
+
+        # Process switches
+        if self.switches:
+            if "sub" in self.switches:
+                if not self.caller.check_permstring("builders"):
+                    self.caller.msg("You don't have permission to remove XP.")
+                    return
+                
+                try:
+                    with transaction.atomic():
+                        # ... existing parsing code ...
+                        
+                        # Find target character
+                        target = search_object(target_name.strip(), 
+                                            typeclass='typeclasses.characters.Character')
+                        if not target:
+                            self.caller.msg(f"Character '{target_name}' not found.")
+                            return
+                        target = target[0]
+                        
+                        # Refresh target data inside transaction
+                        target.refresh_from_db()
+                        
+                        # Process XP subtraction
+                except Exception as e:
+                    logger.error(f"Error in XP subtraction: {str(e)}")
+                    self.caller.msg("An error occurred while processing the XP subtraction.")
+                    return
+        
         if not self.args and not self.switches:
             self._display_xp(self.caller)
             return
@@ -47,8 +83,8 @@ class CmdXP(default_cmds.MuxCommand):
                 
             # Staff check - allow builders or higher to view others
             if not (self.caller.check_permstring("builders") or 
-                   self.caller.check_permstring("Wizards") or 
-                   self.caller.check_permstring("Immortals")):
+                   self.caller.check_permstring("admin") or 
+                   self.caller.check_permstring("superuser")):
                 self.caller.msg("You don't have permission to view others' XP.")
                 return
                 
@@ -386,29 +422,36 @@ class CmdXP(default_cmds.MuxCommand):
                 self.caller.msg(f"Error during XP distribution: {str(e)}")
                 return
 
-    def _display_xp(self, character):
-        """Displays XP information for a character."""
-        xp = character.db.xp
-        
-        if not xp or not isinstance(xp, dict):
-            # Initialize XP if it doesn't exist or isn't a dict
-            xp = {
-                'total': Decimal('0.00'),
-                'current': Decimal('0.00'),
-                'spent': Decimal('0.00'),
-                'ic_earned': Decimal('0.00'),  
-                'monthly_spent': Decimal('0.00'),
-                'last_reset': datetime.now(),
-                'spends': [],
-                'last_scene': None,
-                'scenes_this_week': 0
-            }
-            character.db.xp = xp
+    def _display_xp(self, target):
+        """Display XP information for a character"""
+        with transaction.atomic():
+            target.refresh_from_db()
+            xp_data = target.db.xp
+            
+            if not xp_data:
+                self.caller.msg(f"No XP data found for {target.key}")
+                return
+                
+            # Change 'xp' and 'character' to 'xp_data' and 'target'
+            if not xp_data or not isinstance(xp_data, dict):
+                # Initialize XP if it doesn't exist or isn't a dict
+                xp_data = {
+                    'total': Decimal('0.00'),
+                    'current': Decimal('0.00'),
+                    'spent': Decimal('0.00'),
+                    'ic_earned': Decimal('0.00'),  
+                    'monthly_spent': Decimal('0.00'),
+                    'last_reset': datetime.now(),
+                    'spends': [],
+                    'last_scene': None,
+                    'scenes_this_week': 0
+                }
+                target.db.xp = xp_data
             
         total_width = 78
             
         # header
-        title = f" {character.name}'s XP "
+        title = f" {target.name}'s XP "
         title_len = len(title)
         dash_count = (total_width - title_len) // 2
         header = f"{'|b-|n' * dash_count}{title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
@@ -416,8 +459,8 @@ class CmdXP(default_cmds.MuxCommand):
         # Calculate IC XP (from weekly awards and scene rewards)
         ic_xp = Decimal('0.00')
         award_xp = Decimal('0.00')
-        if xp.get('spends'):
-            for entry in xp['spends']:
+        if xp_data.get('spends'):
+            for entry in xp_data['spends']:
                 if entry['type'] == 'receive':
                     if entry['reason'] == 'Weekly Activity':
                         ic_xp += Decimal(str(entry['amount']))
@@ -425,7 +468,7 @@ class CmdXP(default_cmds.MuxCommand):
                         award_xp += Decimal(str(entry['amount']))
         
         # Update the stored IC XP value
-        xp['ic_earned'] = ic_xp
+        xp_data['ic_earned'] = ic_xp
         
         # xp section
         exp_title = "|y Experience Points |n"
@@ -438,12 +481,12 @@ class CmdXP(default_cmds.MuxCommand):
         
         # left column values
         ic_xp_display = f"{'|wIC XP:|n':<{left_col_width}}{ic_xp:>{right_col_width}.2f}"
-        total_xp = f"{'|wTotal XP:|n':<{left_col_width}}{xp['total']:>{right_col_width}.2f}"
-        current_xp = f"{'|wCurrent XP:|n':<{left_col_width}}{xp['current']:>{right_col_width}.2f}"
+        total_xp = f"{'|wTotal XP:|n':<{left_col_width}}{xp_data['total']:>{right_col_width}.2f}"
+        current_xp = f"{'|wCurrent XP:|n':<{left_col_width}}{xp_data['current']:>{right_col_width}.2f}"
         
         # right column values
         award_xp_display = f"{'|wAward XP:|n':<{left_col_width}}{award_xp:>{right_col_width}.2f}"
-        spent_xp = f"{'|wSpent XP:|n':<{left_col_width}}{xp['spent']:>{right_col_width}.2f}"
+        spent_xp = f"{'|wSpent XP:|n':<{left_col_width}}{xp_data['spent']:>{right_col_width}.2f}"
         
         # and then we bring it together
         spacing = " " * 14  # column spacing
@@ -459,8 +502,8 @@ class CmdXP(default_cmds.MuxCommand):
         
         # format the recent spends
         activity_section = ""
-        if xp.get('spends'):
-            for entry in xp['spends']:
+        if xp_data.get('spends'):
+            for entry in xp_data['spends']:
                 timestamp = datetime.fromisoformat(entry['timestamp'])
                 if entry['type'] == 'spend':
                     # Format spend entries
@@ -487,7 +530,7 @@ class CmdXP(default_cmds.MuxCommand):
         footer = f"{'|b-|n' * total_width}"
         
         # Add scene tracking status
-        scene_data = character.db.scene_data
+        scene_data = target.db.scene_data
         if scene_data and isinstance(scene_data, dict):  # Verify it's a dictionary
             scene_title = "|y Scene Status |n"
             scene_title_len = len(scene_title)
@@ -530,7 +573,7 @@ class CmdXP(default_cmds.MuxCommand):
                 'last_activity': None,
                 'completed_scenes': 0
             }
-            character.db.scene_data = scene_data
+            target.db.scene_data = scene_data
             
             display = (
                 header +
@@ -543,7 +586,8 @@ class CmdXP(default_cmds.MuxCommand):
         
         self.caller.msg(display) 
 
-    def _determine_stat_category(self, stat_name):
+    @staticmethod
+    def _determine_stat_category(stat_name):
         """Determine the category and type of a stat based on its name."""
         # Basic attributes (in physical/social/mental subcategories)
         physical_attrs = ['Strength', 'Dexterity', 'Stamina']

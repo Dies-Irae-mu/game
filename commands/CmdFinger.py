@@ -32,7 +32,7 @@ class CmdFinger(MuxCommand):
     key = "+finger"
     aliases = ["finger", "&finger_*"]
     locks = "cmd:all()"
-    help_category = "Social"
+    help_category = "Chargen & Character Info"
 
     def get_idle_time(self, target):
         """

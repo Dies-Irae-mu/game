@@ -24,7 +24,7 @@ class CmdSpendGain(default_cmds.MuxCommand):
     key = "+spend"
     aliases = ["+gain"]
     locks = "cmd:all()"
-    help_category = "Character"
+    help_category = "RP Commands"
 
     def func(self):
         caller = self.caller

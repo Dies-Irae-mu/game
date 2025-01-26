@@ -13,7 +13,7 @@ class CmdLFRP(default_cmds.MuxCommand):
     key = "+lfrp"
     aliases = ["lfrp"]
     locks = "cmd:all()"
-    help_category = "General"
+    help_category = "RP Commands"
     
     def func(self):
         if not self.args:

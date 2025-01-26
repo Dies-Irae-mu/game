@@ -34,11 +34,60 @@ class RoomParent(DefaultRoom):
         if hasattr(looker, 'check_permstring') and looker.check_permstring("builders"):
             name += f"({self.dbref})"
 
+        # Add indicators for special realm rooms
+        if self.db.umbra_only:
+            name = f"|B[Umbral Realm]|n {name}"
+        elif self.db.fae_only:
+            name = f"|m[Dreaming]|n {name}"
+
         return name
+
+    def can_perceive_fae(self, looker):
+        """
+        Check if a character can perceive the Dreaming.
+        
+        Args:
+            looker (Object): The character attempting to perceive the room.
+            
+        Returns:
+            bool: True if the character can perceive Dreaming, False otherwise.
+        """
+        if not looker:
+            return False
+            
+        # Check if the character has stats
+        if not hasattr(looker, 'db') or not looker.db.stats:
+            return False
+
+        # Get the character's splat
+        splat = (looker.db.stats.get('other', {})
+                              .get('splat', {})
+                              .get('Splat', {})
+                              .get('perm', ''))
+                
+        # Check if the character is a Changeling
+        if splat == "Changeling":
+            return True
+            
+        # Check if the character is Kinain
+        if (splat == "Mortal+" and 
+            looker.db.stats.get('identity', {})
+                          .get('lineage', {})
+                          .get('Mortal+ Type', {})
+                          .get('perm', '') == "Kinain"):
+            return True
+            
+        return False
 
     def return_appearance(self, looker, **kwargs):
         if not looker:
             return ""
+
+        # Handle special realm rooms
+        if self.db.umbra_only and not looker.tags.get("in_umbra", category="state"):
+            return "This place exists only in the Umbra. You cannot perceive it from the material world."
+        elif self.db.fae_only and not self.can_perceive_fae(looker):
+            return "This place exists only in the Dreaming. You cannot perceive it with mortal eyes."
 
         name = self.get_display_name(looker, **kwargs)
         
@@ -46,12 +95,17 @@ class RoomParent(DefaultRoom):
         in_umbra = looker.tags.get("in_umbra", category="state")
         peeking_umbra = kwargs.get("peek_umbra", False)
         
-        # Set color scheme based on umbra state
-        border_color = "|B" if (in_umbra or peeking_umbra) else "|r"
+        # Set color scheme based on realm type and state
+        if self.db.fae_only:
+            border_color = "|m"  # Magenta for Dreaming
+        else:
+            border_color = "|B" if (in_umbra or peeking_umbra) else "|r"
         
         # Choose the appropriate description
         if (in_umbra or peeking_umbra) and self.db.umbra_desc:
             desc = self.db.umbra_desc
+        elif looker.tags.get("in_dreaming", category="state") and self.db.fae_desc:
+            desc = self.db.fae_desc
         else:
             desc = self.db.desc
 
@@ -69,11 +123,10 @@ class RoomParent(DefaultRoom):
         characters = []
         for obj in self.contents:
             if obj.has_account:
-                # Use tag state for comparison
-                obj_umbra_tag = obj.tags.get("in_umbra", category="state")
-                looker_umbra_tag = looker.tags.get("in_umbra", category="state")
-                
-                if obj_umbra_tag == looker_umbra_tag:
+                # Check if they share the same reality layer
+                if ((looker.tags.get("in_umbra", category="state") and obj.tags.get("in_umbra", category="state")) or
+                    (looker.tags.get("in_material", category="state") and obj.tags.get("in_material", category="state")) or
+                    (looker.tags.get("in_dreaming", category="state") and obj.tags.get("in_dreaming", category="state"))):
                     characters.append(obj)
 
         if characters:
@@ -99,25 +152,33 @@ class RoomParent(DefaultRoom):
                 # Combine all parts with proper spacing
                 string += f"{name_part}{idle_part} {ANSIString(shortdesc_str)}\n"
 
-        # List all objects in the room
-        objects = [obj for obj in self.contents if not obj.has_account and not obj.destination]
+        # List all objects in the room that are in the same reality layer
+        objects = []
+        for obj in self.contents:
+            if not obj.has_account and not obj.destination:
+                # Check if object is visible in current reality layer
+                if ((looker.tags.get("in_umbra", category="state") and obj.tags.get("in_umbra", category="state")) or
+                    (looker.tags.get("in_material", category="state") and obj.tags.get("in_material", category="state")) or
+                    (looker.tags.get("in_dreaming", category="state") and obj.tags.get("in_dreaming", category="state"))):
+                    objects.append(obj)
+
         if objects:
             string += divider("Objects", width=78, fillchar=ANSIString(f"{border_color}-|n")) + "\n"
             
-            # get shordesc or dhoe s blsnk string
             for obj in objects:
                 if obj.db.shortdesc:
                     shortdesc = obj.db.shortdesc
                 else:
                     shortdesc = ""
 
+                string += " " + ANSIString(f"{obj.get_display_name(looker)}").ljust(25) + ANSIString(f"{shortdesc}").ljust(53, ' ') + "\n"
 
-            # if looker builder+ show dbref.
+        # List all exits that are accessible in the current reality layer
+        exits = []
+        for ex in self.contents:
+            if ex.destination and ex.access(looker, "view"):
+                exits.append(ex)
 
-                string +=" "+  ANSIString(f"{obj.get_display_name(looker)}").ljust(25) + ANSIString(f"{shortdesc}") .ljust(53, ' ') + "\n"
-
-        # List all exits
-        exits = [ex for ex in self.contents if ex.destination and ex.access(looker, "view")]
         if exits:
             direction_strings = []
             exit_strings = []
@@ -154,6 +215,14 @@ class RoomParent(DefaultRoom):
         padding = 78 - footer_length - 2  # -2 for the brackets
 
         string += ANSIString(f"{border_color}{'-' * padding}[|c{footer_text}{border_color}]|n")
+
+        # Add freezer warning if applicable
+        if self.db.roomtype == "freezer":
+            warning = "\n|r[FROZEN ROOM - No Speaking or Movement Allowed]|n\n"
+            # Insert warning after the room name but before description
+            lines = string.split('\n')
+            lines.insert(2, warning)  # Insert after header
+            string = '\n'.join(lines)
 
         return string
 
@@ -199,6 +268,7 @@ class RoomParent(DefaultRoom):
     def get_gauntlet_difficulty(self):
         """
         Returns the Gauntlet difficulty for this room, including any temporary modifiers.
+        Takes into account character merits that affect the Gauntlet.
         """
         base_difficulty = self.db.gauntlet_difficulty or 6  # Default difficulty
         temp_modifier = self.db.temp_gauntlet_modifier or 0
@@ -213,28 +283,21 @@ class RoomParent(DefaultRoom):
             self.db.temp_gauntlet_expiry = None
             return base_difficulty
         
-        return max(1, base_difficulty + temp_modifier)  # Ensure difficulty never goes below 1
-
-    def modify_gauntlet(self, modifier, duration=0):
-        """
-        Temporarily modifies the Gauntlet difficulty of the room.
+        # Calculate final difficulty
+        final_difficulty = base_difficulty + temp_modifier
         
-        Args:
-            modifier (int): The amount to modify the Gauntlet by (negative numbers lower it)
-            duration (int): How long in seconds the modification should last (0 for permanent)
-        """
-        self.db.temp_gauntlet_modifier = modifier
+        # If this is being called in the context of a character's action,
+        # check for Natural Channel merit
+        if hasattr(self, 'ndb') and self.ndb.current_stepper:
+            character = self.ndb.current_stepper
+            if (hasattr(character, 'db') and 
+                character.db.stats and 
+                'merits' in character.db.stats and 
+                'supernatural' in character.db.stats['merits'] and
+                'Natural Channel' in character.db.stats['merits']['supernatural']):
+                final_difficulty -= 1
         
-        if duration > 0:
-            self.db.temp_gauntlet_expiry = datetime.now().timestamp() + duration
-        else:
-            self.db.temp_gauntlet_expiry = None
-        
-        # Announce the change if it's significant
-        if modifier < 0:
-            self.msg_contents("The Gauntlet seems to thin in this area...")
-        elif modifier > 0:
-            self.msg_contents("The Gauntlet seems to thicken in this area...")
+        return max(1, final_difficulty)  # Ensure difficulty never goes below 1
 
     def modify_gauntlet(self, modifier, duration=0):
         """
@@ -330,6 +393,12 @@ class RoomParent(DefaultRoom):
         """
         Send a message to all objects inside the room, excluding the sender and those in a different plane.
         """
+        if from_obj and hasattr(from_obj, "location"):
+            if from_obj.location.db.roomtype == "freezer":
+                if from_obj.has_account:  # Only block player characters
+                    from_obj.msg("|rYou are frozen and cannot speak.|n")
+                    return
+        
         contents = self.contents
         if exclude:
             exclude = make_iter(exclude)
@@ -347,60 +416,184 @@ class RoomParent(DefaultRoom):
 
             obj.msg(text=text, from_obj=from_obj, mapping=mapping, **kwargs)
 
+    def can_step_sideways(self, character):
+        """
+        Check if a character can step sideways based on their type and conditions.
+        Returns (bool, str) tuple: (can_step, reason)
+        """
+        # Get character's splat and breed
+        stats = character.db.stats
+        if not stats or 'other' not in stats or 'splat' not in stats['other']:
+            return False, "Error: Character splat not found."
+
+        splat = stats['other']['splat'].get('Splat', {}).get('perm', '')
+        
+        # Check if character has Step Sideways merit
+        has_step_sideways = (
+            stats.get('merits', {}).get('supernatural', {}).get('Step Sideways', {}).get('perm', 0) > 0
+        )
+
+        # If they have Step Sideways merit, they can always step sideways
+        if has_step_sideways:
+            return True, ""
+
+        # Check specific Fera restrictions
+        if splat == "Ananasi":
+            # Check if in Crawlerling form
+            current_form = character.db.current_form
+            if current_form != "Crawlerling":
+                return False, "You must be in Crawlerling form to step sideways."
+            # Note: Gauntlet difficulty inversion is handled in get_gauntlet_difficulty
+            return True, ""
+
+        elif splat == "Bastet":
+            # Check for Walking Between Worlds gift
+            has_wbw = (
+                stats.get('powers', {}).get('gift', {}).get('Walking Between Worlds', {}).get('perm', 0) > 0
+            )
+            if has_wbw:
+                return True, ""
+            # Check if in Den-Realm
+            if self.db.roomtype != "Den-Realm":
+                return False, "You can only step sideways within your Den-Realm or with the Walking Between Worlds gift."
+            return True, ""
+
+        elif splat == "Gurahl":
+            # Check if in Umbral Glen
+            if self.db.roomtype != "Umbral-Glen":
+                return False, "You can only step sideways from within an Umbral Glen or via the Rite of Rending the Gauntlet."
+            return True, ""
+
+        elif splat == "Mokolé":
+            # Check for Walking Between Worlds gift
+            has_wbw = (
+                stats.get('powers', {}).get('gift', {}).get('Walking Between Worlds', {}).get('perm', 0) > 0
+            )
+            if not has_wbw:
+                return False, "You require the Walking Between Worlds gift to enter the Umbra."
+            return True, ""
+
+        elif splat == "Nagah":
+            # Check if within an Ananta
+            if self.db.roomtype != "Ananta":
+                return False, "You can only step sideways within an Ananta."
+            # Check if it's the character's attuned Ananta
+            if character.db.attuned_ananta != self.key:
+                return False, "You can only step sideways within your attuned Ananta."
+            return True, ""
+
+        elif splat == "Ratkin":
+            # Check if alone or only with spirits/Ratkin
+            others_present = False
+            for obj in self.contents:
+                if obj != character and obj.has_account:
+                    if not hasattr(obj, 'db') or not obj.db.stats:
+                        others_present = True
+                        break
+                    other_splat = obj.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+                    if other_splat != "Ratkin" and not obj.tags.get("spirit"):
+                        others_present = True
+                        break
+            if others_present:
+                return False, "You can only step sideways when alone or in the presence of spirits or fellow Ratkin."
+            return True, ""
+
+        elif splat == "Rokea":
+            # Check for Swim Sideways merit, Enter Sea's Soul gift, or Rite of Passing the Net
+            has_swim = (
+                stats.get('merits', {}).get('supernatural', {}).get('Swim Sideways', {}).get('perm', 0) > 0
+            )
+            has_ess = (
+                stats.get('powers', {}).get('gift', {}).get("Enter Sea's Soul", {}).get('perm', 0) > 0
+            )
+            has_rite = (
+                stats.get('powers', {}).get('rite', {}).get('Rite of the Passing Net', {}).get('perm', 0) > 0
+            )
+            if not (has_swim or has_ess or has_rite):
+                return False, "You require the Swim Sideways merit, Enter Sea's Soul gift, or Rite of Passing the Net to swim sideways."
+            return True, ""
+
+        # Default case (Garou and others)
+        return True, ""
+
     def step_sideways(self, character):
         """
         Allows a character to step sideways into the Umbra.
         """
-        difficulty = self.get_gauntlet_difficulty()
-        successes, ones = self.roll_gnosis(character, difficulty)
-        
-        if successes > 0:
-            character.tags.remove("in_material", category="state")
-            character.tags.add("in_umbra", category="state")
-            character.msg("You successfully step sideways into the Umbra.")
-            self.msg_contents(f"{character.name} shimmers and fades from view as they step into the Umbra.", exclude=character, from_obj=character)
-            return True
-        elif successes == 0 and ones > 0:
-            # Botch
-            character.msg("You catastrophically fail to step sideways into the Umbra.")
-            self.msg_contents(f"{character.name} seems to flicker for a moment, but remains in place.", exclude=character, from_obj=character)
-            
-            # Announce the botch on the mudinfo channel
-            mudinfo = search_channel("mudinfo")
-            if mudinfo:
-                mudinfo[0].msg(f"|rBOTCH!!!|n {character.name} botched their attempt to step sideways in {self.name}.")
-            
+        # Check if character can step sideways
+        can_step, reason = self.can_step_sideways(character)
+        if not can_step:
+            character.msg(reason)
             return False
-        else:
-            character.msg("You fail to step sideways into the Umbra.")
-            return False
+
+        # Store the character temporarily for difficulty calculation
+        self.ndb.current_stepper = character
+        try:
+            difficulty = self.get_gauntlet_difficulty()
+            
+            # Handle Ananasi's inverted difficulty
+            if (character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '') == "Ananasi" and
+                character.db.current_form == "Crawlerling"):
+                difficulty = 10 - difficulty  # Invert difficulty (1 becomes 9, 2 becomes 8, etc.)
+            
+            successes, ones = self.roll_gnosis(character, difficulty)
+            
+            if successes > 0:
+                character.tags.remove("in_material", category="state")
+                character.tags.add("in_umbra", category="state")
+                character.msg("You successfully step sideways into the Umbra.")
+                self.msg_contents(f"{character.name} shimmers and fades from view as they step into the Umbra.", exclude=character, from_obj=character)
+                return True
+            elif successes == 0 and ones > 0:
+                # Botch
+                character.msg("You catastrophically fail to step sideways into the Umbra.")
+                self.msg_contents(f"{character.name} seems to flicker for a moment, but remains in place.", exclude=character, from_obj=character)
+                
+                # Announce the botch on the mudinfo channel
+                mudinfo = search_channel("mudinfo")
+                if mudinfo:
+                    mudinfo[0].msg(f"|rBOTCH!!!|n {character.name} botched their attempt to step sideways in {self.name}.")
+                
+                return False
+            else:
+                character.msg("You fail to step sideways into the Umbra.")
+                return False
+        finally:
+            # Clean up the temporary character reference
+            self.ndb.current_stepper = None
 
     def return_from_umbra(self, character):
         """
         Allows a character to return from the Umbra to the material world.
         """
-        difficulty = self.get_gauntlet_difficulty()
-        successes, ones = self.roll_gnosis(character, difficulty)
-        
-        if successes > 0:
-            character.tags.remove("in_umbra", category="state")
-            character.tags.add("in_material", category="state")
-            character.msg("You step back into the material world.")
-            self.msg_contents(f"{character.name} shimmers into view as they return from the Umbra.", exclude=character, from_obj=character)
-            return True
-        elif successes == 0 and ones > 0:
-            # Botch
-            character.msg("You catastrophically fail to return from the Umbra.")
+        # Store the character temporarily for difficulty calculation
+        self.ndb.current_stepper = character
+        try:
+            difficulty = self.get_gauntlet_difficulty()
+            successes, ones = self.roll_gnosis(character, difficulty)
             
-            # Announce the botch on the mudinfo channel
-            mudinfo = search_channel("mudinfo")
-            if mudinfo:
-                mudinfo[0].msg(f"|rBOTCH!!!|n {character.name} botched their attempt to return from the Umbra in {self.name}.")
-            
-            return False
-        else:
-            character.msg("You fail to return from the Umbra.")
-            return False
+            if successes > 0:
+                character.tags.remove("in_umbra", category="state")
+                character.tags.add("in_material", category="state")
+                character.msg("You step back into the material world.")
+                self.msg_contents(f"{character.name} shimmers into view as they return from the Umbra.", exclude=character, from_obj=character)
+                return True
+            elif successes == 0 and ones > 0:
+                # Botch
+                character.msg("You catastrophically fail to return from the Umbra.")
+                
+                # Announce the botch on the mudinfo channel
+                mudinfo = search_channel("mudinfo")
+                if mudinfo:
+                    mudinfo[0].msg(f"|rBOTCH!!!|n {character.name} botched their attempt to return from the Umbra in {self.name}.")
+                
+                return False
+            else:
+                character.msg("You fail to return from the Umbra.")
+                return False
+        finally:
+            # Clean up the temporary character reference
+            self.ndb.current_stepper = None
 
     def roll_gnosis(self, character, difficulty):
         """
@@ -488,6 +681,8 @@ class RoomParent(DefaultRoom):
         self.db.unfindable = False
         self.db.fae_desc = ""
         self.db.roll_log = []  # Initialize empty roll log
+        self.db.umbra_only = False  # Attribute for Umbra-only rooms
+        self.db.fae_only = False   # New attribute for Fae-only rooms
         self.db.home_data = {
             'locked': False,
             'keyholders': set(),
@@ -797,6 +992,47 @@ class RoomParent(DefaultRoom):
             table.add_row(rtype, data['rooms'], cost)
             
         return str(table)
+
+    def at_object_receive(self, moved_obj, source_location, **kwargs):
+        """Called when an object enters the room."""
+        super().at_object_receive(moved_obj, source_location, **kwargs)
+        
+        # If this is a freezer room, notify the character
+        if self.db.roomtype == "freezer" and moved_obj.has_account:
+            moved_obj.msg("|rYou have been frozen and cannot leave this room or speak.|n")
+            moved_obj.msg("Contact staff if you believe this is in error.")
+
+    def prevent_exit_use(self, exit_obj, character):
+        """
+        Called by exits to check if character can use them.
+        Returns True if exit use should be prevented.
+        """
+        if self.db.roomtype == "freezer":
+            character.msg("|rYou are frozen and cannot leave this room.|n")
+            return True
+        
+        # Prevent non-Fae from using exits in Dreaming
+        if self.db.fae_only and not self.can_perceive_fae(character):
+            character.msg("|mYou cannot interact with the paths of the Dreaming.|n")
+            return True
+            
+        return False
+
+    def set_as_umbral_realm(self):
+        """Set this room as an Umbra-only location."""
+        self.db.umbra_only = True
+        self.db.roomtype = "Umbral Realm"
+        # Ensure the room has an Umbral description
+        if not self.db.desc:
+            self.db.desc = "This is a realm that exists only in the Umbra."
+
+    def set_as_fae_realm(self):
+        """Set this room as a Fae-only location."""
+        self.db.fae_only = True
+        self.db.roomtype = "Dreaming"
+        # Ensure the room has a Fae description
+        if not self.db.desc:
+            self.db.desc = "This is a realm that exists only in the world of the Fae."
 
 class Room(RoomParent):
     pass

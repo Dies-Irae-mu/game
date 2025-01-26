@@ -43,5 +43,14 @@
         "stat_type": "legacy",
         "values": ["Beast", "Fatalist", "Fool", "Grotesque", "Knave", "Outlaw", "Pandora", "Peacock", "Rake", "Riddler", "Ringleader", "Rogue", "Savage", "Wretch"],
         "splat": "Changeling"
+    },
+    {
+        "name": "Phyla",
+        "description": "The Phyla of an Inanimae, similar to a Changeling's kith.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "identity",
+        "stat_type": "phyla",
+        "values": ["Kubera", "Glome", "Ondine", "Paroseme", "Solimond", "Mannikin"],
+        "splat": "Changeling"
     }
 ]

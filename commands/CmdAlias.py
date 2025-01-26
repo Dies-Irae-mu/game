@@ -22,7 +22,7 @@ class CmdAlias(MuxCommand):
     
     key = "alias"
     locks = "cmd:all()"
-    help_category = "General"
+    help_category = "Chargen & Character Info"
 
     def func(self):
         if not self.args:

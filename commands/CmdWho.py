@@ -24,6 +24,7 @@ class CmdWho(COMMAND_DEFAULT_CLASS):
     aliases = ["doing"]
     locks = "cmd:all()"
     account_caller = False  # important for Account commands
+    help_category = "General"
 
     def format_name(self, puppet, account):
         """Helper function to format character names consistently"""

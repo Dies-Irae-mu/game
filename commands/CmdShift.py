@@ -86,7 +86,7 @@ class CmdShift(default_cmds.MuxCommand):
     key = "+shift"
     aliases = ["shift"]
     locks = "cmd:all()"
-    help_category = "Shapeshifting"
+    help_category = "Shifter"
 
     def func(self):
         if "debug" in self.switches:
@@ -289,19 +289,65 @@ class CmdShift(default_cmds.MuxCommand):
             return False
 
     def _shift_default(self, character, form):
-        # Get character's breed form
-        breed = character.db.stats.get('other', {}).get('identity', {}).get('Breed', {}).get('perm', 'homid').lower()
-        shifter_type = character.db.stats.get('other', {}).get('identity', {}).get('Shifter Type', {}).get('perm', '').lower()
+        """Handle default shifting, with automatic success for natural form."""
+        # Get character's breed and shifter type
+        breed = character.get_stat('identity', 'lineage', 'Breed', temp=False)
+        shifter_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
         
-        # Check if they're shifting to their breed form
-        if shifter_type == 'garou':
-            if (breed == 'homid' and form.name.lower() == 'homid' or
-                breed == 'metis' and form.name.lower() == 'crinos' or
-                breed == 'lupus' and form.name.lower() == 'lupus'):
-                self.caller.msg(f"You easily shift back to your natural {form.name} form.")
-                return True
+        if not breed or not shifter_type:
+            return self._shift_with_roll(character, form)
         
-        # If not shifting to breed form, use the roll method
+        breed = breed.lower()
+        shifter_type = shifter_type.lower()
+        form_name = form.name.lower()
+        
+        # Define natural forms for different breeds
+        HOMID_BREEDS = {
+            'homid',      # Generic
+            'balaram',    # Nagah
+            'kojin'       # Kitsune
+        }
+        
+        ANIMAL_BREEDS = {
+            ('garou', 'lupus'): 'lupus',
+            ('ratkin', 'animal-born'): 'rodens',
+            ('ajaba', 'animal-born'): 'hyaenid',
+            ('ananasi', 'animal-born'): 'crawlerling',
+            ('rokea', 'animal-born'): 'squamus',
+            ('mokole', 'animal-born'): 'suchid',
+            ('gurahl', 'animal-born'): 'ursine',
+            ('bastet', 'animal-born'): 'feline',
+            ('corax', 'animal-born'): 'corvid',
+            ('kitsune', 'animal-born'): 'roko',
+            ('nuwisha', 'animal-born'): 'latrani',
+            ('nagah', 'vasuki'): 'vasuki'
+        }
+        
+        METIS_BREEDS = {
+            ('garou', 'metis'): 'crinos',
+            ('ajaba', 'metis'): 'anthros',
+            ('bastet', 'metis'): 'chatro',
+            ('kitsune', 'shinju'): 'kitsune',
+            ('nagah', 'ahi'): 'nagah',
+            ('ratkin', 'metis'): 'crinos'
+        }
+        
+        # Check if shifting to natural form based on breed
+        if breed in HOMID_BREEDS and form_name == 'homid':
+            self.caller.msg(f"You easily shift back to your natural Homid form.")
+            return True
+        
+        # Check animal-born natural forms
+        if (shifter_type, breed) in ANIMAL_BREEDS and form_name == ANIMAL_BREEDS[(shifter_type, breed)]:
+            self.caller.msg(f"You easily shift back to your natural {form.name} form.")
+            return True
+        
+        # Check metis natural forms
+        if (shifter_type, breed) in METIS_BREEDS and form_name == METIS_BREEDS[(shifter_type, breed)]:
+            self.caller.msg(f"You easily shift back to your natural {form.name} form.")
+            return True
+        
+        # If not shifting to natural form, use the roll method
         return self._shift_with_roll(character, form)
 
     def _apply_form_changes(self, character, form):
@@ -375,10 +421,20 @@ class CmdShift(default_cmds.MuxCommand):
         form_name = form_name.strip()
         message = message.strip()
 
+        # Get the character's shifter type
+        shifter_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '').lower()
+
         try:
-            form = ShapeshifterForm.objects.get(name__iexact=form_name)
+            # Filter by both form name and shifter type
+            form = ShapeshifterForm.objects.get(
+                name__iexact=form_name,
+                shifter_type=shifter_type
+            )
         except ShapeshifterForm.DoesNotExist:
-            self.caller.msg(f"The form '{form_name}' does not exist.")
+            self.caller.msg(f"The form '{form_name}' does not exist for your shifter type.")
+            return
+        except ShapeshifterForm.MultipleObjectsReturned:
+            self.caller.msg(f"Error: Multiple forms found with name '{form_name}'. Please contact an admin.")
             return
 
         character.attributes.add(f"shift_message_{form_name.lower()}", message)

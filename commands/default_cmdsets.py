@@ -49,7 +49,8 @@ from commands.CmdStaff import CmdStaff, CmdPST
 from commands.unfindable import CmdUnfindable
 from commands.CmdChangelingInteraction import CmdChangelingInteraction
 
-from commands.bbs.bbs_cmdset import BBSCmdSet
+from commands.bbs.bbs_all_commands import CmdBBS
+from commands.bbs.bbs_admin_commands import CmdResetBBS
 from commands.oss.oss_cmdset import OssCmdSet
 
 from commands.CmdWeather import CmdWeather
@@ -70,6 +71,8 @@ from commands.comms import CustomCmdChannel
 from commands.CmdCheck import CmdCheck
 from commands.CmdPlots import CmdPlots
 from commands.CmdHangouts import CmdHangout, CmdSetHangout
+from commands.CmdNPC import CmdNPC
+
 
 class CharacterCmdSet(cmdset_character.CharacterCmdSet):
     """
@@ -91,7 +94,7 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CustomCmdChannel())
         
         self.add(CmdGradientName())
-        self.add(BBSCmdSet)
+        self.add(CmdBBS())
         self.add(OssCmdSet)
         self.add(CmdFaeDesc())
         self.add(CmdStats())
@@ -186,7 +189,8 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdListApartments())
         self.add(CmdUpdateExits())
         self.add(CmdTestLock())
-
+        self.add(CmdResetBBS())
+        self.add(CmdNPC())
 class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):
     """
     Command set available to the Session before being logged in.  This

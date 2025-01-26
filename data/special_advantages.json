@@ -1,0 +1,418 @@
+[
+    {
+        "name": "Acute Smell",
+        "description": "The symphony of odors, the spectacle of sensation, the rich epics told by every passing breeze or warm surface — humans sense these things but dimly. Virtually every land animal and every creeping thing, however, knows and understands the language of smells. Level 1 (2 points): Adds two dice to Perception rolls involving scent. Level 2 (3 points): Adds three dice, making scent the dominant sense for virtually all Perception rolls.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2, 3]
+    },
+    {
+        "name": "Alacrity",
+        "description": "Capable of bursts of inhuman speed, you can strike before most people can think. Each two points spent allows you to spend a Willpower point and take one extra action within a single turn, up to a maximum of four actions at 6 points. This bonus lasts only one turn per Willpower point spent.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers", 
+        "stat_type": "special_advantage",
+        "values": [2, 4, 6]
+    },
+    {
+        "name": "Armor",
+        "description": "Provides innate protection, such as thick hide or armor plates. Each point provides one soak die, up to 5 dice. Double cost allows soaking of aggravated damage.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Aura",
+        "description": "Uncanny radiance surrounds you, reflecting your essential nature. Opponents suffer +3 difficulty on rolls against you, neutral characters sense aura effects. May suppress aura for a scene with a Willpower point. As a Flaw, this Trait cannot be suppressed.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [3]
+    },
+    {
+        "name": "Aww!",
+        "description": "You're so adorable that people tend to give you more slack than your activities deserve. Every point adds one die to Social rolls based on cuteness. Half bonus (rounded up) applies in human form.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [1, 2, 3, 4]
+    },
+    {
+        "name": "Bare Necessities",
+        "description": "You can shape-change with your clothing and small possessions intact. 1 point: Retains small items worn close to the skin. 3 points: Retains small carried items like backpacks or swords. Items essentially disappear when shapeshifting and cannot be used until returning to natural form.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [1, 3]
+    },
+    {
+        "name": "Bioluminescence",
+        "description": "Your body can glow and you can turn this light on/off at will. 1 point: Dim cell phone brightness. 2 points: Brighter or directable. 3 points: Both bright and directable. Can blind targets temporarily with successful Dexterity + Perception roll.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [1, 2, 3]
+    },
+    {
+        "name": "Blending",
+        "description": "Ability to alter appearance to match surroundings. Can slowly acclimate over a scene or quickly with Wits + Survival roll (difficulty 8). Quintessence/Gnosis users may spend a point to blend immediately. Successful blending adds +2 difficulty to perceive the creature.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [1]
+    },
+    {
+        "name": "Bond-Sharing",
+        "description": "Creates a mystical bond between companions to share abilities. 4 points: Companion can use one sense or withstand one environment. 5 points: Can go anywhere you can or feel anything you feel. 6 points: Both effects. Bond spans roughly half a mile but works best in close proximity.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [4, 5, 6]
+    },
+    {
+        "name": "Cause Insanity",
+        "description": "Can provoke temporary fits of madness in targets within visual range. Spend Willpower and roll one die per two points in this power against target's Willpower. Each success causes temporary derangement for one day. Three or more successes against mages may cause Quiet.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2, 4, 6, 8, 10]
+    },
+    {
+        "name": "Chameleon Coloration",
+        "description": "Ability to change coloration for camouflage. 4 points: Shadow-Walking in darkness. 6 points: Color matching within a single hue. 8 points: Full environmental color matching. Perceiving a camouflaged creature requires Wits + Alertness roll (difficulty 7).",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [4, 6, 8]
+    },
+    {
+        "name": "Claws, Fangs, or Horns",
+        "description": "Natural weaponry that inflicts lethal damage. 3 points: One form of attack. 5 points: Two forms. 7 points: All three forms. Double cost for aggravated damage. Attacks use specific combat maneuvers: Bite (diff 5, Str+1), Claw (diff 6, Str+2), Gore (diff 7, Str+2 or Str+4 after charge).",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [3, 5, 7]
+    },
+    {
+        "name": "Deadly Demise",
+        "description": "Upon death, inflicts damage to nearby enemies within 30 feet. 2 points: 4 dice lethal damage. 4 points: 6 dice lethal damage. 6 points: 8 dice lethal or 6 dice aggravated damage. Triggers when dropping below Incapacitated from lethal/aggravated damage.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2, 4, 6]
+    },
+    {
+        "name": "Soul-Sense",
+        "description": "Ability to sense spirits and impending death. 2 points: Sense spirits or imminent death with Perception + Awareness roll. 3 points: Detect auras around those near death. May also sense impending births or life forces.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2, 3]
+    },
+    {
+        "name": "Dominance",
+        "description": "Naturally commanding demeanor within specific groups. Adds three dice to Social interactions and reduces Intimidation or Leadership roll difficulties by 2 when dealing with appropriate groups.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [1]
+    },
+    {
+        "name": "Earthbond",
+        "description": "A mystical connection to surroundings that helps perceive threats. Reduces difficulty of perception rolls by 2 when trying to spot potential trouble. May not detect supernatural concealments or beings entering from other realms.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2]
+    },
+    {
+        "name": "Elemental Touch",
+        "description": "Control over a single element. 3 points: Sense large quantities within half-mile. 5 points: Minor manipulations. 7 points: Alter small quantities. 10 points: Conjure element or greater control. 15 points: Large-scale manipulation. Higher levels require Willpower expenditure.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [3, 5, 7, 10, 15]
+    },
+    {
+        "name": "Enhancement",
+        "description": "Superior physical or mental attributes beyond human norm. Each five points allows purchase of one additional Attribute dot above 5, or one extra Health Level above 8. Maximum suggested cap of 8 total dots for Attributes and three extra Health Levels.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [5, 10, 15]
+    },
+    {
+        "name": "Empathic Bond",
+        "description": "Ability to sense and influence emotions like Mind 1 Effect. Can shield own feelings and surface thoughts. May influence mood of others by spending Willpower. Requires focus to connect and may be ethically questionable if used without consent.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2]
+    },
+    {
+        "name": "Extra Heads",
+        "description": "Each two points provides one additional head. Each head adds two dice to Perception rolls, increases mind-control resistance difficulty by 2, and allows additional bite attacks. Multiple heads may have different personalities that don't always agree.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2, 4, 6, 8]
+    },
+    {
+        "name": "Extra Limbs",
+        "description": "Each two points provides an additional prehensile limb. Each limb adds one die to dice pools for multiple actions, using highest pool instead of lowest. One action per two limbs involved. Additional uses depend on limb type and Storyteller discretion.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2, 4, 6, 8]
+    },
+    {
+        "name": "Feast of Nettles",
+        "description": "Ability to absorb and nullify Paradox. 2 points: Three points per week. 3 points: Five points per week. 4 points: Ten points per week. 5 points: Fifteen points per week. 6 points: Twenty points per week. Exceeding limit is fatal.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2, 3, 4, 5, 6]
+    },
+    {
+        "name": "Ferocity",
+        "description": "Grants Rage points (one per two points spent) that can be used to: add health levels to successful attacks, perform additional actions, ignore wound penalties for one turn, or penetrate armor. Requires rest to recover spent points.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2, 4, 6, 8, 10]
+    },
+    {
+        "name": "Ghost Form",
+        "description": "8 points: Become invisible at will. 10 points: Achieve complete incorporeality, immune to physical attacks. Requires Willpower expenditure to maintain. Getting stuck in alternate form possible if Willpower depleted.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [8, 10]
+    },
+    {
+        "name": "Mesmerism",
+        "description": "3 points: Freeze prey with gaze. 6 points: Draw targets into trance. Requires Charisma + Intimidation/Seduction roll against target's Willpower. Effects last minimum three turns, then target may attempt escape with Willpower rolls.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [3, 6]
+    },
+    {
+        "name": "Musical Influence",
+        "description": "Ability to affect emotions through music. Roll appropriate Social Attribute + Ability against target's Willpower. Effects last while music plays. Additional successes affect larger groups. Targets can resist if they recognize manipulation.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [6]
+    },
+    {
+        "name": "Musk",
+        "description": "Emit powerful stench that adds +2 difficulty to all rolls (+4 for enhanced senses). Can spray targets within range using Dexterity + Athletics. Effects last one day. Stamina roll (difficulty 7-9) may overcome penalties.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [3]
+    },
+    {
+        "name": "Mystic Shield",
+        "description": "Resistance to magic. One countermagic die per two points spent, maximum five dice. Adds +1 difficulty per two points against supernatural powers. Must actively defend; doesn't work if caught unaware.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2, 4, 6, 8, 10]
+    },
+    {
+        "name": "Needleteeth",
+        "description": "Sharp teeth and powerful jaws bypass up to three levels of armor when biting. Leaves severe bleeding wounds. Enhances biting attacks only.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [3]
+    },
+    {
+        "name": "Nightsight",
+        "description": "Clear vision in low light conditions. In total darkness, Perception + Alertness roll (difficulty 8) reveals vague outlines. May be hindered by specific environmental conditions at Storyteller's discretion.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [3]
+    },
+    {
+        "name": "Omega Status",
+        "description": "Power in being overlooked. Lowers difficulty of Scrounging, Stealth, Streetwise, and Subterfuge rolls by -2 within relevant social group. Must be part of a significant hierarchical structure to benefit.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [4]
+    },
+    {
+        "name": "Paradox Nullification",
+        "description": "Ability to consume Paradox energies. 2 points: One point per month. 3 points: One point per two weeks. 4 points: One point per week. 5 points: Two points per week. 6 points: One point per day. Must be within arm's reach of mage.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2, 3, 4, 5, 6]
+    },
+    {
+        "name": "Quills",
+        "description": "Sharp defensive spines. 2 points: Contact damage (Strength dice as lethal). 4 points: Can shoot quills up to 30 feet (Dexterity + Athletics). Lodged quills require removal and cause additional damage. Limited by character's Stamina rating.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2, 4]
+    },
+    {
+        "name": "Rapid Healing",
+        "description": "Accelerated recovery from injuries. Every two points advances healing rate by one category on the Healing Damage charts. Maximum eight points for faster recovery from lethal and aggravated damage.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2, 4, 6, 8]
+    },
+    {
+        "name": "Razorskin",
+        "description": "Skin that shreds on contact. Causes Strength +1 lethal damage to attackers using bare-handed attacks. Always active unless shapeshifted or covered. Requires careful handling for intimate contact.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [3]
+    },
+    {
+        "name": "Read and Write",
+        "description": "Ability to read and write in any known human language despite non-human form. Physical limitations may affect method of reading/writing, but comprehension is equal to human capacity.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [1]
+    },
+    {
+        "name": "Regrowth",
+        "description": "Ability to regenerate lost body parts. 2 points: Minor parts (tail, horn). 4 points: Major parts (limbs, eyes). 6 points: Vital organs. Regeneration takes 1 day for minor parts, 3 days for limbs, 1 week for vital organs. Fire/acid can prevent regeneration.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2, 4, 6]
+    },
+    {
+        "name": "Shapechanger",
+        "description": "Ability to assume different forms. 3 points: One alternate form. 5 points: Any form within limited range (e.g., all birds). 8 points: Any form, special traits require additional Advantages. Transformation typically takes one turn.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [3, 5, 8]
+    },
+    {
+        "name": "Shared Knowledge",
+        "description": "Mystic bond allowing shared understanding. 5 points: Share any Knowledge within 50 feet. 7 points: Also gain shared vision through each other's eyes. Bond works up to Willpower x 100 yards. Requires conscious connection.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [5, 7]
+    },
+    {
+        "name": "Size",
+        "description": "Significantly larger or smaller than human norm. 3 points: Slightly different. 5 points: Notably different. 8 points: Considerably different. 10 points: Immensely different. Each level affects Health Levels, Attributes, and detection difficulty.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [3, 5, 8, 10]
+    },
+    {
+        "name": "Spirit Travel",
+        "description": "Ability to cross the Gauntlet into Umbral realms. 8 points: Access to one realm. 10 points: Two realms. 15 points: All three realms. Requires Willpower point and roll against Gauntlet rating. Success determines crossing time from instant to three turns.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [8, 10, 15]
+    },
+    {
+        "name": "Spirit Vision",
+        "description": "Ability to perceive the Penumbra and local spirit world. Can sense spirits and spiritual atmosphere. Requires concentration to focus on one realm. Spirits can usually tell if they're being observed.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [3]
+    },
+    {
+        "name": "Soak Lethal Damage",
+        "description": "Natural ability to soak lethal damage as if it were bashing damage. May be due to hardy frame, thick skin, great size, or elemental composition.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [3]
+    },
+    {
+        "name": "Soak Aggravated Damage",
+        "description": "Ability to soak both lethal and aggravated damage using natural soak dice. Represents extreme durability beyond normal physical limits.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [5]
+    },
+    {
+        "name": "Tunneling",
+        "description": "Can create tunnels through earth at half walking speed. Tunnel size matches body size. Method varies by creature type (eating dirt, burrowing, etc.).",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [3]
+    },
+    {
+        "name": "Unaging",
+        "description": "Complete immunity to natural aging process. Useful for stories spanning multiple time periods or bridging historical and modern narratives.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [5]
+    },
+    {
+        "name": "Universal Translator",
+        "description": "Can understand and communicate in any language. Requires Intelligence + Empathy roll (difficulty 6-9) for new languages. Must recognize communication as language. Initial translations tend to be literal.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [5]
+    },
+    {
+        "name": "Venom",
+        "description": "Poisonous attack delivered through specific method. Every three points inflicts one level of aggravated damage. Effects trigger one turn after attack and three turns later. Five points per level allows skin contact delivery.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [3, 6, 9, 12, 15]
+    },
+    {
+        "name": "Wall-Crawling",
+        "description": "Ability to climb sheer surfaces easily. No roll needed under normal conditions. Extreme conditions may require Dexterity + Athletics rolls.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [4]
+    },
+    {
+        "name": "Water Breathing",
+        "description": "2 points: Can breathe underwater naturally. 5 points: No breathing required at all, suited for various environments.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2, 5]
+    },
+    {
+        "name": "Webbing",
+        "description": "Can spin webs with six soak dice and three health levels. Uses include travel, crafting large webs, snaring foes, and blocking entrances. Trapped victims need three Strength successes to escape.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [5]
+    },
+    {
+        "name": "Wings",
+        "description": "Flight capability. 3 points: Normal jogging speed (13 yards/turn). 5 points: Up to 20 yards/turn. Can involve physical wings or mystical levitation.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [3, 5]
+    }
+]

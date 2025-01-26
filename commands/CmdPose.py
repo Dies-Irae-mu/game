@@ -14,11 +14,17 @@ class PoseBreakMixin:
             
         pose_break = f"\n|y{'=' * 30}> |w{caller.name}|n |y<{'=' * 30}|n"
         
-        # Filter receivers based on Umbra state
-        filtered_receivers = [
-            obj for obj in caller.location.contents
-            if obj.has_account and obj.db.in_umbra == caller.db.in_umbra
-        ]
+        # Filter receivers based on reality layers
+        filtered_receivers = []
+        for obj in caller.location.contents:
+            if not obj.has_account:
+                continue
+            
+            # Check if they share the same reality layer
+            if (caller.tags.get("in_umbra", category="state") and obj.tags.get("in_umbra", category="state")) or \
+               (caller.tags.get("in_material", category="state") and obj.tags.get("in_material", category="state")) or \
+               (caller.tags.get("in_dreaming", category="state") and obj.tags.get("in_dreaming", category="state")):
+                filtered_receivers.append(obj)
         
         for receiver in filtered_receivers:
             if receiver != caller and (not exclude or receiver not in exclude):
@@ -63,6 +69,7 @@ class CmdPose(PoseBreakMixin, default_cmds.MuxCommand):
     aliases = [";", ":"]
     locks = "cmd:all()"
     arg_regex = None
+    help_category = "RP Commands"
 
     def parse(self):
         """
@@ -106,11 +113,17 @@ class CmdPose(PoseBreakMixin, default_cmds.MuxCommand):
         # Get the character's speaking language
         speaking_language = caller.get_speaking_language()
 
-        # Filter receivers based on Umbra state
-        filtered_receivers = [
-            obj for obj in caller.location.contents
-            if obj.has_account and obj.db.in_umbra == caller.db.in_umbra
-        ]
+        # Filter receivers based on reality layers
+        filtered_receivers = []
+        for obj in caller.location.contents:
+            if not obj.has_account:
+                continue
+            
+            # Check if they share the same reality layer
+            if (caller.tags.get("in_umbra", category="state") and obj.tags.get("in_umbra", category="state")) or \
+               (caller.tags.get("in_material", category="state") and obj.tags.get("in_material", category="state")) or \
+               (caller.tags.get("in_dreaming", category="state") and obj.tags.get("in_dreaming", category="state")):
+                filtered_receivers.append(obj)
 
         # Process the pose for each receiver
         for receiver in filtered_receivers:
@@ -124,11 +137,11 @@ class CmdPose(PoseBreakMixin, default_cmds.MuxCommand):
                     
                     # Process the speech
                     speech = match.group(1)
-                    _, msg_understand, msg_not_understand, _ = caller.prepare_say(speech, language_only=True)
+                    _, msg_understand, msg_not_understand, _ = caller.prepare_say(speech, language_only=True, skip_english=True)
                     
                     # Check for Universal Language merit
                     has_universal = any(
-                        merit.lower().replace(' ', '') == 'universallanguist'
+                        merit.lower().replace(' ', '') == 'universallinguist'
                         for category in receiver.db.stats.get('merits', {}).values()
                         for merit in category.keys()
                     )
@@ -153,6 +166,9 @@ class CmdPose(PoseBreakMixin, default_cmds.MuxCommand):
         # Add this at the end of the func method
         try:
             caller.record_scene_activity()
-            caller.msg("|wDebug: Pose triggered scene activity check.|n")
-        except Exception as e:
-            caller.msg(f"|rDebug Error: {str(e)}|n")
+        except KeyError:
+            # Initialize scene data if it doesn't exist
+            if not caller.db.scene_data:
+                caller.db.scene_data = {}
+            caller.db.scene_data['last_weekly_reset'] = None
+            caller.record_scene_activity()

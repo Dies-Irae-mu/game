@@ -47,6 +47,14 @@ class CmdSheet(MuxCommand):
     aliases = ["sh"]
     help_category = "Chargen & Character Info"
 
+    def __init__(self):
+        """Initialize command."""
+        super().__init__()
+        self.advantages_list = []
+        self.pools_list = []
+        self.powers_list = []
+        self.virtues_list = []
+
     def initialize_ghoul_stats(self, character):
         """Initialize or ensure proper stats for Ghoul characters."""
         # Set Blood pool to 3 for Ghouls
@@ -90,6 +98,8 @@ class CmdSheet(MuxCommand):
         self.pools_list = []
         self.virtues_list = []
         self.status_list = []
+        powers = []
+        splat_specific_stats = []  # Initialize as empty list by default
 
         name = self.args.strip()
         if not name:
@@ -158,8 +168,6 @@ class CmdSheet(MuxCommand):
         elif splat.lower() == 'shifter':
             shifter_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
             splat_specific_stats = ['Type']
-            
-            # Add type-specific stats from the SHIFTER_IDENTITY_STATS dictionary
             if shifter_type:
                 type_specific_stats = SHIFTER_IDENTITY_STATS.get(shifter_type, [])
                 splat_specific_stats.extend(type_specific_stats)
@@ -253,6 +261,24 @@ class CmdSheet(MuxCommand):
                 self.pools_list.append(format_stat('Glamour', format_pool_value(character, 'Glamour'), width=25))
             
             self.pools_list.append(format_stat('Willpower', format_pool_value(character, 'Willpower'), width=25))
+        elif splat.lower() == 'companion':
+            splat_specific_stats = ['Companion Type', 'Mage Faction', 'Motivation']
+            # Add Special Advantages section
+            powers.append(divider("Special Advantages", width=38, color="|b"))
+            special_advantages = character.db.stats.get('powers', {}).get('special_advantage', {})
+            if special_advantages:
+                for power, values in special_advantages.items():
+                    power_value = values.get('perm', 0)
+                    powers.append(format_stat(power, power_value, default=0, width=38))
+            
+            # Add Charms section if any exist
+            charms = character.db.stats.get('powers', {}).get('charm', {})
+            if charms:
+                powers.append(" " * 38)  # Add blank line for spacing
+                powers.append(divider("Charms", width=38, color="|b"))
+                for charm, values in charms.items():
+                    charm_value = values.get('perm', 0)
+                    powers.append(format_stat(charm, charm_value, default=0, width=38))
         else:
             splat_specific_stats = []
 
@@ -266,6 +292,18 @@ class CmdSheet(MuxCommand):
         for stat in splat_specific_stats:
             if stat not in all_stats:
                 all_stats.append(stat)
+
+        # Add Phyla for Inanimae after Kith
+        if splat.lower() == 'changeling':
+            kith = character.get_stat('identity', 'lineage', 'Kith', temp=False)
+            if kith == 'Inanimae':
+                # Check both possible locations for Phyla
+                phyla = (character.db.stats.get('identity', {}).get('phyla', {}).get('Phyla', {}).get('perm', '') or 
+                        character.db.stats.get('identity', {}).get('lineage', {}).get('Phyla', {}).get('perm', ''))
+                if phyla:
+                    if 'Kith' in all_stats and 'Phyla' not in all_stats:
+                        kith_index = all_stats.index('Kith')
+                        all_stats.insert(kith_index + 1, 'Phyla')
 
         # Add Splat at the end if not already included
         if 'Splat' not in all_stats:
@@ -293,7 +331,12 @@ class CmdSheet(MuxCommand):
 
             left_value = character.db.stats.get('identity', {}).get('personal', {}).get(left_stat, {}).get('perm', '')
             if not left_value:
-                left_value = character.db.stats.get('identity', {}).get('lineage', {}).get(left_stat, {}).get('perm', '')
+                # For Phyla, check both locations
+                if left_stat == 'Phyla':
+                    left_value = (character.db.stats.get('identity', {}).get('phyla', {}).get('Phyla', {}).get('perm', '') or 
+                                character.db.stats.get('identity', {}).get('lineage', {}).get('Phyla', {}).get('perm', ''))
+                else:
+                    left_value = character.db.stats.get('identity', {}).get('lineage', {}).get(left_stat, {}).get('perm', '')
                 # Special handling for Rank
                 if left_stat == 'Rank' and left_value == '':
                     left_value = '0'
@@ -431,6 +474,41 @@ class CmdSheet(MuxCommand):
                     insert_index = next((i for i, ability in enumerate(abilities) 
                                        if ability.name > 'Flight'), len(abilities))
                     abilities.insert(insert_index, flight)
+            
+            elif splat == 'Companion' and stat_type == 'special_advantage':
+                # Check if the companion has Wings special advantage
+                wings_value = character.db.stats.get('powers', {}).get('special_advantage', {}).get('Wings', {}).get('perm', 0)
+                if wings_value > 0:
+                    # Add Flight ability for winged companions
+                    flight = Stat.objects.filter(name='Flight').first()
+                    if flight:
+                        # Insert Flight in alphabetical order
+                        insert_index = next((i for i, ability in enumerate(abilities) 
+                                           if ability.name > 'Flight'), len(abilities))
+                        abilities.insert(insert_index, flight)
+                
+                # Add base Companion ability
+                companion = Stat.objects.filter(name='Companion').first()
+                if companion:
+                    abilities.append(companion)
+
+            elif splat == 'Changeling':
+                if stat_type == 'talent':
+                    # Add Kenning for Changelings
+                    kenning = Stat.objects.filter(name='Kenning').first()
+                    if kenning:
+                        # Insert Kenning in alphabetical order
+                        insert_index = next((i for i, ability in enumerate(abilities) 
+                                           if ability.name > 'Kenning'), len(abilities))
+                        abilities.insert(insert_index, kenning)
+                elif stat_type == 'knowledge':
+                    # Add Gremayre for Changelings
+                    gremayre = Stat.objects.filter(name='Gremayre').first()
+                    if gremayre:
+                        # Insert Gremayre in alphabetical order
+                        insert_index = next((i for i, ability in enumerate(abilities) 
+                                           if ability.name > 'Gremayre'), len(abilities))
+                        abilities.insert(insert_index, gremayre)
 
             return abilities
 
@@ -460,8 +538,7 @@ class CmdSheet(MuxCommand):
             for ability in ability_list:
                 if character.db.specialties and ability.name in character.db.specialties:
                     for specialty in character.db.specialties[ability.name]:
-                        formatted_specialty = format_ability(Stat(name=f"`{specialty}"), ability_type)
-                        formatted_list.append(formatted_specialty)
+                        formatted_list.append(format_ability(Stat(name=f"`{specialty}"), ability_type))
 
         # For primary abilities
         max_len = max(len(formatted_talents), len(formatted_skills), len(formatted_knowledges))
@@ -660,16 +737,51 @@ class CmdSheet(MuxCommand):
                     combo_value = values.get('perm', 0)
                     powers.append(format_stat(combo, combo_value, default=0, width=38))
         elif character_splat == 'Changeling':
-            powers.append(divider("Arts", width=38, color="|b"))
-            arts = character.db.stats.get('powers', {}).get('art', {})
-            for art, values in arts.items():
-                art_value = values.get('perm', 0)
-                powers.append(format_stat(art, art_value, default=0, width=38))
-            powers.append(divider("Realms", width=38))
-            realms = character.db.stats.get('powers', {}).get('realm', {})
-            for realm, values in realms.items():
-                realm_value = values.get('perm', 0)
-                powers.append(format_stat(realm, realm_value, default=0, width=38))
+            # Add Phyla to identity section for Inanimae
+            kith = character.get_stat('identity', 'lineage', 'Kith', temp=False)
+            if kith == 'Inanimae':
+                phyla = character.get_stat('identity', 'lineage', 'Phyla', temp=False)
+                if phyla:
+                    # Add Phyla to all_stats after Kith
+                    kith_index = all_stats.index('Kith')
+                    all_stats.insert(kith_index + 1, 'Phyla')
+
+            # Process powers section
+            if kith == 'Inanimae':
+                # Add Slivers section for all Inanimae
+                powers.append(divider("Slivers", width=38, color="|b"))
+                slivers = character.db.stats.get('powers', {}).get('sliver', {})
+                if slivers:
+                    for sliver, values in sorted(slivers.items()):
+                        sliver_value = values.get('perm', 0)
+                        powers.append(format_stat(sliver, sliver_value, default=0, width=38))
+                else:
+                    powers.append(" None".ljust(38))
+
+                # Add Arts section ONLY for Mannikins
+                if phyla == 'Mannikins':
+                    powers.append(divider("Arts", width=38, color="|b"))
+                    arts = character.db.stats.get('powers', {}).get('art', {})
+                    if arts:
+                        for art, values in sorted(arts.items()):
+                            art_value = values.get('perm', 0)
+                            powers.append(format_stat(art, art_value, default=0, width=38))
+                    else:
+                        powers.append(" None".ljust(38))
+            else:
+                # Regular Changeling powers
+                powers.append(divider("Arts", width=38, color="|b"))
+                arts = character.db.stats.get('powers', {}).get('art', {})
+                for art, values in sorted(arts.items()):
+                    art_value = values.get('perm', 0)
+                    powers.append(format_stat(art, art_value, default=0, width=38))
+                
+                powers.append(divider("Realms", width=38))
+                realms = character.db.stats.get('powers', {}).get('realm', {})
+                for realm, values in sorted(realms.items()):
+                    realm_value = values.get('perm', 0)
+                    powers.append(format_stat(realm, realm_value, default=0, width=38))
+
         elif character_splat == 'Shifter':
             powers.append(divider("Gifts", width=38, color="|b"))
             gifts = character.db.stats.get('powers', {}).get('gift', {})
@@ -682,6 +794,26 @@ class CmdSheet(MuxCommand):
             for rite, values in rites.items():
                 rite_value = values.get('perm', 0)
                 powers.append(format_stat(rite, rite_value, default=0, width=38))
+
+        elif character_splat == 'Companion':
+            # Add Special Advantages section
+            powers.append(divider("Special Advantages", width=38, color="|b"))
+            special_advantages = character.db.stats.get('powers', {}).get('special_advantage', {})
+            if special_advantages:
+                for power, values in special_advantages.items():
+                    power_value = values.get('perm', 0)
+                    powers.append(format_stat(power, power_value, default=0, width=38))
+            
+            # Add Charms section if any exist
+            charms = character.db.stats.get('powers', {}).get('charm', {})
+            if charms:
+                powers.append(" " * 38)  # Add blank line for spacing
+                powers.append(divider("Charms", width=38, color="|b"))
+                for charm, values in charms.items():
+                    charm_value = values.get('perm', 0)
+                    powers.append(format_stat(charm, charm_value, default=0, width=38))
+        else:
+            powers = []
 
         # Build left column (backgrounds + merits & flaws)
         left_column.append(divider("Backgrounds", width=38, color="|b"))
@@ -724,8 +856,10 @@ class CmdSheet(MuxCommand):
             string += f"{left.strip().ljust(38)}  {power.strip().ljust(38)}\n"
 
         # Display Pools, Virtues & Status in the same three-column format
-        string += header("Pools, Virtues & Status", width=78, color="|y")
-
+        if character_splat == 'Companion':
+            string += header("Pools, Virtues & Status", width=78, color="|y")
+        else:
+            string += header("Pools, Virtues & Status", width=78, color="|y")
         # Initialize lists at the start
         self.pools_list = []
         self.virtues_list = []
@@ -755,9 +889,36 @@ class CmdSheet(MuxCommand):
             self.pools_list.append(format_stat('Willpower', format_pool_value(character, 'Willpower'), width=25))
             
         elif splat.lower() == 'mage':
-            self.pools_list.append(format_stat('Arete', format_pool_value(character, 'Arete'), width=25))
-            self.pools_list.append(format_stat('Quintessence', format_pool_value(character, 'Quintessence'), width=25))
-            self.pools_list.append(format_stat('Willpower', format_pool_value(character, 'Willpower'), width=25))
+            # Clear existing lists first
+            self.pools_list = []
+            self.virtues_list = []
+
+            # Get Avatar/Genius rating and set Quintessence accordingly
+            avatar_value = character.get_stat('backgrounds', 'background', 'Avatar', temp=False) or \
+                          character.get_stat('backgrounds', 'background', 'Genius', temp=False) or 0
+            
+            # Set Quintessence to match Avatar rating
+            character.set_stat('pools', 'dual', 'Quintessence', avatar_value, temp=False)
+            character.set_stat('pools', 'dual', 'Quintessence', avatar_value, temp=True)
+
+            # Add pools - using advantage pool for Arete instead of dual
+            self.pools_list.extend([
+                format_stat('Arete', character.get_stat('pools', 'advantage', 'Arete', temp=False) or 1, width=25),
+                format_stat('Quintessence', format_pool_value(character, 'Quintessence'), width=25),
+                format_stat('Willpower', format_pool_value(character, 'Willpower'), width=25)
+            ])
+
+            # Add virtues
+            synergy_virtues = ['Dynamic', 'Entropic', 'Static']
+            for virtue in synergy_virtues:
+                virtue_value = character.get_stat('virtues', 'synergy', virtue, temp=False) or 0
+                dots = "." * (19 - len(virtue))
+                self.virtues_list.append(f" {virtue}{dots}{virtue_value}".ljust(25))
+            
+            # Add Resonance
+            resonance_value = character.get_stat('pools', 'resonance', 'Resonance', temp=False) or 0
+            dots = "." * (19 - len('Resonance'))
+            self.virtues_list.append(f" Resonance{dots}{resonance_value}".ljust(25))
             
         elif splat.lower() == 'changeling':
             self.pools_list.append(format_stat('Glamour', format_pool_value(character, 'Glamour'), width=25))
@@ -816,23 +977,6 @@ class CmdSheet(MuxCommand):
                     renown_value = character.get_stat('advantages', 'renown', renown, temp=False) or 0
                     dots = "." * (19 - len(renown))
                     self.virtues_list.append(f" {renown}{dots}{renown_value}".ljust(25))
-        elif splat.lower() == 'mage':
-            # Handle Mage-specific virtues
-            synergy_virtues = ['Dynamic', 'Entropic', 'Static']
-            for virtue in synergy_virtues:
-                virtue_value = character.get_stat('virtues', 'synergy', virtue, temp=False) or 0
-                dots = "." * (19 - len(virtue))
-                self.virtues_list.append(f" {virtue}{dots}{virtue_value}".ljust(25))
-            
-            # Add Resonance
-            resonance_value = character.get_stat('pools', 'resonance', 'Resonance', temp=False) or 0
-            dots = "." * (19 - len('Resonance'))
-            self.virtues_list.append(f" Resonance{dots}{resonance_value}".ljust(25))
-            
-            # Update Quintessence based on Avatar background
-            avatar_value = character.get_stat('backgrounds', 'background', 'Avatar', temp=False) or 0
-            character.set_stat('pools', 'dual', 'Quintessence', avatar_value, temp=False)
-            character.set_stat('pools', 'dual', 'Quintessence', avatar_value, temp=True)
         else:
             # Handle other splat virtues
             virtues = character.db.stats.get('virtues', {}).get('moral', {})
@@ -922,15 +1066,3 @@ def calculate_blood_pool(generation):
         return 20
     else:
         return 10  # Default to 10 for any unexpected values
-
-def format_pool_value(character, pool_name):
-    """Format a pool value with both permanent and temporary values."""
-    perm = character.get_stat('pools', 'dual', pool_name, temp=False)
-    temp = character.get_stat('pools', 'dual', pool_name, temp=True)
-
-    if perm is None:
-        perm = 0
-    if temp is None:
-        temp = perm
-
-    return f"{perm}({temp})" if temp != perm else str(perm)

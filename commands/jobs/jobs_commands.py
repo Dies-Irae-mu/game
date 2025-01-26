@@ -67,7 +67,7 @@ class CmdJobs(MuxCommand):
     key = "+jobs"
     aliases = ["+requests", "+job", "+myjobs"]
     locks = "cmd:all()"
-    help_category = "Admin"
+    help_category = "General"
     
     # Add these properties to help with help system registration
     auto_help = True
@@ -1131,14 +1131,14 @@ def create_jobs_help_entry():
         help_entry, created = HelpEntry.objects.get_or_create(
             db_key="jobs",
             defaults={
-                "db_help_category": "Admin",
+                "db_help_category": "General",
                 "db_entrytext": CmdJobs.__doc__
             }
         )
         
         if not created:
             help_entry.db_entrytext = CmdJobs.__doc__
-            help_entry.db_help_category = "Admin"
+            help_entry.db_help_category = "General"
             help_entry.save()
 
         # Set tags properly using the set() method

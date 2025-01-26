@@ -26,7 +26,7 @@ class CmdEmit(PoseBreakMixin, default_cmds.MuxCommand):
     key = "@emit"
     aliases = ["\\\\"]
     locks = "cmd:all()"
-    help_category = "Storytelling"
+    help_category = "RP Commands"
 
     def process_special_characters(self, message):
         """
@@ -53,11 +53,17 @@ class CmdEmit(PoseBreakMixin, default_cmds.MuxCommand):
                 caller.msg("You need to set a speaking language first with +language <language>")
                 return
 
-        # Filter receivers based on Umbra state
-        filtered_receivers = [
-            obj for obj in caller.location.contents
-            if obj.has_account and obj.db.in_umbra == caller.db.in_umbra
-        ]
+        # Filter receivers based on reality layers
+        filtered_receivers = []
+        for obj in caller.location.contents:
+            if not obj.has_account:
+                continue
+            
+            # Check if they share the same reality layer
+            if (caller.tags.get("in_umbra", category="state") and obj.tags.get("in_umbra", category="state")) or \
+               (caller.tags.get("in_material", category="state") and obj.tags.get("in_material", category="state")) or \
+               (caller.tags.get("in_dreaming", category="state") and obj.tags.get("in_dreaming", category="state")):
+                filtered_receivers.append(obj)
 
         # Send pose break before the message
         self.send_pose_break()
@@ -65,7 +71,7 @@ class CmdEmit(PoseBreakMixin, default_cmds.MuxCommand):
         if 'language' in self.switches:
             # The entire emit is in the set language
             speaking_language = caller.get_speaking_language()
-            _, msg_understand, msg_not_understand, _ = caller.prepare_say(processed_args, language_only=True)
+            _, msg_understand, msg_not_understand, _ = caller.prepare_say(processed_args, language_only=True, skip_english=True)
 
             for receiver in filtered_receivers:
                 has_universal = any(
@@ -90,7 +96,7 @@ class CmdEmit(PoseBreakMixin, default_cmds.MuxCommand):
                         
                         # Process the speech
                         speech = match.group(1)
-                        _, msg_understand, msg_not_understand, _ = caller.prepare_say(speech, language_only=True)
+                        _, msg_understand, msg_not_understand, _ = caller.prepare_say(speech, language_only=True, skip_english=True)
                         
                         # Check for Universal Language merit
                         has_universal = any(
@@ -119,6 +125,9 @@ class CmdEmit(PoseBreakMixin, default_cmds.MuxCommand):
         # Add this at the end of the func method
         try:
             self.caller.record_scene_activity()
-            self.caller.msg("|wDebug: Emit triggered scene activity check.|n")
-        except Exception as e:
-            self.caller.msg(f"|rDebug Error: {str(e)}|n")
+        except KeyError:
+            # Initialize scene data if it doesn't exist
+            if not self.caller.db.scene_data:
+                self.caller.db.scene_data = {}
+            self.caller.db.scene_data['last_weekly_reset'] = None
+            self.caller.record_scene_activity()

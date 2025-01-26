@@ -1027,7 +1027,7 @@ class CmdUpdateApartments(MuxCommand):
     
     key = "+updateapts"
     locks = "cmd:perm(builders)"
-    help_category = "Building"
+    help_category = "Building and Housing"
     
     def func(self):
         from evennia.objects.models import ObjectDB
@@ -1122,7 +1122,7 @@ class CmdListApartments(MuxCommand):
     key = "+apartments"
     aliases = ["@apartments"]
     locks = "cmd:perm(builders)"
-    help_category = "Building"
+    help_category = "Building and Housing"
     
     def func(self):
         from evennia.objects.models import ObjectDB
@@ -1230,7 +1230,7 @@ class CmdUpdateExits(MuxCommand):
     
     key = "+updateexits"
     locks = "cmd:perm(builders)"
-    help_category = "Building"
+    help_category = "Building and Housing"
     
     def func(self):
         from evennia.objects.models import ObjectDB
@@ -1337,7 +1337,7 @@ class CmdSetHousing(MuxCommand):
     
     key = "+sethousing"
     locks = "cmd:perm(builders)"
-    help_category = "Building"
+    help_category = "Building and Housing"
     
     def func(self):
         location = self.caller.location
@@ -1449,7 +1449,7 @@ class CmdSetLock(MuxCommand):
     
     key = "+lock"
     locks = "cmd:perm(builders)"
-    help_category = "Building"
+    help_category = "Building and Housing"
     
     def func(self):
         if not self.args:

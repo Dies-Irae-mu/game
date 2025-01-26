@@ -136,5 +136,50 @@
         "stat_type": "lineage",
         "values": ["Questing", "Dynamic", "Static", "Primordial"],
         "splat": "Mage"
+    },
+    {
+        "name": "Signature",
+        "description": "The Resonance signature of a Mage character.",
+        "game_line": "Mage: The Ascension",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Devotional", "Elemental", "Stabilizing", "Temperamental"],
+        "splat": "Mage"
+    },
+    {
+        "name": "Affinity Sphere",
+        "description": "The specialized sphere that a Mage has been trained in.",
+        "game_line": "Mage: The Ascension",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Data", "Primal Utility", "Dimensional Science", "Correspondence", "Entropy", "Forces", "Life", "Matter", "Mind", "Prime", "Spirit", "Time"],
+        "splat": "Mage"
+    },
+    {
+        "name": "Companion Type",
+        "description": "The type of companion a Mage character has.",
+        "game_line": "Mage: The Ascension",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Alien", "Animal", "Bygone", "Construct", "Familiar", "Object", "Reanimate", "Robot", "Spirit"],
+        "splat": "companion"
+    },
+    {
+        "name": "Motivation",
+        "description": "The motivation of a companion Mage character.",
+        "game_line": "Mage: The Ascension",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": [],
+        "splat": "companion"
+    },
+    {
+        "name": "Form",
+        "description": "The form of a companion Mage character.",
+        "game_line": "Mage: The Ascension",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": [],
+        "splat": "companion"
     }
 ]

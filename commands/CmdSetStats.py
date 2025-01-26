@@ -1,5 +1,5 @@
 from evennia import default_cmds
-from world.wod20th.models import Stat, SHIFTER_IDENTITY_STATS, SHIFTER_RENOWN, calculate_willpower, calculate_road
+from world.wod20th.models import Stat, SHIFTER_IDENTITY_STATS, SHIFTER_RENOWN, calculate_willpower, calculate_road, PHYLA, INANIMAE_POWERS
 from evennia.utils import search
 from evennia.utils.search import search_object
 from typeclasses.characters import Character
@@ -34,13 +34,13 @@ PATH_VIRTUES = {
 
 class CmdStats(default_cmds.MuxCommand):
     """
-    Set character stats as staff.
-
     Usage:
       +stats <character>/<stat>[(<instance>)]/<category>=[+-]<value>
       +stats me/<stat>[(<instance>)]/<category>=[+-]<value>
       +stats <character>=reset
       +stats me=reset
+      +stats/specialty <character>/<stat>=<specialty>
+      +stats me/specialty <stat>=<specialty>
 
     Examples:
       +stats Bob/Strength/Physical=+2
@@ -49,6 +49,8 @@ class CmdStats(default_cmds.MuxCommand):
       +stats me=reset
       +stats me/Nature=Curmudgeon
       +stats Bob/Demeanor=Visionary
+      +stats me/specialty Firearms=Sniping
+      +stats Bob/specialty Melee=Swords
 
     This is the staff version of +selfstat with the same functionality
     but can be used on any character.
@@ -63,6 +65,25 @@ class CmdStats(default_cmds.MuxCommand):
         """
         Parse the arguments.
         """
+        # Check for specialty switch
+        if self.switches and "specialty" in self.switches:
+            self.is_specialty = True
+            try:
+                char_and_stat, self.specialty = self.args.split('=', 1)
+                if '/' in char_and_stat:
+                    self.char_name, self.stat_name = char_and_stat.split('/', 1)
+                else:
+                    self.char_name = char_and_stat
+                    self.stat_name = None
+                self.char_name = self.char_name.strip()
+                self.stat_name = self.stat_name.strip() if self.stat_name else None
+                self.specialty = self.specialty.strip()
+            except ValueError:
+                self.char_name = self.stat_name = self.specialty = None
+            return
+
+        # Regular stat parsing
+        self.is_specialty = False
         self.character_name = ""
         self.stat_name = ""
         self.instance = None
@@ -119,7 +140,48 @@ class CmdStats(default_cmds.MuxCommand):
             self.character_name = self.stat_name = self.value_change = self.instance = self.category = None
 
     def func(self):
-        """Implement the command"""
+        """Execute the command."""
+        # Handle specialty command
+        if self.is_specialty:
+            if not self.char_name or not self.stat_name or not self.specialty:
+                self.caller.msg("|rUsage: +stats[/specialty] <character>/<stat>=<specialty>|n")
+                return
+
+            # Get the target character
+            if self.char_name.lower() == "me":
+                character = self.caller
+            else:
+                character = self.caller.search(self.char_name)
+                if not character:
+                    return
+
+            # Fetch the stat definition from the database
+            try:
+                matching_stats = Stat.objects.filter(name__icontains=self.stat_name.strip())
+            except Exception as e:
+                self.caller.msg(f"|rError fetching stats: {e}|n")
+                return
+
+            if not matching_stats.exists():
+                self.caller.msg(f"|rNo stats matching '{self.stat_name}' found in the database.|n")
+                return
+
+            if len(matching_stats) > 1:
+                self.caller.msg(f"|rMultiple stats matching '{self.stat_name}' found: {[stat.name for stat in matching_stats]}. Please be more specific.|n")
+                return
+
+            stat = matching_stats.first()
+            stat_name = stat.name
+
+            specialties = character.db.specialties or {}
+            if not specialties.get(stat_name):
+                specialties[stat_name] = []
+            specialties[stat_name].append(self.specialty)
+            character.db.specialties = specialties
+
+            self.caller.msg(f"|gAdded specialty '{self.specialty}' to {stat_name} for {character.name}.|n")
+            return
+
         if not self.character_name:
             self.caller.msg("|rUsage: +stats <character>/<stat>[(<instance>)]/[<category>]=[+-]<value>|n")
             return
@@ -1187,8 +1249,35 @@ class CmdStats(default_cmds.MuxCommand):
             base_stats['pools']['dual']['Banality'] = {'perm': 1, 'temp': 1}
             base_stats['pools']['dual']['Willpower'] = {'perm': 1, 'temp': 1}
         
+        elif splat.lower() == 'companion':
+            base_stats['powers']['special_advantage'] = {}
+            base_stats['powers']['charm'] = {}
+            base_stats['pools']['dual']['Essence'] = {'perm': 10, 'temp': 10}
+            base_stats['pools']['dual']['Willpower'] = {'perm': 1, 'temp': 1}
+            base_stats['pools']['dual']['Paradox'] = {'perm': 0, 'temp': 0}
+            base_stats['identity']['lineage']['Companion Type'] = {'perm': '', 'temp': ''}
+            base_stats['identity']['lineage']['Mage Faction'] = {'perm': '', 'temp': ''}
+            base_stats['identity']['personal']['Motivation'] = {'perm': '', 'temp': ''}
+
         else:  # Mortal or other
             base_stats['pools']['dual']['Willpower'] = {'perm': 1, 'temp': 1}
+
+    def apply_companion_stats(self, character):
+        """Apply Companion-specific stats"""
+        # Set base pools
+        character.set_stat('pools', 'dual', 'Essence', 10, temp=False)
+        character.set_stat('pools', 'dual', 'Essence', 10, temp=True)
+        character.set_stat('pools', 'dual', 'Willpower', 1, temp=False)
+        character.set_stat('pools', 'dual', 'Willpower', 1, temp=True)
+        character.set_stat('pools', 'dual', 'Paradox', 0, temp=False)
+        character.set_stat('pools', 'dual', 'Paradox', 0, temp=True)
+
+        # Add required flaw based on type
+        companion_type = character.get_stat('identity', 'lineage', 'Companion Type', '').lower()
+        if companion_type in ['construct', 'object', 'robot']:
+            character.set_stat('flaws', 'flaw', 'Power Source', 1, temp=False)
+        else:
+            character.set_stat('flaws', 'flaw', 'Thaumivore', 1, temp=False)
 
         # Initialize basic attributes with default value of 1
         for category in ['physical', 'social', 'mental']:
@@ -1199,14 +1288,8 @@ class CmdStats(default_cmds.MuxCommand):
             else:  # mental
                 attrs = ['Perception', 'Intelligence', 'Wits']
             
-            for attr in attrs:
-                base_stats['attributes'][category][attr] = {'perm': 1, 'temp': 1}
 
-        # Set the stats on the character
-        character.db.stats = base_stats
-        self.caller.msg(f"|gInitialized {character.name} as {splat} with basic stats.|n")
-        character.msg(f"|y{self.caller.name}|n |ginitialized your character as {splat} with basic stats.|n")
-
+    
 from evennia.commands.default.muxcommand import MuxCommand
 from world.wod20th.models import Stat
 from evennia.utils import search
@@ -1215,7 +1298,7 @@ class CmdSpecialty(MuxCommand):
     """
     Usage:
       +stats/specialty <character>/<stat>=<specialty>
-      +stats/specialty me/<stat>=<specialty>
+      +stats me/<stat>=<specialty>
 
     Examples:
       +stats/specialty Bob/Firearms=Sniping
@@ -1309,5 +1392,5 @@ class CmdSpecialty(MuxCommand):
         specialties[stat_name].append(self.specialty)
         character.db.specialties = specialties
 
-        self.caller.msg(f"|gAdded specialty '{self.specialty}' to {character.name}'s {stat_name}.|n")
+        self.caller.msg(f"|gAdded specialty '{self.specialty}' to {stat_name} for {character.name}.|n")
         character.msg(f"|y{self.caller.name}|n |gadded the specialty|n '|y{self.specialty}|n' |gto your {stat_name}.|n")

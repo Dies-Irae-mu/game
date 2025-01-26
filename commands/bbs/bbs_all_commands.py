@@ -44,7 +44,7 @@ class CmdBBS(default_cmds.MuxCommand):
     key = "+bbs"
     aliases = ["@bbs", "bbs"]
     locks = "cmd:all()"
-    help_category = "BBS"
+    help_category = "Event & Bulletin Board"
 
     def check_admin_access(self):
         """Check if the caller has admin access."""

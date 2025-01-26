@@ -56,7 +56,8 @@ class CustomCmdChannel(MuxCommand):
                      "history", "mute", "unmute", "create", "destroy", "desc", 
                      "lock", "unlock", "ban", "unban", "boot", "purge", "view")
     channel_class = ChannelDB
-    
+    help_category = "Communications"
+
     def add_channel_alias(self, caller, channel, aliases):
         """Helper method to add channel aliases."""
         aliases = [alias.strip() for alias in aliases.split(';') if alias.strip()]

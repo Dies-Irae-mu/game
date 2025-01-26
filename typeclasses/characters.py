@@ -290,7 +290,7 @@ class Character(DefaultCharacter):
 
         return masked
 
-    def prepare_say(self, speech, language_only=False, viewer=None):
+    def prepare_say(self, speech, language_only=False, viewer=None, skip_english=False):
         """
         Prepare speech messages based on language settings.
         
@@ -298,6 +298,7 @@ class Character(DefaultCharacter):
             speech (str): The message to be spoken
             language_only (bool): If True, only return the language portion without 'says'
             viewer (Object): The character viewing the message
+            skip_english (bool): If True, don't append language tag for English
             
         Returns:
             tuple: (message to self, message to those who understand, 
@@ -326,25 +327,46 @@ class Character(DefaultCharacter):
         # Staff can always understand all languages
         is_staff = False
         if viewer and viewer.account:
-            is_staff = viewer.account.check_permstring("admin") or viewer.account.check_permstring("builder")
+            # Check permissions in order of hierarchy
+            if viewer.account.is_superuser:
+                is_staff = True
+            elif viewer.account.check_permstring("admin"):
+                is_staff = True
+            elif viewer.account.check_permstring("storyteller"):
+                is_staff = True
+            elif viewer.account.check_permstring("builder"):
+                is_staff = True
+            # Player-level admins don't get language privileges
+            elif viewer.account.check_permstring("player"):
+                is_staff = False
         
         # Format the messages
         if language_only:
-            msg_self = f"{speech} << in {language} >>"
-            if is_staff:
-                msg_understand = f"{speech} << in {language} >>"
-                msg_not_understand = f"{speech} << in {language} >>"
+            if skip_english and language == "English":
+                msg_self = speech
+                msg_understand = speech
+                msg_not_understand = speech
             else:
-                msg_understand = f"{speech} << in {language} >>"
-                msg_not_understand = f"<< something in {language} >>"
+                msg_self = f"{speech} << in {language} >>"
+                if is_staff:
+                    msg_understand = f"{speech} << in {language} >>"
+                    msg_not_understand = f"{speech} << in {language} >>"
+                else:
+                    msg_understand = f"{speech} << in {language} >>"
+                    msg_not_understand = f"<< something in {language} >>"
         else:
-            msg_self = f'You say, "{speech} << in {language} >>"'
-            if is_staff:
-                msg_understand = f'{self.name} says, "{speech} << in {language} >>"'
-                msg_not_understand = f'{self.name} says, "{speech} << in {language} >>"'
+            if skip_english and language == "English":
+                msg_self = f'You say, "{speech}"'
+                msg_understand = f'{self.name} says, "{speech}"'
+                msg_not_understand = f'{self.name} says, "{speech}"'
             else:
-                msg_understand = f'{self.name} says, "{speech} << in {language} >>"'
-                msg_not_understand = f'{self.name} says something in {language}'
+                msg_self = f'You say, "{speech} << in {language} >>"'
+                if is_staff:
+                    msg_understand = f'{self.name} says, "{speech} << in {language} >>"'
+                    msg_not_understand = f'{self.name} says, "{speech} << in {language} >>"'
+                else:
+                    msg_understand = f'{self.name} says, "{speech} << in {language} >>"'
+                    msg_not_understand = f'{self.name} says something in {language}'
         
         return msg_self, msg_understand, msg_not_understand, language
 
@@ -731,7 +753,11 @@ class Character(DefaultCharacter):
         if not self.db.stats or 'other' not in self.db.stats or 'splat' not in self.db.stats['other']:
             return False
         splat = self.db.stats['other']['splat'].get('Splat', {}).get('perm', '')
-        return splat in ['Changeling', 'Kinain']
+        return splat in ['Changeling'] or self.is_kinain()
+
+    def is_kinain(self):
+        """Check if the character is a Kinain."""
+        return self.db.stats.get('identity', {}).get('mortalplus_type', {}).get('Kinain', {}).get('perm', False)
 
     def search_notes(self, search_term):
         """Search notes by name or content."""
@@ -1122,20 +1148,13 @@ class Character(DefaultCharacter):
         ]
         
         valid = len(other_players) > 0
-        if not valid:
-            self.msg("|rNo other players in location.|n")
-        else:
-            self.msg(f"|wFound {len(other_players)} other players.|n")
-        return valid
 
     def record_scene_activity(self):
         """Record activity in current scene."""
         now = datetime.now()
-        self.msg("|wChecking scene status...|n")
 
         # Initialize scene_data if it doesn't exist
         if not hasattr(self.db, 'scene_data') or not self.db.scene_data:
-            self.msg("|wInitializing scene data...|n")
             self.db.scene_data = {
                 'current_scene': None,
                 'scene_location': None,
@@ -1147,9 +1166,6 @@ class Character(DefaultCharacter):
         self.check_scene_status()
         if self.db.scene_data['current_scene']:
             self.db.scene_data['last_activity'] = now
-            self.msg("|wScene activity recorded.|n")
-        else:
-            self.msg("|rNo active scene to record.|n")
 
     def at_say(self, message, msg_self=None, msg_location=None, receivers=None, msg_receivers=None, **kwargs):
         """Hook method for the say command."""
@@ -1597,6 +1613,7 @@ class Character(DefaultCharacter):
                 'type': 'spend',
                 'amount': float(cost),
                 'reason': f"{stat_name} ({current_rating} -> {new_rating})",
+                'approved_by': 'System',
                 'timestamp': timestamp.isoformat()
             }
             

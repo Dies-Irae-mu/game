@@ -41,7 +41,7 @@ class CmdPlots(MuxCommand):
     key = "+plots"
     aliases = ["+plot"]
     locks = "cmd:all()"
-    help_category = "Story"
+    help_category = "Staff"
 
     def parse(self):
         """Custom parsing for session commands"""
