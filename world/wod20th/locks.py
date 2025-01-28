@@ -417,7 +417,7 @@ def has_tradition(accessing_obj, accessed_obj, *args, **kwargs):
     except Exception:
         return False
 
-def has_mage_faction(accessing_obj, accessed_obj, *args, **kwargs):
+def has_affiliation(accessing_obj, accessed_obj, *args, **kwargs):
     """Check if character has a specific mage faction."""
     if not args:
         return False
@@ -595,7 +595,7 @@ LOCK_FUNCS.update({
     "has_type": has_type,
     "has_splat": has_splat,
     "has_tradition": has_tradition,
-    "has_mage_faction": has_mage_faction,
+    "has_affiliation": has_affiliation,
     "has_court": has_court,
     "has_kith": has_kith,
     "has_convention": has_convention,

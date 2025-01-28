@@ -1,0 +1,434 @@
+[
+    {
+        "name": "Airt Sense",
+        "description": "A natural ability of all spirit entities, this Charm allows spirits to find their way through complex Otherworldly non-geography. To find a particular place, or to locate a given creature or spirit among the realms, the Storyteller may roll the tracking spirit's Gnosis against a variable difficulty – 6 in most cases, 8 or 9 in the cases of obscure locations or powerful spirits. As an innate ability, this Charm costs no Essence to employ.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Appear",
+        "description": "Revealing itself in an immaterial form, an entity can use this Charm to manifest on the physical side of the Gauntlet. To do so, the Storyteller rolls the spirit's Gnosis against a difficulty based on the spirit's Essence rating. The Essence cost depends on the spirit's Essence rating, ranging from one point for a simple apparition to five points for a full-bodied form. As an innate ability, this Charm costs no Essence to employ.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1] 
+    },
+    {
+        "name": "Blast",
+        "description": "An all-purpose attack Charm, this power projects damaging energies against the spirit's opponents. Those energies cost one Essence per die of bashing damage, two Essence per die of lethal damage, and three Essence per die of aggravated damage. (For a deadlier option, the spirit may simply spend a point of Essence and roll the spirit's Rage as aggravated damage, as seen in Werewolf: The Apocalypse 20th Anniversary Edition. As noted above, this option may be too lethal for Mage chronicles.) Whatever type of damage it inflicts, the form of the Blast depends on the nature of the spirit; a fire elemental could breathe flame, a frost spirit might spin frost, a shrieking horror from beyond space might warp its target's bones, and so forth. The spirit does not need to hit, and the attack cannot be dodged, although the Spirit Sphere can be used as countermagick against the Blast. As a rough guide to range, assume that this Charm can reach one yard for each point of Essence in the spirit's permanent Essence Trait. An Essence 20 entity, then, could Blast an opponent from up to 20 yards away. Spending Essence does not decrease this range; that same entity could still Blast its opponent from 20 yards away even when its Essence has dropped to 5. (For a deadlier option, the spirit may simply spend a point of Essence and roll the spirit's Rage as aggravated damage, as seen in Werewolf: The Apocalypse 20th Anniversary Edition. As noted above, however, this option may be too lethal for Mage chronicles.) Whatever type of damage it inflicts, the form of the Blast depends on the nature of the spirit; a fire elemental could breathe flame, a frost spirit might spin frost, a shrieking horror from beyond space might warp its target's bones, and so forth. The spirit does not need to hit, and the attack cannot be dodged, although the Spirit Sphere can be used as countermagick against the Blast. As a rough guide to range, assume that this Charm can reach one yard for each point of Essence in the spirit's permanent Essence Trait. An Essence 20 entity, then, could Blast an opponent from up to 20 yards away. Spending Essence does not decrease this range; that same entity could still Blast its opponent from 20 yards away even when its Essence has dropped to 5.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1] 
+    },
+    {
+        "name": "Blighted Touch",
+        "description": "Invoking the essence of corruption, a demonic entity can bring out a target's worst qualities. If the spirit successfully inflicts damage upon its opponent – including damage at range, via the Blast charm –the target must make a Willpower roll, with the difficulty being the spirit's Rage. If the target's roll fails, the character's worst qualities surge to the surface, making him aggressive, arrogant, lusty, depressive, or whatever else fits his personality. That change of personality lasts for several hours – generally an hour or so per point in the spirit's Rage. If the player botches that Willpower roll, then the blight upon his character's personality becomes more-or-less permanent.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1] 
+    },
+    {
+        "name": "Brand",
+        "description": "A demonic entity can brand a target with its essence. The target must make a Willpower roll, with the difficulty being the spirit's Rage. If the target's roll fails, the character's worst qualities surge to the surface, making him aggressive, arrogant, lusty, depressive, or whatever else fits his personality. That change of personality lasts for several hours – generally an hour or so per point in the spirit's Rage. If the player botches that Willpower roll, then the blight upon his character's personality becomes more-or-less permanent.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1] 
+    },
+    {
+        "name": "Break Reality",
+        "description": "The hallmark of a chaos spirit, this Charm changes the Umbral form of an object into some other – maybe radically different – form. A wall becomes mist, fire might become ice, a tree could become a fountain of water. To transform a given object, the Storyteller rolls that spirit's Gnosis; simple transformations would be difficulty 4 or 5, with radical changes rated at difficulty 8 or 9.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1] 
+    },
+    {
+        "name": "Calcify",
+        "description": "With this Charm, a Pattern Spider binds its target into its Pattern Webs. To use the Charm, the Storyteller rolls the spirit's Willpower in a resisted roll against the target's Avatar Background (or against the target's Rage Trait if that target is another spirit).",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1] 
+    },
+    {
+        "name": "Call for Aid",
+        "description": "With an expenditure of five Essence, the spirit calls upon other entities of its kind. The Storyteller rolls the spirit's Willpower, with the difficulty based on the likelihood of other spirits being nearby at the time: difficulty 3 if the other spirits are within sight, difficulty 6 in an area where such spirits are common, difficulty 8 for unusual spirits within that region, and difficulty 9 for rare spirits outside their normal habitat.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1] 
+    },
+    {
+        "name": "Cleanse the Blight",
+        "description": "With a wave of purifying energy, a nature spirit, angel, or other benevolent entity can purge spiritual corruption from its immediate area. The Storyteller rolls the spirit's Gnosis against a difficulty based on the level of corruption – from 4 or 5 for an area with mild taint to 9 or 10 for areas of massive abuse and sickness. This Charm costs 10 Essence.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Cling",
+        "description": "Using this Charm, an entity can cling to an object or another creature. The spirit must first make a successful grappling attack in order to hang onto an unwilling target. After a successful grappling roll, the spirit gains five extra Willpower dice for the purposes of hanging on and resisting other grappling attacks. Once the spirit latches on, the target can free himself only by reducing the Spirit's Essence to zero, pulling it free with a successful grappling attack, or else binding the spirit into a fetish. This Charm costs one Essence point per use, but it lasts until the spirit lets go or is otherwise removed.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Control Electrical Systems",
+        "description": "Engaging its bond with technology, an electricity elemental or spirit of electrical tech can seize control of an electric device and run it according to the spirit's desires. The Storyteller rolls the spirit's Gnosis against a difficulty based upon the complexity of the machine or system – from 3 to control light bulbs to 9 to control a HIT Mark or cybernetic gear. The Essence cost likewise depends upon the sophistication of the device, from one Essence to control simple objects to five Essence to command complex machinery.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Corruption",
+        "description": "As a demon or other spiritual temper employs this Charm, the Storyteller spends one Essence point. The spirit whispers foul suggestions in the target's ear (perhaps in a voice only that victim can hear…), and the victim must make a Willpower roll or else act out the corrupting spirit's suggestions. If that character might be inclined to act on the suggestion to begin with (like, say, a bank teller facing a bunch of money that hasn't yet been logged into the system), she might not even try to resist it.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Create Fire",
+        "description": "With a successful Gnosis roll, the spirit can ignite a fire. The difficulty depends upon the size of blaze – from 3 for small fires to 9 for an inferno. The Essence cost also depends upon the size of the fire, ranging from one point for a simple flicker to five for a conflagration.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Create Wind",
+        "description": "Elemental air command conjures windstorms. Essence cost ranges from one for a light breeze to 20 for a tornado.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Death Fertility",
+        "description": "Is something already killing a living thing? If so, a spirit can use this Charm to accelerate the process. Assuming that the target's already suffering from some malady – injury, infection, starvation, freezing, disease, poison, etc. – an expenditure of five Essence and a Rage roll against the target's Willpower Trait will inflict further damage upon the target. Each success causes one health level of lethal harm, and the spreading sickness or wound might have other effects as well.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Digital Disruption",
+        "description": "Deployed only by Digital Web entities, this Charm inflicts either a soft de-rez – that is, one that dumps the target out of the Web and back into Meatspace without hurting him – or a hard de-rez, which inflicts two points of a Mental Attribute unless the target makes a Stamina roll, difficulty 7 (the damage and Trait loss heal as lethal damage). The entity must hit the target with a Willpower-based attack roll, but success automatically dumps the target out of Netspace. A soft de-rez costs three Essence, and a hard one costs five.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Disable",
+        "description": "This stunning Charm can paralyze a single victim. The Storyteller rolls the spirit's Rage against the appropriate difficulty (target's Stamina + 3, or Rage if the target is another spirit). Cost is one Essence point for each level of the target's current health or one point of Essence per turn if the Charm gets used against a spirit entity. Minimum cost is 10 Essence. The paralysis lasts one turn for every Essence point spent… and yes, the spirit can spend extra Essence to disable its opponent for longer periods of time.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Disorient",
+        "description": "By altering both nearby landmarks and the target's sense of direction, the entity confuses its opponents on either side of the Gauntlet. To do so, the Storyteller rolls the spirit's Gnosis against difficulty 6 or the local Gauntlet rating, whichever is higher. Possessed only by spirits of confusion and the raw Dynamic energies often called Wyld spirits, this Charm costs no Essence.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Dream Journey",
+        "description": "For 10 Essence points (15 if the spirit wants the target to remember it in the morning), an entity may intrude on a sleeping subject's dreams. Although the Charm has no lasting effects beyond the emotional pain or comfort involved in that dream, the spirit can do whatever it damn well pleases within the confines of the dream realm. Of course, if the subject is a lucid dreamer with a Demesne, the spirit might get more than it bargained for… See the Lucid Dreaming Talent (p. 294) and the Demesne Background (pp. 310-311) in Chapter Six for details.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Ease Pain",
+        "description": "By spending one Essence, the spirit may ease another creature's pain. In game terms, this alleviates all wound-based penalties except penalties to movement. The Charm doesn't actually heal the injuries, however – it merely soothes the pain involved. Each Essence point removes the subject's pain for roughly one hour.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Element Sense",
+        "description": "Through instinctive contact with its native element (earth, fire, etc.), an elemental spirit can sense things that happen to be touching, or happening near, sources of that entity's element. When activated, this Charm extends in a circle roughly 500 feet around the elemental itself, so long as the source of that element lies within the area affected by the Charm. A fire elemental, for instance, could sense things within a yard of a candle flame or fireplace if that flame flickers within 500 feet of the elemental itself. Each use of this Charm costs five Essence and lasts roughly an hour.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Feedback",
+        "description": "Possessed only by certain aggressive Digital Web spirits, this Charm fires off a shattering wail of sonic or electronic feedback. Every two points of Essence put into the attack inflics one health level of bashing damage in the form of headaches, scrambled senses, mental trauma, and misfiring nervous systems. Every five points in the attack inflict a level of lethal damage – cooking organs, killing brain cells, electrocuting flesh, and disrupting muscular control. This Charm affects only travelers in the Digital Web, but it can kill their meat back home.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Flee",
+        "description": "With this Charm, the spirit can temporarily boost its Willpower to 15 for the purposes of escaping danger. This bonus does not actually raise the Trait with regards to activities other than escape, although it might aid a spirit who's trying to avoid or hide from a confrontation. Costs two Essence per turn.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Flood",
+        "description": "A typical trick for storm spirits and water elements, this Charm raises the natural water level to flood a given area. The size of that area depends upon the power of the spirit: a Gaffling-level entity could flood a small building or a short city block, whereas a Jaggling could flood a small town. (Don't ask how much water that would be, or how much damage it would do to the area.) The Charm costs one point of Essence per turn to use, and it generally takes several turns to flood a significant area. If there is no water around, the spirit would have to import some via storm clouds, broken water mains, or other potential sources of a flood.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Freeze",
+        "description": "A sudden drop in temperature frosts the immediate area. The spirit's Rage Trait drops by one, and every character within that area suffers one health level in lethal damage for every point in the spirit's new Rage Trait. (Rage 6 would drop to Rage 5, inflicting five dice of lethal damage, for example.) The range of this Charm is roughly 20 feet (three meters) for every dot in the spirit's permanent Rage Trait. That sharp drop in temperature could have other effects too – see Harsh Weather and Environments under Environmental Hazards.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Healing",
+        "description": "With a surge of spiritual energy, the spirit can heal an injured physical being. To do so, the Storyteller rolls the spirit's Gnosis – difficulty 6 for lethal damage, difficulty 8 for aggravated damage. That spirit can heal each of six characters, for example, but it could only do so once. The Charm costs no Essence, but the spirit will probably want some sort of favor in return for the healing.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Illuminate",
+        "description": "Suffusing itself with light, the entity illuminates an area roughly 20 yards or meters from its body or changes the color and intensity of existing lights in the area. This Charm requires no roll or Essence cost.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Influence",
+        "description": "For three Essence points, the spirit can gradually shift a subject's mood in whichever direction that spirit desires. A successful roll of that entity's Gnosis against the subject's Willpower sets the Charm in motion; the spirit can then influence that person from a distance, with no words or obvious contact between them.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Inhabit",
+        "description": "A lesser and more benign version of the Possession Charm allows the spirit to briefly inhabit a living creature or inanimate object. That spirit slips into that host, speaking with her voice and perceiving through her various senses. The Storyteller makes a Gnosis roll, difficulty of the subject's Willpower (for a living target) or the local Gauntlet (for an object). If the subject consents to be inhabited, no roll is necessary. This Charm costs five Essence and lasts for one scene. If the spirit tries to compel its host into any sort of harm or danger, the spirit is immediately ejected from that host.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Insight",
+        "description": "Through this Charm, an entity can puzzle out one hidden element of a target's identity, history, or personality. If the spirit tries to uncover a specific piece of information, the Charm costs 10 Essence; if the entity simply attempts to find something worth using, the cost is five Essence. The difficulty of the roll depends upon the amount of information the spirit is trying to uncover – from 3 for a single fact to 9 for a complete profile.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Iron Will",
+        "description": "By deciding upon a single, specific course of action (guard this place, watch this child, find this book, and so forth), a spirit may invoke this Charm and add five extra dice to any roll that helps it meet that purpose or resist being driven away from the task. Costs one Essence per hour.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Lightning Bolt",
+        "description": "With a surge of power, the entity hurls a thunderbolt. Costs two Essence for each die of lethal damage inflicted. (See also the Blast Charm and Electrocution under Environmental Hazards.)",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Materialize",
+        "description": "This Charm allows a spirit to assume physical shape in the material world… a dangerous thing, especially in the age of machine-gun fire. To do so, the spirit's Gnosis must be higher than the local Gauntlet rating. Once materialized, the spirit can go wherever it wants to go, provided that the local Gauntlet rating is no higher than the spirit's Gnosis -2, and assuming that no one has bound that spirit in a mystic pentacle or hypertech spirit cage (in game terms, a Spirit 4 Effect; see the Spirit Sphere entry in Chapter Ten.) If the entity gets killed in the material realm, its form is dispersed and the spirit winds up banished to the Umbra in Slumber, as if its Essence had been dispersed in the spirit realm.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Meld",
+        "description": "Elemental spirits can merge with their native element by using this Charm, simply disappearing into the element in question. This trick works only for the spirit's native element, however – an air elemental cannot meld into wood. The charm costs two Essence and one turn to employ. At the end of that time, the element may be disturbed by the spirit's passage, but the spirit itself cannot be seen or affected. Obviously, this Charm requires a decent amount of the element in question.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Mind Speech",
+        "description": "For three Essence, a spirit can project images and impressions, or speak directly into a subject's mind, using a form of telepathy. The subject understands the spirit in whatever language she considers her native tongue. If the subject resists the message, the spirit could spend three Essence per die to try to win a resisted roll against the target's Willpower (difficulty 6 for both parties).",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Open Moon Bridge",
+        "description": "A willing spirit with this Charm may open up a moon bridge from one Umbral location to another. For such service, of course, that entity will want a significant favor. The Charm costs no Essence, and the moon bridge can reach up to 1000 miles (1600 km) from the spirit's current location.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Peek",
+        "description": "The entity peers through the Gauntlet from the Penumbra to the physical world. Costs no Essence.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Possession",
+        "description": "The awful power of demons and other corrupting entities, this Charm allows a spirit to enter and command an object or living thing. As with the Inhabit Charm, Possession allows the spirit to see, hear, speak, and otherwise interact with the world through the target's body; in this case, however, that body may be warped in horrific ways through the spirit's influence… becoming, in many cases, a freakish fomor (see Werewolf: The Apocalypse and Infernalism: The Path of Screams for details). It's an article of faith that a possessed person has to bear some previous form of corruption in order to open the door for demonic possession. Whether or not this is true remains a Storyteller call. In any case, the possessing entity finds a secluded spot in the Umbra (often protected by other allied entities) and then begins the possession process. In game terms, the Storyteller spends 10 Essence and then rolls the spirit's Gnosis against a difficulty of the target's Willpower (or, for an object, difficulty 4). The better she rolls, the faster the possession takes place: ",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Quake",
+        "description": "This elemental power allows the spirit to literally shake the material world. For five Essence, the entity can cause the earth to shake, rattle, and roll within a one mile radius of that spirit's presence on either side of the Gauntlet. Each additional five Essence escalates the intensity of the quake, from a notable tremor at five to a devastating catastrophe at 30.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Re-form",
+        "description": "For 20 Essence, the spirit may instantly disappear from its current location and appear somewhere else in the spirit realms… usually far away from its enemies.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Shapeshift",
+        "description": "With a five-point expenditure of Essence, the spirit can look like whatever it wants to look like. That new form doesn't have any additional powers or abilities, though spirits tend to be fairly protean when it comes to things like image, limbs, or size.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Short Out",
+        "description": "Three Essence allow the entity to short out nearby electrical systems with a Gnosis roll, difficulty 6. Some systems, however, are harder to disrupt than other ones are, especially when hypertech is involved – see the Control Electrical Systems Charm for details.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Shatter Glass",
+        "description": "Flexing its will, the spirit breaks all the glass in the area. The Storyteller rolls the spirit's Gnosis, difficulty 6. The base shatter area is roughly 10 yards, and each success makes the affected area 10 yards larger. Costs no Essence.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Solidify Reality",
+        "description": "A Charm for Stasis spirits only, this power allows the entity to spin a Pattern Web, bringing a choking form of order to its surroundings. With a successful Willpower roll, the spirit may craft a spiritual wall so thick that no method short of high-powered Entropy or Spirit magick can bring it down. The difficulty of that roll depends on how large, thick, and potent the Pattern Web will be; a small boost for existing Stasis",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Spirit Away",
+        "description": "The awful talent of Paradox entities and other dreaded spirits, this Charm allows the spirit to snatch a creature or character from the material world and then bring him to its personal Realm. For 25 Essence and four or more successes on a Willpower roll, difficulty 7, the entity can grab someone; if that grab succeeds, the spirit and its prisoner go directly to that spirit's Realm – no stops in between. The very next turn, both beings wind up in the Realm. The prisoner can try to escape, of course, but unless she manages to counter the grab with a successful dodge, she's goin' down… or up… or wherever…",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Spirit Static",
+        "description": "A spirit of order and Stasis can raise the local Gauntlet rating by one level with this Charm. Up to three entities can cooperate on this task, raising the Gauntlet by three. To harden the Gauntlet, the Static",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Swift Flight",
+        "description": "By spending one point of Essence per turn, the spirit can fly at three times its normal speed, up to ([60 + Willpower] x 3) yards or meters per turn.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "System Havoc",
+        "description": "A Charm employed by Digital Web spirits and electronic elementals, this power allows a spirit to wreak havoc on electrical energies, causing most sorts of non-magickal equipment to short out, burn out, or even explode. For two Essence, the spirit can disrupt fragile electrical systems (radios, computers, lights, etc.) With five Essence, it can fry any small electrical system that's not designed or protected with hypertech. And with 10 Essence, it can disrupt (and probably destroy) electronic gear that is protected with hypertech, or else cause widespread damage in massive electrical systems, like city power grids.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Terror",
+        "description": "Through awesome majesty or horrific appearance, the spirit invokes a primal, screaming fear. Mortals and other spirit beings confronted with this entity and its Charm must make Willpower rolls, difficulty 7, or else tremble with soul-deep terror. (If the roll fails, the character is at minus three dice to all dice pools if she tries to act; she succumbs to headlong flight if she can manage to run or fly away from the spirit.) A botch on the Willpower roll reduces the target to weeping, fetal panic. The charm costs three Essence to activate. By spending 10 Essence instead, the entity can raise that Willpower roll's difficulty to 9, force everything that fails that roll to collapse in fear, and subtract three dice from even the targets who do make the roll. For even nastier effects of this Charm on unfortunate characters, see Things Man Was Not Meant to Know under Part III: Health and Injury.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Track",
+        "description": "For five Essence, the entity can track a certain being, without error, throughout the Otherworlds. Certain beings might not be willing or able to enter certain Realms (say, a demon faced with a heaven), but beyond that, the target of this Charm shines like a beacon to the pursuing spirit.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Umbral Storm",
+        "description": "Summoning an Otherworldly storm (often like a hurricane, but possibly much weirder than that…), the spirit invokes high winds (40 mph) and driving rains. This being the Umbra, those rains might be blood, frogs, Skittles, or some other cascading material. For five Essence, the storm covers roughly a mile in diameter; for every two additional Essence points spent, that spirit can increase the winds by 10 mph or the storm's size by 10%. A favored trick for elementals and storm spirits, this Umbral tempest lasts until it blows over naturally.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Umbraquake",
+        "description": "This shattering Charm shakes the local Umbrascape with such force that everyone standing within its range (roughly a half mile) suffers half the spirit's Rage in bashing damage each turn, either from the shaking ground or from collapsing structures, falling trees, and other debris. Each turn's worth of quake costs one point of Essence.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Updraft",
+        "description": "A potent gust of wind lifts human-sized creatures into the air. The Storyteller rolls the spirit's Willpower against difficulty 6; for each success, the spirit can lift one creature of roughly 300 pounds or less. Costs no Essence.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    },
+    {
+        "name": "Waves",
+        "description": "This elemental spirit Charm creates strong currents on or under the surface of bodies of water. Churning waters to froth, the spirit can swamp boats, drown swimmers, and send waves crashing against shores or vessels. Such applications cost five Essence to affect a 50 foot radius, and the effects last roughly five minutes for each five Essence spent.",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "charm",
+        "values": [1]
+    }
+]

@@ -747,13 +747,13 @@ class CmdCheck(MuxCommand):
                     results['errors'].append(f"Missing required lineage attribute for Mage: {attr}")
 
             # Get Mage Faction
-            mage_faction = character.db.stats.get('identity', {}).get('lineage', {}).get('Mage Faction', {}).get('perm')
-            if mage_faction:
-                if mage_faction == 'Traditions' and not character.db.stats.get('identity', {}).get('lineage', {}).get('Tradition', {}).get('perm'):
+            affiliation = character.db.stats.get('identity', {}).get('lineage', {}).get('Mage Faction', {}).get('perm')
+            if affiliation:
+                if affiliation == 'Traditions' and not character.db.stats.get('identity', {}).get('lineage', {}).get('Tradition', {}).get('perm'):
                     results['errors'].append("Traditions Mage must have a Tradition set")
-                elif mage_faction == 'Technocracy' and not character.db.stats.get('identity', {}).get('lineage', {}).get('Convention', {}).get('perm'):
+                elif affiliation == 'Technocracy' and not character.db.stats.get('identity', {}).get('lineage', {}).get('Convention', {}).get('perm'):
                     results['errors'].append("Technocratic Mage must have a Convention set")
-                elif mage_faction == 'Nephandi' and not character.db.stats.get('identity', {}).get('lineage', {}).get('Nephandi Faction', {}).get('perm'):
+                elif affiliation == 'Nephandi' and not character.db.stats.get('identity', {}).get('lineage', {}).get('Nephandi Faction', {}).get('perm'):
                     results['errors'].append("Nephandi Mage must have a Nephandi Faction set")
 
             # Check Mage-specific notes

@@ -17,6 +17,12 @@
                 html: true,
                 headerIds: true,
                 sanitize: false,
+                listIndent: 2,
+                renderer: new marked.Renderer(),
+                pedantic: false,
+                mangle: true,
+                smartLists: true,
+                smartypants: true
             });
 
             // Pre-process the content
@@ -24,16 +30,23 @@
                 const leftContentData = `{{ page.content|escapejs }}`;
                 const rightContentData = `{{ page.right_content|escapejs }}`;
                 
+                console.log("Raw Left Content:", leftContentData);
+                console.log("Raw Right Content:", rightContentData);
+                
                 // Process left content
                 const leftContentElement = document.querySelector('.left_content');
                 if (leftContentElement && leftContentData) {
-                    leftContentElement.innerHTML = marked.parse(leftContentData);
+                    const processedLeftContent = marked.parse(leftContentData);
+                    console.log("Processed Left Content:", processedLeftContent);
+                    leftContentElement.innerHTML = processedLeftContent;
                 }
                 
                 // Process right content
                 const rightContentElement = document.querySelector('.right_content');
                 if (rightContentElement && rightContentData) {
-                    rightContentElement.innerHTML = marked.parse(rightContentData);
+                    const processedRightContent = marked.parse(rightContentData);
+                    console.log("Processed Right Content:", processedRightContent);
+                    rightContentElement.innerHTML = processedRightContent;
                 }
             });
         </script>

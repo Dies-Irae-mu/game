@@ -1437,3 +1437,29 @@ body.menu-open {
     }
 }
 
+/* List Styling */
+.content ul {
+    margin-left: 1.5em;
+    margin-bottom: 1em;
+}
+
+.content ul ul {
+    margin-left: 2em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.content ul li {
+    margin-bottom: 0.5em;
+    list-style-type: disc;
+}
+
+.content ul ul li {
+    list-style-type: circle;
+}
+
+/* Ensure proper spacing between list items */
+.content li + li {
+    margin-top: 0.25em;
+}
+

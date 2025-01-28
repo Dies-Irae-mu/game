@@ -533,7 +533,7 @@ GAROU_AUSPICE = {
     'Ragabash', 'Galliard', 'Theurge', 'Ahroun', 'Philodox'
 }
 
-MAGE_FACTION = {
+AFFILIATION = {
     'Traditions', 'Technocracy', 'Nephandi'
 }
 

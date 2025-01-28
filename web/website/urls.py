@@ -7,14 +7,22 @@ so it can reroute to all website pages.
 """
 
 from django.urls import path
+from web.views import sheet, update_character_field
 
 from evennia.web.website.urls import urlpatterns as evennia_website_urlpatterns
 
+# Filter out any character-related patterns from default patterns
+filtered_website_patterns = [
+    pattern for pattern in evennia_website_urlpatterns 
+    if not any(x in str(pattern.pattern) for x in ['characters', 'character'])
+]
+
 # add patterns here
 urlpatterns = [
-    # path("url-pattern", imported_python_view),
-    # path("url-pattern", imported_python_view),
+    # Character sheet URL
+    path('characters/detail/<str:key>/<str:dbref>/', sheet, name='character_sheet'),
+    path('characters/update/<str:key>/<str:dbref>/', update_character_field, name='update_character_field'),
 ]
 
 # read by Django
-urlpatterns = urlpatterns + evennia_website_urlpatterns
+urlpatterns = urlpatterns + filtered_website_patterns

@@ -78,6 +78,25 @@ class Character(DefaultCharacter):
             'last_weekly_reset': datetime.now()  # For weekly scene count reset
         }
 
+    def at_post_unpuppet(self, account=None, session=None, **kwargs):
+        """
+        Called just after the Character was unpuppeted.
+        """
+        if not self.sessions.count():
+            # only remove this char from grid if no sessions control it anymore.
+            if self.location:
+                def message(obj, from_obj):
+                    obj.msg(
+                        "{name} has disconnected{reason}.".format(
+                            name=self.get_display_name(obj),
+                            reason=kwargs.get("reason", ""),
+                        ),
+                        from_obj=from_obj,
+                    )
+                self.location.for_contents(message, exclude=[self], from_obj=self)
+                self.db.prelogout_location = self.location
+                self.location = None
+
     @lazy_property
     def notes(self):
         return Note.objects.filter(character=self)

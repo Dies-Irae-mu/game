@@ -136,6 +136,21 @@ class Account(DefaultAccount):
 
     """
 
+    def at_disconnect(self, reason=None, **kwargs):
+        """
+        Called just before user is disconnected.
+
+        Args:
+            reason (str, optional): The reason given for the disconnect,
+                (echoed to the connection channel by default).
+            **kwargs (dict): Arbitrary, optional arguments for users
+                overriding the call (unused by default).
+        """
+        reason = f" ({reason if reason else ''})"
+        self._send_to_connect_channel(
+            ("|R{key} has disconnected{reason}|n").format(key=self.key, reason=reason)
+        )
+
     pass
 
 

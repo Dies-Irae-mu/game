@@ -2,7 +2,7 @@
 
 from evennia import Command
 from evennia.utils.evmenu import EvMenu
-from world.wod20th.models import Stat, SHIFTER_IDENTITY_STATS, SHIFTER_RENOWN, SHIFTER_RENOWN, CLAN, MAGE_FACTION, MAGE_SPHERES, TRADITION, TRADITION_SUBFACTION, CONVENTION, METHODOLOGIES, NEPHANDI_FACTION, SEEMING, KITH, SEELIE_LEGACIES, UNSEELIE_LEGACIES, ARTS, REALMS, calculate_willpower, calculate_road, MORTALPLUS_TYPES
+from world.wod20th.models import Stat, SHIFTER_IDENTITY_STATS, SHIFTER_RENOWN, SHIFTER_RENOWN, CLAN, AFFILIATION, MAGE_SPHERES, TRADITION, TRADITION_SUBFACTION, CONVENTION, METHODOLOGIES, NEPHANDI_FACTION, SEEMING, KITH, SEELIE_LEGACIES, UNSEELIE_LEGACIES, ARTS, REALMS, calculate_willpower, calculate_road, MORTALPLUS_TYPES
 from typeclasses.characters import Character
 from evennia.commands.default.muxcommand import MuxCommand
 from world.jobs.models import Job, Queue

@@ -278,7 +278,7 @@ class CmdPST(default_cmds.MuxCommand):
             self.caller.msg("Invalid switch. See help +pst for usage.")
 
     def list_pst(self):
-        player_storytellers = []
+        player_storytellers = set()  # Use a set to prevent duplicates
         
         # Check all accounts first
         for account in AccountDB.objects.all():
@@ -289,22 +289,25 @@ class CmdPST(default_cmds.MuxCommand):
                      (character and character.tags.get("pst", category="role")))
             
             if is_pst:
-                player_storytellers.append((account, character))
+                # Use character's dbref as unique identifier if it exists, otherwise account's dbref
+                unique_id = character.dbref if character else account.dbref
+                if unique_id not in [x[2] for x in player_storytellers]:
+                    player_storytellers.add((account, character, unique_id))
 
         # Now check for characters that might be PSTs without accounts (roster characters)
         from evennia.objects.models import ObjectDB
         for obj in ObjectDB.objects.filter(db_typeclass_path__contains='characters'):
             if obj.tags.get("pst", category="role"):
                 # Only add if not already in the list
-                if not any(pst for pst in player_storytellers if pst[1] == obj):
-                    player_storytellers.append((None, obj))
+                if obj.dbref not in [x[2] for x in player_storytellers]:
+                    player_storytellers.add((None, obj, obj.dbref))
 
         string = self.format_header("Dies Irae Player Storytellers", width=78)
         string += self.format_columns(["Name", "Position", "Status", "Claimed"], color="|w")
         string += "|r=|n" * 78 + "\n"
 
         if player_storytellers:
-            for account, character in player_storytellers:
+            for account, character, _ in sorted(player_storytellers, key=lambda x: (x[1].key if x[1] else x[0].key) if x[1] or x[0] else ""):
                 # Get name (prefer character's name)
                 if character:
                     gradient_name = character.db.gradient_name

@@ -232,28 +232,108 @@ class CmdSetHousing(MuxCommand):
     locks = "cmd:perm(builders)"
     help_category = "Building and Housing"
     
-    def func(self):
-        location = self.caller.location
+    def initialize_housing_data(self, location):
+        """Helper method to initialize housing data"""
+        if not hasattr(location.db, 'housing_data') or not location.db.housing_data:
+            location.db.housing_data = {
+                'is_housing': False,
+                'max_apartments': 0,
+                'current_tenants': {},
+                'apartment_numbers': set(),
+                'required_resources': 0,
+                'building_zone': None,
+                'connected_rooms': set(),
+                'is_lobby': False,
+                'available_types': []
+            }
+        return location.db.housing_data
+
+    def find_lobby(self, location):
+        """Helper method to find the connected lobby"""
+        # First check if this room is a lobby
+        if location.db.housing_data and location.db.housing_data.get('is_lobby'):
+            return location
+            
+        # Then check all connected exits
+        for exit in location.exits:
+            if not exit.destination:
+                continue
+                
+            # Check if this exit leads to lobby (by name or alias)
+            exit_names = [exit.key.lower()]
+            if exit.aliases:
+                exit_names.extend([alias.lower() for alias in exit.aliases.all()])
+            
+            if any(name in ['lobby', 'l'] for name in exit_names):
+                dest = exit.destination
+                if (hasattr(dest, 'db') and 
+                    hasattr(dest.db, 'housing_data') and 
+                    dest.db.housing_data and 
+                    dest.db.housing_data.get('is_lobby')):
+                    return dest
+                    
+            # Check the destination directly
+            dest = exit.destination
+            if (hasattr(dest, 'db') and 
+                hasattr(dest.db, 'housing_data') and 
+                dest.db.housing_data and 
+                dest.db.housing_data.get('is_lobby')):
+                return dest
+                
+            # Also check if the destination has exits leading to a lobby
+            if hasattr(dest, 'exits'):
+                for other_exit in dest.exits:
+                    if not other_exit.destination:
+                        continue
+                    
+                    other_dest = other_exit.destination
+                    if (hasattr(other_dest, 'db') and 
+                        hasattr(other_dest.db, 'housing_data') and 
+                        other_dest.db.housing_data and 
+                        other_dest.db.housing_data.get('is_lobby')):
+                        return other_dest
         
-        # Handle clear switch first
-        if "clear" in self.switches:
-            if hasattr(location.db, 'housing_data'):
-                location.db.housing_data = {
-                    'is_housing': False,
-                    'max_apartments': 0,
-                    'current_tenants': {},
-                    'apartment_numbers': set(),
-                    'required_resources': 0,
-                    'building_zone': None,
-                    'connected_rooms': set(),
-                    'is_lobby': False
-                }
-            location.db.roomtype = "Room"
-            location.db.resources = 0
-            self.caller.msg("Housing settings cleared.")
+        return None
+
+    def check_lobby_required(self, location, switch):
+        """Check if command requires an active lobby setup"""
+        # These commands can be used without a lobby
+        if switch in ["setlobby", "clear", "info"]:
+            return True
+            
+        # For other commands, check if this is a lobby or connected to one
+        if location.db.housing_data.get('is_lobby'):
+            return True
+            
+        # Try to find a connected lobby
+        lobby = self.find_lobby(location)
+        if lobby:
+            return True
+                
+        self.caller.msg("You must set up this room as a lobby first using +manage/setlobby")
+        return False
+
+    def func(self):
+        if not self.switches:
+            self.caller.msg("Usage: +sethousing/<switch>")
             return
             
-        # Check for valid switch
+        switch = self.switches[0]
+        location = self.caller.location
+        
+        # Store existing exits before modifying
+        existing_exits = [
+            (exit.key, exit.aliases.all(), exit.destination) 
+            for exit in location.exits
+        ]
+        
+        # Initialize housing data for all commands
+        self.initialize_housing_data(location)
+
+        # Check if command requires lobby setup
+        if not self.check_lobby_required(location, switch):
+            return
+
         if not self.switches or not any(switch in self.switches for switch in ["apartment", "condo", "residential"]):
             self.caller.msg("Please specify the type: /apartment, /condo, or /residential")
             return
@@ -276,23 +356,41 @@ class CmdSetHousing(MuxCommand):
             self.caller.msg("Usage: +sethousing/<type> <resources> [max_units]")
             return
         
+        # Restore exits after housing setup
+        def restore_exits():
+            from evennia import create_object
+            from typeclasses.exits import Exit
+            
+            for exit_key, exit_aliases, exit_dest in existing_exits:
+                if exit_dest:  # Only restore exits with a destination
+                    new_exit = create_object(Exit, 
+                                             key=exit_key, 
+                                             location=location, 
+                                             destination=exit_dest)
+                    # Restore aliases
+                    for alias in exit_aliases:
+                        new_exit.aliases.add(alias)
+        
         # Set up housing based on switch
         if "apartment" in self.switches:
             location.setup_housing("Apartment Building", max_units)
             location.db.resources = resources
-            location.db.housing_data['max_apartments'] = max_units  # Explicitly set max_apartments
+            location.db.housing_data['max_apartments'] = max_units
+            restore_exits()
             self.caller.msg(f"Set up room as apartment building with {resources} resources and {max_units} maximum units.")
             
         elif "condo" in self.switches:
             location.setup_housing("Condominiums", max_units)
             location.db.resources = resources
-            location.db.housing_data['max_apartments'] = max_units  # Explicitly set max_apartments
+            location.db.housing_data['max_apartments'] = max_units
+            restore_exits()
             self.caller.msg(f"Set up room as condominium with {resources} resources and {max_units} maximum units.")
             
         elif "residential" in self.switches:
             location.setup_housing("Residential Area", max_units)
             location.db.resources = resources
-            location.db.housing_data['max_apartments'] = max_units  # Explicitly set max_apartments
+            location.db.housing_data['max_apartments'] = max_units
+            restore_exits()
             self.caller.msg(f"Set up room as residential area with {resources} resources and {max_units} maximum units.")
 
 class CmdManageBuilding(MuxCommand):
@@ -300,22 +398,22 @@ class CmdManageBuilding(MuxCommand):
     Manage apartment building zones.
     
     Usage:
-        +building/setlobby            - Sets current room as building lobby
-        +building/addroom            - Adds current room to building zone
-        +building/removeroom         - Removes current room from building zone
-        +building/info               - Shows building zone information
-        +building/clear              - Clears all building zone data
-        +building/types             - Lists available apartment types
-        +building/addtype <type>    - Add an apartment type to this building
-        +building/remtype <type>    - Remove an apartment type from this building
+        +manage/setlobby            - Sets current room as building lobby
+        +manage/addroom            - Adds current room to building zone
+        +manage/removeroom         - Removes current room from building zone
+        +manage/info               - Shows building zone information
+        +manage/clear              - Clears all building zone data
+        +manage/types             - Lists available apartment types
+        +manage/addtype <type>    - Add an apartment type to this building
+        +manage/remtype <type>    - Remove an apartment type from this building
         
     Example:
-        +building/setlobby
-        +building/addtype Studio
-        +building/addtype "Two-Bedroom"
+        +manage/setlobby
+        +manage/addtype Studio
+        +manage/addtype "Two-Bedroom"
     """
     
-    key = "+building"
+    key = "+manage"
     locks = "cmd:perm(builders)"
     help_category = "Building and Housing"
     
@@ -397,12 +495,12 @@ class CmdManageBuilding(MuxCommand):
         if lobby:
             return True
                 
-        self.caller.msg("You must set up this room as a lobby first using +building/setlobby")
+        self.caller.msg("You must set up this room as a lobby first using +manage/setlobby")
         return False
 
     def func(self):
         if not self.switches:
-            self.caller.msg("Usage: +building/<switch>")
+            self.caller.msg("Usage: +manage/<switch>")
             return
             
         switch = self.switches[0]
@@ -467,14 +565,14 @@ class CmdManageBuilding(MuxCommand):
                 
         elif switch == "addtype":
             if not self.args:
-                self.caller.msg("Usage: +building/addtype <type>")
+                self.caller.msg("Usage: +manage/addtype <type>")
                 return
                 
             try:
                 from commands.housing import CmdRent
                 apt_type = self.args.strip()
                 if apt_type not in CmdRent.APARTMENT_TYPES and apt_type not in CmdRent.RESIDENTIAL_TYPES:
-                    self.caller.msg(f"Invalid type. Use +building/types to see available types.")
+                    self.caller.msg(f"Invalid type. Use +manage/types to see available types.")
                     return
                     
                 if 'available_types' not in location.db.housing_data:
@@ -613,10 +711,10 @@ class CmdSetLock(MuxCommand):
     Set various types of locks on an exit or room.
     
     Usage:
-        +lock <target>=<locktype>:<value>[,<locktype>:<value>...]
-        +lock/view <target>=<locktype>:<value>[,<locktype>:<value>...]
-        +lock/list <target>          - List current locks
-        +lock/clear <target>         - Clear all locks
+        +setlock <target>=<locktype>:<value>[,<locktype>:<value>...]
+        +setlock/view <target>=<locktype>:<value>[,<locktype>:<value>...]
+        +setlock/list <target>          - List current locks
+        +setlock/clear <target>         - Clear all locks
         
     Lock Types:
         splat:<type>      - Restrict to specific splat (Vampire, Werewolf, etc)
@@ -629,15 +727,15 @@ class CmdSetLock(MuxCommand):
         tribe:<name>      - Restrict to specific werewolf tribe
         auspice:<name>    - Restrict to specific werewolf auspice
         tradition:<name>  - Restrict to specific mage tradition
-        mage_faction:<name> - Restrict to specific mage faction
+        affiliation:<name> - Restrict to specific mage faction
         convention:<name> - Restrict to specific Technocratic convention
         nephandi_faction:<name> - Restrict to specific Nephandi faction
         court:<name>      - Restrict to specific changeling court
         kith:<name>       - Restrict to specific changeling kith
     """
     
-    key = "+lock"
-    aliases = ["+locks"]
+    key = "+setlock"
+    aliases = ["+lock", "+locks", "+setlocks"]
     locks = "cmd:perm(builders)"
     help_category = "Building and Housing"
     
@@ -653,11 +751,49 @@ class CmdSetLock(MuxCommand):
         return table
     
     def func(self):
+        # Handle clear switch first
+        if "clear" in self.switches:
+            if not self.args:
+                self.caller.msg("Usage: +setlock/clear <target>")
+                return
+                
+            target = self.caller.search(self.args, location=self.caller.location)
+            if not target:
+                return
+                
+            # Clear all locks
+            target.locks.clear()
+            
+            # Re-add basic locks for exits
+            if target.is_typeclass("typeclasses.exits.Exit") or target.is_typeclass("typeclasses.exits.ApartmentExit"):
+                # Add standard exit locks
+                standard_locks = {
+                    "call": "true()",
+                    "control": "id(1) or perm(Admin)",
+                    "delete": "id(1) or perm(Admin)",
+                    "drop": "holds()",
+                    "edit": "id(1) or perm(Admin)",
+                    "examine": "perm(Builder)",
+                    "get": "false()",
+                    "puppet": "false()",
+                    "teleport": "false()",
+                    "teleport_here": "false()",
+                    "tell": "perm(Admin)",
+                    "traverse": "all()"
+                }
+                
+                for lock_type, lock_def in standard_locks.items():
+                    target.locks.add(f"{lock_type}:{lock_def}")
+            
+            self.caller.msg(f"Cleared all locks from {target.get_display_name(self.caller)}.")
+            return
+
+        # Validate base arguments
         if not self.args:
-            self.caller.msg("Usage: +lock <target>=<locktype>:<value>[,<locktype>:<value>...]")
+            self.caller.msg("Usage: +setlock <target>=<locktype>:<value>[,<locktype>:<value>...]")
             return
             
-        # Handle switches first
+        # Handle list switch
         if "list" in self.switches:
             target = self.caller.search(self.lhs, location=self.caller.location)
             if not target:
@@ -672,8 +808,9 @@ class CmdSetLock(MuxCommand):
             self.caller.msg(table)
             return
 
+        # Validate lock definition
         if not self.rhs:
-            self.caller.msg("Usage: +lock <target>=<locktype>:<value>[,<locktype>:<value>...]")
+            self.caller.msg("Usage: +setlock <target>=<locktype>:<value>[,<locktype>:<value>...]")
             return
             
         target = self.caller.search(self.lhs, location=self.caller.location)
@@ -704,7 +841,7 @@ class CmdSetLock(MuxCommand):
                         lock_str = f'has_merit({merit.strip()}, {level.strip()})'
                     else:
                         lock_str = f'has_merit({value.strip()})'
-                elif locktype in ["clan", "tribe", "auspice", "tradition", "mage_faction", "kith", "court"]:
+                elif locktype in ["clan", "tribe", "auspice", "tradition", "affiliation", "kith", "court"]:
                     lock_str = f'has_{locktype}({value.strip()})'
                 else:
                     self.caller.msg(f"Invalid lock type.")

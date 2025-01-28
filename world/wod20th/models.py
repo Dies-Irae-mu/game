@@ -49,6 +49,7 @@ STAT_TYPES = [
     ('special_advantage', 'Special Advantage'),
     ('discipline', 'Discipline'),
     ('realm', 'Realm'),
+    ('blessing', 'Blessing'),
     ('sphere', 'Sphere'),
     ('art', 'Art'),
     ('path', 'Path'),
@@ -62,6 +63,7 @@ STAT_TYPES = [
     ('vice', 'Vice'),
     ('merit', 'Merit'),
     ('flaw', 'Flaw'),
+    ('possessed_type', 'Possessed Type'),
     ('trait', 'Trait'),
     ('skill', 'Skill'),
     ('knowledge', 'Knowledge'),
@@ -191,6 +193,11 @@ GAROU_TRIBE_CHOICES = [
     ('none', 'None')
 ]
 
+POSSESSED_TYPE_CHOICES = [
+    ('fomori', 'Fomori'),
+    ('kami', 'Kami')
+]
+
 MORTALPLUS_TYPE_CHOICES = [
     ('ghoul', 'Ghoul'),
     ('kinfolk', 'Kinfolk'),
@@ -213,7 +220,39 @@ MORTALPLUS_POOLS = {
     'Sorcerer': {
         'Quintessence': {'default': 0, 'max': 10}
     },
+    'Psychic': {
+        'Willpower': {'default': 3, 'max': 10},
+    }
 }
+
+MORTALPLUS_TYPES = {
+    'Ghoul': ['Disciplines'],
+    'Kinfolk': ['Gifts'],
+    'Sorcerer': ['Sorcery'],
+    'Psychic': ['Numina'],
+    'Faithful': ['Faith'],
+    'Kinain': ['Arts', 'Realms']
+}
+
+# Add Possessed types
+POSSESSED_TYPES = {
+    'Fomori': ['Blessing'],
+    'Kami': ['Blessing']
+}
+
+POSSESSED_POOLS = {
+    'Fomori': {
+        'Willpower': {'default': 3, 'max': 10},
+        'Gnosis': {'default': 0, 'max': 10},
+        'Rage': {'default': 0, 'max': 10}
+    },
+    'Kami': {
+        'Willpower': {'default': 4, 'max': 10},
+        'Gnosis': {'default': 1, 'max': 10},
+        'Rage': {'default': 0, 'max': 10}
+    }
+}
+
 class Stat(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(default='')  # Changed to non-nullable with default empty string
@@ -579,12 +618,12 @@ CLAN = {
     'Daughters of Cacophony', 'Gargoyles', 'Kiasyd', 'Nagaraja', 'Salubri', 'Samedi', 'True Brujah'
 }
 
-MAGE_FACTION = {
+AFFILIATION = {
     'Traditions', 'Technocracy', 'Nephandi'
 }
 
 MAGE_SPHERES = {
-    'Correspondence', 'Entropy', 'Forces', 'Life', 'Matter', 'Mind', 'Prime', 'Spirit', 'Time'
+    'Correspondence', 'Entropy', 'Forces', 'Life', 'Matter', 'Mind', 'Prime', 'Spirit', 'Time', 'Dimensional Science', 'Primal Utility', 'Data'
 }
 
 TRADITION = {
@@ -700,15 +739,6 @@ ARTS = {
 
 REALMS = {
     'Actor', 'Fae', 'Nature', 'Prop', 'Scene', 'Time'
-}
-
-MORTALPLUS_TYPES = {
-    'Ghoul': ['Disciplines'],
-    'Kinfolk': ['Gifts'],
-    'Sorcerer': ['Sorcery'],
-    'Psychic': ['Numina'],
-    'Faithful': ['Faith'],
-    'Kinain': ['Arts', 'Realms']
 }
 
 MORTALPLUS_POWERS = {

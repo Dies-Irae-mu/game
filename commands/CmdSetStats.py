@@ -480,7 +480,7 @@ class CmdStats(default_cmds.MuxCommand):
 
         # If the stat is 'Mage Faction', apply the correct subfaction stats
         if full_stat_name == 'Mage Faction':
-            self.apply_mage_faction_stats(character, new_value)
+            self.apply_affiliation_stats(character, new_value)
 
         # After setting a stat, recalculate Willpower and Road
         if full_stat_name in ['Courage', 'Self-Control', 'Conscience', 'Conviction', 'Instinct']:
@@ -1128,7 +1128,7 @@ class CmdStats(default_cmds.MuxCommand):
         self.caller.msg(f"|gApplied Changeling-specific stats to {character.name}.|n")
         character.msg(f"|gYour Changeling-specific stats have been applied.|n")
 
-    def apply_mage_faction_stats(self, character, faction):
+    def apply_affiliation_stats(self, character, faction):
         if faction.lower() == 'traditions':
             character.set_stat('identity', 'lineage', 'Tradition', '')
             character.set_stat('identity', 'lineage', 'Traditions Subfaction', '')

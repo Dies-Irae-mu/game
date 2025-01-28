@@ -47,10 +47,23 @@ class ExitCommand(Command):
     
     def access(self, accessing_obj, access_type="cmd", default=True):
         """
-        Override access check to include view lock.
+        Override access check to include view lock and add debugging.
         """
-        if access_type == "cmd":
-            return self.obj.access(accessing_obj, "view")
+        # Add detailed debugging
+        if access_type == "view":
+            # Log detailed information about the view access check
+            logger.log_info(f"View Access Check for {self.key}:")
+            logger.log_info(f"Accessing Object: {accessing_obj}")
+            logger.log_info(f"Current Locks: {self.locks}")
+            
+            # Check if the object can pass the view lock
+            view_result = super().access(accessing_obj, "view", default)
+            
+            logger.log_info(f"View Access Result: {view_result}")
+            
+            return view_result
+        
+        # For other access types, use default implementation
         return super().access(accessing_obj, access_type, default)
 
 class ExitCmdSet(CmdSet):
@@ -78,6 +91,9 @@ class Exit(DefaultExit):
         """
         super().at_object_creation()
         self.at_cmdset_creation()
+        # Ensure view lock is set to allow all by default
+        if not any(lock.startswith("view:") for lock in self.locks.all()):
+            self.locks.add("view:all()")
         
     def at_cmdset_creation(self):
         """
@@ -100,20 +116,26 @@ class Exit(DefaultExit):
     
     def return_appearance(self, looker, **kwargs):
         """
-        This formats how the exit appears in listings.
-        Only show if the looker passes the view lock.
+        Override return_appearance to add more robust view checking.
         """
+        # Check view access first
         if not self.access(looker, "view"):
+            logger.log_info(f"Exit {self.key} appearance not visible to {looker}")
             return ""
+        
+        # If view access is granted, return the appearance
         return super().return_appearance(looker, **kwargs)
         
     def get_display_name(self, looker, **kwargs):
         """
-        Displays the name of the object in a viewer-aware manner.
-        Only show if the looker passes the view lock.
+        Override display name to add more robust view checking.
         """
+        # Check view access first
         if not self.access(looker, "view"):
+            logger.log_info(f"Exit {self.key} not visible to {looker}")
             return ""
+        
+        # If view access is granted, return the display name
         return super().get_display_name(looker, **kwargs)
     
     def get_aliases(self, looker, **kwargs):
@@ -158,23 +180,15 @@ class Exit(DefaultExit):
     
     def get_extra_info(self, looker, **kwargs):
         """
-        Returns the exit's extra info (like <O>).
-        Only show if the looker passes the view lock.
+        Override extra info to add more robust view checking.
         """
+        # Check view access first
         if not self.access(looker, "view"):
+            logger.log_info(f"Exit {self.key} extra info not visible to {looker}")
             return ""
-            
-        # Get the first letter of the name if no aliases
-        if not self.aliases.all():
-            if not self.name:
-                return "<>"
-            return f"<{self.name[0].upper()}>"
-            
-        # Get the first alias
-        alias = self.aliases.all()[0]
-        if not alias:
-            return "<>"
-        return f"<{alias.upper()}>"
+        
+        # If view access is granted, return the extra info
+        return super().get_extra_info(looker, **kwargs)
     
     def at_look(self, looker, **kwargs):
         """

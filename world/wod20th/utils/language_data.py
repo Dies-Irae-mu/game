@@ -1,134 +1,158 @@
 LANGUAGE_CATEGORIES = {
-    "Major World Languages": {
-        "arabic": "Arabic",
-        "bengali": "Bengali",
-        "chinese": "Chinese (Mandarin)",
-        "cantonese": "Chinese (Cantonese)",
+    "San Diego Common Languages": {
         "english": "English",
-        "french": "French",
-        "german": "German",
-        "hindi": "Hindi",
-        "indonesian": "Indonesian",
-        "italian": "Italian",
-        "japanese": "Japanese",
-        "korean": "Korean",
-        "persian": "Farsi",
-        "portuguese": "Portuguese",
-        "russian": "Russian",
         "spanish": "Spanish",
-        "turkish": "Turkish",
-        "urdu": "Urdu",
-        "vietnamese": "Vietnamese"
+        "tagalog": "Tagalog",
+        "chinese": "Chinese",
+        "vietnamese": "Vietnamese",
+        "korean": "Korean",
+        "japanese": "Japanese",
+        "khmer": "Khmer",
+        "hmong": "Hmong",
+        "thai": "Thai",
+        "lao": "Lao"
     },
     "African Languages": {
-        "amharic": "Amharic",        # Ethiopia
-        "hausa": "Hausa",            # Nigeria, Niger, Ghana
-        "igbo": "Igbo",              # Nigeria
-        "lingala": "Lingala",        # Congo Basin
-        "oromo": "Oromo",            # Ethiopia, Kenya
-        "somali": "Somali",          # Somalia, Ethiopia
-        "swahili": "Swahili",        # East Africa
-        "twi": "Twi",                # Ghana
-        "wolof": "Wolof",            # Senegal, Gambia
-        "yoruba": "Yoruba",          # Nigeria, Benin
-        "zulu": "Zulu",              # South Africa
-        "bambara": "Bambara",        # Mali
-        "bemba": "Bemba",            # Zambia
-        "chichewa": "Chichewa",      # Malawi
-        "ganda": "Ganda",            # Uganda
-        "kikuyu": "Kikuyu",          # Kenya
-        "kinyarwanda": "Kinyarwanda", # Rwanda
-        "luganda": "Luganda",        # Uganda
-        "luo": "Luo",                # Kenya
-        "makonde": "Makonde",        # Tanzania
-        "ndebele": "Ndebele",        # Zimbabwe
-        "nyanja": "Nyanja",          # Malawi
-        "shona": "Shona",            # Zimbabwe
-        "swati": "Swati",            # Swaziland
-        "tswana": "Tswana",          # Botswana
-        "venda": "Venda",            # South Africa
-        "xhosa": "Xhosa"             # South Africa
+        "amharic": "Amharic",
+        "hausa": "Hausa",
+        "igbo": "Igbo",
+        "lingala": "Lingala",
+        "oromo": "Oromo",
+        "somali": "Somali",
+        "swahili": "Swahili",
+        "twi": "Twi",
+        "wolof": "Wolof",
+        "yoruba": "Yoruba",
+        "zulu": "Zulu",
+        "afrikaans": "Afrikaans",
+        "bambara": "Bambara",
+        "bemba": "Bemba",
+        "chichewa": "Chichewa",
+        "ganda": "Ganda",
+        "kikuyu": "Kikuyu",
+        "kinyarwanda": "Kinyarwanda",
+        "luganda": "Luganda",
+        "luo": "Luo",
+        "makonde": "Makonde",
+        "maltese": "Maltese",
+        "mbumba": "Mbumba",
+        "ndebele": "Ndebele",
+        "nyanja": "Nyanja",
+        "shona": "Shona",
+        "swati": "Swati",
+        "tswana": "Tswana",
+        "venda": "Venda",
+        "xhosa": "Xhosa"
     },
     "European Languages": {
-        "albanian": "Albanian",
-        "armenian": "Armenian",
-        "azerbaijani": "Azerbaijani",
-        "belarusian": "Belarusian",
         "bosnian": "Bosnian",
         "bulgarian": "Bulgarian",
         "croatian": "Croatian",
         "czech": "Czech",
         "danish": "Danish",
         "dutch": "Dutch",
-        "estonian": "Estonian",
         "finnish": "Finnish",
         "greek": "Greek",
+        "french": "French",
+        "german": "German",
+        "italian": "Italian",
         "hungarian": "Hungarian",
+        "norwegian": "Norwegian",
+        "polish": "Polish",
+        "romanian": "Romanian",
+        "serbian": "Serbian",
+        "swedish": "Swedish",
+        "ukrainian": "Ukrainian",
+        "albanian": "Albanian",
+        "armenian": "Armenian",
+        "azerbaijani": "Azerbaijani",
+        "belarusian": "Belarusian",
+        "estonian": "Estonian",
         "icelandic": "Icelandic",
         "irish": "Irish",
         "latvian": "Latvian",
         "lithuanian": "Lithuanian",
         "macedonian": "Macedonian",
-        "maltese": "Maltese",
         "moldovan": "Moldovan",
         "montenegrin": "Montenegrin",
-        "norwegian": "Norwegian",
-        "polish": "Polish",
-        "romanian": "Romanian",
-        "serbian": "Serbian",
+        "portuguese": "Portuguese",
+        "russian": "Russian",
         "slovak": "Slovak",
-        "slovenian": "Slovenian",
-        "swedish": "Swedish",
-        "ukrainian": "Ukrainian"
+        "slovenian": "Slovenian"
     },
     "Asian Languages": {
         "burmese": "Burmese",
+        "bengali": "Bengali",
+        "mandarin": "Mandarin",
+        "cantonese": "Cantonese",
         "gujarati": "Gujarati",
-        "khmer": "Khmer",
-        "lao": "Lao",
         "malay": "Malay",
         "punjabi": "Punjabi",
         "tamil": "Tamil",
         "telugu": "Telugu",
-        "thai": "Thai",
-        "tibetan": "Tibetan"
+        "hindi": "Hindi",
+        "indonesian": "Indonesian"
     },
     "Middle Eastern Languages": {
+        "arabic": "Arabic",
         "hebrew": "Hebrew",
         "kurdish": "Kurdish",
+        "armenian": "Armenian",
+        "syriac": "Syriac",
         "pashto": "Pashto",
-        "syriac": "Syriac"
+        "turkish": "Turkish",
+        "urdu": "Urdu",
+        "farsi": "Farsi"
     },
     "Indigenous American Languages": {
+        "navajo": "Navajo",
+        "quechua": "Quechua",
+        "inuit": "Inuit",
         "apache": "Apache",
-        "chamorro": "Chamorro",
         "cherokee": "Cherokee",
+        "chamorro": "Chamorro",
         "chickasaw": "Chickasaw",
         "choctaw": "Choctaw",
         "comanche": "Comanche",
         "cree": "Cree",
         "haida": "Haida",
         "haudenosaunee": "Haudenosaunee",
-        "inuit": "Inuit",
         "iroquois": "Iroquois",
         "kiowa": "Kiowa",
         "lakota": "Lakota",
         "maya": "Maya",
-        "navajo": "Navajo",
         "pueblo": "Pueblo",
-        "quechua": "Quechua",
         "tlingit": "Tlingit",
+        "turtle": "Turtle",
         "yaqui": "Yaqui",
         "zuni": "Zuni"
     },
     "Pacific Languages": {
-        "fijian": "Fijian",
         "hawaiian": "Hawaiian",
         "maori": "Maori",
         "samoan": "Samoan",
-        "tagalog": "Tagalog",
         "tahitian": "Tahitian",
-        "tongan": "Tongan"
+        "tongan": "Tongan",
+        "fijian": "Fijian"
+    },
+    "Supernatural & Ancient Languages": {
+        "animal": "Animal",
+        "spirit": "Spirit",
+        "enochian": "Enochian",
+        "old_english": "Old English",
+        "old_norse": "Old Norse",
+        "latin": "Latin",
+        "ancient_greek": "Ancient Greek",
+        "ancient_egyptian": "Ancient Egyptian",
+        "akkadian": "Akkadian",
+        "sanskrit": "Sanskrit",
+        "babylonian": "Babylonian",
+        "sumerian": "Sumerian",
+        "elamite": "Elamite",
+        "hittite": "Hittite",
+        "phoenician": "Phoenician",
+        "minoan": "Minoan",
+        "mycenaean": "Mycenaean"
     }
 }
 

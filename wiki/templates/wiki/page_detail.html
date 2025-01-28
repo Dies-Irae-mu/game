@@ -6,7 +6,7 @@
 {% block content %}
 <div class="left_content">
     <h1>{{ page.title }}</h1>
-    {{ page.content|linebreaks }}
+    {{ page.content|safe }}
 </div>
 
 <div class="right_content {% if not page.right_content %}hidden{% endif %}">

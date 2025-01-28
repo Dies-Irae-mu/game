@@ -207,7 +207,7 @@ class CmdTestLock(MuxCommand):
     Example:
         @testlock Nicole = has_splat(Mage)
         @testlock Nicole = has_tradition(Order of Hermes)
-        @testlock Nicole = has_mage_faction(Traditions)
+        @testlock Nicole = has_affiliation(Traditions)
     """
     
     key = "@testlock"

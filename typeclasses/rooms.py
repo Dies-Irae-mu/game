@@ -177,6 +177,9 @@ class RoomParent(DefaultRoom):
         exits = []
         for ex in self.contents:
             if ex.destination and ex.access(looker, "view"):
+                # Add logging to help diagnose visibility
+                from evennia.utils import logger
+                logger.log_info(f"Exit {ex.key} is visible to {looker}")
                 exits.append(ex)
 
         if exits:
@@ -287,17 +290,27 @@ class RoomParent(DefaultRoom):
         final_difficulty = base_difficulty + temp_modifier
         
         # If this is being called in the context of a character's action,
-        # check for Natural Channel merit
+        # check for Natural Channel merit and Ananasi form
         if hasattr(self, 'ndb') and self.ndb.current_stepper:
             character = self.ndb.current_stepper
             if (hasattr(character, 'db') and 
-                character.db.stats and 
-                'merits' in character.db.stats and 
-                'supernatural' in character.db.stats['merits'] and
-                'Natural Channel' in character.db.stats['merits']['supernatural']):
-                final_difficulty -= 1
+                character.db.stats):
+                
+                # Check for Natural Channel merit
+                if ('merits' in character.db.stats and 
+                    'supernatural' in character.db.stats['merits'] and
+                    'Natural Channel' in character.db.stats['merits']['supernatural']):
+                    final_difficulty -= 1
+                
+                # Check for Ananasi in Crawlerling form
+                shifter_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+                if (shifter_type == "Ananasi" and
+                    character.db.current_form == "Crawlerling"):
+                    # Invert difficulty (2->10, 3->9, 4->8, etc.)
+                    final_difficulty = 12 - final_difficulty
         
-        return max(1, final_difficulty)  # Ensure difficulty never goes below 1
+        # Ensure difficulty stays within valid range (1-10)
+        return max(1, min(10, final_difficulty))
 
     def modify_gauntlet(self, modifier, duration=0):
         """
@@ -421,12 +434,13 @@ class RoomParent(DefaultRoom):
         Check if a character can step sideways based on their type and conditions.
         Returns (bool, str) tuple: (can_step, reason)
         """
-        # Get character's splat and breed
+        # Get character's splat and type
         stats = character.db.stats
         if not stats or 'other' not in stats or 'splat' not in stats['other']:
             return False, "Error: Character splat not found."
 
         splat = stats['other']['splat'].get('Splat', {}).get('perm', '')
+        shifter_type = stats['other'].get('type', {}).get('Type', {}).get('perm', '')
         
         # Check if character has Step Sideways merit
         has_step_sideways = (
@@ -437,16 +451,19 @@ class RoomParent(DefaultRoom):
         if has_step_sideways:
             return True, ""
 
+        # Only allow Shifters to step sideways
+        if splat != "Shifter":
+            return False, "Only Shifters can step sideways."
+
         # Check specific Fera restrictions
-        if splat == "Ananasi":
+        if shifter_type == "Ananasi":
             # Check if in Crawlerling form
             current_form = character.db.current_form
             if current_form != "Crawlerling":
                 return False, "You must be in Crawlerling form to step sideways."
-            # Note: Gauntlet difficulty inversion is handled in get_gauntlet_difficulty
             return True, ""
 
-        elif splat == "Bastet":
+        elif shifter_type == "Bastet":
             # Check for Walking Between Worlds gift
             has_wbw = (
                 stats.get('powers', {}).get('gift', {}).get('Walking Between Worlds', {}).get('perm', 0) > 0
@@ -458,13 +475,13 @@ class RoomParent(DefaultRoom):
                 return False, "You can only step sideways within your Den-Realm or with the Walking Between Worlds gift."
             return True, ""
 
-        elif splat == "Gurahl":
+        elif shifter_type == "Gurahl":
             # Check if in Umbral Glen
             if self.db.roomtype != "Umbral-Glen":
                 return False, "You can only step sideways from within an Umbral Glen or via the Rite of Rending the Gauntlet."
             return True, ""
 
-        elif splat == "Mokolé":
+        elif shifter_type == "Mokolé":
             # Check for Walking Between Worlds gift
             has_wbw = (
                 stats.get('powers', {}).get('gift', {}).get('Walking Between Worlds', {}).get('perm', 0) > 0
@@ -473,7 +490,7 @@ class RoomParent(DefaultRoom):
                 return False, "You require the Walking Between Worlds gift to enter the Umbra."
             return True, ""
 
-        elif splat == "Nagah":
+        elif shifter_type == "Nagah":
             # Check if within an Ananta
             if self.db.roomtype != "Ananta":
                 return False, "You can only step sideways within an Ananta."
@@ -482,7 +499,7 @@ class RoomParent(DefaultRoom):
                 return False, "You can only step sideways within your attuned Ananta."
             return True, ""
 
-        elif splat == "Ratkin":
+        elif shifter_type == "Ratkin":
             # Check if alone or only with spirits/Ratkin
             others_present = False
             for obj in self.contents:
@@ -491,14 +508,16 @@ class RoomParent(DefaultRoom):
                         others_present = True
                         break
                     other_splat = obj.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
-                    if other_splat != "Ratkin" and not obj.tags.get("spirit"):
-                        others_present = True
-                        break
+                    other_type = obj.db.stats.get('other', {}).get('type', {}).get('Type', {}).get('perm', '')
+                    if other_splat != "Shifter" or other_type != "Ratkin":
+                        if not obj.tags.get("spirit"):
+                            others_present = True
+                            break
             if others_present:
                 return False, "You can only step sideways when alone or in the presence of spirits or fellow Ratkin."
             return True, ""
 
-        elif splat == "Rokea":
+        elif shifter_type == "Rokea":
             # Check for Swim Sideways merit, Enter Sea's Soul gift, or Rite of Passing the Net
             has_swim = (
                 stats.get('merits', {}).get('supernatural', {}).get('Swim Sideways', {}).get('perm', 0) > 0
@@ -513,59 +532,21 @@ class RoomParent(DefaultRoom):
                 return False, "You require the Swim Sideways merit, Enter Sea's Soul gift, or Rite of Passing the Net to swim sideways."
             return True, ""
 
-        # Default case (Garou and others)
+        # Default case - any shifter type without special restrictions can step sideways like Garou
         return True, ""
-
-    def step_sideways(self, character):
-        """
-        Allows a character to step sideways into the Umbra.
-        """
-        # Check if character can step sideways
-        can_step, reason = self.can_step_sideways(character)
-        if not can_step:
-            character.msg(reason)
-            return False
-
-        # Store the character temporarily for difficulty calculation
-        self.ndb.current_stepper = character
-        try:
-            difficulty = self.get_gauntlet_difficulty()
-            
-            # Handle Ananasi's inverted difficulty
-            if (character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '') == "Ananasi" and
-                character.db.current_form == "Crawlerling"):
-                difficulty = 10 - difficulty  # Invert difficulty (1 becomes 9, 2 becomes 8, etc.)
-            
-            successes, ones = self.roll_gnosis(character, difficulty)
-            
-            if successes > 0:
-                character.tags.remove("in_material", category="state")
-                character.tags.add("in_umbra", category="state")
-                character.msg("You successfully step sideways into the Umbra.")
-                self.msg_contents(f"{character.name} shimmers and fades from view as they step into the Umbra.", exclude=character, from_obj=character)
-                return True
-            elif successes == 0 and ones > 0:
-                # Botch
-                character.msg("You catastrophically fail to step sideways into the Umbra.")
-                self.msg_contents(f"{character.name} seems to flicker for a moment, but remains in place.", exclude=character, from_obj=character)
-                
-                # Announce the botch on the mudinfo channel
-                mudinfo = search_channel("mudinfo")
-                if mudinfo:
-                    mudinfo[0].msg(f"|rBOTCH!!!|n {character.name} botched their attempt to step sideways in {self.name}.")
-                
-                return False
-            else:
-                character.msg("You fail to step sideways into the Umbra.")
-                return False
-        finally:
-            # Clean up the temporary character reference
-            self.ndb.current_stepper = None
 
     def return_from_umbra(self, character):
         """
         Allows a character to return from the Umbra to the material world.
         """
+        # Check if Ananasi needs to be in Crawlerling form
+        stats = character.db.stats
+        if stats:
+            shifter_type = stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+            if shifter_type == "Ananasi" and character.db.current_form != "Crawlerling":
+                character.msg("You must be in Crawlerling form to cross the Gauntlet.")
+                return False
+
         # Store the character temporarily for difficulty calculation
         self.ndb.current_stepper = character
         try:
@@ -590,6 +571,46 @@ class RoomParent(DefaultRoom):
                 return False
             else:
                 character.msg("You fail to return from the Umbra.")
+                return False
+        finally:
+            # Clean up the temporary character reference
+            self.ndb.current_stepper = None
+
+    def step_sideways(self, character):
+        """
+        Allows a character to step sideways into the Umbra.
+        """
+        # Check if character can step sideways
+        can_step, reason = self.can_step_sideways(character)
+        if not can_step:
+            character.msg(reason)
+            return False
+
+        # Store the character temporarily for difficulty calculation
+        self.ndb.current_stepper = character
+        try:
+            difficulty = self.get_gauntlet_difficulty()
+            successes, ones = self.roll_gnosis(character, difficulty)
+            
+            if successes > 0:
+                character.tags.remove("in_material", category="state")
+                character.tags.add("in_umbra", category="state")
+                character.msg("You successfully step sideways into the Umbra.")
+                self.msg_contents(f"{character.name} shimmers and fades from view as they step into the Umbra.", exclude=character, from_obj=character)
+                return True
+            elif successes == 0 and ones > 0:
+                # Botch
+                character.msg("You catastrophically fail to step sideways into the Umbra.")
+                self.msg_contents(f"{character.name} seems to flicker for a moment, but remains in place.", exclude=character, from_obj=character)
+                
+                # Announce the botch on the mudinfo channel
+                mudinfo = search_channel("mudinfo")
+                if mudinfo:
+                    mudinfo[0].msg(f"|rBOTCH!!!|n {character.name} botched their attempt to step sideways in {self.name}.")
+                
+                return False
+            else:
+                character.msg("You fail to step sideways into the Umbra.")
                 return False
         finally:
             # Clean up the temporary character reference

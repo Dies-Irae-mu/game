@@ -1,6 +1,6 @@
 [
     {
-        "name": "Mage Faction",
+        "name": "Affiliation",
         "description": "The primary faction of a Mage character.",
         "game_line": "Mage: The Ascension",
         "category": "identity",

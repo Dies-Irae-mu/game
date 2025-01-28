@@ -21,6 +21,7 @@ class CmdLanguage(MuxCommand):
       +language/rem <language>         (Remove a language from yourself)
       +language/rem <name>=<language>  (Staff only - Remove from others)
       +language/view <name>            (Staff only - View character's languages)
+      +language/native <language>        (Set your native language)
 
     Examples:
       +language
@@ -61,54 +62,43 @@ class CmdLanguage(MuxCommand):
                 return
             
             language = self.args.strip().title()
-            if language not in self.caller.get_languages():
-                self.caller.msg(f"You must know a language before setting it as native. Use +language/add {language} first.")
+            
+            # Check if the language is valid
+            found = False
+            proper_language = None
+            for lang_key, proper_lang in AVAILABLE_LANGUAGES.items():
+                if lang_key.lower() == language.lower() or proper_lang.lower() == language.lower():
+                    found = True
+                    proper_language = proper_lang
+                    break
+            
+            if not found:
+                self.caller.msg(f"'{language}' is not a valid language. Use +languages/list to see available languages.")
                 return
             
-            # Store the old native language
+            # Set the native language
             old_native = self.caller.db.native_language or "English"
+            self.caller.db.native_language = proper_language
             
-            # If switching to English, check if we need to remove a language
-            if language == "English":
-                languages = self.caller.get_languages()
-                merits = self.caller.db.stats.get('merits', {})
-                language_merit_points = 0
-                natural_linguist = False
-                
-                # Calculate available points
-                for category in merits:
-                    category_merits = merits[category]
-                    if any(merit.lower().replace(' ', '') == 'naturallinguist' 
-                          for merit in category_merits.keys()):
-                        natural_linguist = True
-                        break
-                
-                for category in merits:
-                    category_merits = merits[category]
-                    for merit_name, merit_data in category_merits.items():
-                        if merit_name == 'Language':
-                            base_points = merit_data.get('perm', 0)
-                            language_merit_points = base_points * 2 if natural_linguist else base_points
-                            break
-                        elif merit_name.startswith('Language('):
-                            base_points = merit_data.get('perm', 0)
-                            points = base_points * 2 if natural_linguist else base_points
-                            language_merit_points += points
-                
-                # Calculate used points after switch
-                used_languages = len(languages) - 1  # -1 for English
-                
-                # If switching to English would put us over points, remove the last added language
-                if used_languages > language_merit_points:
-                    if len(languages) > 1:  # Make sure we don't remove English
-                        last_language = languages[-1]
-                        languages.remove(last_language)
-                        self.caller.db.languages = languages
-                        self.caller.msg(f"Removed {last_language} to stay within language point limits.")
+            # Get current languages and ensure both English and the native language are included
+            languages = self.caller.get_languages()
             
-            # Set the new native language
-            self.caller.db.native_language = language
-            self.caller.msg(f"You have set {language} as your native language.")
+            # Remove the old native language if it's not English
+            if old_native != "English" and old_native in languages:
+                languages.remove(old_native)
+            
+            # Ensure English and new native language are included
+            if "English" not in languages:
+                languages.append("English")
+            if proper_language not in languages:
+                languages.append(proper_language)
+            
+            # Update the character's languages
+            self.caller.db.languages = languages
+            
+            self.caller.msg(f"You have set {proper_language} as your native language.")
+            if old_native != "English" and old_native != proper_language:
+                self.caller.msg(f"Removed {old_native} from your known languages.")
             
             # Show updated language list
             self.list_languages()
@@ -366,47 +356,44 @@ class CmdLanguage(MuxCommand):
         # Define categories and their languages
         categories = {
             "San Diego Common Languages": [
-                "Spanish", "Filipino/Tagalog", "Chinese", "Vietnamese", "Korean", "Japanese", 
-                "Mon-Khmer (Cambodian)", "Hmong", "Thai", "Laotian"
-            ],
-
-            "Major World Languages": [
-                "Arabic", "Bengali", "Mandarin", "English", "French", 
-                "German", "Hindi", "Indonesian", "Italian", "Japanese", "Korean",
-                "Farsi", "Portuguese", "Russian", "Spanish", "Turkish",
-                "Urdu"
+                "English", "Spanish", "Tagalog", "Chinese", "Vietnamese", "Korean", "Japanese", 
+                "Khmer", "Hmong", "Thai", "Lao"
             ],
             "African Languages": [
                 "Amharic", "Hausa", "Igbo", "Lingala", "Oromo", "Somali",
                 "Swahili", "Twi", "Wolof", "Yoruba", "Zulu", "Afrikaans", "Bambara", 
                 "Bemba", "Chichewa", "Ganda", "Kikuyu", "Kinyarwanda", "Luganda", 
                 "Luo", "Makonde", "Maltese", "Mbumba", "Ndebele", "Nyanja", "Shona", 
-                "Swati", "Tswana", "Venda", "Xhosa", "Zulu"
+                "Swati", "Tswana", "Venda", "Xhosa"
             ],
             "European Languages": [
-                "Bosnian", "Bulgarian", "Croatian", "Czech", "Danish", "Dutch",
-                "Finnish", "Greek", "Hungarian", "Norwegian", "Polish", "Romanian",
-                "Serbian", "Swedish", "Ukrainian", "Albanian", "Armenian", "Azerbaijani", 
-                "Belarusian", "Bosnian", "Bulgarian", "Croatian", "Czech", "Danish", 
-                "Dutch", "Estonian", "Finnish", "French", "German", "Greek", "Hungarian", 
-                "Icelandic", "Irish", "Italian", "Latvian", "Lithuanian", "Macedonian", 
-                "Maltese", "Moldovan", "Montenegrin", "Norwegian", "Polish", "Romanian", 
-                "Serbian", "Slovak", "Slovenian", "Swedish", "Ukrainian"
+                "Albanian", "Armenian", "Azerbaijani", "Belarusian", "Bosnian", "Bulgarian",
+                "Croatian", "Czech", "Danish", "Dutch", "Estonian", "Finnish", "French",
+                "German", "Greek", "Hungarian", "Icelandic", "Irish", "Italian", "Latvian",
+                "Lithuanian", "Macedonian", "Maltese", "Moldovan", "Montenegrin", "Norwegian",
+                "Polish", "Portuguese", "Romanian", "Russian", "Serbian", "Slovak", "Slovenian",
+                "Swedish", "Ukrainian"
             ],
             "Asian Languages": [
-                "Burmese", "Cantonese", "Gujarati", "Khmer", "Lao",
-                "Malay", "Punjabi", "Tamil", "Telugu", "Thai"
+                "Burmese", "Bengali", "Mandarin", "Cantonese", "Gujarati", "Malay", 
+                "Punjabi", "Tamil", "Telugu", "Hindi", "Indonesian"
             ],
             "Middle Eastern Languages": [
-                "Hebrew", "Kurdish", "Armenian", "Syriac", "Pashto"
+                "Arabic", "Hebrew", "Kurdish", "Armenian", "Syriac", "Pashto", "Turkish",
+                "Urdu", "Farsi"
             ],
             "Indigenous American Languages": [
                 "Navajo", "Quechua", "Inuit", "Apache", "Cherokee", "Chamorro", "Chickasaw", 
                 "Choctaw", "Comanche", "Cree", "Haida", "Haudenosaunee", "Iroquois", "Kiowa", 
-                "Lakota", "Maya", "Navajo", "Pueblo", "Tlingit", "Turtle", "Yaqui", "Zuni"
+                "Lakota", "Maya", "Pueblo", "Tlingit", "Turtle", "Yaqui", "Zuni"
             ],
             "Pacific Languages": [
-                "Hawaiian", "Maori", "Tagalog", "Samoan", "Tahitian", "Tongan", "Fijian"
+                "Hawaiian", "Maori", "Samoan", "Tahitian", "Tongan", "Fijian"
+            ],
+            "Supernatural & Ancient Languages": [
+                "Animal", "Spirit", "Enochian", "Old English", "Old Norse", "Latin",
+                "Ancient Greek", "Ancient Egyptian", "Akkadian", "Sanskrit", "Babylonian", 
+                "Sumerian", "Elamite", "Hittite", "Phoenician", "Minoan", "Mycenaean"
             ]
         }
         
@@ -515,7 +502,7 @@ class CmdLanguage(MuxCommand):
         Staff command to view a character's languages.
         Usage: +language/view <character>
         """
-        if not self.caller.check_permstring("Developer"):
+        if not self.caller.check_permstring("builders"):
             self.caller.msg("You don't have permission to view other characters' languages.")
             return
 
@@ -534,32 +521,38 @@ class CmdLanguage(MuxCommand):
         languages = target.get_languages()
         current = target.get_speaking_language()
         
-        # Test line to check if ANY colors work
-        self.caller.msg("|rTEST RED|n |bTEST BLUE|n |yTEST YELLOW|n")
-        
         # Create the output using raw strings
-        divider_line = "-" * 78
+        main_header = f"|b< |y{target.name}'s Languages|n |b>"
+        known_header = "|b< |yKnown Languages|n |b>"
+        speaking_header = "|b< |yCurrently Speaking|n |b>"
+        merit_header = "|b< |yMerit Points|n |b>"
+        
+        # Strip ANSI codes for length calculation
+        main_length = len(ANSIString(main_header).clean())
+        known_length = len(ANSIString(known_header).clean())
+        speaking_length = len(ANSIString(speaking_header).clean())
+        merit_length = len(ANSIString(merit_header).clean())
+        
+        main_padding = (78 - main_length) // 2
+        known_padding = (78 - known_length) // 2
+        speaking_padding = (78 - speaking_length) // 2
+        merit_padding = (78 - merit_length) // 2
         
         output = [
-            f"|b{divider_line}|n",
-            f"|b{' ' * 30}< Languages >|n",
-            f"|b{divider_line}|n",
-            f"|b{' ' * 25}Known Languages|n",
-            f"|b{divider_line}|n",
+            f"|b{'-' * main_padding}{main_header}{'-' * (78 - main_padding - main_length)}|n",
+            f"|b{'-' * known_padding}{known_header}{'-' * (78 - known_padding - known_length)}|n",
         ]
         
         # Format languages list with wrapping
         if languages:
-            wrapped_languages = wrap_ansi(f"|y{', '.join(languages)}|n", width=76, left_padding=0)
+            wrapped_languages = wrap_ansi(f"|w{', '.join(languages)}|n", width=76, left_padding=0)
             output.append(wrapped_languages)
         else:
             output.append("None")
         
         # Add current speaking language
         output.extend([
-            f"|b{divider_line}|n",
-            f"|b{' ' * 25}Currently Speaking|n",
-            f"|b{divider_line}|n",
+            f"|b{'-' * speaking_padding}{speaking_header}{'-' * (78 - speaking_padding - speaking_length)}|n",
             current if current else "None"
         ])
 
@@ -567,9 +560,9 @@ class CmdLanguage(MuxCommand):
         merits = target.db.stats.get('merits', {})
         language_merit_points = 0
         natural_linguist = False
-        native_language = target.db.native_language or "English"
+        native_language = target.db.native_language or "English"  # Default to English if not set
         
-        # Check for Natural Linguist and Language merits
+        # Merit checks
         for category in merits:
             category_merits = merits[category]
             if any(merit.lower().replace(' ', '') == 'naturallinguist' 
@@ -590,29 +583,32 @@ class CmdLanguage(MuxCommand):
                     language_merit_points += points
 
         if language_merit_points > 0:
+            # Calculate used languages, excluding English and native language
+            used_languages = len(languages)
+            if "English" in languages:
+                used_languages -= 1  # English is always free
+            if native_language in languages and native_language != "English":
+                used_languages -= 1  # Native language is also free
+            
+            points_remaining = language_merit_points - used_languages
+
             output.extend([
-                f"|b{divider_line}|n",
-                f"|b{' ' * 25}Merit Points|n",
-                f"|b{divider_line}|n",
+                f"|b{'-' * merit_padding}{merit_header}{'-' * (78 - merit_padding - merit_length)}|n",
                 f"Total points: {language_merit_points} ({language_merit_points//2 if natural_linguist else language_merit_points} from Language merit{' x2 from Natural Linguist' if natural_linguist else ''})",
                 f"Native language: {native_language}",
-                f"Languages used: {len(languages) - 2}",  # -2 because English and native language are free
-                f"Points remaining: {language_merit_points - (len(languages) - 2)}"
+                f"Languages used: {used_languages}",
+                f"Points remaining: {points_remaining}"
             ])
         else:
             output.extend([
-                f"|b{divider_line}|n",
-                f"|b{' ' * 25}Merit Points|n",
-                f"|b{divider_line}|n",
+                f"|b{'-' * merit_padding}{merit_header}{'-' * (78 - merit_padding - merit_length)}|n",
                 f"Native language: {native_language}"
             ])
         
-        output.append(f"|b{divider_line}|n")
+        output.append(f"|b{'-' * 78}|n")
         
-        # Send raw string first, then processed version
-        raw_output = "\n".join(output)
-        self.caller.msg(f"Raw output: {raw_output}")  # Debug line
-        self.caller.msg(raw_output)
+        # Send only the formatted output
+        self.caller.msg("\n".join(output))
 
     def validate_languages(self, caller=None):
         """

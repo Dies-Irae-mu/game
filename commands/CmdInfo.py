@@ -1,5 +1,5 @@
 from evennia.commands.default.muxcommand import MuxCommand
-from world.wod20th.models import Stat, STAT_TYPES, SHIFTER_IDENTITY_STATS, SHIFTER_RENOWN, CLAN, MAGE_FACTION, MAGE_SPHERES, \
+from world.wod20th.models import Stat, STAT_TYPES, SHIFTER_IDENTITY_STATS, SHIFTER_RENOWN, CLAN, AFFILIATION, MAGE_SPHERES, \
     TRADITION, TRADITION_SUBFACTION, CONVENTION, METHODOLOGIES, NEPHANDI_FACTION, SEEMING, KITH, SEELIE_LEGACIES, \
     UNSEELIE_LEGACIES, ARTS, REALMS, calculate_willpower, calculate_road
 from evennia.utils.ansi import ANSIString
