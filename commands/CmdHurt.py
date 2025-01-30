@@ -1,5 +1,5 @@
 from evennia import Command
-from world.wod20th.utils.damage import apply_damage_or_healing, format_damage, format_status
+from world.wod20th.utils.damage import apply_damage_or_healing, format_damage, format_status, calculate_total_health_levels
 
 class CmdHurt(Command):
     """
@@ -55,40 +55,17 @@ class CmdHurt(Command):
         
         # Calculate total health levels including bonuses
         base_health = 7
-        
-        # Check for Huge Size merit
-        huge_size = target.get_stat('merits', 'physical', 'Huge Size', temp=False)
-        if not huge_size:
-            huge_size = target.get_stat('merits', 'merit', 'Huge Size', temp=False)
-        if huge_size:
-            base_health += 1
-        
-        # Check for Glome phyla
-        glome_phyla = target.get_stat('identity', 'lineage', 'Phyla') == 'Glome'
-        if not glome_phyla:
-            glome_phyla = target.get_stat('identity', 'phyla', 'Phyla') == 'Glome'
-        if glome_phyla:
-            base_health += 2
-        
-        # Check for Troll kith
-        if target.get_stat('identity', 'lineage', 'Kith') == 'Troll':
-            base_health += 1
-
-        # Add vampire health levels if applicable
-        if target.get_stat('other', 'splat', 'Splat') == 'Vampire':
-            base_health += 2
+        bonus_health = calculate_total_health_levels(target)
+        total_health = base_health + bonus_health
 
         # Apply damage
         apply_damage_or_healing(target, damage, damage_type_full)
-        if target.get_stat('Other', 'Splat', 'Splat') == 'Vampire':
-            health = health + 2
-        else:
-            health = health + 1
-        # Ensure damage doesn't exceed maximum health
-        if target.db.agg > base_health:
-            target.db.agg = base_health
 
-        # Get the green gradient_name of th target
+        # Ensure damage doesn't exceed maximum health
+        if target.db.agg > total_health:
+            target.db.agg = total_health
+
+        # Get the green gradient_name of the target
         target_gradient = target.db.gradient_name or target.key
 
         msg = f"|rHURT> |n{target_gradient} takes |r{damage}|n |y{damage_type_full}|n.\n"

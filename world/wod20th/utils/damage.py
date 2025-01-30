@@ -1,6 +1,35 @@
 from evennia.utils.ansi import ANSIString
 
 
+def calculate_total_health_levels(character):
+    """Calculate total health levels including all bonuses."""
+    bonus_health = 0
+    
+    # Check for Huge Size merit - check both locations
+    huge_size = character.get_stat('merits', 'physical', 'Huge Size', temp=False)
+    if not huge_size:  # Check alternate location
+        huge_size = character.get_stat('merits', 'merit', 'Huge Size', temp=False)
+    
+    if huge_size:
+        bonus_health += 1  # Huge Size grants 1 additional Bruised level
+    
+    # Check for Troll kith
+    if character.get_stat('identity', 'lineage', 'Kith') == 'Troll':
+        bonus_health += 1
+        
+    # Check for Glome phyla - check both possible locations
+    glome_phyla = character.get_stat('identity', 'lineage', 'Phyla') == 'Glome'
+    if not glome_phyla:  # Check alternate location
+        glome_phyla = character.get_stat('identity', 'phyla', 'Phyla') == 'Glome'
+    
+    if glome_phyla:
+        bonus_health += 2
+
+    # Store bonus health for use in other functions
+    character.db.bonus_health = bonus_health
+        
+    return bonus_health
+
 def apply_damage_or_healing(character, change, damage_type):
     current_bashing = character.db.bashing or 0
     current_lethal = character.db.lethal or 0
@@ -8,16 +37,8 @@ def apply_damage_or_healing(character, change, damage_type):
     base_health = character.get_stat('other', 'other', 'Health') or 7
     
     # Calculate bonus health levels
-    bonus_health = 0
+    bonus_health = calculate_total_health_levels(character)
     
-    # Check for Huge Size merit
-    if character.get_stat('advantages', 'merits', 'Huge Size'):
-        bonus_health += 1
-    
-    # Check for Glome phyla
-    if character.get_stat('identity', 'lineage', 'Phyla') == 'Glome':
-        bonus_health += 2
-        
     # Add bonus health to base health
     health_levels = base_health + bonus_health
     
@@ -120,20 +141,29 @@ def calculate_injury_level(total_damage, health_levels, agg_damage, char_type):
     return "Healthy"
 
 def format_damage(character):
-    health_levels = character.db.health_levels or 7
-    agg = min(character.db.agg or 0, health_levels + 1)
-    lethal = min(character.db.lethal or 0, health_levels - agg)
-    bashing = min(character.db.bashing or 0, health_levels - agg - lethal)
+    """Format damage markers for display."""
+    # Get base health levels
+    base_health = 7
+    
+    # Calculate bonus health levels
+    bonus_health = calculate_total_health_levels(character)
+    total_health = base_health + bonus_health
+
+    # Get current damage levels
+    agg = min(character.db.agg or 0, total_health + 1)
+    lethal = min(character.db.lethal or 0, total_health - agg)
+    bashing = min(character.db.bashing or 0, total_health - agg - lethal)
 
     string = ""
 
+    # Add damage markers
     for i in range(agg):
         string += ANSIString("|h|r[*]|n")
     for i in range(lethal):
         string += ANSIString("|r[X]|n")
     for i in range(bashing):
         string += ANSIString("|y[/]|n")
-    for i in range(health_levels - agg - lethal - bashing):
+    for i in range(total_health - agg - lethal - bashing):
         string += ANSIString("|g[ ]|n")
 
     return string
@@ -142,28 +172,8 @@ def format_damage(character):
 def format_damage_stacked(character):
     """Format character's health levels with damage markers."""
     # Calculate bonus health levels
-    bonus_health = 0
+    bonus_health = calculate_total_health_levels(character)
     
-    # Check for Huge Size merit - check both locations
-    huge_size = character.get_stat('merits', 'physical', 'Huge Size', temp=False)
-    if not huge_size:  # Check alternate location
-        huge_size = character.get_stat('merits', 'merit', 'Huge Size', temp=False)
-    
-    if huge_size:
-        bonus_health += 1  # Huge Size grants 1 additional Bruised levels
-    
-    # Check for Troll kith
-    if character.get_stat('identity', 'lineage', 'Kith') == 'Troll':
-        bonus_health += 1
-        
-    # Check for Glome phyla - check both possible locations
-    glome_phyla = character.get_stat('identity', 'lineage', 'Phyla') == 'Glome'
-    if not glome_phyla:  # Check alternate location
-        glome_phyla = character.get_stat('identity', 'phyla', 'Phyla') == 'Glome'
-    
-    if glome_phyla:
-        bonus_health += 2
-        
     # Define standard health levels
     standard_health_levels = [
         (ANSIString("Hurt"), ANSIString("|g[ ]|n"), " (-1)"),

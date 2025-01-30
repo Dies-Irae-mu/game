@@ -132,14 +132,14 @@ class CmdCheck(MuxCommand):
     # Define secondary abilities that cost half the normal amount
     SECONDARY_ABILITIES = {
         'talent': {
-            'Carousing', 'Diplomacy', 'Intrigue', 'Mimicry', 'Scrounging', 'Seduction', 'Style',
+            'Artistry', 'Carousing', 'Diplomacy', 'Intrigue', 'Mimicry', 'Scrounging', 'Seduction', 'Style',
             # Mage-specific secondaries will be added dynamically
-            'High Ritual', 'Blatancy'
+            'High Ritual', 'Blatancy', 'Lucid Dreaming', 'Flying'
         },
         'skill': {
             'Archery', 'Fortune-Telling', 'Fencing', 'Gambling', 'Jury-Rigging', 'Pilot', 'Torture',
             # Mage-specific secondaries will be added dynamically
-            'Microgravity Ops', 'Energy Weapons', 'Helmsman', 'Biotech'
+            'Do', 'Microgravity Ops', 'Energy Weapons', 'Helmsman', 'Biotech'
         },
         'knowledge': {
             'Area Knowledge', 'Cultural Savvy', 'Demolitions', 'Herbalism', 'Media', 'Power-Brokering', 'Vice',

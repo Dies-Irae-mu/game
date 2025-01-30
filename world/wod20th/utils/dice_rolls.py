@@ -22,13 +22,21 @@ def roll_dice(dice_pool: int, difficulty: int) -> Tuple[List[int], int, int]:
     
     return rolls, successes, ones
 
-def interpret_roll_results(successes, ones, rolls=None, diff=6):
-    """Interpret the results of a dice roll."""
+def interpret_roll_results(successes, ones, rolls=None, diff=6, nightmare_dice=0):
+    """
+    Interpret the results of a dice roll.
+    Colors used:
+    - Regular successes: |g Green
+    - Regular failures: |w White
+    - Nightmare successes: |r Red
+    - Nightmare failures: |y Yellow
+    - Ones: |r Red
+    """
     # Format success count with color
     if successes == 0:
-        success_string = f"|y{successes}|n"
+        success_string = f"|w{successes}|n"
     elif successes > 0:
-        success_string = f"|g{successes}|n"
+        success_string = f"|g{successes}|n"  # Green for successes
     else:
         success_string = f"|r{successes}|n"
 
@@ -38,19 +46,41 @@ def interpret_roll_results(successes, ones, rolls=None, diff=6):
     if successes == -1 and ones > 0:
         msg += f"|r Botch!|n"
     else:
-        msg += "|y Successes|n" if successes != 1 else "|y Success|n"
+        msg += " Success" if successes == 1 else " Successes"
     
     # Format dice results with color
     if rolls:
         msg += " |w(|n"
         colored_rolls = []
-        for roll in sorted(rolls, reverse=True):
+        
+        # Keep track of which dice are nightmare dice (the last N dice)
+        nightmare_start = len(rolls) - nightmare_dice
+        
+        # Sort the rolls but keep track of their original positions
+        roll_info = [(i, roll) for i, roll in enumerate(rolls)]
+        roll_info.sort(key=lambda x: (-x[1], x[0]))  # Sort by value (descending) then position
+        
+        for i, (orig_pos, roll) in enumerate(roll_info):
+            is_nightmare = orig_pos >= nightmare_start
+            
             if roll == 1:
-                colored_rolls.append(f"|r{roll}|n")
+                # Ones are always red
+                colored_rolls.append(f"|r1|n")
             elif roll >= diff:
-                colored_rolls.append(f"|g{roll}|n")
+                if is_nightmare:
+                    # Nightmare successes are magenta
+                    colored_rolls.append(f"|m{roll}|n")
+                else:
+                    # Regular successes are green
+                    colored_rolls.append(f"|g{roll}|n")
             else:
-                colored_rolls.append(f"|y{roll}|n")
+                if is_nightmare:
+                    # Non-success nightmare dice are blue
+                    colored_rolls.append(f"|b{roll}|n")
+                else:
+                    # Regular non-successes are white
+                    colored_rolls.append(f"|w{roll}|n")
+        
         msg += " ".join(colored_rolls)
         msg += "|w)|n"
     

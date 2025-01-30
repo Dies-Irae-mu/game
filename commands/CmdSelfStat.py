@@ -270,6 +270,10 @@ class CmdSelfStat(default_cmds.MuxCommand):
             base_stats['pools']['dual']['Glamour'] = {'perm': 1, 'temp': 1}
             base_stats['pools']['dual']['Banality'] = {'perm': 1, 'temp': 1}
             base_stats['pools']['dual']['Willpower'] = {'perm': 1, 'temp': 1}
+            base_stats['pools']['other'] = {
+                'Nightmare': {'perm': 0, 'temp': 0},
+                'Willpower Imbalance': {'perm': 0, 'temp': 0}
+            }
             
             # Initialize Changeling-specific abilities
             base_stats['abilities']['talent']['Kenning'] = {'perm': 0, 'temp': 0}
@@ -306,6 +310,7 @@ class CmdSelfStat(default_cmds.MuxCommand):
             base_stats['pools']['dual']['Willpower'] = {'perm': 3, 'temp': 3}
             base_stats['pools']['dual']['Essence'] = {'perm': 15, 'temp': 15}
             base_stats['pools']['dual']['Paradox'] = {'perm': 0, 'temp': 0}
+            base_stats['pools']['dual']['Rage'] = {'perm': 0, 'temp': 0}  # Initialize Rage pool
             base_stats['identity']['lineage']['Companion Type'] = {'perm': '', 'temp': ''}
             base_stats['identity']['lineage']['Affiliation'] = {'perm': '', 'temp': ''}
             base_stats['identity']['personal']['Motivation'] = {'perm': '', 'temp': ''}
@@ -315,6 +320,34 @@ class CmdSelfStat(default_cmds.MuxCommand):
             base_stats['pools']['dual']['Willpower'] = {'perm': 1, 'temp': 1}
 
         return base_stats
+
+    def update_companion_pools(self, character):
+        """Update pools based on Companion powers."""
+        if character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm') != 'Companion':
+            return
+
+        # Get special advantages
+        special_advantages = character.db.stats.get('powers', {}).get('special_advantage', {})
+        
+        # Handle Ferocity
+        ferocity = special_advantages.get('Ferocity', {}).get('perm', 0)
+        if ferocity:
+            rage_value = min(5, ferocity // 2)
+            character.set_stat('pools', 'dual', 'Rage', rage_value, temp=False)
+            character.set_stat('pools', 'dual', 'Rage', rage_value, temp=True)
+
+        # Handle Feast of Nettles
+        feast_level = special_advantages.get('Feast of Nettles', {}).get('perm', 0)
+        paradox_values = {
+            2: 3,   # 2 points -> 3 permanent
+            3: 5,   # 3 points -> 5 permanent
+            4: 10,  # 4 points -> 10 permanent
+            5: 15,  # 5 points -> 15 permanent
+            6: 20   # 6 points -> 20 permanent
+        }
+        if feast_level in paradox_values:
+            character.set_stat('pools', 'dual', 'Paradox', paradox_values[feast_level], temp=False)
+            character.set_stat('pools', 'dual', 'Paradox', 0, temp=True)
 
     def func(self):
         """
@@ -932,12 +965,80 @@ class CmdSelfStat(default_cmds.MuxCommand):
             self.caller.msg("Error: An unexpected error occurred. Please try again or contact an admin if the issue persists.")
             return
 
+        # Special handling for Nightmare to ensure it stays in the dictionary
+        if self.stat_name == 'Nightmare':
+            try:
+                value = int(self.value_change)
+                # Ensure pools/other structure exists
+                if 'pools' not in self.caller.db.stats:
+                    self.caller.db.stats['pools'] = {}
+                if 'other' not in self.caller.db.stats['pools']:
+                    self.caller.db.stats['pools']['other'] = {}
+                if 'Nightmare' not in self.caller.db.stats['pools']['other']:
+                    self.caller.db.stats['pools']['other']['Nightmare'] = {}
+                
+                # Set both temp and perm values
+                self.caller.db.stats['pools']['other']['Nightmare']['temp'] = value
+                self.caller.db.stats['pools']['other']['Nightmare']['perm'] = value
+                
+                return
+            except ValueError:
+                self.caller.msg("Error: Nightmare value must be a number.")
+                return
+
+        # After the stat value is set, check if we need to adjust pools
+        try:
+            if stat.stat_type in ['blessing', 'special_advantage']:
+                self.apply_power_based_pools(self.caller, stat.stat_type, full_stat_name, new_value)
+                # For Companions, update all pools after any special advantage change
+                if self.caller.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm') == 'Companion':
+                    self.update_companion_pools(self.caller)
+        except Exception as e:
+            self.caller.msg("Error: Unable to process power-based pool adjustments. Please try again or contact an admin.")
+            return
+
+    def apply_power_based_pools(self, character, power_type, power_name, value):
+        """Adjust pools based on specific powers."""
+        # Handle Possessed blessings
+        if power_type == 'blessing':
+            if power_name == 'Berserker':
+                # Set Rage to 5 for characters with Berserker blessing
+                character.set_stat('pools', 'dual', 'Rage', 5, temp=False)
+                character.set_stat('pools', 'dual', 'Rage', 5, temp=True)
+            elif power_name == 'Spirit Ties':
+                # Set Gnosis equal to Spirit Ties level
+                character.set_stat('pools', 'dual', 'Gnosis', value, temp=False)
+                character.set_stat('pools', 'dual', 'Gnosis', value, temp=True)
+
+        # Handle Companion special advantages
+        elif power_type == 'special_advantage':
+            if power_name == 'Ferocity':
+                # Calculate Rage based on Ferocity (1 Rage per 2 points, max 5)
+                rage_value = min(5, value // 2)
+                # Set both permanent and temporary values
+                character.set_stat('pools', 'dual', 'Rage', rage_value, temp=False)
+                character.set_stat('pools', 'dual', 'Rage', rage_value, temp=True)
+            elif power_name == 'Feast of Nettles':
+                # Set Paradox pool based on Feast of Nettles level
+                paradox_values = {
+                    2: 3,   # 2 points -> 3 permanent
+                    3: 5,   # 3 points -> 5 permanent
+                    4: 10,  # 4 points -> 10 permanent
+                    5: 15,  # 5 points -> 15 permanent
+                    6: 20   # 6 points -> 20 permanent
+                }
+                if value in paradox_values:
+                    # Set both permanent and temporary values
+                    character.set_stat('pools', 'dual', 'Paradox', paradox_values[value], temp=False)
+                    character.set_stat('pools', 'dual', 'Paradox', paradox_values[value], temp=True)
+                    # Then set temporary to 0 after ensuring the pool exists
+                    character.set_stat('pools', 'dual', 'Paradox', 0, temp=True)
+
     def apply_shifter_stats(self, character):
         """Apply shifter-specific stats"""
         shifter_type = character.get_stat('identity', 'lineage', 'Type')
         if not shifter_type:
             return
-
         # Convert shifter_type to lowercase for comparison
         shifter_type = shifter_type.lower()
 

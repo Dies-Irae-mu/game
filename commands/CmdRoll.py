@@ -6,6 +6,7 @@ from world.wod20th.utils.dice_rolls import roll_dice, interpret_roll_results
 import re
 from difflib import get_close_matches
 from datetime import datetime
+from random import randint
 
 class CmdRoll(default_cmds.MuxCommand):
     """
@@ -13,17 +14,24 @@ class CmdRoll(default_cmds.MuxCommand):
 
     Usage:
       +roll <expression> [vs <difficulty>]
+      +roll/nightmare [<number>] <expression> [vs <difficulty>]
       +roll/log
 
     Examples:
       +roll strength+dexterity+3-2
       +roll stre+dex+3-2 vs 7
+      +roll/nightmare Legerdemain+Prop vs 6
+      +roll/nightmare/3 Legerdemain+Prop vs 6
       +roll/log
 
     This command allows you to roll dice based on your character's stats
     and any modifiers. You can specify stats by their full name or abbreviation.
     The difficulty is optional and defaults to 6 if not specified.
     Stats that don't exist or have non-numeric values are treated as 0.
+
+    The /nightmare switch is used for Changeling characters to replace regular
+    dice with Nightmare dice. The number of Nightmare dice can be specified
+    after the switch, or it will default to the character's current Nightmare rating.
 
     Use +roll/log to view the last 10 rolls made in the current location.
     """
@@ -37,6 +45,74 @@ class CmdRoll(default_cmds.MuxCommand):
         if self.switches and "log" in self.switches:
             self.display_roll_log()
             return
+
+        # Handle Nightmare dice
+        nightmare_dice = 0
+        force_nightmare_dice = None
+        if self.switches and any(s.startswith('nightmare') for s in self.switches):
+            # Check if character is a Changeling
+            if not self.caller.db.stats:
+                self.caller.msg("Error: Character has no stats.")
+                return
+                
+            # Check if character is a Changeling by checking splat
+            splat = self.caller.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('temp', '')
+            if not splat:
+                splat = self.caller.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+            
+            if splat != 'Changeling':
+                self.caller.msg("Error: Only Changelings can use Nightmare dice.")
+                return
+
+            # Parse the input to check for Arts and Realms
+            match = re.match(r'(.*?)(?:\s+vs\s+(\d+))?$', self.args.strip(), re.IGNORECASE)
+            if not match:
+                self.caller.msg("Invalid roll format. Use: +roll <expression> [vs <difficulty>]")
+                return
+
+            expression = match.group(1)
+            components = re.split(r'[+-]', expression)
+            components = [c.strip().strip('"\'').strip() for c in components if c.strip()]
+
+            # Check if any component is an Art or Realm
+            has_art_or_realm = False
+            for component in components:
+                art_value = self.caller.db.stats.get('powers', {}).get('art', {}).get(component.title(), {}).get('temp', None)
+                realm_value = self.caller.db.stats.get('powers', {}).get('realm', {}).get(component.title(), {}).get('temp', None)
+                if art_value is not None or realm_value is not None:
+                    has_art_or_realm = True
+                    break
+
+            if not has_art_or_realm:
+                self.caller.msg("Error: Nightmare dice can only be used when rolling Arts + Realms.")
+                return
+
+            # First check for forced nightmare dice
+            has_forced_dice = False
+            if len(self.switches) >= 2 and self.switches[0] == 'nightmare':
+                try:
+                    force_nightmare_dice = int(self.switches[1])
+                    has_forced_dice = True
+                    nightmare_dice = force_nightmare_dice
+                except ValueError:
+                    self.caller.msg("Invalid number of Nightmare dice specified.")
+                    return
+
+            # If no forced dice, check if we should use Nightmare rating
+            if not has_forced_dice:
+                # Check if Nightmare exists in stats
+                nightmare_exists = ('Nightmare' in self.caller.db.stats.get('pools', {}).get('other', {}))
+                if nightmare_exists:
+                    # Get the rating (which might be 0)
+                    nightmare_rating = self.caller.db.stats['pools']['other']['Nightmare'].get('temp', 0)
+                    if not nightmare_rating:
+                        nightmare_rating = self.caller.db.stats['pools']['other']['Nightmare'].get('perm', 0)
+                    
+                    if 'nightmare' in self.switches:
+                        if nightmare_rating > 0:
+                            nightmare_dice = nightmare_rating
+                        else:
+                            nightmare_dice = 0
 
         if not self.args:
             self.caller.msg("Usage: +roll <expression> [vs <difficulty>]")
@@ -127,11 +203,112 @@ class CmdRoll(default_cmds.MuxCommand):
             if dice_pool == 0 and original_pool > 0:
                 warnings.append("|rWarning: Health penalties have reduced your dice pool to 0.|n")
 
-        # Roll the dice using our utility function
-        rolls, successes, ones = roll_dice(dice_pool, difficulty)
-        
+        # After calculating dice_pool, adjust nightmare dice if needed
+        if nightmare_dice > 0:
+            # Get current Nightmare rating for reference
+            current_nightmare = self.caller.db.stats.get('pools', {}).get('other', {}).get('Nightmare', {}).get('temp', 0)
+            if not current_nightmare:
+                current_nightmare = self.caller.db.stats.get('pools', {}).get('other', {}).get('Nightmare', {}).get('perm', 0)
+
+            # If using forced dice, add them to current rating
+            if has_forced_dice:
+                nightmare_dice = min(current_nightmare + force_nightmare_dice, dice_pool)
+            else:
+                nightmare_dice = min(nightmare_dice, dice_pool)
+
+            # Roll dice
+            regular_dice = dice_pool - nightmare_dice
+            regular_rolls = []
+            nightmare_rolls = []
+            
+            # Roll regular dice
+            if regular_dice > 0:
+                regular_rolls, regular_successes, regular_ones = roll_dice(regular_dice, difficulty)
+            else:
+                regular_successes = regular_ones = 0
+            
+            # Roll nightmare dice
+            nightmare_successes = 0
+            nightmare_ones = 0
+            nightmare_tens = 0
+            
+            for _ in range(nightmare_dice):
+                roll = randint(1, 10)
+                nightmare_rolls.append(roll)
+                if roll >= difficulty:
+                    nightmare_successes += 1
+                if roll == 1:
+                    nightmare_ones += 1
+                if roll == 10:
+                    nightmare_tens += 1
+            
+            # Combine results
+            rolls = regular_rolls + nightmare_rolls
+            successes = regular_successes + nightmare_successes
+            ones = regular_ones + nightmare_ones
+            
+            # Update nightmare pool if 10s were rolled
+            if nightmare_tens > 0:
+                current_nightmare = self.caller.db.stats.get('pools', {}).get('other', {}).get('Nightmare', {}).get('temp', 0)
+                if not current_nightmare:
+                    current_nightmare = self.caller.db.stats.get('pools', {}).get('other', {}).get('Nightmare', {}).get('perm', 0)
+                new_nightmare = min(10, current_nightmare + nightmare_tens)
+                
+                # Ensure the stats structure exists
+                if 'pools' not in self.caller.db.stats:
+                    self.caller.db.stats['pools'] = {}
+                if 'other' not in self.caller.db.stats['pools']:
+                    self.caller.db.stats['pools']['other'] = {}
+                if 'Nightmare' not in self.caller.db.stats['pools']['other']:
+                    self.caller.db.stats['pools']['other']['Nightmare'] = {}
+                
+                # Update both temp and perm values
+                self.caller.db.stats['pools']['other']['Nightmare']['temp'] = new_nightmare
+                self.caller.db.stats['pools']['other']['Nightmare']['perm'] = new_nightmare
+                
+                # Check for Imbalance
+                if new_nightmare >= 10:
+                    # Reset Nightmare to 0
+                    self.caller.db.stats['pools']['other']['Nightmare']['temp'] = 0
+                    self.caller.db.stats['pools']['other']['Nightmare']['perm'] = 0
+                    
+                    # Add Willpower Imbalance
+                    current_imbalance = self.caller.db.stats.get('pools', {}).get('other', {}).get('Willpower Imbalance', {}).get('temp', 0)
+                    if not current_imbalance:
+                        current_imbalance = self.caller.db.stats.get('pools', {}).get('other', {}).get('Willpower Imbalance', {}).get('perm', 0)
+                    
+                    new_imbalance = min(10, current_imbalance + 1)
+                    
+                    if 'Willpower Imbalance' not in self.caller.db.stats['pools']['other']:
+                        self.caller.db.stats['pools']['other']['Willpower Imbalance'] = {}
+                    self.caller.db.stats['pools']['other']['Willpower Imbalance']['temp'] = new_imbalance
+                    self.caller.db.stats['pools']['other']['Willpower Imbalance']['perm'] = new_imbalance
+                    
+                    # Add one point of Glamour
+                    if 'pools' in self.caller.db.stats and 'dual' in self.caller.db.stats['pools']:
+                        glamour_data = self.caller.db.stats['pools']['dual'].get('Glamour', {})
+                        current_glamour = glamour_data.get('temp', glamour_data.get('perm', 0))
+                        max_glamour = glamour_data.get('perm', 0)
+                        if current_glamour < max_glamour:
+                            self.caller.db.stats['pools']['dual']['Glamour']['temp'] = current_glamour + 1
+                    
+                    warnings.append("|rNightmare has reached 10! Marking Willpower Imbalance and resetting Nightmare to 0.|n")
+                    warnings.append("|gGained 1 point of Glamour from Imbalance.|n")
+                
+                elif nightmare_tens > 0:
+                    warnings.append(f"|rGained {nightmare_tens} Nightmare from rolling 10s on Nightmare dice (new total: {new_nightmare}).|n")
+            
+            # Add Nightmare dice info to descriptions
+            if nightmare_dice > 0:
+                description.append(f"|r({nightmare_dice} Nightmare dice)|n")
+                detailed_description.append(f"|r({nightmare_dice} Nightmare dice - {nightmare_rolls})|n")
+        else:
+            # Regular roll without Nightmare dice
+            rolls, successes, ones = roll_dice(dice_pool, difficulty)
+            nightmare_dice = 0  # Ensure nightmare_dice is defined for non-nightmare rolls
+
         # Interpret the results
-        result = interpret_roll_results(successes, ones, rolls=rolls, diff=difficulty)
+        result = interpret_roll_results(successes, ones, rolls=rolls, diff=difficulty, nightmare_dice=nightmare_dice)
 
         # Format the outputs
         public_description = " ".join(description)
@@ -182,6 +359,39 @@ class CmdRoll(default_cmds.MuxCommand):
         normalized_input = stat_name.lower().strip()
         normalized_nospace = normalized_input.replace('-', '').replace(' ', '')
 
+        # Get character's splat for context-aware matching
+        splat = self.caller.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('temp', '')
+        if not splat:
+            splat = self.caller.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+
+        # First try exact match in the most relevant category based on splat
+        if splat.lower() == 'changeling':
+            # For Changelings, check Arts first
+            art_value = self.caller.db.stats.get('powers', {}).get('art', {}).get(stat_name.title(), {}).get('temp', None)
+            if art_value is not None:
+                return art_value, stat_name.title()
+            
+            # Then check Realms
+            realm_value = self.caller.db.stats.get('powers', {}).get('realm', {}).get(stat_name.title(), {}).get('temp', None)
+            if realm_value is not None:
+                return realm_value, stat_name.title()
+
+        elif splat.lower() == 'shifter':
+            # For Shifters, prioritize Gifts over other stats
+            gift_value = self.caller.db.stats.get('powers', {}).get('gift', {}).get(stat_name.title(), {}).get('temp', None)
+            if gift_value is not None:
+                return gift_value, stat_name.title()
+
+            # Special case for Primal-Urge
+            if normalized_nospace in ['primalurge', 'primal']:
+                if 'abilities' in character_stats and 'talent' in character_stats['abilities']:
+                    stat_data = character_stats['abilities']['talent'].get('Primal-Urge', {})
+                    if stat_data:
+                        if 'temp' in stat_data and stat_data['temp'] != 0:
+                            return stat_data['temp'], 'Primal-Urge'
+                        return stat_data.get('perm', 0), 'Primal-Urge'
+                return 0, 'Primal-Urge'
+
         # Common abbreviations mapping
         abbreviations = {
             'str': 'strength',
@@ -200,28 +410,11 @@ class CmdRoll(default_cmds.MuxCommand):
             normalized_input = abbreviations[normalized_nospace]
             normalized_nospace = normalized_input
 
-        print(f"DEBUG: Looking for stat: '{normalized_input}' (nospace: '{normalized_nospace}')")
-        print(f"DEBUG: Character stats structure: {character_stats.keys()}")
-        print(f"DEBUG: Secondary abilities: {character_stats.get('secondary_abilities', {})}")
-
-        # Special handling for Primal-Urge
-        if normalized_nospace in ['primalurge', 'primal']:
-            if 'abilities' in character_stats and 'talent' in character_stats['abilities']:
-                stat_data = character_stats['abilities']['talent'].get('Primal-Urge', {})
-                if stat_data:
-                    if 'temp' in stat_data and stat_data['temp'] != 0:
-                        return stat_data['temp'], 'Primal-Urge'
-                    return stat_data.get('perm', 0), 'Primal-Urge'
-            return 0, 'Primal-Urge'
-
-        # Direct check for secondary abilities first
+        # Direct check for secondary abilities
         if 'secondary_abilities' in character_stats:
             for ability_type, abilities in character_stats['secondary_abilities'].items():
-                print(f"DEBUG: Checking {ability_type}: {abilities}")
                 for stat, stat_data in abilities.items():
-                    print(f"DEBUG: Comparing '{stat.lower()}' with '{normalized_input}'")
                     if stat.lower() == normalized_input:
-                        print(f"DEBUG: Found direct match in secondary abilities: {stat} with data {stat_data}")
                         if 'temp' in stat_data and stat_data['temp'] != 0:
                             return stat_data['temp'], stat
                         return stat_data.get('perm', 0), stat
@@ -232,11 +425,9 @@ class CmdRoll(default_cmds.MuxCommand):
         # Check regular stats
         for category, cat_stats in character_stats.items():
             if category == 'secondary_abilities':
-                continue  # Skip here, we'll handle secondary abilities separately
+                continue  # Skip here, we already handled secondary abilities
             for stat_type, stats in cat_stats.items():
                 for stat, stat_data in stats.items():
-                    if stat == 'Primal-Urge':
-                        continue
                     normalized_name = stat.lower()
                     normalized_nospace_name = normalized_name.replace('-', '').replace(' ', '')
                     all_stats.append((normalized_name, normalized_nospace_name, stat, category, stat_type, stat_data))
