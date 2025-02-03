@@ -25,8 +25,59 @@
         "name": "Arete",
         "description": "Arete is the measure of a mage's skill at magic.",
         "game_line": "Mage: The Ascension",
-        "category": "other",
+        "category": "pools",
         "stat_type": "advantage",
         "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    {
+        "name": "Enlightenment",
+        "description": "Enlightenment is a Technocrat's way of saying 'Arete.'",
+        "game_line": "Mage: The Ascension",
+        "category": "pools",
+        "stat_type": "advantage",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    {
+        "name": "Dynamic",
+        "description": "The level to which a Mage has been influenced by the dynamic forces of the Metaphysical Trinity.",
+        "game_line": "Mage: The Ascension",
+        "category": "virtues",
+        "stat_type": "synergy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Entropic",
+        "description": "The level to which a Mage has been influenced by the entropic forces of the Metaphysical Trinity.",
+        "game_line": "Mage: The Ascension",
+        "category": "virtues",
+        "stat_type": "synergy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Static",
+        "description": "The level to which a Mage has been influenced by the static forces of the Metaphysical Trinity.",
+        "game_line": "Mage: The Ascension",
+        "category": "virtues",
+        "stat_type": "synergy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Resonance",
+        "description": "Resonance is the indication of how a Mage's spells appear, often acting as a kind of signature.",
+        "game_line": "Mage: The Ascension",
+        "category": "pools",
+        "stat_type": "resonance",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Mana",
+        "description": "Mana is the measure of power related to static magic energy. It can be used to power casting or fuel effects by hedge wizards and sorcerers.",
+        "game_line": "Mage: The Ascension",
+        "category": "pools",
+        "stat_type": "dual",
+        "values": {
+            "permanent": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+            "temporary": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+        }
     }
 ]

@@ -14,11 +14,17 @@ class PoseBreakMixin:
             
         pose_break = f"\n|y{'=' * 30}> |w{caller.name}|n |y<{'=' * 30}|n"
         
-        # Filter receivers based on Umbra state
-        filtered_receivers = [
-            obj for obj in caller.location.contents
-            if obj.has_account and obj.db.in_umbra == caller.db.in_umbra
-        ]
+        # Filter receivers based on reality layers
+        filtered_receivers = []
+        for obj in caller.location.contents:
+            if not obj.has_account:
+                continue
+            
+            # Check if they share the same reality layer
+            if (caller.tags.get("in_umbra", category="state") and obj.tags.get("in_umbra", category="state")) or \
+               (caller.tags.get("in_material", category="state") and obj.tags.get("in_material", category="state")) or \
+               (caller.tags.get("in_dreaming", category="state") and obj.tags.get("in_dreaming", category="state")):
+                filtered_receivers.append(obj)
         
         for receiver in filtered_receivers:
             if receiver != caller and (not exclude or receiver not in exclude):
@@ -63,6 +69,7 @@ class CmdPose(PoseBreakMixin, default_cmds.MuxCommand):
     aliases = [";", ":"]
     locks = "cmd:all()"
     arg_regex = None
+    help_category = "RP Commands"
 
     def parse(self):
         """
@@ -70,9 +77,6 @@ class CmdPose(PoseBreakMixin, default_cmds.MuxCommand):
         """
         super().parse()
         
-       # if self.cmdstring == ":":
-            #Add a space after colon if not present
-           # self.args = " " + self.args.lstrip()
         if self.cmdstring == ";":
             # Remove space after semicolon if present
             self.args = self.args.lstrip()
@@ -85,11 +89,17 @@ class CmdPose(PoseBreakMixin, default_cmds.MuxCommand):
         return message
 
     def func(self):
-        "Perform the pose"
         caller = self.caller
         if not self.args:
             caller.msg("Pose what?")
             return
+
+        # Check if there's a language-tagged speech and set speaking language
+        if "~" in self.args:
+            speaking_language = caller.get_speaking_language()
+            if not speaking_language:
+                caller.msg("You need to set a speaking language first with +language <language>")
+                return
 
         # Send pose break before processing the message
         self.send_pose_break()
@@ -103,16 +113,62 @@ class CmdPose(PoseBreakMixin, default_cmds.MuxCommand):
         # Get the character's speaking language
         speaking_language = caller.get_speaking_language()
 
-        # Filter receivers based on Umbra state
-        filtered_receivers = [
-            obj for obj in caller.location.contents
-            if obj.has_account and obj.db.in_umbra == caller.db.in_umbra
-        ]
+        # Filter receivers based on reality layers
+        filtered_receivers = []
+        for obj in caller.location.contents:
+            if not obj.has_account:
+                continue
+            
+            # Check if they share the same reality layer
+            if (caller.tags.get("in_umbra", category="state") and obj.tags.get("in_umbra", category="state")) or \
+               (caller.tags.get("in_material", category="state") and obj.tags.get("in_material", category="state")) or \
+               (caller.tags.get("in_dreaming", category="state") and obj.tags.get("in_dreaming", category="state")):
+                filtered_receivers.append(obj)
 
-        # Construct the pose message
-        pose_message = f"{poser_name} {processed_args}"
-
-        # Send the pose to filtered receivers
+        # Process the pose for each receiver
         for receiver in filtered_receivers:
-            receiver.msg(pose_message)
+            # If there's language-tagged speech in the pose, process it
+            if "~" in processed_args:
+                parts = []
+                current_pos = 0
+                for match in re.finditer(r'"~([^"]+)"', processed_args):
+                    # Add text before the speech
+                    parts.append(processed_args[current_pos:match.start()])
+                    
+                    # Process the speech
+                    speech = match.group(1)
+                    _, msg_understand, msg_not_understand, _ = caller.prepare_say(speech, language_only=True, skip_english=True)
+                    
+                    # Check for Universal Language merit
+                    has_universal = any(
+                        merit.lower().replace(' ', '') == 'universallinguist'
+                        for category in receiver.db.stats.get('merits', {}).values()
+                        for merit in category.keys()
+                    )
+                    
+                    if receiver == caller or has_universal or (speaking_language and speaking_language in receiver.get_languages()):
+                        parts.append(f'"{msg_understand}"')
+                    else:
+                        parts.append(f'"{msg_not_understand}"')
+                    
+                    current_pos = match.end()
+                
+                # Add any remaining text
+                parts.append(processed_args[current_pos:])
+                
+                # Construct final message
+                final_message = f"{poser_name} {''.join(parts)}"
+                receiver.msg(final_message)
+            else:
+                # No language-tagged speech, send normal pose
+                receiver.msg(f"{poser_name} {processed_args}")
 
+        # Add this at the end of the func method
+        try:
+            caller.record_scene_activity()
+        except KeyError:
+            # Initialize scene data if it doesn't exist
+            if not caller.db.scene_data:
+                caller.db.scene_data = {}
+            caller.db.scene_data['last_weekly_reset'] = None
+            caller.record_scene_activity()

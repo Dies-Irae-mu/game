@@ -36,6 +36,8 @@ class CmdNotes(MuxCommand):
       +note/prove <note>=<target(s)> - show any note to a list of targets
       +note/approve[/<category>] <target>/<note> - approve a note (staff only)
       +note/unapprove[/<category>] <target>/<note> - unapprove a note (staff only)
+      +note/delete <note>         - delete one of your notes
+      +note/delete <target>=<note> - delete someone else's note (staff only)
 
       Sample categories: General, Story, Merit, Flaw, Rote, Magick, NPC, Background
       Combo Discipline, Ritual (use for Sabbat or Shifter)
@@ -44,7 +46,7 @@ class CmdNotes(MuxCommand):
     key = "+note"
     aliases = ["+notes"]
     locks = "cmd:all()"
-    help_category = "Character"
+    help_category = "Chargen & Character Info"
 
     def search_for_character(self, search_string):
         # First, try to find by exact name match
@@ -90,6 +92,8 @@ class CmdNotes(MuxCommand):
                 self.approve_note()
             elif switch == "unapprove":
                 self.unapprove_note()
+            elif switch in ["delete", "del"]:
+                self.delete_note()
             else:
                 self.caller.msg(f"Unknown switch: {switch}")
         else:
@@ -149,36 +153,35 @@ class CmdNotes(MuxCommand):
                 self.caller.msg("You don't have any valid notes.")
                 return
 
-            output = header(f"Notes for {self.caller.name}", width=width, color="|y", fillchar="|r=|n", bcolor="|b")
+            # Calculate column width for the tabular display
+            col_width = 25  # Width for each note column
+            cols_per_row = 3  # Number of columns per row
+
+            output = header(f"{self.caller.name}'s Notes", width=width, color="|y", fillchar="|b=|n", bcolor="|b")
 
             # Sort categories alphabetically
             for category in sorted(notes_by_category.keys()):
                 category_notes = notes_by_category[category]
-                # Sort notes by ID within each category
-                category_notes.sort(key=lambda x: int(x.note_id))
+                # Sort notes by name within each category
+                category_notes.sort(key=lambda x: x.name.lower())
                 
-                # Category header in white
-                output += f"\n|w{category}|n ({len(category_notes)})\n"
+                # Category header with equals
+                output += f"\n|b==> |y{category}|n |b<==|n" + "|b=|n" * (width - len(category) - 7) + "\n"
                 
-                for note in category_notes:
-                    # Note header with ID
-                    output += f"* #{note.note_id} {note.name}"
-                    
-                    # Add status if private/pending
-                    if not note.is_public:
-                        output += " (PRIVATE"
-                        if not note.is_approved:
-                            output += ", PENDING"
-                        output += ")"
-                    output += "\n"
-                    
-                    # Note text indented and truncated
-                    text_preview = note.text[:60] + "..." if len(note.text) > 60 else note.text
-                    text_lines = text_preview.split('\n')
-                    for line in text_lines:
-                        output += "    " + line + "\n"
+                # Process notes in rows of cols_per_row columns
+                for i in range(0, len(category_notes), cols_per_row):
+                    row_notes = category_notes[i:i + cols_per_row]
+                    row = ""
+                    for note in row_notes:
+                        # Format note name with ID, truncate if too long
+                        note_display = note.name
+                        if len(note_display) > col_width - 2:
+                            note_display = note_display[:col_width - 3] + "…"
+                        # Pad with spaces to maintain column width
+                        row += f"{note_display:<{col_width}}"
+                    output += " " + row.rstrip() + "\n"
 
-            output += footer(width=width, fillchar="|r=|n")
+            output += "|b=" + "=" * (width - 2) + "=|n"
             self.caller.msg(output)
             
         except Exception as e:
@@ -193,7 +196,8 @@ class CmdNotes(MuxCommand):
 
         name, text = self.args.split("=", 1)
         name = name.strip()
-        text = text.strip()
+        # Convert %r markers to newlines, properly handling double %r
+        text = text.strip().replace("%r%r", "\n\n").replace("%r", "\n")
 
         # Handle category in name
         if "/" in name:
@@ -215,12 +219,31 @@ class CmdNotes(MuxCommand):
 
         note_id, text = self.args.split("=", 1)
         note_id = note_id.strip()
-        text = text.strip()
+        # Convert %r markers to newlines, properly handling double %r
+        text = text.strip().replace("%r%r", "\n\n").replace("%r", "\n")
 
         if self.caller.update_note(note_id, text=text):
             self.caller.msg(f"Note '{note_id}' updated.")
         else:
             self.caller.msg(f"Note '{note_id}' not found.")
+
+    def get_note_by_name_or_id(self, target, note_identifier):
+        """Helper method to find a note by either name or ID."""
+        notes_dict = target.attributes.get('notes', {})
+        
+        # First try to find by ID
+        if note_identifier in notes_dict:
+            note_data = notes_dict[note_identifier]
+            if note_data:
+                return note_identifier, note_data
+        
+        # If not found by ID, try to find by name (case-insensitive)
+        note_identifier_lower = note_identifier.lower()
+        for note_id, note_data in notes_dict.items():
+            if note_data and note_data.get('name', '').lower() == note_identifier_lower:
+                return note_id, note_data
+        
+        return None, None
 
     def view_note(self):
         """View a specific note."""
@@ -229,25 +252,24 @@ class CmdNotes(MuxCommand):
             return
 
         if "/" in self.args:
-            target_name, note_id = self.args.split("/", 1)
+            target_name, note_identifier = self.args.split("/", 1)
             target = self.search_for_character(target_name)
             if not target:
                 return
             
             # Handle wildcard to show all notes
-            if note_id == "*":
+            if note_identifier == "*":
                 self.list_character_notes(target)
                 return
         else:
             target = self.caller
-            note_id = self.args
+            note_identifier = self.args
 
-        # Get notes dictionary
-        notes_dict = target.attributes.get('notes', {})
-        note_data = notes_dict.get(str(note_id))
+        # Try to find note by name or ID
+        note_id, note_data = self.get_note_by_name_or_id(target, note_identifier)
         
         if not note_data:
-            self.caller.msg("No note with that ID exists.")
+            self.caller.msg(f"Could not find a note matching '{note_identifier}'.")
             return
 
         # Create Note object
@@ -270,12 +292,14 @@ class CmdNotes(MuxCommand):
             return
 
         # Check permissions
-        if target != self.caller and not (note.is_public or self.caller.check_permstring("Builders")):
+        if target != self.caller and not (note.is_public or 
+            self.caller.check_permstring("builders") or 
+            self.caller.check_permstring("storyteller")):
             self.caller.msg("You don't have permission to view this note.")
             return
 
         self.display_note(note)
-
+    
     def list_character_notes(self, target):
         """List all viewable notes for a character."""
         notes_dict = target.attributes.get('notes', {})
@@ -285,7 +309,8 @@ class CmdNotes(MuxCommand):
 
         width = 78
         notes_by_category = defaultdict(list)
-        is_staff = self.caller.check_permstring("Builders")
+        is_staff = (self.caller.check_permstring("builders") or 
+                   self.caller.check_permstring("storyteller"))
         
         try:
             # Process each note from the dictionary
@@ -321,36 +346,70 @@ class CmdNotes(MuxCommand):
                 self.caller.msg(f"No viewable notes found for {target.name}.")
                 return
 
-            output = header(f"Notes for {target.name}", width=width, color="|y", fillchar="|r=|n", bcolor="|b")
+            # Calculate column width for the tabular display
+            col_width = 25  # Width for each note column
+            cols_per_row = 3  # Number of columns per row
 
-            # Sort categories alphabetically
-            for category in sorted(notes_by_category.keys()):
-                category_notes = notes_by_category[category]
-                # Sort notes by ID within each category
-                category_notes.sort(key=lambda x: int(x.note_id))
-                
-                # Category header in white
-                output += f"\n|w{category}|n ({len(category_notes)})\n"
-                
-                for note in category_notes:
-                    # Note header with ID
-                    output += f"* #{note.note_id} {note.name}"
-                    
-                    # Add status if private/pending
-                    if not note.is_public:
-                        output += " (PRIVATE"
-                        if not note.is_approved:
-                            output += ", PENDING"
-                        output += ")"
-                    output += "\n"
-                    
-                    # Note text indented and truncated
-                    text_preview = note.text[:60] + "..." if len(note.text) > 60 else note.text
-                    text_lines = text_preview.split('\n')
-                    for line in text_lines:
-                        output += "    " + line + "\n"
+            if is_staff:
+                # Staff view with detailed information
+                output = header(f"Notes for {target.name}", width=width, color="|y", fillchar="|b=|n", bcolor="|b")
 
-            output += footer(width=width, fillchar="|r=|n")
+                # Sort categories alphabetically
+                for category in sorted(notes_by_category.keys()):
+                    category_notes = notes_by_category[category]
+                    # Sort notes by name within each category
+                    category_notes.sort(key=lambda x: x.name.lower())
+                    
+                    # Category header with equals
+                    output += f"\n|b==> |y{category}|n |b<==|n" + "|b=|n" * (width - len(category) - 7) + "\n"
+                    
+                    # Process notes in rows of cols_per_row columns
+                    for i in range(0, len(category_notes), cols_per_row):
+                        row_notes = category_notes[i:i + cols_per_row]
+                        row = ""
+                        for note in row_notes:
+                            # Format note name with ID and status
+                            note_display = f"{note.name}"
+                            if not note.is_public:
+                                note_display += "*"  # Add asterisk for private notes
+                            if not note.is_approved:
+                                note_display += "!"  # Add exclamation for pending notes
+                            note_display += f" (#{note.note_id})"
+                            
+                            if len(note_display) > col_width - 2:
+                                note_display = note_display[:col_width - 3] + "…"
+                            # Pad with spaces to maintain column width
+                            row += f"{note_display:<{col_width}}"
+                        output += " " + row.rstrip() + "\n"
+
+                output += "|b=" + "=" * (width - 2) + "=|n"
+            else:
+                # Regular user view with tabular format
+                output = header(f"{target.name}'s Notes", width=width, color="|y", fillchar="|b=|n", bcolor="|b")
+
+                # Sort categories alphabetically
+                for category in sorted(notes_by_category.keys()):
+                    category_notes = notes_by_category[category]
+                    category_notes.sort(key=lambda x: x.name.lower())
+                    
+                    # Category header with dots
+                    output += f"\n|b==> |y{category}|n |b<==|n" + "." * (width - len(category) - 7) + "\n"
+                    
+                    # Process notes in rows of cols_per_row columns
+                    for i in range(0, len(category_notes), cols_per_row):
+                        row_notes = category_notes[i:i + cols_per_row]
+                        row = ""
+                        for note in row_notes:
+                            # Format note name, truncate if too long
+                            note_display = note.name
+                            if len(note_display) > col_width - 2:
+                                note_display = note_display[:col_width - 3] + "…"
+                            # Pad with spaces to maintain column width
+                            row += f"{note_display:<{col_width}}"
+                        output += " " + row.rstrip() + "\n"
+
+                output += "|b=" + "=" * (width - 2) + "=|n"
+
             self.caller.msg(output)
             
         except Exception as e:
@@ -421,7 +480,8 @@ class CmdNotes(MuxCommand):
             return
 
         # Check permissions
-        if target != self.caller and not self.caller.check_permstring("Builders"):
+        if target != self.caller and not (self.caller.check_permstring("builders") or 
+            self.caller.check_permstring("storyteller")):
             self.caller.msg("You don't have permission to decompile this note.")
             return
 
@@ -480,7 +540,8 @@ class CmdNotes(MuxCommand):
             return
 
         # Check permissions if trying to modify another character's notes
-        if target != self.caller and not self.caller.check_permstring("Builders"):
+        if target != self.caller and not (self.caller.check_permstring("builders") or 
+            self.caller.check_permstring("storyteller")):
             self.caller.msg("You don't have permission to modify notes on other characters.")
             return
 
@@ -515,7 +576,8 @@ class CmdNotes(MuxCommand):
 
     def approve_note(self):
         """Approve a note (staff only)."""
-        if not self.caller.check_permstring("Builders"):
+        if not (self.caller.check_permstring("builders") or 
+            self.caller.check_permstring("storyteller")):
             self.caller.msg("You don't have permission to approve notes.")
             return
 
@@ -548,7 +610,7 @@ class CmdNotes(MuxCommand):
 
     def unapprove_note(self):
         """Unapprove a note (staff only)."""
-        if not self.caller.check_permstring("Builders"):
+        if not self.caller.check_permstring("builders"):
             self.caller.msg("You don't have permission to unapprove notes.")
             return
 
@@ -602,19 +664,64 @@ class CmdNotes(MuxCommand):
             output += format_stat("Approved:", "No", width=width) + "\n"
 
         # Show creation and update times for staff
-        if self.caller.check_permstring("Builders"):
+        if (self.caller.check_permstring("builders") or 
+            self.caller.check_permstring("storyteller")):
             output += format_stat("Created:", note.created_at.strftime("%Y-%m-%d %H:%M:%S"), width=width) + "\n"
             output += format_stat("Updated:", note.updated_at.strftime("%Y-%m-%d %H:%M:%S"), width=width) + "\n"
 
         output += divider("", width=width, fillchar="-", color="|r") + "\n"
         
-        # Note content
-        content_lines = note.text.replace('|/', '\n').split('\n')
+        # Note content - properly handle line breaks
+        text = note.text.strip()
+        # Split on actual newlines, preserving empty lines for spacing
+        content_lines = text.split('\n')
         wrapped_lines = []
         for line in content_lines:
             if line.strip():
-                wrapped_lines.append(wrap_ansi(line.strip(), width=width-2))
-        output += '\n'.join(wrapped_lines) + "\n"
+                # Add a space before each non-empty line for better readability
+                wrapped_lines.extend([' ' + l for l in wrap_ansi(line.strip(), width=width-2).split('\n')])
+            else:
+                wrapped_lines.append('')  # Preserve empty lines
 
+        output += '\n'.join(wrapped_lines) + "\n"
         output += footer(width=width, fillchar="|r=|n")
         self.caller.msg(output)
+
+    def delete_note(self):
+        """Delete a note."""
+        if not self.args:
+            self.caller.msg("Usage: +note/delete <note> or +note/delete <target>=<note>")
+            return
+
+        # Handle staff deleting other player's notes
+        if "=" in self.args and self.caller.check_permstring("builders"):
+            target_name, note_id = self.args.split("=", 1)
+            target = self.search_for_character(target_name)
+            if not target:
+                return
+        else:
+            target = self.caller
+            note_id = self.args
+
+        # Get the note to verify it exists
+        notes_dict = target.attributes.get('notes', {})
+        note_data = notes_dict.get(str(note_id))
+
+        if not note_data:
+            self.caller.msg("No note with that ID exists.")
+            return
+
+        # Check permissions
+        if target != self.caller and not self.caller.check_permstring("builders"):
+            self.caller.msg("You don't have permission to delete notes from other characters.")
+            return
+
+        # Delete the note
+        notes_dict.pop(str(note_id))
+        target.attributes.add('notes', notes_dict)
+
+        # Notify both parties
+        self.caller.msg(f"Note #{note_id} has been deleted.")
+        if target != self.caller:
+            target.msg(f"Your note #{note_id} has been deleted by {self.caller.name}.")
+

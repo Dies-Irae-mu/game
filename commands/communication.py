@@ -1,6 +1,7 @@
 from evennia.commands.default.muxcommand import MuxCommand
 from evennia import search_object
 from evennia.utils.utils import inherits_from
+from typeclasses.characters import Character
 
 class AdminCommand(MuxCommand):
     """
@@ -39,7 +40,7 @@ class CmdOOC(MuxCommand):
     """
     key = "ooc"
     locks = "cmd:all()"
-    help_category = "Communication"
+    help_category = "Communications"
 
     def func(self):
         if not self.args:
@@ -246,12 +247,13 @@ class CmdSummon(AdminCommand):
     Usage:
       +summon <player>
 
-    Teleports the specified player to your location.
+    Teleports the specified player to your location and matches their
+    Umbra/Material state to yours.
     """
 
     key = "+summon"
-    locks = "cmd:perm(admin)"
-    help_category = "Admin"
+    locks = "cmd:perm(builders) or perm(storyteller)"
+    help_category = "Staff"
 
     def func(self):
         caller = self.caller
@@ -260,7 +262,16 @@ class CmdSummon(AdminCommand):
             caller.msg("Usage: +summon <player>")
             return
 
-        target = self.search_for_character(self.args)
+        # First try direct name match
+        target = None
+        chars = caller.search(self.args, global_search=True, typeclass='typeclasses.characters.Character', quiet=True)
+        if chars:
+            target = chars[0] if isinstance(chars, list) else chars
+            
+        # If no direct match, try alias
+        if not target:
+            target = Character.get_by_alias(self.args.lower())
+
         if not target:
             caller.msg(f"Could not find character '{self.args}'.")
             return
@@ -269,7 +280,35 @@ class CmdSummon(AdminCommand):
             caller.msg("You can only summon characters.")
             return
 
+        # Check if target is connected
+        if not target.has_account or not target.sessions.count():
+            caller.msg(f"{target.name} is not currently online.")
+            return
+
         old_location = target.location
+        if not old_location:
+            caller.msg(f"{target.name} doesn't have a valid location.")
+            return
+
+        # Handle Umbra/Material state
+        caller_in_umbra = caller.tags.has("in_umbra", category="state")
+        target_in_umbra = target.tags.has("in_umbra", category="state")
+        
+        if caller_in_umbra != target_in_umbra:
+            # Remove current state
+            if target_in_umbra:
+                target.tags.remove("in_umbra", category="state")
+            else:
+                target.tags.remove("in_material", category="state")
+            
+            # Add new state to match caller
+            if caller_in_umbra:
+                target.tags.add("in_umbra", category="state")
+                target.msg("You shift into the Umbra.")
+            else:
+                target.tags.add("in_material", category="state")
+                target.msg("You shift into the Material realm.")
+
         target.move_to(caller.location, quiet=True)
         caller.msg(f"You have summoned {target.name} to your location.")
         target.msg(f"{caller.name} has summoned you.")
@@ -283,12 +322,13 @@ class CmdJoin(AdminCommand):
     Usage:
       +join <player>
 
-    Teleports you to the specified player's location.
+    Teleports you to the specified player's location and matches your
+    Umbra/Material state to theirs.
     """
 
     key = "+join"
-    locks = "cmd:perm(admin)"
-    help_category = "Admin"
+    locks = "cmd:perm(builders) or perm(storyteller)"
+    help_category = "Staff"
 
     def func(self):
         caller = self.caller
@@ -297,7 +337,16 @@ class CmdJoin(AdminCommand):
             caller.msg("Usage: +join <player>")
             return
 
-        target = self.search_for_character(self.args)
+        # First try direct name match
+        target = None
+        chars = caller.search(self.args, global_search=True, typeclass='typeclasses.characters.Character', quiet=True)
+        if chars:
+            target = chars[0] if isinstance(chars, list) else chars
+            
+        # If no direct match, try alias
+        if not target:
+            target = Character.get_by_alias(self.args.lower())
+
         if not target:
             caller.msg(f"Could not find character '{self.args}'.")
             return
@@ -305,6 +354,34 @@ class CmdJoin(AdminCommand):
         if not inherits_from(target, "typeclasses.characters.Character"):
             caller.msg("You can only join characters.")
             return
+
+        # Check if target is connected and has a location
+        if not target.has_account or not target.sessions.count():
+            caller.msg(f"{target.name} is not currently online.")
+            return
+
+        if not target.location:
+            caller.msg(f"{target.name} doesn't have a valid location to join.")
+            return
+
+        # Handle Umbra/Material state
+        caller_in_umbra = caller.tags.has("in_umbra", category="state")
+        target_in_umbra = target.tags.has("in_umbra", category="state")
+        
+        if caller_in_umbra != target_in_umbra:
+            # Remove current state
+            if caller_in_umbra:
+                caller.tags.remove("in_umbra", category="state")
+            else:
+                caller.tags.remove("in_material", category="state")
+            
+            # Add new state to match target
+            if target_in_umbra:
+                caller.tags.add("in_umbra", category="state")
+                caller.msg("You shift into the Umbra.")
+            else:
+                caller.tags.add("in_material", category="state")
+                caller.msg("You shift into the Material realm.")
 
         caller.move_to(target.location, quiet=True)
         caller.msg(f"You have joined {target.name} at their location.")

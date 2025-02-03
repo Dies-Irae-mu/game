@@ -10,6 +10,17 @@
                 "values": [1, 2, 3, 4, 5],
                 "splat": "Shifter"
             }
+        },
+        "knowledges": {
+            "Rituals": {
+                "name": "Rituals",
+                "description": "Knowledge of rites and traditional Shifter religious practices.",
+                "game_line": "Shifter",
+                "category": "abilities",
+                "stat_type": "knowledge",
+                "values": [1, 2, 3, 4, 5],
+                "splat": "Shifter"
+            }
         }
    },
     "Changeling": {

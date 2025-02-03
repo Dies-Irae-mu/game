@@ -9,11 +9,18 @@ here you can define how all characters will look and behave by default.
 from evennia.objects.objects import DefaultCharacter
 from evennia.utils.utils import lazy_property
 from evennia.utils.ansi import ANSIString
-from world.wod20th.models import Stat, Note
+from world.wod20th.models import Stat
 from world.wod20th.utils.ansi_utils import wrap_ansi
 import re
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
+from world.wod20th.utils.language_data import AVAILABLE_LANGUAGES
+
+from django.contrib.auth.models import User
+from django.db import models
+from decimal import Decimal, ROUND_DOWN, InvalidOperation
+import json
+from world.wod20th.utils.formatting import header, footer, divider
 
 class Character(DefaultCharacter):
     """
@@ -24,14 +31,22 @@ class Character(DefaultCharacter):
 
     def at_object_creation(self):
         """
-        Called when the character is first created.
+        Called only at initial creation.
         """
         super().at_object_creation()
+
+        # Initialize basic attributes
+        self.db.desc = ""
+        self.db.stats = {}
+        
+        # Initialize languages with English as default
+        self.db.languages = ["English"]
+        self.db.speaking_language = "English"
+        
         self.tags.add("in_material", category="state")
         self.db.unfindable = False
         self.db.fae_desc = ""
-        self.db.languages = ["English"]  # Default language
-        self.db.speaking_language = None
+
         self.db.approved = False  # Ensure all new characters start unapproved
         self.db.in_umbra = False  # Use a persistent attribute instead of a tag
         
@@ -41,26 +56,85 @@ class Character(DefaultCharacter):
         self.db.bashing = 0
         self.db.injury_level = "Healthy"
 
+        # Initialize XP tracking with separate IC XP
+        self.db.xp = {
+            'total': Decimal('0.00'),    # Total XP earned
+            'current': Decimal('0.00'),  # Available XP to spend
+            'spent': Decimal('0.00'),    # Total XP spent
+            'ic_xp': Decimal('0.00'),    # XP earned from IC scenes
+            'monthly_spent': Decimal('0.00'),  # XP spent this month
+            'last_reset': datetime.now(),  # Last monthly reset
+            'spends': [],  # List of recent spends
+            'last_scene': None,  # Last IC scene participation
+            'scenes_this_week': 0  # Number of scenes this week
+        }
+
+        # Scene tracking
+        self.db.scene_data = {
+            'current_scene': None,  # Will store start time of current scene
+            'scene_location': None, # Location where scene started
+            'last_activity': None,  # Last time character was active in scene
+            'completed_scenes': 0,  # Number of completed scenes this week
+            'last_weekly_reset': datetime.now()  # For weekly scene count reset
+        }
+
+    def at_post_unpuppet(self, account=None, session=None, **kwargs):
+        """
+        Called just after the Character was unpuppeted.
+        """
+        if not self.sessions.count():
+            # only remove this char from grid if no sessions control it anymore.
+            if self.location:
+                def message(obj, from_obj):
+                    obj.msg(
+                        "{name} has disconnected{reason}.".format(
+                            name=self.get_display_name(obj),
+                            reason=kwargs.get("reason", ""),
+                        ),
+                        from_obj=from_obj,
+                    )
+                self.location.for_contents(message, exclude=[self], from_obj=self)
+                self.db.prelogout_location = self.location
+                self.location = None
+
     @lazy_property
     def notes(self):
         return Note.objects.filter(character=self)
 
-    def add_note(self, name, text, category="General", is_public=False):
-        """Add a new note."""
-        notes = self.attributes.get('notes', default={})
-        note_id = str(len(notes) + 1)
+    def add_note(self, name, text, category="General"):
+        """Add a new note to the character."""
+        notes = self.attributes.get('notes', {})
         
-        note = Note(
+        # Find the first available ID by checking for gaps
+        used_ids = set(int(id_) for id_ in notes.keys())
+        note_id = 1
+        while note_id in used_ids:
+            note_id += 1
+        
+        # Create the new note
+        note_data = {
+            'name': name,
+            'text': text,
+            'category': category,
+            'is_public': False,
+            'is_approved': False,
+            'created_at': datetime.now(),
+            'updated_at': datetime.now()
+        }
+        
+        notes[str(note_id)] = note_data
+        self.attributes.add('notes', notes)
+        
+        return Note(
             name=name,
             text=text,
             category=category,
-            is_public=is_public,
-            note_id=note_id
+            is_public=False,
+            is_approved=False,
+            created_at=note_data['created_at'],
+            updated_at=note_data['updated_at'],
+            note_id=str(note_id)
         )
-        
-        notes[note_id] = note.to_dict()
-        self.attributes.add('notes', notes)
-        return note
 
     def get_note(self, note_id):
         """Get a specific note by ID."""
@@ -99,7 +173,6 @@ class Character(DefaultCharacter):
                 return True
             return False
         except Exception as e:
-            logger.log_err(f"Error in change_note_status: {e}")
             return False
 
     def get_display_name(self, looker, **kwargs):
@@ -124,7 +197,40 @@ class Character(DefaultCharacter):
         """
         Get the character's known languages.
         """
-        return self.db.languages or []  # Return an empty list if None
+        # Get current languages, initialize if needed
+        current_languages = self.db.languages or []
+        
+        # Convert to list if it's not already
+        if not isinstance(current_languages, list):
+            current_languages = [current_languages]
+        
+        # Clean up the languages list
+        cleaned_languages = []
+        seen = set()
+        
+        # First pass: extract all language strings and clean them
+        for entry in current_languages:
+            # Convert to string and clean it
+            lang_str = str(entry).replace('"', '').replace("'", '').replace('[', '').replace(']', '')
+            # Split on commas and process each part
+            for part in lang_str.split(','):
+                clean_lang = part.strip()
+                if clean_lang and clean_lang.lower() not in seen:
+                    # Check if it's a valid language
+                    for available_lang in AVAILABLE_LANGUAGES.values():
+                        if available_lang.lower() == clean_lang.lower():
+                            cleaned_languages.append(available_lang)
+                            seen.add(available_lang.lower())
+                            break
+        
+        # Ensure English is first
+        if "English" in cleaned_languages:
+            cleaned_languages.remove("English")
+        cleaned_languages.insert(0, "English")
+        
+        # Store the cleaned list back to the database
+        self.db.languages = cleaned_languages
+        return cleaned_languages
 
     def set_speaking_language(self, language):
         """
@@ -132,10 +238,18 @@ class Character(DefaultCharacter):
         """
         if language is None:
             self.db.speaking_language = None
-        elif language in self.db.languages:
-            self.db.speaking_language = language
-        else:
-            raise ValueError(f"You don't know the language: {language}")
+            return
+            
+        # Get clean language list
+        known_languages = self.get_languages()
+        
+        # Case-insensitive check
+        for known in known_languages:
+            if known.lower() == language.lower():
+                self.db.speaking_language = known
+                return
+                
+        raise ValueError(f"You don't know the language: {language}")
 
     def get_speaking_language(self):
         """
@@ -195,49 +309,84 @@ class Character(DefaultCharacter):
 
         return masked
 
-    def prepare_say(self, message, language_only=False):
+    def prepare_say(self, speech, language_only=False, viewer=None, skip_english=False):
         """
-        Prepare the messages for the say command, handling tilde-based language switching.
+        Prepare speech messages based on language settings.
+        
+        Args:
+            speech (str): The message to be spoken
+            language_only (bool): If True, only return the language portion without 'says'
+            viewer (Object): The character viewing the message
+            skip_english (bool): If True, don't append language tag for English
+            
+        Returns:
+            tuple: (message to self, message to those who understand, 
+                   message to those who don't understand, language used)
         """
-        use_language = message.lstrip().startswith('~')
-        name = self.db.gradient_name if self.db.gradient_name else self.name
+        # Strip the language marker if present
+        if speech.startswith('~'):
+            speech = speech[1:]
+        
+        # Check if we're in an OOC Area
+        in_ooc_area = (hasattr(self.location, 'db') and 
+                      self.location.db.roomtype == 'OOC Area')
+        
+        # If in OOC Area, skip language processing
+        if in_ooc_area:
+            if language_only:
+                return speech, speech, speech, None
+            else:
+                msg = f'You say, "{speech}"'
+                msg_others = f'{self.name} says, "{speech}"'
+                return msg, msg_others, msg_others, None
+        
+        # Get the speaking language
         language = self.get_speaking_language()
         
-        if use_language:
-            # strip the tilde from the message
-            message = message[1:].lstrip()
-            
-                       
-            if language and not language_only:
-                # Preserve the tilde in the message
-                masked_message = self.mask_language(message, language)
-                msg_self = f'You say, "{message} |w<< in {language} >>|n"'
-                msg_understand = f'{name} says, "{message} |w<< in {language} >>|n"'
-                msg_not_understand = f'{name} says, "{masked_message}"'
-            else:
-                msg_self = f'You say, "{message}"'
-                msg_understand = f'{name} says, "{message}"'
-                msg_not_understand = msg_understand
-               
-        else:
-            msg_self = f'You say, "{message}"'
-            msg_understand = f'{name} says, "{message}"'
-            msg_not_understand = msg_understand
-           
+        # Staff can always understand all languages
+        is_staff = False
+        if viewer and viewer.account:
+            # Check permissions in order of hierarchy
+            if viewer.account.is_superuser:
+                is_staff = True
+            elif viewer.account.check_permstring("admin"):
+                is_staff = True
+            elif viewer.account.check_permstring("storyteller"):
+                is_staff = True
+            elif viewer.account.check_permstring("builder"):
+                is_staff = True
+            # Player-level admins don't get language privileges
+            elif viewer.account.check_permstring("player"):
+                is_staff = False
         
-        if language_only and language:
-            msg_self = f'{message} |w<< in {language} >>|n'
-            msg_understand = f'{message} |w<< in {language} >>|n'
-            msg_not_understand = f'{self.mask_language(message, language)}'    
-        elif language_only:
-            msg_self = f'{message}'
-            msg_understand = f'{message}'
-            msg_not_understand = f'{message}'
-            language = None
-
+        # Format the messages
+        if language_only:
+            if skip_english and language == "English":
+                msg_self = speech
+                msg_understand = speech
+                msg_not_understand = speech
+            else:
+                msg_self = f"{speech} << in {language} >>"
+                if is_staff:
+                    msg_understand = f"{speech} << in {language} >>"
+                    msg_not_understand = f"{speech} << in {language} >>"
+                else:
+                    msg_understand = f"{speech} << in {language} >>"
+                    msg_not_understand = f"<< something in {language} >>"
         else:
-            language = None
-
+            if skip_english and language == "English":
+                msg_self = f'You say, "{speech}"'
+                msg_understand = f'{self.name} says, "{speech}"'
+                msg_not_understand = f'{self.name} says, "{speech}"'
+            else:
+                msg_self = f'You say, "{speech} << in {language} >>"'
+                if is_staff:
+                    msg_understand = f'{self.name} says, "{speech} << in {language} >>"'
+                    msg_not_understand = f'{self.name} says, "{speech} << in {language} >>"'
+                else:
+                    msg_understand = f'{self.name} says, "{speech} << in {language} >>"'
+                    msg_not_understand = f'{self.name} says something in {language}'
+        
         return msg_self, msg_understand, msg_not_understand, language
 
     def step_sideways(self):
@@ -270,45 +419,73 @@ class Character(DefaultCharacter):
         self.location.msg_contents(f"{self.name} shimmers into view as they return from the Umbra.", exclude=[self])
         return True
 
+    def format_description(self, desc):
+        """
+        Format the description with proper paragraph handling and indentation.
+        """
+        if not desc:
+            return ""
+            
+        # First normalize all line breaks and tabs
+        desc = desc.replace('%T', '%t')
+        desc = desc.replace('%R%R', '\n\n')  # Double line breaks first
+        desc = desc.replace('%r%r', '\n\n')
+        desc = desc.replace('%R', '\n')
+        desc = desc.replace('%r', '\n')
+        
+        # Process each paragraph
+        paragraphs = []
+        for paragraph in desc.split('\n'):
+            # Skip completely empty paragraphs
+            if not paragraph.strip():
+                paragraphs.append('')
+                continue
+                
+            # Handle tabs at start of paragraph
+            tab_count = 0
+            working_paragraph = paragraph
+            while working_paragraph.startswith('%t'):
+                tab_count += 1
+                working_paragraph = working_paragraph[2:]  # Remove just the %t
+            
+            # Apply indentation and handle the rest of the paragraph
+            if tab_count > 0:
+                working_paragraph = '    ' * tab_count + working_paragraph
+            
+            # Wrap the paragraph while preserving ANSI codes
+            wrapped = wrap_ansi(working_paragraph, width=76)
+            paragraphs.append(wrapped)
+        
+        # Clean up multiple consecutive empty lines
+        result = []
+        last_empty = False
+        for p in paragraphs:
+            if not p:
+                if not last_empty:
+                    result.append(p)
+                last_empty = True
+            else:
+                result.append(p)
+                last_empty = False
+        
+        return '\n'.join(result)
+
     def return_appearance(self, looker, **kwargs):
         """
-        This formats a description for any object looking at this object.
+        This formats a description. It is the hook a 'look' command
+        should call.
         """
         if not looker:
             return ""
-        
-        # Get the description
-        desc = self.db.desc
-
+            
         # Start with the name
         string = f"|c{self.get_display_name(looker)}|n\n"
 
-        # Process character description
+        # Get and format the description
+        desc = self.db.desc
         if desc:
-            # Replace both %t and |- with a consistent tab marker
-            desc = desc.replace('%t', '|t').replace('|-', '|t')
-            
-            paragraphs = desc.split('%r')
-            formatted_paragraphs = []
-            for p in paragraphs:
-                if not p.strip():
-                    formatted_paragraphs.append('')  # Add blank line for empty paragraph
-                    continue
-                
-                # Handle tabs manually
-                lines = p.split('|t')
-                indented_lines = [line.strip() for line in lines]
-                indented_text = '\n    '.join(indented_lines)
-                
-                # Wrap each line individually
-                wrapped_lines = [wrap_ansi(line, width=78) for line in indented_text.split('\n')]
-                formatted_paragraphs.append('\n'.join(wrapped_lines))
-            
-            # Join paragraphs with a single newline, and remove any consecutive newlines
-            joined_paragraphs = '\n'.join(formatted_paragraphs)
-            joined_paragraphs = re.sub(r'\n{3,}', '\n\n', joined_paragraphs)
-            
-            string += joined_paragraphs + "\n"
+            desc = self.format_description(desc)
+            string += desc + "\n"
 
         # Add any other details you want to include in the character's appearance
         # For example, you might want to add information about their equipment, stats, etc.
@@ -364,6 +541,16 @@ class Character(DefaultCharacter):
         # Send message to the speaker
         self.msg(msg_self)
 
+        # Check if this is an IC scene
+        if (self.location and 
+            hasattr(self.location, 'db') and 
+            self.location.db.roomtype != 'OOC Area' and
+            any(obj for obj in self.location.contents 
+                if obj != self and 
+                hasattr(obj, 'has_account') and 
+                obj.has_account)):
+            self.record_scene_activity()
+
     def at_pose(self, pose_understand, pose_not_understand, pose_self, speaking_language):
         if not self.location:
             return
@@ -388,6 +575,16 @@ class Character(DefaultCharacter):
         # Log the pose (only visible to those in the same realm)
         self.location.msg_contents(pose_understand, exclude=filtered_receivers + [self], from_obj=self)
 
+        # Check if this is an IC scene
+        if (self.location and 
+            hasattr(self.location, 'db') and 
+            self.location.db.roomtype != 'OOC Area' and
+            any(obj for obj in self.location.contents 
+                if obj != self and 
+                hasattr(obj, 'has_account') and 
+                obj.has_account)):
+            self.record_scene_activity()
+
     def at_emote(self, message, msg_self=None, msg_location=None, receivers=None, msg_receivers=None, **kwargs):
         """Display an emote to the room."""
         if not self.location:
@@ -407,60 +604,61 @@ class Character(DefaultCharacter):
         # Send the emote to the emitter
         self.msg(msg_self or message)
 
-    def get_stat(self, category, stat_type, stat_name, temp=False):
+        # Check if this is an IC scene
+        if (self.location and 
+            hasattr(self.location, 'db') and 
+            self.location.db.roomtype != 'OOC Area' and
+            any(obj for obj in self.location.contents 
+                if obj != self and 
+                hasattr(obj, 'has_account') and 
+                obj.has_account)):
+            self.record_scene_activity()
+
+    def get_stat(self, category, subcategory, stat_name, temp=False):
         """
-        Retrieve the value of a stat, considering instances if applicable.
+        Retrieve the value of a stat.
+        
+        Args:
+            category (str): Main category (attributes, abilities, etc.)
+            subcategory (str): Subcategory (physical, social, etc.)
+            stat_name (str): Name of the stat
+            temp (bool): Whether to get temporary or permanent value
         """
         if not hasattr(self.db, "stats") or not self.db.stats:
             return None
 
         category_stats = self.db.stats.get(category, {})
-        type_stats = category_stats.get(stat_type, {})
+        if subcategory:
+            type_stats = category_stats.get(subcategory, {})
+        else:
+            type_stats = category_stats
 
-        # Handle background instances
-        if category == "backgrounds":
-            instance_match = re.match(r"(\w+)\(([\w\s]+)\)", stat_name)
-            if instance_match:
-                base_stat = instance_match.group(1)
-                instance = instance_match.group(2)
-                
-                if base_stat in type_stats:
-                    instances = type_stats[base_stat].get('instances', {})
-                    if instance in instances:
-                        return instances[instance]['temp' if temp else 'perm']
-                return None
-
-        # Handle non-instanced stats
         if stat_name in type_stats:
-            if isinstance(type_stats[stat_name], dict) and 'instances' in type_stats[stat_name]:
-                # Return base value for background without instance
-                return type_stats[stat_name]['base']['temp' if temp else 'perm']
-            return type_stats[stat_name]['temp' if temp else 'perm']
-
-        # If not found and the category is 'pools', check in 'dual' as well
-        if category == 'pools' and 'dual' in self.db.stats:
-            dual_stats = self.db.stats['dual']
-            if stat_name in dual_stats:
-                return dual_stats[stat_name]['temp' if temp else 'perm']
-
-        # If still not found, check the Stat model
-        stat = Stat.objects.filter(name=stat_name, category=category, stat_type=stat_type).first()
-        if stat:
-            return stat.default
+            return type_stats[stat_name].get('temp' if temp else 'perm', 0)
 
         return None
 
     def set_stat(self, category, stat_type, stat_name, value, temp=False):
-        """
-        Set the value of a stat, considering instances if applicable.
-        Also handles special cases like Appearance for certain splats/forms.
-        """
-        if not hasattr(self.db, "stats") or not self.db.stats:
-            self.db.stats = {}
+        """Set a stat value."""
+        if not hasattr(self, 'db') or not self.db.stats:
+            return
+
+        # Store old Natural Linguist state before any changes
+        had_natural_linguist = False
+        for cat in self.db.stats.get('merits', {}).values():
+            if any(merit.lower().replace(' ', '') == 'naturallinguist' 
+                  for merit, data in cat.items() 
+                  if data.get('perm', 0) > 0):
+                had_natural_linguist = True
+                break
+
+        # Create nested dictionaries if they don't exist
         if category not in self.db.stats:
             self.db.stats[category] = {}
         if stat_type not in self.db.stats[category]:
             self.db.stats[category][stat_type] = {}
+        
+        # If stat doesn't exist, create it with both perm and temp values
         if stat_name not in self.db.stats[category][stat_type]:
             self.db.stats[category][stat_type][stat_name] = {'perm': 0, 'temp': 0}
 
@@ -479,10 +677,30 @@ class Character(DefaultCharacter):
                 return
 
         # Normal stat setting
-        if temp:
-            self.db.stats[category][stat_type][stat_name]['temp'] = value
-        else:
-            self.db.stats[category][stat_type][stat_name]['perm'] = value
+        key = 'temp' if temp else 'perm'
+        old_value = self.db.stats[category][stat_type][stat_name].get(key, 0)
+        self.db.stats[category][stat_type][stat_name][key] = value
+
+        # If this is a language-related merit change
+        if not self.db.approved and not temp:  # Only during chargen, only for permanent changes
+            if ((stat_name == 'Language' and value < old_value) or
+                (stat_name == 'Natural Linguist' and had_natural_linguist) or
+                (stat_name.startswith('Language(') and value < old_value)):
+                # Import here to avoid circular imports
+                from commands.CmdLanguage import CmdLanguage
+                cmd = CmdLanguage()
+                cmd.caller = self
+                if cmd.validate_languages():
+                    cmd.list_languages()
+
+        # If value is 0, remove the stat entirely (do this after language validation)
+        if value == 0:
+            del self.db.stats[category][stat_type][stat_name]
+            # Clean up empty dictionaries
+            if not self.db.stats[category][stat_type]:
+                del self.db.stats[category][stat_type]
+            if not self.db.stats[category]:
+                del self.db.stats[category]
 
     def check_stat_value(self, category, stat_type, stat_name, value, temp=False):
         """
@@ -554,7 +772,11 @@ class Character(DefaultCharacter):
         if not self.db.stats or 'other' not in self.db.stats or 'splat' not in self.db.stats['other']:
             return False
         splat = self.db.stats['other']['splat'].get('Splat', {}).get('perm', '')
-        return splat in ['Changeling', 'Kinain']
+        return splat in ['Changeling'] or self.is_kinain()
+
+    def is_kinain(self):
+        """Check if the character is a Kinain."""
+        return self.db.stats.get('identity', {}).get('mortalplus_type', {}).get('Kinain', {}).get('perm', False)
 
     def search_notes(self, search_term):
         """Search notes by name or content."""
@@ -650,6 +872,959 @@ class Character(DefaultCharacter):
         
         return matches[0] if matches else None
 
+    def handle_language_merit_change(self):
+        """
+        Handle changes to Language merit or Natural Linguist merit.
+        Removes excess languages if merit points are reduced.
+        """
+        merits = self.db.stats.get('merits', {})
+        language_points = 0
+        natural_linguist = False
+        
+        # Check for Natural Linguist in both categories
+        for category in ['mental', 'social']:
+            if category in merits:
+                if any(merit.lower().replace(' ', '') == 'naturallinguist' 
+                      for merit in merits[category].keys()):
+                    natural_linguist = True
+                    break
+        
+        # Get Language merit points
+        if 'social' in merits:
+            for merit_name, merit_data in merits['social'].items():
+                if merit_name == 'Language':
+                    base_points = merit_data.get('perm', 0)
+                    language_points = base_points * 2 if natural_linguist else base_points
+                    break
+        
+        # Get current languages
+        current_languages = self.get_languages()
+        
+        # If we have more languages than points allow (accounting for free English)
+        if len(current_languages) - 1 > language_points:
+            # Keep English and only as many additional languages as we have points for
+            new_languages = ["English"]
+            additional_languages = [lang for lang in current_languages if lang != "English"]
+            new_languages.extend(additional_languages[:language_points])
+            
+            # Update languages
+            self.db.languages = new_languages
+            
+            # Reset speaking language to English if current language was removed
+            if self.db.speaking_language not in new_languages:
+                self.db.speaking_language = "English"
+            
+            # Notify the character with more detail
+            removed_languages = set(current_languages) - set(new_languages)
+            self.msg(f"Your language merit points have been reduced to {language_points}. "
+                    f"The following languages have been removed: {', '.join(removed_languages)}\n"
+                    f"Your known languages are now: {', '.join(new_languages)}")
+        
+        # If Natural Linguist was removed, update the display
+        if not natural_linguist and len(current_languages) > 1:
+            self.msg(f"Natural Linguist merit removed. Your current language points: {language_points}")
+
+    def update_merit(self, merit_name, new_value):
+        """Update a merit's value and validate languages if necessary."""
+        old_value = self.db.stats.get('merits', {}).get(merit_name, 0)
+        
+        # Update the merit value
+        # ... your existing merit update code ...
+        
+        # If it's a language-related merit, validate languages
+        if (merit_name == 'Language' or 
+            merit_name.startswith('Language(') or 
+            merit_name == 'Natural Linguist'):
+            # Import the command
+            from commands.CmdLanguage import CmdLanguage
+            cmd = CmdLanguage()
+            cmd.caller = self
+            if cmd.validate_languages():
+                cmd.list_languages()
+
+    def can_see_languages(self, viewer):
+        """
+        Determine if the viewer can see this character's languages.
+        
+        Args:
+            viewer (Object): The character/account trying to view languages
+            
+        Returns:
+            bool: True if viewer can see languages, False otherwise
+        """
+        # Admin and Builder staff can always see languages
+        if viewer.check_permstring("builders") or viewer.check_permstring("admin"):
+            return True
+            
+        # Character can see their own languages
+        if viewer == self:
+            return True
+            
+        # Characters in same room can see languages if character is speaking
+        if viewer.location == self.location:
+            return True
+            
+        return False
+
+    def add_xp(self, amount, reason="Weekly XP", approved_by=None):
+        """Add XP to the character."""
+        try:
+            # Initialize XP if not exists
+            if not hasattr(self.db, 'xp') or not self.db.xp:
+                self.db.xp = {
+                    'total': Decimal('0.00'),
+                    'current': Decimal('0.00'),
+                    'spent': Decimal('0.00'),
+                    'ic_xp': Decimal('0.00'),
+                    'monthly_spent': Decimal('0.00'),
+                    'last_reset': datetime.now(),
+                    'spends': [],
+                    'last_scene': None,
+                    'scenes_this_week': 0
+                }
+
+            xp_amount = Decimal(str(amount)).quantize(Decimal('0.01'), rounding=ROUND_DOWN)
+            self.db.xp['total'] += xp_amount
+            self.db.xp['current'] += xp_amount
+            
+            # Log the award
+            timestamp = datetime.now()
+            award = {
+                'type': 'award',
+                'amount': float(xp_amount),
+                'reason': reason,
+                'approved_by': approved_by.key if approved_by else 'System',
+                'timestamp': timestamp.isoformat()
+            }
+            
+            self.db.xp['spends'].insert(0, award)
+            self.db.xp['spends'] = self.db.xp['spends'][:10]
+            
+            return True
+        except Exception as e:
+            self.msg(f"Error adding XP: {str(e)}")
+            return False
+
+    def spend_xp(self, amount, reason, approved_by=None):
+        """
+        Spend XP from the character's pool.
+        
+        Args:
+            amount (float): Amount of XP to spend
+            reason (str): What the XP was spent on
+            approved_by (Object): Staff member who approved the spend
+        
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            # Convert to Decimal and round to 2 decimal places
+            xp_amount = Decimal(str(amount)).quantize(Decimal('0.01'), rounding=ROUND_DOWN)
+            
+            # Check if character has enough XP
+            if self.db.xp['current'] < xp_amount:
+                return False
+            
+            # Check monthly spend limit unless staff approved
+            if not approved_by:
+                # Reset monthly spent if it's been a month
+                if datetime.now() - self.db.xp['last_reset'] > timedelta(days=30):
+                    self.db.xp['monthly_spent'] = Decimal('0.00')
+                    self.db.xp['last_reset'] = datetime.now()
+                
+                # Check if this would exceed monthly limit
+                if self.db.xp['monthly_spent'] + xp_amount > Decimal('20.00'):
+                    return False
+                
+                self.db.xp['monthly_spent'] += xp_amount
+            
+            # Update XP totals
+            self.db.xp['current'] -= xp_amount
+            self.db.xp['spent'] += xp_amount
+            
+            # Log the spend
+            timestamp = datetime.now()
+            spend = {
+                'type': 'spend',
+                'amount': float(xp_amount),
+                'reason': reason,
+                'approved_by': approved_by.key if approved_by else None,
+                'timestamp': timestamp.isoformat()
+            }
+            
+            # Add to spends list
+            self.db.xp['spends'].insert(0, spend)
+            
+            # Keep only last 10 entries
+            self.db.xp['spends'] = self.db.xp['spends'][:10]
+            
+            return True
+        except (ValueError, TypeError, InvalidOperation):
+            return False
+
+    def record_scene_participation(self):
+        """Record that the character participated in an IC scene."""
+        now = datetime.now()
+        
+        # If it's been more than a week since last scene, reset counter
+        if self.db.xp['last_scene']:
+            last_scene = datetime.fromisoformat(self.db.xp['last_scene'])
+            if now - last_scene > timedelta(days=7):
+                self.db.xp['scenes_this_week'] = 0
+        
+        self.db.xp['last_scene'] = now.isoformat()
+        self.db.xp['scenes_this_week'] += 1
+
+    def start_scene(self):
+        """Start tracking a new scene."""
+        now = datetime.now()
+        self.db.scene_data['current_scene'] = now
+        self.db.scene_data['scene_location'] = self.location
+        self.db.scene_data['last_activity'] = now
+
+    def end_scene(self):
+        """End current scene and check if it counts."""
+        
+        if not self.db.scene_data['current_scene']:
+            self.msg("|rNo current scene to end.|n")
+            return False
+
+        now = datetime.now()
+        scene_start = self.db.scene_data['current_scene']
+        last_activity = self.db.scene_data['last_activity']
+
+        # Check if scene meets duration requirement (20 minutes)
+        duration = (now - scene_start).total_seconds() / 60
+
+        if duration >= 20:  # Scene must be 20+ mins
+            self.db.scene_data['completed_scenes'] += 1
+            self.msg(f"|gScene completed and counted! Total completed scenes: {self.db.scene_data['completed_scenes']}|n")
+        else:
+            self.msg(f"|rScene too short to count ({int(duration)} minutes - needs 20+)|n")
+            
+        # Reset scene tracking
+        self.db.scene_data['current_scene'] = None
+        self.db.scene_data['scene_location'] = None
+        self.db.scene_data['last_activity'] = None
+
+        return True
+
+    def check_scene_status(self):
+        """Check if we should start/continue/end a scene."""
+        # Ensure scene_data exists
+        if not hasattr(self.db, 'scene_data') or not self.db.scene_data:
+            self.db.scene_data = {
+                'current_scene': None,
+                'scene_location': None,
+                'last_activity': None,
+                'completed_scenes': 0,
+                'last_weekly_reset': datetime.now()
+            }
+
+        now = datetime.now()
+        
+        # Check for weekly reset
+        if self.db.scene_data['last_weekly_reset']:
+            days_since_reset = (now - self.db.scene_data['last_weekly_reset']).days
+            if days_since_reset >= 7:
+                old_count = self.db.scene_data['completed_scenes']
+                self.db.scene_data['completed_scenes'] = 0
+                self.db.scene_data['last_weekly_reset'] = now
+      # If not in a valid scene location, end any current scene
+        if not self.location or not self.is_valid_scene_location():
+            if self.db.scene_data['current_scene']:
+                self.end_scene()
+            return
+
+        # If in a new location, end current scene and start new one
+        if (self.db.scene_data['scene_location'] and 
+            self.db.scene_data['scene_location'] != self.location):
+            self.end_scene()
+            self.start_scene()
+            return
+
+        # If not in a scene but in valid location, start one
+        if not self.db.scene_data['current_scene']:
+            self.start_scene()
+
+    def is_valid_scene_location(self):
+        """Check if current location is valid for scene tracking."""
+        if not self.location:
+            return False
+            
+        # Must be IC room
+        if (hasattr(self.location, 'db') and 
+            getattr(self.location.db, 'roomtype', None) == 'OOC Area'):
+            return False
+            
+        # Must have other players present
+        other_players = [
+            obj for obj in self.location.contents 
+            if (obj != self and 
+                hasattr(obj, 'has_account') and 
+                obj.has_account and
+                obj.db.in_umbra == self.db.in_umbra)  # Must be in same realm
+        ]
+        
+        valid = len(other_players) > 0
+
+    def record_scene_activity(self):
+        """Record activity in current scene."""
+        now = datetime.now()
+
+        # Initialize scene_data if it doesn't exist
+        if not hasattr(self.db, 'scene_data') or not self.db.scene_data:
+            self.db.scene_data = {
+                'current_scene': None,
+                'scene_location': None,
+                'last_activity': None,
+                'completed_scenes': 0,
+                'last_weekly_reset': datetime.now()
+            }
+
+        self.check_scene_status()
+        if self.db.scene_data['current_scene']:
+            self.db.scene_data['last_activity'] = now
+
+    def at_say(self, message, msg_self=None, msg_location=None, receivers=None, msg_receivers=None, **kwargs):
+        """Hook method for the say command."""
+        super().at_say(message, msg_self, msg_location, receivers, msg_receivers, **kwargs)
+        self.record_scene_activity()
+
+    def at_pose(self, pose_understand, pose_not_understand, pose_self, speaking_language):
+        """Handle poses."""
+        super().at_pose(pose_understand, pose_not_understand, pose_self, speaking_language)
+        self.record_scene_activity()
+
+    def at_emote(self, message, msg_self=None, msg_location=None, receivers=None, msg_receivers=None, **kwargs):
+        """Display an emote to the room."""
+        super().at_emote(message, msg_self, msg_location, receivers, msg_receivers, **kwargs)
+        self.record_scene_activity()
+
+    def at_init(self):
+        """
+        Called when object is first created and after each server reload.
+        """
+        super().at_init()
+        
+        # Initialize scene_data if it doesn't exist
+        if not hasattr(self.db, 'scene_data'):
+            self.db.scene_data = {
+                'current_scene': None,  # Will store start time of current scene
+                'scene_location': None, # Location where scene started
+                'last_activity': None,  # Last time character was active in scene
+                'completed_scenes': 0,  # Number of completed scenes this week
+                'last_weekly_reset': datetime.now()  # For weekly scene count reset
+            }
+
+    def init_scene_data(self):
+        """Force initialize scene data."""
+        self.db.scene_data = {
+            'current_scene': None,
+            'scene_location': None,
+            'last_activity': None,
+            'completed_scenes': 0,
+            'last_weekly_reset': datetime.now()
+        }
+        self.msg("|wScene data initialized.|n")
+
+    def calculate_xp_cost(self, stat_name, new_rating, category=None, current_rating=None, subcategory=None):
+        """Calculate XP cost for increasing a stat."""
+        if current_rating is None:
+            current_rating = self.get_stat(category, subcategory, stat_name) or 0
+        
+        splat = self.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+        shifter_type = self.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+        
+        # Initialize cost and requires_approval
+        cost = 0
+        requires_approval = False
+
+        # Can't decrease stats via XP
+        if new_rating <= current_rating:
+            return (0, False)
+
+        # Calculate base cost based on stat type
+        if category == 'attributes':
+            # First dot is free, then current rating × 4
+            if current_rating == 0:
+                cost = sum(i * 4 for i in range(1, new_rating))
+            else:
+                cost = sum(i * 4 for i in range(current_rating, new_rating))
+            requires_approval = new_rating > 3
+
+        elif category == 'abilities':
+            if subcategory in ['talent', 'skill', 'knowledge', 'secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+                if current_rating == 0:
+                    cost = 3 + sum(i * 2 for i in range(1, new_rating))
+                else:
+                    cost = sum(i * 2 for i in range(current_rating + 1, new_rating + 1))
+                requires_approval = new_rating > 3
+
+        elif category == 'powers' and splat == 'Shifter':
+            # Handle different shifter types
+            if shifter_type == 'Garou':
+                breed = self.db.stats.get('identity', {}).get('lineage', {}).get('Breed', {}).get('perm', '')
+                tribe = self.db.stats.get('identity', {}).get('lineage', {}).get('Tribe', {}).get('perm', '')
+                auspice = self.db.stats.get('identity', {}).get('lineage', {}).get('Auspice', {}).get('perm', '')
+                
+                # Check if it's a breed/auspice/tribe gift
+                is_breed_gift = f"Breed: {breed}" in stat_name
+                is_tribe_gift = f"Tribe: {tribe}" in stat_name
+                is_auspice_gift = f"Auspice: {auspice}" in stat_name
+                
+                if is_breed_gift or is_tribe_gift or is_auspice_gift:
+                    cost = new_rating * 3  # Gift Level * 3
+                else:
+                    cost = new_rating * 5  # Gift Level * 5 for outside gifts
+                
+                requires_approval = new_rating > 1  # Only level 1 gifts without approval
+                
+            elif shifter_type in ['Bastet', 'Corax', 'Gurahl', 'Kitsune', 'Mokole', 'Nagah', 'Nuwisha', 'Ratkin', 'Rokea', 'Ajaba', 'Ananasi', 'Camazotz']:
+                # Other shifter types might have different costs or approval requirements
+                # For now, using same base structure as Garou
+                cost = new_rating * 4  # Different base cost for other shifter types
+                requires_approval = new_rating > 1
+
+        elif category == 'pools' and stat_name in ['Willpower', 'Rage', 'Gnosis']:
+            if stat_name == 'Willpower':
+                cost = sum(range(current_rating + 1, new_rating + 1))
+                requires_approval = new_rating > 5
+            elif stat_name in ['Rage', 'Gnosis'] and splat == 'Shifter':
+                if stat_name == 'Rage':
+                    cost = sum(range(current_rating + 1, new_rating + 1))
+                else:  # Gnosis
+                    cost = sum(i * 2 for i in range(current_rating + 1, new_rating + 1))
+                requires_approval = new_rating > 5
+
+        elif category == 'backgrounds':
+            cost = (new_rating - current_rating) * 5
+            auto_approve_backgrounds = [
+                'Resources', 'Contacts', 'Allies', 'Backup', 
+                'Herd', 'Library', 'Kinfolk', 'Spirit Heritage'
+            ]
+            requires_approval = (
+                stat_name not in auto_approve_backgrounds or 
+                new_rating > 2
+            )
+
+        elif category == 'powers':
+            if splat == 'Vampire':
+                clan = self.db.stats.get('identity', {}).get('lineage', {}).get('Clan', {}).get('perm', '')
+                
+                # Determine if discipline is in-clan
+                is_in_clan = self._is_discipline_in_clan(stat_name, clan)
+                is_caitiff = clan == 'Caitiff'
+                
+                # First dot costs 10 XP for all types
+                if current_rating == 0:
+                    cost = 10
+                    if new_rating > 1:
+                        # Add costs for additional dots
+                        if is_in_clan:
+                            cost += sum(i * 5 for i in range(1, new_rating))
+                        elif is_caitiff:
+                            cost += sum(i * 6 for i in range(1, new_rating))
+                        else:  # Out of clan
+                            cost += sum(i * 7 for i in range(1, new_rating))
+                else:
+                    # Just adding dots beyond the first
+                    if is_in_clan:
+                        cost = sum(i * 5 for i in range(current_rating, new_rating))
+                    elif is_caitiff:
+                        cost = sum(i * 6 for i in range(current_rating, new_rating))
+                    else:  # Out of clan
+                        cost = sum(i * 7 for i in range(current_rating, new_rating))
+                
+                requires_approval = new_rating > 2
+
+            elif splat == 'Mage':
+                # Check if it's an affinity sphere
+                is_affinity = self._is_affinity_sphere(stat_name)
+                
+                if current_rating == 0:
+                    cost = 10  # First dot always costs 10
+                    if new_rating > 1:
+                        # Add costs for additional dots
+                        if is_affinity:
+                            cost += sum(i * 7 for i in range(1, new_rating))
+                        else:
+                            cost += sum(i * 8 for i in range(1, new_rating))
+                else:
+                    # Just adding dots beyond the first
+                    if is_affinity:
+                        cost = sum(i * 7 for i in range(current_rating, new_rating))
+                    else:
+                        cost = sum(i * 8 for i in range(current_rating, new_rating))
+                
+                requires_approval = new_rating > 2
+
+            elif splat == 'Changeling':
+                is_art = stat_name.startswith('Art:')
+                is_realm = stat_name.startswith('Realm:')
+                
+                if is_art:
+                    if current_rating == 0:
+                        cost = 3  # First dot costs 3
+                        if new_rating > 1:
+                            cost += sum(i * 4 for i in range(1, new_rating))
+                    else:
+                        cost = sum(i * 4 for i in range(current_rating, new_rating))
+                
+                elif is_realm:
+                    if current_rating == 0:
+                        cost = 5  # First dot costs 5
+                        if new_rating > 1:
+                            cost += sum(i * 3 for i in range(1, new_rating))
+                    else:
+                        cost = sum(i * 3 for i in range(current_rating, new_rating))
+                
+                requires_approval = new_rating > 2
+
+        return (cost, requires_approval)
+
+    def _is_discipline_in_clan(self, discipline, clan):
+        """Helper method to check if a discipline is in-clan."""
+        # general disciplines that any vampire can learn as if in-clan, basically the physical ones
+        GENERAL_DISCIPLINES = ['Potence', 'Celerity', 'Fortitude', 'Auspex']
+        
+        # clan-specific
+        clan_disciplines = {
+            'Brujah': ['Celerity', 'Potence', 'Presence'],
+            'Gangrel': ['Animalism', 'Fortitude', 'Protean'],
+            'Malkavian': ['Auspex', 'Obfuscate', 'Dementation'],
+            'Nosferatu': ['Potence', 'Animalism', 'Obfuscate'],
+            'Tremere': ['Thaumaturgy', 'Dominate', 'Auspex'],
+            'Tzimisce': ['Vicissitude', 'Auspex', 'Animalism'],
+            'Ventrue': ['Dominate', 'Fortitude', 'Presence'],
+            'Lasombra': ['Dominate', 'Obtenebration', 'Potence'],
+            'Toreador': ['Auspex', 'Presence', 'Celerity'],
+            'Followers of Set': ['Obfuscate', 'Presence', 'Serpentis'],
+            'Ravnos': ['Animalism', 'Chimerstry', 'Fortitude'],
+            'Giovanni': ['Dominate', 'Necromancy', 'Potence'],
+            'Caitiff': GENERAL_DISCIPLINES,  # caitiff can learn general disciplines as in-clan
+            'City Gangrel': ['Celerity', 'Fortitude', 'Protean']
+        }
+        
+        # Check if it's a general discipline or in-clan discipline
+        return (discipline in GENERAL_DISCIPLINES or 
+                (clan in clan_disciplines and discipline in clan_disciplines[clan]))
+
+    def _is_affinity_sphere(self, sphere):
+        """Helper method to check if a sphere is an affinity sphere."""
+        affinity_sphere = self.db.stats.get('other', {}).get('affinity_sphere', {}).get('Affinity_Sphere', {}).get('perm', '')
+        return sphere in affinity_sphere
+
+    def can_buy_stat(self, stat_name, new_rating, category=None):
+        """Check if a stat can be bought without staff approval."""
+        # Get character's splat
+        splat = self.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+        if not splat:
+            return (False, "Character splat not set")
+
+        # Basic validation
+        if category == 'abilities':
+            # For abilities, we need to determine the subcategory (talent/skill/knowledge)
+            for subcat in ['talent', 'skill', 'knowledge']:
+                current_rating = (self.db.stats.get('abilities', {})
+                                .get(subcat, {})
+                                .get(stat_name, {})
+                                .get('perm', 0))
+                if current_rating:  # Found the ability
+                    break
+        else:
+            current_rating = self.get_stat(category, None, stat_name) or 0
+
+        if new_rating <= current_rating:
+            return (False, "New rating must be higher than current rating")
+
+        # Auto-approve list for each splat
+        AUTO_APPROVE = {
+            'all': {
+                'attributes': 3,  # All attributes up to 3
+                'abilities': 3,   # All abilities up to 3
+                'backgrounds': {   # Specific backgrounds up to 2
+                    'Resources': 2,
+                    'Contacts': 2,
+                    'Allies': 2,
+                    'Backup': 2,
+                    'Herd': 2,
+                    'Library': 2
+                },
+                'willpower': {     # Willpower limits by splat
+                    'Mage': 6,
+                    'default': 5
+                }
+            },
+            'Vampire': {
+                'powers': {        # Disciplines up to 2
+                    'max': 2,
+                    'types': ['Discipline']
+                }
+            },
+            'Mage': {
+                'powers': {        # Spheres up to 2
+                    'max': 2,
+                    'types': ['Sphere']
+                }
+            },
+            'Changeling': {
+                'powers': {        # Arts and Realms up to 2
+                    'max': 2,
+                    'types': ['Art', 'Realm']
+                }
+            },
+            'Shifter': {
+                'powers': {        # Level 1 Gifts only
+                    'max': 1,
+                    'types': ['Gift']
+                }
+            }
+        }
+
+        # Check category-specific limits
+        if category == 'attributes' and new_rating <= AUTO_APPROVE['all']['attributes']:
+            return (True, None)
+            
+        if category == 'abilities' and new_rating <= AUTO_APPROVE['all']['abilities']:
+            return (True, None)
+            
+        if category == 'backgrounds':
+            max_rating = AUTO_APPROVE['all']['backgrounds'].get(stat_name)
+            if max_rating and new_rating <= max_rating:
+                return (True, None)
+                
+        if stat_name == 'Willpower':
+            max_willpower = AUTO_APPROVE['all']['willpower'].get(splat, 
+                          AUTO_APPROVE['all']['willpower']['default'])
+            if new_rating <= max_willpower:
+                return (True, None)
+                
+        if category == 'powers' and splat in AUTO_APPROVE:
+            power_rules = AUTO_APPROVE[splat]['powers']
+            # Check if it's the right type of power for the splat
+            power_type = self._get_power_type(stat_name)
+            if (power_type in power_rules['types'] and 
+                new_rating <= power_rules['max']):
+                return (True, None)
+
+        return (False, "Requires staff approval")
+
+    def _get_power_type(self, stat_name):
+        """Helper method to determine power type from name."""
+        if stat_name.startswith('Gift:'):
+            return 'Gift'
+        elif stat_name.startswith('Discipline:'):
+            return 'Discipline'
+        elif stat_name.startswith('Sphere:'):
+            return 'Sphere'
+        elif stat_name.startswith('Art:'):
+            return 'Art'
+        elif stat_name.startswith('Realm:'):
+            return 'Realm'
+        return None
+
+    def ensure_stat_structure(self, category, subcategory):
+        """Ensure the proper nested structure exists for stats."""
+        if not hasattr(self.db, 'stats'):
+            self.db.stats = {}
+        
+        if category not in self.db.stats:
+            self.db.stats[category] = {}
+        
+        if subcategory and subcategory not in self.db.stats[category]:
+            self.db.stats[category][subcategory] = {}
+        
+        return True
+
+    def buy_stat(self, stat_name, new_rating, category=None, subcategory=None, reason=""):
+        """Buy or increase a stat with XP."""
+        try:
+            # Ensure proper structure exists
+            self.ensure_stat_structure(category, subcategory)
+            
+            # Get current permanent rating (not temporary/shifted rating)
+            if category and subcategory:
+                current_rating = (self.db.stats.get(category, {})
+                                .get(subcategory, {})
+                                .get(stat_name, {})
+                                .get('perm', 0))
+            else:
+                current_rating = 0
+            
+            # Calculate cost
+            cost, requires_approval = self.calculate_xp_cost(
+                stat_name, 
+                new_rating, 
+                category=category,
+                subcategory=subcategory,
+                current_rating=current_rating
+            )
+            
+            if cost == 0:
+                return False, "Invalid stat or no increase needed"
+            
+            if requires_approval:
+                return False, "This purchase requires staff approval"
+            
+            # Check if we have enough XP
+            if self.db.xp['current'] < cost:
+                return False, f"Not enough XP. Cost: {cost}, Available: {self.db.xp['current']}"
+            
+            # Get the current form and any modifiers
+            current_form = self.db.current_form
+            form_modifier = 0
+            if current_form and current_form.lower() != 'homid':
+                try:
+                    from world.wod20th.models import ShapeshifterForm
+                    # Get character's shifter type
+                    shifter_type = self.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '').lower()
+                    
+                    # Query form by both name and shifter type
+                    form = ShapeshifterForm.objects.get(
+                        name__iexact=current_form,
+                        shifter_type=shifter_type
+                    )
+                    form_modifier = form.stat_modifiers.get(stat_name.lower(), 0)
+                    
+                    # Special handling for stats that should be set to 0 in certain forms
+                    zero_appearance_forms = [
+                        'crinos',      # All shapeshifters
+                        'anthros',     # Ajaba war form
+                        'arthren',     # Gurahl war form
+                        'sokto',       # Bastet war form
+                        'chatro'       # Bastet battle form
+                    ]
+                    if (stat_name.lower() == 'appearance' and 
+                        current_form.lower() in zero_appearance_forms):
+                        form_modifier = -999  # Force to 0
+                    elif (stat_name.lower() == 'manipulation' and 
+                          current_form.lower() == 'crinos'):
+                        form_modifier = -2  # Crinos form penalty
+                    
+                except (ShapeshifterForm.DoesNotExist, AttributeError) as e:
+                    print(f"DEBUG: Form lookup error - {str(e)}")
+                    form_modifier = 0
+            
+            # Update the permanent stat value
+            if category and subcategory:
+                if stat_name not in self.db.stats[category][subcategory]:
+                    self.db.stats[category][subcategory][stat_name] = {}
+                
+                # Set the permanent value
+                self.db.stats[category][subcategory][stat_name]['perm'] = new_rating
+                
+                # Calculate temporary value with form modifier
+                if form_modifier == -999:  # Special case for forced 0
+                    temp_value = 0
+                else:
+                    temp_value = max(0, new_rating + form_modifier)  # Ensure non-negative
+                
+                self.db.stats[category][subcategory][stat_name]['temp'] = temp_value
+            
+            # Deduct XP
+            self.db.xp['current'] -= Decimal(str(cost))
+            self.db.xp['spent'] += Decimal(str(cost))
+            
+            # Log the spend
+            timestamp = datetime.now()
+            spend = {
+                'type': 'spend',
+                'amount': float(cost),
+                'reason': f"{stat_name} ({current_rating} -> {new_rating})",
+                'approved_by': 'System',
+                'timestamp': timestamp.isoformat()
+            }
+            
+            if not self.db.xp.get('spends'):
+                self.db.xp['spends'] = []
+            self.db.xp['spends'].insert(0, spend)
+            self.db.xp['spends'] = self.db.xp['spends'][:10]  # Keep only last 10 entries
+            
+            return True, f"Successfully bought {stat_name} {new_rating} for {cost} XP"
+            
+        except Exception as e:
+            return False, f"Error buying stat: {str(e)}"
+
+    def _display_xp(self, character):
+        """Displays XP information for a character."""
+        xp = character.db.xp
+        if not xp:
+            # Initialize XP if it doesn't exist
+            xp = {
+                'total': Decimal('0.00'),
+                'current': Decimal('0.00'),
+                'spent': Decimal('0.00'),
+                'ic_xp': Decimal('0.00'),
+                'monthly_spent': Decimal('0.00'),
+                'last_reset': datetime.now(),
+                'spends': [],
+                'last_scene': None,
+                'scenes_this_week': 0
+            }
+            character.db.xp = xp
+            
+        total_width = 78
+            
+        # Header
+        title = f" {character.name}'s XP "
+        title_len = len(title)
+        dash_count = (total_width - title_len) // 2
+        header = f"{'|b-|n' * dash_count}{title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
+        
+        # XP section
+        exp_title = "|y Experience Points |n"
+        title_len = len(exp_title)
+        dash_count = (total_width - title_len) // 2
+        exp_header = f"{'|b-|n' * dash_count}{exp_title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
+        
+        # XP value formatting
+        left_col_width = 20  
+        right_col_width = 12 
+        spacing = " " * 14  # column spacing
+        
+        # Format columns
+        ic_xp = f"{'|wIC XP:|n':<{left_col_width}}{xp['total'] - xp['current']:>{right_col_width}.2f}"
+        total_xp = f"{'|wTotal XP:|n':<{left_col_width}}{xp['total']:>{right_col_width}.2f}"
+        current_xp = f"{'|wCurrent XP:|n':<{left_col_width}}{xp['current']:>{right_col_width}.2f}"
+        award_xp = f"{'|wAward XP:|n':<{left_col_width}}{xp['current']:>{right_col_width}.2f}"
+        spent_xp = f"{'|wSpent XP:|n':<{left_col_width}}{xp['spent']:>{right_col_width}.2f}"
+        
+        # Combine XP section
+        exp_section = f"{ic_xp}{spacing}{award_xp}\n"
+        exp_section += f"{total_xp}{spacing}{spent_xp}\n"
+        exp_section += f"{current_xp}\n"
+        
+        # Recent activity section
+        activity_title = "|y Recent Activity |n"
+        activity_title_len = len(activity_title)
+        activity_dash_count = (total_width - activity_title_len) // 2
+        activity_header = f"{'|b-|n' * activity_dash_count}{activity_title}{'|b-|n' * (total_width - activity_dash_count - activity_title_len)}\n"
+        
+        # Format recent activity
+        activity_section = ""
+        if xp.get('spends'):
+            for entry in xp['spends']:
+                timestamp = datetime.fromisoformat(entry['timestamp'])
+                if entry['type'] == 'spend':
+                    activity_section += (
+                        f"{timestamp.strftime('%Y-%m-%d %H:%M')} - "
+                        f"Spent {entry['amount']:.2f} XP on {entry['reason']}\n"
+                    )
+                else:
+                    activity_section += (
+                        f"{timestamp.strftime('%Y-%m-%d %H:%M')} - "
+                        f"Received {entry['amount']:.2f} XP ({entry['reason']})\n"
+                    )
+        else:
+            activity_section = "No XP history yet.\n"
+        
+        footer = f"{'|b-|n' * total_width}"
+        
+        # Add scene tracking status if available
+        scene_data = character.db.scene_data
+        if scene_data:
+            scene_title = "|y Scene Status |n"
+            scene_title_len = len(scene_title)
+            scene_dash_count = (total_width - scene_title_len) // 2
+            scene_header = f"{'|b-|n' * scene_dash_count}{scene_title}{'|b-|n' * (total_width - scene_dash_count - scene_title_len)}\n"
+            
+            scene_section = ""
+            if scene_data['current_scene']:
+                duration = (datetime.now() - scene_data['current_scene']).total_seconds() / 60
+                scene_section += f"Current scene duration: {int(duration)} minutes\n"
+                if scene_data['last_activity']:
+                    last_activity = (datetime.now() - scene_data['last_activity']).total_seconds() / 60
+                    scene_section += f"Last activity: {int(last_activity)} minutes ago\n"
+            else:
+                scene_section += "No active scene\n"
+            
+            scene_section += f"Completed scenes this week: {scene_data['completed_scenes']}\n"
+            
+            display = (
+                header +
+                exp_header +
+                exp_section +
+                activity_header +
+                activity_section +
+                scene_header +
+                scene_section +
+                footer
+            )
+        else:
+            display = (
+                header +
+                exp_header +
+                exp_section +
+                activity_header +
+                activity_section +
+                footer
+            )
+        
+        return display
+
+    def award_ic_xp(self, amount=4):
+        """Award IC XP for completing weekly scenes."""
+        try:
+            xp_amount = Decimal(str(amount)).quantize(Decimal('0.01'), rounding=ROUND_DOWN)
+            self.db.xp['total'] += xp_amount
+            self.db.xp['current'] += xp_amount
+            self.db.xp['ic_xp'] += xp_amount
+            
+            # Log the award
+            timestamp = datetime.now()
+            award = {
+                'type': 'award',
+                'amount': float(xp_amount),
+                'reason': "Weekly IC XP",
+                'approved_by': 'System',
+                'timestamp': timestamp.isoformat()
+            }
+            
+            self.db.xp['spends'].insert(0, award)
+            self.db.xp['spends'] = self.db.xp['spends'][:10]
+            
+            return True
+        except Exception as e:
+            self.msg(f"Error awarding IC XP: {str(e)}")
+            return False
+
+    def at_pre_channel_msg(self, message, channel, senders=None, **kwargs):
+        """
+        Called before a character receives a message from a channel.
+        
+        Args:
+            message (str): The message to be received
+            channel (Channel): The channel the message is from
+            senders (list): List of senders who should receive the message
+            
+        Returns:
+            message (str or None): The processed message or None to abort receiving
+        """
+        return self.account.at_pre_channel_msg(message, channel, senders, **kwargs)
+
+    def channel_msg(self, message, channel, senders=None, **kwargs):
+        """
+        Called when a character receives a message from a channel.
+        
+        Args:
+            message (str): The message received
+            channel (Channel): The channel the message is from
+            senders (list): List of senders who should receive the message
+        """
+        self.account.channel_msg(message, channel, senders, **kwargs)
+
+    def at_post_channel_msg(self, message, channel, senders=None, **kwargs):
+        """
+        Called after a character has received a message from a channel.
+        
+        Args:
+            message (str): The message received
+            channel (Channel): The channel the message is from
+            senders (list): List of senders who should receive the message
+        """
+        return self.account.at_post_channel_msg(message, channel, senders, **kwargs)
+
 class Note:
     def __init__(self, name, text, category="General", is_public=False, is_approved=False, 
                  approved_by=None, approved_at=None, created_at=None, updated_at=None, note_id=None):
@@ -699,3 +1874,4 @@ class Note:
             else:
                 note_data[field] = None
                 
+        return cls(**note_data)

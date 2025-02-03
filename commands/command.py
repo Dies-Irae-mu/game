@@ -185,3 +185,16 @@ class Command(BaseCommand):
 #                 self.character = self.caller.get_puppet(self.session)
 #             else:
 #                 self.character = None
+
+class ShifterCommand(Command):
+    """Base class for Shifter-only commands"""
+    locks = "cmd:splat(Shifter)"  # Only Shifters can use this command
+
+class GarouCommand(Command):
+    """Base class for Garou-only commands"""
+    locks = "cmd:type(Garou)"  # Only Garou can use this command
+
+# Or combine them
+class GarouShifterCommand(Command):
+    """Base class for commands that require both Garou type and Shifter splat"""
+    locks = "cmd:splat(Shifter) and type(Garou)"

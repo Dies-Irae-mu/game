@@ -17,6 +17,12 @@
                 html: true,
                 headerIds: true,
                 sanitize: false,
+                listIndent: 2,
+                renderer: new marked.Renderer(),
+                pedantic: false,
+                mangle: true,
+                smartLists: true,
+                smartypants: true
             });
 
             // Pre-process the content
@@ -24,16 +30,23 @@
                 const leftContentData = `{{ page.content|escapejs }}`;
                 const rightContentData = `{{ page.right_content|escapejs }}`;
                 
+                console.log("Raw Left Content:", leftContentData);
+                console.log("Raw Right Content:", rightContentData);
+                
                 // Process left content
                 const leftContentElement = document.querySelector('.left_content');
                 if (leftContentElement && leftContentData) {
-                    leftContentElement.innerHTML = marked.parse(leftContentData);
+                    const processedLeftContent = marked.parse(leftContentData);
+                    console.log("Processed Left Content:", processedLeftContent);
+                    leftContentElement.innerHTML = processedLeftContent;
                 }
                 
                 // Process right content
                 const rightContentElement = document.querySelector('.right_content');
                 if (rightContentElement && rightContentData) {
-                    rightContentElement.innerHTML = marked.parse(rightContentData);
+                    const processedRightContent = marked.parse(rightContentData);
+                    console.log("Processed Right Content:", processedRightContent);
+                    rightContentElement.innerHTML = processedRightContent;
                 }
             });
         </script>
@@ -92,6 +105,12 @@
                         <li><a href="/channels/">Channels</a></li>
                         <li><a href="/help/">Help</a></li>
                         <li><a href="/webclient/">Play Online</a></li>
+                        <li class="nav-search">
+                            <form action="{% url 'wiki:search' %}" method="get">
+                                <input type="text" name="q" placeholder="Search wiki...">
+                                <button type="submit"><i class="fas fa-search"></i></button>
+                            </form>
+                        </li>
                         {% if user.is_authenticated %}
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle">{{ user.username }}</a>
@@ -109,9 +128,9 @@
                             <li class="login-btn"><a href="/auth/login/?next=/">Login</a></li>
                         {% endif %}
                     </ul>
-                    <div class="hamburger-menu">
+                    <button class="hamburger-menu" aria-label="Toggle menu">
                         <img src="{% static 'wiki/imgs/hamburger.svg' %}" alt="Menu" class="hamburger-icon">
-                    </div>
+                    </button>
                 </div>
             </div>
         </nav>
@@ -190,15 +209,19 @@
                 <!-- Content -->
                 <div class="content_holder">
                     <div class="content">
-                        <div class="left_content">
-                            <!-- Content will be inserted by JavaScript -->
-                        </div>
-                        
-                        <div class="right_content {% if not page.right_content %}hidden{% endif %}">
-                            {% block sidebar %}
+                        {% if page %}
+                            <div class="left_content">
                                 <!-- Content will be inserted by JavaScript -->
-                            {% endblock %}
-                        </div>
+                            </div>
+                            
+                            <div class="right_content {% if not page.right_content %}hidden{% endif %}">
+                                {% block sidebar %}
+                                    <!-- Content will be inserted by JavaScript -->
+                                {% endblock %}
+                            </div>
+                        {% else %}
+                            {% block content %}{% endblock %}
+                        {% endif %}
                     </div>
                     <footer>
                         <p>Powered by <a href="https://evennia.com">Evennia</a></p>
@@ -211,33 +234,133 @@
         <div class="sliding-menu">
             <ul class="menu-items">
                 <li><a href="/">Home</a></li>
-                <li><a href="#">Characters</a></li>
-                <li><a href="#">Wiki</a></li>
-                <li><a href="#">Channels</a></li>
-                <li><a href="#">Help</a></li>
-                <li><a href="#">Play Online</a></li>
-                {% if user.is_authenticated %}
-                    <li><a href="#">Profile</a></li>
-                    <li><a href="#">Settings</a></li>
-                    <li><a href="#">Logout</a></li>
-                {% else %}
-                    <li><a href="#">Login</a></li>
+                <li><a href="/characters/">Characters</a></li>
+                
+                <!-- Wiki Section -->
+                <li class="dropdown-header">Wiki</li>
+                <li><a href="{% url 'wiki:page_list' %}">All Pages</a></li>
+                {% if featured_articles %}
+                    <li class="dropdown-divider"><hr/></li>
+                    <li class="dropdown-header">Featured</li>
+                    {% for article in featured_articles %}
+                        <li {% if page.slug == article.slug %}class="highlight"{% endif %}>
+                            <a href="{% url 'wiki:page_detail' article.slug %}">{{ article.title }}</a>
+                        </li>
+                    {% endfor %}
                 {% endif %}
+                
+                {% if related_articles %}
+                    <li class="dropdown-divider"><hr/></li>
+                    <li class="dropdown-header">Related</li>
+                    {% for article in related_articles %}
+                        <li {% if page.slug == article.slug %}class="highlight"{% endif %}>
+                            <a href="{% url 'wiki:page_detail' article.slug %}">{{ article.title }}</a>
+                        </li>
+                    {% endfor %}
+                {% endif %}
+                
+                <li><a href="/channels/">Channels</a></li>
+                <li><a href="/help/">Help</a></li>
+                <li><a href="/webclient/">Play Online</a></li>
+                
+                {% if user.is_authenticated %}
+                    <li class="dropdown-divider"><hr/></li>
+                    <li class="dropdown-header">Account</li>
+                    <li><a href="/characters/create/">Create Character</a></li>
+                    <li><a href="/characters/">Manage Characters</a></li>
+                    <li><a href="/accounts/profile/">Profile</a></li>
+                    <li><a href="/accounts/password_change/">Change Password</a></li>
+                    <li><a href="/auth/logout/?next=/">Logout</a></li>
+                {% else %}
+                    <li><a href="/auth/login/?next=/">Login</a></li>
+                {% endif %}
+                
+                <!-- Mobile Search -->
+                <li class="mobile-search">
+                    <form action="{% url 'wiki:search' %}" method="get">
+                        <input type="text" name="q" placeholder="Search wiki...">
+                        <button type="submit"><i class="fas fa-search"></i></button>
+                    </form>
+                </li>
             </ul>
         </div>
         <div class="menu-overlay"></div>
 
         <!-- Update the scroll event listener -->
         <script>
-            document.addEventListener('scroll', function() {
+            document.addEventListener('DOMContentLoaded', function() {
+                // Elements
                 const nav = document.querySelector('.main-nav');
-                const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-                
-                // Calculate opacity based on scroll position (0 to 1000px)
-                const scrollOpacity = Math.min(scrollPosition / 1000, 1);
-                nav.style.backgroundColor = `rgba(0, 0, 0, ${scrollOpacity})`;
-                
-                console.log('Scroll position:', scrollPosition, 'Opacity:', scrollOpacity);
+                const hamburger = document.querySelector('.hamburger-menu');
+                const slidingMenu = document.querySelector('.sliding-menu');
+                const menuOverlay = document.querySelector('.menu-overlay');
+
+                // Remove the inline onclick from the button
+                if (hamburger) {
+                    hamburger.removeAttribute('onclick');
+                }
+
+                // Simple toggle function
+                function toggleMenu(e) {
+                    if (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+
+                    const isOpen = slidingMenu.classList.contains('open');
+                    
+                    // Force close any open dropdowns
+                    const dropdowns = document.querySelectorAll('.dropdown-menu');
+                    dropdowns.forEach(dropdown => dropdown.classList.remove('open'));
+
+                    // Toggle menu state
+                    if (!isOpen) {
+                        slidingMenu.classList.add('open');
+                        menuOverlay.classList.add('open');
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        slidingMenu.classList.remove('open');
+                        menuOverlay.classList.remove('open');
+                        document.body.style.overflow = '';
+                    }
+                }
+
+                // Handle scroll opacity
+                function handleScroll() {
+                    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                    const scrollOpacity = Math.min(scrollPosition / 1000, 1);
+                    nav.style.backgroundColor = `rgba(0, 0, 0, ${scrollOpacity})`;
+                }
+
+                // Event Listeners
+                if (hamburger) {
+                    // Remove any existing listeners
+                    hamburger.replaceWith(hamburger.cloneNode(true));
+                    const newHamburger = document.querySelector('.hamburger-menu');
+                    
+                    // Add new click listener
+                    newHamburger.addEventListener('click', toggleMenu);
+                }
+
+                if (menuOverlay) {
+                    menuOverlay.addEventListener('click', toggleMenu);
+                }
+
+                // Close menu on escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && slidingMenu.classList.contains('open')) {
+                        toggleMenu();
+                    }
+                });
+
+                // Handle scroll
+                window.addEventListener('scroll', handleScroll);
+                handleScroll();
+
+                // Remove the error-causing line
+                if (window.onscroll) {
+                    window.removeEventListener('scroll', window.onscroll);
+                }
             });
         </script>
     </body>

@@ -64,6 +64,14 @@
         "values": [1, 2, 3, 4, 5]
     },
     {
+        "name": "Lucid Dreaming",
+        "description": "You can enter and control your dreams, and can even create your own dreams. This Talent allows you to enter the dreams of others, and to manipulate them in subtle ways.",
+        "game_line": "Various",
+        "category": "abilities",
+        "stat_type": "secondary_talent",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
         "name": "Streetwise",
         "description": "You know how life on the streets works, and you can get by in rough-and-tumble environments. This Talent allows you to find out where to get black-market goods and services, as well as how to behave and survive in a gang, gangland, or criminal underworld.",
         "game_line": "Various",
@@ -101,6 +109,14 @@
         "game_line": "Various",
         "category": "abilities",
         "stat_type": "skill",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Do",
+        "description": "Do is the quintessential martial art. It is the original martial art created by the Akashic Brotherhood, and is the basis for all other martial arts. Do is the art of movement, and is the basis for all other martial arts.",
+        "game_line": "Mage: The Ascension",
+        "category": "abilities",
+        "stat_type": "secondary_skill",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -425,10 +441,26 @@
     },
     {
         "name": "Flight",
-        "category": "Talents",
-        "stat_type": "ability",
-        "values": [0, 1, 2, 3, 4, 5]
-        "description": "The ability to fly and maneuver in the air",
-        "splat": ["Vampire:Gargoyle", "Shifter:Corax", "Shifter:Camazotz", "Shifter:Mokole"]
+        "category": "abilities",
+        "stat_type": "talent",
+        "values": [0, 1, 2, 3, 4, 5],
+        "description": "The ability to fly and maneuver in the air.",
+        "splat": "Various"
+    },
+    {
+        "name": "Flying",
+        "category": "secondary_abilities",
+        "stat_type": "secondary_talent",
+        "values": [0, 1, 2, 3, 4, 5],
+        "description": "The ability to fly and maneuver in the air, as a Mage.",
+        "splat": "Mage: The Ascension"
+    },
+    {
+        "name": "Artistry",
+        "category": "secondary_abilities",
+        "stat_type": "secondary_talent",
+        "values": [1, 2, 3, 4, 5],
+        "description": "The ability to create physical art of any kind.",
+        "splat": "Various"
     }
 ]

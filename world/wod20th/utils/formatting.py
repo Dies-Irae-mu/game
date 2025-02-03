@@ -20,6 +20,7 @@ def format_stat(stat, value, width=25, default=None, tempvalue=None, allow_zero=
         if not allow_zero and tempvalue == 0:
             tempvalue = 1
         # Only show temporary value if it's numerically different
+
         value_str = f"{value}({tempvalue})"
     else:
         # Just show permanent value if temporary is same or not set

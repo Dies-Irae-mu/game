@@ -18,6 +18,38 @@
         "splat": "Shifter"
     },
     {
+        "name": "Deed Name",
+        "description": "The given name of a character based on their reputation or deeds.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": []
+    },
+    {
+        "name": "Camp",
+        "description": "The secret or semi-secret organization of the character's tribe to which they belong.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": []
+    },
+    {
+        "name": "Lodge",
+        "description": "Camp, but for Silver Fangs.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": []
+    },
+    {
+        "name": "Fang House",
+        "description": "The house of Silver Fang characters.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": []
+    },
+    {
         "name": "Type",
         "description": "The type of the shifter character (Garou, Gurahl, etc).",
         "game_line": "Werewolf: The Apocalypse",
@@ -72,7 +104,7 @@
         "splat": "Shifter"
     },
     {
-        "name": "Varnas",
+        "name": "Varna",
         "description": "The Varna of a particular Mokole character.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "identity",

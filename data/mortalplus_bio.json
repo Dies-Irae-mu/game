@@ -1,12 +1,12 @@
 [
     {
-        "name": "Subsplat",
+        "name": "Mortalplus Type",
         "description": "Sorcerer, Psychic, Faithful, Ghoul, Kinain, Kinfolk, etc.",
         "game_line": "Various",
         "category": "identity",
         "stat_type": "lineage",
         "values": ["Sorcerer", "Psychic", "Faithful", "Ghoul", "Kinain", "Kinfolk", "Consor"],
-        "splat": "Mortal"
+        "splat": "Mortal+"
     },
     {
         "name": "Fellowship",
@@ -20,7 +20,7 @@
                     "Pythian Order", "Weeping Moon", "The Fenian", "Friends of Foster", "Maison Liban", "Mogen HaChav",
                     "Nebuu-Afef", "Nephite Priesthood", "Seven Thunders", "Silver Portal", "Society of Leopold", "Strike Force Zero",
                     "Star Council", "Uzoma"],
-        "splat": "Mortal"
+        "splat": "Mortal+"
     },
     {
         "name": "Psychic",
@@ -29,7 +29,7 @@
         "category": "identity",
         "stat_type": "lineage",
         "values": ["Sorcerer", "Psychic", "Faithful", "Ghoul", "Kinain", "Kinfolk", "Consor"],
-        "splat": "Mortal"
+        "splat": "Mortal+"
     },
     {
         "name": "Societies",
@@ -39,6 +39,6 @@
         "stat_type": "lineage",
         "values": ["Oculi Dei", "Red Order", "Poor Knights of Acre", "Order of the Holy Sepulchre", "Rifa'i", "Sanctified Flame", 
                    "Keepers of the Holy Writ", "Purifying Tempest", "Illuminated Crusade", "Sacred Thorn", "Order of the Divine Vigil"],
-        "splat": "Mortal"
+        "splat": "Mortal+"
     }
 ]

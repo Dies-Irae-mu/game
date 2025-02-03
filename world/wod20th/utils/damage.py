@@ -1,11 +1,47 @@
 from evennia.utils.ansi import ANSIString
 
 
+def calculate_total_health_levels(character):
+    """Calculate total health levels including all bonuses."""
+    bonus_health = 0
+    
+    # Check for Huge Size merit - check both locations
+    huge_size = character.get_stat('merits', 'physical', 'Huge Size', temp=False)
+    if not huge_size:  # Check alternate location
+        huge_size = character.get_stat('merits', 'merit', 'Huge Size', temp=False)
+    
+    if huge_size:
+        bonus_health += 1  # Huge Size grants 1 additional Bruised level
+    
+    # Check for Troll kith
+    if character.get_stat('identity', 'lineage', 'Kith') == 'Troll':
+        bonus_health += 1
+        
+    # Check for Glome phyla - check both possible locations
+    glome_phyla = character.get_stat('identity', 'lineage', 'Phyla') == 'Glome'
+    if not glome_phyla:  # Check alternate location
+        glome_phyla = character.get_stat('identity', 'phyla', 'Phyla') == 'Glome'
+    
+    if glome_phyla:
+        bonus_health += 2
+
+    # Store bonus health for use in other functions
+    character.db.bonus_health = bonus_health
+        
+    return bonus_health
+
 def apply_damage_or_healing(character, change, damage_type):
     current_bashing = character.db.bashing or 0
     current_lethal = character.db.lethal or 0
     current_agg = character.db.agg or 0
-    health_levels = character.get_stat('other', 'other', 'Health') or 7
+    base_health = character.get_stat('other', 'other', 'Health') or 7
+    
+    # Calculate bonus health levels
+    bonus_health = calculate_total_health_levels(character)
+    
+    # Add bonus health to base health
+    health_levels = base_health + bonus_health
+    
     char_type = character.db.char_type or "mortal"
     injury_level = character.db.injury_level or "Healthy"
 
@@ -105,32 +141,41 @@ def calculate_injury_level(total_damage, health_levels, agg_damage, char_type):
     return "Healthy"
 
 def format_damage(character):
-    health_levels = character.db.health_levels or 7
-    agg = min(character.db.agg or 0, health_levels + 1)
-    lethal = min(character.db.lethal or 0, health_levels - agg)
-    bashing = min(character.db.bashing or 0, health_levels - agg - lethal)
+    """Format damage markers for display."""
+    # Get base health levels
+    base_health = 7
+    
+    # Calculate bonus health levels
+    bonus_health = calculate_total_health_levels(character)
+    total_health = base_health + bonus_health
+
+    # Get current damage levels
+    agg = min(character.db.agg or 0, total_health + 1)
+    lethal = min(character.db.lethal or 0, total_health - agg)
+    bashing = min(character.db.bashing or 0, total_health - agg - lethal)
 
     string = ""
 
+    # Add damage markers
     for i in range(agg):
         string += ANSIString("|h|r[*]|n")
     for i in range(lethal):
         string += ANSIString("|r[X]|n")
     for i in range(bashing):
         string += ANSIString("|y[/]|n")
-    for i in range(health_levels - agg - lethal - bashing):
+    for i in range(total_health - agg - lethal - bashing):
         string += ANSIString("|g[ ]|n")
 
     return string
 
 
 def format_damage_stacked(character):
-    # Fetch health levels from character stats or default to 7
-    health_levels_count = character.get_stat('other', 'other', 'Health') or 7
-    splat = character.get_stat('other', 'other', 'Splat')
-
-    base_health_levels = [
-        (ANSIString("Bruised"), ANSIString("|g[ ]|n"), ""),
+    """Format character's health levels with damage markers."""
+    # Calculate bonus health levels
+    bonus_health = calculate_total_health_levels(character)
+    
+    # Define standard health levels
+    standard_health_levels = [
         (ANSIString("Hurt"), ANSIString("|g[ ]|n"), " (-1)"),
         (ANSIString("Injured"), ANSIString("|g[ ]|n"), " (-1)"),
         (ANSIString("Wounded"), ANSIString("|g[ ]|n"), " (-2)"),
@@ -139,17 +184,28 @@ def format_damage_stacked(character):
         (ANSIString("Incapacitated"), ANSIString("|g[ ]|n"), "")
     ]
 
-    # Add the extra health boxes for vampires
+    # Create the full health levels list starting with Bruised levels
+    health_levels = []
+    
+    # Add all Bruised levels (base of 1 plus bonuses)
+    bruised_count = 1 + bonus_health  # Base of 1 Bruised level plus bonuses
+    for _ in range(bruised_count):
+        health_levels.append((ANSIString("Bruised"), ANSIString("|g[ ]|n"), ""))
+    
+    # Add standard health levels
+    health_levels.extend(standard_health_levels)
+    
+    # Add the appropriate final health level
+    splat = character.get_stat('other', 'splat', 'Splat')
     if splat == "Vampire":
-        base_health_levels.append((ANSIString("Torpor"), ANSIString("|g[ ]|n"), ""))
-        base_health_levels.append((ANSIString("Final Death"), ANSIString("|g[ ]|n"), ""))
+        health_levels.extend([
+            (ANSIString("Torpor"), ANSIString("|g[ ]|n"), ""),
+            (ANSIString("Final Death"), ANSIString("|g[ ]|n"), "")
+        ])
     else:
-        base_health_levels.append((ANSIString("Dead"), ANSIString("|g[ ]|n"), ""))
+        health_levels.append((ANSIString("Dead"), ANSIString("|g[ ]|n"), ""))
 
-    # Adjust the health levels list based on the character's health levels
-    extra_bruised_levels = [(ANSIString("Bruised"), ANSIString("|g[ ]|n"), "")] * (health_levels_count - 7)
-    health_levels =  extra_bruised_levels + base_health_levels[:7]  + base_health_levels[7:]
-
+    # Apply damage markers
     agg = character.db.agg or 0
     lethal = character.db.lethal or 0
     bashing = character.db.bashing or 0
@@ -162,16 +218,19 @@ def format_damage_stacked(character):
     for i in range(agg):
         health_levels[i] = (health_levels[i][0], ANSIString("|h|r[*]|n"), health_levels[i][2])
     for i in range(agg, agg + lethal):
-        health_levels[i] = (health_levels[i][0], ANSIString("|r[X]|n"), health_levels[i][2])
+        if i < len(health_levels):
+            health_levels[i] = (health_levels[i][0], ANSIString("|r[X]|n"), health_levels[i][2])
     for i in range(agg + lethal, agg + lethal + bashing):
-        health_levels[i] = (health_levels[i][0], ANSIString("|y[/]|n"), health_levels[i][2])
+        if i < len(health_levels):
+            health_levels[i] = (health_levels[i][0], ANSIString("|y[/]|n"), health_levels[i][2])
 
     output = []
     for level, marker, penalty in health_levels:
         if marker not in [ANSIString("|g[ ]|n")]:
             level = ANSIString(f"|w{level}|n")
             penalty = ANSIString(f"|r{penalty}|n")
-        output.append(f"{level:<15} {marker} {penalty}")
+        # Add consistent spacing - pad level name to 15 characters
+        output.append(f"{level:<15}{marker} {penalty}")
 
     return output
 

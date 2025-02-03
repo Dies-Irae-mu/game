@@ -3,104 +3,104 @@
         "name": "Path of Blood",
         "description": "This path focuses on the manipulation of Kindred vitae. It allows the thaumaturge to test the blood for properties such as how much vitae remains, approximate Generation, and whether the subject has committed diablerie.",
         "game_line": "Vampire: The Masquerade",
-        "category": "Thaumaturgy",
-        "stat_type": "discipline",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
         "values": [1, 2, 3, 4, 5]
     },
     {
         "name": "Elemental Mastery",
         "description": "This path allows a vampire limited control over and communion with inanimate objects. It can draw upon the strength and resilience of the earth or objects around him to increase his physical prowess without the need for large amounts of blood.",
         "game_line": "Vampire: The Masquerade",
-        "category": "Thaumaturgy",
-        "stat_type": "discipline",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
         "values": [1, 2, 3, 4, 5]
     },
     {
         "name": "Movement of the Mind",
         "description": "This path allows the thaumaturge to manipulate and move objects with the power of her mind, including lifting, pushing, and manipulating items from a distance.",
         "game_line": "Vampire: The Masquerade",
-        "category": "Thaumaturgy",
-        "stat_type": "discipline",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
         "values": [1, 2, 3, 4, 5]
     },
     {
         "name": "Lure of Flames",
         "description": "This path grants the thaumaturge the power to conjure and control fire. The intensity and area of the flame depend on the thaumaturge's mastery of the path.",
         "game_line": "Vampire: The Masquerade",
-        "category": "Thaumaturgy",
-        "stat_type": "discipline",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
         "values": [1, 2, 3, 4, 5]
     },
     {
         "name": "Weather Control",
         "description": "Command over the weather, allowing the thaumaturge to create phenomena such as fog, rain, high winds, and even lightning strikes.",
         "game_line": "Vampire: The Masquerade",
-        "category": "Thaumaturgy",
-        "stat_type": "discipline",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
         "values": [1, 2, 3, 4, 5]
     },
     {
         "name": "The Green Path",
         "description": "This path grants the thaumaturge power over plants, allowing her to command and influence vegetation to do her bidding.",
         "game_line": "Vampire: The Masquerade",
-        "category": "Thaumaturgy",
-        "stat_type": "discipline",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
         "values": [1, 2, 3, 4, 5]
     },
     {
         "name": "The Path of Conjuring",
         "description": "This path allows the thaumaturge to create temporary objects and creatures out of thin air. The complexity and durability of these creations depend on the thaumaturge's mastery of the path.",
         "game_line": "Vampire: The Masquerade",
-        "category": "Thaumaturgy",
-        "stat_type": "discipline",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
         "values": [1, 2, 3, 4, 5]
     },
     {
         "name": "Hands of Destruction",
         "description": "A path that allows the thaumaturge to dissolve and decay objects and beings with a touch, causing them to break down and disintegrate.",
         "game_line": "Vampire: The Masquerade",
-        "category": "Thaumaturgy",
-        "stat_type": "discipline",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
         "values": [1, 2, 3, 4, 5]
     },
     {
         "name": "Neptune's Might",
         "description": "This path grants the thaumaturge power over water, enabling her to manipulate and control it, ranging from small quantities to large bodies of water.",
         "game_line": "Vampire: The Masquerade",
-        "category": "Thaumaturgy",
-        "stat_type": "discipline",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
         "values": [1, 2, 3, 4, 5]
     },
     {
         "name": "Path of Mars",
         "description": "A path that enhances the thaumaturge's abilities as a warrior, granting increased physical prowess and combat capabilities.",
         "game_line": "Vampire: The Masquerade",
-        "category": "Thaumaturgy",
-        "stat_type": "discipline",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
         "values": [1, 2, 3, 4, 5]
     },
     {
         "name": "Technomancy",
         "description": "A relatively recent path that focuses on the control of electronic devices, allowing the thaumaturge to interface with and manipulate technology.",
         "game_line": "Vampire: The Masquerade",
-        "category": "Thaumaturgy",
-        "stat_type": "discipline",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
         "values": [1, 2, 3, 4, 5]
     },
     {
         "name": "Path of Corruption",
         "description": "This path allows the thaumaturge to manipulate and corrupt the morals and ethics of her victims, leading them to depravity and moral decay.",
         "game_line": "Vampire: The Masquerade",
-        "category": "Thaumaturgy",
-        "stat_type": "discipline",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
         "values": [1, 2, 3, 4, 5]
     },
     {
         "name": "Path of the Father's Vengeance",
         "description": "A specialized path that inflicts the darkness of the Angel of Death upon the subject, causing excruciating pain in the presence of light.",
         "game_line": "Vampire: The Masquerade",
-        "category": "Thaumaturgy",
-        "stat_type": "discipline",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
         "values": [1, 2, 3, 4, 5]
     },
     {

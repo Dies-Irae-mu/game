@@ -13,13 +13,14 @@ class CmdUmbraInteraction(MuxCommand):
     +step: Attempt to step sideways into or out of the Umbra.
            Optional modifier (e.g. +step -2) for temporary difficulty adjustment
     +peek: Look across the Gauntlet without entering the Umbra.
+           (Shifters only)
     +gauntlet/check: Check current Gauntlet difficulty
     """
 
     key = "+step"
     aliases = ["+peek", "+gauntlet"]
     locks = "cmd:all()"
-    help_category = "Werewolf"
+    help_category = "Shifter"
 
     def func(self):
         """Execute command."""
@@ -27,6 +28,10 @@ class CmdUmbraInteraction(MuxCommand):
             if self.cmdstring == "+step":
                 self.do_step()
             elif self.cmdstring == "+peek":
+                # Check if the character is a Shifter before allowing peek
+                if not hasattr(self.caller, 'is_shifter') or not self.caller.is_shifter():
+                    self.caller.msg("Only Shifters can peek across the Gauntlet.")
+                    return
                 self.do_peek()
             return
             
@@ -39,6 +44,8 @@ class CmdUmbraInteraction(MuxCommand):
         # If already in Umbra, just return to material world
         if self.caller.tags.get("in_umbra", category="state"):
             if self.caller.location.return_from_umbra(self.caller):
+                self.caller.tags.remove("in_umbra", category="state")
+                self.caller.tags.add("in_material", category="state")
                 self.caller.msg("You have returned to the material world.")
             else:
                 self.caller.msg("You failed to return from the Umbra.")
@@ -63,6 +70,7 @@ class CmdUmbraInteraction(MuxCommand):
             
             # Attempt to step sideways
             if room.step_sideways(self.caller):
+                self.caller.tags.remove("in_material", category="state")
                 self.caller.tags.add("in_umbra", category="state")
                 self.caller.msg("You have stepped sideways into the Umbra.")
             else:
@@ -76,7 +84,10 @@ class CmdUmbraInteraction(MuxCommand):
         if self.caller.tags.get("in_umbra", category="state"):
             self.caller.msg("You're already in the Umbra. Use +step to return to the material world.")
         else:
+            # Get the peek result and handle any line breaks
             result = self.caller.location.peek_umbra(self.caller)
+            if result:
+                result = result.replace("%r", "\n").replace("\n\n", "\n")
             self.caller.msg(result)
 
     def do_check_gauntlet(self):

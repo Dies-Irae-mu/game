@@ -15,6 +15,7 @@ class CmdHeal(Command):
     """
     key = "+heal"
     locks = "cmd:all()"
+    help_category = "RP Commands"
 
     def parse(self):
         args = self.args.strip().split("=")

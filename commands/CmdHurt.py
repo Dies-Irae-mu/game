@@ -1,5 +1,5 @@
 from evennia import Command
-from world.wod20th.utils.damage import apply_damage_or_healing, format_damage, format_status
+from world.wod20th.utils.damage import apply_damage_or_healing, format_damage, format_status, calculate_total_health_levels
 
 class CmdHurt(Command):
     """
@@ -15,7 +15,7 @@ class CmdHurt(Command):
     """
     key = "+hurt"
     locks = "cmd:all()"
-    
+    help_category = "RP Commands"
     def parse(self):
         args = self.args.strip().split("=")
         if len(args) == 2:
@@ -52,22 +52,20 @@ class CmdHurt(Command):
             return
 
         damage_type_full = {'b': 'bashing', 'l': 'lethal', 'a': 'aggravated'}[damage_type]
-        health = target.get_stat('other', 'other', 'Health') or 7
-        if health == 0 and damage_type != 'a':
-            self.caller.msg(f"{target.name} is already dead and cannot take more bashing or lethal damage.")
-            return
+        
+        # Calculate total health levels including bonuses
+        base_health = 7
+        bonus_health = calculate_total_health_levels(target)
+        total_health = base_health + bonus_health
 
+        # Apply damage
         apply_damage_or_healing(target, damage, damage_type_full)
-        # if the character's character.db.agg is greater than 
-        if target.get_stat('Other', 'Splat', 'Splat') == 'Vampire':
-            health = health + 2
-        else:
-            health = health + 1
 
-        if target.db.agg > health:
-            target.db.agg = health
+        # Ensure damage doesn't exceed maximum health
+        if target.db.agg > total_health:
+            target.db.agg = total_health
 
-        # Get the green gradient_name of th target
+        # Get the green gradient_name of the target
         target_gradient = target.db.gradient_name or target.key
 
         msg = f"|rHURT> |n{target_gradient} takes |r{damage}|n |y{damage_type_full}|n.\n"

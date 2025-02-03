@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 class StatForm(forms.ModelForm):
     class Meta:
         model = Stat
-        fields = ['name', 'description', 'game_line', 'category', 'stat_type', 'values', 'rage_cost']
+        fields = ['name', 'description', 'game_line', 'category', 'stat_type', 'values']
         widgets = {
             'values': forms.Textarea(attrs={'rows': 3}),
         }

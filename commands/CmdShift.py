@@ -86,7 +86,7 @@ class CmdShift(default_cmds.MuxCommand):
     key = "+shift"
     aliases = ["shift"]
     locks = "cmd:all()"
-    help_category = "Shapeshifting"
+    help_category = "Shifter"
 
     def func(self):
         if "debug" in self.switches:
@@ -237,13 +237,20 @@ class CmdShift(default_cmds.MuxCommand):
         self.caller.msg(table)
 
     def _reset_stats(self, character):
-        # Reset all stats that can be modified by shapeshifting
-        stats_to_reset = ['strength', 'dexterity', 'stamina', 'charisma', 'manipulation', 'appearance', 'perception', 'intelligence', 'wits']
-        for stat in stats_to_reset:
-           stat_obj = Stat.objects.get(name__iexact=stat, category='attributes')
-           if stat_obj.category and stat_obj.stat_type:
-               curr_stat = character.get_stat(stat_obj.category, stat_obj.stat_type, stat_obj.name)
-               character.set_stat(stat_obj.category, stat_obj.stat_type, stat_obj.name, curr_stat, temp=True)
+        """Reset all stats to their permanent values."""
+        for category, subcats in character.db.stats.items():
+            if isinstance(subcats, dict):
+                for subcat, stats in subcats.items():
+                    if isinstance(stats, dict):
+                        for stat, values in stats.items():
+                            if isinstance(values, dict) and 'perm' in values:
+                                # Reset temp to match perm
+                                perm_value = values['perm']
+                                character.db.stats[category][subcat][stat] = {
+                                    'perm': perm_value,
+                                    'temp': perm_value
+                                }
+                                print(f"DEBUG: Reset {category}.{subcat}.{stat} to perm={perm_value}, temp={perm_value}")
 
     def _shift_with_roll(self, character, form):
         """Attempt to shift using a dice roll."""
@@ -282,48 +289,95 @@ class CmdShift(default_cmds.MuxCommand):
             return False
 
     def _shift_default(self, character, form):
-        # Get character's breed form
-        breed = character.db.stats.get('other', {}).get('identity', {}).get('Breed', {}).get('perm', 'homid').lower()
-        shifter_type = character.db.stats.get('other', {}).get('identity', {}).get('Shifter Type', {}).get('perm', '').lower()
+        """Handle default shifting, with automatic success for natural form."""
+        # Get character's breed and shifter type
+        breed = character.get_stat('identity', 'lineage', 'Breed', temp=False)
+        shifter_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
         
-        # Check if they're shifting to their breed form
-        if shifter_type == 'garou':
-            if (breed == 'homid' and form.name.lower() == 'homid' or
-                breed == 'metis' and form.name.lower() == 'crinos' or
-                breed == 'lupus' and form.name.lower() == 'lupus'):
-                self.caller.msg(f"You easily shift back to your natural {form.name} form.")
-                return True
+        if not breed or not shifter_type:
+            return self._shift_with_roll(character, form)
         
-        # If not shifting to breed form, use the roll method
+        breed = breed.lower()
+        shifter_type = shifter_type.lower()
+        form_name = form.name.lower()
+        
+        # Define natural forms for different breeds
+        HOMID_BREEDS = {
+            'homid',      # Generic
+            'balaram',    # Nagah
+            'kojin'       # Kitsune
+        }
+        
+        ANIMAL_BREEDS = {
+            ('garou', 'lupus'): 'lupus',
+            ('ratkin', 'animal-born'): 'rodens',
+            ('ajaba', 'animal-born'): 'hyaenid',
+            ('ananasi', 'animal-born'): 'crawlerling',
+            ('rokea', 'animal-born'): 'squamus',
+            ('mokole', 'animal-born'): 'suchid',
+            ('gurahl', 'animal-born'): 'ursine',
+            ('bastet', 'animal-born'): 'feline',
+            ('corax', 'animal-born'): 'corvid',
+            ('kitsune', 'animal-born'): 'roko',
+            ('nuwisha', 'animal-born'): 'latrani',
+            ('nagah', 'vasuki'): 'vasuki'
+        }
+        
+        METIS_BREEDS = {
+            ('garou', 'metis'): 'crinos',
+            ('ajaba', 'metis'): 'anthros',
+            ('bastet', 'metis'): 'chatro',
+            ('kitsune', 'shinju'): 'kitsune',
+            ('nagah', 'ahi'): 'nagah',
+            ('ratkin', 'metis'): 'crinos'
+        }
+        
+        # Check if shifting to natural form based on breed
+        if breed in HOMID_BREEDS and form_name == 'homid':
+            self.caller.msg(f"You easily shift back to your natural Homid form.")
+            return True
+        
+        # Check animal-born natural forms
+        if (shifter_type, breed) in ANIMAL_BREEDS and form_name == ANIMAL_BREEDS[(shifter_type, breed)]:
+            self.caller.msg(f"You easily shift back to your natural {form.name} form.")
+            return True
+        
+        # Check metis natural forms
+        if (shifter_type, breed) in METIS_BREEDS and form_name == METIS_BREEDS[(shifter_type, breed)]:
+            self.caller.msg(f"You easily shift back to your natural {form.name} form.")
+            return True
+        
+        # If not shifting to natural form, use the roll method
         return self._shift_with_roll(character, form)
 
     def _apply_form_changes(self, character, form):
-        # Reset stats to base values first
-        self._reset_stats(character)
-        
-        # If it's Homid form, we're done (using base stats)
+        """Apply form changes and preserve abilities."""
+        # If it's Homid form, reset everything to base stats
         if form.name.lower() == 'homid':
+            print(f"DEBUG: Setting Homid form for {character.name}")
+            character.attributes.add('current_form', 'Homid')
             character.db.current_form = 'Homid'
+            character.db.display_name = character.key
+            
+            # Reset all attributes to their permanent values
+            for category in ['physical', 'social', 'mental']:
+                if category in character.db.stats.get('attributes', {}):
+                    for stat, values in character.db.stats['attributes'][category].items():
+                        perm_value = values.get('perm', 0)
+                        character.db.stats['attributes'][category][stat] = {
+                            'perm': perm_value,
+                            'temp': perm_value
+                        }
+                        print(f"DEBUG: Reset {category}.{stat} to perm={perm_value}, temp={perm_value}")
             return
         
-        # Apply stat modifiers for non-Homid forms
-        for stat, modifier in form.stat_modifiers.items():
-            stat_obj = Stat.objects.get(name__iexact=stat)
-            
-            if stat_obj.category and stat_obj.stat_type:
-                current_value = character.get_stat(stat_obj.category, stat_obj.stat_type, stat_obj.name, temp=False)
-                
-                # Handle special case where Appearance is set to 0
-                if stat.lower() == 'appearance' and modifier == 0:
-                    new_value = 0
-                else:
-                    new_value = current_value + modifier
-                
-                # Ensure stats don't go below 0 or above 10
-                new_value = max(0, min(10, new_value))
-                
-                character.set_stat(stat_obj.category, stat_obj.stat_type, stat_obj.name, new_value, temp=True)
-                self.caller.msg("|YSHIFT>|n" + format_stat(stat_obj.name, current_value) + f" -> |g{new_value}|n")
+        # For non-Homid forms
+        character.attributes.add('current_form', form.name)
+        character.db.current_form = form.name
+        character.db.display_name = form.name
+        
+        # Apply form modifiers
+        self._apply_form_modifiers(character, form)
 
     def _display_shift_message(self, character, form):
         """Display the appropriate shift message."""
@@ -344,7 +398,7 @@ class CmdShift(default_cmds.MuxCommand):
                 f"{character.key} shifts into {form.name} form."
             )
 
-        # Change the character's visible name
+        # Update only the persistent attributes
         character.db.current_form = form.name
         if form.name.lower() == 'homid':
             character.db.display_name = character.db.original_name
@@ -367,10 +421,20 @@ class CmdShift(default_cmds.MuxCommand):
         form_name = form_name.strip()
         message = message.strip()
 
+        # Get the character's shifter type
+        shifter_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '').lower()
+
         try:
-            form = ShapeshifterForm.objects.get(name__iexact=form_name)
+            # Filter by both form name and shifter type
+            form = ShapeshifterForm.objects.get(
+                name__iexact=form_name,
+                shifter_type=shifter_type
+            )
         except ShapeshifterForm.DoesNotExist:
-            self.caller.msg(f"The form '{form_name}' does not exist.")
+            self.caller.msg(f"The form '{form_name}' does not exist for your shifter type.")
+            return
+        except ShapeshifterForm.MultipleObjectsReturned:
+            self.caller.msg(f"Error: Multiple forms found with name '{form_name}'. Please contact an admin.")
             return
 
         character.attributes.add(f"shift_message_{form_name.lower()}", message)
@@ -438,7 +502,12 @@ class CmdShift(default_cmds.MuxCommand):
 
     def _apply_form_modifiers(self, character, form):
         """Apply stat modifiers from the form."""
-        # First reset all stats
+        # If shifting to Homid, just reset stats to permanent values
+        if form.name.lower() == 'homid':
+            self._reset_stats(character)
+            return
+        
+        # For non-Homid forms, first reset all stats to permanent values
         self._reset_stats(character)
         
         # List of forms that set Appearance to 0
@@ -450,29 +519,49 @@ class CmdShift(default_cmds.MuxCommand):
             'chatro'       # Bastet battle form
         ]
 
-        # Debug output
-        print(f"Form name: {form.name.lower()}")
-        print(f"Is zero appearance form? {form.name.lower() in zero_appearance_forms}")
-        print(f"Current Appearance: {character.get_stat('attributes', 'social', 'Appearance', temp=True)}")
-
-        # Handle Appearance first to ensure it takes precedence
-        if form.name.lower() in zero_appearance_forms:
-            stat_obj = Stat.objects.get(name__iexact='appearance', category='attributes')
-            # Force temp value to 0 and add a flag to indicate it should stay 0
-            character.set_stat(stat_obj.category, stat_obj.stat_type, stat_obj.name, 0, temp=True)
-            character.attributes.add('appearance_override', True)
-            print(f"Set appearance to 0 and added override flag")
-            print(f"New Appearance value: {character.get_stat('attributes', 'social', 'Appearance', temp=True)}")
-        else:
-            # Clear the override flag if it exists
-            character.attributes.remove('appearance_override')
-            print(f"Removed override flag")
-
-        # Then apply all other modifiers
+        # Then apply form modifiers
         for stat, mod in form.stat_modifiers.items():
-            if stat.lower() != 'appearance':  # Skip Appearance since we handled it above
-                stat_obj = Stat.objects.get(name__iexact=stat, category='attributes')
-                if stat_obj.category and stat_obj.stat_type:
-                    current_stat = character.get_stat(stat_obj.category, stat_obj.stat_type, stat_obj.name)
-                    new_value = current_stat + mod
-                    character.set_stat(stat_obj.category, stat_obj.stat_type, stat_obj.name, new_value, temp=True)
+            stat_obj = Stat.objects.get(name__iexact=stat, category='attributes')
+            if stat_obj.category and stat_obj.stat_type:
+                # Get permanent value
+                perm_value = character.get_stat(stat_obj.category, stat_obj.stat_type, stat_obj.name, temp=False)
+                # Calculate new temporary value
+                temp_value = max(0, perm_value + mod)  # Ensure non-negative
+                
+                # Ensure the category and subcategory exist
+                if stat_obj.category not in character.db.stats:
+                    character.db.stats[stat_obj.category] = {}
+                if stat_obj.stat_type not in character.db.stats[stat_obj.category]:
+                    character.db.stats[stat_obj.category][stat_obj.stat_type] = {}
+                
+                # Set both permanent and temporary values
+                character.db.stats[stat_obj.category][stat_obj.stat_type][stat_obj.name] = {
+                    'perm': perm_value,
+                    'temp': temp_value
+                }
+                print(f"DEBUG: Set {stat} perm={perm_value}, temp={temp_value}")
+
+        # Handle Appearance last (after other modifiers)
+        if form.name.lower() in zero_appearance_forms:
+            # Get the permanent Appearance value
+            appearance_perm = character.db.stats.get('attributes', {}).get('social', {}).get('Appearance', {}).get('perm', 0)
+            
+            # Ensure the social subcategory exists
+            if 'social' not in character.db.stats['attributes']:
+                character.db.stats['attributes']['social'] = {}
+            
+            # Set Appearance with permanent value preserved but temp value at 0
+            character.db.stats['attributes']['social']['Appearance'] = {
+                'perm': appearance_perm,
+                'temp': 0
+            }
+            print(f"DEBUG: Set Appearance perm={appearance_perm}, temp=0")
+            
+            # Also handle Manipulation in Crinos form
+            if form.name.lower() == 'crinos':
+                manip_perm = character.db.stats.get('attributes', {}).get('social', {}).get('Manipulation', {}).get('perm', 0)
+                character.db.stats['attributes']['social']['Manipulation'] = {
+                    'perm': manip_perm,
+                    'temp': max(0, manip_perm - 2)  # -2 penalty in Crinos
+                }
+                print(f"DEBUG: Set Manipulation perm={manip_perm}, temp={max(0, manip_perm - 2)}")

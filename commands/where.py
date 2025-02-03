@@ -4,6 +4,7 @@ from evennia.utils.ansi import ANSIString
 from world.wod20th.utils.formatting import header, footer, divider
 from evennia.utils.evtable import EvTable
 from collections import defaultdict
+
 import time
 
 class CmdWhere(default_cmds.MuxCommand):
@@ -68,6 +69,30 @@ class CmdWhere(default_cmds.MuxCommand):
         # Last resort
         return "Unknown"
 
+    def format_name(self, puppet, session):
+        """Helper function to consistently format names"""
+        name_prefix = "^" if puppet.db.afk else " "
+        name_suffix = "*" if puppet.check_permstring("builders") else ""
+        
+        # Add state indicators to suffix
+        if puppet.tags.has("in_umbra", category="state"):
+            name_suffix = f"@{name_suffix}"
+        if puppet.db.lfrp:
+            name_suffix = f"${name_suffix}"
+            
+        base_name = f"{name_prefix}{puppet.name}{name_suffix}"
+        
+        # Create padded version before adding colors
+        padded_name = ANSIString(base_name).ljust(20)
+        
+        # Apply color codes after padding
+        if puppet.tags.has("in_umbra", category="state"):
+            padded_name = f"|b{padded_name}|n"
+        if puppet.db.lfrp:
+            padded_name = f"|y{padded_name}|n"
+            
+        return padded_name
+
     def func(self):
         """Implement the command"""
         caller = self.caller
@@ -97,16 +122,12 @@ class CmdWhere(default_cmds.MuxCommand):
 
             # Handle unfindable characters for everyone
             if puppet.db.unfindable:
-                # Add LFRP coloring and staff indicator for unfindable chars
-                name = puppet.name
-                if puppet.db.lfrp:
-                    name = f"|y{name}|n"
-                name_suffix = "*" if puppet.check_permstring("builders") else ""
-                
+                formatted_name = self.format_name(puppet, session)
+                idle_str = self.format_idle_time(self.get_idle_time(session))
                 unfindable_chars.append((
-                    f"{name}{name_suffix}",
-                    puppet.db.char_type if puppet.db.char_type else "",
-                    self.format_idle_time(self.get_idle_time(session)),
+                    formatted_name,
+                    f"{puppet.db.char_type if puppet.db.char_type else ''}      ",  # Fixed 6 spaces
+                    f"{idle_str:5}",  # Fixed 5 spaces
                     puppet.location.get_display_name(caller) if is_staff else "Unknown"
                 ))
                 continue
@@ -117,22 +138,13 @@ class CmdWhere(default_cmds.MuxCommand):
 
             area = self.get_area_name(location)
             char_type = puppet.db.char_type if puppet.db.char_type else ""
-            idle_time = self.format_idle_time(self.get_idle_time(session))
+            idle_str = self.format_idle_time(self.get_idle_time(session))
             
-            # Add LFRP coloring
-            name = puppet.name
-            if puppet.db.lfrp:
-                name = f"|y{name}|n"
-            
-            # Add AFK and staff indicators
-            name_prefix = "^" if puppet.db.afk else " "
-            name_suffix = "*" if puppet.check_permstring("builders") else ""
-            
-            # Add character to appropriate area
+            formatted_name = self.format_name(puppet, session)
             areas[area].append((
-                f"{name_prefix}{name}{name_suffix}",
-                char_type,
-                idle_time,
+                formatted_name,
+                f"{char_type}      ",  # Fixed 6 spaces
+                f"{idle_str:5}",  # Fixed 5 spaces
                 location.get_display_name(caller)
             ))
 
@@ -142,21 +154,19 @@ class CmdWhere(default_cmds.MuxCommand):
                 string += "\n"  # Empty line for spacing
                 string += f"|c---< {area} >{'-' * (70 - len(area))}|n\n"
                 for name, char_type, idle, loc in sorted(areas[area]):
-                    string += f"{name:<20} {char_type:<6} {idle:<5} {loc}\n"
+                    string += f" {name} {char_type} {idle}   {loc}\n"  # Added 3 spaces before location
 
         # unfindable characters section
         if unfindable_chars:
             string += f"\n|c---< Unfindable Characters >{'-' * (70 - len('Unfindable Characters'))}|n\n"
             for name, char_type, idle, loc in sorted(unfindable_chars):
-                if is_staff:
-                    string += f" {name:<20} {char_type:<6} {idle:<5} {loc}\n"
-                else:
-                    string += f" {name:<20} {char_type:<6} {idle:<5} Unknown\n"
+                string += f" {name} {char_type} {idle}   {loc}\n"  # Added 3 spaces before location
 
         # legend
-        string += "\n|r" + "-" * 78 + "|n"  # Add a separator line
-        string += "\n|yLegend: ^ = AFK, * = Staff, |yYellow|n = Looking for RP|n"
-        string += "\n|r" + "-" * 78 + "|n\n"  # Add another separator line
+        string += "\n|r" + "-" * 78 + "|n"
+        string += "\n|yLegend: ^ = AFK, * = Staff, |yYellow/$ = Looking for RP|n, |bBlue/@ = In Umbra|n"
+        string += "\n|r" + "-" * 78 + "|n\n"
 
         string += footer(width=78)
         caller.msg(string)
+

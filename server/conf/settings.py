@@ -68,12 +68,15 @@ CSRF_TRUSTED_ORIGINS = ['https://beta.diesiraemu.com', 'http://beta.diesiraemu.c
 """
 
 BASE_ROOM_TYPECLASS = "typeclasses.rooms.RoomParent"
+BASE_EXIT_TYPECLASS = "typeclasses.exits.Exit"
+BASE_CHANNEL_TYPECLASS = "typeclasses.channels.Channel"
+
 LOCK_FUNC_MODULES = [
     "evennia.locks.lockfuncs",
     "world.wod20th.locks", 
 ]
 MAX_NR_CHARACTERS = 5
-
+DEFAULT_CHANNELS = []
 CSRF_TRUSTED_ORIGINS = ['http://localhost:4005', 'http://localhost:4000', 'https://diesiraemu.com']
 
 COLOR_ANSI_EXTRA_MAP = color_markups.MUX_COLOR_ANSI_EXTRA_MAP
@@ -85,16 +88,14 @@ COLOR_ANSI_XTERM256_BRIGHT_BG_EXTRA_MAP = color_markups.MUX_COLOR_ANSI_XTERM256_
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'diesiraemu.com']
 WEBSOCKET_CLIENT_URL = None  # Let Evennia handle this automatically
-
 INSTALLED_APPS += (
     "world.wod20th",
     "wiki",
     "world.jobs",
     "web.character",
+    "world.plots",
+    "world.hangouts",
 )
-
-BASE_ROOM_TYPECLASS = "typeclasses.rooms.RoomParent"
-BASE_CHANNEL_TYPECLASS = "typeclasses.channels.Channel"
 
 # Change 8001 to your desired websocket port
 
@@ -312,3 +313,70 @@ elif ENVIRONMENT == 'development':
     WEBSOCKET_CLIENT_URL = "ws://localhost:4202/websocket"
 
 
+AT_SERVER_STARTSTOP_MODULE = "world.wod20th.scripts"
+
+# Import our custom lock functions
+from world.wod20th.locks import LOCK_FUNCS as WOD_LOCK_FUNCS
+
+# Lock function modules
+LOCK_FUNC_MODULES = [
+    "evennia.locks.lockfuncs",
+    "world.wod20th.locks"
+]
+
+LOCK_FUNCS = {
+    # Basic type checks
+    "has_splat": WOD_LOCK_FUNCS["has_splat"],
+    "has_type": WOD_LOCK_FUNCS["has_type"],
+    "subscribed": WOD_LOCK_FUNCS["subscribed"],
+    "tenant": WOD_LOCK_FUNCS["tenant"],
+
+    # Primary abilities
+    "has_talent": WOD_LOCK_FUNCS["has_talent"],
+    "has_skill": WOD_LOCK_FUNCS["has_skill"],
+    "has_knowledge": WOD_LOCK_FUNCS["has_knowledge"],
+    
+    # Secondary abilities
+    "has_secondary_talent": WOD_LOCK_FUNCS["has_secondary_talent"],
+    "has_secondary_skill": WOD_LOCK_FUNCS["has_secondary_skill"],
+    "has_secondary_knowledge": WOD_LOCK_FUNCS["has_secondary_knowledge"],
+    
+    # Advantages
+    "has_merit": WOD_LOCK_FUNCS["has_merit"],
+    
+    # Vampire
+    "has_clan": WOD_LOCK_FUNCS["has_clan"],
+
+    # Garou/some shifters
+    "has_tribe": WOD_LOCK_FUNCS["has_tribe"],
+    "has_auspice": WOD_LOCK_FUNCS["has_auspice"],
+
+    # Mage stuff
+    "has_tradition": WOD_LOCK_FUNCS["has_tradition"],
+    "has_affiliation": WOD_LOCK_FUNCS["has_affiliation"],
+    "has_convention": WOD_LOCK_FUNCS["has_convention"],
+    "has_nephandi_faction": WOD_LOCK_FUNCS["has_nephandi_faction"],
+    
+    # Changeling specifics
+    "has_court": WOD_LOCK_FUNCS["has_court"],
+    "has_kith": WOD_LOCK_FUNCS["has_kith"],
+
+}
+######################################################################
+# Logging configuration
+######################################################################
+# Configure log rotation
+PORTAL_LOG_ROTATE_SIZE = 1000000  # Rotate at 1 MB
+PORTAL_LOG_FILES = 10  # Keep 10 backup files
+SERVER_LOG_ROTATE_SIZE = 1000000  # Rotate at 1 MB
+SERVER_LOG_FILES = 10  # Keep 10 backup files
+
+def at_server_start():
+    """
+    This is called every time the server starts up.
+    """
+    # Import here to avoid circular imports
+    from world.wod20th.scripts import start_all_scripts
+    start_all_scripts()
+
+AT_SERVER_START_HOOK = "server.conf.settings.at_server_start"

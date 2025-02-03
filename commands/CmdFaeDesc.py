@@ -1,48 +1,84 @@
+"""
+Command for setting and viewing Fae descriptions of characters.
+"""
 from evennia.commands.default.muxcommand import MuxCommand
 
 class CmdFaeDesc(MuxCommand):
     """
-    Set the fae description for yourself or the room.
+    Set or view your own Fae description.
+    Only Changelings and Kinain can use this command.
 
     Usage:
-      @faedesc me=<description>
-      @faedesc here=<description>
+      +faedesc                - View your Fae description
+      +faedesc <description> - Set your Fae description
+      +faedesc/clear         - Clear your Fae description
 
-    This command sets the fae description that Changelings and Kinain
-    can see when using the +flook command.
+    Examples:
+      +faedesc A shimmer of fae glamour surrounds your form.
+      +faedesc/clear
     """
 
-    key = "@faedesc"
+    key = "+faedesc"
+    aliases = ["+fdesc"]
     locks = "cmd:all()"
-    help_category = "Building"
+    help_category = "Social"
+
+    def can_perceive_fae(self, character):
+        """
+        Check if a character can perceive the Dreaming.
+        """
+        if not character:
+            return False
+            
+        # Check if the character has stats
+        if not hasattr(character, 'db') or not character.db.stats:
+            return False
+
+        # Get the character's splat
+        splat = (character.db.stats.get('other', {})
+                              .get('splat', {})
+                              .get('Splat', {})
+                              .get('perm', ''))
+                
+        # Check if the character is a Changeling
+        if splat == "Changeling":
+            return True
+            
+        # Check if the character is Kinain
+        if (splat == "Mortal+" and 
+            character.db.stats.get('identity', {})
+                          .get('lineage', {})
+                          .get('Mortal+ Type', {})
+                          .get('perm', '') == "Kinain"):
+            return True
+            
+        return False
 
     def func(self):
         """Execute command."""
         caller = self.caller
 
-        if not self.args or "=" not in self.args:
-            caller.msg("Usage: @faedesc me=<description> or @faedesc here=<description>")
+        # Check if the user is a Changeling or Kinain
+        if not self.can_perceive_fae(caller):
+            caller.msg("Only those with Fae blood can perceive or set Fae descriptions.")
             return
 
-        target, description = self.args.split("=", 1)
-        target = target.strip().lower()
-        description = description.strip()
+        # Handle clearing description
+        if "clear" in self.switches:
+            if hasattr(caller, 'db'):
+                caller.db.fae_desc = ""
+                caller.msg("Your Fae description cleared.")
+            return
 
-        if target == "me":
-            if hasattr(caller, 'set_fae_description'):
-                caller.set_fae_description(description)
-                caller.msg("You set your fae description.")
+        if not self.args:
+            # View own Fae description
+            if hasattr(caller, 'db') and caller.db.fae_desc:
+                caller.msg("|mYour Fae Description:|n\n%s" % caller.db.fae_desc)
             else:
-                caller.msg("You can't set a fae description for yourself.")
-        elif target == "here":
-            location = caller.location
-            if not location:
-                caller.msg("You are nowhere.")
-                return
-            if hasattr(location, 'set_fae_description'):
-                location.set_fae_description(description)
-                caller.msg("You set the fae description of the room.")
-            else:
-                caller.msg("You can't set a fae description for this location.")
-        else:
-            caller.msg("You can only set fae descriptions for 'me' or 'here'.")
+                caller.msg("You have no special Fae aspect set.")
+            return
+
+        # Set own Fae description
+        if hasattr(caller, 'db'):
+            caller.db.fae_desc = self.args
+            caller.msg("Your Fae description set.")

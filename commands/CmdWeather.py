@@ -23,6 +23,7 @@ class CmdWeather(default_cmds.MuxCommand):
     """
 
     key = "+weather"
+    aliases = ["+time"]
     locks = "cmd:all()"
     help_category = "General"
 

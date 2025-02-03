@@ -32,7 +32,7 @@ class CmdEvents(default_cmds.MuxCommand):
     key = "+events"
     aliases = ["+event"]
     locks = "cmd:all()"
-    help_category = "Storytelling"
+    help_category = "Event & Bulletin Board"
 
     def func(self):
         if not self.args and not self.switches:

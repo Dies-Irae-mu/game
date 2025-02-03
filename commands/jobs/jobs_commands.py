@@ -9,7 +9,7 @@ from django.db import models, transaction, connection
 from evennia.utils.utils import crop
 from evennia.utils.ansi import ANSIString
 from world.wod20th.utils.ansi_utils import wrap_ansi
-from world.wod20th.utils.formatting import header, footer, divider
+from world.wod20th.utils.formatting import header, footer, divider, format_stat
 from textwrap import fill
 from django.utils import timezone
 from django.db.models import Max, F
@@ -23,10 +23,12 @@ class CmdJobs(MuxCommand):
 
     Usage:
       +jobs                      - List all jobs
+      +myjobs                    - List jobs you created or are assigned to
       +jobs <#>                  - View details of a specific job
       +jobs/create <category>/<title>=<text> [= <template>] <args>
       +jobs/comment <#>=<text>   - Add a comment to a job
       +jobs/close <#>           - Close a job
+      +jobs/reopen <#>          - Reopen an archived job
       +jobs/addplayer <#>=<player>
       +jobs/removeplayer <#>=<player>
       +jobs/assign <#>=<staff>
@@ -54,16 +56,18 @@ class CmdJobs(MuxCommand):
 
     Examples:
       +jobs
+      +myjobs
       +jobs 5
       +jobs/create REQ/New Character=Please review my character sheet
       +jobs/comment 5=Added background story
       +jobs/approve 5
+      +jobs/reopen 5
     """
 
     key = "+jobs"
     aliases = ["+requests", "+job", "+myjobs"]
     locks = "cmd:all()"
-    help_category = "Admin"
+    help_category = "General"
     
     # Add these properties to help with help system registration
     auto_help = True
@@ -77,7 +81,10 @@ class CmdJobs(MuxCommand):
 
     def func(self):
         if not self.args and not self.switches:
-            self.list_jobs()
+            if self.cmdstring == "+myjobs":
+                self.list_my_jobs()
+            else:
+                self.list_jobs()
         elif self.args and not self.switches:
             self.view_job()
         elif "archive" in self.switches:
@@ -88,6 +95,8 @@ class CmdJobs(MuxCommand):
             self.add_comment()
         elif "close" in self.switches:
             self.close_job()
+        elif "reopen" in self.switches:
+            self.reopen_job()
         elif "addplayer" in self.switches:
             self.add_player()
         elif "removeplayer" in self.switches:
@@ -114,8 +123,6 @@ class CmdJobs(MuxCommand):
             self.view_queue_jobs()
         elif "list_with_object" in self.switches:
             self.list_jobs_with_object()
-        elif "archive" in self.switches:
-            self.view_archived_job()
         elif "complete" in self.switches:
             self.complete_job()
         elif "cancel" in self.switches:
@@ -185,7 +192,16 @@ class CmdJobs(MuxCommand):
                 output += "|cAttached Objects:|n None\n"
             
             output += divider("Description", width=78, fillchar="-", color="|r", text_color="|c") + "\n"
-            output += wrap_ansi(job.description, width=76, left_padding=2) + "\n\n"
+            
+            # Handle description text wrapping
+            paragraphs = [p.strip() for p in job.description.split('\n\n') if p.strip()]
+            for i, paragraph in enumerate(paragraphs):
+                # Wrap text at a consistent width with proper indentation
+                lines = wrap_ansi(paragraph, width=70)  # Reduced width for consistent wrapping
+                for line in lines.split('\n'):
+                    output += "  " + line.strip() + "\n"
+                if i < len(paragraphs) - 1:
+                    output += "\n"
             
             if job.comments:
                 output += divider("Comments", width=78, fillchar="-", color="|r", text_color="|c") + "\n"
@@ -193,7 +209,7 @@ class CmdJobs(MuxCommand):
                     output += f"|c{comment['author']} [{comment['created_at']}]:|n\n"
                     output += wrap_ansi(comment['text'], width=76, left_padding=2) + "\n\n"
             
-            output += footer(width=78, fillchar="|r-|n")
+            output += divider("", width=78, fillchar="-", color="|r") + "\n"
             self.caller.msg(output)
         except ValueError:
             self.caller.msg("Invalid job ID.")
@@ -214,9 +230,13 @@ class CmdJobs(MuxCommand):
 
         title_desc, description = parts
         title_desc = title_desc.strip()
-        description = description.strip()
+        # Convert %r markers to newlines and normalize paragraph spacing
+        description = description.strip().replace("%r", "\n")
+        # Normalize multiple newlines to double newlines for paragraph spacing
+        while "\n\n\n" in description:
+            description = description.replace("\n\n\n", "\n\n")
 
-        # Handle category/title format - split on first / only
+        # Handle category/title format
         if "/" in title_desc:
             category, title = title_desc.split("/", 1)
             category = category.strip().upper()
@@ -951,20 +971,174 @@ class CmdJobs(MuxCommand):
         except Job.DoesNotExist:
             self.caller.msg(f"Job #{job_id} not found.")
 
+    def display_note(self, note):
+        """Display a note with formatting."""
+        width = 78
+        output = header(f"Job #{note.note_id}", width=width, color="|y", fillchar="|r=|n", bcolor="|b")
+
+        if note.category:
+            output += f"|c{note.category}|n"
+            output += f" |w#{note.note_id}|n\n"
+
+        output += format_stat("Note Title:", note.name, width=width) + "\n"
+        output += format_stat("Visibility:", "Public" if note.is_public else "Private", width=width) + "\n"
+        
+        # Show approval status and details
+        if note.is_approved:
+            output += format_stat("Approved:", "Yes", width=width) + "\n"
+            if note.approved_by:
+                output += format_stat("Approved By:", note.approved_by, width=width) + "\n"
+            if note.approved_at:
+                output += format_stat("Approved At:", note.approved_at.strftime("%Y-%m-%d %H:%M:%S"), width=width) + "\n"
+        else:
+            output += format_stat("Approved:", "No", width=width) + "\n"
+
+        # Show creation and update times for staff
+        if self.caller.check_permstring("Builders"):
+            output += format_stat("Created:", note.created_at.strftime("%Y-%m-%d %H:%M:%S"), width=width) + "\n"
+            output += format_stat("Updated:", note.updated_at.strftime("%Y-%m-%d %H:%M:%S"), width=width) + "\n"
+
+        output += divider("", width=width, fillchar="-", color="|r") + "\n"
+        
+        # Note content - properly handle line breaks and indentation
+        text = note.text.strip()
+        # Split on actual newlines
+        paragraphs = [p.strip() for p in text.split('\n') if p.strip()]
+        
+        # Process each paragraph
+        for i, paragraph in enumerate(paragraphs):
+            # Wrap the paragraph text
+            wrapped_lines = wrap_ansi(paragraph, width=width-4).split('\n')
+            # Add proper indentation to each line
+            for line in wrapped_lines:
+                output += "  " + line + "\n"
+            # Add a blank line between paragraphs, but not after the last one
+            if i < len(paragraphs) - 1:
+                output += "\n"
+        
+        output += footer(width=width, fillchar="|r=|n")
+        self.caller.msg(output)
+
+    def list_my_jobs(self):
+        """List jobs that are relevant to the caller."""
+        if self.caller.check_permstring("Admin"):
+            # For staff, show jobs they created or are assigned to
+            jobs = Job.objects.filter(
+                models.Q(requester=self.caller.account) |
+                models.Q(assignee=self.caller.account),
+                status__in=['open', 'claimed']
+            ).distinct().order_by('-created_at')
+        else:
+            # For players, show only jobs they created
+            jobs = Job.objects.filter(
+                requester=self.caller.account,
+                status__in=['open', 'claimed']
+            ).order_by('-created_at')
+
+        if not jobs:
+            self.caller.msg("You have no open jobs.")
+            return
+
+        output = header("My Dies Irae Jobs", width=78, fillchar="|r-|n") + "\n"
+        
+        # Create the header row
+        header_row = "|cJob #  Queue      Job Title                 Started  Assignee          Status|n"
+        output += header_row + "\n"
+        output += ANSIString("|r" + "-" * 78 + "|n") + "\n"
+
+        # Add each job as a row
+        for job in jobs:
+            assignee = job.assignee.username if job.assignee else "-----"
+            row = (
+                f"{job.id:<6}"
+                f"{crop(job.queue.name, width=10):<11}"
+                f"{crop(job.title, width=25):<25}"
+                f"{job.created_at.strftime('%m/%d/%y'):<9}"
+                f"{crop(assignee, width=17):<18}"
+                f"{job.status}"
+            )
+            output += row + "\n"
+
+        output += footer(width=78, fillchar="|r-|n")
+        self.caller.msg(output)
+
+    def reopen_job(self):
+        """Reopen an archived job."""
+        if not self.args:
+            self.caller.msg("Usage: +jobs/reopen <#>")
+            return
+
+        try:
+            job_id = int(self.args)
+            archived_job = ArchivedJob.objects.get(original_id=job_id)
+
+            # Check permissions
+            if not (self.caller.check_permstring("Admin") or archived_job.requester == self.caller.account):
+                self.caller.msg("You don't have permission to reopen this job.")
+                return
+
+            # Create a new job with the archived information
+            new_job = Job.objects.create(
+                title=archived_job.title,
+                description=archived_job.description,
+                requester=archived_job.requester,
+                assignee=archived_job.assignee,
+                queue=archived_job.queue,
+                status='open',
+                comments=[]  # Start with empty comments
+            )
+
+            # Add a system comment about reopening
+            new_job.comments.append({
+                'author': 'System',
+                'text': f"Job reopened by {self.caller.name} (Previous job #{job_id})",
+                'created_at': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+            })
+
+            # If there were previous comments, add them with a header
+            if archived_job.comments:
+                new_job.comments.append({
+                    'author': 'System',
+                    'text': "--- Previous Comments ---",
+                    'created_at': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+                })
+                new_job.comments.append({
+                    'author': 'System',
+                    'text': archived_job.comments,
+                    'created_at': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+                })
+
+            new_job.save()
+
+            self.caller.msg(f"Job #{job_id} has been reopened as Job #{new_job.id}.")
+            self.post_to_jobs_channel(self.caller.name, new_job.id, f"reopened (was Job #{job_id})")
+
+            # Notify the original requester if different from the reopener
+            if archived_job.requester != self.caller.account:
+                self.send_mail_notification(
+                    new_job,
+                    f"Your job '{archived_job.title}' (#{job_id}) has been reopened as Job #{new_job.id} by {self.caller.name}."
+                )
+
+        except ValueError:
+            self.caller.msg("Invalid job ID.")
+        except ArchivedJob.DoesNotExist:
+            self.caller.msg(f"Archived job #{job_id} not found.")
+
 def create_jobs_help_entry():
     """Create or update the jobs help entry."""
     try:
         help_entry, created = HelpEntry.objects.get_or_create(
             db_key="jobs",
             defaults={
-                "db_help_category": "Admin",
+                "db_help_category": "General",
                 "db_entrytext": CmdJobs.__doc__
             }
         )
         
         if not created:
             help_entry.db_entrytext = CmdJobs.__doc__
-            help_entry.db_help_category = "Admin"
+            help_entry.db_help_category = "General"
             help_entry.save()
 
         # Set tags properly using the set() method
