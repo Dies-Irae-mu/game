@@ -8,11 +8,12 @@ def format_stat(stat, value, width=25, default=None, tempvalue=None, allow_zero=
         value = default
         tempvalue = default  # Also set tempvalue to default if value is defaulted
 
-    stat_str = f" {stat}"
+    # Don't add leading space here anymore
+    stat_str = stat
     
     if stat == "Paradox":
         # For Paradox, only show the temporary value
-        value_str = str(tempvalue)
+        value_str = str(tempvalue) if tempvalue is not None else "None"
     elif stat == "Arete":
         # For Arete, don't show temporary value
         value_str = str(value)
@@ -20,7 +21,6 @@ def format_stat(stat, value, width=25, default=None, tempvalue=None, allow_zero=
         if not allow_zero and tempvalue == 0:
             tempvalue = 1
         # Only show temporary value if it's numerically different
-
         value_str = f"{value}({tempvalue})"
     else:
         # Just show permanent value if temporary is same or not set
@@ -31,8 +31,10 @@ def format_stat(stat, value, width=25, default=None, tempvalue=None, allow_zero=
     if len(stat_str) > max_stat_length:
         stat_str = stat_str[:max_stat_length-3] + "..."
 
-    dots = "." * (width - len(stat_str) - len(value_str) - 1)
-    return f"{stat_str}{dots}{value_str}"
+    # Calculate dots needed for spacing
+    dots = "." * (width - len(stat_str) - len(value_str) - 2)  # -2 for the spaces we'll add
+    # Add highlight black to dots and consistent spacing
+    return f" {stat_str}|x{dots}|n {value_str}"
 
 def header(title, width=78,  color="|y", fillchar=ANSIString("|b-|n"), bcolor="|b"):
     return ANSIString.center(ANSIString(f"{bcolor}<|n {color} {title} |n{bcolor}>|n"), width=width, fillchar=ANSIString(fillchar)) + "\n"

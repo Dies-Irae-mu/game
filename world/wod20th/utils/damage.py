@@ -229,7 +229,6 @@ def format_damage_stacked(character):
         if marker not in [ANSIString("|g[ ]|n")]:
             level = ANSIString(f"|w{level}|n")
             penalty = ANSIString(f"|r{penalty}|n")
-        # Add consistent spacing - pad level name to 15 characters
         output.append(f"{level:<15}{marker} {penalty}")
 
     return output

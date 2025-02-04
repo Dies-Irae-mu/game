@@ -86,7 +86,7 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     },
     {
         "name": "Contacts",
@@ -94,7 +94,7 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     },
     {
         "name": "Fame",
@@ -102,7 +102,7 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     },
     {
         "name": "Generation",
@@ -110,7 +110,7 @@
         "game_line": "Vampire: The Masquerade",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5, 6],
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         "splat": "Vampire"
     },
     {
@@ -119,7 +119,7 @@
         "game_line": "Vampire: The Masquerade",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5],
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         "splat": "Vampire"
     },
     {
@@ -128,7 +128,7 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     },
     {
         "name": "Mentor",
@@ -136,7 +136,7 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5],
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         "splat": "Various"
     },
     {
@@ -145,7 +145,7 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     },
     {
         "name": "Retainers",
@@ -153,7 +153,7 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5],
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         "splat": "Various"
     },
     {
@@ -162,8 +162,131 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5],
-        "splat": "Various"
-    }
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "splat": "Various",
+        "instanced": true
+    },
+    {
+        "name": "Artifact",
+        "description": "Artifacts are items that are strong in supernatural potency. This Background represents possession of such an item that is acquired as a family heirloom, a gift from a Mentor, or other achievements through a character's career. Truly legendary artifacts such as Excalibur or Durandal cannot be acquired with this Background.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    {
+        "name": "Mob",
+        "description": "This Background represents the ability to control, organize and direct a witch-hunting angry mob. It may be organized through charity work, a televised sermons, social networks or other more direct means. The mob summoned is composed by angry and armed, violent people who can very easily get carried away once they get down into the fray.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    {
+        "name": "Base of Operations",
+        "description": "A Base of Operations is a secure location controlled and owned by the character. It is not the same as their home, although nothing forbids the character from spending most of their time and sleeping there. The score of this Background is split into Luxury, Size and Security, and it can be pooled among various characters.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    {
+        "name": "Guide",
+        "description": "A mysterious supernatural entity has chosen your character to aid them in hunting down vampires or other supernatural beings. These entities are usually interested in the welfare of mortals, but have also hidden motives to encourage certain sorts of behavior in their companions.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    {
+        "name": "Antecessor",
+        "description": "An ancestor shadow watches over you and assists you in time of need, especially if you wander through dangerous hauntings. It could be a loved one that passed away, that turned into your guardian angel, or a more ancient spirit that assists you in performing a quest assigned to your lineage.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    {
+        "name": "Paranormal Tools",
+        "description": "This Background represents a collection of tools, both technologically advanced or entirely mundane, that are suited to document and perform research in paranormal and supernatural activities in a reliable and scientific way.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    {
+        "name": "Caretaker",
+        "description": "You are the custodian of a building or property, even if you are not the owner of it. This can represent a public role that has been assigned to you by an authority, or the de facto obtainment of a similar position through social connections, employment or even fraud.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    {
+        "name": "Cult",
+        "description": "Your character has a group of individuals that deeply revere and follow them, attributing to them mystic and supernatural powers, or considering them the messenger of a divine revelation. Often used by mages, this Background can also be acquired by other characters who want to exploit the social advantages that come from having control over such impressionable people. This Background implies a dedicated and fervent belief in the character and it is more than just casual friendship or a pragmatic alliance.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
+    },
+    {
+        "name": "Armory",
+        "description": "The character possess a functional Armory and has the means and ability to maintain the weapons within it. The entity and availability of the weapons depends on the local laws of California. Higher scores in this Background can include also a number of illegal weapons.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    {
+        "name": "Equipment",
+        "description": "This Background represents possession of significant equipment that can be used to fight supernatural foes at various degrees of effectiveness.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+       },
+    {
+        "name": "Servants",
+        "description": "Servants are loyal individuals that take care of the character's domain or estate. They usually take care of routine tasks, and some of them can also travel with the character.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    {
+        "name": "Rank",
+        "description": "A title of importance among the Masses.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "splat": "Various",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    {
+        "name": "Spies",
+        "description": "Information networks.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "splat": "Various",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    {
+        "name": "Totem",
+        "description": "A powerful spirit ally.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    {
+        "name": "Reliquary",
+        "description": "The character has access to a Reliquary of the Church that protects occulted secrets within it. It may represents as much a holy relic as a blasphemous item that was hidden to keep it away from wicked hands. Access to these items represents both a privilege and a responsibility.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    }
 ]

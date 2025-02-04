@@ -5,6 +5,27 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Mage",
+        "affiliation": ["Traditions", "Nephandi", []],
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Blessing",
+        "description": "Someone out there has left its mark on you. That mark is usually beneficial, but it comes with uncanny side effects. Maybe you always find a few extra bucks when you need them but get stuck with the check when you grab some drinks with the girls. Perhaps you’re lucky in lust but can’t find a lasting partnership. This Background gives you a minor perk at the cost of a related quirk.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "splat": "Mage",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Companion",
+        "description": "A non-human helper with special abilities.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "splat": "Mage",
+        "affiliation": ["Technocracy"],
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -13,6 +34,7 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Mage",
         "values": [1, 2, 3, 4, 5]   
     },
     {
@@ -21,7 +43,9 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Various",
+        "instanced": true
     },
     {
         "name": "Node",
@@ -29,6 +53,7 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Mage",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -37,6 +62,7 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Various",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -45,6 +71,8 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Mage",
+        "affiliation": ["Traditions", "Nephandi", []],
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -53,6 +81,8 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Mage",
+        "affiliation": "Technocracy",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -61,6 +91,7 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Various",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -69,6 +100,7 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Various",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -77,6 +109,18 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Mage",
+        "affiliation": "Traditions",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Labyrinth",
+        "description": "Nephandic stronghold.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "splat": "Mage",
+        "affiliation": "Nephandi",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -85,14 +129,8 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
-    },
-    {
-        "name": "Cult",
-        "description": "Group of dedicated believers.",
-        "game_line": "Various",
-        "category": "backgrounds",
-        "stat_type": "background",
+        "splat": "Mage",
+        "affiliation": "Technocracy",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -101,6 +139,7 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Mage",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -109,6 +148,7 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Various",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -117,6 +157,8 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Mage",
+        "affiliation": "Technocracy",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -125,6 +167,7 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Various",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -133,7 +176,8 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Mage"
     },
     {
         "name": "Cloaking",
@@ -141,6 +185,8 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Mage",
+        "affiliation": "Technocracy",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -149,6 +195,7 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Mage",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -157,6 +204,7 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Various",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -165,6 +213,7 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Mage",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -173,6 +222,8 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Mage",
+        "affiliation": "Technocracy",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -181,6 +232,8 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
+        "splat": "Mage",
+        "affiliation": "Technocracy",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -189,14 +242,8 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
-    },
-    {
-        "name": "Rank",
-        "description": "A title of importance among the Masses.",
-        "game_line": "Various",
-        "category": "backgrounds",
-        "stat_type": "background",
+        "splat": "Mage",
+        "affiliation": "Technocracy",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -205,23 +252,8 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
-    },
-    {
-        "name": "Spies",
-        "description": "Information networks.",
-        "game_line": "Various",
-        "category": "backgrounds",
-        "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
-    },
-    {
-        "name": "Totem",
-        "description": "A powerful spirit ally.",
-        "game_line": "Various",
-        "category": "backgrounds",
-        "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Mage"
     },
     {
         "name": "Wonder",
@@ -229,6 +261,8 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Mage",
+        "instanced": true
     }
 ]

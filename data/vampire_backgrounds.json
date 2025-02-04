@@ -1,0 +1,79 @@
+[
+    {
+        "name": "Anarch Information Exchange",
+        "description": "Anarchs have a sophisticated network of coordination and information sharing using both computers and social networks, leading to a network known as the Information Exchange. Characters with this Background can ask the Network about sensitive information, in particular about prominent figures likes Princes or Bishops.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Vampire"
+
+    },
+    {
+        "name": "Black Hand Membership",
+        "description": "This Background represents membership in the Black Hand, the Sabbat elite body of soldiers and assassins.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Vampire"
+    },
+    {
+        "name": "Communal Haven",
+
+        "description": "A vampire's shared haven that offers security and comfort. Like Base of Operations, this Background is split in the aspects of Size, Luxury and Security. Communal Haven can be pooled among various vampires.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Vampire"
+
+    },
+    {
+        "name": "Ritae",
+        "description": "This Background represents the knowledge of Sabbat Rituals and Ritae. It is essential for pack priests, and ritae will not have effect without it. Sabbat members without priestly role require compelling justification to take this Background.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Vampire"
+    },
+    {
+        "name": "Blasphemous Shrine",   
+        "description": "Lector Priests need to desacrate a conventionally buried corpse and use it as an offering to Set. These corpses, if put in a shrine dedicated to Set, will amplify the power of Akhu rituals performed in that shrine. This Background grants bonus dice equivalent to its score for the Akhu ritual.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Vampire"  
+
+    },
+    {
+        "name": "Memento de Morte",
+        "description": "This Background represents access to relics imbued with the power of death to enhance Necromancy rolls.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Vampire"
+    },
+    {
+        "name": "Spirit Slaves",
+        "description": "This Background represents control over one or more ghosts, either through their fetters or knowledge of their goals.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Vampire"
+    },
+    {
+        "name": "Oubliette",
+        "description": "Vampires with Abyss Mysticism and Obtenebration can construct an oubliette within a subterranean structure. Entities summoned within remain permanently unless destroyed, and those trapped within will endure physical and mental strain.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Vampire"
+    }
+]
+

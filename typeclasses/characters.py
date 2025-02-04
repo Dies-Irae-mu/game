@@ -478,6 +478,22 @@ class Character(DefaultCharacter):
         if not looker:
             return ""
             
+        # Check if looker is a Changeling and send Banality message
+        if looker.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm') == 'Changeling':
+            # Get target's Banality from pools.dual
+            banality = self.db.stats.get('pools', {}).get('dual', {}).get('Banality', {}).get('perm', 0)
+            if isinstance(banality, dict):
+                banality = banality.get('perm', 0)
+            try:
+                banality = int(banality)
+            except (ValueError, TypeError):
+                banality = 0
+                
+            # Import here to avoid circular imports
+            from world.wod20th.utils.banality import get_banality_message
+            msg = get_banality_message(banality)
+            looker.msg(f"|m{msg}|n")
+            
         # Start with the name
         string = f"|c{self.get_display_name(looker)}|n\n"
 
@@ -486,9 +502,6 @@ class Character(DefaultCharacter):
         if desc:
             desc = self.format_description(desc)
             string += desc + "\n"
-
-        # Add any other details you want to include in the character's appearance
-        # For example, you might want to add information about their equipment, stats, etc.
 
         return string
 
@@ -614,93 +627,60 @@ class Character(DefaultCharacter):
                 obj.has_account)):
             self.record_scene_activity()
 
-    def get_stat(self, category, subcategory, stat_name, temp=False):
-        """
-        Retrieve the value of a stat.
-        
-        Args:
-            category (str): Main category (attributes, abilities, etc.)
-            subcategory (str): Subcategory (physical, social, etc.)
-            stat_name (str): Name of the stat
-            temp (bool): Whether to get temporary or permanent value
-        """
-        if not hasattr(self.db, "stats") or not self.db.stats:
-            return None
+    def get_stat(self, stat_type, category, stat_name, temp=False):
+        """Get a stat value."""
+        # Handle attributes by using their category as the stat_type
+        if stat_type == 'attributes':
+            stat_type = category  # Use physical/social/mental as the stat_type
+            category = 'attributes'  # Set category to 'attributes'
 
-        category_stats = self.db.stats.get(category, {})
-        if subcategory:
-            type_stats = category_stats.get(subcategory, {})
-        else:
-            type_stats = category_stats
+        # Handle other stats
+        if stat_type not in self.db.stats:
+            return 0
+        if category not in self.db.stats[stat_type]:
+            return 0
+        if stat_name not in self.db.stats[stat_type][category]:
+            return 0
+        return self.db.stats[stat_type][category][stat_name].get('temp' if temp else 'perm', 0)
 
-        if stat_name in type_stats:
-            return type_stats[stat_name].get('temp' if temp else 'perm', 0)
-
-        return None
-
-    def set_stat(self, category, stat_type, stat_name, value, temp=False):
+    def set_stat(self, stat_type, category, stat_name, value, temp=False):
         """Set a stat value."""
-        if not hasattr(self, 'db') or not self.db.stats:
+        # Ensure stats structure exists
+        if not hasattr(self.db, 'stats'):
+            self.db.stats = {}
+
+        # Handle identity stats
+        if stat_type in ['personal', 'lineage']:
+            if 'identity' not in self.db.stats:
+                self.db.stats['identity'] = {'personal': {}, 'lineage': {}}
+            self.db.stats['identity'][stat_type][stat_name] = {'perm': value, 'temp': value}
             return
 
-        # Store old Natural Linguist state before any changes
-        had_natural_linguist = False
-        for cat in self.db.stats.get('merits', {}).values():
-            if any(merit.lower().replace(' ', '') == 'naturallinguist' 
-                  for merit, data in cat.items() 
-                  if data.get('perm', 0) > 0):
-                had_natural_linguist = True
-                break
+        # Handle archetype stats
+        if stat_type == 'archetype':
+            if 'archetype' not in self.db.stats:
+                self.db.stats['archetype'] = {'personal': {}}
+            self.db.stats['archetype']['personal'][stat_name] = {'perm': value, 'temp': value}
+            return
 
-        # Create nested dictionaries if they don't exist
-        if category not in self.db.stats:
-            self.db.stats[category] = {}
-        if stat_type not in self.db.stats[category]:
-            self.db.stats[category][stat_type] = {}
-        
-        # If stat doesn't exist, create it with both perm and temp values
-        if stat_name not in self.db.stats[category][stat_type]:
-            self.db.stats[category][stat_type][stat_name] = {'perm': 0, 'temp': 0}
-
-        # Special handling for Appearance stat
-        if stat_name == 'Appearance':
-            splat = self.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
-            clan = self.db.stats.get('identity', {}).get('lineage', {}).get('Clan', {}).get('perm', '')
-            form = self.db.stats.get('other', {}).get('form', {}).get('Form', {}).get('temp', '')
-
-            # Force Appearance to 0 for specific cases
-            if (splat == 'Vampire' and clan in ['Nosferatu', 'Samedi']) or \
-               (splat == 'Shifter' and form == 'Crinos'):
-                value = 0
-                self.db.stats[category][stat_type][stat_name]['perm'] = 0
-                self.db.stats[category][stat_type][stat_name]['temp'] = 0
+        # Handle attributes
+        if category == 'attributes':
+            if 'attributes' not in self.db.stats:
+                self.db.stats['attributes'] = {'physical': {}, 'social': {}, 'mental': {}}
+            if stat_type in ['physical', 'social', 'mental']:
+                if stat_name not in self.db.stats['attributes'][stat_type]:
+                    self.db.stats['attributes'][stat_type][stat_name] = {'perm': 0, 'temp': 0}
+                self.db.stats['attributes'][stat_type][stat_name]['temp' if temp else 'perm'] = value
                 return
 
-        # Normal stat setting
-        key = 'temp' if temp else 'perm'
-        old_value = self.db.stats[category][stat_type][stat_name].get(key, 0)
-        self.db.stats[category][stat_type][stat_name][key] = value
-
-        # If this is a language-related merit change
-        if not self.db.approved and not temp:  # Only during chargen, only for permanent changes
-            if ((stat_name == 'Language' and value < old_value) or
-                (stat_name == 'Natural Linguist' and had_natural_linguist) or
-                (stat_name.startswith('Language(') and value < old_value)):
-                # Import here to avoid circular imports
-                from commands.CmdLanguage import CmdLanguage
-                cmd = CmdLanguage()
-                cmd.caller = self
-                if cmd.validate_languages():
-                    cmd.list_languages()
-
-        # If value is 0, remove the stat entirely (do this after language validation)
-        if value == 0:
-            del self.db.stats[category][stat_type][stat_name]
-            # Clean up empty dictionaries
-            if not self.db.stats[category][stat_type]:
-                del self.db.stats[category][stat_type]
-            if not self.db.stats[category]:
-                del self.db.stats[category]
+        # Handle all other stats
+        if stat_type not in self.db.stats:
+            self.db.stats[stat_type] = {}
+        if category not in self.db.stats[stat_type]:
+            self.db.stats[stat_type][category] = {}
+        if stat_name not in self.db.stats[stat_type][category]:
+            self.db.stats[stat_type][category][stat_name] = {'perm': 0, 'temp': 0}
+        self.db.stats[stat_type][category][stat_name]['temp' if temp else 'perm'] = value
 
     def check_stat_value(self, category, stat_type, stat_name, value, temp=False):
         """
@@ -1824,6 +1804,27 @@ class Character(DefaultCharacter):
             senders (list): List of senders who should receive the message
         """
         return self.account.at_post_channel_msg(message, channel, senders, **kwargs)
+
+    def del_stat(self, stat_type, category, stat_name, temp=False):
+        """Delete a stat value."""
+        # Handle attributes by using their category as the stat_type
+        if stat_type == 'attributes':
+            stat_type = category  # Use physical/social/mental as the stat_type
+            category = 'attributes'  # Set category to 'attributes'
+
+        # Check if the stat exists
+        if (stat_type in self.db.stats and 
+            category in self.db.stats[stat_type] and 
+            stat_name in self.db.stats[stat_type][category]):
+            if temp:
+                # Only delete the temporary value
+                if 'temp' in self.db.stats[stat_type][category][stat_name]:
+                    del self.db.stats[stat_type][category][stat_name]['temp']
+            else:
+                # Delete the entire stat entry
+                del self.db.stats[stat_type][category][stat_name]
+            return True
+        return False
 
 class Note:
     def __init__(self, name, text, category="General", is_public=False, is_approved=False, 

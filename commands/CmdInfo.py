@@ -1,7 +1,16 @@
 from evennia.commands.default.muxcommand import MuxCommand
-from world.wod20th.models import Stat, STAT_TYPES, SHIFTER_IDENTITY_STATS, SHIFTER_RENOWN, CLAN, AFFILIATION, MAGE_SPHERES, \
-    TRADITION, TRADITION_SUBFACTION, CONVENTION, METHODOLOGIES, NEPHANDI_FACTION, SEEMING, KITH, SEELIE_LEGACIES, \
-    UNSEELIE_LEGACIES, ARTS, REALMS, calculate_willpower, calculate_road
+from world.wod20th.models import Stat, STAT_TYPES
+from world.wod20th.utils.shifter_utils import SHIFTER_IDENTITY_STATS, SHIFTER_RENOWN
+from world.wod20th.utils.stat_mappings import (STAT_TYPES, ARTS, REALMS, CATEGORIES, MAGE_SPHERES, UNIVERSAL_BACKGROUNDS,
+                                               TRADITION_SUBFACTION, METHODOLOGIES, VAMPIRE_BACKGROUNDS,
+                                               CHANGELING_BACKGROUNDS, MAGE_BACKGROUNDS, TECHNOCRACY_BACKGROUNDS,
+                                               TRADITIONS_BACKGROUNDS, NEPHANDI_BACKGROUNDS, SORCERER_BACKGROUNDS,
+                                               SHIFTER_BACKGROUNDS, SECONDARY_TALENTS, SECONDARY_SKILLS, SECONDARY_KNOWLEDGES,
+)
+from world.wod20th.utils.vampire_utils import CLAN
+from world.wod20th.utils.mage_utils import AFFILIATION, TRADITION, CONVENTION, NEPHANDI_FACTION
+from world.wod20th.utils.shifter_utils import SHIFTER_IDENTITY_STATS, SHIFTER_RENOWN
+from world.wod20th.utils.changeling_utils import SEEMING, KITH, SEELIE_LEGACIES, UNSEELIE_LEGACIES
 from evennia.utils.ansi import ANSIString
 from evennia.utils.evtable import EvTable
 from django.db.models import Q
@@ -38,9 +47,10 @@ class CmdInfo(MuxCommand):
         # Core types
         'attribute', 'ability', 'secondary_ability', 'advantage', 'background',
         'lineage', 'discipline', 'combodiscipline', 'thaumaturgy', 'gift',
-        'rite', 'sphere', 'rote', 'art', 'splat', 'bygone_power',
+        'rite', 'sphere', 'rote', 'art', 'splat', 'special_advantage',
         'realm', 'path', 'sorcery', 'faith', 'numina', 'enlightenment',
-        'power', 'merit', 'flaw', 'trait',
+        'power', 'merit', 'flaw', 'trait', 'hedge_ritual', 'ritual',
+        'blessing', 'charm', 'sliver', 'thaum_ritual'
         # Ability subtypes
         'skill', 'knowledge', 'talent',
         'secondary_knowledge', 'secondary_talent', 'secondary_skill',
@@ -58,20 +68,19 @@ class CmdInfo(MuxCommand):
     
     # Group similar stat types together based on CATEGORIES
     DISPLAY_CATEGORIES = {
-        'Attributes': ['physical', 'social', 'mental', 'attribute'],
-        'Abilities': ['skill', 'knowledge', 'talent', 'ability'],
-        'Secondary Abilities': ['secondary_knowledge', 'secondary_talent', 'secondary_skill', 'secondary_ability'],
-        'Advantages': ['advantage', 'background'],
+        'Attributes': ['attribute'],
+        'Abilities': ['skill', 'knowledge', 'talent', 'abilities'],
+        'Secondary Abilities': ['secondary_knowledge', 'secondary_talent', 'secondary_skill', 'secondary_abilities'],
+        'Advantages': ['background', 'merit', 'flaw'],
         'Powers': [
             'discipline', 'combodiscipline', 'thaumaturgy', 'gift', 'rite',
             'sphere', 'rote', 'art', 'edge', 'bygone_power', 'realm',
-            'path', 'sorcery', 'faith', 'numina', 'power'
+            'path', 'sorcery', 'faith', 'numina', 'power', 'hedge_ritual',
+            'blessing', 'charm', 'sliver', 'thaum_ritual'
         ],
         'Supernatural': ['lineage', 'enlightenment', 'supernatural'],
-        'Merits & Flaws': ['merit', 'flaw'],
-        'Traits': ['trait', 'personal', 'moral', 'archetype'],
-        'Identity': ['splat', 'kith', 'seeming', 'house', 'seelie-legacy', 'unseelie-legacy', 'court', 'mortalplus_type', 'varna'],
-        'Pools': ['renown', 'arete', 'banality', 'glamour', 'essence', 'quintessence', 'paradox'],
+        'Identity': ['kith', 'seeming', 'house', 'seelie-legacy', 'unseelie-legacy', 'court', 'mortalplus_type', 'varna'],
+        'Archetypes': ['archetype']
     }
     
     ignore_categories = {'other', 'specialty'}  # Categories to ignore in searches
@@ -116,8 +125,6 @@ class CmdInfo(MuxCommand):
         """Format a footer with consistent width."""
         return f"|r=|n" * width + "\n"
 
-
-
     def match_category(self, input_str):
         """Match category and return tuple of (key, display_name)."""
         input_str_lower = input_str.lower()
@@ -146,6 +153,18 @@ class CmdInfo(MuxCommand):
             'virtues': (['virtue'], 'Virtues'),
             'pool': (['renown', 'arete', 'banality', 'glamour', 'essence', 'quintessence', 'paradox'], 'Pools'),
             'pools': (['renown', 'arete', 'banality', 'glamour', 'essence', 'quintessence', 'paradox'], 'Pools'),
+            'blessing': (['blessing'], 'Powers'),
+            'blessings': (['blessing'], 'Powers'),
+            'charm': (['charm'], 'Powers'),
+            'charms': (['charm'], 'Powers'),
+            'hedge ritual': (['hedge_ritual'], 'Powers'),
+            'hedge rituals': (['hedge_ritual'], 'Powers'),
+            'special advantage': (['special_advantage'], 'Advantages'),
+            'special advantages': (['special_advantage'], 'Advantages'),
+            'archetype': (['archetype'], 'Archetypes'),
+            'archetypes': (['archetype'], 'Archetypes'),
+            'nature': (['archetype'], 'Archetypes'),
+            'demeanor': (['archetype'], 'Archetypes')
         }
         
         # Check direct mappings first
@@ -242,10 +261,34 @@ class CmdInfo(MuxCommand):
         results = Stat.objects.filter(query).order_by('name')
 
         if not results.exists():
-            string += f"No {display_name.lower()} found"
-            if only_splat:
-                string += f" for {only_splat}"
-            string += ".\r\n"
+            if display_name == "Powers":
+                # Show power subcategories even if no results
+                string += "Available Power Types:\n\n"
+                power_categories = {
+                    'Vampire Powers': ['discipline', 'combodiscipline', 'thaumaturgy'],
+                    'Werewolf Powers': ['gift', 'rite'],
+                    'Mage Powers': ['sphere', 'rote'],
+                    'Changeling Powers': ['art', 'realm'],
+                    'Sorcerer Powers': ['hedge_ritual', 'path', 'sorcery'],
+                    'Other Powers': ['faith', 'numina', 'power', 'blessing', 'charm', 'special_advantage', 'sliver']
+                }
+                
+                table = EvTable(border="none")
+                table.add_column("|wPower Category|n", width=25)
+                table.add_column("|wTypes|n", width=53)
+                
+                for category, types in power_categories.items():
+                    types_str = ", ".join(t.replace('_', ' ').title() for t in types)
+                    table.add_row(category, types_str)
+                
+                string += str(table)
+                string += "\n\nUse |w+info <type>|n to see specific powers (e.g. |w+info disciplines|n)\n"
+
+            else:
+                string += f"No {display_name.lower()} found"
+                if only_splat:
+                    string += f" for {only_splat}"
+                string += ".\r\n"
         elif display_name in ["Merits & Flaws", "Traits", "Virtues & Vices"]:
             # Merit/flaw/trait table formatting
             table = EvTable("|wName|n", "|wGame Line|n", "|wType|n", "|wValues|n", border="none")
@@ -260,33 +303,39 @@ class CmdInfo(MuxCommand):
                 table.add_row(result.name, game_line, stat_type, formatted_values)
             string += ANSIString(table)
         elif display_name == "Powers":
-            # Powers table formatting with type-specific columns
-            table = EvTable("|wName|n", "|wGame Line|n", "|wType|n", "|wDetails|n", border="none")
-            table.reformat_column(0, width=25, align="l")
-            table.reformat_column(1, width=15, align="l")
-            table.reformat_column(2, width=15, align="l")
-            table.reformat_column(3, width=23, align="l")
+            # Group powers by their type
+            powers_by_type = {}
             for result in results:
-                details = ""
-                if result.stat_type == 'gift':
-                    if result.values:
-                        details = f"Rank {result.values[0]}"
-                    if hasattr(result, 'auspice') and result.auspice and result.auspice != 'none':
-                        details += f" ({result.auspice})"
-                elif result.stat_type in ['discipline', 'combodiscipline', 'thaumaturgy']:
-                    if hasattr(result, 'xp_cost'):
-                        details = f"XP: {result.xp_cost}"
-                elif result.values:
-                    details = f"Level {result.values[0]}" if len(result.values) == 1 else f"Levels {', '.join(map(str, result.values))}"
+                stat_type = result.stat_type.replace('_', ' ').title()
+                if stat_type not in powers_by_type:
+                    powers_by_type[stat_type] = []
+                powers_by_type[stat_type].append(result)
+            
+            # Display each power type in its own section
+            for power_type, power_list in sorted(powers_by_type.items()):
+                string += f"\n|w{power_type}|n\n"
+                table = EvTable("|wName|n", "|wGame Line|n", "|wDetails|n", border="none")
+                table.reformat_column(0, width=25, align="l")
+                table.reformat_column(1, width=20, align="l")
+                table.reformat_column(2, width=33, align="l")
                 
-                game_line = result.game_line or result.splat or "Any"
-                table.add_row(
-                    result.name,
-                    game_line,
-                    result.stat_type.title(),
-                    details
-                )
-            string += ANSIString(table)
+                for power in power_list:
+                    details = ""
+                    if power.stat_type == 'gift':
+                        if power.values:
+                            details = f"Rank {power.values[0]}"
+                        if hasattr(power, 'auspice') and power.auspice and power.auspice != 'none':
+                            details += f" ({power.auspice})"
+                    elif power.stat_type in ['discipline', 'combodiscipline', 'thaumaturgy']:
+                        if hasattr(power, 'xp_cost'):
+                            details = f"XP: {power.xp_cost}"
+                    elif power.values:
+                        details = f"Level {power.values[0]}" if len(power.values) == 1 else f"Levels {', '.join(map(str, power.values))}"
+                    
+                    game_line = power.game_line or power.splat or "Any"
+                    table.add_row(power.name, game_line, details)
+                string += ANSIString(table)
+                string += "\n"
         elif display_name in ["Pools", "Attributes", "Abilities"]:
             # Stat-based table format
             table = EvTable("|wName|n", "|wGame Line|n", "|wType|n", "|wRange|n", border="none")
@@ -312,10 +361,11 @@ class CmdInfo(MuxCommand):
                 table.add_row(result.name, game_line, stat_type)
             string += ANSIString(table)
             
-        string += f"\r\n    Found |w{len(results)}|n entries"
-        if only_splat:
-            string += f" for {only_splat}"
-        string += ".\r\n"
+        if results.exists():
+            string += f"\r\n    Found |w{len(results)}|n entries"
+            if only_splat:
+                string += f" for {only_splat}"
+            string += ".\r\n"
         string += self.format_footer(width=78)
         self.caller.msg(string)
 

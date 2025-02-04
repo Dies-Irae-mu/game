@@ -5,7 +5,7 @@
         "game_line": "Mage: The Ascension",
         "category": "identity",
         "stat_type": "lineage",
-        "values": ["Traditions", "Technocracy", "Nephandi"],
+        "values": ["Traditions", "Technocracy", "Nephandi", "Orphan"],
         "splat": "Mage"
     },
     {
@@ -56,7 +56,7 @@
                 "Kopa Loei", "Red Spear Society", "Sheikha", "Solitaries", "Spirit Smith", "Uzoma"
             ],
             "Order of Hermes": [
-                "House Bonisagus", "House Flambeau", "House Fortunae", "House Quaesitori", "House Shaea", "House Tytalus",
+                "House Bonisagus", "House Flambeau", "House Fortunae", "House Quaesitor", "House Shaea", "House Tytalus",
                 "House Verditius", "House Criamon", "House Jerbiton", "House Merinita", "House Skopos", "House Xaos"
             ],
             "Verbena": [
@@ -123,8 +123,8 @@
         "category": "identity",
         "stat_type": "lineage",
         "values": [
-            "Herald of the Basilisk", "Obliviate", "Malfean", "Baphie", 
-            "Infernalist", "Ironhand", "Mammonite", "K'llashaa"
+            "Heralds of Basilisk", "Obliviates", "Malfeans", "Baphies", 
+            "Infernalists", "Ironhands", "Mammonites", "K'llashaa"
         ],
         "splat": "Mage"
     },

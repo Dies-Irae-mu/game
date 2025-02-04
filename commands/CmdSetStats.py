@@ -1,36 +1,15 @@
 from evennia import default_cmds
-from world.wod20th.models import Stat, SHIFTER_IDENTITY_STATS, SHIFTER_RENOWN, calculate_willpower, calculate_road, PHYLA, INANIMAE_POWERS
+from world.wod20th.models import Stat
+from world.wod20th.utils.shifter_utils import (
+    SHIFTER_IDENTITY_STATS, SHIFTER_RENOWN, SHIFTER_TYPE_CHOICES,
+    AUSPICE_CHOICES, BASTET_TRIBE_CHOICES, BREED_CHOICES,
+    GAROU_TRIBE_CHOICES
+)
+from world.wod20th.utils.changeling_utils import PHYLA, INANIMAE_POWERS
+from world.wod20th.utils.virtue_utils import calculate_willpower, calculate_road, PATH_VIRTUES
 from evennia.utils import search
 from evennia.utils.search import search_object
 from typeclasses.characters import Character
-
-PATH_VIRTUES = {
-    'Humanity': ('Conscience', 'Self-Control'),
-    'Night': ('Conviction', 'Instinct'),
-    'Beast': ('Conviction', 'Instinct'),
-    'Harmony': ('Conscience', 'Instinct'),
-    'Evil Revelations': ('Conviction', 'Self-Control'),
-    'Self-Focus': ('Conviction', 'Instinct'),
-    'Scorched Heart': ('Conviction', 'Self-Control'),
-    'Entelechy': ('Conviction', 'Self-Control'),
-    'Sharia El-Sama': ('Conscience', 'Self-Control'),
-    'Asakku': ('Conviction', 'Instinct'),
-    'Death and the Soul': ('Conviction', 'Self-Control'),
-    'Honorable Accord': ('Conscience', 'Self-Control'),
-    'Feral Heart': ('Conviction', 'Instinct'),
-    'Orion': ('Conviction', 'Instinct'),
-    'Power and the Inner Voice': ('Conviction', 'Instinct'),
-    'Lilith': ('Conviction', 'Instinct'),
-    'Caine': ('Conviction', 'Instinct'),
-    'Cathari': ('Conviction', 'Instinct'),
-    'Redemption': ('Conscience', 'Self-Control'),
-    'Metamorphosis': ('Conviction', 'Instinct'),
-    'Bones': ('Conviction', 'Self-Control'),
-    'Typhon': ('Conviction', 'Self-Control'),
-    'Paradox': ('Conviction', 'Self-Control'),
-    'Blood': ('Conviction', 'Self-Control'),
-    'Hive': ('Conviction', 'Instinct')
-}
 
 class CmdStats(default_cmds.MuxCommand):
     """

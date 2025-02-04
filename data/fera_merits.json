@@ -143,18 +143,30 @@
         "source": "W20 Changing Breeds, pg. 208"
     },
     {
-        "name": "Cat/Fox Magic",
+        "name": "Cat Magic",
         "description": "In addition to the blessings of Luna and Gaia, the character has a rare aptitude for lesser human magic—she is capable of learning what mages call 'hedge magic.' The character can use this talent to mimic Gifts and rites from any Changing Breed, and can develop her own mystic rites given time and Storyteller approval. For a more in-depth treatment of hedge magic, see Sorcerer Revised.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [7],
         "splat": "Shifter",
-        "shifter_type": ["Bastet", "Kitsune"],
+        "shifter_type": ["Bastet"],
+        "source": "W20 Changing Breeds, pg. 208"
+    },
+    {
+        "name": "Fox Magic",
+        "description": "In addition to the blessings of Luna and Gaia, the character has a rare aptitude for lesser human magic—she is capable of learning what mages call 'hedge magic.' The character can use this talent to mimic Gifts and rites from any Changing Breed, and can develop her own mystic rites given time and Storyteller approval. For a more in-depth treatment of hedge magic, see Sorcerer Revised.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "merits",
+        "stat_type": "supernatural",
+        "values": [7],
+        "splat": "Shifter",
+        "shifter_type": ["Kitsune"],
         "source": "W20 Changing Breeds, pg. 208"
     },
     {
         "name": "Step Sideways",
+
         "description": "Unlike normal members of her Breed, the character may step sideways in the manner of the Garou. While almost all members of her Breed can access the Umbra through Gifts or Rites, the character has an inherent connection to the spirit world. Perhaps this is a particular blessing from a powerful spirit, or perhaps it is as much a mystery to her as it is to everyone else.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "merits",

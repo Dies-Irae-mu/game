@@ -35,7 +35,7 @@
         "name": "Nature",
         "description": "This is the 'true' personality of your character — who she is deep down.",
         "game_line": "Vampire: The Masquerade",
-        "category": "archetype",
+        "category": "identity",
         "stat_type": "personal",
         "values": []
     },
@@ -43,7 +43,7 @@
         "name": "Demeanor",
         "description": "This is the personality your character presents to the world. Often different from Nature.",
         "game_line": "Vampire: The Masquerade",
-        "category": "archetype",
+        "category": "identity",
         "stat_type": "personal",
         "values": []
     },

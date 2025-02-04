@@ -68,13 +68,297 @@
         "source": "Ghouls & Revenants"
     },
     {
+        "name": "Supernatural Kinfolk",
+        "description": "This Merit is not intended for mortal Kinfolk. If, however, you intend to play a vampire, mage, wraith, or changeling character who is also Kinfolk, you must purchase this Merit. Despite your supernatural status, your Garou tribe (or other Changing Breed) accepts you as Kin. They may not rejoice in it, but they don't automatically deny or reject you. Individuals outside your family, including other Garou, may not like you. Other tribes may not acknowledge you as Kin. Most Garou view mages as Gnosis-raiders. They see vampires as Wyrm-spawn, wraiths as un-natural, and changelings as untrustworthy. In fact, you may experience a conflict of interest in walking a fine line between your two supernatural worlds. You find, nevertheless, that there is merit in knowing about both your supernatural and your Kinfolk backgrounds. Supernatural Kinfolk costs four points for mages, changelings, and wraiths. Vampire Kinfolk costs 5 points due to the inherent hostility between Garou and Kindred. Sometimes even family ties are hard-pressed to bridge the gap between the two gestalts. Kinfolk characters created with the standard rule (i.e., those who are not either dead, Awakened, Embraced, or Kithain), may not have this Merit. It is reserved exclusively for characters constructed as wraiths, vampires, mages, or changelings based upon the rules for those games.",
+        "game_line": "Werewolf the Apocalypse",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": "Kinfolk",
+        "stat_type": "supernatural",
+        "values": [4, 5],
+        "source": "Kinfolk: A Breed Apart"
+    },
+    {
+        "name": "Gnosis",
+        "description": "More than any other blessing, the possession of Gnosis among Kin is a special mark of Gaia's favor. It's extremely rare for mortals to be so gifted. Having Gnosis grants many privileges, such as the ability to learn Gifts, use fetishes and, in the case of a vampire's Embrace, the chance to die with dignity and honor, rather than suffer unlife. Even the stuffiest Garou gives a nod of respect to a Kin who possesses Gnosis. Kinfolk lucky enough to possess Gnosis recover it in the same manner as Garou. Kinfolk cannot have Rage; they do not have the fury of Gaia within them. Five points spent on this Merit grants one point of Gnosis; six points grants two points of Gnosis; and seven points, three points of Gnosis.",
+        "game_line": "Werewolf the Apocalypse",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": "Kinfolk",
+        "stat_type": "supernatural",
+        "values": [5, 6, 7],
+        "source": "Kinfolk: A Breed Apart"
+
+    },
+    {
+        "name": "Feral Appearance",
+        "description": "Whether you're more rugged than average or have a lean, hungry look to your features, werewolves like what they see. It isn't a matter of physical beauty as human society judges it; there's just something about you that stirs werewolves' animal natures.",
+        "game_line": "Werewolf the Apocalypse",
+        "category": "merits",   
+        "splat": "Mortal+", 
+        "mortalplus_type": "Kinfolk",
+        "stat_type": "physical",
+        "values": [1],
+        "source": "Kinfolk: A Breed Apart"
+
+    },
+    {
+        "name": "Wolf-sense",
+        "description": "A blend of folk wisdom, practical sense, and animal instinct.",
+        "game_line": "Werewolf the Apocalypse",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": "Kinfolk",
+        "stat_type": "mental",
+        "values": [1],
+        "source": "Kinfolk: A Breed Apart"
+
+    },
+    {
+        "name": "Gall",
+        "description": "Audacity, guts, pluck — you've got it. You aren't afraid to stand up to anyone, from hoodlums to tribal leaders. This isn't brash, foolhardy behavior; you simply don't get the shakes when the Silver Fang Ahroun comes to speak to you.",
+        "game_line": "Werewolf the Apocalypse",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": "Kinfolk",
+        "stat_type": "social",
+        "values": [2],
+        "source": "Kinfolk: A Breed Apart"
+
+    },
+    {
+        "name": "Recognize Garou",
+        "description": "You've become adept at picking out werewolves in a crowd. This is not mystical awareness; it's simply knowing the physical and personality traits that mark Gaia's warriors.",
+        "game_line": "Werewolf the Apocalypse",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": "Kinfolk",
+        "stat_type": "social",
+        "values": [3],
+        "source": "Kinfolk: A Breed Apart"
+
+    },
+    {
+        "name": "Good Old Boy",
+        "description": "You're an intrinsically nice person, and werewolves and Kin tend to like you. Even lupus Garou may approach you in a friendly manner. Take an extra die on all Social rolls involving interaction with Garou or Kinfolk.",
+        "game_line": "Werewolf the Apocalypse",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": "Kinfolk",
+        "stat_type": "social",
+        "values": [2],
+        "source": "Kinfolk: A Breed Apart"
+
+    },
+    {
+        "name": "Good Old Girl",
+        "description": "You're an intrinsically nice person, and werewolves and Kin tend to like you. Even lupus Garou may approach you in a friendly manner. Take an extra die on all Social rolls involving interaction with Garou or Kinfolk.",
+        "game_line": "Werewolf the Apocalypse",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": "Kinfolk",
+        "stat_type": "social",
+        "values": [2],
+        "source": "Kinfolk: A Breed Apart"
+    },
+
+    {
+        "name": "Fetish",
+        "description": "You own a fetish. Work with your Storyteller on constructing the item and its backstory. Five points equals a Level One fetish, six points a Level Two fetish, and seven points a Level Three fetish. If you do not have the Gnosis Merit, you may not be able to attune the Fetish to yourself or use it.",
+        "game_line": "Werewolf the Apocalypse",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": "Kinfolk",
+        "stat_type": "supernatural",
+        "values": [5, 6, 7],
+        "source": "Kinfolk: A Breed Apart"
+    },
+    {
+        "name": "Innocent",
+        "description": "If you've done something wrong, you are the last to be blamed, unless evidence of your wrongdoing is brought forward. This does not mean you are 'an innocent'; everyone simply assumes you are.",
+        "game_line": "Sorcerer",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": ["Sorcerer", "Psychic"],
+        "stat_type": "social",
+        "values": [1],
+        "source": "Sorcerer: Revised"
+    },
+    {
+        "name": "Psychic Awareness",
+        "description": "Even if you have no psychic powers of your own, you can sense the presence of recent psychic energies within a nearby area (about a 10-foot radius) with a Perception + Occult (difficulty 8) roll. How much information you glean and how detailed it is depends on your successes. A single success might merely confirm that a psychic talent was at work recently, while five or more might allow you to pick up the lingering sensation of a talented psychic who had been here, her strength, mood, and plans at the moment she had passed by.",
+        "game_line": "Sorcerer",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": ["Sorcerer", "Psychic"],
+        "stat_type": "supernatural",
+        "values": [3],
+        "source": "Sorcerer: Revised"
+    },
+    {
         "name": "Flow of Ki",
-        "description": "You can directly channel your mana to aid in physical actions.",
+        "description": "You understand the natural flow of energy through the human body, taught through a form of martial arts. This energy is represented as Quintessence but may be called a variety of things: chi, ki, and others, depending on your martial arts style. You may spend Quintessence from your internal reserves to reduce the difficulty of any die pool for physical actions. You cannot lower the difficulty below two, nor may you reduce it by more than three. You must be able to store Quintessence in your own pattern to be eligible for this Merit.",
+        "game_line": "Sorcerer",
+        "category": "merits",   
+        "splat": "Mortal+", 
+        "mortalplus_type": "Sorcerer", 
+        "stat_type": "physical",
+        "values": [3],
+        "source": "Sorcerer: Revised"
+    },
+    {
+        "name": "Force of Spirit",
+        "description": "The light of your soul is evident to those around you. You may physically glow, appear divinely beautiful, or perhaps your voice resonates with the music of the spheres. You may spend Quintessence points to reduce the difficulty of a social roll on a one-for-one basis. No difficulty may be lower than two, and none may be lowered by more than three. You must be able to store Quintessence in your own pattern to be eligible for this Merit.",
         "game_line": "Sorcerer",
         "category": "merits",
         "splat": "Mortal+",
         "mortalplus_type": "Sorcerer",
-        "stat_type": "physical",
-        "values": [3]
+        "stat_type": "social",
+        "values": [2],
+        "source": "Sorcerer: Revised"
+    },
+    {
+        "name": "Strength of Psyche",
+        "description": "You have developed a talent to draw on arcane energies to supercharge your mind. You can sharpen your senses, speed your thoughts, and connect the dots between disparate clues. You may spend Quintessence points to reduce the difficulty of any die pool for a mental action. The difficulty may not be reduced below two, nor be reduced by more than three. You must be able to store Quintessence in your own pattern to be eligible for this Merit.",
+        "game_line": "Sorcerer",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": "Sorcerer",
+        "stat_type": "mental",
+        "values": [2],
+        "source": "Sorcerer: Revised"
+    },
+    {
+        "name": "Detached",
+        "description": "The power of your mind is beyond the anchor of your body — physical existence separated from psychic phenomena. You do not suffer wound penalties on uses of your psychic powers until you are Incapacitated. When you are Incapacitated, you may spend a Willpower point to attempt to manifest a psychic power at half the normal die pool (rounded down). You can only try this once per scene, after which you fall unconscious.",
+        "game_line": "Sorcerer",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": "Sorcerer",
+        "stat_type": "mental",
+        "values": [4],
+        "source": "Sorcerer: Revised"
+    },
+    {
+        "name": "Rote Sorcerer",
+        "description": "While many sorcerers specialize in well-trod Paths or other Numina, some are more specialized but capable of doing things beyond what the usual Numina have to offer. A Rote Sorcerer has some specific power that they can perform. This power can be essentially anything, limited only by the fact that they need to have a talent and they need someone who can do it (usually a mage) to teach them. For each purchase of this Merit, the sorcerer chooses a rote, as per M20. By default, the sorcerer can cast this specific rote with a dicepool equal to the highest sphere. In this case, the Merit costs one point per Sphere in the effect. So a Forces 3, Prime 2 effect would count as a 5-pt. Merit. The sorcerer cannot cast the rote as quickly as a mage: they must spend a number of turns equal to the highest Sphere for each casting roll. Finally, because sorcerers aren't affected by Paradox, there is no reaction to a successful casting, but a botched one will result in some appropriate mishap resulting in damage similar to a Paradox backlash. The following options may change this cost: +1: Instead of a fixed dice pool of the highest Sphere in the rote, the sorcerer chooses an Attribute + Ability pool and rolls that to perform the rote. +1: The rote is a specialty, that is, 10s count as 2 successes when casting it -1: Though the sorcerer can do it, the rote is particularly difficult, adding one to the difficulty of each casting +2: The rote can be cast in a single turn. +1: Decrease the number of mishap dice by one. This may be purchased multiple times, but the dice pool can never fall below one.",
+        "game_line": "Sorcerer",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": "Sorcerer",
+        "stat_type": "supernatural",
+        "values": [1, 2, 3, 4, 5, 6, 7],
+        "source": "Sorcerer: Paths of Power"
+    },
+    {
+        "name": "Style Sleeper",
+        "description": "Your character knows that magic is real, they practice magic themselves, but these other pretenders are clearly fakes. Anytime you see magic that fits your Paradigm, things proceed as they should, but when you are a witness to magic outside of that style, you are treated as a Sleeper. This is not a Flaw because it more often disrupts the magic of your opponents and not your own. There may be some unintended consequences when another sorcerer of a different Paradigm tries to heal you, but your disbelief counters their magic.",
+        "game_line": "Sorcerer",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": "Sorcerer",
+        "stat_type": "supernatural",
+        "values": [2],
+        "source": "Sorcerer: Paths of Power"
+    },
+    {
+        "name": "Special Friend",
+        "description": "You have a friend who is not entirely human. Perhaps they are a vampire who decided that befriending you would help them stay in touch with their Humanity, a werewolf who considers you like family, or a mage who wants to guide you to a deeper understanding one day. Whatever they are, you only have vague ideas about them and their kind, enough from listening to them to pick up a dot or two of an appropriate Lore, but no more. They will be willing, at times, to come to your aid, but that will also bring along all the entanglements that being around someone like them always does.",
+        "game_line": "Sorcerer",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": "Sorcerer",
+        "stat_type": "social",
+        "values": [3],
+        "source": "Sorcerer: Paths of Power"
+    },
+    {
+        "name": "Twin Link",
+        "description": "Your psychic character shares a permanent psychic connection to another person. This duplicates the benefit of the Level Two Synergy effect. The linked psychics gain +2 to their Empathy score to determine the other party’s feelings. As a 6pt Merit, the bonded characters can purchase the Synergy power, in addition to other psychic powers they may have at a lower cost — 7 freebie points per dot, 3 experience points per dot to increase. This Synergy power only works on their bonded partner.",
+        "game_line": "Sorcerer",
+        "category": "merits",
+        "splat": "Mortal+", 
+        "mortalplus_type": "Psychic",
+        "stat_type": "supernatural",
+        "values": [4, 6],
+        "source": "Sorcerer: Paths of Power"
+    },
+    {
+        "name": "Wild Talent",
+        "description": "While many psychics never receive proper training to develop their gifts, you lack even basic control of your powers. However, without burdensome control over your talents comes greater power. Use the following table to determine the costs and effect of this Merit (or Flaw) which cannot exceed 4 points: +1 For every extra die you have when using the power.",
+        "game_line": "Sorcerer",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": "Psychic",
+        "stat_type": "supernatural",
+        "values": [4],  
+        "source": "Sorcerer: Paths of Power"
+    },
+    {
+        "name": "Path Natural",
+        "description": "You are naturally gifted to one Path of power. This could be tied to your mundane skills that translate easily to magic, a heritage that calls to certain power, or you have made a deal with otherworldly beings to open yourself to greater power. During character creation, chose one Path; in this Path, you only pay three-quarters experience to advance to higher levels or to learn rituals for that Path.",
+        "game_line": "Sorcerer",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": "Sorcerer",
+        "stat_type": "supernatural",
+        "values": [5],
+        "source": "Sorcerer: Paths of Power"    
+    },
+    {
+        "name": "Sterile",
+        "description": "Put simply, your sorcerer cannot have children. For those who practice Tantric rituals or require sex as a focus, but do not desire pregnancy or unwanted children, this is a Merit. For those who belong to cultures, strong families or marriages that expect them to have children, this is a Flaw.",
+        "game_line": "Sorcerer",
+        "category": "merits",
+        "splat": "Mortal+", 
+        "mortalplus_type": "Sorcerer",
+        "stat_type": "social",
+        "values": [1],
+        "source": "Sorcerer: Revised"
+    },
+    {
+        "name": "Faction Favorite",
+        "description": "Awakened mages may be the visionaries who help the Traditions and Conventions build the future, but it is the linear mages who provide the bedrock foundation upon which new recruits, cultural identity, stable Chantries and hopes for the future are actually built. Whether due to a special distinction for conserving the past glories of a Tradition or a solid reputation as one of the backbones of organizational power, you command respect in your Tradition or Convention. This is important because the worldwide influences of the mighty keystone associations of magicians transcend most of the smaller societies that manage to survive the ages. Modify all social rolls connected to Tradition or Convention Status or decision-making by two points of difficulty in your favor.",
+        "game_line": "Sorcerer",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": ["Sorcerer", "Psychic", "Faithful"],
+        "stat_type": "social",
+        "values": [2],
+        "source": "Sorcerer: Revised"
+
+    },
+    {
+        "name": "Ritual Congregation",  
+        "description": "Some magicians require large numbers of believers to aid them in creating the resonance and trappings necessary to invoke spells or rituals. Most individuals limited in such a way become adept at manipulating or swaying audiences into helping them, unwittingly or not. You have carefully cultivated a group of at least 100 members who are at least familiar enough with the concepts of your magical style to serve as useful aids in the process. Of course, most of them are expecting something in return, whether it be redemption, social interaction or direct magical benefit.",
+        "game_line": "Sorcerer",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": ["Sorcerer", "Psychic", "Faithful"],
+        "stat_type": "social",
+        "values": [4],
+        "source": "Sorcerer: Revised"
+    },
+    {
+        "name": "Psychic Ritual",
+        "description": "Your psychic is a true rarity amongst the pure practitioners of the Arts of mental magic. Some realization of the importance of the universe has crept into his consciousness sufficiently that he has even managed to create a ritual that allows him to perform some extended psychic effect. You need to create a ritual, approved of by your Storyteller, for one of the levels of one of your character’s psychic Paths. When your character performs this ritual, you may use the normal rules for rituals and extended magic rules, with minor necessary changes. Obviously, as your psychic does not gain Paradox, the penalty for a botch falls to the Storyteller, greatly increasing the horrific effects of the catastrophic failure. Your roll is limited to no more dice than your psychic’s Stamina + Parapsychology.",
+        "game_line": "Sorcerer",
+        "category": "merits",  
+        "splat": "Mortal+",
+        "mortalplus_type": "Psychic",
+        "stat_type": "supernatural",
+        "values": [2],
+        "source": "Sorcerer: Revised"
+    },
+    {
+        "name": "Blood Magic",
+        "description": "Perhaps you learned magic from a particularly dark cult. Maybe your spirit needs additional energy, beyond your strength of will, to enact magic. Perhaps you foolishly studied under a vampire or from tomes plundered from vampires. Whatever the reason, your sorcerer’s use of magic always requires the sacrifice of his own blood. In some cases, it will simply burn away from inside. In others, the magician must cut himself and include it in the ritual. Each use of magic causes an unsoakable level of bashing damage. Furthermore, the Resonance of your magic is likely to be dark, or at the very least, martyred in nature.",
+        "game_line": "Sorcerer",
+        "category": "merits",
+        "splat": "Mortal+",
+        "mortalplus_type": "Sorcerer",
+        "stat_type": "supernatural",
+        "values": [5],
+        "source": "Sorcerer: Revised"
     }
 ]

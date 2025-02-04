@@ -23,22 +23,22 @@
         "splat": "Mortal+"
     },
     {
-        "name": "Psychic",
-        "description": "Psychic",
-        "game_line": "Various",
-        "category": "identity",
-        "stat_type": "lineage",
-        "values": ["Sorcerer", "Psychic", "Faithful", "Ghoul", "Kinain", "Kinfolk", "Consor"],
-        "splat": "Mortal+"
-    },
-    {
-        "name": "Societies",
+        "name": "Society",
         "description": "Societies of the Church that work with the faithful.",
         "game_line": "Various",
         "category": "identity",
         "stat_type": "lineage",
         "values": ["Oculi Dei", "Red Order", "Poor Knights of Acre", "Order of the Holy Sepulchre", "Rifa'i", "Sanctified Flame", 
                    "Keepers of the Holy Writ", "Purifying Tempest", "Illuminated Crusade", "Sacred Thorn", "Order of the Divine Vigil"],
+        "splat": "Mortal+"
+    },
+    {
+        "name": "Domitor",
+        "description": "The Domitor is a ghoul's vampire master.",
+        "game_line": "Various",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": [],
         "splat": "Mortal+"
     }
 ]

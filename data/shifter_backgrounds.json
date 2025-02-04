@@ -110,5 +110,41 @@
         "category": "backgrounds",
         "stat_type": "background",
         "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Batsu",
+        "description": "A Batsu are the Kitsune's closest allies and friends, with whom they keep a very special and tight bond. Most Kitsune are part of a Batsu of a few kitsune. This is a relationship similar to that of many trio, quartets or even quintets that populate East Asian mythology and fiction. It is comparable to the Allies Background, but involves a much deeper relationship.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "shifter_type": "Kitsune"
+    },
+    {
+        "name": "Kitsune Clan",
+        "description": "The Clan of a Kitsune is a group of family, kin and friends who know the truth about werefoxes and their purpose. This includes many Kinfolk, but also regular humans who are chosen with great care as trustful allies. After all not inducing Delirium has also some advantages. This replaces the Kinfolk Background for Kitsune.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "shifter_type": "Kitsune"
+    },
+    {
+        "name": "Go-En",
+        "description": "This represents a network of minor contacts that a Kitsune uses, instead of relying on a singular major contact, so they can have multiple sources of information on various topics. Kitsune may make Contacts rolls to find someone to aid them in any given endeavor at a Difficulty of 5, rather than 7.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "shifter_type": "Kitsune"
+    },
+    {
+        "name": "Sempai",
+        "description": "A Sempai is essentially comparable to a Mentor for a Kitsune, with some differences. A Kitsune can also have a group of Hengeyokai as mentors. Such Mentor can be an uncle or an aunt (or both), a Kitsune parent, a court sentai (a group) that adopts the Kitsune as a mascot, or a ranking official of a Beast Court. Four dots of Sempai are equivalent to a five-tailed Kitsune Sempai, and five dots to a six-tailed one.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "shifter_type": "Kitsune"
     }
 ]

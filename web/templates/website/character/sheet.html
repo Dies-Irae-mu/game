@@ -1212,8 +1212,8 @@ function setPrimaryImage(key, dbref, imageId) {
                 }
             });
             
-            // Then set the new primary image
-            const newPrimaryItem = document.querySelector(`.gallery-item:has([data-image-id="${imageId}"])`);
+            // Fix: Update selector to find the correct gallery item
+            const newPrimaryItem = document.querySelector(`.gallery-item[data-image-id="${imageId}"]`);
             if (newPrimaryItem) {
                 newPrimaryItem.classList.add('primary');
                 const button = newPrimaryItem.querySelector('.make-primary');
@@ -1224,7 +1224,7 @@ function setPrimaryImage(key, dbref, imageId) {
             
             // Update main image
             const mainImage = document.querySelector('.character-image');
-            const newPrimaryImage = document.querySelector(`.gallery-item:has([data-image-id="${imageId}"]) img`);
+            const newPrimaryImage = document.querySelector(`.gallery-item[data-image-id="${imageId}"] img`);
             if (mainImage && newPrimaryImage) {
                 mainImage.src = newPrimaryImage.src;
             }

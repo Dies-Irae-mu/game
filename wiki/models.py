@@ -60,6 +60,7 @@ class WikiPage(models.Model):
     published = models.BooleanField(default=True)
 
     class Meta:
+        app_label = 'wiki'
         verbose_name = "Wiki Page"
         verbose_name_plural = "Wiki Pages"
         ordering = ['title']
@@ -129,6 +130,7 @@ class WikiRevision(SharedMemoryModel):
     )
 
     class Meta:
+        app_label = 'wiki'
         verbose_name = "Wiki Revision"
         verbose_name_plural = "Wiki Revisions"
         ordering = ['-edited_at']
@@ -138,6 +140,12 @@ class WikiRevision(SharedMemoryModel):
 
 
 class FeaturedImage(models.Model):
+    """
+    Model for storing featured images for wiki pages.
+    """
+    class Meta:
+        app_label = 'wiki'
+
     page = models.OneToOneField(
         'WikiPage',
         on_delete=models.CASCADE,

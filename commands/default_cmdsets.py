@@ -18,7 +18,7 @@ from evennia import default_cmds
 from commands.CmdGradient import CmdGradientName
 from commands.CmdShortDesc import CmdShortDesc
 from commands.CmdPose import CmdPose
-from commands.CmdSetStats import CmdStats, CmdSpecialty
+from commands.CmdSetStats import CmdStats
 from commands.CmdSheet import CmdSheet
 from commands.CmdInfo import CmdInfo
 from commands.CmdHurt import CmdHurt
@@ -48,6 +48,7 @@ from commands.CmdShift import CmdShift
 from commands.CmdStaff import CmdStaff, CmdPST
 from commands.unfindable import CmdUnfindable
 from commands.CmdChangelingInteraction import CmdChangelingInteraction
+from commands.CmdBanality import CmdBanality
 
 from commands.bbs.bbs_all_commands import CmdBBS
 from commands.bbs.bbs_admin_commands import CmdResetBBS
@@ -117,10 +118,9 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdAlias())
         self.add(CmdLFRP())
         self.add(CmdStaff())
-        self.add(CmdSpecialty())
         self.add(CmdUnfindable())
         self.add(JobSystemCmdSet)
-
+        self.add(CmdBanality())
         self.add(CmdUmbraInteraction())
         self.add(CmdMeet())
         self.add(CmdPlusIc())

@@ -14,8 +14,16 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "identity",
         "stat_type": "lineage",
-        "values": ["Homid", "Metis", "Animal-Born"],
+        "values": ["Homid", "Metis", "Animal-Born", "Rodens", "Latrani", "Balaram", "Suchid", "Ahi", "Koji", "Roko", "Shinju", "Arachnid"],
         "splat": "Shifter"
+    },
+    {
+        "name": "Rank",
+        "description": "The Rank of a shifter character.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": [1, 2, 3, 4, 5, 6]
     },
     {
         "name": "Deed Name",

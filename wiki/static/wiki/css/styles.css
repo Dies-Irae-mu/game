@@ -18,6 +18,38 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'zw_error_system';
+    src: url('/static/wiki/fonts/zw_error_system.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'true_lies';
+    src: url('/static/wiki/fonts/true_lies.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Illumina';
+    src: url('/static/wiki/fonts/Illumina.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'bygonest_rustic_regular';
+    src: url('/static/wiki/fonts/bygonest_rustic_regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* Global styles */
 * {
     margin: 0;
@@ -35,22 +67,23 @@ body {
 
 /* Typography */
 h1, h2, h4 {
-    font-family: 'impact_label_reversed', Arial, sans-serif;
     color: #fff;
-    letter-spacing: 5px;
+    letter-spacing: 4px;
     background-color: #000;
     padding: 10px;
     font-weight: normal;
 }
 
 h1 {
-    font-size: 28px;
+	font-family: 'bygonest_rustic_regular';
+    font-size: 30px;
     border-bottom: 1px solid #fff;
     padding-bottom: 10px;
 }
 
 h2 {
-    font-size: 24px;
+	font-family: 'impact_label_reversed', Arial, sans-serif;
+    font-size: 28px;
     background-color: #000;
     border-bottom: 1px solid #fff;
     padding-top: 5px;
@@ -58,9 +91,9 @@ h2 {
 }
 
 h3 {
-    font-size: 28px;
+    font-family: 'true_lies', Arial, sans-serif;
+    font-size: 23px;
     padding: 10px;
-    font-family: 'punktype', Arial, sans-serif;
     font-weight: normal;
     letter-spacing: 5px;
 }
@@ -429,7 +462,7 @@ ul {
         color: rgba(255, 255, 255, 0.7);
         text-decoration: none;
         font-size: 24px;
-        font-family: 'impact_label_reversed', Arial, sans-serif;
+        font-family: 'zw_error_system', Arial, sans-serif;
     }
 }
 
@@ -620,7 +653,7 @@ footer {
     color: #fff;
     text-align: center;
     padding: 24px 0;
-    font-family: "impact_label_reversed", Arial, sans-serif;
+    font-family: "bygonest_rustic_regular.woff", Arial, sans-serif;
     margin-top: auto;
 }
 
@@ -942,7 +975,7 @@ footer a:hover {
     margin: 0;
     padding: 0;
     font-size: 16px;
-    font-family: 'impact_label_reversed', Arial, sans-serif;
+    font-family: 'bygonest_rustic_regular', Arial, sans-serif;
 
 }
 
@@ -973,7 +1006,7 @@ p {
     color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
     font-size: 20px;
-    font-family: 'impact_label_reversed', Arial, sans-serif;
+    font-family: 'zw_error_system', Arial, sans-serif;
     display: block;
     padding: 10px;
     transition: all 0.3s ease-in-out;
@@ -987,11 +1020,9 @@ p {
     transform: translateX(0);
 }
 
-/* Remove the duplicate media query styles for sliding-menu a */
-
 /* Dropdown menu styling updates */
 .dropdown-header {
-    font-family: 'impact_label_reversed', Arial, sans-serif;
+    font-family: 'zw_error_system', Arial, sans-serif;
     color: rgba(255, 255, 255, 0.5);
     font-size: 20px;
     padding: 10px 16px;
@@ -1244,7 +1275,7 @@ p {
 
 /* Mobile menu styling */
 .sliding-menu .dropdown-header {
-    font-family: 'impact_label_reversed', Arial, sans-serif;
+    font-family: 'zw_error_system', Arial, sans-serif;
     color: rgba(255, 255, 255, 0.5);
     font-size: 20px;
     padding: 20px 20px 10px;

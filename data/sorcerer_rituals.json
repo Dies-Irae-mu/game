@@ -1,0 +1,538 @@
+[
+		{
+			"name": "Object Permanence",
+			"description": "Hedge magicians naturally have an easier time summoning targets they have a strong connection to, such as a beloved pet or the ritual knife their mentor gifted them. With Object Permanence, the hedge magician forces a supernatural connection to objects for future summoning. This treats the target as \"well-known to the sorcerer,\" even if the sorcerer found it in a dumpster an hour ago. The sorcerer meditates within 10 feet of the target and spends a point of Willpower. Every success represents a day the target maintains the supernatural connection to the sorcerer. A hedge magician may have a maximum number of targets bound this way at once as they have dots in Conjuration.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [2]
+		},
+		{
+			"name": "Always Armed",
+			"description": "The sorcerer doesn't have to appear armed to have a weapon at the ready. Due to the nature of this ritual, it's nearly always hung before the sorcerer enters a potentially dangerous situation. If they need to access the weapon, the sorcerer completes the ritual by reaching into their trenchcoat or a convenient shadow to summon it. Traditionally, sorcerers used this ritual to conjure swords, but in modern times it's most common for a sorcerer to summon a shotgun or rifle. The summoned weapon can't be larger than a shotgun or long sword.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Shitstorm",
+			"description": "The hedge magician surrounds themself and companions within 25 feet of them with a swirling shell of small inanimate objects. This adds +1 difficulty to hit anyone covered by the effect with a ranged attack for every 2 activation successes. Additionally, anyone attempting close combat against those affected by the ritual must soak [activation successes] in damage. This is usually bashing, unless the sorcerer was in a room filled with broken glass, small knives, or other sharp objects, in which case the damage is lethal. The sorcerer doesn't have to target any enemy in particular for this to occur. Anyone, friend or foe, who gets too close to the flying debris is hit and must soak the damage.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Extraction",
+			"description": "Another ritual commonly hung \"just in case\", Extraction allows the sorcerer to take fallen or overwhelmed companions out of battle and to safety. The sorcerer first moves out of range of combat, typically behind cover, and pulls their companions out of a shadow. There isn't a difficulty increase or success penalty if the companions aren't resisting and aren't immediately being targeted — the chaos of combat can hide this ritual's use. Once the sorcerer and their companions are out of range, they aren't counted as being in combat unless a combatant finds them and attacks. This powerful ritual can work on up to 10 companions, who the sorcerer must define when initially performing the ritual.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [4]
+		},
+		{
+			"name": "Sprint",
+			"description": "Sometimes, a magician needs to travel a short distance quickly. Though preparations vary, mostly by practice and Ability, this Ritual always concludes by lacing up a pair of blue sneakers. Once they are on, the magician can run faster than any mundane human, so long as no one sees them do so. Each success on the ritual doubles the running speed and grants one minute of running. At the end, the ritual leaves the magician exhausted, and they must rest for five minutes.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [1]
+		},
+		{
+			"name": "Teleport Ward",
+			"description": "Hedge magicians studying the Path of Conveyance quickly learn to defend themselves from it. By marking out a room or building in an appropriate way — a chalk circle, sigils on the walls, or anti-teleportation field projectors, etc. — they can make it harder for other hedge magicians to use the Path to enter the area. After the ritual is set, each success must be overcome by a caster trying to enter the bounded area. This protection degrades at a rate of one success per month, but a single success on another ritual roll restores it.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [2]
+		},
+		{
+			"name": "Get Me the Heck Outta Here!",
+			"description": "One of the most useful tools a magician can have in their pocket is an escape route for when things go badly. This ritual instantly brings the magician back to a pre-prepared home location within 50 miles of them. It requires at least four successes to cast, though additional successes 20 miles apiece to the ritual's range. An additional roll when casting the ritual allows the magician to return to a secondary location if their dedicated home is too far away. This ritual is almost always cast as a hanging ritual.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Information Superhighway",
+			"description": "For technology-based magicians, there's an unusual means of transportation often overlooked by mystics. It's harder to access than others but can sometimes reach places Conveyance normally can't. This ritual allows the caster to travel from any electrical outlet to any other, by converting the magician into electricity. The range is limited to 5 miles per success. This travel takes one minute per 5 miles. However, the archetypical sealed room Conveyance can't access is usually not sealed off from electricity: If an outlet exists, then the magician can get to it.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [4]
+		},
+		{
+			"name": "Teleportal",
+			"description": "Masters of the Path of Conveyance can do more than simply transport themselves and others from place to place. They can create stable gateways between two locations. First, the magician must prepare both sites for the portal to be created. This takes three days of preparation at each site using trappings and materials appropriate to the caster's Path Ability. Once the appropriate preparations are complete, the magician makes an extended roll, with one roll per hour. It requires at least one success per 10 miles between the portals. Each extra success adds five uses of the portal or a condition at one or both ends, such as a restriction on who can use it or making the portal one way. Creating this portal costs one permanent Willpower point, which is not refunded if the portal dissipates. Teleportal is a complex ritual, best accomplished with assistants.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [5]
+		},
+		{
+			"name": "Dowsing",
+			"description": "This ritual allows the diviner to find lost people and objects by looking back to where they were lost. It's much more effective on objects, as people tend to move on their own more. While short range dowsing can involve the Instruments pointing in the direction that the sorcerer must move in to find the person or object, at long range a map is generally used with the method of choice pointing to some location. The diviner must either be familiar with the object or have some personal object belonging to the lost person. For finding an object, the difficulty is between 6 and 8, depending on how well-hidden the object is and how common such objects are (keys are usually easy to find, gold deposits much harder). For people, the difficulty increases by 1.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [2]
+		},
+		{
+			"name": "Eldritch Mark",
+			"description": "By inscribing a symbol or mark onto an object or the forehead of a person, the magicians marks them as theirs. The mark is invisible to the naked eye, but obvious to anyone with magically enhanced perceptions of any sort. The mark informs anyone looking at it of the name of the magician who created the mark. This ritual takes five minutes to cast and has no Willpower cost. The mark lasts until the next new moon.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [1]
+		},
+		{
+			"name": "Enhance Craftsmanship",
+			"description": "Sometimes, instead of a magic item, what a magician needs is an otherwise normal but perfectly crafted object. This ritual creates unbreakable blades, sweaters that don't unravel, and similar objects whose only enhancement is in the extreme quality of their crafting. These objects cannot be enchanted further, however. Enhanced items are not magical, but an Enchanter or Alchemist can roll Perception + Occult (difficulty 6) to recognize that they were created in this manner. This ritual must be cast during the creation of the object, or takes 15-20 minutes after the fact, and costs no Willpower.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [2]
+		},
+		{
+			"name": "Belle/Beau/Bright of the Ball",
+			"description": "With knowledge of an upcoming social event and proper preparation, a sorcerer can make themselves quite the sensation. With an invitation in hand, whether intended for them or not, the magician infuses their presence into the upcoming gathering. For the duration of the specified party, they receive VIP treatment from all attendees and hired staff. The organizers give their blessing and offer a hearty \"have a great night\" without second-guessing their guest list.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Love Potion Number 9",
+			"description": "Regardless of its classic and iconic nature, usage of the \"love potion\" has fallen out of fashion for obvious reasons. As societies have become more insistent on the importance of consent, sorcerers have had less call to take the time and resources required to perform this ritual. Those that are still willing to make the potent mixture of love and loyalty do so with hesitancy and charge a premium price. A lock of hair, a dram of blood, or a sentimental personal effect is required to create the right connection to the heart in question. When performed for an individual other than the sorcerer themselves, some part of the client is usually required as well. The ritual takes the form of the traditional potion in some practices; in others it is a sort of ritualized binding with a knotted cord. In all cases, the victim is tied to the anchor point of the sorcerer or their client. Once performed, the victim finds themselves uneasy and sick to their stomach. The lingering nausea vanishes when the anchor is near, or when they are performing a task that they know would please the anchor.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [4]
+		},
+		{
+			"name": "Death Curse",
+			"description": "One of the most extreme rituals a magician can perform, the Death Curse always results in their death, and usually the destruction of their enemies. The magician spends all of their permanent Willpower, gaining a pool of successes equal to their value for the final spell. This ritual allows them to increase the level of Aspects to 2 higher than their Path rating, allowing relatively powerful magicians to sacrifice themselves for legendary curses (or, more rarely, blessings). Curses that resound for generations with fates worse than death for entire towns aren't unheard of for the most powerful of magicians who find themselves willing to make the sacrifice. They make their Path roll at a difficulty determined by the Aspects as usual, but with that additional pool of automatic successes. Upon completing the ritual, the magician collapses, having spent their life in the casting; they're often dead before they even hit the floor.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [1]
+		},
+		{
+			"name": "Step on a Crack",
+			"description": "A common rhyme among children says, \"If you step on a crack, you break your mother's back.\" It's just a childish version of an ancient belief that touching cracks brings misfortune. This belief is made manifest in this ritual. Unlike most curses, the magician must inform their target of the curse for it to take effect, and the curse doesn't automatically occur. Instead, the victim can attempt to evade the curse by not touching cracks. This, of course, inevitably proves to be impossible, triggering a curse bringing some non-life-threatening but potentially permanent harm to the victim or to their loved ones. If they can Unweave this curse before stepping on a crack, it is done at –2 difficulty. However, once the curse is triggered, any attempt to rid the victim of it is at +2 difficulty instead, as their actions were the direct cause of their misfortune, unfair as that may be.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [2]
+		},
+		{
+			"name": "Bashert",
+			"description": "Though this ritual existed in ancient times in one form or another, it has been popularized in its current form by Anne Richard and Judith Marquette. Fate may be fickle, but some matches are almost impossible to keep apart. With even a single success, the target of this ritual is nearly guaranteed to meet a perfect match, someone with the potential to be their True Love (as per the Merit on Book of Secrets p. 59), within the next year. Each additional success divides the time: two successes brings them together within six months, three decreases the wait to four months, and so on.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Freudian Slip",
+			"description": "Speaking your thoughts at the wrong time can be social suicide. It can end friendships, destroy careers, and create lifelong hatreds with other consequences down the line. Magicians who study the Path of Fortune have refined this this ritual to take advantage of this knowledge. Freudian Slip curses its victim to say the worst possible thing they actually believe at their next important social event or encounter. This can include political speeches, job interviews, dates, family events, and more. Whatever the context, the next time they are trying to conceal their true feelings in a situation where revealing them would cause significant and lasting harm, they must make a Willpower roll (difficulty 8) to avoid simply blurting them out. If they avoid significant social events for a year and a day, the curse dies off, leaving them safe.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [4]
+		},
+		{
+			"name": "Generational Wealth",
+			"description": "There are only so many ways to become wealthy enough to last for generations. Other than simple luck, all of them require a substantial sacrifice. For most, this sacrifice is borne by others, through exploitative labor practices or criminal enterprise. In fact, due to the fickle nature of luck, exploitation has always been the easier and more reliable path to wealth. This ritual allows luck to be tamed and guaranteed. It still requires a sacrifice; after all, nothing comes for free. But rather than sacrificing others, taking advantage of their desperation, the parent who seeks security for their family voluntarily sacrifices themself. Though the sacrifice must be willing, few magicians are willing to perform this ritual. Those who are willing must perform the sacrifice in some way appropriate to their practice. The beneficiaries of the sacrifice find themselves suddenly extremely lucky, able to win enough money gambling so they, their children, and their children's children, will never have to work another day in their lives. Even if they somehow manage to throw away this vast wealth, the next generation will be just as lucky and regain it. The blessing lasts for seven generations, after which the descendants are on their own.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [5]
+		},
+		{
+			"name": "Ward",
+			"description": "This ritual protects an area from ghostly incursion. It costs a point of Willpower and will keep wraiths out for one hour on a single success, a day on two, a week on three, a month on four, and three months on five.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [1]
+		},
+		{
+			"name": "Forbiddance",
+			"description": "Drives a wraith from the area. The sorcerer rolls Willpower vs. difficulty 7, and successes can be canceled by the wraith spending Willpower. If the sorcerer wins, however, the wraith must stay away.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [1]
+		},
+		{
+			"name": "Seal",
+			"description": "Ward, but for naturae",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [2]
+		},
+		{
+			"name": "Banishment",
+			"description": "Forbiddance, but for naturae.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [2]
+		},
+		{
+			"name": "Gossip",
+			"description": "This ritual causes information to be passed quickly among the chosen contacts of the medium. For each success, one ghost or spirit the medium knows will learn the given information within the next 24 hours.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Dolor",
+			"description": "This is an enhanced version of earlier protective rituals. If the spirit attempts to fight against a Forbiddance or a Ward (or a Banishment or Seal), then an Ephemera roll is made and each success subtracts one does one damage to the spirit, generally taken out of Corpus or Essence.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Grasp",
+			"description": "For seven days, the medium becomes a fetter for the targeted wraith.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [4]
+		},
+		{
+			"name": "Command",
+			"description": "A minor nature spirit can be commanded to perform one small task.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [4]
+		},
+		{
+			"name": "Distant Call",
+			"description": "The medium can, briefly, speak with someone who has proceeded to some afterlife and is no longer in the Shadowlands",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [5]
+		},
+		{
+			"name": "Healing Slumber",
+			"description": "The healer treats a willing (or unconscious) patient and sends them into a deep, energizing sleep. On success, the patient remains asleep for 9 hours; when they awake, all bashing damage is healed, and the patient regains a point of Willpower. For every success above one, subtract one hour from the required sleep time. The healer cannot treat lethal or aggravated wounds in this way.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [1]
+		},
+		{
+			"name": "Jolt",
+			"description": "The sorcerer spends a point of Willpower and magically awakens a person who is sleeping, unconscious, or comatose. This normally requires one success but requires the toxin's rating in successes to wake someone who is drugged, and four successes to wake the comatose. Reversing a magickal effect requires successes equal to the original effect +1 to reverse it. This power doesn't heal the underlying illness, injury, or poisoning, and the patient falls unconscious again at the end of the scene if the healer doesn't resolve the underlying issue. This can be used to help identify the patient and gather information about who or what put them in that state.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [2]
+		},
+		{
+			"name": "Mike's Cure-All",
+			"description": "While similar rituals were performed for centuries, or longer, this version was first recorded in Chicago during Prohibition and was based on Victorian era Cure-Alls. The healer can force a patient's body to purge all drugs and toxins through any, and sometimes all, possible exits. This includes vomiting, sweat, tears, diarrhea, etc. The process is incredibly unpleasant but can save a poisoning victim or someone who's overdosed. The sorcerer must get at least as many successes as the Toxin Rating for the most potent toxin in the patient's system. No damage is healed, but the patient suffers no further ill effects. This can purge magical potions as well.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Humor Alignment",
+			"description": "This is an old ritual for curing chronic and congenital conditions. It dates back to the Middle Ages when Humorism was in vogue. The healer bleeds the patient with leeches, a ritual knife, or another tool suited to their practice, which deals one level of lethal damage. The healer spends a point of Willpower and must roll at least 5 successes. The healer may perform this ritual as an extended action. The patient rests for three days, after which the lethal damage and the condition are healed. This rest needn't be solely sleep. The patient may move minimally to perform basic bodily functions but otherwise should be laying down. If the patient is too active during the three days, the ritual fails automatically. The ritual will also fail if the patient suffers significant mental or emotional stress, such as trying to work from bed or having a heated argument.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [4]
+		},
+		{
+			"name": "Fire's Weal",
+			"description": "Fire is one of the most dangerous hazards in the World of Darkness; even natural flames can easily cause permanent damage to powerful supernatural beings. With this ritual, the magician can give protection against fire of all sorts. With two successes, the ritual allows the target to soak fire damage, even supernatural flame, as though it were bashing, regardless of what damage it causes. Successes in excess of two reduce the difficulty on soak rolls against fire (to a maximum modifier of –3), so four total successes result in soaking fire damage at –2 difficulty.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [2]
+		},
+		{
+			"name": "Hellblade",
+			"description": "A flashy ritual, Hellblade attunes a weapon, traditionally a sword, to the Path of Hellfire. Once attuned, the magician can spend one Willpower to engulf the weapon in flame. The flame causes the weapon to inflict two additional dice of damage and converts its damage to aggravated. This lasts for a scene, though the ritual ends if the weapon leaves the caster's hand. This ritual requires a minimum of two successes.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [2]
+		},
+		{
+			"name": "Purification of the Inferno",
+			"description": "After an unfortunate encounter with a vampire, Charles Moran developed this ritual to protect himself in the future. Unfortunately, this ritual does not discriminate friend from foe, making it an extremely risky ritual to cast when the magician might be in close quarters with others, such as in an elevator. Purification of the Inferno acts as a defensive failsafe. The first person to touch the magician after the ritual immediately bursts into flames, suffering four dice of aggravated damage. The flames then become entirely mundane, dealing three lethal damage per turn, which can be soaked at difficulty 8 until they are put out. The ritual requires three successes on casting.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Smoldering Ruin",
+			"description": "The most common target of the Hellfire Path is an individual enemy. It's directly offensive magic, and magicians know it and use it as such. Sometimes, targeting individuals and even groups is too small scale. Sometimes a magician really wants to just cut loose, and hedge magic doesn't offer very many outlets to do so. Masters of Hellfire, however, developed this ritual in order to do just that: cut loose and cause damage to their enemies all at once. Smoldering Ruin requires a full three hours to cast, and in all its forms a Stamina roll (difficulty 6) must be made just to complete the exhausting ritual. Once completed, the magician spends 3 points of Willpower and must achieve at least 5 successes. Despite the difficulty, success is worth the effort: The ritual lights a building on fire, burning it to the ground. No mundane efforts can extinguish this fire, fueled by the caster's desire for destruction, though supernatural means are capable of doing so. It can even burn buildings made out of normally fire-resistant and fireproof materials. Notably, the caster must perform the ritual while inside the building, and then hope they can escape before becoming trapped inside.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [5]
+		},
+		{
+			"name": "Cruel Whispers",
+			"description": "Illusionists must often be masters of psychological warfare. They can't create anything truly real, so they play on the fears and anxieties of their targets to control them. One of the key rituals for this is Cruel Whispers. A purely auditory illusion, Cruel Whispers follows its target around for twenty-four hours. Though the magician may never know what the whispers are saying, the victim hears voices, just barely audible, pointing out every flaw, every insecurity, and ever misstep they make during the day. This distracts them, giving them +1 difficulty on all rolls for the day, and whenever they botch they must make a Willpower roll (difficulty 6) or else suffer the effects of the Chronic Depression Flaw (BoS p. 51) for one week.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [2]
+		},
+		{
+			"name": "Hard-Light Constructs",
+			"description": "A popular ritual among technosorcerers, Hard-Light Constructs are illusions everyone involved knows are fake. This creates scenery, furniture, etc., that looks and feels real, though putting your weight onto it wouldn't be the best idea. It's often used to simulate visuals where every single detail isn't needed, but which have moving parts. It creates the illusion for all onlookers, rather than a fixed set of targets. At least one Extraordinary Citizen has been reprimanded for using Hard-Light Constructs to run their World of Shadows game.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Instant Feast",
+			"description": "Illusory food is deceptively hard to create. Taste, smell, image, and texture all need to be just right to fool someone into thinking they're eating a real meal. The target rolls Perception + Alertness (difficulty 7). On failure, they believe they are eating real food for the duration of the meal, whatever food the magician can imagine. However, they're still hungry. This provides no sustenance (unless the illusion is covering up some other food), though if six or more successes are rolled on the casting, hunger cues are suppressed for a number of hours equal to the target's Stamina, before they feel hungry again. This can't alleviate the effects of starvation.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [4]
+		},
+		{
+			"name": "Oubliette",
+			"description": "One of the most terrifying rituals of the Path of Illusion, Oubliette has broken some of the strongest people in the world. The magician must be within a few feet of their target for the entirety of a three-hour ritual, which requires at least 5 successes. If they can accomplish this, then the ritual removes all five senses from the victim. They are trapped in a world without any sensation until either the magician releases them or they accumulate 5 successes on Perception rolls at difficulty 9, making one every hour. The victim must start over on a botch. Often, the victims of this ritual are being punished for heinous crimes, and have it cast on them before they are thrown into a hole and forgotten, left to starve without even knowing they are starving.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [5]
+		},
+		{
+			"name": "Rest in Peace",
+			"description": "By summoning a thunderstorm from the underworld, the magician can place nearby ghosts into a state of Slumber. Slumber is similar in many ways to sleep for the living. It is restorative for the ghost's ephemeral form and restful for their minds and personalities. While in Slumber, the ghost loses awareness of their surroundings, instead experiencing vivid dreams. Usually those dreams are lively and colorful, focused on the ghost's passions, but with a darkness overlaying them due to the Shadow. The Slumber created by this ritual brings better, more peaceful dreams. The Shadow's influence over them is diminished to nothing, and even Spectres find themselves having positive dreams for the first time since they fell to their Shadows. A single success always puts a willing target into Slumber, but unwilling targets (like most Spectres) roll Willpower (difficulty 6) and must achieve more successes than the ritual in order to stay awake.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [2]
+		},
+		{
+			"name": "Calm Above, Hell Below",
+			"description": "Spells for the Path of Maelstroms generally bring Tempest energy from the Underworld into the physical world. This creates the storms above and calms the below. This Ritual reverses that. It can only be performed during a storm, and when complete, any normal storm in the area dies down. Extreme weather events are largely unaffected and can be used to perform this ritual several times, even decreasing the difficulty by one. However, it is rarely a good idea to sit outside in a hurricane for several hours. The storm's energy enrages the ghosts in the area. On a single success, they must make Willpower rolls (difficulty 6), or they begin lashing out, attacking each other and even the living if they have the power to do so. If the caster achieves five or more successes, this additionally creates a Maelstrom, causing most ghosts to attempt to flee the area, before being attacked by the spectres such disturbances inevitably attract.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Shelter for the Dead",
+			"description": "A powerful but only situationally useful ritual, Shelter for the Dead can only be performed with the largest storms from the Underworld: The Great Maelstroms. No one knows how or when it was developed, but it was first used to protect the ghosts of Constantinople during the Great Maelstrom caused by the Black Death. The ritual is passed down by those few who know it to their students, hoping that it will never be necessary but knowing how valuable it can be if the worst happens. At the cost of risking an extreme storm battering the lands of the living, Shelter for the Dead creates a region, no more than the size of a modern city block, where the Maelstrom cannot enter. Rather, if the pieces of the Great Maelstrom do enter, they immediately are transformed into brutal storms, with extreme wind, hailstones the size of fists, and other strange things, regardless of the usual weather in the area. The ritual requires ten successes, almost always necessitating a group, and lasts for one day, plus one for each additional success beyond the minimal ten.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [5]
+		},
+		{
+			"name": "Deathsight",
+			"description": "Normally, a necromancer can only see the ghosts around them. They can't see the environment the ghosts call home. This ritual changes that. With it, a magician not only sees the Restless Dead, but can actually peer into the Shadowlands. This effect lasts for one minute per success on the ritual. While under the influence of this ritual, the necromancer cannot perceive the normal world; only the Shadowlands are visible to them.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [1]
+		},
+		{
+			"name": "Wrapped in a Shroud",
+			"description": "The Shroud separates the world of the living from the world of the dead. It can be difficult to cross this barrier, a fact which protects the living and the dead both from each other. Usually, either a necromancer must reach across from the land of the living to the world of the dead, or a ghost must have crossed to accomplish something among the living, in order for them to interact. For one minute per success on this ritual, the necromancer manages to actually stand between worlds, able to interact directly with both without further magic. Both human beings and ghosts can interact freely with the magician, for better or for worse.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Forced Medium",
+			"description": "Some people are naturally easier for ghosts to possess. These mediums may view this as a gift or a curse, but it marks them apart. These are the people who deal with the spirit worlds, and who ghosts will come to in order to either ask them to solve a problem or else take over their body to compel them do so. This ritual gives the target the merit Medium (BoS p. 69) for a week, along with a –2 difficulty on attempts by ghosts to possess them.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [4]
+		},
+		{
+			"name": "Steal Life",
+			"description": "One of the darkest arts of Mortal Necromancy, masters of the Path can steal the life energy from another living person. The caster first fills themself with death energy but doesn't shape it directly into a spell. Instead, before it can absorb their own life force, they push it into their victim. This transfer takes with it the most recent five health levels of damage the caster currently suffers from. The caster heals those injuries. Most versions of this ritual involve carving sigils into the victim (or piercing them with electrical wires, or any number of other techniques) causing additional harm. Needless to say, very few survive this process, and those who do often hunt the necromancer until the end of their days.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [5]
+		},
+		{
+			"name": "Shroud Bubble",
+			"description": "Sometimes, when all else fails, the best thing a magician can do when faced with a troublesome haunting is to hide and wait it out. The problem being that ghosts have a nasty tendency to walk through walls and most other protective barriers. They also tend to be relentless, often obsessed when their minds are turned to a task. Desperate magicians being haunted by perseverant ghosts invented the concept of the Shroud Bubble to protect themselves, especially when waiting for backup to arrive to handle the ghost more directly. The ritual requires three successes but increases the Shroud to 10 near the magician. In fact, the Shroud rating increases in a sphere just large enough to contain them. The effect remains stationary, so the magician can't leave the area without increasing their risk from ghosts and lasts for 8 hours.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Shut It Down",
+			"description": "Hauntings can vary in scale. For ones confined to a room or two, it's fairly simple to shut down the powers the ghosts are using to interact with the physical world. More often, though, there's a whole building or larger area being haunted, and if the ghost is denied one room, they'll just go to another. With Shut It Down, a much larger area than usual can be quieted, such that ghostly powers are impossible to use. The magician must mark the corners of the building or area, which can be as large as a full city block of empty land or a single building. The ritual requires at least 3 successes, and ghosts inside can only use their powers if they succeed on a Willpower roll at difficulty 8.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Doxxing",
+			"description": "By reading the currents generated by a ghost and its movements, the magician can glean information from it. Each piece of information comes with a cost and must be declared and paid for before the casting. Any resources spent in this way are not refunded if the ritual fails. No information is gained if the ritual fails to achieve the number of successes required for the information being sought out: • Identifying a Passion — One success each. This identifies both the Passion and the emotion it is tied to. • Nature, Demeanor, and Shadow Archetype — One success and one point of Willpower each. • Identifying a Fetter — Much more difficult, this requires two successes and a point of Willpower. • The True Name of the ghost — This requires five successes and two points of Willpower.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [4]
+		},
+		{
+			"name": "Overwrite",
+			"description": "The ultimate expression of the Path of Necronics, the practitioner concludes that all ghosts are electromagnetic signals trapped in the matrix of a formerly living person's personality. This explains why they're so malleable, for good or ill. With this ritual, the magician can rewrite the nature of the ghost on a fundamental level. To do so, they must know the ghost's True Name and possess one of the ghost's Fetters. The ritual takes twelve hours and requires two Stamina rolls (at difficulty 6) to complete. For this entire time, the ghost must be held within the same room as the caster, roughly a 10-foot by 10-foot space. Upon completion of the ritual, significant changes can be made to the ghost, but each has a cost. They last for one lunar cycle by default but become permanent if the costs are doubled. Some of the possible changes are: • 1 success and 1 Willpower point per level to change Passions, and an extra Willpower to change to a different emotion. • 2 successes and 1 Health Level — not damage, the Health Level itself disappears for the duration — to add or remove a point of Angst. • 5 successes and 5 Willpower to overwrite the ghost entirely with another specific personality.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [5]
+		},
+		{
+			"name": "Symbol Interpretation",
+			"description": "In their rush to control the dreams of others, many oneiromancers forget even the meaning of the name of their Path. Though none forget that oneiros means dream, they think \"mancy\" simply refers to magic, rather than being derived from manteia, or divination. A growing movement among oneiromancers across Fellowships — spearheaded by Prof. Jeremiah Marquette, who specializes in using dreams to access blocked or forgotten memories — is reviving lost information by gathering aspects of the Path forgotten by many practitioners. He's popularized a new ritual allowing an oneiromancer to find the answer to any one yes/no question the dreamer has ever known the answer to by reading the symbols of their dreams. The magician must have something of the target's in their possession. They then must succeed at a Path roll and spend the night observing their target's dreams with a specific yes or no question in mind. At the end, they must make an Intelligence + Enigmas or Intelligence + Esoterica (Dream Interpretation) roll. If they succeed, they find the answer to their question in the target's dreams.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [1]
+		},
+		{
+			"name": "Bedtime Story",
+			"description": "The most dangerous moment for an oneiromancer is that first step into a dream. The narrative of the dream is in effect, and they are forcibly adapted to it, sometimes losing themselves to it. Enterprising oneiromancers developed a ritual to take control of the dream as it forms, mitigating the risk that they'll lose control. This ritual must be completed as the subject goes to sleep and requires the oneiromancer be in the room with them. However, a single success allows the oneiromancer to direct the forming dream, broadly guiding its narrative and themes.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [2]
+		},
+		{
+			"name": "Invade Demesne",
+			"description": "Normally, the space created by the Demense background is inviolate. Only powerful mages capable of finding them through astral travel can reach them. oneiromancers, however, have tricks few others can reproduce. This ritual lets the oneiromancer enter the Demense of their target. Once there, they can try to seize control, though this requires a Path roll at difficulty 9, opposed by the Demense's owner rolling Wits + Demense (difficulty 6). This is highly risky, and only the most well-prepared oneiromancers should try it.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Dream Scream",
+			"description": "While powerful oneiromancers can simply send dreams to people as spells, with this ritual, they can send a message to several people at once through their dreams. The magician chooses a message consisting of a single sentence, fixes it in their mind, and performs the ritual. At completion, they can send the message to one person per success within a 10-mile radius.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [4]
+		},
+		{
+			"name": "Infusion",
+			"description": "While a spell can only store a single point of mana, this ritual allows the sorcerer to store several points of mana in some consumable object, usually a potion (especially for alchemists). Each success allows the item to store one point of mana, though the transfer is imperfect. For each success, up to two mana can be spent, half of which (rounded up) \"leaks\" and is lost, leaving the other half (rounded down) in the consumable.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [2]
+		},
+		{
+			"name": "Shape Mana",
+			"description": "With this ritual, the sorcerer can make substantial changes to the flow of mana. Positive energy can be turned toxic, curses can be turned into blessings, and ley lines can be bent to go where the sorcerer wants. These effects are generally permanent, though some require regular rituals (more frequently for bigger effects) to maintain them. The size of the effect is determined by the number of successes. A single success can dissipate bad luck. Three successes, however, can bring good fortune (-1 difficulty on all commerce, better healing at a hospital, etc.). Five or more successes can allow truly spectacular changes, like moving ley lines, changing what a ward defends again, etc.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Lifting Shadows",
+			"description": "Shadows and shades hide secrets for those who wish to hide them, but the learned sorcerer may reveal those secrets to those they trust. Smearing ink into a pair of contacts or funneling smoke into tight swimming goggles, the sorcerer brings the sight of the recipient into the realm of shadows. For the next eight hours, night may be as bright as day. Once blessed, the sorcerer or their ally may treat all darkness as daylight when making Alertness tests based on sight.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [1]
+		},
+		{
+			"name": "Grip of Shades",
+			"description": "Within every crevasse hides a little shadow. Within every shadow hides an ally to a sorcerer of the Path of Shadowcasting. It is access to these allies that gives the sorcerer leverage in ways that many would never anticipate. By hardening the shadowstuff within the shadows on their person, the sorcerer may afford themselves a modicum of protection against impacts and benefits from an advantage in hand-to-hand combat. For 24 hours after bathing in coal-infused oils, the sorcerer has rating 2 armor when soaking bashing or lethal damage and adds two to all Brawl and Martial Arts dice pools that involve grappling.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Face Theft",
+			"description": "The key ritual for Shapeshifting-based spycraft, Face Theft allows the magician to take on the precise form of another human being. They must have some piece of the person, such as strands of hair or nail clippings. The ritual requires one success for a person broadly similar to the caster, and an additional success each if the form differs in race, sex, or by more than 20 years of age.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [1]
+		},
+		{
+			"name": "Fix the True Form",
+			"description": "Shapeshifters often find themselves in conflict with one another. They also run into stranger things with multiple forms. Fix the True Form was developed by one who claimed descent from werewolves. It forces anyone targeted by it to take on their \"true\" form if they fail at a Willpower roll (difficulty 8). For magicians, they simply revert to their natural form, as do most other shapeshifters. Ironically, despite being created in part to force werewolves into their human or wolf forms, this ritual forces Garou and Fera to take on their mixed forms instead, often with terrible consequences for an overconfident hedge magician.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [4]
+		},
+		{
+			"name": "Megafauna Transformation",
+			"description": "The Path of Shapeshifting allows the caster to assume animal forms, including partial transformations. But in the end, the caster can normally only fully transform into a normal animal. This ritual allows them to become a gigantic version of whatever animal they want to transform into. In most cases, this is a full throwback to an extinct version of the animal, such as the megatherium (giant sloth) of the Americas. This requires at least five successes.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [5]
+		},
+		{
+			"name": "Save Keepsake",
+			"description": "This ritual takes an hour to perform, but allows the chronomancer to rescue an object of importance to them. The object must be personal (so this can't be used for money, for example) and must have been destroyed. The sorcerer completes the ritual and the object is pulled forward in time from the moment of its destruction, leaving the timeline unchanged, though the object will exist once again.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [4]
+		},
+		{
+			"name": "Time Enough at Last",
+			"description": "One of the most complex rituals known to sorcerers, Time Enough at Last takes a full week to perform, working eight hours each day, and cannot be hurried in any way. Each day requires the expenditure of a Willpower point and a point of Mana, plus two on the final day. For all this effort, the chronomancer can travel to the past and has five minutes per success rather than one.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [5]
+		},
+		{
+			"name": "Trap the Spirit",
+			"description": "This ritual takes a half hour to perform, but at the end, the sorcerer is able to manipulate the Gauntlet with sufficient subtlety that it creates a \"pocket\" wrapped in the Gauntlet. A spirit summoned into this pocket through other Paths or magics will be trapped inside unless it can overcome a strong Gauntlet (up to 3 points higher than the surrounding area) or it is released by the sorcerer.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [3]
+		},
+		{
+			"name": "Find My Keys",
+			"description": "A sorcerer almost never has trouble finding small items lost within their home. On a single success after a 15 minute ritual, whatever item of theirs that is missing, if it is in their home, is found.",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [1]
+		},
+		{
+			"name": "Violate Sanctum",
+			"description": "Masters of Scrying can find their enemies sancta and watch them when they think that they're alone. The ritual requires several hours to perform, but only needs to get one success more than the strength of the target's wards, and the sorcerer can view their target's home",
+			"game_line": "Mage: The Awakening",
+			"category": "powers",
+			"stat_type": "hedge_ritual",
+			"values": [5]
+		}
+	]

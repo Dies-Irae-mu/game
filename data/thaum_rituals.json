@@ -1,0 +1,362 @@
+[
+    {
+        "name": "Bind the Accusing Tongue",
+        "description": "This ancient ritual is said to have been one of the first developed by the Tremere and a primary reason for the lack of cohesive opposition to their expansion. Bind the Accusing Tongue lays a compulsion upon the subject that prevents him from speaking ill of the caster, allowing the thaumaturge to commit literally unspeakable acts without fear of reprisal.",
+        "system": "The caster must have a picture or other image or effigy of the ritual's target, a lock of the target's hair, and a black silken cord. The caster winds the cord around the hair and image while intoning the ritual's vocal component. Once the ritual is complete, the target must score more successes on a Willpower roll (difficulty of the caster's Thaumaturgy rating + 3) than the caster scored in order to say anything negative about the caster. The ritual lasts until the target succeeds at this roll or the silk cord is unwound, at which point the image and the lock of hair crumble to dust.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Blood Rush",
+        "description": "This ritual allows the vampire to create the sensation of drinking blood in himself without actually feeding. The ritual can be used for pleasure, but it is more often used to prevent frenzy when confronted with fresh blood. The vampire must carry the fang of a predatory animal on his person for this ritual to work.",
+        "system": "Performance of the ritual results in the Beast being kept in check automatically. Blood Rush allows the vampire to resist hunger-based frenzy for up to one hour, at which point the Cainite feels hungry again (assuming he did before). This ritual takes only one turn to enact.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Communicate with Kindred Sire",
+        "description": "By enacting this ritual, the caster may join minds with her sire, speaking telepathically with him over any distance. The communication may continue until the ritual expires or until either party ends the conversation. The caster must possess an item once owned by her sire for the ritual to work.",
+        "system": "The caster must meditate for 30 minutes to create the connection. Conversation may be maintained for 10 minutes per success on the activation roll.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Defense of the Sacred Haven",
+        "description": "This ritual prevents sunlight from entering an area within 20 feet (six meters) of this ritual's casting. A mystical darkness blankets the area, keeping the baleful light at bay. Sunlight reflects off windows or magically fails to pass through doors or other portals. To invoke this ritual's protection, the caster draws sigils in her own blood on all the affected windows and doors. The ritual lasts as long as the thaumaturge stays within the 20-foot (6-meter) radius.",
+        "system": "This ritual requires one hour to perform, during which the caster recites incantations and inscribes glyphs. One blood point is required for this ritual to work.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Deflection of Wooden Doom",
+        "description": "This ritual protects the caster from being staked, whether she is resting or active. While this ritual is in effect, the first stake that would pierce the vampire's heart disintegrates in the attacker's hand. A stake merely held near the caster is unaffected; for this ritual to work, the stake must actively be used in an attempt to impale the vampire.",
+        "system": "The caster must surround herself with a circle of wood for a full hour. Any wood will work: furniture, sawdust, raw timber, 2' x 4's, whatever. The circle must remain unbroken, however. At the end of the hour, the vampire places a wooden splinter under her tongue. If this splinter is removed, the ritual is nullified. This ritual lasts until the following dawn or dusk.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Devil's Touch",
+        "description": "Thaumaturges use this ritual to place curses upon mortals who earn their ire. Using this ritual marks an individual invisibly, causing all those who come in contact with him to receive him poorly. The mortal is treated as the most loathsome individual conceivable, and all who deal with him do everything in their power to make him miserable. Even bums spit at an afflicted individual, and children taunt him and barrage him with vulgarities.",
+        "system": "The effects of this ritual last one night, disappearing as the sun rises. The mortal (it doesn't work on vampires) must be present when the ritual is invoked, and a penny must be placed somewhere on his person (in a pocket, shoe, etc.).",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Domino of Life",
+        "description": "A vampire wanting or needing to simulate a human characteristic can do so once Domino of Life is cast. For one entire night, the vampire can eat, breathe, maintain a normal body temperature, assume a human flesh tone, or display some other single trait of humankind she desires. Note that only one trait can be replicated in this fashion. The vampire must have a vial of fresh human blood on his person to maintain this ritual.",
+        "system": "Using this ritual adds one die to the caster's dice pools when attempting to pass as human. Unless onlookers are especially wary, the Domino of Life should fool them into thinking the caster is mortal — not that they should have any reason to suspect otherwise.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Engaging the Vessel of Transference",
+        "description": "This ritual enchants a container to fill itself with blood from any living or unliving being who holds it, replacing the volume of blood taken with an equal amount previously held inside the container. When the ritual is enacted, the vessel (which must be between the size of a small cup and a one-gallon/four-liter jug) is sealed full of the caster's blood and inscribed with the Hermetic sigil which empowers the ritual. Whenever an individual touches the container with his bare skin, he feels a slight chill against his flesh but no further discomfort. The container continues to exchange the blood it contains until it is opened. The two most common uses of this ritual are to covertly create a blood bond and to obtain a sample of a subject's blood for ritual or experimental purposes.",
+        "system": "This ritual takes three hours to enact (reduced by 15 minutes for each success on the casting roll) and requires one blood point (although not necessarily the caster's blood), which is sealed inside the container. The ritual only switches blood between itself and a subject if it is touched with bare skin — even thin cotton gloves keep it from activating. Individuals with at least four dots in Occult recognize the Hermetic sigil with two successes on an Intelligence + Occult roll (difficulty 8).",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Illuminate the Trail of Prey",
+        "description": "This ritual causes the path of the subject's passing to glow in a manner that only the vampire can see. The tracks shine distinctly, but only to the eyes of the caster. Even airplane trajectories and animal tracks shine with unhealthy light. The ritual is nullified if the target wades through or immerses himself in water, or if he reaches the destination of his journey. The caster must burn a length of white satin ribbon that has been in her possession for at least 24 hours for this ritual to take effect.",
+        "system": "The thaumaturge must have a mental picture of or know the name of her prey. The individual's wake glows with a level of brightness dependent on how long it has been since he passed that way — old tracks burn less brightly, while fresh tracks blaze.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Incantation of the Shepherd",
+        "description": "This ritual enables the caster to mystically locate all members of his herd. While intoning the ritual's vocal component, he spins in a slow circle with a glass object of some sort held to each of his eyes. At the end of the ritual, he has a subliminal sense of the direction and distance to each of his regular vessels.",
+        "system": "This ritual gives the character the location (relative to him) of every member of his Herd. If he does not have the Herd Background, Incantation of the Shepherd locates the closest three mortals from whom the caster has fed at least three times each. This ritual has a maximum range of 10 miles or 15 kilometers times the character's Herd Background, or five miles (eight kilometers) if he has no points in that Background.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Purity of Flesh",
+        "description": "The caster cleanses her body of all foreign material with this ritual. To perform it, she meditates on bare earth or stone while surrounded by a circle of 13 sharp stones. Over the course of the ritual, the caster is slowly purged of all physical impurities: dirt, alcohol, drugs, poison, bullets lodged in the flesh, and tattoo ink are equally affected, slowly rising to the surface of the caster's skin and flaking away as a gritty gray film that settles within the circle. Any jewelry, makeup, or clothes that the caster is wearing are also dissolved.",
+        "system": "The player spends one blood point before rolling. Purity of Flesh removes all physical items from the caster's body, but does not remove enchantments, mind control, or diseases of the blood.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Wake with Evening's Freshness",
+        "description": "This ritual allows a vampire to awaken at any sign of danger, especially during the day. If any potentially harmful circumstances arise, the caster immediately rises, ready to face the problem. This ritual requires the ashes of burned feathers to be spread over the area in which the Kindred wishes to sleep.",
+        "system": "This ritual must be performed immediately before the vampire goes to sleep for the day. Any interruption to the ceremonial casting renders the ritual ineffective. If danger arises, the caster awakens and may ignore the Humanity/Path dice pool limit rule for the first two turns of consciousness. Thereafter, the penalty takes effect, but the thaumaturge will have already risen and will be able to address problematic situations.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Widow's Spite",
+        "description": "This ritual causes a pain, itch, or other significant (but not deadly) sensation in the subject. Similar in effect to legendary 'voodoo doll' effects, this ritual is used more out of scorn or malice than actual enmity. In fact, it requires a wax or cloth doll that resembles the target, which bleeds when the power takes effect.",
+        "system": "The ceremonial doll must resemble, however rudely, the victim of the ritual. It produces no mechanical effect, other than a simple physical stimulus. The caster may determine where on the subject's body the pain or itch appears.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Blood Walk",
+        "description": "A thaumaturge casts this ritual on a blood sample from another vampire. Blood Walk is used to trace the subject's Kindred lineage and the blood bonds in which the subject is involved.",
+        "system": "This ritual requires three hours to cast, reduced by 15 minutes for each success on the roll. It requires one blood point from the subject. Each success allows the caster to 'see back' one Generation (to a limit of the Fourth Generation — the Third Generation do not give up their secrets so easily), giving the caster both the true name of the ancestor and an image of his face. The caster also learns the Generation and Clan or bloodline from which the subject is descended. With three successes, the caster also learns the identities of all parties with whom the subject shares a blood bond, either as regnant or thrall.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [2]
+    },
+    {
+        "name": "Burning Blade",
+        "description": "Developed during Clan Tremere's troubled inception, Burning Blade allows a caster to temporarily enchant a melee weapon to inflict unhealable wounds on supernatural creatures. While this ritual is in effect, the weapon flickers with an unholy greenish flame.",
+        "system": "This ritual can only be cast on melee weapons. The caster must cut the palm of her weapon hand during the ritual — with the weapon if it is edged, otherwise with a sharp stone. This inflicts a single health level of lethal damage, which cannot be soaked but may be healed normally. The player spends three blood points, which are absorbed by the weapon. Once the ritual is cast, the weapon inflicts aggravated damage on all supernatural creatures for the next few successful attacks, one per success rolled. Multiple castings of Burning Blade cannot be 'stacked' for longer durations. Furthermore, the wielder of the weapon cannot choose to do normal damage and 'save up' aggravated strikes — each successful attack uses one aggravated strike until there are none left, at which point the weapon reverts to inflicting normal damage.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [2]
+    },
+    {
+        "name": "Donning the Mask of Shadows",
+        "description": "This ritual renders its subject translucent; her form appears dark and smoky, and the sounds of her footsteps are muffled. While it does not create true invisibility, the Mask of Shadows makes the subject much less likely to be detected by sight or hearing.",
+        "system": "This ritual may be simultaneously cast on a number of subjects equal to the caster's Occult rating; each individual past the first adds five minutes to the base casting time. Individuals under the Mask of Shadows can only be detected if the observer possesses a power (such as Auspex) sufficient to penetrate Obfuscate 3. The Mask of Shadows lasts a number of hours equal to the number of successes rolled when it is cast or until the caster voluntarily lowers it.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [2]
+    },
+    {
+        "name": "Eyes of the Night Hawk",
+        "description": "This ritual allows the vampire to see through the eyes of a bird, and to hear through its ears. The bird chosen must be a predatory bird, and the vampire must touch it when initiating this ritual. At the end of this ritual, the caster must put out the bird's eyes, or suffer blindness herself.",
+        "system": "The vampire is able to mentally control where the bird travels for the duration of the ritual. The bird will not necessarily perform any other action than flight — the caster cannot command it to fight, pick up and return an object, or scratch a target. The bird returns to the vampire after finishing its flight. If the vampire does not put out the bird's eyes, she suffers a three-night period of blindness. This ritual ceases effect at sunrise.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [2]
+    },
+    {
+        "name": "Machine Blitz",
+        "description": "Machines go haywire when this ritual is cast. It takes effect instantly and lasts as long as the vampire concentrates on it. This ritual may be used to kill car engines, erase flash drives, drain the battery of a cellphone, stop life-support machines, et cetera. Essentially, Machine Blitz stops any machine more complex than a rope-and-pulley. The thaumaturge must have a scrap of rusted metal in her possession for this ritual to work, though some vampires use a variant that requires a knot steeped in human saliva to be untied.",
+        "system": "This ritual only stops machines; it does not grant any control over them. The effects of this ritual are invisible and appear to be coincidental.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [2]
+    },
+    {
+        "name": "Principal Focus of Vitae Infusion",
+        "description": "This ritual imbues a quantity of blood within an object small enough for the vampire to carry in both hands. (The object may not be any larger than this, though it may be as small as a dime.) After the ritual is conducted, the object takes on a reddish hue and becomes slick to the touch. At a mental command, the caster may release the object from its enchantment, causing it to break down into a pool of blood. This blood may serve whatever purpose the vampire desires; many thaumaturges wear enchanted baubles to ensure they have emergency supplies of vitae.",
+        "system": "An object may store only one blood point of vitae. If a Kindred wishes to make an infused focus for an ally, she may do so, but the blood contained within must be her own. (If the ally then drinks the blood, he is one step closer to the blood bond). The ally must be present at the creation of the focus.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [2]
+    },
+    {
+        "name": "Recure of the Homeland",
+        "description": "The vampire calls on the power of the earth to heal grave wounds she may have received. The thaumaturge must use at least a handful of dirt from the city or town of her mortal birth and recite a litany of her mortal family tree as she casts this ritual.",
+        "system": "The Cainite must mix the earth with two points of her own blood to make a healing paste. One handful will heal one aggravated wound, and only one handful can be used per night. This ritual can only be used on the vampire who knows it.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [2]
+    },
+    {
+        "name": "Ward Versus Ghouls",
+        "description": "Wary Tremere created this ritual to protect themselves from the minions of vengeful rivals. By invoking this ritual, the caster creates a glyph that causes great pain to any ghouls who come in contact with it. The Kindred pours a point's worth of blood over the object he wishes to ward (a piece of parchment, a coin, a doorknob, etc.), and recites the incantation, which takes 10 minutes. In 10 hours, the magical ward is complete, and will inflict excruciating pain on any ghoul unfortunate enough to touch the warded object.",
+        "system": "Ghouls who touch warded objects suffer three dice of lethal damage. This damage occurs again if the ghoul touches the object further; indeed, a ghoul who consciously wishes to touch a warded object must spend a point of Willpower to do so. This ritual wards only one object — if inscribed on the side of a car, the ward affects only that door or fender, not the whole car. Wards may be placed on weapons, even bullets, though this usually works best on small-caliber weapons. Bullets often warp upon firing, however, and for a ward to remain intact on a fired round, the player needs five successes on the Firearms roll.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [2]
+    },
+    {
+        "name": "Warding Circle versus Ghouls",
+        "description": "This ritual is enacted in a manner similar to that of Ward versus Ghouls, but creates a circle centered on the caster into which a ghoul cannot pass without being burned. The circle can be made as large and as permanent as the caster desires, as long as she is willing to pay the necessary price. Many Tremere chantries and havens are protected by this and other Warding Circle rituals.",
+        "system": "The ritual requires three blood points of mortal blood. The caster determines the size of the warding circle when it is cast; the default radius is 10 feet/3 meters, and every 10-foot/3-meter increase raises the difficulty by one, to a maximum of 9 (one additional success is required for every increase past the number necessary to raise the difficulty to 9). The player spends one blood point for every 10 feet/3 meters of radius and rolls. The ritual takes the normal casting time if it is to be short-term (lasting for the rest of the night) or one night if it is to be long-term (lasting a year and a day). Once the warding circle is established, any ghoul who attempts to cross its boundary feels a tingle on his skin and a slight breeze on his face — a successful Intelligence + Occult roll (difficulty 8) identifies this as a warding circle. If the ghoul attempts to press on, he must roll more successes on a Willpower roll (difficulty of the caster's Thaumaturgy rating + 3) than the caster rolled when establishing the ward. Failure indicates that the ward blocks his passage and inflicts three dice of bashing damage, and his next roll to attempt to enter the circle is at +1 difficulty. If the ghoul leaves the circle and attempts to enter it again, he must repeat the roll. Attempts to leave the circle are not blocked.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [2]
+    },    
+    {
+        "name": "Clinging of the Insect",
+        "description": "This ritual allows the caster to cling to walls or ceilings, as would a spider. She may even crawl along these surfaces (as long as they can support her). Use of this power seriously discomfits mortal onlookers. The character must place a live spider under her tongue for the duration of the ritual (though the spider may die while in the thaumaturge's mouth without canceling the power).",
+        "system": "The character may move at half her normal rate while climbing walls or ceilings. This power lasts for one scene, or until the vampire spits out the spider.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [3]
+    },
+    {
+        "name": "Flesh of Fiery Touch",
+        "description": "This defensive ritual inflicts painful burns on anyone who deliberately touches the subject's skin. It requires the subject to swallow a small glowing ember, which does put off some vampires with low pain thresholds. Some vain thaumaturges use this ritual purely for its subsidiary effect of darkening the subject's skin to a healthy sun-bronzed hue.",
+        "system": "Flesh of Fiery Touch takes two hours to cast (reduced by 10 minutes per success). It requires a small piece of wood, coal, or other common fuel source, which ignites and is swallowed at the end of the ritual. The subject who swallows the red-hot ember receives a single aggravated health level of damage (difficulty 6 to soak with Fortitude). Until the next sunset, anyone who touches the subject's flesh receives a burn that inflicts a single aggravated health level of damage (again, difficulty 6 to soak with Fortitude). The victim must voluntarily touch the subject; this damage is not inflicted if the victim is touched or accidentally comes in contact with the subject. This ritual darkens the subject's skin to that which would be obtained by long-term exposure to the sun in a mortal. The tone is slightly unnatural and metallic, and is clearly artificial to any observer who succeeds in a Perception + Medicine roll (difficulty 8).",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [3]
+    },
+    {
+        "name": "Incorporeal Passage",
+        "description": "Use of this ritual allows the thaumaturge to make herself insubstantial. The caster becomes completely immaterial and thus is able to walk through walls, pass through closed doors, escape manacles, etc. The caster also becomes invulnerable to physical attacks for the duration of the ritual. The caster must follow a straight path through any physical objects, and may not draw back. Thus, a Kindred may walk through a solid wall, but may not walk down through the earth (as it would be impossible to reach the other side before the ritual lapsed). This ritual requires that the caster carry a shard from a shattered mirror to hold her image.",
+        "system": "This ritual lasts a number of hours equal to the number of successes scored on a Wits + Survival roll (difficulty 6). The caster may prematurely end the ritual (and, thus, her incorporeality) by turning the mirror shard away so that it no longer reflects her image.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [3]
+    },
+    {
+        "name": "Mirror of Second Sight",
+        "description": "This object is an oval mirror no less than four inches (10 cm) wide and no more than 18 inches (45 cm) in length. It looks like a normal mirror, but once created, the vampire can use it to see the supernatural: It reflects the true form of Lupines and faeries, and enables the owner to see ghosts as they move though the Underworld. The caster creates the mirror by bathing an ordinary mirror in a quantity of her own blood while reciting a ritual incantation.",
+        "system": "The ritual requires one point of the vampire's blood. Thereafter, the mirror reflects images of other supernatural creatures' true forms — werewolves appear in their hulking man-wolf shapes, magi glow in a scintillating nimbus, ghosts become visible (in the mirror), and so on. Sometimes, the mirror also reveals those possessed of True Faith in clouds of golden light.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [3]
+    },
+    {
+        "name": "Pavis of Foul Presence",
+        "description": "The Tremere joke privately that this is their 'ritual for the Ventrue.' Kindred who invoke the Presence Discipline on the subject of this ritual find the effects of their Discipline reversed, as if they had used the power on themselves. For example, a vampire using Presence to instill fear in a Kindred under the influence of this ritual feels the fear herself; a vampire summoning the caster is instead drawn to the thaumaturge's location. This ritual is an unbroken secret among the Tremere, and the Warlocks maintain that its use is unknown outside their Clan. The magical component for this ritual is a length of blue silken cord, which must be worn around the caster's neck.",
+        "system": "This ritual lasts against a number of effects equal to the successes rolled, or until the sunrise after it is enacted. Note that the Presence Discipline power must actually succeed before being reversed by the ritual. As such, only powers that specifically target the caster (and thus, require a roll to succeed) can be reversed — 'passive' powers such as Majesty are not affected.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [3]
+    },
+    {
+        "name": "Sanguine Assistant",
+        "description": "Thaumaturges often need laboratory assistants whom they can trust implicitly. This ritual allows the intrepid vampire to conjure a temporary servant. To cast the ritual, the thaumaturge slices open his arm and bleeds into a specially prepared earthen bowl. The ritual sucks in and animates whatever random unimportant items the wizard happens to have lying around his workshop — glass beakers, dissection tools, pencils, crumpled papers, semiprecious stones — and binds the materials together into a small humanoid form animated by the power of the ritual and the blood.",
+        "system": "The player spends five blood points and rolls. The servant created by the ritual stands a foot (30 cm) high and appears as a roughly humanoid shape composed of whatever the ritual sucked in for its own use. It lasts for one night per success rolled. At the end of the last night, the assistant crawls into the bowl used for its creation and falls apart. The assistant can be reanimated through another application of this ritual; if the caster so desires, it re-forms from the same materials with the same memories and personality. A Sanguine Assistant has Strength and Stamina of 1, and Dexterity and Mental Attributes equal to those of the caster. It begins with no Social Attributes to speak of, but gains one dot per night in Charisma and Manipulation until its ratings are equal to those of the caster. It has all of the caster's Abilities at one dot lower than his own. A Sanguine Assistant is a naturally timid creature and flees if attacked, though it will try to defend its master's life at the cost of its own. It has no Disciplines of its own, but has a full understanding of all of its master's Thaumaturgical knowledge and can instruct others if so commanded. A Sanguine Assistant is impervious to any mind-controlling Disciplines or magic, so completely is it bound to its creator's will.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [3]
+    },
+    {
+        "name": "Shaft of Belated Quiescence",
+        "description": "This ritual turns an ordinary stake of rowan wood into a particularly vicious weapon. When the stake penetrates a vampire's body, the tip breaks off and begins working its way through the victim's flesh to his heart. The trip may take several minutes or several nights, depending on where the stake struck. The stake eludes attempts to dig it out, burrowing farther into the victim's body to escape surgery. The only Kindred who are immune to this internal attack are those who have had their hearts removed by Serpentis.",
+        "system": "The ritual takes five hours to enact, minus 30 minutes per success. The stake must be carved of rowan wood, coated with three blood points of the caster's blood, and blackened in an oak-wood fire. When the ritual is complete, the stake is enchanted to act as described above. An attack with a Shaft of Belated Quiescence is performed as with a normal stake: a Dexterity + Melee roll (difficulty 6, modified as per the normal combat rules; the attack does not need to specifically target the heart) with a lethal damage rating of Strength + 1. If at least one health level of damage is inflicted after the target rolls to soak, the tip of the stake breaks off and begins burrowing. If not, the stake may be used to make subsequent attacks until it strikes deep enough to activate. Once the tip of the stake is in the victim's body, the Storyteller begins an extended roll of the caster's Thaumaturgy rating (difficulty 9), rolling once per hour of game time. Successes on this roll are added to the successes scored in the initial attack. This represents the tip's progress toward the victim's heart. A botch indicates that the tip has struck a bone and all accumulated successes are lost (including those from the initial attack roll). Removing the part of the body where the tip impacted (such as a Tzimisce turning into blood or a vampire cutting off their arm) may stop the tip's progress, depending on the number of successes acquired and the Storyteller's discretion. When the shaft accumulates a total of 15 successes, it reaches the victim's heart. This paralyzes Kindred and is instantly fatal to mortals and ghouls. Attempts to surgically remove the tip of the shaft can be made with an extended Dexterity + Medicine roll made once per hour (difficulty 7 for Kindred and 8 for mortals). The surgeon must accumulate a number of successes equal to those currently held by the shaft in order to remove the tip. Once surgery begins, however, the shaft begins actively evading the surgeon's probes, and its rolls are made once every 30 minutes for the duration of the surgery attempt. Each individual surgery roll that scores less than three successes inflicts an additional unsoakable level of lethal damage on the patient. Shaft of Belated Quiescence may be performed on other wooden impaling weapons, such as spears, arrows, practice swords, and pool cues, provided that they are made of rowan wood. It may not, however, create a Bullet of Belated Quiescence.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [3]
+    },
+    {
+        "name": "Ward versus Lupines",
+        "description": "This wards an object in a manner identical to that of the Level Two ritual Ward Versus Ghouls, except that it affects werewolves.",
+        "system": "Ward versus Lupines behaves exactly as does Ward versus Ghouls, but it affects werewolves rather than ghouls. The ritual requires a handful of silver dust rather than a blood point.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [3]
+    },
+    {
+        "name": "Bone of Lies",
+        "description": "This ritual enchants a mortal bone so that anyone who holds it must tell the truth. The bone in question is often a skull, though any part of the skeleton will do — some casters use strings of teeth, necklaces of finger joints, or wands fashioned from ribs or arms. The bone grows blacker as it compels its holder to tell the truth, until it has turned completely ebony and has no magic left. This ritual binds the spirit of the individual to whom the bone belonged in life; it is this spirit who wrests the truth from the potential liar. The spirit absorbs the lies intended to be told by the bone's holder, and as it compels more truth, it becomes more and more corrupt. If summoned forth, this spirit reflects the sins it has siphoned from the defeated liar (in addition to anger over its unwilling servitude). For this reason, anonymous bones are often used in the ritual, and the bone is commonly buried after it has been used to its full extent. A specific bone may never be used twice for this ritual, though different bones from the same corpse can.",
+        "system": "The bone imbued with this magical power must be at least 200 years old and must absorb 10 blood points on the night that the ritual is cast. Each lie the holder wishes to tell consumes one of these blood points, and the holder must speak the truth immediately thereafter. When all 10 blood points have been consumed, the bone's magic ceases to work.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [4]
+    },
+    {
+        "name": "Firewalker",
+        "description": "This ritual imbues the vampire with an unnatural resistance to fire. Only a foolish vampire would actually attempt to walk on or through fire, but this ritual does grant an advanced tolerance to flame. Some Sabbat use this ritual to show off, while other thaumaturges use it only for martial concerns. To enact the ritual, the caster must cut off the end of one of his fingers and burn it in a Thaumaturgical circle.",
+        "system": "Cutting off one's finger does not do any health levels of damage, but it hurts like hell and requires a Willpower roll to perform. This ritual may be cast on other vampires (at the expense of the caster's fingertips...). If the subject has no Fortitude, he may soak fire with his Stamina for the duration of this ritual. If the vampire has Fortitude, he may soak fire with his Stamina + Fortitude for the duration of the ritual. This ritual lasts one hour.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [4]
+    },
+    {
+        "name": "Heart of Stone",
+        "description": "A vampire under the effect of this ritual experiences the transformation suggested by the ritual's name: his heart is completely transmuted to solid rock, rendering him virtually impervious to staking. The subsidiary effects of the transformation, however, seem to follow the Hermetic laws of sympathetic magic: The vampire's emotional capacity becomes almost nonexistent, and his ability to relate to others suffers as well.",
+        "system": "This ritual requires nine hours (reduced by one hour for every success). It can only be cast on oneself. The caster lies naked on a flat stone surface and places a bare candle over his heart. The candle burns down to nothing over the course of the ritual, causing one aggravated health level of damage (difficulty 5 to soak with Fortitude). At the end of the ritual, the caster's heart hardens to stone. The caster gains a number of additional dice equal to twice his Thaumaturgy rating to soak any attack that aims for his heart and is completely impervious to the effects of a Shaft of Belated Quiescence. Additionally, the difficulty to use all Presence or other emotionally manipulative powers on him is increased by three due to his emotional isolation. The drawbacks are as follows: the caster's Conscience/Conviction and Empathy scores drop to 1 (or to 0 if they already were at 1) and all dice pools for Social rolls except those involving Intimidation are halved (including those required to use Disciplines). All Merits that the character has pertaining to positive social interaction are neutralized. Heart of Stone lasts as long as the caster wishes it to.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [4]
+    },
+    {
+        "name": "Splinter Servant",
+        "description": "Another ritual designed to enchant a stake, Splinter Servant is a progressive development of Shaft of Belated Quiescence. (The two rituals, however, are mutually exclusive.) A Splinter Servant consists of a stake carved from a tree which has nourished itself on the dead. The stake must be bound in wax-sealed nightshade twine. When the binding is torn off, the Splinter Servant leaps to life, animating itself and attacking whomever the wielder commands — or the wielder, if she is too slow in assigning a target. The servant splits itself into a roughly humanoid form and begins single-mindedly trying to impale the target's heart. Its exertions tear it apart within a few minutes, but if it pierces its victim's heart before it destroys itself, it is remarkably difficult to remove, as pieces tend to remain behind if the main portion is yanked out.",
+        "system": "The ritual requires 12 hours to cast, minus one per success, and the servant must be created as described above. When the binding is torn off, the character who holds it must point the servant at its target and verbally command it to attack during the same turn. If this command is not given, the servant attacks the closest living or unliving being, usually the unfortunate individual who currently carries it. A Splinter Servant always aims for the heart. It has an attack dice pool of the caster's Wits + Occult, a damage dice pool of the caster's Thaumaturgy rating, and a maximum movement rate of 30 yards or meters per turn. Note that these values are those of the caster who created the servant, not the individual who activates it. A Splinter Servant cannot fly, but can leap its full movement rating every turn. Every action it takes is to attack or move toward its target; it cannot dodge or split its dice pool to perform multiple attacks. The servant makes normal stake attacks that aim for the heart (difficulty 9), and its success is judged as per the rules for a normal staking. A Splinter Servant has three health levels, and attacks directed against it are made at +3 difficulty due to its small size and erratic movement patterns. A Splinter Servant has an effective life of five combat turns per success rolled in its creation. If it has not impaled its victim by the last turn of its life, the servant collapses into a pile of ordinary, inanimate splinters. Three successes on a Dexterity roll (difficulty 8) are required to remove a Splinter Servant from a victim's heart without leaving behind shards of the stake.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [4]
+    },
+    {
+        "name": "Ward versus Kindred",
+        "description": "This warding ritual functions exactly as do Ward versus Ghouls and Ward versus Lupines, but it inflicts injury upon Cainites.",
+        "system": "Ward versus Kindred behaves exactly as does Ward versus Ghouls, but it affects vampires rather than ghouls. The ritual requires a blood point of the caster's own blood and does not affect the caster.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [4]
+    },
+    {
+        "name": "Blood Contract",
+        "description": "This ritual creates an unbreakable agreement between the two parties who sign it. The contract must be written in the caster's blood and signed in the blood of whoever applies their name to the document. This ritual takes three nights to enact fully, after which both parties are compelled to fulfill the terms of the contract.",
+        "system": "This ritual is best handled by the Storyteller, who may bring those who sign the blood contract into compliance by whatever means necessary (it is not unknown for demons to materialize and enforce adherence to certain blood contracts). The only way to terminate the ritual is to complete the terms of the contract or to burn the document itself — attempts to add a clause forbidding burning the contract have resulted in the contract spontaneously combusting upon completion of the ritual. One blood point is consumed in the creation of the document, and an additional blood point is consumed by those who sign it.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [5]
+    },
+    {
+        "name": "Enchant Talisman",
+        "description": "This ritual is the first taught to most Tremere once they have attained mastery of their first path. Create Talisman allows the caster to enchant a personal magical item (the fabled wizard's staff) to act as an amplifier for her will and thaumaturgical might. Many talismans are laden with additional rituals (such as every ward known to the caster). The physical appearance of a talisman varies, but it must be a rigid object close to a yard or a meter long. Swords and walking sticks are the most common talismans, but some innovative or eccentric thaumaturges have enchanted violins, shotguns, pool cues, and classroom pointers.",
+        "system": "This ritual requires six hours per night for one complete cycle of the moon, beginning and ending on the new moon. Over this time, the vampire carefully prepares her talisman, carving it with Hermetic runes that signify her true name and the sum total of her thaumaturgical knowledge. The player spends one blood point per night and makes an extended roll of Intelligence + Occult (difficulty 8), one roll per week. If a night's work is missed or if the four rolls do not accumulate at least 20 net successes, the talisman is ruined and the process must be begun again. A completed talisman gives the caster several advantages. When the character is holding the talisman, the difficulty of all magic that targets her is increased by one. The player receives two extra dice when rolling for uses of the character's primary path and one extra die when rolling for the character's ritual castings. If the talisman is used as a weapon, it gives the player an additional die to roll to hit. If the thaumaturge is separated from her talisman, a successful Perception + Occult roll (difficulty 7) gives her its location. If a talisman is in the possession of another individual, it gives that individual three additional dice to roll when using any form of magic against the talisman's owner. At the Storyteller's discretion, rituals that target the caster and use her talisman as a physical component may have greatly increased effects. A thaumaturge may only have one talisman at a time. Ownership of a talisman may not be transferred — each individual must create her own.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [5]
+    },
+    {
+        "name": "Escape to a True Friend",
+        "description": "Escape to a True Friend allows the caster to travel to the person whose friendship and trust she most values. The ritual has a physical component of a yard-wide/meter-wide circle charred into the bare ground or floor. The caster may step into the circle at any time and speak the true name of her friend. She is instantly transported to that individual, wherever he may be at the moment. She does not appear directly in front of him, but materializes in a location within a few minutes' walk that is out of sight of any observer. The circle may be reused indefinitely, as long as it is unmarred.",
+        "system": "This ritual takes six hours a night for six nights to cast, reduced by one night for every two successes. Each night requires the sacrifice of three of the caster's own blood points, which are poured into the circle. Once the circle is complete, the transport may be attempted at any time. The caster may take one other individual with her when she travels, or a maximum amount of 'cargo' equal to her own weight.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [5]
+    },
+    {
+        "name": "Paper Flesh",
+        "description": "This dreadful ritual enfeebles the subject, making her skin brittle and weak. Humors rise to the surface and flesh tightens around bones and scales away at the slightest touch. Used against physically tough opponents, this ritual strips away the inherent resilience of the vampiric body, leaving it a fragile, dry husk. The thaumaturge must inscribe his subject's true name (which is much harder to discern for elders than it is for young vampires) on a piece of paper, which he uses to cut himself and then burns to cinders.",
+        "system": "This ritual causes the subject's Stamina and Fortitude (if any) to drop to 1 each. For every Generation below Eighth, the subject retains one extra point of Stamina or Fortitude (keeping Fortitude first, though she may not exceed her original scores). For example, a vampire of the Fourth Generation with Fortitude targeted by Paper Flesh would drop to a Stamina + Fortitude score of 6 (assuming the score was 6 or more to begin with). This ritual lasts one night.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [5]
+    },
+    {
+        "name": "Ward versus Spirits",
+        "description": "This warding ritual functions exactly as Ward versus Ghouls, but it inflicts injury upon spirits. Several other versions of this ward exist, each geared toward a particular type of non-physical being.",
+        "system": "Ward versus Spirits behaves exactly as does Ward versus Ghouls, but it affects spirits (including those summoned or given physical form by Thaumaturgy Paths such as Elemental Mastery). The material component for Ward versus Spirits is a handful of pure sea salt. The other versions of this ward, also Level Five rituals, are Ward versus Ghosts and Ward versus Demons. Each of these three Level Five wards affects its respective target on both the physical and spiritual planes. Ward versus Ghosts requires a handful of powdered marble from a tombstone, while Ward versus Demons requires a vial of holy water.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [5]
+    }
+]

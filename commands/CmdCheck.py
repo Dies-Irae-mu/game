@@ -1,4 +1,4 @@
-from world.wod20th.models import POWER_SOURCE_TYPES
+from world.wod20th.utils.companion_utils import POWER_SOURCE_TYPES
 from evennia.commands.default.muxcommand import MuxCommand
 from world.wod20th.models import Stat
 
@@ -59,6 +59,7 @@ class CmdCheck(MuxCommand):
     FREEBIE_COSTS = {
         'attribute': 5,
         'ability': 2,
+        'secondary_ability': 1,
         'background': 1,
         'willpower': 1,
         'virtue': 2,
@@ -66,16 +67,22 @@ class CmdCheck(MuxCommand):
         'flaw': -1,  # Flaws add points
         # Splat-specific costs
         'gift': 7,
+        'kinfolk_gift': 10,  # Special cost for Kinfolk with Gnosis
         'rage': 1,
         'gnosis': 2,
-        'sphere': 7,
+        'art': 5,
+        'sliver': 5,
+        'glamour': 3,
+        'realm': 2,
         'arete': 4,
         'quintessence': 0.25,  # 1 per 4 dots
+        'sphere': 7,
         'discipline': 7,
         'road': 2,
-        'art': 5,
-        'glamour': 3,
-        'realm': 2
+        'numina': 7,
+        'sorcery': 7,
+        'hedge_ritual': 3,
+        'faith': 7
     }
 
     XP_COSTS = {
@@ -153,54 +160,35 @@ class CmdCheck(MuxCommand):
         if not self.args:
             character = self.caller
         else:
-            # Only allow staff to check other characters
-            if not self.caller.check_permstring("Builder") and not self.caller.check_permstring("Admin") and not self.caller.check_permstring("Developer"):
-                self.caller.msg("You don't have permission to check other characters.")
-                return
-                
             character = self.caller.search(self.args)
             if not character:
                 return
+            if not self.caller.check_permstring("Builder"):
+                self.caller.msg("You don't have permission to check other characters.")
+                return
 
-        # Get character's splat
-        splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
-        if not splat:
-            self.caller.msg("|rError: Character has no splat type set.|n")
-            return
-
-        # Initialize results dictionary
         results = {
             'attributes': {'primary': 0, 'secondary': 0, 'tertiary': 0},
-            'abilities': {'primary': 0, 'secondary': 0, 'tertiary': 0},
+            'abilities': {'primary': {'category': '', 'points': 0}, 'secondary': {'category': '', 'points': 0}, 'tertiary': {'category': '', 'points': 0}},
             'backgrounds': 0,
+            'merits': 0,
+            'flaws': 0,
             'freebies_spent': 0,
-            'xp_spent': 0,
+            'total_freebies': 15,
             'errors': []
         }
 
-        # Check attributes
+        # Run all checks
         self.check_attributes(character, results)
-        
-        # Check abilities
         self.check_abilities(character, results)
-        
-        # Check backgrounds
         self.check_backgrounds(character, results)
-        
-        # Check required notes
-        self.check_required_notes(character, results)
-        
-        # Check free dots
         self.check_free_dots(character, results)
-        
-        # Calculate freebie points
         self.calculate_freebies(character, results)
-
-        # Calculate XP if any exists
-        self.calculate_xp(character, results)
+        self.check_required_notes(character, results)
 
         # Display results
-        self.display_results(character, results)
+        output = self.display_results(character, results)
+        self.caller.msg(output)
 
     def check_attributes(self, character, results):
         """Check attribute point allocation."""
@@ -211,8 +199,8 @@ class CmdCheck(MuxCommand):
             total = 0
             attributes = character.db.stats.get('attributes', {}).get(category, {})
             for attr, values in attributes.items():
-                # Subtract 1 from each attribute value since all attributes start at 1
-                attr_value = values.get('perm', 0) - 1
+                # Get the permanent value, defaulting to 1 (all attributes start at 1)
+                attr_value = values.get('perm', 1) - 1
                 if attr_value > 0:
                     total += attr_value
             attribute_totals.append((category, total))
@@ -249,19 +237,15 @@ class CmdCheck(MuxCommand):
             for ability, values in abilities.items():
                 ability_value = min(values.get('perm', 0), 3)  # Cap at 3 for initial point allocation
                 if ability_value > 0:
-                    # If it's a secondary ability, count it as half points
-                    if ability in secondary_abilities.get(category, set()):
-                        category_total += ability_value * 0.5
-                    else:
-                        category_total += ability_value
+                    category_total += ability_value
 
-            # Check secondary abilities
+            # Check secondary abilities category
             secondary_category = f'secondary_{category}'
             secondary_abilities_dict = character.db.stats.get('secondary_abilities', {}).get(secondary_category, {})
             for ability, values in secondary_abilities_dict.items():
                 ability_value = min(values.get('perm', 0), 3)  # Cap at 3 for initial point allocation
                 if ability_value > 0:
-                    category_total += ability_value * 0.5  # All abilities in secondary_abilities are secondary abilities
+                    category_total += ability_value * 0.5  # Secondary abilities cost half points
 
             if category_total > 0:
                 all_ability_points.append((category, category_total))
@@ -272,6 +256,13 @@ class CmdCheck(MuxCommand):
         # Pad the list if we have fewer than 3 categories with points
         while len(all_ability_points) < 3:
             all_ability_points.append(('unused', 0))
+
+        # Store the results
+        results['abilities'] = {
+            'primary': {'category': all_ability_points[0][0], 'points': all_ability_points[0][1]},
+            'secondary': {'category': all_ability_points[1][0], 'points': all_ability_points[1][1]},
+            'tertiary': {'category': all_ability_points[2][0], 'points': all_ability_points[2][1]}
+        }
 
         # Check against expected values
         if all_ability_points[0][1] > 13:
@@ -289,9 +280,22 @@ class CmdCheck(MuxCommand):
         elif all_ability_points[2][1] < 5:
             results['errors'].append(f"Tertiary abilities ({all_ability_points[2][0]}) should have 5 points, has {all_ability_points[2][1]}")
 
-        results['abilities']['primary'] = all_ability_points[0][1]
-        results['abilities']['secondary'] = all_ability_points[1][1]
-        results['abilities']['tertiary'] = all_ability_points[2][1]
+        # Add secondary abilities section to results
+        results['secondary_abilities'] = {
+            'talents': {},
+            'skills': {},
+            'knowledges': {}
+        }
+
+        # Populate secondary abilities in results
+        for category in ['talent', 'skill', 'knowledge']:
+            secondary_category = f'secondary_{category}'
+            secondary_dict = character.db.stats.get('secondary_abilities', {}).get(secondary_category, {})
+            for ability, values in secondary_dict.items():
+                ability_value = values.get('perm', 0)
+                if ability_value > 0:
+                    plural_category = category + 's'  # Convert to plural for results dict
+                    results['secondary_abilities'][plural_category][ability] = ability_value
 
     def check_backgrounds(self, character, results):
         """Check background point allocation."""
@@ -339,6 +343,20 @@ class CmdCheck(MuxCommand):
         if flaw_dots > 7:
             results['errors'].append(f"Character has too many flaw dots ({flaw_dots}). Maximum allowed is 7.")
 
+        # Special handling for Possessed gifts
+        if splat == 'possessed':
+            possessed_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Possessed Type', {}).get('perm')
+            blessings = character.db.stats.get('powers', {}).get('blessing', {})
+            blessing_count = len(blessings) if blessings else 0
+            max_blessings = 4 if possessed_type == 'Fomori' else 3
+            
+            if blessing_count > max_blessings:
+                results['errors'].append(f"Possessed may only have {max_blessings} blessings (currently has {blessing_count})")
+                
+            # Check if they're trying to buy blessings with freebies
+            if blessing_count > 3:  # More than the free ones
+                results['errors'].append("Possessed cannot buy additional blessings with freebie points")
+
         if splat == 'vampire':
             # Check for 3 discipline dots
             disciplines = character.db.stats.get('powers', {}).get('discipline', {})
@@ -353,7 +371,7 @@ class CmdCheck(MuxCommand):
                         results['errors'].append(f"- {disc}: {dots} dots")
 
             # Get character's Enlightenment path
-            enlightenment = character.db.stats.get('identity', {}).get('personal', {}).get('Enlightenment', {}).get('perm')
+            enlightenment = character.db.stats.get('identity', {}).get('lineage', {}).get('Enlightenment', {}).get('perm')
             if not enlightenment:
                 results['errors'].append("Missing required identity attribute for Vampire: Enlightenment")
                 return
@@ -398,7 +416,7 @@ class CmdCheck(MuxCommand):
                 results['errors'].append(f"Missing required virtues for {enlightenment}: {', '.join(missing_virtues)}")
 
             # Check Road rating against virtue total and cap for non-Humanity paths
-            road = character.get_stat('pools', 'moral', 'Road', temp=False)
+            road = character.get_stat('pools', 'moral', 'Road', temp=False) or 0
             if enlightenment != 'Humanity' and road > 5:
                 results['errors'].append(f"Non-Humanity paths cannot have Road rating above 5 at character creation (currently {road})")
             if road > virtue_total:
@@ -411,7 +429,7 @@ class CmdCheck(MuxCommand):
             results['freebies_spent'] = results.get('freebies_spent', 0) + freebies_spent_on_virtues + freebies_spent_on_road
 
             # Check Willpower against Courage
-            willpower = character.get_stat('pools', 'dual', 'Willpower', temp=False)
+            willpower = character.get_stat('pools', 'dual', 'Willpower', temp=False) or 0
             courage = virtues.get('Courage', {}).get('perm', 0)
             if willpower != courage:
                 results['errors'].append(f"Willpower should equal Courage rating ({courage}) but is {willpower}")
@@ -436,7 +454,7 @@ class CmdCheck(MuxCommand):
 
         elif splat == 'sorcerer':
             # Check for 6 dots of paths
-            paths = character.db.stats.get('powers', {}).get('path', {})
+            paths = character.db.stats.get('powers', {}).get('sorcery', {})
             total_dots = sum(values.get('perm', 0) for values in paths.values())
             if total_dots < 6:
                 results['errors'].append(f"Sorcerer should have at least 6 path dots (has {total_dots})")
@@ -450,8 +468,8 @@ class CmdCheck(MuxCommand):
 
         elif splat == 'faithful':
             # Check for 3 dots of Faith paths
-            paths = character.db.stats.get('powers', {}).get('faithpath', {})
-            total_dots = sum(values.get('perm', 0) for values in paths.values())
+            faith = character.db.stats.get('powers', {}).get('faith', {})
+            total_dots = sum(values.get('perm', 0) for values in faith.values())
             if total_dots < 3:
                 results['errors'].append(f"Faithful should have at least 3 Faith path dots (has {total_dots})")
 
@@ -542,11 +560,53 @@ class CmdCheck(MuxCommand):
                 if total_gifts < req['count']:
                     results['errors'].append(f"{shifter_type.title()} should have {req['msg']} (has {total_gifts})")
 
+        elif splat == 'possessed':
+            # Check for Possessed Type
+            possessed_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Possessed Type', {}).get('perm')
+            if not possessed_type:
+                results['errors'].append("Possessed must have a Possessed Type set")
+
+            # Check blessings
+            blessings = character.db.stats.get('powers', {}).get('blessing', {})
+            blessing_dots = sum(values.get('perm', 0) for values in blessings.values())
+            if blessing_dots < 3:
+                results['errors'].append(f"Possessed should have at least 3 blessing dots (has {blessing_dots})")
+
+            # Special check for Fomori blessings
+            if possessed_type == 'Fomori':
+                required_blessings = ['Armored Skin', 'Berserker', 'Gifted Fomor']
+                has_required = False
+                for blessing in required_blessings:
+                    if blessing in blessings:
+                        has_required = True
+                        break
+                if not has_required:
+                    results['errors'].append(f"Fomori receive one of the following blessings for free: {', '.join(required_blessings)}")
+
+            # Check background limits
+            limited_backgrounds = ['Allies', 'Contacts', 'Resources']
+            backgrounds = character.db.stats.get('backgrounds', {}).get('background', {})
+            for bg in limited_backgrounds:
+                if bg in backgrounds and backgrounds[bg].get('perm', 0) > 3:
+                    results['errors'].append(f"Possessed may not have more than 3 dots in {bg} (currently has {backgrounds[bg].get('perm')})")
+
+            # Check Kami Fate requirement
+            if possessed_type == 'Kami':
+                fate_dots = backgrounds.get('Fate', {}).get('perm', 0)
+                if fate_dots < 1:
+                    results['errors'].append("Kami must take at least one dot in the Fate background")
+
+        elif splat == 'mortal+':
+            # Check for Mortal+ Type
+            mortalplus_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Mortal+ Type', {}).get('perm')
+            if not mortalplus_type:
+                results['errors'].append("Mortal+ must have a Mortal+ Type set")
+
     def get_secondary_abilities(self, splat):
         """Get the list of secondary abilities based on character splat."""
         secondaries = {
             'talent': {
-                'Carousing', 'Diplomacy', 'Intrigue', 'Mimicry', 'Scrounging', 'Seduction', 'Style'
+                'Artistry', 'Carousing', 'Diplomacy', 'Intrigue', 'Mimicry', 'Scrounging', 'Seduction', 'Style'
             },
             'skill': {
                 'Archery', 'Fortune-Telling', 'Fencing', 'Gambling', 'Jury-Rigging', 'Pilot', 'Torture'
@@ -558,16 +618,17 @@ class CmdCheck(MuxCommand):
 
         # Add Mage-specific secondaries if character is a Mage
         if splat.lower() == 'mage':
-            secondaries['talent'].update({'High Ritual', 'Blatancy'})
-            secondaries['skill'].update({'Microgravity Ops', 'Energy Weapons', 'Helmsman', 'Biotech'})
+            secondaries['talent'].update({'High Ritual', 'Blatancy','Lucid Dreaming', 'Flying'})
+            secondaries['skill'].update({'Microgravity Ops', 'Energy Weapons', 'Helmsman', 'Biotech', 'Do'})
             secondaries['knowledge'].update({'Hypertech', 'Cybernetics', 'Paraphysics', 'Xenobiology'})
 
         return secondaries
 
     def calculate_freebies(self, character, results):
         """Calculate freebie point expenditure."""
-        splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
-        base_freebies = 21 if splat.lower() in ['mortal', 'mortal+'] else 15
+        splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '').lower()
+        # Mortal, Mortal+, and Possessed get 21 freebies, others get 15
+        base_freebies = 21 if splat in ['mortal', 'mortal+', 'possessed'] else 15
         spent_freebies = 0
 
         # Calculate total flaw points first
@@ -581,45 +642,69 @@ class CmdCheck(MuxCommand):
         # Total freebies is base amount plus flaw points
         total_freebies = base_freebies + total_flaw_points
 
-        # Get secondary abilities for this character's splat
-        secondary_abilities = self.get_secondary_abilities(splat)
-
-        # Calculate attribute freebies (only for values above 5)
+        # Calculate attribute freebies (for all points over primary/secondary/tertiary caps)
+        attribute_totals = []
         for category in ['physical', 'social', 'mental']:
+            total = 0
             attributes = character.db.stats.get('attributes', {}).get(category, {})
             for attr, values in attributes.items():
-                attr_value = values.get('perm', 0)
-                if attr_value > 5:  # Only charge freebies for dots above 5
-                    spent_freebies += (attr_value - 5) * self.FREEBIE_COSTS['attribute']
+                attr_value = values.get('perm', 1) - 1  # Subtract 1 since all attributes start at 1
+                if attr_value > 0:
+                    total += attr_value
+            attribute_totals.append((category, total))
+        
+        # Sort to determine primary/secondary/tertiary
+        attribute_totals.sort(key=lambda x: x[1], reverse=True)
+        
+        # Calculate costs for points over caps
+        if attribute_totals[0][1] > 7:  # Primary
+            spent_freebies += (attribute_totals[0][1] - 7) * self.FREEBIE_COSTS['attribute']
+        if attribute_totals[1][1] > 5:  # Secondary
+            spent_freebies += (attribute_totals[1][1] - 5) * self.FREEBIE_COSTS['attribute']
+        if attribute_totals[2][1] > 3:  # Tertiary
+            spent_freebies += (attribute_totals[2][1] - 3) * self.FREEBIE_COSTS['attribute']
 
-        # Calculate ability freebies (any dots above 3)
+        # Calculate ability freebies
+        ability_totals = []
         for category in ['talent', 'skill', 'knowledge']:
-            # Check regular abilities
+            total = 0
+            # Regular abilities
             abilities = character.db.stats.get('abilities', {}).get(category, {})
             for ability, values in abilities.items():
                 ability_value = values.get('perm', 0)
-                if ability_value > 3:
-                    # If it's a secondary ability, charge half cost
-                    if ability in secondary_abilities.get(category, set()):
-                        spent_freebies += (ability_value - 3) * (self.FREEBIE_COSTS['ability'] / 2)
-                    else:
-                        spent_freebies += (ability_value - 3) * self.FREEBIE_COSTS['ability']
-
-            # Check secondary abilities
+                total += ability_value
+            
+            # Secondary abilities
             secondary_category = f'secondary_{category}'
-            secondary_abilities_dict = character.db.stats.get('secondary_abilities', {}).get(secondary_category, {})
-            for ability, values in secondary_abilities_dict.items():
+            secondary_abilities = character.db.stats.get('secondary_abilities', {}).get(secondary_category, {})
+            for ability, values in secondary_abilities.items():
                 ability_value = values.get('perm', 0)
-                if ability_value > 3:
-                    spent_freebies += (ability_value - 3) * (self.FREEBIE_COSTS['ability'] / 2)
+                total += ability_value * 0.5
+            
+            ability_totals.append((category, total))
+        
+        # Sort to determine primary/secondary/tertiary
+        ability_totals.sort(key=lambda x: x[1], reverse=True)
+        
+        # Calculate costs for points over caps
+        if ability_totals[0][1] > 13:  # Primary
+            spent_freebies += (ability_totals[0][1] - 13) * self.FREEBIE_COSTS['ability']
+        if ability_totals[1][1] > 9:  # Secondary
+            spent_freebies += (ability_totals[1][1] - 9) * self.FREEBIE_COSTS['ability']
+        if ability_totals[2][1] > 5:  # Tertiary
+            spent_freebies += (ability_totals[2][1] - 5) * self.FREEBIE_COSTS['ability']
 
         # Calculate background freebies
+        total_backgrounds = 0
         backgrounds = character.db.stats.get('backgrounds', {}).get('background', {})
         expected_backgrounds = 7 if splat.lower() == 'mage' else 5
         for background, values in backgrounds.items():
             background_value = values.get('perm', 0)
-            if background_value > expected_backgrounds:
-                spent_freebies += (background_value - expected_backgrounds) * self.FREEBIE_COSTS['background']
+            total_backgrounds += background_value
+        
+        expected_backgrounds = 7 if splat == 'mage' else 5
+        if total_backgrounds > expected_backgrounds:
+            spent_freebies += (total_backgrounds - expected_backgrounds) * self.FREEBIE_COSTS['background']
 
         # Calculate merit points
         for merit_type in ['merit', 'physical', 'social', 'mental', 'supernatural']:
@@ -627,9 +712,8 @@ class CmdCheck(MuxCommand):
             for merit, values in merits.items():
                 merit_value = values.get('perm', 0)
                 spent_freebies += merit_value * self.FREEBIE_COSTS['merit']
-
         # Splat-specific calculations
-        if splat.lower() == 'shifter':
+        if splat == 'shifter':
             # Get shifter type to determine free gifts
             shifter_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '').lower()
             gift_requirements = {
@@ -645,28 +729,118 @@ class CmdCheck(MuxCommand):
                 'rokea': 2
             }
             free_gifts = gift_requirements.get(shifter_type, 3)  # Default to 3 if type not found
-
-            # Calculate Gift costs (only for gifts beyond the free ones)
+                        # Calculate Gift costs (only for gifts beyond the free ones)
             gifts = character.db.stats.get('powers', {}).get('gift', {})
             total_gifts = len(gifts) if gifts else 0
             if total_gifts > free_gifts:
                 spent_freebies += (total_gifts - free_gifts) * self.FREEBIE_COSTS['gift']
 
             # Calculate Rage and Gnosis costs
-            rage = character.get_stat('pools', 'dual', 'Rage', temp=False)
-            gnosis = character.get_stat('pools', 'dual', 'Gnosis', temp=False)
+            rage = character.get_stat('pools', 'dual', 'Rage', temp=False) or 0
+            gnosis = character.get_stat('pools', 'dual', 'Gnosis', temp=False) or 0
             
-            if rage > 1:  # Assuming base Rage of 1
-                spent_freebies += (rage - 1) * self.FREEBIE_COSTS['rage']
-            if gnosis > 1:  # Assuming base Gnosis of 1
-                spent_freebies += (gnosis - 1) * self.FREEBIE_COSTS['gnosis']
+            # Get base Rage based on auspice
+            auspice = character.get_stat('identity', 'lineage', 'Auspice', temp=False)
+            base_rage = {
+                'Ragabash': 1,
+                'Theurge': 2,
+                'Philodox': 3,
+                'Galliard': 4,
+                'Ahroun': 5
+            }.get(auspice, 1)  # Default to 1 if auspice not found
+            
+            # Get base Gnosis based on breed
+            breed = character.get_stat('identity', 'lineage', 'Breed', temp=False)
+            base_gnosis = 1 if breed == 'Homid' else 3 if breed == 'Metis' else 5
+            
+            if rage > base_rage:
+                spent_freebies += (rage - base_rage) * self.FREEBIE_COSTS['rage']
+            if gnosis > base_gnosis:
+                spent_freebies += (gnosis - base_gnosis) * self.FREEBIE_COSTS['gnosis']
 
-        results['freebies_spent'] = spent_freebies
+
+        # Vampire-specific calculations
+        elif splat == 'vampire':
+            # Calculate discipline costs
+            disciplines = character.db.stats.get('powers', {}).get('discipline', {})
+            total_discipline_dots = sum(values.get('perm', 0) for values in disciplines.values())
+            if total_discipline_dots > 3:  # Free dots
+                spent_freebies += (total_discipline_dots - 3) * self.FREEBIE_COSTS['discipline']
+
+            # Calculate virtue and road costs
+            virtues = character.db.stats.get('virtues', {}).get('moral', {})
+            enlightenment = character.db.stats.get('identity', {}).get('lineage', {}).get('Enlightenment', {}).get('perm')
+            
+            if enlightenment:
+                required_virtues = self.PATH_VIRTUES.get(enlightenment, [])
+                remaining_free_dots = 7
+                
+                for virtue in required_virtues:
+                    value = virtues.get(virtue, {}).get('perm', 0)
+                    if value > 0:
+                        # For non-Humanity paths, Conviction and Instinct start at 0
+                        if enlightenment != 'Humanity' and virtue in ['Conviction', 'Instinct']:
+                            if value > remaining_free_dots:
+                                spent_freebies += (value - remaining_free_dots) * self.FREEBIE_COSTS['virtue']
+                                remaining_free_dots = 0
+                            else:
+                                remaining_free_dots -= value
+                        else:  # Humanity virtues or Courage start at 1
+                            if (value - 1) > remaining_free_dots:
+                                spent_freebies += (value - 1 - remaining_free_dots) * self.FREEBIE_COSTS['virtue']
+                                remaining_free_dots = 0
+                            else:
+                                remaining_free_dots -= (value - 1)
+                # Calculate Road costs
+                road = character.get_stat('pools', 'moral', 'Road', temp=False) or 0
+                virtue_total = sum(values.get('perm', 0) for values in virtues.values())
+                if road > virtue_total:
+                    spent_freebies += (road - virtue_total) * self.FREEBIE_COSTS['road']
+
+        elif splat == 'changeling':
+            # Calculate Art costs
+            arts = character.db.stats.get('powers', {}).get('art', {})
+            art_dots = sum(values.get('perm', 0) for values in arts.values())
+            if art_dots > 3:  # Free dots
+                spent_freebies += (art_dots - 3) * self.FREEBIE_COSTS['art']
+
+            # Calculate Realm costs
+            realms = character.db.stats.get('powers', {}).get('realm', {})
+            realm_dots = sum(values.get('perm', 0) for values in realms.values())
+            if realm_dots > 5:  # Free dots
+                spent_freebies += (realm_dots - 5) * self.FREEBIE_COSTS['realm']
+
+            # Calculate Glamour costs
+            glamour = character.get_stat('pools', 'dual', 'Glamour', temp=False) or 0
+            seeming = character.get_stat('identity', 'lineage', 'Seeming', temp=False)
+            base_glamour = 5 if seeming == 'Childling' else 4 if seeming == 'Wilder' else 3
+            if glamour > base_glamour:
+                spent_freebies += (glamour - base_glamour) * self.FREEBIE_COSTS['glamour']
+
+        elif splat == 'mage':
+            # Calculate Sphere costs
+            spheres = character.db.stats.get('powers', {}).get('sphere', {})
+            sphere_dots = sum(values.get('perm', 0) for values in spheres.values())
+            if sphere_dots > 6:  # 5 free dots + 1 affinity
+                spent_freebies += (sphere_dots - 6) * self.FREEBIE_COSTS['sphere']
+
+            # Calculate Arete costs
+            arete = character.get_stat('pools', 'dual', 'Arete', temp=False) or 0
+            if arete > 1:
+                spent_freebies += (arete - 1) * self.FREEBIE_COSTS['arete']
+
+            # Calculate Quintessence costs
+            quintessence = character.get_stat('pools', 'dual', 'Quintessence', temp=False) or 0
+            avatar = character.get_stat('backgrounds', 'background', 'Avatar', temp=False) or 0
+            if quintessence > avatar:
+                spent_freebies += ((quintessence - avatar) / 4) * self.FREEBIE_COSTS['quintessence']
+
+        results['freebies_spent'] = int(spent_freebies)
         results['total_freebies'] = total_freebies
         if spent_freebies > total_freebies:
-            results['errors'].append(f"Too many freebie points spent: {spent_freebies}/{total_freebies}")
+            results['errors'].append(f"Too many freebie points spent: {int(spent_freebies)}/{total_freebies}")
         elif spent_freebies < total_freebies:
-            results['errors'].append(f"Not all freebie points spent: {spent_freebies}/{total_freebies}")
+            results['errors'].append(f"Not all freebie points spent: {int(spent_freebies)}/{total_freebies}")
 
     def check_combo_prerequisites(self, character, combo_name):
         """Check if a character meets the prerequisites for a combo discipline."""
@@ -708,18 +882,22 @@ class CmdCheck(MuxCommand):
             'Date of Birth': 'identity/personal',
             'Concept': 'identity/personal'
         }
-        required_archetype = {
-            'Nature': 'archetype/personal',
-            'Demeanor': 'archetype/personal'
-        }
+
+        # Check Nature/Demeanor for all splats except Changeling
+        splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '').lower()
+        if splat != 'changeling':
+            required_archetype = {
+                'Nature': 'identity/personal',
+                'Demeanor': 'identity/personal'
+            }
+            
+            for attr, path in required_archetype.items():
+                if not character.db.stats.get('identity', {}).get('personal', {}).get(attr, {}).get('perm'):
+                    results['errors'].append(f"Missing required identity attribute: {attr}")
 
         for attr, path in required_personal.items():
             if not character.db.stats.get('identity', {}).get('personal', {}).get(attr, {}).get('perm'):
                 results['errors'].append(f"Missing required identity attribute: {attr}")
-
-        for attr, path in required_archetype.items():
-            if not character.db.stats.get('archetype', {}).get('personal', {}).get(attr, {}).get('perm'):
-                results['errors'].append(f"Missing required archetype attribute: {attr}")
 
         # Get character's splat
         splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '').lower()
@@ -741,13 +919,13 @@ class CmdCheck(MuxCommand):
 
         elif splat == 'mage':
             # Check required Mage attributes
-            required_mage = ['Mage Faction', 'Essence']
+            required_mage = ['Affiliation', 'Essence']
             for attr in required_mage:
                 if not character.db.stats.get('identity', {}).get('lineage', {}).get(attr, {}).get('perm'):
                     results['errors'].append(f"Missing required lineage attribute for Mage: {attr}")
 
             # Get Mage Faction
-            affiliation = character.db.stats.get('identity', {}).get('lineage', {}).get('Mage Faction', {}).get('perm')
+            affiliation = character.db.stats.get('identity', {}).get('lineage', {}).get('Affiliation', {}).get('perm')
             if affiliation:
                 if affiliation == 'Traditions' and not character.db.stats.get('identity', {}).get('lineage', {}).get('Tradition', {}).get('perm'):
                     results['errors'].append("Traditions Mage must have a Tradition set")
@@ -789,9 +967,9 @@ class CmdCheck(MuxCommand):
                     results['errors'].append("Childling Changelings must have Glamour >= 5")
 
             # Check Banality requirement
-            banality = character.get_stat('pools', 'dual', 'Banality', temp=False)
+            banality = character.get_stat('virtues', 'moral', 'Banality', temp=False) or 0
             if banality < 3:
-                results['errors'].append("All Changelings must have Banality >= 3")
+                results['errors'].append(f"All Changelings must have Banality >= 3 (currently {banality})")
 
             # Check required Changeling notes
             required_changeling_notes = ['Frailties', 'Birthrights', 'Musing Threshold', 'Ravaging Threshold', 'Antithesis']
@@ -801,7 +979,7 @@ class CmdCheck(MuxCommand):
 
         elif splat == 'vampire':
             # Check required Vampire attributes
-            required_vampire_lineage = ['Clan', 'Generation', 'Sire']
+            required_vampire_lineage = ['Clan', 'Generation', 'Sire', 'Enlightenment']  # Added Enlightenment
             required_vampire_identity = ['Date of Embrace']
             
             for attr in required_vampire_lineage:
@@ -835,7 +1013,7 @@ class CmdCheck(MuxCommand):
 
         elif splat == 'companion':
             # Check required Companion attributes
-            required_companion = ['Companion Type', 'Mage Faction', 'Motivation']
+            required_companion = ['Companion Type', 'Affiliation', 'Motivation']
             for attr in required_companion:
                 if not character.db.stats.get('identity', {}).get('lineage', {}).get(attr, {}).get('perm'):
                     results['errors'].append(f"Missing required lineage attribute for Companion: {attr}")
@@ -893,7 +1071,7 @@ class CmdCheck(MuxCommand):
                 ability_value = values.get('perm', 0)
                 if ability_value > 3:  # Assuming max of 3 from freebies
                     # Check if this is a secondary ability
-                    if ability in secondary_abilities.get(category, set()):
+                    if ability.lower() in {ab.lower() for ab in secondary_abilities.get(category, set())}:
                         ability_xp += (ability_value - 3) * (self.XP_COSTS['ability'] / 2)
                     else:
                         ability_xp += (ability_value - 3) * self.XP_COSTS['ability']
@@ -980,163 +1158,111 @@ class CmdCheck(MuxCommand):
 
     def display_results(self, character, results):
         """Display the results of the character check."""
-        output = [
-            f"|wCharacter Check Results for {character.name}|n",
-            "",
-            "|yAttributes:|n",
-            f"Primary: {results['attributes']['primary']}/7",
-            f"Secondary: {results['attributes']['secondary']}/5",
-            f"Tertiary: {results['attributes']['tertiary']}/3",
-            "",
-            "|yAbilities:|n",
-            f"Primary: {results['abilities']['primary']}/13",
-            f"Secondary: {results['abilities']['secondary']}/9",
-            f"Tertiary: {results['abilities']['tertiary']}/5",
-            "",
-            f"|yBackgrounds:|n {results['backgrounds']}/{'7' if character.get_stat('other', 'splat', 'Splat').lower() == 'mage' else '5'}",
-            "",
-            "|yMerits & Flaws:|n",
-            f"Merit dots: {results.get('merits', 0)}",
-            f"Flaw dots: {results.get('flaws', 0)}/7"
-        ]
+        string = f"|wCharacter Check Results for {character.name}|n\n\n"
 
-        # Add splat-specific power information
-        splat = character.get_stat('other', 'splat', 'Splat').lower()
+        # Attributes
+        string += "|yAttributes:|n\n"
+        string += f"Primary: {results['attributes']['primary']}/7\n"
+        string += f"Secondary: {results['attributes']['secondary']}/5\n"
+        string += f"Tertiary: {results['attributes']['tertiary']}/3\n\n"
+
+        # Calculate total points in each ability category including secondary abilities
+        talent_total = sum(values.get('perm', 0) for values in character.db.stats.get('abilities', {}).get('talent', {}).values())
+        skill_total = sum(values.get('perm', 0) for values in character.db.stats.get('abilities', {}).get('skill', {}).values())
+        knowledge_total = sum(values.get('perm', 0) for values in character.db.stats.get('abilities', {}).get('knowledge', {}).values())
+
+        # Calculate secondary ability totals
+        sec_talent_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('secondary_abilities', {}).get('secondary_talent', {}).values())
+        sec_skill_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('secondary_abilities', {}).get('secondary_skill', {}).values())
+        sec_knowledge_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('secondary_abilities', {}).get('secondary_knowledge', {}).values())
+
+        # Combined totals
+        total_talent = talent_total + sec_talent_total
+        total_skill = skill_total + sec_skill_total
+        total_knowledge = knowledge_total + sec_knowledge_total
+
+        # Abilities with combined totals
+        string += "|yAbilities:|n\n"
+        string += f"Primary: {results['abilities']['primary']['points']}/13 ({results['abilities']['primary']['category']}) - Total with secondaries: {total_talent if results['abilities']['primary']['category'] == 'talent' else total_skill if results['abilities']['primary']['category'] == 'skill' else total_knowledge}\n"
+        string += f"Secondary: {results['abilities']['secondary']['points']}/9 ({results['abilities']['secondary']['category']}) - Total with secondaries: {total_talent if results['abilities']['secondary']['category'] == 'talent' else total_skill if results['abilities']['secondary']['category'] == 'skill' else total_knowledge}\n"
+        string += f"Tertiary: {results['abilities']['tertiary']['points']}/5 ({results['abilities']['tertiary']['category']}) - Total with secondaries: {total_talent if results['abilities']['tertiary']['category'] == 'talent' else total_skill if results['abilities']['tertiary']['category'] == 'skill' else total_knowledge}\n"
         
-        if splat == 'vampire':
-            disciplines = character.db.stats.get('powers', {}).get('discipline', {})
-            total_dots = sum(values.get('perm', 0) for values in disciplines.values())
-            output.extend([
-                "",
-                "|yDisciplines:|n",
-                f"Total dots: {total_dots} (Free: 3, Extra: {total_dots - 3})",
-                "Current disciplines:"
-            ])
-            for disc, values in disciplines.items():
-                dots = values.get('perm', 0)
-                if dots > 0:
-                    output.append(f"- {disc}: {dots}")
+        # Calculate freebie points needed for abilities over limit
+        primary_over = max(0, results['abilities']['primary']['points'] - 13) * 2  # 2 freebie points per ability dot
+        secondary_over = max(0, results['abilities']['secondary']['points'] - 9) * 2
+        tertiary_over = max(0, results['abilities']['tertiary']['points'] - 5) * 2
+        total_ability_freebies = primary_over + secondary_over + tertiary_over
+        
+        if total_ability_freebies > 0:
+            string += f"Freebie points needed for abilities over limit: {total_ability_freebies}\n"
+        string += "\n"
 
-        elif splat == 'mage':
-            spheres = character.db.stats.get('powers', {}).get('sphere', {})
-            total_dots = sum(values.get('perm', 0) for values in spheres.values())
-            output.extend([
-                "",
-                "|ySpheres:|n",
-                f"Total dots: {total_dots} (Free: 6 [5 + 1 affinity], Extra: {total_dots - 6})",
-                "Current spheres:"
-            ])
-            for sphere, values in spheres.items():
-                dots = values.get('perm', 0)
-                if dots > 0:
-                    output.append(f"- {sphere}: {dots}")
+        # Secondary Abilities with totals
+        string += "|ySecondary Abilities:|n\n"
+        
+        # Talents
+        if results['secondary_abilities']['talents']:
+            string += "\n|cTalents (Total: {:.1f} points):|n\n".format(sec_talent_total)
+            for talent, value in sorted(results['secondary_abilities']['talents'].items()):
+                string += f"{talent}: {value} ({value * 0.5} points)\n"
+        
+        # Skills
+        if results['secondary_abilities']['skills']:
+            string += "\n|cSkills (Total: {:.1f} points):|n\n".format(sec_skill_total)
+            for skill, value in sorted(results['secondary_abilities']['skills'].items()):
+                string += f"{skill}: {value} ({value * 0.5} points)\n"
+        
+        # Knowledges
+        if results['secondary_abilities']['knowledges']:
+            string += "\n|cKnowledges (Total: {:.1f} points):|n\n".format(sec_knowledge_total)
+            for knowledge, value in sorted(results['secondary_abilities']['knowledges'].items()):
+                string += f"{knowledge}: {value} ({value * 0.5} points)\n"
+        
+        string += "\n"
 
-        elif splat == 'changeling':
+        # Backgrounds
+        string += f"|yBackgrounds:|n {results['backgrounds']}/5\n\n"
+
+        # Merits & Flaws
+        string += "|yMerits & Flaws:|n\n"
+        string += f"Merit dots: {results['merits']}\n"
+        string += f"Flaw dots: {results['flaws']}/7\n\n"
+
+        # Arts & Realms for Changelings
+        splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+        if splat.lower() == 'changeling':
+            string += "|yArts & Realms:|n\n"
             arts = character.db.stats.get('powers', {}).get('art', {})
             realms = character.db.stats.get('powers', {}).get('realm', {})
             art_dots = sum(values.get('perm', 0) for values in arts.values())
             realm_dots = sum(values.get('perm', 0) for values in realms.values())
-            output.extend([
-                "",
-                "|yArts & Realms:|n",
-                f"Art dots: {art_dots} (Free: 3, Extra: {art_dots - 3})",
-                f"Realm dots: {realm_dots} (Free: 5, Extra: {realm_dots - 5})",
-                "Current arts:"
-            ])
-            for art, values in arts.items():
-                dots = values.get('perm', 0)
-                if dots > 0:
-                    output.append(f"- {art}: {dots}")
-            output.append("Current realms:")
-            for realm, values in realms.items():
-                dots = values.get('perm', 0)
-                if dots > 0:
-                    output.append(f"- {realm}: {dots}")
-
-        elif splat == 'shifter':
-            gifts = character.db.stats.get('powers', {}).get('gift', {})
-            shifter_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '').lower()
-            gift_requirements = {
-                'ajaba': {'count': 3, 'msg': "one breed Gift, one aspect Gift, and one Level One general Ajaba Gift"},
-                'bastet': {'count': 3, 'msg': "one Level One general Gift, one Level One breed Gift, and one Level One tribe Gift"},
-                'corax': {'count': 3, 'msg': "three Gifts from their allowed list"},
-                'gurahl': {'count': 3, 'msg': "one breed Gift, one auspice Gift, and one general Gurahl Gift"},
-                'kitsune': {'count': 3, 'msg': "one general Kitsune Gift, one breed Gift, and one Path Gift"},
-                'mokole': {'count': 2, 'msg': "one aspect Gift and one general Mokolé Gift"},
-                'nagah': {'count': 3, 'msg': "one general Nagah Gift, one breed Gift, and one auspice Gift"},
-                'nuwisha': {'count': 3, 'msg': "one breed Gift and two general Nuwisha Gifts"},
-                'ratkin': {'count': 3, 'msg': "one breed Gift, one aspect Gift, and one general Gift"},
-                'rokea': {'count': 2, 'msg': "one general Rokea Gift and one auspice Gift"}
-            }
-            free_gifts = gift_requirements.get(shifter_type, {}).get('count', 0)
-            total_gifts = len(gifts) if gifts else 0
-            output.extend([
-                "",
-                "|yGifts:|n",
-                f"Total gifts: {total_gifts} (Free: {free_gifts}, Extra: {total_gifts - free_gifts})",
-                f"Required gifts: {gift_requirements.get(shifter_type, {}).get('msg', 'Unknown shifter type')}",
-                "Current gifts:"
-            ])
-            for gift in gifts:
-                output.append(f"- {gift}")
-
-        elif splat == 'sorcerer':
-            paths = character.db.stats.get('powers', {}).get('path', {})
-            total_dots = sum(values.get('perm', 0) for values in paths.values())
-            output.extend([
-                "",
-                "|yPaths:|n",
-                f"Total dots: {total_dots} (Free: 6, Extra: {total_dots - 6})",
-                "Current paths:"
-            ])
-            for path, values in paths.items():
-                dots = values.get('perm', 0)
-                if dots > 0:
-                    output.append(f"- {path}: {dots}")
-
-        elif splat == 'psychic':
-            numina = character.db.stats.get('powers', {}).get('numina', {})
-            total_dots = sum(values.get('perm', 0) for values in numina.values())
-            output.extend([
-                "",
-                "|yNumina:|n",
-                f"Total dots: {total_dots} (Free: 6, Extra: {total_dots - 6})",
-                "Current numina:"
-            ])
-            for power, values in numina.items():
-                dots = values.get('perm', 0)
-                if dots > 0:
-                    output.append(f"- {power}: {dots}")
-
-        output.extend([
-            "",
-            f"|yFreebie Points:|n {results['freebies_spent']}/{results['total_freebies']}"
-        ])
-
-        # Add XP information if character has starting XP
-        if 'total_xp' in results:
-            output.extend([
-                "",
-                f"|yStarting XP:|n {results['xp_spent']}/{results['total_xp']}"
-            ])
+            string += f"Art dots: {art_dots} (Free: 3, Extra: {art_dots - 3})\n"
+            string += f"Realm dots: {realm_dots} (Free: 5, Extra: {realm_dots - 5})\n"
             
-            # Add XP spending breakdown if any XP was spent
-            if results['xp_spent'] > 0 and hasattr(results, 'xp_breakdown'):
-                output.extend([
-                    "",
-                    "|yXP Spending Breakdown:|n"
-                ])
-                for category, amount in results.get('xp_breakdown', {}).items():
-                    if amount > 0:
-                        output.append(f"- {category}: {amount} XP")
+            # List current arts
+            string += "Current arts:\n"
+            for art, values in sorted(arts.items()):
+                dots = values.get('perm', 0)
+                if dots > 0:
+                    string += f"- {art}: {dots}\n"
+            
+            # List current realms
+            string += "Current realms:\n"
+            for realm, values in sorted(realms.items()):
+                dots = values.get('perm', 0)
+                if dots > 0:
+                    string += f"- {realm}: {dots}\n"
+            string += "\n"
 
-        output.append("")
+        # Freebie Points
+        string += f"|yFreebie Points:|n {results.get('freebies_spent', 0)}/15\n\n"
 
+        # Errors
         if results['errors']:
-            output.append("|rErrors:|n")
+            string += "|rErrors:|n\n"
             for error in results['errors']:
-                output.append(f"- {error}")
+                string += f"- {error}\n"
         else:
-            output.append("|gNo errors found. Character creation points are properly allocated.|n")
+            string += "|gNo errors found. Character creation points are properly allocated.|n\n"
 
-        self.caller.msg("\n".join(output)) 
+        return string 

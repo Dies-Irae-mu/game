@@ -1,6 +1,124 @@
 """
 Utility functions for handling Shifter-specific character initialization and updates.
 """
+from world.wod20th.utils.banality import get_default_banality
+from typing import Dict, Union, List, Tuple
+
+# Valid shifter types
+SHIFTER_TYPE_CHOICES: List[Tuple[str, str]] = [
+    ('garou', 'Garou'),
+    ('gurahl', 'Gurahl'),
+    ('rokea', 'Rokea'),
+    ('ananasi', 'Ananasi'),
+    ('ajaba', 'Ajaba'),
+    ('bastet', 'Bastet'),
+    ('corax', 'Corax'),
+    ('kitsune', 'Kitsune'),
+    ('mokole', 'Mokole'),
+    ('nagah', 'Nagah'),
+    ('nuwisha', 'Nuwisha'),
+    ('ratkin', 'Ratkin'),
+    ('none', 'None')
+]
+
+# Valid auspices
+AUSPICE_CHOICES: List[Tuple[str, str]] = [
+    ('ragabash', 'Ragabash'),
+    ('theurge', 'Theurge'),
+    ('philodox', 'Philodox'),
+    ('galliard', 'Galliard'),
+    ('ahroun', 'Ahroun'),
+    ('brightwater', 'Brightwater'),
+    ('dimwater', 'Dimwater'),
+    ('darkwater', 'Darkwater'), 
+    ('arcas', 'Arcas'),
+    ('uzmati', 'Uzmati'),
+    ('kojubat', 'Kojubat'),
+    ('kieh', 'Kieh'),
+    ('rishi', 'Rishi'),
+    ('rising sun', 'Rising Sun'),
+    ('noonday sun', 'Noonday Sun'),
+    ('shrouded sun', 'Shrouded Sun'),
+    ('midnight sun', 'Midnight Sun'),
+    ('decorated sun', 'Decorated Sun'),
+    ('solar eclipse', 'Solar Eclipse'),
+    ('kamakshi', 'Kamakshi'),
+    ('kartikeya', 'Kartikeya'),
+    ('kamsa', 'Kamsa'),
+    ('kali', 'Kali'),
+    ('none', 'None')
+]
+
+# Valid Bastet tribes
+BASTET_TRIBE_CHOICES: List[Tuple[str, str]] = [
+    ('qualmi', 'Qualmi'),
+    ('swara', 'Swara'),
+    ('khan', 'Khan'),
+    ('simba', 'Simba'),
+    ('pumonca', 'Pumonca'),
+    ('balam', 'Balam'),
+    ('bubasti', 'Bubasti'),
+    ('ceilican', 'Ceilican'),
+    ('bagheera', 'Bagheera'),
+    ('none', 'None')
+]
+
+# Valid breeds
+BREED_CHOICES: List[Tuple[str, str]] = [
+    ('homid', 'Homid'),
+    ('metis', 'Metis'),
+    ('lupus', 'Lupus'),
+    ('feline', 'Feline'),
+    ('squamus', 'Squamus'),
+    ('ursine', 'Ursine'),
+    ('latrani', 'Latrani'),
+    ('rodens', 'Rodens'),
+    ('corvid', 'Corvid'),
+    ('balaram', 'Balaram'),
+    ('suchid', 'Suchid'),
+    ('ahi', 'Ahi'),
+    ('arachnid', 'Arachnid'),
+    ('kojin', 'Kojin'),
+    ('roko', 'Roko'),
+    ('shinju', 'Shinju'),
+    ('animal-born', 'Animal-Born'),
+    ('none', 'None')
+
+
+]
+
+# Valid Garou tribes
+GAROU_TRIBE_CHOICES: List[Tuple[str, str]] = [
+    ('black fury', 'Black Fury'),
+    ('bone gnawer', 'Bone Gnawer'),
+    ('children of gaia', 'Children of Gaia'),
+    ('fianna', 'Fianna'),
+    ('glass walker', 'Glass Walker'),
+    ('red talon', 'Red Talon'),
+    ('shadow lord', 'Shadow Lord'),
+    ('silent strider', 'Silent Strider'),
+    ('silver fang', 'Silver Fang'),
+    ('stargazer', 'Stargazer'),
+    ('uktena', 'Uktena'),
+    ('wendigo', 'Wendigo'),
+    ('none', 'None')
+]
+
+# Shifter identity stats for each type
+SHIFTER_IDENTITY_STATS = {
+    'Ajaba': ['Breed', 'Aspect', 'Deed Name'],
+    'Ananasi': ['Breed', 'Aspect', 'Deed Name'],
+    'Bastet': ['Breed', 'Tribe', 'Deed Name'],
+    'Corax': ['Breed', 'Deed Name'],
+    'Garou': ['Breed', 'Auspice', 'Tribe', 'Camp', 'Deed Name'],
+    'Gurahl': ['Breed', 'Auspice', 'Deed Name'],
+    'Kitsune': ['Breed', 'Path', 'Deed Name'],
+    'Mokole': ['Breed', 'Auspice', 'Stream', 'Varna', 'Deed Name'],
+    'Nagah': ['Breed', 'Auspice', 'Deed Name', 'Crown'],
+    'Nuwisha': ['Breed', 'Deed Name'],
+    'Ratkin': ['Breed', 'Aspect', 'Deed Name'],
+    'Rokea': ['Breed', 'Auspice', 'Deed Name']
+}
 
 # Common Breed-based Gnosis values used across multiple shifter types
 COMMON_BREED_GNOSIS = {
@@ -11,24 +129,38 @@ COMMON_BREED_GNOSIS = {
 }
 
 # Renown types for each shifter type
-SHIFTER_RENOWN = {
-    'Garou': ['Glory', 'Honor', 'Wisdom'],
-    'Bastet': ['Ferocity', 'Cunning', 'Honor'],
-    'Mokole': ['Clutch', 'Face', 'Honor'],
-    'Nagah': ['Purity', 'Wisdom', 'Honor'],
-    'Corax': ['Cunning', 'Honor', 'Wisdom'],
-    'Gurahl': ['Honor', 'Wisdom', 'Strength'],
-    'Ratkin': ['Infamy', 'Cunning', 'Obligation'],
-    'Ananasi': ['Cunning', 'Obedience', 'Wisdom'],
-    'Kitsune': ['Chie', 'Toku', 'Kagayaki'],
-    'Rokea': ['Strength', 'Wisdom', 'Honor'],
-    'Ajaba': ['Glory', 'Honor', 'Wisdom'],
-    'Nuwisha': ['Cunning', 'Humor', 'Wisdom']
+SHIFTER_RENOWN: Dict[str, Union[List[str], Dict[str, Dict[str, List[int]]]]] = {
+    "Ajaba": ["Cunning", "Ferocity", "Obligation"],
+    "Ananasi": ["Cunning", "Obedience", "Wisdom"],
+    "Bastet": ["Cunning", "Ferocity", "Honor"],
+    "Corax": ["Glory", "Honor", "Wisdom"],
+    "Garou": ["Glory", "Honor", "Wisdom"],
+    "Gurahl": ["Honor", "Succor", "Wisdom"],
+    "Kitsune": ["Cunning", "Honor", "Glory"],
+    "Mokole": ["Glory", "Honor", "Wisdom"],
+    "Nagah": [],  # Nagah don't use Renown
+    "Nuwisha": ["Humor", "Glory", "Cunning"],
+    "Ratkin": ["Infamy", "Obligation", "Cunning"],
+    "Rokea": ["Valor", "Harmony", "Innovation"]
 }
 
 def initialize_shifter_type(character, shifter_type):
     """Initialize specific stats for a given shifter type."""
-    breed = character.get_stat('identity', 'lineage', 'Breed', '').lower()
+    # Initialize basic stats structure
+    if 'identity' not in character.db.stats:
+        character.db.stats['identity'] = {}
+    if 'lineage' not in character.db.stats['identity']:
+        character.db.stats['identity']['lineage'] = {}
+    
+    # Initialize all identity stats for the shifter type
+    if shifter_type in SHIFTER_IDENTITY_STATS:
+        for stat in SHIFTER_IDENTITY_STATS[shifter_type]:
+            character.set_stat('identity', 'lineage', stat, '', temp=False)
+            character.set_stat('identity', 'lineage', stat, '', temp=True)
+    
+    # Get breed safely with a default value
+    breed = character.get_stat('identity', 'lineage', 'Breed')
+    breed = breed.lower() if breed else ''
     
     # Initialize powers category if it doesn't exist
     if 'powers' not in character.db.stats:
@@ -46,9 +178,17 @@ def initialize_shifter_type(character, shifter_type):
 
     # Set renown types based on shifter type
     renown_types = SHIFTER_RENOWN.get(shifter_type, [])
-    for renown_type in renown_types:
-        if renown_type not in character.db.stats['advantages']['renown']:
-            character.db.stats['advantages']['renown'][renown_type] = {'perm': 0, 'temp': 0}
+    renown_message = None
+    if renown_types:
+        for renown_type in renown_types:
+            if renown_type not in character.db.stats['advantages']['renown']:
+                character.db.stats['advantages']['renown'][renown_type] = {'perm': 0, 'temp': 0}
+        renown_message = f"Set Renown to {', '.join(renown_types)}."
+
+    # Set default Banality based on shifter type
+    banality = get_default_banality('Shifter', subtype=shifter_type)
+    character.set_stat('pools', 'dual', 'Banality', banality, temp=False)
+    character.set_stat('pools', 'dual', 'Banality', banality, temp=True)
 
     if shifter_type == 'Ajaba':
         initialize_ajaba(character, breed)
@@ -74,6 +214,8 @@ def initialize_shifter_type(character, shifter_type):
         initialize_rokea(character, breed)
     elif shifter_type == 'Garou':
         initialize_garou(character, breed)
+
+    return renown_message
 
 def initialize_ajaba(character, breed):
     """Initialize Ajaba-specific stats."""
@@ -247,7 +389,8 @@ def initialize_mokole(character, breed):
 
 def initialize_nagah(character, breed):
     """Initialize Nagah-specific stats."""
-    auspice = character.get_stat('identity', 'lineage', 'Auspice', '').lower()
+    auspice = character.get_stat('identity', 'lineage', 'Auspice')
+    auspice = auspice.lower() if auspice else ''
     
     # Set base Willpower
     character.set_stat('pools', 'dual', 'Willpower', 4, temp=False)
@@ -298,7 +441,8 @@ def initialize_nuwisha(character, breed):
 
 def initialize_ratkin(character, breed):
     """Initialize Ratkin-specific stats."""
-    aspect = character.get_stat('identity', 'lineage', 'Aspect', '').lower()
+    aspect = character.get_stat('identity', 'lineage', 'Aspect')
+    aspect = aspect.lower() if aspect else ''
     
     # Set base Willpower
     character.set_stat('pools', 'dual', 'Willpower', 3, temp=False)
@@ -326,7 +470,8 @@ def initialize_ratkin(character, breed):
 
 def initialize_rokea(character, breed):
     """Initialize Rokea-specific stats."""
-    auspice = character.get_stat('identity', 'lineage', 'Auspice', '').lower()
+    auspice = character.get_stat('identity', 'lineage', 'Auspice')
+    auspice = auspice.lower() if auspice else ''
     
     # Set base Willpower
     character.set_stat('pools', 'dual', 'Willpower', 4, temp=False)
@@ -354,8 +499,10 @@ def initialize_rokea(character, breed):
 
 def initialize_garou(character, breed):
     """Initialize Garou-specific stats."""
-    auspice = character.get_stat('identity', 'lineage', 'Auspice', '').lower()
-    tribe = character.get_stat('identity', 'lineage', 'Tribe', '').lower()
+    auspice = character.get_stat('identity', 'lineage', 'Auspice')
+    auspice = auspice.lower() if auspice else ''
+    tribe = character.get_stat('identity', 'lineage', 'Tribe')
+    tribe = tribe.lower() if tribe else ''
     
     # Set Auspice-based Rage
     GAROU_AUSPICE_RAGE = {
@@ -393,3 +540,11 @@ def initialize_garou(character, breed):
     if tribe in GAROU_TRIBE_WILLPOWER:
         character.set_stat('pools', 'dual', 'Willpower', GAROU_TRIBE_WILLPOWER[tribe], temp=False)
         character.set_stat('pools', 'dual', 'Willpower', GAROU_TRIBE_WILLPOWER[tribe], temp=True) 
+
+def get_shifter_identity_stats(shifter_type: str) -> List[str]:
+    """Get the identity stats for a specific shifter type."""
+    return SHIFTER_IDENTITY_STATS.get(shifter_type, [])
+
+def get_shifter_renown(shifter_type: str) -> List[str]:
+    """Get the renown types for a specific shifter type."""
+    return SHIFTER_RENOWN.get(shifter_type, []) 

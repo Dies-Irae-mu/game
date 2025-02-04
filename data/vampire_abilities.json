@@ -454,5 +454,13 @@
         "values": [0, 1, 2, 3, 4, 5],
         "description": "The ability to fly and maneuver in the air, as a Mage.",
         "splat": "Mage: The Ascension"
+    },
+    {
+        "name": "Artistry",
+        "category": "secondary_abilities",
+        "stat_type": "secondary_talent",
+        "values": [1, 2, 3, 4, 5],
+        "description": "The ability to create physical art of any kind.",
+        "splat": "Various"
     }
 ]

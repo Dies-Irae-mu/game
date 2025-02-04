@@ -1,860 +1,666 @@
-{
-  "archetypes": [
+[
     {
       "name": "Activist",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower when you successfully confront abuse, right wrongs, or reveal an actual conspiracy and, by doing so, bring it down.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower when you successfully confront abuse, right wrongs, or reveal an actual conspiracy and, by doing so, bring it down.",
       "description": "The world is broken. Help fix it. Speak truth to power, dig up secrets, call people out on their shit, and reveal your plans for a better world to anyone who will listen. While apathetic cowards sit back and tune out, you step up and do whatever needs doing. Sure, folks might consider you a pain in the ass, but at least you're making a difference! Action is your greatest strength. You're not one to sit things out. There's no time to waste on mindless self-indulgence and no room to stay scared of what might happen. The wolf's already halfway through the door, and you refuse to let that bastard win. Even so, your constant Outrage wears thin. There's never room to sit back and enjoy life. As far as you're concerned, complacency is a sin. Your fury's justified, of course, but it gets old all the same. Before you can truly Ascend, you've got to balance righteous pyrotechnics with calm acceptance. Life never has been – and never will be – perfect. Finding a place of serenity within your storm is an essential part of your transcendence."
     },
     {
-      "name": "Activist",
-      "splat": "Wraith",
-      "mechanics": "The Activist regains Willpower every time he takes a successful action to further his chosen cause.",
-      "description": "The Activist is a wraith who instigates, campaigns for, and participates in change. He recognizes the Underworld's issues and protests them in order to make things improve. The Activist aggressively stands up to the forces that appall him, regardless of whether they originate in a local Necropolis or from one of the Deathlords' thrones. Sloth and apathy drive the Activist to frustration. Obstacles against his taking action force him to anger"
-    },
-    {
       "name": "Alpha",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower when you are able to force a rival to submit to your authority.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower when you are able to force a rival to submit to your authority.",
       "description": "The Alpha wants to be in charge. He demands respect and obedience, even submission. He may convince himself that he wants power for the greater good, or he may simply believe it is his natural birthright. Many leaders, from the streets to the boardroom, exemplify the Alpha Archetype. This Archetype is common among werewolves, from those who consider themselves the best choice for pack leader to those who attempt to rise to command septs or even tribes."
     },
     {
       "name": "Anarchist",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever you reject unnecessary rules, laws, or social norms and achieve success because of it.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever you reject unnecessary rules, laws, or social norms and achieve success because of it.",
       "description": "The Anarchist believes that the world would be a better place if every individual took responsibility for her own destiny and stayed out of everyone else's business. She lives her own rules and refuses to bend to higher powers or society."
     },
     {
       "name": "Architect",
-      "splat": "Wraith",
-      "mechanics": "The Architect regains Willpower every time a long-term plan she has created comes to fruition.",
-      "description": "The Architect carefully plans for the future. She's a creator, and knows creation to be the greatest weapon against Oblivion. The uncontrollable must be surveyed, organized, and put towards a better, useful purpose. She doesn't just plan the construction of objects — society itself can be built better and stronger."
-    },
-    {
-      "name": "Architect",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever you establish something of importance or lasting value.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever you establish something of importance or lasting value.",
       "description": "The Architect has a sense of purpose even greater than herself. She is truly happy only when creating something of lasting value for others. People will always need things, and the Architect strives to provide at least one necessity. Inventors, pioneers, town founders, entrepreneurs, and the like are all Architect Archetypes. A Kindred Architect might seek to create new laws that affect her fellow undead, or she might aim to establish a new Anarch domain."
     },
     {
-      "name": "Architect",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower whenever you establish something of importance or lasting value.",
-      "description": "The Architect wants to build things, to improve the world around her, and to make things of lasting value for others. Inventors, pioneers, town founders, entrepreneurs and the like reflect the Architect's goals. Garou Architects may want to build septs, forge caerns, or broker peace between feuding factions."
-    },
-    {
       "name": "Autocrat",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower when you achieve control over a group or organization involving other individuals.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower when you achieve control over a group or organization involving other individuals.",
       "description": "The Autocrat wants to be in charge. He seeks prominence for its own sake, not because he has an operation's best interests at heart or because he has the best ideas (though he may certainly think so). He may genuinely believe others are incompetent, but ultimately he craves power and control. Dictators, gang leaders, bullies, corporate raiders, and their ilk are Autocrat Archetypes. A Kindred Autocrat may crave a title, or he may wish to be recognized as the leader of a coterie."
     },
     {
       "name": "Avant-Garde",
-      "splat": "Wraith",
-      "mechanics": "The Avant-Garde regains Willpower every time she experiences something new and controversial.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "The Avant-Garde regains Willpower every time she experiences something new and controversial.",
       "description": "The Avant-Garde is a pioneer of invention. Unafraid to experiment and innovate, the Avant-Garde produces and supports whatever she can that is exciting and new. To her, being dead is no barrier to discovery and growth. The Avant-Garde is unafraid of controversy or what the neighbors might think. She despises bland repetition, and always seeks new experiences."
     },
     {
       "name": "Barterer",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower whenever you gain a significant commodity at a good price.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever you gain a significant commodity at a good price.",
       "description": "The art of the deal is the art of life. The Barterer Archetype exults in getting something potent for a low price, and takes personal pride in being savvy enough to avoid bad deals and capitalize on good ones. For werewolves, this Archetype is most common among Theurges and others who broker deals with the spirit world, where the dance of chiminage and patronage is so significant."
     },
     {
       "name": "Benefactor",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower when you provide help that someone else desperately needs.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower when you provide help that someone else desperately needs.",
       "description": "It's a cruel world, but you make things easier. Generous sometimes to a fault, you supply whatever you can provide: money, advice, protection, maybe just a shoulder when someone really needs to cry. You can't just turn blind eyes to suffering and need. It's your moral duty to do whatever you can do to make things right. When things get tough, you call upon your inner White Knight and charge in, bringing gifts, guidance, and occasional force when nothing else will do. Altruism is all too rare, especially in the World of Darkness. Helping people is your pleasure. Magick, as far as you're concerned, is a tool for helping folks less fortunate than yourself. To do less is an abuse of the powers you possess. On the flipside, though, you often feel Obligation even when you're not actually needed. This, in turn, can become resentment – both on your part and on the parts of people who now feel, rightly or wrongly, that they owe you. Sometimes, you just need to back off, chill out, and let people do things for themselves. Martyrdom isn't always the best Path toward Ascension."
     },
     {
       "name": "Big Bad Wolf",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower whenever someone recoils from you in horror or otherwise reacts in fear.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever someone recoils from you in horror or otherwise reacts in fear.",
       "description": "The Big Bad Wolf craves fear. Not her own: the fear of others. She may delight in stalking humans, intimidating other Garou, or using fear as a weapon against the forces of the Wyrm. This Archetype is popular among Ragabash as well as Ahroun, and finds a home in most tribes, from the slasher urban legends of the Bone Gnawers to the righteous avengers of the Red Talons."
     },
     {
       "name": "Bon Vivant",
-      "splat": "Wraith",
-      "mechanics": "The Bon Vivant regains Willpower every time he truly indulges and expresses his enjoyment.",
-      "description": "The Bon Vivant sees death as an opportunity to revel. He faces Oblivion with a cocktail in hand and a lover on his arm. Hedonism isn't escapism for the Bon Vivant — it's the only logical response to Oblivion. Such a view can lead to short-sightedness, but if the choice is between embracing absolute pleasure or succumbing to tedium, then that choice is easy to make."
-    },
-    {
-      "name": "Bon Vivant",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever you truly enjoy yourself and can fully express your exultation.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever you truly enjoy yourself and can fully express your exultation.",
       "description": "The Bon Vivant knows that life — and unlife — is shallow and meaningless. As such, the Bon Vivant decides to enjoy her time on Earth. The Bon Vivant is not necessarily irresponsible. Rather, she is simply predisposed to having a good time along the way. Most Bon Vivants have low Self-Control ratings, as they are so given to excess. Hedonists, sybarites, and dilettantes are all examples of the Bon Vivant Archetype. A Kindred Bon Vivant may sire a brood of fawning childer, or he may spend his time gorging on the blood of drug abusers for the contact high."
     },
     {
-      "name": "Bon Vivant",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower whenever you truly enjoy yourself and can fully express your exultation.",
-      "description": "Life is short, and it's bound to end poorly. The Bon Vivant is one who plans to make the best of it. The Bon Vivant isn't necessarily irresponsible: simply predisposed to having a good time along the way. Most Bon Vivant Garou are homids given to the pursuit of pleasure that Western culture exalts."
-    },
-    {
       "name": "Bravo",
-      "splat": "Wraith",
-      "mechanics": "The Bravo regains Willpower every time she beats someone down, verbally or physically.",
-      "description": "The Bravo never shows fear. She'll happily put others down if doing so improves her standing, and does it for fun even if it doesn't benefit her directly. She's a bully, more inclined to continue a losing battle than compromise with the victor, even against unstoppable odds. The Bravo is good to have on your side in a conflict, but woe to those who cross her. Defeat leads to wracking self-doubt for the Bravo, or pushes her to dangerous extremes instead."
-    },
-    {
-      "name": "Bravo",
-      "splat": "Vampire",
-      "mechanics": "The Bravo regains Willpower every time she beats someone down, verbally or physically.",
-      "description": "The Bravo is a tough and a bully, and often takes perverse pleasure in tormenting the weak. To the Bravo's mind, might makes right. Power is what matters, and only those with power should be respected. Naturally, physical power is the best kind, but any kind will do. The Bravo sees overt threats as a perfectly reasonable means of gaining cooperation. The Bravo is not incapable of pity or kindness; he just prefers to do things his way. Robbers, bigots, and thugs are all Bravo Archetypes. A Kindred Bravo may abuse authority the system has granted him, or he may — violently or otherwise — force other Kindred out of his way to get what he wants. He's almost certainly an asshole."
-    },
-    {
-      "name": "Bravo",
-      "splat": "Werewolf",
-      "mechanics": "The Bravo regains Willpower every time she beats someone down, verbally or physically.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "The Bravo regains Willpower every time she beats someone down, verbally or physically.",
       "description": "The Bravo is not incapable of pity or kindness; he just prefers to do things his way. Robbers, bigots, and thugs are all Bravo Archetypes. Werewolf Bravos are prone to bare their teeth at a moment's notice, and are frequently dismissive or even abusive of ordinary humans."
     },
     {
       "name": "Bureaucrat",
-      "splat": "Wraith",
-      "mechanics": "The Bureaucrat regains Willpower every time he uses the established rules to deal with a situation.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "The Bureaucrat regains Willpower every time he uses the established rules to deal with a situation.",
       "description": "The Bureaucrat works the system from within. He recognizes the need for regulations, forms, and ordered queuing. Patience and organization are typical strengths of the Bureaucrat, who follows every procedure. The Bureaucrat understands rules and red tape can stifle initiative, but only by working steadily via the correct channels can security be maintained."
     },
     {
       "name": "Capitalist",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever you make a successful 'sale' of any 'commodity'.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever you make a successful 'sale' of any 'commodity'.",
       "description": "You are the ultimate mercenary, realizing that there is always a market to be developed — anything can be a commodity. You have a keen understanding of how to manipulate both kine and Cainites into thinking that they need specific goods or services. Appearance and influence are everything when it comes to the big sale, though you'll use anything to your advantage. Salesmen, soldiers of fortune, and bootlickers all adhere to the Capitalist Archetype."
     },
     {
       "name": "Caregiver",
-      "splat": "Wraith",
-      "mechanics": "The Caregiver regains Willpower every time she successfully protects and nurtures another.",
-      "description": "The Caregiver finds meaning in helping others. If there's another wraith who needs assistance or just someone to listen, she's the first to demonstrate compassion. Though some wraiths take advantage of this kindness, the Caregiver knows it's only through looking out for one another that wraiths can resist the pull of Oblivion."
-    },
-    {
-      "name": "Caregiver",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever you successfully protect or nurture someone else.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever you successfully protect or nurture someone else.",
       "description": "Everyone needs a shoulder to cry on. A Caregiver takes her comfort in consoling others, and people often come to her with their problems. Vampires with Caregiver Archetypes often attempt, as best they can, to protect the mortals on whom they feed. Nurses, doctors, and psychiatrists are examples of potential Caregivers. Caregiver Kindred are often the type who — tragically — Embrace mortal loves they've left behind in hopes of softening their loss, or even those who create situations of grief in order to ease it and thus validate themselves."
     },
     {
-      "name": "Caregiver",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower whenever you successfully protect or nurture someone else.",
-      "description": "The Caregiver takes her comfort in consoling others or assisting them with their problems. Healing the wounded and lending strength to the weak is the source of the Caregiver's resolve. Werewolf Caregivers often have strong Kinfolk ties, and draw motivation from the nurturing ideal of the Earth Mother."
-    },
-    {
       "name": "Celebrant",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever you pursue your cause or convert another character to the same passion.",
-      "description": "The Celebrant takes joy in her cause. Whether the character's passion is battle, religion, foiling her rivals, or reading fine literature, it gives the Celebrant the strength to withstand adversity. Given the chance, the Celebrant will indulge in her passion as deeply as possible. Unlike the Fanatic (p. 91), the Celebrant pursues her cause not out of duty, but out of enthusiasm. Crusaders, hippies, political activists, and art enthusiasts are Celebrant Archetypes. Celebrant Kindred may cleave to mortal ideologies that are incongruous with their new Damned conditions, or they may be the advocates of new trends and causes that move through undead society."
-    },
-    {
-      "name": "Celebrant",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower whenever you pursue your cause or convert another character to the same passion.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever you pursue your cause or convert another character to the same passion.",
       "description": "The Celebrant has a cause, and she follows it not from grim necessity but from exuberant enthusiasm. Her passion may be battle, art, the game of politics, or any other endeavor that grants her sufficient strength to carry on. The enthusiasm of Garou Celebrants is all the more valuable in the face of the war against the Wyrm; the Archetype is popular among Galliards, and Galliards of other Archetypes love to stir up a Celebrant as well."
     },
     {
       "name": "Chameleon",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever you fool someone into thinking you're someone else.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever you fool someone into thinking you're someone else.",
       "description": "Independent and self-reliant, you carefully study the behavior and mannerisms of everyone you come in contact with so you can pass yourself off as someone else later. You spend so much time altering your mannerisms and appearance that your own sire may not even recognize you. Spies, con artists, drag queens, and impostors best represent the Chameleon."
     },
     {
       "name": "Child",
-      "splat": "Wraith",
-      "mechanics": "The Child regains Willpower every time she gets her own way despite the objections of others.",
-      "description": "The Child sees the Underworld without cynicism or bitterness. Every journey is an undiscovered adventure, one the child can't wait to embark upon. The Child's enthusiasm is infectious, her spark of vitality a beacon of hope in the Underworld. However, her patience is thin, and when she wants something she wants it now. She's endearing, but some wraiths take exception to such naiveté."
-    },
-    {
-      "name": "Child",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever you manage to convince someone to help you with no gain to herself, or to nurture you.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever you manage to convince someone to help you with no gain to herself, or to nurture you.",
       "description": "The Child is still immature in personality and temperament. He wants what he wants now, and often prefers someone to give it to him. Although he can typically care for himself, he would rather have someone cater to his capricious desires. Some Child Archetypes are actually innocent rather than immature, ignorant of the cold ways of the real world. Actual children, spoiled individuals, and some drug abusers are Child Archetypes. Kindred with the Child Archetype might have not yet fully reached an understanding of the world and have some characteristic such as cruelty, entitlement, sympathy, or hunger that is out of balancewith their other personality aspects, as they haven't yet reached the 'rounded' state of adulthood. Note that a Child Archetype need not be a physical, literal child at the time of Embrace. Some people simply never grow up."
     },
     {
       "name": "Competitor",
-      "splat": "Wraith",
-      "mechanics": "The Competitor regains Willpower every time he succeeds at a competitive challenge.",
-      "description": "The Competitor is determined to be the best. He's the hardest worker and hones his skills relentlessly until they're superior. The Competitor measures himself against others and will do whatever it takes to beat them head to head. This can result in trouble and unwinnable situations, but also empowers his drive to excellence."
-    },
-    {
-      "name": "Competitor",
-      "splat": "Vampire",
-      "mechanics": "The Competitor regains Willpower every time he succeeds at a competitive challenge.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "The Competitor regains Willpower every time he succeeds at a competitive challenge.",
       "description": "The Competitor takes great excitement in the pursuit of victory. To the Competitor, every task is a new challenge to meet and a new contest to win. Indeed, the Competitor sees all interactions as some sort of opportunity for her to be the best — the best leader, the most productive, the most valuable, or whatever. Corporate raiders, professional athletes, and impassioned researchers are all examples of Competitor Archetypes. Kindred Competitors have any number of resources and accomplishments over which to assert themselves, from mortal herds and creature comforts to titles and prestige in Kindred society."
     },
     {
-      "name": "Competitor",
-      "splat": "Werewolf",
-      "mechanics": "The Competitor regains Willpower every time he succeeds at a competitive challenge.",
-      "description": "The Competitor devotes himself to the pursuit of victory. He may be a gambler by nature, or he may seek out challenges that must be overcome by discipline and skill. Every interaction is an opportunity for him to excel. Werewolves with this Archetype may pursue their goals in politics, in battle, or in other arenas. A Garou Competitor takes Renown very seriously."
-    },
-    {
       "name": "Conformist",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever the group or your supported leader achieves a goal due to your support.",
-      "description": "The Conformist is a follower, taking another's lead and finding security in the decisions of others. She prefers not to take charge, instead seeking to throw in with the rest of the group and lend her own unique aid. TheConformist is drawn to the most dynamic personality or the individual she perceives to be the 'best.' Being a Conformist is not necessarily a bad thing — every group needs followers to lend stability to their causes. Groupies, party voters, and 'the masses' are Conformist Archetypes. Conformist Kindred can take many forms, from the ardent Sabbat pack member, to the Kindred who follows a Clan-first agenda, to the trusted supporters of a titled vampire or rising star."
-    },
-    {
-      "name": "Conformist",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower whenever the group or your supported leader achieves a goal due to your support.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever the group or your supported leader achieves a goal due to your support.",
       "description": "The Conformist prefers not to take charge, instead seeking security in letting others give orders that she can follow. The Conformist may be the 'beta' or middle manager to the most dynamic personality in a social setting, or she may prefer to follow along with her pack, right or wrong. This isn't necessarily a weak Archetype; it can simply represent a desire to play a support role. Examples of Garou Conformists include tribal loyalists and packmates who enforce the pack leader's role."
     },
     {
       "name": "Conniver",
-      "splat": "Wraith",
-      "mechanics": "The Conniver regains Willpower every time she convinces someone else to do something that benefits only her.",
-      "description": "The Conniver knows everyone's out there waiting to be played. She'll dupe them all and come out untouched on the other side. And the best part is, she'll do it with the knowledge someone else will take the fall for whatever she's done. It's the act of getting away with something, far more than the actual deed itself, that excites the Conniver, and suckering someone else in the process is the icing on the cake. Nothing is worse for the Conniver than to be alone without someone to outwit."
-    },
-    {
-      "name": "Conniver",
-      "splat": "Vampire",
-      "mechanics": "The Conniver regains Willpower every time she convinces someone else to do something that benefits only her.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "The Conniver regains Willpower every time she convinces someone else to do something that benefits only her.",
       "description": "Why work for something when you can trick somebody else into getting it for you? The Conniver always tries to find the easy way, the fast track to success and wealth. Some people call him a thief, a swindler, or less pleasant terms, but he knows that everybody in the world would do unto him if they could. He just does it first, and better. Criminals, con artists, salespeople, urchins, and entrepreneurs might be Connivers. Some would argue that all Kindred are Connivers in some sense, but those that have the Conniver archetype may be abusive to their childer and ghouls, or they may be more persuasive in gaining support for their machinations."
     },
     {
-      "name": "Conniver",
-      "splat": "Werewolf",
-      "mechanics": "The Conniver regains Willpower every time she convinces someone else to do something that benefits only her.",
-      "description": "The Conniver prefers deceit and misdirection to hard work and open confrontation. He may be an outright thief and swindler, or he might be a manipulator hoping to influence those in charge to achieving his goals for them. The Shadow Lords have a reputation for having Connivers among their tribe, but any tribe has its share of werewolves willing to play a more subtle game."
-    },
-    {
       "name": "Contrary",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower whenever your inversion of expectations leads folks to realize how false those expectations had been.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower whenever your inversion of expectations leads folks to realize how false those expectations had been.",
       "description": "Inversion is an essential part of real life. For every rule, there must be exceptions. You live to turn things inside out, undercutting assumptions by showing their weak foundations. You're the Devil's Advocate, pointing out flaws by embodying the opposite of what folks expect. A successful Contrary displays Insight; your inversions succeed because they point to a deeper truth. If you're serious about this path (that is, if you're an actual Contrary, not simply an asshole), then you're a jester with a clue. That ability to see beyond appearances is extremely useful in the Awakened realm. And yet, your perpetual Subversion can be annoying, intrusive, and outright destructive. Certain assumptions really are true, and inverting them doesn't provide any particular wisdom. If you seriously want to reach beyond appearances, you have to realize that your own contrariness can be its own limitation. True wisdom comes through a balance between rejection and acceptance."
     },
     {
-      "name": "Contrary",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower any time you are able to flout social mores without retribution.",
-      "description": "The Contrary has an innate need to go against the grain and to challenge established social conventions or even laws. Some have a penchant for bizarre behavior such as you'd expect from an eccentric celebrity; others are outright heretics. Many Ragabash play the contrary in a traditional form, defying conventional laws as a way of challenging their relevance."
-    },
-    {
       "name": "Creep Show",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever someone recoils from you in horror or otherwise reacts in fear.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever someone recoils from you in horror or otherwise reacts in fear.",
       "description": "You strive to shock and disgust those around you with gratuitous acts and ostentatiously 'evil' mannerisms. You realize, of course, that it's all show and merely a way to intimidate and control others. Outsiders, on the other hand, think you are the Devil incarnate, and you revel in this image. Shock-rockers, rebellious teenagers, circus freaks, and the attention-starved exemplify the Creep Show Archetype."
     },
     {
       "name": "Critic",
-      "splat": "Wraith",
-      "mechanics": "The Critic regains Willpower every time he points out someone else's flaw, and through its exposure provably reduces harm.",
-      "description": "The Critic is the first to spot another's flaws and point them out — but only in the interest of helping them improve, of course. His goal is to help others perfect themselves through his advice, even if not everyone has enough self-confidence to react well to his honesty. To those he cares about, he gives sage advice without the sarcasm or judgement; those he doesn't get the full force of his critique."
-    },
-    {
-      "name": "Critic",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever you find a flaw in a design or plan and then improve upon it.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever you find a flaw in a design or plan and then improve upon it.",
       "description": "The Critic observes the world around her with a jaundiced eye, seeking out flaws and deficiencies. She experiences a special satisfaction in exploiting these weaknesses publically so that eventually the design will improve. Some critics feel it is their duty to push the world to be better."
     },
     {
       "name": "Crusader",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower when you accomplish some great deed in the name of your higher goal.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower when you accomplish some great deed in the name of your higher goal.",
       "description": "People need a hero, and you're there to fill that role. Driven by a higher purpose – religious conviction, moral ethics, a philosophical ideal – you strive for a better world. The sword you wield might be more symbolic than literal: a scientist or teacher can be a Crusader too. The struggle, though, is what defines you. A better future must be built upon the foundations of our flawed world, and your duty compels you to demolish the obstacles so that reconstruction can begin. Your admirable Zeal propels you through every challenge you face. Lesser souls might falter, but you will not. Fanaticism, though, is the mark of a Crusader. Your convictions leave little room for compromise. When everything looks like a nail, it's hard to stop hammering. Until and unless you learn to temper your enthusiasm and question your own assumptions, you're just chasing shadows of your own extremism."
     },
     {
       "name": "Cub",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower whenever you manage to convince someone to to nurture you, or to help you with no gain to herself.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever you manage to convince someone to to nurture you, or to help you with no gain to herself.",
       "description": "The Cub isn't ready to take responsibility. He's still immature, perhaps innocent, and tries to depend on others for protection and nurturing. Werewolves rarely keep the Cub Archetype for long — it tends to be stripped away by the vicious realities of their constant struggle. Still, some find themselves defaulting back to earlier behavior as a plea for help."
     },
     {
       "name": "Curmudgeon",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever someone does something specific and negative, just like you said they would.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever someone does something specific and negative, just like you said they would.",
       "description": "A Curmudgeon is bitter and cynical, finding flaws in everything and seeing little humor in life or unlife. He is often fatalistic or pessimistic, and has very little esteem for others. To the Curmudgeon, the glass is never more than half-full, though it may be damn near empty when other people are involved. Many Internet junkies, pop-culture fans, and Generation Xers are Curmudgeons. Kindred Curmudgeons see elder oppression or spoiled neonates running amok behind every development in undead society, and may or may not rise beyond acerbic grumbling to change any problems they perceive."
     },
     {
       "name": "Dabbler",
-      "splat": "Vampire",
-      "mechanics": "Regain Willpower whenever you find a new enthusiasm and drop your old one completely.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower whenever you find a new enthusiasm and drop your old one completely.",
       "description": "The Dabbler is interested in everything but focuses on nothing. He flits from idea to idea, passion to passion, and project to project without actually finishing anything. Others may get swept up in the Dabbler's enthusiasm, and be left high and dry when he moves on to something else without warning. Most Dabblers have high Intelligence, Charisma, and Manipulation ratings, but not much in the way of Wits or Stamina. Toreador are often Dabblers, particularly those afflicted with the derisive sobriquet 'Poseurs.'"
     },
     {
       "name": "Deviant",
-      "splat": "Wraith",
-      "mechanics": "The Deviant regains Willpower every time she blatantly flouts social mores and benefits as a result.",
-      "description": "The Deviant stands out as frankly different. Her preferences don't match those of the surrounding culture, but she won't stop practicing them. She sees no reason to conform when there's more to be gained through independent thought and experience. Others judge the Deviant, but she remains stalwart in her pursuits, daring her critics to comment."
-    },
-    {
-      "name": "Deviant",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower any time you are able to flout social mores without retribution.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower any time you are able to flout social mores without retribution.",
       "description": "The Deviant is a freak, ostracized from society by unique tastes or beliefs that place her outside the mainstream. Deviants are not indolent rebels or shiftless 'unrecognized geniuses'; rather, they are independent thinkers who don't quite fit in the status quo. Deviant Archetypes often feel that the world stands against them, and as such reject traditional morality. Some have bizarre tastes, preferences, and ideologies. Extremists, eccentric celebrities, and straight-up weirdoes are Deviant Archetypes. Kindred deviants may observe heretical or outlawed habits like diablerie or deference to elders, and they may well go Anarch or Autarkis instead of having to constantly defend their subversion of Traditions or Sect customs."
     },
     {
       "name": "Director",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower when you influence or aid a group or influential individual in the completion of a difficult task.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower when you influence or aid a group or influential individual in the completion of a difficult task.",
       "description": "To the Director, nothing is worse than chaos and disorder. The Director seeks to be in charge, adopting a 'my way or the highway' attitude on matters of decision-making. The Director is more concerned with bringing order out of strife, however, and need not be truly 'in control' of a group to guide it. Coaches, teachers, and many political figures exemplify the Director Archetype. Kindred Directors may be simple advocates of established codes, or they may prove instrumental in tearing down corrupt existing orders to make way for new leaders or factional movements."
     },
     {
-      "name": "Director",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower when you influence or aid a group or influential individual in the completion of a difficult task.",
-      "description": "The Director is related to the Alpha Archetype. Whereas the Alpha is focused on command as a means, the Director is more concerned with the ends. She wants to turn chaos into order and to forge groups into well-oiled machines. In Garou society, Directors usually do their best to work their way into sept offices so that they can better orchestrate cooperation among their charges."
-    },
-    {
       "name": "Enigma",
-      "splat": "Wraith",
-      "mechanics": "The Enigma regains Willpower every time someone is confused by his actions, which later turn out to be worthwhile.",
-      "description": "To be an Enigma is to walk apart from all the wraiths around him. He erects obfuscations around his actions, enjoying the fact that everyone considers him a puzzle to be solved. Hating predictability, he takes pleasure in being hard to anticipate. His actions have logic, but he's only happy if no one else is privy to it."
-    },
-    {
-      "name": "Enigma",
-      "splat": "Vampire",
-      "mechanics": "The Enigma regains Willpower every time someone is confused by his actions, which later turn out to be worthwhile.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "The Enigma regains Willpower every time someone is confused by his actions, which later turn out to be worthwhile.",
       "description": "Your actions are bizarre, puzzling, and inexplicable to everyone except yourself. Your strangeness may be a residual effect from your Embrace, or the most effective way for you to carry out your work. To the rest of the world, however, your erratic actions suggest that you're eccentric if not completely crazy. Conspiracy theorists, deep-cover agents, and Jyhad fanatics all live up to the Enigma Archetype."
     },
     {
       "name": "Explorer",
-      "splat": "Wraith",
-      "mechanics": "The Explorer regains Willpower every time she discovers something previously unknown.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "The Explorer regains Willpower every time she discovers something previously unknown.",
       "description": "The Explorer is possessed by wanderlust and the need for adventure. She views the Underworld as one rich prospect offering endless possibilities for discovery, and this in turn drives her constantly to seek out its limits. From the unknown spaces on the map to the boundaries of what can be done with Arcanoi, she always wants to find out what's around the next corner. What's done is done, and what matters is what comes next. Part of her worries there will one day be no new treasures to find, but those anxieties are brushed aside. There will always be new horizons to discover."
     },
     {
       "name": "Eye of the Storm",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever a ruckus, riot, or less violent but equally chaotic phenomenon occurs around you.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever a ruckus, riot, or less violent but equally chaotic phenomenon occurs around you.",
       "description": "Despite your calm appearance, chaos and havoc seems to follow you. From burning cities to emotional upheaval, death and destruction circle you like albatrosses. For you, unlife is a never-ending trial with uncertainty around every corner. Gang leaders, political figures, and other influential individuals exemplify the Eye of the Storm Archetype."
     },
     {
       "name": "Fanatic",
-      "splat": "Wraith",
-      "mechanics": "The Fanatic regains Willpower every time, when fueled by zeal, she successfully completes a task related to her core belief.",
-      "description": "The Fanatic is consumed by her belief. She does not care how others perceive her, for her cause is righteous and all those who stand in her way do so at their own risk. Advancing along the road toward that goal provides only fleeting triumph, as there's always more to do to in the service of her creed. Impossible to dissuade, she'll tackle any odds in the service of her belief."
-    },
-    {
-      "name": "Fanatic",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever you accomplish some task that directly relates to your cause.",
-      "description": "The Fanatic has a purpose, and that purpose consumes his existence. The Fanatic pours himself into his cause, and he may even feel guilty for undertaking any objective that deviates from his higher goal. To the Fanatic, the end justifies the means — the cause is more important than those who serve it. Players who choose Fanatic Archetypes must select a cause for their character to further. Revolutionaries, zealots, and sincere firebrands are all examples of Fanatic Archetypes. Kindred Fanatics are often champions for or against a particular aspect of undead society, such as equality among all vampires, the extermination of Anarchs, or stamping infernalism out of the Sword of Caine."
-    },
-    {
-      "name": "Fanatic",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower whenever you accomplish some task that directly relates to your cause.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever you accomplish some task that directly relates to your cause.",
       "description": "The Fanatic's purpose consumes his existence. Nothing is as important as the higher goal, and frequently the end justifies all manner of means. Players who choose Fanatic Archetypes must select a cause for their characters to further. The Garou Nation has a long history of fanaticism, usually focusing on some particular aspect of the war against the Wyrm, such as bringing down the Black Spiral Dancers or unifying the tribes under one leader."
     },
     {
       "name": "Fatalist",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower whenever someone does something specific and negative, just like you said they would.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever someone does something specific and negative, just like you said they would.",
       "description": "The Fatalist is relentlessly cynical and pessimistic, always concerned with the cloud rather than the silver lining. He may have once been idealistic, but he has lost those ideals after bitter experience. Many Garou are Fatalists, driven by an unhealthy focus on the inevitable decline of their kind and the looming doom of Apocalypse."
     },
     {
       "name": "Follower",
-      "splat": "Wraith",
-      "mechanics": "The Follower regains Willpower every time he demonstrates absolute loyalty under trying circumstances.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "The Follower regains Willpower every time he demonstrates absolute loyalty under trying circumstances.",
       "description": "The Follower recognizes an excellent leader and flourishes by supporting her. He offers advice from behind or beside the throne, his loyalty never in doubt. Freed from the responsibilities of command, he can function to best effect by putting his efforts at someone else's disposal. Always looking for a stronger personality to support, the Follower can be a loyal, capable ally, allowing a strong leader to be even more effective."
     },
     {
       "name": "Gallant",
-      "splat": "Vampire",
-      "mechanics": "Regain a Willpower point whenever you successfully impress another person.",
-      "description": "Gallants are flamboyant souls, always seeking attention and the chance to be the brightest star. Gallants seek the company of others, if only to earn their adoration. Attention drives the Gallant, and the chase is often as important as its end. Nothing excites a Gallant so much as a new audience to woo. Performers, only children, and those with low self-esteem often embody the Gallant Archetype. Kindred Gallants may be Harpies, or they may have enormous herds of doting thralls."
-    },
-    {
-      "name": "Gallant",
-      "splat": "Werewolf",
-      "mechanics": "Regain a Willpower point whenever you successfully impress another person.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a Willpower point whenever you successfully impress another person.",
       "description": "The Gallant wants to be the center of attention. She basks in the attentive praise of others, though she may be perfectly happy drawing their scorn as well. As long as she's on center stage, it's all good. Many Galliards and Fianna are drawn to this archetype."
     },
     {
       "name": "Gambler",
-      "splat": "Wraith",
-      "mechanics": "The Gambler regains Willpower every time she comes up against unwinnable odds and somehow emerges the victor.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "The Gambler regains Willpower every time she comes up against unwinnable odds and somehow emerges the victor.",
       "description": "The Gambler risks it all just to feel a tiny spark of life again, upping the stakes in order to get the thrill of beating the odds. She's sure she can win when the chips are down, and that any setback's a temporary one. The thrill of existence is the risk of losing it all, and the rush when a bet pays off. She trusts her luck and skill equally, and will lay them on the line against anything Oblivion can come up with."
     },
     {
       "name": "Guru",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever someone seeks out your help in spiritual matters and your guidance moves that individual to an enlightened action.",
-      "description": "Your enlightenment draws others to you. You may be a mentor of a particular Path of Enlightenment, a priest with the Church, or merely an idealist. Whatever the case, your presence motivates and moves others to engage in spiritual or ideological pursuits. Your peers view you as calm, centered, and 'with it,' even when you are preaching violence as a means to an end. Cult leaders, Zen masters, and Pack Priests are examples of Gurus."
-    },
-    {
-      "name": "Guru",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower whenever someone seeks out your help in spiritual matters and your guidance moves that individual to an enlightened action.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever someone seeks out your help in spiritual matters and your guidance moves that individual to an enlightened action.",
       "description": "The Guru is a spiritual counselor, one who seeks wisdom for the purpose of passing it on. She values metaphysical insight highly, searching for her own enlightenment even as she attempts to bring others further along their own paths. The Guru's path may be peaceful, as with a Child of Gaia or Stargazer, but it may also be a blood-soaked spiritual road leading to Valhalla."
     },
     {
       "name": "Hacker",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower when you detect a flaw in some important structure, system, or device, or else when you puzzle out a way to improve something that was supposedly designed well to begin with.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower when you detect a flaw in some important structure, system, or device, or else when you puzzle out a way to improve something that was supposedly designed well to begin with.",
       "description": "Every system is a locked vault, and you've got the keys. If you don't have ones that work, you'll make new ones – that's half the fun of life, after all! Puzzles excite you; limits just piss you off. Especially given the sheer amount of abuse that's built into any system, the world needs folks like you to tear down impediments and set reality free. Imagination is your greatest strength. You see things not as they are, but as they could be once you get done with them! Driven to dismantle existing systems and then put them together in interesting new shapes, you tend to pepper your compulsions with sincerely-held philosophy. You're not a vandal, for crying out loud – you're a visionary who refuses to accept shit sandwiches handed out as lunch. Sometimes, though, you go too far. Perversity leads you to tear apart things that weren't broken… things that may, in fact, have been better left alone. Although it might seem philosophically valid to tear down the wards on a wizard's lab, those wards might have been laid that way for reasons you didn't understand until it was a little too late."
     },
     {
       "name": "Idealist",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower when your beliefs are tested to the breaking point yet do not fail.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower when your beliefs are tested to the breaking point yet do not fail.",
       "description": "Cowards accept what is. You know how much better things will be once the flaws in the system have been purged. Guided by a great ideal – spiritual devotion, political philosophy, scientific theory, compassionate humanity – you refuse to remain shackled by defeatism. Your Ideal is correct. You know this to be true. Now is the time to bring it about. Once you do, everyone else will see just how wrong they've been… and how right you are. Conviction is your life's blood. Whether you're a scientist chasing inspiration, a theorist assured that this theory cannot fail, a religious devotee, or some other sort of Idealist, you possess near-unshakable faith in your ideal – the kind of faith that shapes reality. Like most fanatics, though, you're Dogmatic to a fault. Blind to any potential flaws, you'll fight – sometimes literally – to assure the truth of your beliefs. All mages are idealists to a point; in your case, though, this devotion seems stifling. When (not if, when) reality falls short of your ideals, you might wind up depressed, violent, or – as with many Marauders – insane."
     },
     {
       "name": "Idealist",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower any time an action in pursuit of your ideals furthers your goals and brings your ideal closer to fruition.",
-      "description": "The Idealist believes — truly, madly, deeply — in some higher goal or morality. The object of his idealism may be something as pragmatic as the Camarilla's eventual triumph or as amorphous as the ultimate good, but the belief is there. Idealists are frequently either very new to the Blood or very old, and many seekGolconda as the final expression of their idealism. In the meantime, an Idealist tries to reconcile his beliefs with the demands of vampiric existence, often acting contrary to his self-interest in doing so."
-    },
-    {
-      "name": "Idealist",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower any time an action in pursuit of your ideals furthers your goals and brings your vision closer to fruition.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower any time an action in pursuit of your ideals furthers your goals and brings your vision closer to fruition.",
       "description": "The Idealist believes in a higher goal or morality. The object of his idealism may vary, from a specific code of honor to a noble ambition to a simple benevolent philosophy. Some Idealists are naïve or foolish, while others are inspiring leaders, able to stir the hearts of other werewolves with the justness of their cause. Many Garou Idealists have beliefs highly influenced by those of their tribe."
     },
     {
       "name": "Innovator",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower when your inspiration leads to a helpful new breakthrough.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower when your inspiration leads to a helpful new breakthrough.",
       "description": "There's always a better way. You spend your life looking for methods and inventions that improve on what has gone before. Sure, past achievements are wonderful enough… but if you just add this, shift that, approach the issue from this other angle instead, then you'll make a good thing that much better or fix an obvious flaw in a promising design. Creativity is your strong point. No practice, tool, or traditional method is too good for improvement, especially not at this crucial point in human evolution. Let other people follow the established paths – you're busy drawing up the next road toward a goal most folks don't even know exists. Your Restless Unorthodoxy, though, can get you in trouble. Especially if you belong to a sect or faction based on established results and protocols (the Technocracy, the Hermetic Order, the Akashayana, and so on), your innovations might be someone else's heresy. Many mages have been burnt at stakes both literal and symbolic for doing the things you do, and a missed step could make (an) ash of you."
     },
     {
       "name": "Jester",
-      "splat": "Wraith",
-      "mechanics": "The Jester regains Willpower every time he makes a dire situation lighter through comedy.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "The Jester regains Willpower every time he makes a dire situation lighter through comedy.",
       "description": "The Jester knows the strongest weapon against Oblivion is humor. To laugh in the face of Oblivion is to deny it any power. Though the Jester's timing may not always be the best — the compulsion to make a joke out of everything can wreak havoc with trying to commune with one's Passions — their unflagging goof humor can be more infuriating to a ravening Spectre than a fully armed Centurion."
     },
     {
       "name": "Judge",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever you correctly solve a problem or when one of your arguments unites dissenting parties.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever you correctly solve a problem or when one of your arguments unites dissenting parties.",
       "description": "The Judge perpetually seeks to improve the system. A Judge takes pleasure in her rational nature and ability to draw the right conclusion when presented with facts. The Judge respects justice, as it is the most efficient model for resolving issues. Judges, while they pursue the 'streamlining' of problems, are rarely visionary, as they prefer proven models to insight. Engineers, lawyers, and doctors are often Judge Archetypes. Kindred Judges might gravitate toward enforcement roles in local society, or they might be a voice of reason in an otherwise radical coterie."
     },
     {
-      "name": "Judge",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower whenever you correctly solve a problem by considering the evidence presented, or when one of your arguments unites dissenting parties.",
-      "description": "The Judge favors rationality, and likes nothing better than weighing a situation and finding the correct decision. This Archetype is typically conservative, as its mentality runs counter to reactionary behavior. Philodox naturally are expected to play the Judge as part of their role in Garou society; whether or not it is in their very nature is largely irrelevant."
-    },
-    {
       "name": "Kid",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower when you bring out the nurturing side of someone who doesn't normally care much for other people.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower when you bring out the nurturing side of someone who doesn't normally care much for other people.",
       "description": "Either young in years or young at heart, you give the impression of needing to be taken care of by older, wiser folks. That impression may be deceiving, but you're glad to use it to your best advantage. You could be an actual child – somewhere between post-toddlerhood and late adolescence – or chronologically an adult with a childlike personality. Whatever your actual age might be, your concerns are simple, capricious, and typically self-involved. There's a kind of Innocence to you, and it provides the source of your strength. People want to protect that sense of wonder and hope and tend to offer you a compassion they might not feel toward other folks. The extreme of innocence, though, is Immaturity. Trusting too easily, acting too rashly, jumping into things without considering their potential consequences… you're guilty of all these things and more. You can slide from charming child to spoiled brat in the space between two heartbeats, and the traits that inspire people to take care of you can become infuriating as well. If and when you want to reach a higher state, you'll have to put certain childish things aside."
     },
     {
       "name": "Leader",
-      "splat": "Wraith",
-      "mechanics": "The Leader regains Willpower every time she assumes control of a situation.",
-      "description": "The Leader is a wraith who knows she's the only one capable of doing what must be done. Incapable of just sitting by while things are done poorly, she'll step up and take charge when the situation demands it. A natural at giving orders, the Leader cares less about others' feelings than she does about making sure things get done right."
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "The Leader regains Willpower every time she assumes control of a situation.",
+      "description": "The Leader is a Various who knows she's the only one capable of doing what must be done. Incapable of just sitting by while things are done poorly, she'll step up and take charge when the situation demands it. A natural at giving orders, the Leader cares less about others' feelings than she does about making sure things get done right."
     },
     {
       "name": "Loner",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower when you achieve some meaningful goal without help from anyone else, especially if your accomplishment benefits other people too.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower when you achieve some meaningful goal without help from anyone else, especially if your accomplishment benefits other people too.",
       "description": "Fuck the world. Everything you need in life you've got inside yourself. Even in the middle of a crowd, you're alone… or at least, you feel that way. People don't understand you, and you don't care enough to try to understand them. It's not that you're a sociopath or anything (although you just might be one) so much as it's that you just don't connect with that whole social animal thing at all. Self-Reliance is your blessing. You're so used to doing everything yourself that you rarely depend on another person's aid. Ascension, so far as you understand it, is a solitary task, so why bother asking for assistance with that goal? Trouble is, your Disconnection cuts you off from empathy and the wealth of human experience. Until and unless you let down the barriers and connect with other living things, you're doomed to a lonesome and limited existence."
     },
     {
-      "name": "Loner",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower when you accomplish something by yourself, yet which still benefits the coterie in some way.",
-      "description": "Even in a crowd the Loner sticks out, because he so obviously does not belong. Others view Loners as pariahs, remote, and isolated, but in truth the Loner prefers his own company to that of others. For whatever reason, the Loner simply disdains others, and this feeling is often reciprocated. Criminals, radicals, and free thinkers are all Loner Archetypes. Kindred Loners often hail from one of the rugged individualist Clans like the Gangrel or Ravnos, and they have a proclivity for ending up Autarkis by dint of not giving a shit what some up-his-own-ass Prince or Archbishop says is a law."
-    },
-    {
-      "name": "Loner",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower when you accomplish something by yourself, yet which still benefits the pack in some way.",
-      "description": "The Loner needs solitude. He may be part of a pack and a loyal soldier of the sept, but social behavior fatigues him. He needs time alone in order to recharge his batteries. This is a difficult Archetype for Garou to deal with, as it is at odds with their inborn desires to be part of a tightly-knit pack. It's not a commonly seen Archetype among werewolves."
-    },
-    {
       "name": "Machine",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower by performing spectacular acts of heartlessness and ruin.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower by performing spectacular acts of heartlessness and ruin.",
       "description": "Heaven lacks glory without the threat of Hell. It's your noble chore, then, to be the Agent of Infamy. An obvious choice for Nephandic mages (though not, by a long shot, exclusive to their kind), this Archetype embodies unapologetic villainy. As Voltaire (the singer, not the philosopher) put it, 'It's so easy when you're evil'… easy, fun, and satisfying! You Reveal Dark Truths that many people are afraid to face. When you show up, Pollyanna runs screaming for the hills. Your existence undercuts the comfortable lies of polite society. Anyone can play a hero, but a memorable villain is worth his weight in blood. The problem, of course, is that you're Depraved. There might be a heroic heel-turn in your future, but that's unlikely. Chances are, you're headed for the Cauls; if you haven't Fallen with the Nephandi already, you probably will soon enough."
     },
     {
       "name": "Mad Scientist",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower when you successfully bend the rules of your technomancer sect while still applying something that seems oddly like science (see the sidebar SCIENCE!!!, p.290) and manage to avoid invoking Paradox.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower when you successfully bend the rules of your technomancer sect while still applying something that seems oddly like science (see the sidebar SCIENCE!!!, p.290) and manage to avoid invoking Paradox.",
       "description": "Science is not a field for cowards and fools. You understand that technology expands only when brave souls such as yourself dare the unthinkable and push past the established norms of hidebound preconceptions. Yes, those cowards and fools do falter when they behold the scope of your temerity. Let them! Just as Vesalius defied taboos when he performed dissections or Galileo challenged the Church with his discoveries, so too must other visionaries stand firm and expand the reach of science… visionaries including, of course, yourself. You do, in fact, have Vision. It's probably your greatest strength. Pursing that vision despite all obstacles, you move the boundaries of reality through sheer determination. Problem is, you are Batshit Insane. There are reasons that other people have not dared the things you do or, if they have, that they're reviled names in the Halls of Infamy. The Technocracy, Virtual Adepts, and especially the Etherites might depend upon minds like yours, but they also keep a wary eye out for the times when you'll go too far – because you will."
     },
     {
       "name": "Martyr",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower whenever you manage to make a noticeably positive difference in someone else's situation by giving deeply of yourself.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower whenever you manage to make a noticeably positive difference in someone else's situation by giving deeply of yourself.",
       "description": "It's your glory to sacrifice yourself for the greater good. Precisely what this greater good looks like is up to you. It's probably based on a religious creed – possibly, but not necessarily, Islam or Christianity. Then again, you may want to give your all for a secular cause you believe in, maybe a political ideology, a philosophical ideal, or simply the opportunity to be heroic in ways only you can perform. This sacrifice doesn't have to be fatal, though it'll probably wind up being terminal eventually. Until then, you tend to put yourself in a position to suffer so that someone else might thrive. Sacrifice is a mighty thing in magick. The willingness to surrender one's self to a greater end is one of the most obvious (and famous) Paths toward Ascension. That said, such Self-Deprecation can have unfortunate consequences far beyond simple hazards to your health. Martyrs tend to get on people's nerves, wind up being taken advantage of, and deal with abuse that has nothing to do with the greater good. Worse, perhaps, people like you often resent the beneficiaries of their sacrifice, many of whom might not want you to sacrifice yourself at all."
     },
     {
-      "name": "Martyr",
-      "splat": "Wraith",
-      "mechanics": "The Martyr regains Willpower every time he sacrifices a definable resource or suffers demonstrable harm so others may gain.",
-      "description": "The Martyr knows the meaning of sacrifice. He puts his own Fetters on the line to achieve the objective at hand. The Martyr suffers to see a cause reach its just end, and loudly proclaims all that's being lost in exchange for the greater goal. He doesn't want a reward, but he does seek recognition for all he's TRAITS 129 prepared to surrender. Sometimes misunderstood as suicidal, the Martyr simply knows that to achieve great things, someone has to pay the price."
-    },
-    {
-      "name": "Martyr",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower when you suffer some amount of damage or loss of a definable resource for your ideals or another's immediate gain.",
-      "description": "The Martyr suffers for his cause, enduring his trials out of the belief that his discomfort will ultimately improve others' lot. Some Martyrs simply want the attention or sympathy their ordeals engender, while others are sincere in their cause, greeting their opposition with unfaltering faith. Many revolutionaries, staunch idealists, and outcasts are Martyr Archetypes. Kindred Martyrs are often associated with reform movements among Kindred society, but rarely as figureheads — and they need not necessarily be on the pro-reform side of the issue."
-    },
-    {
-      "name": "Martyr",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower when you suffer some amount of damage or loss of a definable resource for the sake of your ideals or for another's immediate gain.",
-      "description": "The Martyr is at her strongest when forged in a crucible of suffering. It's not necessarily masochism that drives her on this path; it may be a desire for attention, or a profound belief in the virtue of self-sacrifice. Garou society has a tendency to romanticize the heroic last stand of a Martyr, and as dangerous as the war is, following this Archetype's path can quickly lead to the heroic end the Martyr may crave."
-    },
-    {
       "name": "Masochist",
-      "splat": "Vampire",
-      "mechanics": "Regain one point of Willpower when your own suffering leads to some tangible gain for you.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain one point of Willpower when your own suffering leads to some tangible gain for you.",
       "description": "The Masochist exists to test his limits, to see how much pain he can tolerate before he collapses. He gains satisfaction in humiliation, suffering, denial, and even physical pain. The Masochist defines who he is by his capacity to feel discomfort — he rises each night only to greet a new pain. Certain extreme athletes, urban tribalists, and the clinically depressed exemplify the Masochist Archetype. Kindred Masochists might be overtly self-mortifying horrors who play to their Beast's self-destructive whims, or they may be ambitious taskmasters, as with a coterie leader who refuses to accept failure and pushes his own limits in his exacting schemes."
     },
     {
       "name": "Mediator",
-      "splat": "Wraith",
-      "mechanics": "The Mediator regains Willpower every time she convinces others to compromise on a high-stakes disagreement.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "The Mediator regains Willpower every time she convinces others to compromise on a high-stakes disagreement.",
       "description": "The Mediator knows how important compromise can be, and seeks to avoid conflict. She pursues give and take no matter who the parties are, knowing that unless both sides benefit, clashes can escalate to cataclysmic levels. While there's always the fear her involvement might makes things worse, she knows someone has to be the impassioned voice of reason when the stakes are so high."
     },
     {
       "name": "Monster",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower by performing spectacular acts of heartlessness and ruin.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower by performing spectacular acts of heartlessness and ruin.",
       "description": "Heaven lacks glory without the threat of Hell. It's your noble chore, then, to be the Agent of Infamy. An obvious choice for Nephandic mages (though not, by a long shot, exclusive to their kind), this Archetype embodies unapologetic villainy. As Voltaire (the singer, not the philosopher) put it, 'It's so easy when you're evil'… easy, fun, and satisfying! You Reveal Dark Truths that many people are afraid to face. When you show up, Pollyanna runs screaming for the hills. Your existence undercuts the comfortable lies of polite society. Anyone can play a hero, but a memorable villain is worth his weight in blood. The problem, of course, is that you're Depraved. There might be a heroic heel-turn in your future, but that's unlikely. Chances are, you're headed for the Cauls; if you haven't Fallen with the Nephandi already, you probably will soon enough."
     },
     {
-      "name": "Monster",
-      "splat": "Vampire",
-      "mechanics": "Monster characters should pick a specific atrocity, regaining Willpower whenever they indulge that urge.",
-      "description": "The Monster knows she is a creature of darkness and acts like it. Evil and suffering are the Monster's tools, and she uses them wherever she goes. No villainy is below her, no hurt goes uninflicted, and no lie remains untold. The Monster does not commit evil for its own sake, but rather as a means to understand what she has become. Unstable individuals, those who have been greatly wronged or harmed, and those defined as sociopaths may come to display characteristics of the Monster Archetype. Kindred Monsters include many Sabbat, degenerate Kindred elders, and those who never adjust properly to what they have become after the Embrace."
-    },
-    {
       "name": "Nihilist",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever you engage in self-destructive behavior.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever you engage in self-destructive behavior.",
       "description": "The Nihilist believes that life is without objective purpose or intrinsic value. Since nothing matters, the Nihilist feels morally free to indulge in whatever destructive passions she might crave at the moment."
     },
     {
       "name": "Optimist",
-      "splat": "Wraith",
-      "mechanics": "The Optimist regains Willpower every time he discovers and champions the bright side to an otherwise grim event.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "The Optimist regains Willpower every time he discovers and champions the bright side to an otherwise grim event.",
       "description": "The Optimist knows things could be a lot worse, but with a little effort they're going to get better. He sees the positive side of having survived death, and presses the realization on everyone. The Optimist vigilantly aims to keep spirits high, helping to show others that even in the Underworld, it's not just doom and gloom. This, in his opinion, is the best way to fight Oblivion and its sidekick, despair."
     },
     {
       "name": "Pedagogue",
-      "splat": "Vampire",
-      "mechanics": "Regain one point of Willpower whenever you see or learn of someone who has benefited from the wisdom you shared with them.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain one point of Willpower whenever you see or learn of someone who has benefited from the wisdom you shared with them.",
       "description": "The Pedagogue knows it all, and desperately wants to inform others. Whether through a sense of purpose or a genuine desire to help others, the Pedagogue makes sure his message is heard — at length, if necessary. Pedagogue Archetypes may range from well-meaning mentors to verbose blowhards who love to hear themselves talk. Instructors, the overeducated, and 'veterans of their field' are all examples of Pedagogue Archetypes. Kindred Pedagogues include watchdogs of the Traditions, ideological Anarchs, and perhaps even that rare soul seeking Golconda who wants company on the journey."
     },
     {
-      "name": "Pedagogue",
-      "splat": "Werewolf",
-      "mechanics": "Regain one point of Willpower whenever you see or learn of someone who has benefited from the wisdom you shared with them.",
-      "description": "The Pedagogue wants to share his knowledge, which he certainly believes to be extensive. Some Pedagogues may be overbearing blowhards who want to be admired for their wisdom, while others may be scarred mentors who want to see their pupils excel. They often try for sept offices, where they have the benefit of many listeners and the authority to compel attention."
-    },
-    {
       "name": "Penitent",
-      "splat": "Wraith",
-      "mechanics": "The Penitent regains Willpower every time he makes heartfelt reparation for a previous error.",
-      "description": "The Penitent needs to make up for all the terrible things he's done. Every action he takes is done with an eye toward atonement, while every misstep redoubles his determination to make good in the end. Doing so may not always be to his advantage, but such is the price of redemption. From the outside, it may look like the Penitent teeters on the brink of being self-destructive, but he knows his suffering is a badge of honor, and every scar is a sin washed away."
-    },
-    {
-      "name": "Penitent",
-      "splat": "Vampire",
-      "mechanics": "The Penitent regains Willpower every time he makes heartfelt reparation for a previous error.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "The Penitent regains Willpower every time he makes heartfelt reparation for a previous error.",
       "description": "The Penitent exists to atone for the grave sin she commits simply by being who she is. Penitents have either low self-esteem or traumatic past experiences, and feel compelled to 'make up' for inflicting herself upon the world. Penitent Archetypes are not always religious in outlook; some truly want to scourge the world of the grief they bring to it. Repentant sinners, persons with low self-esteem, and remorseful criminals are examples of the Penitent Archetype. Penitent Kindred include those who scourge themselves of the Beast like medieval monks, vampires who stand up for the rights of mortals, and those who subsist entirely on the vitae of animals."
     },
     {
       "name": "Perfectionist",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever you accomplish your goal without any demonstrable flaw.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever you accomplish your goal without any demonstrable flaw.",
       "description": "Perfectionist Archetypes demand flawless execution. A half-hearted job gives the Perfectionist no satisfaction, and she expects the same degree of commitment and attention to detail from others that she demands from herself. Although the Perfectionist may be exacting, the achievement of the end goal drives her, and often those for whom she is responsible. Prima donnas, artists, and architects exemplify the Perfectionist Archetype. A Perfectionist Kindred might be a zealous Sabbat member who expects more than his pack can consistently deliver, or she may be a moralist who sometimes applies her own high standards of Humanity to others in her coterie."
     },
     {
-      "name": "Perfectionist",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower whenever you accomplish your goal without any demonstrable flaw.",
-      "description": "The Perfectionist is committed to getting things right. She holds herself and her colleagues to an exacting standard. Having a Perfectionist in a pack can drive the pack to accomplish great things, if she has the skill to inspire. Galliards and Philodox are particularly prone to this Archetype, as are no few Silver Fangs."
-    },
-    {
       "name": "Pragmatist",
-      "splat": "Wraith",
-      "mechanics": "The Pragmatist regains Willpower every time she succeeds by putting the goal first.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "The Pragmatist regains Willpower every time she succeeds by putting the goal first.",
       "description": "The Pragmatist's complete focus is on reaching her goal, no matter what it takes. She has a matter-of-fact approach to the inhabitants of the Underworld, knowing an omelet can't be made without breaking a few eggs. It's all well and good to debate moral niceties, but when there's a Maelstrom pounding on the door, solutions are what matters. Others might think this makes the Pragmatist cold, but they can't argue with the results."
     },
     {
       "name": "Prophet",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower when you speak Truth to power and inspire a successful change.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower when you speak Truth to power and inspire a successful change.",
       "description": "Speaking capital-T Truth, you bring a sacred message to a wounded world. That message might not necessarily be religious, though it's at least got religious undertones. Regardless of its nature, it's capital-I Important in ways that simple opinions could never be. Traditionally, a prophet becomes the chosen representative of Truth, throwing light into shadowed corners and forcing folks to look at their own hypocrisies. It's not an easy cross to bear, but Truth will not be denied for long. Insight is your greatest strength. Prophets tend to see things that are hidden to most people: secrets, omens, visions of the future, and so forth. Even if you lack the blessing/ curse of prophecy, few mysteries escape your sight. Ruthlessness is the traditional flaw of prophets. Driven by their vision of Truth, such people tend to be impatient, fanatical, and defiant of mortal power. You'll probably score lots of points for guts, but you might find those guts roasting on a spit in some ruler's torture garden. True prophets often meet unhappy ends… and they tend to take their followers down with them when they go."
     },
     {
       "name": "Rebel",
-      "splat": "Wraith",
-      "mechanics": "The Rebel regains Willpower every time he acts successfully against authority.",
-      "description": "The Rebel sees authority and needs to tear it down. He despises the establishment, seeing it as a force of oppression. That doesn't mean he has anything in mind to replace it with; it's just that what exists now needs to come crashing down. Occasionally he wonders about the collateral damage he inflicts, but in the end, the system has to be destroyed. Casualties can be mourned and celebrated after the rebellion is done."
-    },
-    {
-      "name": "Rebel",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever your actions adversely affect your chosen opposition.",
-      "description": "The Rebel is a malcontent, never satisfied with the status quo or the system as it is. He hates the very idea of authority and does everything in his power to challenge and undermine it. Perhaps the Rebel truly believes in his ideals, but it is just as likely that he bears authority figures some ill will over a 'wrong' done to him in the past. A Rebel may hate institutions categorically, or she may be consumed with opposition toward a single particular authority. Teenagers, insurrectionists, and nonconformists all exemplify the Rebel Archetype. Rebel Kindred certainly include the Sabbat, Anarchs, and temperamental Brujah, but also have room for Tremere who chafe at the rigid Clan hierarchy or neonates who deplore their sires."
-    },
-    {
-      "name": "Rebel",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower whenever your actions adversely affect your chosen opposition.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever your actions adversely affect your chosen opposition.",
       "description": "The Rebel has issues with authority, usually one particular authority. It may be revenge or idealism that drives him, but he simply can't obey bad orders — and he's the one who decides what 'bad orders' entail. Most Rebel werewolves are still young, as consistently defying one's elders is something that one tends to outgrow… or have beaten out. It's all too easy for a Rebel to come to a bad end when unity is the thing the Garou Nation needs most."
     },
     {
       "name": "Rogue",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower whenever you manage to score a victory against the forces of oppressive authority.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower whenever you manage to score a victory against the forces of oppressive authority.",
       "description": "You make rebellion look good. More than just some scruffy malcontent, you challenge convention with stylish dispatch. Attitude is your first, last and middle name, and it's the only label you accept. You give not one precious fuck for authority, and when you finally head towards that Big Dirt Nap, you plan to go out laughing. Defiance is your life's blood, the pillar of your soul. Your problem, though, is Selfishness. So dedicated are you to your own individuality that you'll ignore the concerns of other folks. Before you can become a valuable part of your society (much less a candidate for transcendence), you'll have to learn to let go of your own whims and take the bigger picture into account."
     },
     {
-      "name": "Rogue",
-      "splat": "Wraith",
-      "mechanics": "The Rogue regains Willpower every time her self-centered disposition leads to demonstrable advantages, in the form of material profit or favors to be repaid.",
-      "description": "The pinnacle of both self-interest and self-sufficiency, the Rogue looks out for herself. She uses society for her own benefit but doesn't think its rules apply to her; as far as she's concerned, regulations are for people who can't think on their feet. Others may despair of her focus on herself, but the Rogue's charm and sunny disposition usually win them over in the end."
-    },
-    {
-      "name": "Rogue",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower when your self-centered disposition leads you to profit, materially or otherwise.",
-      "description": "Only one thing matters to the Rogue: herself. To each his own, and if others cannot protect their claims, they have no right to them. The Rogue is not necessarily a thug or bully, however. She simply refuses to succumb to the whims of others. Rogues almost universally possess a sense of self-sufficiency. They have their own best interests in mind at all times. Prostitutes, capitalists, and criminals all embody the Rogue Archetype. Kindred Rogues include diablerists, Autarkis, and a Primogen who puts his Clan's opportunities before the supremacy of the Kindred as a whole."
-    },
-    {
-      "name": "Rogue",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower when your self-centered disposition leads you to profit, materially or otherwise.",
-      "description": "The Rogue's sense of self-interest is paramount. She might be a thug or a bully, or she might just be a powerful individualist or have a strong belief in self-sufficiency. Sacrifice is a sucker's game to her. As with other primarily self-centered Archetypes, the Rogue frequently has trouble excelling in the exceptionally cooperative environment of Garou society. It's hard to keep your self-interest hidden from your pack, and few things weaken pack bonds more than the knowledge that your packmate believes in all for one, and one also for that one."
-    },
-    {
       "name": "Sadist",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower whenever you inflict pain upon someone for no reason other than your own pleasure.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower whenever you inflict pain upon someone for no reason other than your own pleasure.",
       "description": "You exist to inflict pain and suffering upon others. Killing is too easy; torture is the best way to truly harm a person, and you seek the slowest, most painful means to push others to the ultimate limits. Pain — others' pain — gives you immense pleasure. Drill sergeants, jilted ex-lovers, and some of the terminally deranged may all embody the Sadist Archetype at one time or another; sadism is rare enough to appear only in aberrant cases, rather than reliably in any type or class of person."
     },
     {
       "name": "Scientist",
-      "splat": "Wraith",
-      "mechanics": "The Scientist regains Willpower every time a logical, systematic approach helps solve a long-term problem.",
-      "description": "The Scientist knows the Underworld is possessed of patterns and logic, and he strives to understand and master both. Every encounter he experiences brings him closer to the truth. It's all just incomplete data, which he endeavors to make complete. He's the one best equipped to solve the greatest mysteries and make sense of this new existence. He is careful and methodical, because the consequences of being slipshod are too terrible to contemplate."
-    },
-    {
-      "name": "Scientist",
-      "splat": "Vampire",
-      "mechanics": "Regain Willpower any time a logical, systematic approach to a problem helps you solve it, or information gathered logically is of use in another, similar situation.",
-      "description": "To a Scientist, existence is a puzzle which she can help to reassemble. A scientist logically and methodically examines her every situation and maneuver, looking for logical outcomes and patterns. This is not to say that the Scientist is always looking for a scientific or rational explanation, but rather she examines her surroundings rigorously and with a critical eye. The system a Scientist attempts to impose on the world may be completely ludicrous, but it is a system, and she sticks by it."
-    },
-    {
-      "name": "Scientist",
-      "splat": "Werewolf",
-      "mechanics": "Regain Willpower any time a logical, systematic approach to a problem helps you solve it, or information gathered logically is of use in another, similar situation.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower any time a logical, systematic approach to a problem helps you solve it, or information gathered logically is of use in another, similar situation.",
       "description": "The Scientist Archetype isn't necessarily obsessed with literal science — rather, this represents the desire to understand. A Scientist looks for patterns at play around her, and wants to see how things follow from a logical sequence of events. She's interested in the systems that govern the world. Among the Garou, the Scientist may be found anywhere from techno-savvy Glass Walker information junkies to Uktena Theurges fascinated with unraveling the enigmas of the spirit world."
     },
     {
       "name": "Sensualist",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower when you get a chance to revel in some potent sensual experience… especially if you get to share with someone else. (Novelty, though, is key).",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower when you get a chance to revel in some potent sensual experience… especially if you get to share with someone else. (Novelty, though, is key).",
       "description": "Sensation is a drug to you. The jittery rush of adrenaline, the caress of this week's lover on your skin, the raspy pull of a brush through messy hair, even the dull burn of a broken heart – you chase those dragons with bright abandon. The obvious choice for an Ecstatic mage, this compulsion finds new expressions in the Art of magick. The first thing you learn in each Sphere, after all, is perception. For someone like you, that's all the reason in the world you need in order to learn each Sphere and savor its sensations. Receptiveness is your gift. Your devotion to sensuality inspires you to challenge yourself. You're not shy about sharing, either, and your delight in even the most painful stimulations can get other people to explore them with you too. Hedonism is your curse. Those indulgences can drive you to do stupid, reckless, selfish things. You tend to haul other folks along with you for the ride, and although you might cherish the resulting agonies, your companions are less likely to appreciate them… or you… after a few disasters."
     },
     {
       "name": "Sociopath",
-      "splat": "Vampire",
-      "mechanics": "Regain Willpower whenever you are the greatest contributor to a body count after everything has settled down.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower whenever you are the greatest contributor to a body count after everything has settled down.",
       "description": "All inferior beings both living and undead should be exterminated in order to bring about a harmonious existence. You likely feel no remorse when you kill (depending upon your Humanity or Path). On the contrary, you are doing a glorious deed for society. Some vampires are critical of your violent nature, but you sometimes manage to sway them with arguments like, 'Darwin would agree that I'm only helping nature along!' and, 'Only the strongest shall survive!'"
     },
     {
       "name": "Soldier",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower when you achieve your orders' objectives. The more difficult the orders are to fulfill, the better it feels to accomplish them.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower when you achieve your orders' objectives. The more difficult the orders are to fulfill, the better it feels to accomplish them.",
       "description": "The Soldier is not a blindly loyal follower. While she exists for orders, she does not adhere to them unquestioningly. More independent than a Conformist but too tied into the idea of command to be a Loner, the Soldier applies her own techniques to others' goals. While she may seek command herself someday, her ambitions lie within the established hierarchy and structure. The Soldier has no compunctions about using whatever means necessary to do what needs to be done, so long as the orders to do so came from the right place."
     },
     {
-      "name": "Soldier",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower when you achieve your orders' objectives. The more difficult the orders are to fulfill, the better it feels to accomplish them.",
-      "description": "The Soldier excels in situations where there are clear objectives and procedures. This Archetype is something of a more goal-oriented Conformist, and a natural complement to a Director. He works well in social situations as long as everyone else in his group is also willing to play their part. Many veteran werewolves have something of the Soldier within them, for this mentality is unquestionably useful for pack activity and the ongoing war."
-    },
-    {
       "name": "Survivor",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower whenever you survive a difficult situation through stubborn cunning and a refusal to give in.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower whenever you survive a difficult situation through stubborn cunning and a refusal to give in.",
       "description": "Nothing stops you. Hardened by previous ordeals, you've developed a sense of self-preservation that keeps you going when lesser souls surrender to the odds. You've got little patience or sympathy for people who won't do whatever it takes to endure hardship. 'Shut up and step up or get the fuck out of my way' is your motto. Other folks might not make it through, but their weakness won't lead to your death. Perseverance is your defining trait. You do what you need to do with what you have to work with. Obstacles are just logistics, and excuses never healed a broken leg. Your weakness, though, is a profound Callousness. You've shut down so much in order to keep going that folks often wonder if you feel anything at all."
     },
     {
-      "name": "Survivor",
-      "splat": "Wraith",
-      "mechanics": "Regain Willpower whenever you survive a difficult situation through stubborn cunning and a refusal to give in.",
-      "description": "The Survivor never surrenders or backs down, even in the face of Oblivion. She resists every obstacle thrown her way and overcomes each adversity. Her will is indomitable. She knows even as others fall by the wayside, she'll keep going no matter how impossible the odds. Her Shadow may attempt to chip away at her cast-iron self-discipline, but she resists even that malevolent voice with gritted teeth and clenched fists."
-    },
-    {
-      "name": "Survivor",
-      "splat": "Vampire",
-      "mechanics": "Regain Willpower whenever you survive a difficult situation through stubborn cunning and a refusal to give in.",
-      "description": "No matter what happens, no matter the odds or opposition, the Survivor always manages to pull through. Whether alone or with a group, the Survivor's utter refusal to accept defeat often makes the difference between success and failure. Survivors are frustrated by others' acceptance of 'what fate has in store' or willingness to withstand less than what they can achieve. Outcasts, street folk, and idealists may well be Survivor Archetypes. A Kindred Survivor might be a renegade under a Prince's edict of Blood Hunt, an erstwhile Bishop forced from power, or a lowly Nosferatu who finds himself kicked from hunting ground to hunting ground with no acknowledged claim of domain."
-    },
-    {
-      "name": "Survivor",
-      "splat": "Werewolf",
-      "mechanics": "Regain Willpower whenever you survive a difficult situation through stubborn cunning and a refusal to give in.",
-      "description": "The direct opposite of the Fatalist or Martyr, the Survivor never concedes defeat. No matter what else happens, she who survives always has more of a chance at achieving her goals the next day. Survivors may be unpopular voices in the Garou Nation, criticizing the ideals of noble sacrifice and fighting a losing war. However, they can also be inspirational, refusing to succumb to despair or accept what others consider inevitable."
-    },
-    {
       "name": "Thrill-Seeker",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower any time you succeed at a dangerous task that you have deliberately undertaken.",
-      "description": "The Thrill-Seeker lives for the rush of danger. Unlike those of arguably saner disposition, the Thrill-Seeker actively pursues hazardous and possibly deadly situations. The Thrill-Seeker is not consciously suicidal or self-destructive — he simply seeks the stimulation of imminent disaster. Gangbangers, petty thieves, and exhibitionists are all examples of the Thrill-Seeker Archetype. Kindred Thrill-Seekers might habitually break the Masquerade just to see if they'll get caught, they might maintain contacts in a rival Clan or Sect, or they might actively plot a Prince's overthrow just to see if they can pull it off."
-    },
-    {
-      "name": "Thrill-Seeker",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower any time you succeed at a dangerous task that you have deliberately undertaken.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain a point of Willpower any time you succeed at a dangerous task that you have deliberately undertaken.",
       "description": "The Thrill-Seeker loves to gamble with his life. This Archetype doesn't indicate a death wish, but rather the stimulation of high risk and adrenaline. Werewolf Thrill-Seekers never have to worry about running out of opportunities to indulge their vice."
     },
     {
       "name": "Traditionalist",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower when your efforts prove the value of old-fashioned ways.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower when your efforts prove the value of old-fashioned ways.",
       "description": "Devoted to tradition, you preserve the legacy of bygone wisdom. New ideas are shaky, untested by time, and thus flawed. The Old Ways often are best. They were good enough for our ancestors, and they'll be good enough for future generations too. Your Consistency is a virtue. Especially in an age like ours, in which novelty defines mainstream culture, it's good to have someone as authentic and dependable as you. Rigidity, though, can destroy you. Stasis tends to lead to Entropy, especially where mages are concerned. Though your dedication to tradition is admirable enough, you'll need to learn some flexibility if you want to adapt in this age and eventually transcend it."
     },
     {
-      "name": "Traditionalist",
-      "splat": "Wraith",
-      "mechanics": "Regain Willpower when your efforts prove the value of old-fashioned ways.",
-      "description": "The Traditionalist is bolstered by the known and familiar, and knows how to employ them to best effect. In his eyes, altering the status quo is an unnecessary risk — just look what happened to Charon. He'll fight tooth and nail to preserve the old ways, believing he's fighting to prevent disaster."
-    },
-    {
-      "name": "Traditionalist",
-      "splat": "Vampire",
-      "mechanics": "Regain Willpower when your efforts prove the value of old-fashioned ways.",
-      "description": "The orthodox ways satisfy the Traditionalist, who prefers to accomplish her goals with time-tested methods. Why vary your course when what has worked in the past is good enough? The Traditionalist finds the status quo acceptable, even preferable, to a change that might yield unpredictable results. Conservatives, judges, and authority figures are all examples of Traditionalist Archetypes. Traditionalist Kindred unsurprisingly look to the Traditions as a behavior model, though a few Anarchs and elders may espouse a 'traditionalism' that predates both Camarilla and Sabbat."
-    },
-    {
-      "name": "Traditionalist",
-      "splat": "Werewolf",
-      "mechanics": "Regain Willpower when your efforts prove the value of old-fashioned ways.",
-      "description": "The old ways are best, says the Traditionalist. She upholds the laws of the ancestors, and is quick to point out where a rule has always worked in the past. She's not very fond of change, even if it might turn out for the better. The Garou Nation is replete with Traditionalists, though the traditions they uphold can vary quite widely from tribe to tribe."
-    },
-    {
       "name": "Trickster",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower when your clever plans result in a big gain for you and your companions or a big loss for your enemies.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower when your clever plans result in a big gain for you and your companions or a big loss for your enemies.",
       "description": "The world is your plaything. People are your toys. A Lord or Lady of Misrule, you work an eternal scam against the dull background of everyday existence. Unlike the Contrary, you're less interested in political subversion than in personal gratification. It's not that you don't care about your companions – you do. Still, when life is one big joke, it's better to be the setup than the punchline. Cleverness is your claim to fame. Your tricks display considerable flair. Unbound by typical concerns, you upend the order of gods and kings. Nothing holds you back except the few scruples you might actually possess. Untrustworthiness is your crown of thorns. Charming as you might be, there's an edge to you that smart people perceive. Your own tricks often backfire on you too, leaving you with less than you'd had at the beginning of that scheme. If and when you want something better for yourself, you'll need to know when to stop laughing and start taking ownership of your actions and their consequences."
     },
     {
-      "name": "Trickster",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower any time you manage to lift others' spirits, especially if you are able to assuage your own pain in the process.",
-      "description": "The Trickster finds the absurd in everything. No matter how grim life (or unlife) may become, the Trickster always uncovers a kernel of humor within it. Tricksters cannot abide sorrow or pain, and so they strive to lighten the spirits of those around them. Some Tricksters have even higher ideals, challenging static dogmaby exposing its failures in humorous ways. Comedians, satirists, and social critics are examples of Trickster Archetypes. Kindred Tricksters may call attention to the flaws in a leader's policy, they may be glib-tongued devil's advocates who question the Traditions or ritae of their Sect, or they may simply have an acute sense of the ironies of a world that makes vampiric predator and mortal prey almost indistinguishable physically."
-    },
-    {
-      "name": "Trickster",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower any time you manage to lift others' spirits, especially if you are able to assuage your own pain in the process.",
-      "description": "Life is grim and short. The Trickster argues that it's a better response to laugh than it is to cry. Some Tricksters use humor to escape confrontation, while others are compassionate souls who work to lessen their friends' burden with laughter. This archetype is classically Ragabash, and key to the Bone Gnawer tribal spirit."
-    },
-    {
       "name": "Visionary",
-      "splat": "Mage",
-      "mechanics": "Regain Willpower when you convince folks that your vision is worth their devotion too, or when your actions turn your vision into practical reality.",
+      "category": "identity",
+      "stat_type": "archetype",
+      "splat": "Various",
+      "system": "Regain Willpower when you convince folks that your vision is worth their devotion too, or when your actions turn your vision into practical reality.",
       "description": "Beyond typical perception, there's something more. You see it, though few other people do. Even by mage standards, you're a radical seer. Though you spend lots of time and energy chasing your vision, that deeper goal is worth whatever its search might cost. Inspiration guides your steps, inspiring you to see what others can't or won't perceive. You visualize some great ideal – the return of your people's glory, a world-changing technology, a path toward Earth's redemption, that sort of thing – with the passion of a true believer. Your weakness, though, is Pride in your stubborn search for truth. To Ascend, you must learn humility, seeking visions that other people can enjoy as well."
-    },
-    {
-      "name": "Visionary",
-      "splat": "Wraith",
-      "mechanics": "The Visionary regains Willpower every time she convinces others to follow her vision, without providing evidence to back up its veracity.",
-      "description": "The Visionary knows a better tomorrow awaits, and is unafraid to say so. She sees the path to that shining future clearly, but taking it requires guts and a willingness to throw caution to the wind. The Visionary knows if her vision fails she'll be decried as a fraud, but believes in what she's doing. Her vision gives her strength and lends it to those around her. In turn, her vision's reinforced by others supporting her journey."
-    },
-    {
-      "name": "Visionary",
-      "splat": "Vampire",
-      "mechanics": "Regain a point of Willpower each time you are able to convince others to have faith in your dreams and follow the course of action dictated by your vision.",
-      "description": "The Visionary keeps her eyes on a goal that others might find impossible. Like the Idealist or Fanatic, her cause is important to her. Unlike those Archetypes, the Visionary focuses principally on sharing the dream with others. Visionaries frequently face dismissal as foolish dreamers thanks to the fatalism that pervades Garou society, but a few manage to share their dreams of a Gaia that will be healed and strong when the Apocalypse has ended."
-    },
-    {
-      "name": "Visionary",
-      "splat": "Werewolf",
-      "mechanics": "Regain a point of Willpower each time you are able to convince others to have faith in your dreams and follow the course of action dictated by your vision.",
-      "description": "The Visionary keeps her eyes on a goal that others might find impossible. Like the Idealist or Fanatic, her cause is important to her. Unlike those Archetypes, the Visionary focuses principally on sharing the dream with others. Visionaries frequently face dismissal as foolish dreamers thanks to the fatalism that pervades Garou society, but a few manage to share their dreams of a Gaia that will be healed and strong when the Apocalypse has ended."
     },
     {
       "name": "Archivist",
       "category": "identity",
       "stat_type": "archetype",
-      "splat": "All",
-      "mechanics": "Regain Willpower when information you previously recovered is instrumental in answering a colleague's question or considerably advancing their goals.",
+      "splat": "Various",
+      "system": "Regain Willpower when information you previously recovered is instrumental in answering a colleague's question or considerably advancing their goals.",
       "description": "A place for everything, and everything in its place. Knowledge is power, but power fails when it's lost or disordered. Too many books have been burnt, too many libraries ransacked, too many antiques lost to greed. You refuse to let the legacies of the past fall to chaos; you refuse to let humanity's collective genius falter by even a single step. No knowledge is truly forbidden, You hunger for it all, collecting and categorizing everything you uncover for the betterment of yourself and others. It takes tremendous Diligence to pursue this path. Even the most learned academic cannot master every science or philosophy, but this knowledge isn't for you alone. You may be a studious dilettante or a master of one specific field. Either way, you pursue every opportunity to expand and record your learning, creating a system to document and recollect every pertinent detail at the moment it's needed. Sometimes old lore is abandoned for good reason, as dead-end research perpetuates bad ideas and newer studies surpass older work. You struggle to leave even the most irrelevant or disproven notion behind, and your Obsession with collecting knowledge risks drowning you in redundancies."
     },
     {
       "name": "Mercenary",
       "category": "identity",
       "stat_type": "archetype",
-      "splat": "All",
-      "mechanics": "Regain Willpower when you're praised or rewarded for successfully completing a significantly risky task at another's behest.",
+      "splat": "Various",
+      "system": "Regain Willpower when you're praised or rewarded for successfully completing a significantly risky task at another's behest.",
       "description": "You're a professional thrill-seeker and risk-taker. You put yourself in harm's way for others, a gladiator or sell-sword in the modern age. You might be a bare-knuckle boxer, a hostage-recovery specialist, or an ambitious young trader in a financial firm. No matter the arena, you live to take risks and beat the odds. Regardless of whether you're loyal to a specific employer or a mercenary seeking a challenge, you laugh in the face of danger — if you can get paid and applauded for doing it, so much the better. Beating the odds time and time again gives you a Self-Assured nature, keeping you calm and ready when the mission inevitably goes awry. You don't always succeed, but your wins are a net positive, and your reputation for success keeps employers knocking at your door whenever a crisis looms. You know just how good you are. This certainty comes at a price. Knowing your own value gives you an Arrogance which demands recognition whenever you place your life on the line. You don't have to beat every rival, but you need to know you can make them bleed if it comes to a fight. You aren't a martyr to someone else's cause; your life and skill have value. Some say success is its own reward, but if the victory leaves no witnesses, without reward or praise what's the point?"
     },
     {
       "name": "Consolidator",
       "category": "identity",
       "stat_type": "archetype",
-      "splat": "All",
-      "mechanics": "Regain Willpower when you enhance the quality of a long-term project by personally acquiring assets or allies, or by dismantling or removing failing assets which hinder your success.",
+      "splat": "Various",
+      "system": "Regain Willpower when you enhance the quality of a long-term project by personally acquiring assets or allies, or by dismantling or removing failing assets which hinder your success.",
       "description": "The machine is greater than its component parts. The choir is louder than the lone voice. The empire holds more sway than the disparate countries. There is power in the whole. You know the world is a better place when everyone strives towards a common purpose, and you have the power and will to make that a reality. Some may resist your guiding hand, misled by false ideals of independence, but one way or another you will convince them. Integration breeds strength. Your Appreciation for the potential in all things is a gift you long to share. Every project, person, and enterprise you encounter is an opportunity to assess and steer the world towards greater things. Whether it be allies, businesses, or ideas, you acquire the things which matter to you and find a way to fit them together. You build bridges between bitter rivals, rescue struggling businesses from bankruptcy, and turn small ideas into miracles. With your help, the weak survive and the worthy flourish. Placing your own views above others runs the risk of Tyranny. You struggle with rejection and opposition, viewing anyone who spurns your offers of alliance as an enemy Other to be defeated and consumed for the greater good. Failure among your own assets is equally frustrating, forcing you to cut away your own empire's weak flesh to preserve its overall strength."
     },
     {
       "name": "Consumer",
       "category": "identity",
       "stat_type": "archetype",
-      "splat": "All",
-      "mechanics": "Regain Willpower when the purchase and use or consumption of a new possession provides you with exceptional joy.",
+      "splat": "Various",
+      "system": "Regain Willpower when the purchase and use or consumption of a new possession provides you with exceptional joy.",
       "description": "The world is a marvelous place, filled with treasures of the ages and new wonders created every day. Thanks to centuries of human ingenuity there's no shortage of gadgets and relics to play with, art to collect, and outfits to wear. Whereas the Bon Vivant relishes new experiences, you're driven to acquire new possessions. Whether it be an old masterpiece or a new gimmick, you constantly seek the best the world has to offer. You live in constant Fascination. Like a human magpie, you find allure in the sheen and shine of the latest material offering. The smallest discovery rejuvenates you, and when all the world is a treasure trove every day becomes an adventure. You're not greedy; when something valuable has lost its appeal you can let it go and share it with the world. You delight in finding others to share your enthusiasm. Sometimes, the giddy high never comes, and only the Hunger persists. You feel a numbness when your possessions fail to stimulate you, so you move on to newer, rarer, more expensive sources of pleasure. As your tastes become more refined and harder to satisfy, you risk succumbing to excess in the pursuit of increasingly shallow happiness."
     },
     {
       "name": "Entrepreneur",
       "category": "identity",
       "stat_type": "archetype",
-      "splat": "All",
-      "mechanics": "Regain Willpower when a mission or project you have invested in leads to a substantial victory or pay-off.",
+      "splat": "Various",
+      "system": "Regain Willpower when a mission or project you have invested in leads to a substantial victory or pay-off.",
       "description": "Life is a gamble, but not everyone chooses to throw dice. Sometimes a gamble is a new idea to be expressed or an opportunity to seize. That's where you come in. As an entrepreneur you like to take risks on new businesses and projects, investing your wealth, time, and reputation on the luck of the roll. Mages, sorcerers and other unnatural creatures can be entrepreneurs as well - they gamble with even greater stakes, hunting for lost nodes and risking new rites of magick to secure the next big win. Ambition drives you. Your eyes look ever upwards, to the mortal and supernatural alike who hold more power than you. You strive to be better, to do better in all things, and your friends and business partners find themselves caught up in the ride. Whether you succeed or fail, it's one hell of a trip. To reach those lofty heights you need to take risks, and the biggest payoffs are always the hardest to predict with the most to lose if they fail. Temptation is high, and repeated losses can make you Reckless with your own resources and those of your allies. To master your own faults you need to learn patience, before a downward spiral of failure destroys you and everyone you work alongside."
     },
     {
       "name": "Hoarder",
       "category": "identity",
       "stat_type": "archetype",
-      "splat": "All",
-      "mechanics": "Regain Willpower when you overcome a significant challenge with the aid of your own stockpiled assets.",
+      "splat": "Various",
+      "system": "Regain Willpower when you overcome a significant challenge with the aid of your own stockpiled assets.",
       "description": "Change is coming. There's always a new threat on the horizon, a new peril beyond the predictions of the heedless world. It's impossible to fully anticipate what you'll need in the future, so you prepare for everything. Like the dragons of legend, you hold on to the things that have use to you. Your stockpile may include weaponry, rare books, fuel, canned food, or even boxes of wigs and stacks of archived newspapers. Your hoard is an extension of your sense of self, something to keep close by and access in times of need. This state of readiness has advantages. Self-Reliance is a boon for any creature, and it frees you from doubt and distraction enough to focus on the refinement of your personal power. You may measure your wealth in an unconventional way, but you know money isn't as useful as the resources it can provide. Others may scoff at your habits, but you're rarely found wanting when the same challenge arises a second time. The threat of developing a harmful Compulsion is real for you. Preparing for every danger can turn the act of stockpiling into a comfort mechanic. If you don't keep yourself in check, you gather resources with no practical use, store material to excess, and lose yourself to a labyrinthine cage of your own creation to feel safe in the face of increasing uncertainty."
     },
     {
       "name": "Machiavelli",
       "category": "identity",
       "stat_type": "archetype",
-      "splat": "All",
-      "mechanics": "Regain Willpower when a lie about your true capabilities aids you in thwarting an enemy's plans.",
+      "splat": "Various",
+      "system": "Regain Willpower when a lie about your true capabilities aids you in thwarting an enemy's plans.",
       "description": "Power is everything: it's in a finely tailored suit, a stern word, an endorsement from an influential ally. Power is nothing. Power is a carefully crafted illusion, not something you can possess, but what you can take for yourself from others when the impulse arises. You pursue your ambitions with a ruthless clarity, exercising deceit and intimidation where necessary. You're not needlessly cruel — it benefits you to be loved and feared. But when you must choose, it's far better to be feared. Your Cunning is your greatest weapon. When your opponents can estimate your true strength, they can prepare for you, so you never let them see it. You use bravado and misdirection to present a mask of false power to drive away weaker threats. You hide your greatest power — when your enemies finally strike, they're already ten steps behind. What you can do, anyone can do. Sometimes you lie awake at night fearing your closest friends are aiming their own daggers at your back. Paranoia urges you to deeper levels of secrecy and ever more tangled webs of deceit. You want to be trusted, and you want to trust in return, but the simple truth is no one is truly trustworthy."
     },
     {
       "name": "Mediator",
       "category": "identity",
       "stat_type": "archetype",
-      "splat": "All",
-      "mechanics": "Regain Willpower when you resolve a conflict by making opposing figures reach a compromise or agreement.",
+      "splat": "Various",
+      "system": "Regain Willpower when you resolve a conflict by making opposing figures reach a compromise or agreement.",
       "description": "Extremist views are a bane to rational dialogue. The modern need for people to oppose one another in increasingly binary debates, pushing down all disagreement and dismissing even the most rational of counterpoints, creates an increasingly fractured and uncaring society. You refuse to let the world rip itself apart. By teaching those around you to be mindful of their own mistakes and prejudices, you can help align their thoughts and heal the rifts before they become too wide. You're a creature of Sympathy. No view is truly alien; even the most irrational ideas are forged by experience. When you disagree with someone, you can see the events and personal concerns shaping their position. Trading experiences and perspectives and introducing new ideas is a crucial step in changing people for the better. Finding common ground between two opposing forces and seeding it with the potential for agreement invigorates you. Spending so much time contemplating other viewpoints leaves little time to nurture your own. Plagued by Indecision, you struggle to commit fully to your own ideals or positions. If you're not careful, you become a perpetual fence-sitter, unable to take a stand in any conflict because you're too committed to seeking compromise."
     },
     {
       "name": "Mogul",
       "category": "identity",
       "stat_type": "archetype",
-      "splat": "All",
-      "mechanics": "Regain Willpower when your or your subordinate's achievement garners substantial acclaim.",
+      "splat": "Various",
+      "system": "Regain Willpower when your or your subordinate's achievement garners substantial acclaim.",
       "description": "You're at the forefront of a major enterprise or industry, steering innovators and market leaders towards success. This authority can take many forms — you almost certainly have substantial Allies, Fame, Rank, or Resources at your disposal, although a supernatural creature might also demonstrate their authority with Domain, Cult, Legend or even Spies. Regardless, you're an icon of success in your chosen field, a benchmark for admirers and would-be competitors to aspire to. Ambition guides your every action. You might be a canny investor, a skilled inventor, or an influential media magnate. Your public contributions might be your own creations or the projects of others you've guided towards success. What matters to you is discovering excellence in the world and making it public, forever ensuring your name and mark is attached to greatness. Striving to be the biggest fish in the pond is emotionally taxing. Taking first place means everyone's the competition. Jealousy arises each time a new challenger enters the field and each time someone beyond your influence celebrates a victory. Sometimes your own judgment and excellence isn't enough, and you give in to the temptation to sabotage and belittle your rivals. You create a lot of enemies this way, but in the end isn't everyone a potential enemy already?"
     },
     {
       "name": "Nepotist",
       "category": "identity",
       "stat_type": "archetype",
-      "splat": "All",
-      "mechanics": "Regain Willpower when a close acquaintance or family member succeeds at a duty or responsibility which you have entrusted to them.",
+      "splat": "Various",
+      "system": "Regain Willpower when a close acquaintance or family member succeeds at a duty or responsibility which you have entrusted to them.",
       "description": "You can't save everyone. Even the wealthiest and most powerful creatures struggle to improve lives on a global level, and entities more powerful than you have destroyed themselves trying. You learned to choose your battles and dedicate your time to those closest to you — your family and closest friends. You don't wantonly spoil your loved ones; your greatest joy comes from giving them the tools, responsibilities, and opportunities to fulfill their own potential. In difficult times, the Pride you feel when those closest to you achieve success grants you clarity and purpose. When they succeed, they pay their success forward in kind. In this way legacies are created. In this way empires are built and maintained. You can't always be there for the people who matter to you, but knowing they can take the reins in your absence reassures you. This reassurance gives way to Frustration when your expectations aren't met. When you entrust a duty to another you expect a return on your trust, time, and effort. Failure gnaws at you and plays havoc with your judgment. Their failures are a reflection of your own, and you're quick to scold or correct any mistakes made in your name. Worse than failure is when those close to you refuse the crown you offer. After all you've fought to achieve, having your legacy rejected cuts deep. When it happens you lash out in anger, denying your loved ones utterly."
     },
     {
       "name": "Steward",
       "category": "identity",
       "stat_type": "archetype",
-      "splat": "All",
-      "mechanics": "Regain Willpower when you defend a substantial asset entrusted to you from attack, or significantly expand an asset on another's behalf.",
+      "splat": "Various",
+      "system": "Regain Willpower when you defend a substantial asset entrusted to you from attack, or significantly expand an asset on another's behalf.",
       "description": "You defend what they won. You maintain what they created. Where the head leads, the hands act in their stead. Some call you steward, seneschal. Some regard you as nothing more than the silent figure in your master's shadow. As the custodian of a home, business, legacy, or place of power, you have control over a great deal of authority which you wield on another's behalf. You may be a servant in name only — your master may be long dead, your order inactive or shattered, your oaths of service impossible to complete. It doesn't matter. What you now have, you protect with total dedication, because it isn't yours to lose. The Dedication you show in defending your domain baffles your colleagues. Gifted with wealth, power, and responsibility, you resist the temptation to squander what you've been given. Instead, you choose to nurture, to build and expand, and to protect with force if you must. Command without the crown is a pitiable job. History remembers the king, not the vassal. When you give yourself over too much to your duties you risk Self-Sublimation as your own wants and objectives become alien to you. Blind loyalty can break your sense of self over time, and if you don't take measures to acknowledge your personal needs and desires you may lose yourself to identity-crushing subservience, and eternal duty without reward."
     }
   ]
-}

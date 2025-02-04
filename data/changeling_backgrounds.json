@@ -5,7 +5,8 @@
         "game_line": "Changeling: The Dreaming",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Changeling"
     },
     {
         "name": "Dreamers",
@@ -13,7 +14,8 @@
         "game_line": "Changeling: The Dreaming",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Changeling"
     },
     {
         "name": "Holdings",
@@ -21,7 +23,8 @@
         "game_line": "Changeling: The Dreaming",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Changeling"
     },
     {
         "name": "Remembrance",
@@ -29,7 +32,8 @@
         "game_line": "Changeling: The Dreaming",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Changeling"
     },
     {
         "name": "Retinue",
@@ -37,7 +41,8 @@
         "game_line": "Changeling: The Dreaming",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Changeling"
     },
     {
         "name": "Title",
@@ -45,7 +50,8 @@
         "game_line": "Changeling: The Dreaming",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Changeling"
     },
     {
         "name": "Treasure",
@@ -53,6 +59,61 @@
         "game_line": "Changeling: The Dreaming",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Changeling"
+    },
+    {
+        "name": "Digital Dreamers",
+        "description": "In the age of YouTube stars, Pinterest darlings, and other internet celebrities, you have discovered new ways to connect with and inspire Dreamers. You can regain Glamour from your fans and followers without needing to meet them face-to-face. While not as effective as personal contact, it’s a regular way to gain small amounts of Glamour. Of course, you must take steps to maintain your popularity or this Background may begin to diminish.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Changeling"
+    },
+    {
+        "name": "Husk",
+        "description": "This background indicates how skilled an inanimae has become in forging her Husks. Without this Background, the character appears similar to her Dreamform, and is easilysubjected to the forces of Banality through disbelief when confronted by humans.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Changeling"
+    },
+    {
+        "name": "Circle",
+        "description": "A close-knit group of mortals who hold you in high regard. They may or may not be aware of your faerie nature but they regard you as someone of import. You offer advice and counsel in exchange for their protection and assistance but they are not under your control. If abused or taken advantage of, they may turn against you.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Changeling"
+    },
+    {
+        "name": "Spirit Companion",
+        "description": "You have a special bond with a spirit that takes the form of an animal or other small creature, usually reflective of its nature. The spirit follows you whenever you enter the spirit plane (Upper World), and may act as a guide or scout. Your spirit companion can also store excess Medicine (Glamour) or Willpower.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Changeling"
+    },
+    {
+        "name": "Vision",
+        "description": "You are able to access the Higher Hunting Grounds (Dreaming) through changing and meditation. Through these visions you connect with past incarnations and sometimes other Nunnehi or their kin.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Changeling"
+    },
+    {
+        "name": "Changeling Companion",
+        "description": "The Lycian has a changeling friend he trusts completely. His Companion might be a Kithain or one of the Gallain. Either way, they’re seldom far from one another, they’re close friends, and the assistance the changeling provides the character is invaluable.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Changeling"
     }
 ]

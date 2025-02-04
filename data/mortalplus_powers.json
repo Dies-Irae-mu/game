@@ -96,7 +96,23 @@
         "values": [1, 2, 3, 4, 5]
     },
     {
-        "name": "Mediumship",
+        "name": "Ephemera",
+        "description": "",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "sorcery",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Mortal Necromancy",
+        "description": "",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "sorcery",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Necronics",
         "description": "",
         "game_line": "Various",
         "category": "powers",
@@ -136,7 +152,7 @@
         "values": [1, 2, 3, 4, 5]
     },
     {
-        "name": "Shadowcasting",
+        "name": "Shadows",
         "description": "",
         "game_line": "Various",
         "category": "powers",
@@ -168,7 +184,23 @@
         "values": [1, 2, 3, 4, 5]
     },
     {
+        "name": "Starlight",
+        "description": "",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "sorcery",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
         "name": "Summoning, Binding, and Warding",
+        "description": "",
+        "game_line": "Various",
+        "category": "powers",
+        "stat_type": "sorcery",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Maelstroms",
         "description": "",
         "game_line": "Various",
         "category": "powers",
