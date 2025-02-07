@@ -290,5 +290,45 @@
         "category": "flaws",
         "stat_type": "supernatural",
         "values": [5]
+    },
+    {
+        "name": "Isolated Upbringing",
+        "description": "You were raised within a reclusive environment and have had little contact with the “mundane” world. This could mean you were the child of Arcanum scholars, were born in a Uzome ile, or were extensively home-schooled away from society. This gives you a limited understanding of how the “normal” world works, and whenever you are outside of your childhood Affiliation, you have a –1 die penalty to all social skills.",
+        "game_line": "Sorcerer",
+        "category": "flaws",
+        "stat_type": "social",
+        "values": [2],
+        "splat": "Mortal+",
+        "mortalplus_type": ["Sorcerer", "Psychic", "Faithful"],
+        "source": "Sorcerer: Paths of Power"
+    },
+    {
+        "name": "Black and White",
+        "description": "Everyone quibbles about shades of gray and nuances, but you don't get bogged down in such wastes of time. The world is actually very simple, and everything falls into neat categories that you can judge in an instant. For you or against you, good or evil, easy or impossible, necessary or not, your judgmental nature causes misunderstandings and social friction as you oversimplify everything. In social scenarios where your closemindedness comes to bear, increase the difficulty by one. This Flaw combines well with other focusing Merits like Code of Honor.",
+        "game_line": "Sorcerer",
+        "category": "flaws",
+        "stat_type": "mental",
+        "values": [1],
+        "source": "Sorcerer: Paths of Power"
+    },
+    {
+        "name": "Pacifist",
+        "description": "You’ve chosen to cause no intentional harm to anyone, be it a religious restriction or a moral decision you made. You may defend yourself with magic, and this may be something that you have specialized in for that purpose. If you take this Flaw, you should be prepared to play with these restrictions sincerely.",
+        "game_line": "Sorcerer",
+        "category": "flaws",
+        "stat_type": "supernatural",
+        "values": [5],
+        "source": "Sorcerer: Paths of Power"
+    },
+    {   
+        "name": "Wild Talent Flaw", 
+        "description": "While many psychics never receive proper training to develop their gifts, you lack even basic control of your powers. However, without burdensome control over your talents comes greater power. Use the following table to determine the costs and effect of this Merit (or Flaw) which cannot exceed 4 points: –1 You must make a Willpower roll (Difficulty 7) to use the power. –2 You can only consciously use the power defensively. (Your precognitive powers warn you of an attack using Danger Sense, or your telekinesis can stop an oncoming car.) –3 You have no conscious control of the power, but it works more often to your benefit than not. (Your clairvoyancy manifests in useful prophetic dreams.) –4 Your powers activate randomly (a minimum of once per session) and often when you least expect or desire it. (Telekinetically flinging books around a library while attempting to do research.)",
+        "game_line": "Sorcerer",
+        "category": "flaws",
+        "stat_type": "supernatural",
+        "values": [4],
+        "splat": "Mortal+",
+        "mortalplus_type": ["Psychic"],
+        "source": "Sorcerer: Paths of Power"
     }
 ]

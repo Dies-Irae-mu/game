@@ -25,13 +25,30 @@ IDENTITY_LINEAGE = {
     'affiliation': ('identity', 'lineage'),
     'essence': ('identity', 'lineage'),
     'signature': ('identity', 'lineage'),
-    'affinity sphere': ('identity', 'lineage')
+    'affinity sphere': ('identity', 'lineage'),
+    'possesed type': ('identity', 'lineage'),
+    'mortalplus type': ('identity', 'lineage'),
+    'companion type': ('identity', 'lineage'),
+    'varna': ('identity', 'lineage'),
+    'crown': ('identity', 'lineage'),
+    'court': ('identity', 'lineage'),
+    'camp': ('identity', 'lineage'),
+    'lodge': ('identity', 'lineage'),
+    'fang house': ('identity', 'lineage'),
+    'ananasi faction': ('identity', 'lineage'),
+    'ananasi cabal': ('identity', 'lineage'),
+    'kitsune path': ('identity', 'lineage'),
+    'kitsune faction': ('identity', 'lineage'),
+    'ajaba faction': ('identity', 'lineage')
+    
+    
 }
 
 # Special stats that need custom handling
 SPECIAL_STATS = [
     'splat', 'type', 'nature', 'demeanor', 'enlightenment', 'generation',
-    'kith', 'phyla', 'breed', 'auspice', 'aspect', 'path', 'tribe'
+    'kith', 'phyla', 'breed', 'auspice', 'aspect', 'path', 'tribe', 'essence',
+    'gnosis'
 ]
 
 # Splat-specific backgrounds
@@ -449,3 +466,324 @@ POSSESSED_POOLS = {
         'Rage': {'default': 0, 'max': 10}
     }
 }
+
+# Pool Types and Values
+POOL_TYPES = {
+    'dual': {
+        'Willpower': {'min': 1, 'max': 10},
+        'Rage': {'min': 0, 'max': 10},
+        'Gnosis': {'min': 0, 'max': 10},
+        'Blood': {'min': 0, 'max': 20},
+        'Glamour': {'min': 0, 'max': 10},
+        'Banality': {'min': 0, 'max': 10},
+        'Paradox': {'min': 0, 'max': 20},
+        'Essence': {'min': 0, 'max': 10},
+        'Mana': {'min': 0, 'max': 10}
+    },
+    'moral': {
+        'Road': {'min': 0, 'max': 10},
+        'Path': {'min': 0, 'max': 10}
+    },
+    'advantage': {
+        'Arete': {'min': 1, 'max': 10},
+        'Enlightenment': {'min': 1, 'max': 10}
+    },
+    'resonance': {
+        'Dynamic': {'min': 0, 'max': 5},
+        'Entropic': {'min': 0, 'max': 5},
+        'Static': {'min': 0, 'max': 5}
+    }
+}
+
+# Power Categories
+POWER_CATEGORIES = {
+    'gift': 'powers',
+    'discipline': 'powers',
+    'sphere': 'powers',
+    'art': 'powers',
+    'realm': 'powers',
+    'sorcery': 'powers',
+    'thaumaturgy': 'powers',
+    'thaum_ritual': 'powers',
+    'special_advantage': 'powers',
+    'charm': 'powers',
+    'blessing': 'powers',
+    'faith': 'powers',
+    'numina': 'powers',
+    'ritual': 'powers',
+    'hedge_ritual': 'powers',
+    'combodiscipline': 'powers'
+}
+
+# Ability Types
+ABILITY_TYPES = {
+    'talent': {
+        'primary': ['Athletics', 'Alertness', 'Awareness', ...],
+        'secondary': SECONDARY_TALENTS  # Already defined
+    },
+    'skill': {
+        'primary': ['Animal Ken', 'Crafts', 'Drive', ...],
+        'secondary': SECONDARY_SKILLS  # Already defined
+    },
+    'knowledge': {
+        'primary': ['Academics', 'Computer', 'Finance', ...],
+        'secondary': SECONDARY_KNOWLEDGES  # Already defined
+    }
+}
+
+# Attribute Categories
+ATTRIBUTE_CATEGORIES = {
+    'physical': ['Strength', 'Dexterity', 'Stamina'],
+    'social': ['Charisma', 'Manipulation', 'Appearance'],
+    'mental': ['Perception', 'Intelligence', 'Wits']
+}
+
+# Special Advantage Definitions
+SPECIAL_ADVANTAGES = {
+    'wings': {'min': 3, 'max': 5, 'flight': True},
+    'alacrity': {'min': 1, 'max': 5},
+    'ferocity': {'min': 1, 'max': 5},
+    'human guise': {'min': 1, 'max': 3},
+    'regrowth': {'min': 1, 'max': 6},
+    'universal translator': {'min': 1, 'max': 5},
+    'venom': {'min': 1, 'max': 15}
+}
+
+# Validation Mappings
+import json
+import os
+from pathlib import Path
+
+# Helper function to load JSON files
+def load_json_data(file_path):
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+# Helper function to organize merits/flaws by type
+def organize_by_type(items, category):
+    organized = {
+        'physical': [],
+        'social': [],
+        'mental': [],
+        'supernatural': []
+    }
+    
+    for item in items:
+        if item.get('category') == category and 'stat_type' in item and 'name' in item:
+            stat_type = item['stat_type'].lower()
+            if stat_type in organized:
+                organized[stat_type].append(item['name'])
+    
+    return organized
+
+# Path to data directory
+DATA_DIR = Path(__file__).parent.parent / 'data'
+
+# Load all merit/flaw data
+MERIT_FILES = [
+    'changeling_merits.json',
+    'fera_merits.json',
+    'garou_merits.json',
+    'mage_merits.json',
+    'mortalplus_merits.json',
+    'vampire_merits.json'
+]
+
+FLAW_FILES = [
+    'changeling_flaws.json',
+    'fera_flaws.json',
+    'garou_flaws.json',
+    'mage_flaws.json',
+    'mortalplus_flaws.json',
+    'vampire_flaws.json'
+]
+
+# Load and combine all merit data
+ALL_MERITS = []
+for file_name in MERIT_FILES:
+    file_path = DATA_DIR / file_name
+    if file_path.exists():
+        ALL_MERITS.extend(load_json_data(file_path))
+
+# Load and combine all flaw data
+ALL_FLAWS = []
+for file_name in FLAW_FILES:
+    file_path = DATA_DIR / file_name
+    if file_path.exists():
+        ALL_FLAWS.extend(load_json_data(file_path))
+
+# Organize merits by type
+MERIT_CATEGORIES = organize_by_type(ALL_MERITS, 'merits')
+
+# Organize flaws by type
+FLAW_CATEGORIES = organize_by_type(ALL_FLAWS, 'flaws')
+
+# Create validation mappings
+MERIT_VALUES = {
+    item['name']: item['values'] if isinstance(item['values'], list) else [item['values']]
+    for item in ALL_MERITS if 'name' in item and 'values' in item
+}
+
+FLAW_VALUES = {
+    item['name']: item['values'] if isinstance(item['values'], list) else [item['values']]
+    for item in ALL_FLAWS if 'name' in item and 'values' in item
+}
+
+# Additional metadata mappings
+MERIT_REQUIREMENTS = {
+    item['name']: item.get('requirements', [])
+    for item in ALL_MERITS if 'name' in item
+}
+
+MERIT_SPLAT_RESTRICTIONS = {
+    item['name']: {
+        'splat': item.get('splat'),
+        'splat_type': item.get('mortalplus_type', item.get('shifter_type'))
+    }
+    for item in ALL_MERITS if 'name' in item
+}
+
+FLAW_SPLAT_RESTRICTIONS = {
+    item['name']: {
+        'splat': item.get('splat'),
+        'splat_type': item.get('mortalplus_type', item.get('shifter_type'))
+    }
+    for item in ALL_FLAWS if 'name' in item
+}
+
+# Update the existing STAT_VALIDATION dictionary
+STAT_VALIDATION = {
+    'pools': POOL_TYPES,
+    'powers': POWER_CATEGORIES,
+    'abilities': ABILITY_TYPES,
+    'attributes': ATTRIBUTE_CATEGORIES,
+    'flaws': FLAW_CATEGORIES,
+    'merits': MERIT_CATEGORIES,
+    'flaws': FLAW_CATEGORIES
+}
+
+def process_special_advantages(advantages):
+    """Convert special advantages list into a validation dictionary"""
+    processed = {}
+    for item in advantages:
+        if 'name' not in item or 'values' not in item:
+            continue
+            
+        name = item['name'].lower()
+        values = item['values'] if isinstance(item['values'], list) else [item['values']]
+        
+        # Create the advantage entry
+        processed[name] = {
+            'min': min(values),
+            'max': max(values),
+            'values': values,
+            'description': item.get('description', ''),
+            'game_line': item.get('game_line', 'Unknown'),
+            'effects': parse_effects_from_description(item.get('description', ''))
+        }
+    return processed
+
+def parse_effects_from_description(description):
+    """Parse special effects from advantage description"""
+    effects = {}
+    desc_lower = description.lower()
+    
+    # Flight effects
+    if any(word in desc_lower for word in ['flight', 'fly', 'flying']):
+        effects['flight'] = True
+        
+    # Combat effects
+    if 'damage' in desc_lower:
+        effects['combat'] = True
+        if 'lethal damage' in desc_lower:
+            effects['damage_type'] = 'lethal'
+        elif 'aggravated damage' in desc_lower:
+            effects['damage_type'] = 'aggravated'
+            
+    # Resource requirements
+    if 'willpower' in desc_lower:
+        effects['requires_willpower'] = True
+    if 'gnosis' in desc_lower:
+        effects['requires_gnosis'] = True
+        
+    # Roll requirements
+    if 'difficulty' in desc_lower:
+        effects['has_roll'] = True
+        
+    # Special abilities
+    if 'soak' in desc_lower:
+        effects['soak'] = True
+    if 'heal' in desc_lower or 'regenerat' in desc_lower:
+        effects['healing'] = True
+        
+    return effects
+
+def validate_special_advantage(name, value, character=None):
+    """
+    Validate a special advantage and its value
+    Returns (is_valid, message, effects)
+    """
+    try:
+        # Get the stat from database
+        from world.wod20th.models import Stat
+        stat = Stat.objects.get(
+            name__iexact=name,
+            stat_type='special_advantage'
+        )
+        
+        try:
+            value = int(value)
+        except (TypeError, ValueError):
+            return False, f"Value must be a number between {min(stat.values)} and {max(stat.values)}", None
+            
+        if value not in stat.values:
+            return False, f"Invalid value. Must be one of: {', '.join(map(str, stat.values))}", None
+        
+        # Check character restrictions if character provided
+        if character:
+            # Example restriction check
+            if 'flight' in stat.system and hasattr(character, 'size') and character.size > 3:
+                return False, "Character too large for wings", None
+        
+        return True, value, parse_effects_from_description(stat.description)
+        
+    except Stat.DoesNotExist:
+        return False, f"Invalid special advantage: {name}", None
+
+def get_special_advantage_info(name):
+    """Get detailed information about a special advantage"""
+    try:
+        from world.wod20th.models import Stat
+        stat = Stat.objects.get(
+            name__iexact=name,
+            stat_type='special_advantage'
+        )
+        
+        return {
+            'name': stat.name,
+            'description': stat.description,
+            'values': stat.values,
+            'game_line': stat.game_line,
+            'effects': parse_effects_from_description(stat.description)
+        }
+    except Stat.DoesNotExist:
+        return None
+
+def list_special_advantages(game_line=None):
+    """List all special advantages, optionally filtered by game line"""
+    from world.wod20th.models import Stat
+    query = Stat.objects.filter(stat_type='special_advantage')
+    if game_line:
+        query = query.filter(game_line=game_line)
+        
+    return [{
+        'name': stat.name,
+        'min': min(stat.values),
+        'max': max(stat.values),
+        'description': stat.description[:100] + '...' if len(stat.description) > 100 else stat.description
+    } for stat in query]
+
+# Update STAT_VALIDATION to include special advantages
+STAT_VALIDATION.update({
+    'special_advantages': SPECIAL_ADVANTAGES
+})

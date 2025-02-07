@@ -72,7 +72,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "identity",
         "stat_type": "lineage",
-        "values": ["Ragabash", "Theurge", "Philodox", "Galliard", "Ahroun", "Kamakshi", "Kartikeya", "Kamsa", "Kali", "Rising Sun", "Noonday Sun", "Shrouded Sun", "Midnight Sun", "Decorated Sun", "Solar Eclipse", "Arcas", "Uzmati", "Kojubat", "Kieh", "Rishi", "Brightwater", "Dimwater", "Darkwater"],
+        "values": ["Ragabash", "Theurge", "Philodox", "Galliard", "Ahroun", "Kamakshi", "Kartikeya", "Kamsa", "Kali", "Rising Sun", "Noonday Sun", "Shrouded Sun", "Midnight Sun", "Decorated Sun", "Solar Eclipse", "Tung Chun", "Nam Hsia", "Sai Chau", "Pei Tung", "Hemanta", "Zarad", "Grisma", "Vasanta", "Arcas", "Uzmati", "Kojubat", "Kieh", "Rishi", "Brightwater", "Dimwater", "Darkwater"],
         "splat": "Shifter"
     },
     {
@@ -155,5 +155,13 @@
         "stat_type": "lineage",
         "values": ["Secean", "Plicare", "Gaderin", "Agrere", "Anomia", "Malum", "Kar", "Amari Aliquid", "Chymos", "Kumo", "Antara", "Kumatai", "Padrone"],
         "splat": "Shifter"
+    },
+    {
+        "name": "First Change Date",
+        "description": "The date of the first change of a character.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": []
     }
 ]

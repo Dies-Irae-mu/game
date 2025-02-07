@@ -689,13 +689,20 @@ class CmdStats(default_cmds.MuxCommand):
 
     def apply_splat_pools(self, character, splat):
         """Apply the correct pools and bio stats based on the character's splat."""
+        # Store existing Willpower values if they exist
+        willpower_perm = character.get_stat('pools', 'dual', 'Willpower', temp=False)
+        willpower_temp = character.get_stat('pools', 'dual', 'Willpower', temp=True)
+        
         # Remove all existing pools except Willpower
         character.db.stats['pools'] = {k: v for k, v in character.db.stats.get('pools', {}).items() if k == 'Willpower'}
 
-        # Add Willpower for all characters if it doesn't exist
+        # Add Willpower for all characters if it doesn't exist, preserving existing values
         if 'Willpower' not in character.db.stats['pools']:
-            character.set_stat('pools', 'dual', 'Willpower', 1, temp=False)
-            character.set_stat('pools', 'dual', 'Willpower', 1, temp=True)
+            # Only set to 1 if no previous value exists
+            willpower_perm = willpower_perm if willpower_perm is not None else 1
+            willpower_temp = willpower_temp if willpower_temp is not None else 1
+            character.set_stat('pools', 'dual', 'Willpower', willpower_perm, temp=False)
+            character.set_stat('pools', 'dual', 'Willpower', willpower_temp, temp=True)
 
         if splat.lower() == 'vampire':
             self.apply_vampire_stats(character)
@@ -705,6 +712,11 @@ class CmdStats(default_cmds.MuxCommand):
             self.apply_mage_stats(character)
         elif splat.lower() == 'changeling':
             self.apply_changeling_stats(character)
+        elif splat.lower() == 'companion':
+            self.apply_companion_stats(character)
+            # Restore Willpower values for companions since apply_companion_stats overwrites them
+            character.set_stat('pools', 'dual', 'Willpower', willpower_perm, temp=False)
+            character.set_stat('pools', 'dual', 'Willpower', willpower_temp, temp=True)
 
         self.caller.msg(f"|gApplied default stats for {splat} to {character.name}.|n")
         character.msg(f"|gYour default stats for {splat} have been applied.|n")
@@ -932,8 +944,6 @@ class CmdStats(default_cmds.MuxCommand):
         # Set base pools
         character.set_stat('pools', 'dual', 'Essence', 10, temp=False)
         character.set_stat('pools', 'dual', 'Essence', 10, temp=True)
-        character.set_stat('pools', 'dual', 'Willpower', 1, temp=False)
-        character.set_stat('pools', 'dual', 'Willpower', 1, temp=True)
         character.set_stat('pools', 'dual', 'Paradox', 0, temp=False)
         character.set_stat('pools', 'dual', 'Paradox', 0, temp=True)
 
@@ -1059,4 +1069,47 @@ class CmdSpecialty(MuxCommand):
 
         self.caller.msg(f"|gAdded specialty '{self.specialty}' to {stat_name} for {character.name}.|n")
         character.msg(f"|y{self.caller.name}|n |gadded the specialty|n '|y{self.specialty}|n' |gto your {stat_name}.|n")
+
+    def initialize_possessed_stats(self, character):
+        """Initialize or ensure proper stats for Possessed characters."""
+        possessed_type = character.get_stat('identity', 'lineage', 'Possessed Type', temp=False)
+        
+        # Get base pools based on type
+        if possessed_type == 'Kami':
+            base_gnosis = 1
+            base_willpower = 4
+            base_rage = 0
+        elif possessed_type == 'Fomori':
+            base_gnosis = 0
+            base_willpower = 3
+            base_rage = 0
+        else:
+            return  # Invalid type
+
+        # Initialize powers category if it doesn't exist
+        if 'powers' not in character.db.stats:
+            character.db.stats['powers'] = {}
+            
+        # Initialize blessings, gifts, and charms categories
+        character.db.stats['powers']['blessing'] = {}
+        character.db.stats['powers']['gift'] = {}
+        character.db.stats['powers']['charm'] = {}
+
+        # Check for Berserker blessing
+        blessings = character.db.stats.get('powers', {}).get('blessing', {})
+        has_berserker = any(name.lower() == 'berserker' and values.get('perm', 0) > 0 
+                           for name, values in blessings.items())
+        if has_berserker:
+            base_rage = 5
+
+        # Check for Spirit Ties blessing and adjust Gnosis
+        spirit_ties_value = next((values.get('perm', 0) for name, values in blessings.items() 
+                                if name.lower() == 'spirit ties'), 0)
+        if spirit_ties_value > 0:
+            base_gnosis = min(5, base_gnosis + spirit_ties_value)  # Cap at 5
+
+        # Set the final pool values
+        self.set_stat_both(character, 'pools', 'dual', 'Gnosis', base_gnosis)
+        self.set_stat_both(character, 'pools', 'dual', 'Willpower', base_willpower)
+        self.set_stat_both(character, 'pools', 'dual', 'Rage', base_rage)
 

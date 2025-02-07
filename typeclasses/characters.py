@@ -478,21 +478,33 @@ class Character(DefaultCharacter):
         if not looker:
             return ""
             
-        # Check if looker is a Changeling and send Banality message
+        # Check if looker is a Changeling
         if looker.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm') == 'Changeling':
-            # Get target's Banality from pools.dual
-            banality = self.db.stats.get('pools', {}).get('dual', {}).get('Banality', {}).get('perm', 0)
-            if isinstance(banality, dict):
-                banality = banality.get('perm', 0)
-            try:
-                banality = int(banality)
-            except (ValueError, TypeError):
-                banality = 0
-                
-            # Import here to avoid circular imports
-            from world.wod20th.utils.banality import get_banality_message
-            msg = get_banality_message(banality)
-            looker.msg(f"|m{msg}|n")
+            # Get target's splat info
+            target_splat = self.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+            # Check if target is Kinain (Mortal+ with Type Kinain)
+            is_kinain = (target_splat == 'Mortal+' and 
+                        self.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm') == 'Kinain')
+            
+            # Special handling for Changelings looking at other Changelings or Kinain
+            if target_splat == 'Changeling' or is_kinain:
+                looker.msg("|mMore about this {} is hidden beyond mortal eyes...|n".format(
+                    "Kithain" if target_splat == 'Changeling' else "Kinain"
+                ))
+            else:
+                # Get target's Banality from pools.dual
+                banality = self.db.stats.get('pools', {}).get('dual', {}).get('Banality', {}).get('perm', 0)
+                if isinstance(banality, dict):
+                    banality = banality.get('perm', 0)
+                try:
+                    banality = int(banality)
+                except (ValueError, TypeError):
+                    banality = 0
+                    
+                # Import here to avoid circular imports
+                from world.wod20th.utils.banality import get_banality_message
+                msg = get_banality_message(banality)
+                looker.msg(f"|m{msg}|n")
             
         # Start with the name
         string = f"|c{self.get_display_name(looker)}|n\n"

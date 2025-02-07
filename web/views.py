@@ -399,6 +399,8 @@ def help_topic(request, category, topic):
         'help_text': help_text
     })
 
+@login_required
+@require_POST
 def upload_character_image(request, key, dbref):
     """Handle character image upload."""
     if not request.user.is_authenticated:
@@ -407,9 +409,6 @@ def upload_character_image(request, key, dbref):
     character = get_object_or_404(ObjectDB, db_key=key, id=dbref)
     if not (request.user.is_staff or character.access(request.user, 'edit')):
         return JsonResponse({'success': False, 'error': 'Permission denied'}, status=403)
-
-    if request.method != 'POST':
-        return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=405)
 
     if 'image' not in request.FILES:
         return JsonResponse({'success': False, 'error': 'No image file provided'}, status=400)
@@ -431,19 +430,14 @@ def upload_character_image(request, key, dbref):
     os.makedirs(full_path, exist_ok=True)
 
     try:
-        # First, set all existing images to non-primary
-        CharacterImage.objects.filter(character=character).update(is_primary=False)
+        # Create a new image record
+        image = CharacterImage(character=character)
+        
+        # If this is the first image, make it primary
+        if not CharacterImage.objects.filter(character=character).exists():
+            image.is_primary = True
 
-        # Then, get or create the primary image
-        image = CharacterImage.objects.filter(character=character, is_primary=True).first()
-        if not image:
-            image = CharacterImage(character=character, is_primary=True)
-
-        # Delete old image file if it exists
-        if image.image:
-            image.image.delete()
-
-        # Save the new image
+        # Save the new image file
         with default_storage.open(filepath, 'wb+') as destination:
             for chunk in image_file.chunks():
                 destination.write(chunk)
@@ -489,21 +483,24 @@ def delete_character_image(request, key, dbref, image_id):
     try:
         # Get the image to delete
         image = get_object_or_404(CharacterImage, id=image_id, character=character)
-        
-        # If this was the primary image and there are other images,
-        # make the most recent one primary
-        if image.is_primary:
-            next_image = CharacterImage.objects.filter(character=character).exclude(id=image_id).order_by('-id').first()
-            if next_image:
-                next_image.is_primary = True
-                next_image.save()
+        was_primary = image.is_primary
         
         # Delete the image file and record
         if image.image:
             image.image.delete()
         image.delete()
         
-        return JsonResponse({'success': True})
+        # If this was the primary image, set a new primary
+        if was_primary:
+            next_image = CharacterImage.objects.filter(character=character).order_by('-id').first()
+            if next_image:
+                next_image.is_primary = True
+                next_image.save()
+        
+        return JsonResponse({
+            'success': True,
+            'new_primary_id': next_image.id if was_primary and next_image else None
+        })
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
 

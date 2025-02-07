@@ -178,8 +178,6 @@
         "description": "If you've done something wrong, you are the last to be blamed, unless evidence of your wrongdoing is brought forward. This does not mean you are 'an innocent'; everyone simply assumes you are.",
         "game_line": "Sorcerer",
         "category": "merits",
-        "splat": "Mortal+",
-        "mortalplus_type": ["Sorcerer", "Psychic"],
         "stat_type": "social",
         "values": [1],
         "source": "Sorcerer: Revised"

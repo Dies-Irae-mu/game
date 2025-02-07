@@ -107,7 +107,7 @@ POSSESSED_POWERS = {
 }
 
 def initialize_possessed_stats(character, possessed_type):
-    """Initialize specific stats for a possessed character."""
+    """Initialize stats for a possessed character."""
     # Initialize basic stats structure
     if 'identity' not in character.db.stats:
         character.db.stats['identity'] = {}
@@ -117,36 +117,47 @@ def initialize_possessed_stats(character, possessed_type):
     # Initialize powers category if it doesn't exist
     if 'powers' not in character.db.stats:
         character.db.stats['powers'] = {}
-    
+        
     # Convert possessed_type to proper case using POSSESSED_TYPE_CHOICES
     proper_type = next((t[0] for t in POSSESSED_TYPE_CHOICES if t[0].lower() == possessed_type.lower()), None)
     if not proper_type:
         return
-    
+
     # Initialize power categories
     power_categories = ['blessing', 'charm', 'gift']
     for category in power_categories:
         if category not in character.db.stats['powers']:
             character.db.stats['powers'][category] = {}
-        
-        # Initialize available powers for the type
-        if proper_type in POSSESSED_POWERS and category in POSSESSED_POWERS[proper_type]:
-            for power in POSSESSED_POWERS[proper_type][category]:
-                if power not in character.db.stats['powers'][category]:
-                    character.db.stats['powers'][category][power] = {'perm': 0, 'temp': 0}
-    
+            
     # Set base pools based on type
     if proper_type in POSSESSED_POOLS:
         pools = POSSESSED_POOLS[proper_type]
+        # Store current Willpower value if it exists
+        current_willpower = character.get_stat('pools', 'dual', 'Willpower', temp=False)
+        
         for pool_name, pool_data in pools.items():
+            # Skip Willpower if it's already set
+            if pool_name == 'Willpower' and current_willpower is not None:
+                continue
             character.set_stat('pools', 'dual', pool_name, pool_data['default'], temp=False)
             character.set_stat('pools', 'dual', pool_name, pool_data['default'], temp=True)
-            if pool_name != 'Banality':  # Don't announce Banality changes here
-                character.msg(f"Set {pool_name} to {pool_data['default']}.")
-    
-    # Set the type in identity/lineage
+
+    # Set the possessed type
     character.set_stat('identity', 'lineage', 'Possessed Type', proper_type, temp=False)
     character.set_stat('identity', 'lineage', 'Possessed Type', proper_type, temp=True)
+
+    # Set Banality based on type
+    banality = 6  # Default banality for possessed
+    character.set_stat('pools', 'dual', 'Banality', banality, temp=False)
+    character.set_stat('pools', 'dual', 'Banality', banality, temp=True)
+
+    # Initialize available powers for the type
+    if proper_type in POSSESSED_POWERS:
+        for category in power_categories:
+            if category in POSSESSED_POWERS[proper_type]:
+                for power in POSSESSED_POWERS[proper_type][category]:
+                    if power not in character.db.stats['powers'][category]:
+                        character.db.stats['powers'][category][power] = {'perm': 0, 'temp': 0}
 
 def validate_possessed_powers(character, power_type, power_name, value):
     """

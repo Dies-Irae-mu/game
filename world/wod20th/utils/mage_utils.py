@@ -102,16 +102,14 @@ def initialize_mage_stats(character, affiliation, tradition=None, convention=Non
     character.set_stat('pools', 'dual', 'Willpower', 3, temp=False)
     character.set_stat('pools', 'dual', 'Willpower', 3, temp=True)
     
-    # Initialize Resonance
+    # Initialize Resonance at 0
     character.db.stats.setdefault('pools', {}).setdefault('resonance', {})
-    if 'Resonance' not in character.db.stats['pools']['resonance']:
-        character.db.stats['pools']['resonance']['Resonance'] = {'perm': 0, 'temp': 0}
+    character.db.stats['pools']['resonance']['Resonance'] = {'perm': 0, 'temp': 0}
     
-    # Initialize Synergy virtues
+    # Initialize Synergy virtues at 0
     character.db.stats.setdefault('virtues', {}).setdefault('synergy', {})
     for virtue in ['Dynamic', 'Entropic', 'Static']:
-        if virtue not in character.db.stats['virtues']['synergy']:
-            character.db.stats['virtues']['synergy'][virtue] = {'perm': 0, 'temp': 0}
+        character.db.stats['virtues']['synergy'][virtue] = {'perm': 0, 'temp': 0}
     
     # Initialize Paradox pool
     character.set_stat('pools', 'dual', 'Paradox', 0, temp=False)

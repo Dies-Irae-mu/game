@@ -146,5 +146,14 @@
         "stat_type": "background",
         "values": [1, 2, 3, 4, 5],
         "shifter_type": "Kitsune"
+    },
+    {
+        "name": "Jamak",
+        "description": "A Jamak (plural Jamaa) is a personal Totem usually found in the company of a Bastet. While some are large enough to need a group of the werecats to ally with, many are quite happy to ally themselves with a single feline.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "shifter_type": "Bastet"
     }
 ]

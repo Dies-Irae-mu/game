@@ -29,6 +29,7 @@ from commands.CmdRoll import CmdRoll
 from commands.CmdSay import CmdSay
 from commands.CmdEmit import CmdEmit
 from commands.CmdNotes import CmdNotes
+from commands.CmdRenown import CmdRenown
 from commands.building import (
     CmdSetRoomResources, CmdSetRoomType, CmdSetUmbraDesc, 
     CmdSetGauntlet, CmdUmbraInfo, CmdSetHousing, CmdManageBuilding, 
@@ -120,6 +121,7 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdStaff())
         self.add(CmdUnfindable())
         self.add(JobSystemCmdSet)
+        self.add(CmdRenown())
         self.add(CmdBanality())
         self.add(CmdUmbraInteraction())
         self.add(CmdMeet())

@@ -777,10 +777,10 @@
                 {% endwith %}
                 {% if can_edit %}
                     <div class="image-controls">
-                        <form action="{% url 'character-upload-image' character.key character.id %}" method="post" enctype="multipart/form-data" class="upload-form">
+                        <form action="{% url 'character-upload-image' character.key character.id %}" method="post" enctype="multipart/form-data" class="upload-form" id="image-upload-form">
                             {% csrf_token %}
                             <div class="file-input-wrapper">
-                                <input type="file" name="image" accept="image/*" id="image-upload">
+                                <input type="file" name="image" accept="image/*" id="image-upload" required>
                                 <label for="image-upload" class="file-input-label">
                                     <i class="fas fa-upload"></i> Choose New Image
                                 </label>
@@ -976,7 +976,7 @@
     <!-- Lightbox Modal -->
     <div class="lightbox" id="imageLightbox" onclick="closeLightbox()">
         <button class="lightbox-close">CLOSE</button>
-        <img class="lightbox-image" src="" alt="Expanded view" onclick="event.stopPropagation()">
+        <img class="lightbox-image" src="" alt="Expanded view">
     </div>
 </div>
 
@@ -1124,45 +1124,66 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const fileInput = document.getElementById('image-upload');
-    const fileLabel = document.querySelector('.file-input-label');
-    const uploadForm = document.querySelector('.upload-form');
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('image-upload');
+        const fileLabel = document.querySelector('.file-input-label');
+        const uploadForm = document.getElementById('image-upload-form');
+        
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const fileName = this.files[0].name;
+                    fileLabel.innerHTML = `<i class="fas fa-check"></i> ${fileName}`;
+                }
+            });
+        }
     
-    fileInput.addEventListener('change', function() {
-        if (this.files && this.files[0]) {
-            const fileName = this.files[0].name;
-            fileLabel.innerHTML = `<i class="fas fa-check"></i> ${fileName}`;
+        if (uploadForm) {
+            uploadForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                
+                // Disable form elements during upload
+                const submitButton = this.querySelector('button[type="submit"]');
+                const fileInput = this.querySelector('input[type="file"]');
+                submitButton.disabled = true;
+                fileInput.disabled = true;
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response data:', data);  // Add logging to verify response
+                    if (data && data.success) {
+                        window.location.reload();
+                    } else {
+                        throw new Error(data.error || 'Failed to upload image');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert(error.message || 'Error uploading image');
+                    
+                    // Re-enable form elements
+                    submitButton.disabled = false;
+                    fileInput.disabled = false;
+                });
+            });
         }
     });
-
-    uploadForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            credentials: 'same-origin'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.reload(); // Reload to show new image
-            } else {
-                alert(data.error || 'Failed to upload image');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error uploading image');
-        });
-    });
-});
-</script>
+    </script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

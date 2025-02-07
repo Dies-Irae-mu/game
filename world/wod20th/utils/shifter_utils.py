@@ -91,7 +91,7 @@ BREED_CHOICES: List[Tuple[str, str]] = [
 GAROU_TRIBE_CHOICES: List[Tuple[str, str]] = [
     ('black fury', 'Black Fury'),
     ('bone gnawer', 'Bone Gnawer'),
-    ('children of gaia', 'Children of Gaia'),
+    ('child of gaia', 'Child of Gaia'),
     ('fianna', 'Fianna'),
     ('glass walker', 'Glass Walker'),
     ('red talon', 'Red Talon'),

@@ -414,5 +414,29 @@
         "category": "powers",
         "stat_type": "special_advantage",
         "values": [3, 5]
+    },
+    {
+        "name": "Hibernation",
+        "description": "Toads may sleep in mud for centuries and awaken as though only a morning had passed. Bears take to their caves for the winter, and consume no food therein. Like these somnolent beasts, you can go to sleep, needing no food or water until you awaken. Like the fox, you may even seem dead to others - it takes magic of some kind to notice signs of life. You need only buy this Advantage if your hibernation is completely voluntary. Automatic or mandatory hibernation falls under the Flaw: Compulsion.",
+        "game_line": "The Bygone Bestiary",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2]
+    },
+    {
+        "name": "Immunity",
+        "description": "As the cock withstands the searing poison of the basilisk, you can ignore the effect of some dangerous (or at least unpleasant) thing. Some Immunities are part and parcel of a beast's nature; others, like Mithradites' immunity to poison, accrue over a long period of conditioning. Immunities vary in price, depending on their lethality and their frequency, much as Vulnerabilities do. You must buy each Immunity separately, although the Storyteller may allow a number of similar Immunities (basilisks, snakes, toadstools, iocaine powder) to be packaged as one more common Immunity (poisons).",
+        "game_line": "The Bygone Bestiary",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [2, 5, 10, 15]
+    },
+    {
+        "name": "Shared Knowledge",
+        "description": "Magi and their familiars often share an intense empathic link; you feel what she feels and even know, in a way, what she knows. Through the same channel, she feels your emotions and shares your knowledge. This is a tremendous feeling when relations are good, although suspicion, secrecy and mistrust can poison this bond even more thoroughly than usual. Although it's related to Bond-Sharing, this Advantage is a bit different: While Bond-Sharing exchanges sensations, Shared Knowledge passes understanding - you actually see through each other's eyes and access each other's thoughts. While not telepathy in the strictest sense, this mystic bond allows you both to share hunches, gut feelings and instincts.",
+        "game_line": "The Bygone Bestiary",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "values": [5, 7]
     }
 ]

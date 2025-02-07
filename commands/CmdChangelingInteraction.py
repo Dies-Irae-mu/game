@@ -24,12 +24,14 @@ class CmdChangelingInteraction(MuxCommand):
 
     def func(self):
         """Execute command."""
-        if not self.caller.db.stats or 'other' not in self.caller.db.stats or 'splat' not in self.caller.db.stats['other']:
-            self.caller.msg("You don't have the ability to interact with the Fae realm.")
-            return
-
         splat = self.caller.db.stats['other']['splat'].get('Splat', {}).get('perm', '')
-        if splat not in ['Changeling', 'Kinain']:
+        
+        # Check if character is either a Changeling or Kinain
+        is_kinain = (splat == 'Mortal+' and 
+                    self.caller.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm') == 'Kinain')
+        
+        # Only allow Changelings and Kinain to use these commands
+        if not (splat == 'Changeling' or is_kinain):
             self.caller.msg("You don't have the ability to interact with the Fae realm.")
             return
 
@@ -124,5 +126,11 @@ class CmdChangelingInteraction(MuxCommand):
         """Check if a character is a Changeling or Kinain."""
         if not character.db.stats or 'other' not in character.db.stats or 'splat' not in character.db.stats['other']:
             return False
+            
         splat = character.db.stats['other']['splat'].get('Splat', {}).get('perm', '')
-        return splat in ['Changeling', 'Kinain']
+        
+        # Check for Kinain (Mortal+ with Type Kinain)
+        is_kinain = (splat == 'Mortal+' and 
+                    character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm') == 'Kinain')
+                    
+        return splat == 'Changeling' or is_kinain

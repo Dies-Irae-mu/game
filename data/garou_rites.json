@@ -1,0 +1,907 @@
+[
+    {
+        "name": "Appease the Traffic Gods",
+        "rite_type": "Mystic",
+        "description": "Glass Walkers and Bone Gnawers know that it's nearly impossible to get across town in a hurry, especially around the morning and evening rush hour — and in very large cities, those morning and evening rush hours edge closer together every week. Garou can do it in their lupine and near-lupine forms, but most of the time traveling across town as a gigantic wolf isn't a reasonable thing to do. This ritual allows a Garou to get the attention of the pattern spiders that nurse the ebb and flow of traffic patterns across a city's streets and highways. The rite asks them to nudge things here and there to provide the clearest possible path for the Garou's vehicle. Lights turn green just as the character hits them, or stay green just long enough for the character to sneak through — or, failing that, nearby cops are distracted as the Garou runs the red. Note that Appease the Traffic Gods can't perform miracles: if there's an accident at one of the main intersections in town, the best this rite can do is free up an alternate side route. The traffic gods may well simply manifest in the form of a convenient ambulance or fire engine for the characters' vehicle to slipstream through traffic, but Garou should be aware that this rite won't protect them if they violate the simple and obvious rules of the road. Appease the Traffic Gods will never, for instance, lure a character's vehicle to drive on the sidewalk. System: The Garou must enact this rite at a site within about a quarter-mile of the city's geographic center. The rite begins an hour before dawn; the character beseeches spirits of the sky, rain, and sun to cleanse the filth from the sky. At the culmination of the hour-long rite, the character spends one Gnosis and rolls Manipulation + Occult (difficulty of the local Gauntlet, which means that a careful spirit survey of the geographical center of the city may be worthwhile before performing Clear the Miasma). If the Garou achieves three or more successes, the smog in the sky precipitates as ordinary dirt into the morning dew. The local Gauntlet drops by 1 for the day, and the general attitude of nature-spirits in the city improves as they don't need to spend their time fighting pollution and Wyrm taint. This last effect reduces the difficulty of all Social rolls dealing with local Gaian spirits by 1 for the next day.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Baptism of Fire",
+        "rite_type": "Mystic",
+        "description": "Most tribes attempt to track down all children born to their Kinfolk within one month of the children's birth to see if they \"share the blood.\" (Most commonly, this search involves the Gift: Scent of the True Form.) Those who are Garou are \"baptized\" in the light of their auspice moon, beside a ritual fire. Such a baptism most commonly involves mingling ashes with a few drops of Garou blood. The mixture is then touched to the child's ears, nose, eyelids and tongue. In the presence of a lesser tribal spirit known as a Kin-Fetch, the babe is then held up to the moonlight while the baptizing Garou howls Gaia's greeting to the newborn. The ritemaster then has the Kin-Fetch kiss the infant. The spirit's fiery kiss inscribes a spiritual brand upon the babe in the form of the newborn's tribal pictograph. This mark is not visible on the newborn's body; the only mark left is spiritual. It is impossible to remove this spiritual brand. Such a mark can be traced and recognized by all Garou (including the Black Spiral Dancers, who all too often track down cubs of other tribes and capture them in order to create more of their foul number). The participating Kin-Fetch spirit is assigned to watch over the young Garou as she grows to maturity, so that the tribe may always know the child's location and whether she is endangered. When the child is about to undergo the First Change and is ready for the Rite of Passage, the spirit alerts the tribe. Unfortunately, such minor spirits are notoriously weak-willed and easily distracted. All too often, a Kin-Fetch loses track of its charge or becomes lost itself, leaving the young cub on her own. Such \"lost cubs\" often become Lunatics or recluses, terrified of themselves and unable to understand their powerful primal urges. System: The ritemaster makes a Charisma + Rituals roll. Only one success is required, but additional successes improve the chance that the Kin-Fetch will keep track of the child. This rite must be performed at night under the moon in which the child was born. Although this rite is normally performed within a month of birth, the brand can be inscribed at any time before the cub reaches adolescence and undergoes her First Change. The brand fades out of existence after the cub's Rite of Passage.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Bonding Rite",
+        "rite_type": "Renown",
+        "description": "This literally named rite is quite simple, but is absolutely crucial to the entire camp's understanding of modern Garou war tactics. The rite temporarily binds a number of Kinfolk into a pack, asking the pack totem to accept them. To perform this rite a length of surgical thread is passed through the knuckles of one hand of each pack member and prospective Kinfolk. Every Kinfolk must stand next to at least one Garou, which means at least a third of the expanded pack must be werewolves. In the gaps between each hand a steel charm in the shape of a glyph is hung from the surgical thread. The two ends of the thread are tied together to form a circle. Following this the ritemaster recites a prayer to the pack totem three times, speaking more incoherently each time. At the conclusion of the last prayer, each member jerks their hand away, causing the surgical thread to rip through their skin. The thread will remain embedded in the ritemaster's knuckles. She then wears the ring of thread like a necklace. From now, she is the lynchpin of the pack. If she dies, the effects of the rite vanish. System: The ritemaster rolls Charisma + Leadership, difficulty 6. All Kinfolk involved in the rite receive the blessing of the pack totem exactly as the Garou do and may take part in pack tactics with them. The Gift lasts for one scene per success on the initial roll.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Free the Wayward Child",
+        "rite_type": "Mother",
+        "description": "This rite, a simple one, frees a male Garou child of a Black Fury from any spiritual ties to Pegasus and the Black Furies. It is a quick, emotional rite; the mother traces the Black Fury glyph on her son's forehead in tears, and then blows on the boy's forehead until the glyph dries up. This rite's popularity is relatively new as such things go; in the ancient days, a male child was often simply left out to die of exposure. System: There are no game mechanics involved with this rite; it simply acknowledges that the child is unmarked by any Fury blood and free to become a full member of whatever tribe will adopt him.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Gathering for the Departed",
+        "rite_type": "Death",
+        "description": "This rite is enacted in honor of the newly dead. A Galliard or a packmate of the departed werewolf usually performs the rite. This rite varies dramatically from tribe to tribe. For example, a Fianna ritemaster leads the sept in the telling of tales, both raucous and heroic, about the fallen Garou. In contrast stands the Wendigo's solemn rite, in which the ritemaster and all the fallen one's packmates stand on the highest peak available, tails to the wind, and howl out their pride and grief to speed their companion onward to her next life. The exact form the rite takes does not matter, only the acknowledgment itself. System: The ritemaster leads the release of the Garou's combined emotions into the spirit world. The Uktena say that such emotions have a real impact upon the Umbra and that they help ensure that the departed Garou retains ties to her mortal relatives. At the Storyteller's discretion, this rite makes the deceased's spirit easier to contact through the Ancestors Background.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Last Blessing",
+        "rite_type": "Mystic",
+        "description": "The mere existence of metis threatens the Veil, as they are born and die in Crinos form. This blessing is given to a metis by the ritemaster after going to war and before the metis' face is cold in death. It simply ensures that the metis' corpse will be in that form which she most preferred (apart from her breed form, of course): human or wolf, arousing no suspicion. Many metis have received this rite with joy, seeing it as a sign of Gaia's forgiveness. System: The ritemaster lays hands on the metis and chants the Song of the True Form; then spends one permanent Gnosis. The metis' body changes to Homid or Lupus form, and the change is permanent.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Moot Rite",
+        "rite_type": "Caern",
+        "description": "A moot cannot open until this rite is completed. The rite recharges the caern with Gnosis. The rite always includes a prolonged howl led by a Garou known as the Master of the Howl. The howl varies by tribe and sept, but it always expresses the unique nature of the sept. All werewolves present must form a circle within the caern itself before they commence howling. Numerous variations on the basic requirements exist. The Red Talons often bite their own paws and scratch their blood into the earth, while the Uktena pass their most powerful fetish from one to another as each in turn adds her voice to the howl. However, the howl must always echo forth and the eternal circle must form. System: The rite must be performed at least once per month to keep the caern consecrated. During the course of a moot, the participants must empower the caern with a combined total of five Gnosis points per caern level in order to replenish it fully.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Prayer of the Seeking",
+        "rite_type": "Mystic",
+        "description": "This is actually a modified (and much more complex) Prayer of the Prey, which is only taught to Uktena's children. Before a hunt for a specific item of lore or magic (such as a lost fetish or tome), the Garou prays while holding an attuned object (usually a water snake skin or, for the fortunate, an uktena scale). If successful, the Uktena finds the search much easier. If the attuned focus is lost, a new one must be found and attuned in order for the rite to work; attuned foci are personal and cannot be transferred. Smart Garou usually give some token of their gratitude for particularly successful uses of this rite. System: Initial attunement of an ordinary focus requires the expenditure of a temporary Gnosis point; an uktena scale is already considered attuned to the owner. Before the search begins, the Garou prays to Great Uktena while holding the focus; the player makes a Wits + Rituals roll (difficulty 7, or 6 if the focus is an uktena scale). For every two successes, the player may add one die to any Enigmas, Investigation or Occult roll related to the search for the object in question. Alternately, in difficult cases the Storyteller may drop hints in the form of omens, waking visions or intuitive leaps to get the ball rolling. The object must be of lore or magical value. The bonus ends when the Garou diverts from the quest for any reason (including sleep or eating, not including fighting guards who bar the Garou's path to the goal).",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Preserving the Fetish",
+        "rite_type": "Mystic",
+        "description": "This rite is designed to honor and preserve a spirit within a fetish, or other spirit-imbued object. Each Garou who practices the rite introduces small variations, depending on the type of spirit and fetish involved. The rite generally includes cleaning the fetish, and perhaps even re-coating damaged layers of paint or making other such similar repairs, though many Garou (and spirits) prefer fetishes that appear to be veterans, not brand-new. This rite is often assigned to cubs, who are subsequently given the task of maintaining the fetishes of the sept. This is usually also the only time cubs are allowed near the arsenal of the sept. System: The player rolls Wits + Rituals, difficulty 8. Good roleplaying and clever ideas for honoring the spirit (emphasis on honoring here) could warrant bonus decreases in difficulty level. This ritual should be performed at least once a month, but most Garou are encouraged to use it as often as possible, especially after having used the fetish.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rejuvenate the Soil",
+        "rite_type": "Seasonal",
+        "description": "In the earliest days of agriculture, and even before the advent of agriculture, when humans hunted for meat and gathered fruits and vegetables as they could, they were fully aware that spending too long in one place would leach the life from the soil. When tending to herds of mortals still mattered to the Black Furies, they taught their charges the ways of the Earth Mother; Rejuvenate the Soil is one of those secrets. The planter takes a pound of seeds from the choicest crop produced or gathered this year, and burns that mass in a bronze bowl while murmuring prayers to Gaia in her guise as Demeter. She must insure that no ashes or cinders leave the fire, lest the ritual lose its efficacy. When the fire is complete, the Fury mixes in a few drops of her own blood. Using a labrys, the Fury next carves a glyph of fertility — at least three feet across, and preferably larger — into the soil at the center of the area to be affected. She then smears or pours the blood-ash mixture into the glyph. An area radiating out from the glyph will regain some of its bounty over the winter. System: The player should roll Stamina + Survival, difficulty 6 (unless the area is a former blight, in which case it must be ritually cleansed and even then the difficulty is 7 the first year). Every success yields an acre of improved cropland for the next year.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Naskit-tin",
+        "rite_type": "Seasonal",
+        "description": "Time: When the first Alaskan flowers bloom (late June to early July) Naskit-tin is celebrated by the Wendigo of Alaska and parts of northern Canada. It is a surprisingly delicate and beautiful rite, unaffected by the anguish and bitter anger often expressed by this tribe. It celebrates the return of the flowers to the land. Summers in the North Country are short and intense, the days as gloriously long as the interminable nights of Alaskan winters. The vampires loathe this time of year, and the Wendigo celebrate their exodus as well as the flowers' return. During this lyrical and joyous rite, the ritemaster leads the way out onto one of the sweeping plains of their land. The others of the sept trail along behind her in no particular order, often pelting each other with any snow still on the ground or leaping in mock ambushes. Spirits run high and that is as it should be, for the energy encourages all life to burst forth in joy. As they walk, the ritemaster tells the tale of Tuacholka, a Wendigo ancestor who climbed the highest mountain in the world to see Gaia Herself when She was grieving so fiercely for the loss of the Croatan that even the earth, Her body, could no longer grow warm. Tuacholka told Gaia that the Wendigo and their brothers and sisters of the Uktena would never forget the Croatan, and that they would gladly take the weight of their Mother's pain if only She would return Her warmth to the world. Grateful for Her children's love and strength, Gaia returned the warmth to the lands, and Her tears turned to flowers of love. As the ritemaster speaks, she ceremoniously gathers enough flowers to form a wreath. Shedding a single tear each upon the delicate flowers in memory of the Croatan, she passes the wreath to her septmates to add their tears. When all have done so, the ritemaster tosses the wreath far out onto a river or the ocean so that it might carry their pain and love to the Croatan. The Garou then turn to the fields and flowers they love and commence a wild, romping salute to the beauty of life and Gaia's blessings.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Unveiled Glen",
+        "rite_type": "Caern",
+        "description": "This Black Furies rite will reveal the presence of potential caerns and sacred places. It will cause any sacred place nearby to glow with a dim blue light in the eyes of the ritualist, and if the ritualist closes her eyes and concentrates, she will be drawn towards the sacred place. The rite is usually cast in the morning and lasts all day, but requires the expenditure of a Gnosis point. If the ritualist enters battle, the rite must be re-cast.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Abscission",
+        "rite_type": "Caern",
+        "description": "This rite is very, very new; only in recent years have the Garou learned enough about Abscesses to be able to find a defense against their formation. Affording the caern the spiritual fortification it will need to defend itself, this rite is not only dangerous to the ritemaster, but to the caern as a whole if not performed properly and to exact detail. Ideally, the master of this rite should be the same person that opened the caern in the first place. If this is impossible, the ritemaster must call out to the spirit of the werewolf who opened the caern and ask for strength and wisdom, offering up a gift of some sort or another in trade. Normally, a chalice containing a small amount of blood from each member of the caern's Garou inhabitants is a worthy sacrifice, although the carcass of a Wyrm-minion, collection of talens or a greater fetish may also suffice depending on the nature of the caern's spirit. After the sacrifice is made (if necessary), the ritemaster must walk from the heart of the caern to the westernmost border of the caern's bawn at sunset and back again while the moon of her auspice is in apogee. This walk is performed while reciting the litany of every werewolf who has died in the defense of the caern since its opening. When the ritemaster returns to the heart of the caern, she must call out to the caern's spirit, reaffirming her sept's dedication to the caern in her solicitation for strength. System: In order to initiate the abscission of a caern, a character engages in a resisted, extended roll of Perception + Rituals (Difficulty 7). The number of successes needed equals 10 minus the caern's level. The character is opposed by the mounting intensity of the forces of the Wyld that seek to manifest within the caern in an effort to create a Threshold. The dice pool of the would-be Threshold is the level of the caern. The difficulty of the would-be Threshold is the character's Gnosis score, while the number of successes needed by the Threshold equals the character's Willpower. The first one to garner the necessary successes wins. If the character wins the contest, the caern's spirit has heard her call and marshals its spiritual as well as physical forces and allies in defense of the caern. The results of this call to battle are left to Storyteller discretion. If the character loses the contest, however, the opposite effect occurs; the Wyld's forces rally to attack the caern's inhabitants, and the Abscess begins to manifest completely throughout the caern, assimilating, draining, and destroying all that seek to impede its progress.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Binding",
+        "rite_type": "Mystic",
+        "description": "This rite binds a spirit to a Garou, making it his servant. The more powerful the spirit is, the more difficult the process is. Although any encountered spirit is subject to binding, the Garou generally feel that spirits should be bound only when needed. They do not feel good about binding spirits for great lengths of time. This point does not go uncontested, however, particularly by the mystics of the Uktena tribe. Spirits trapped through this rite may be bound into temporary service or into objects to create talens (see Fetishes and Talens, pp. 240-241). No spirit allows itself to be bound unless it is friendly to the binding character's totem. Spirits can be bound into objects, places, and people, although the Garou generally don't perform the last feat unless the need is great. Failing this rite can be dangerous, for the spirit is very likely to become hostile and attempt to harm the mystic. System: A Garou can attempt this rite only in the presence of a spirit, and it is usually performed in the Umbra. When attempting to bind a spirit, a Garou must first spend a number of Gnosis points (minimum one). Each point of Gnosis spent reduces the spirit's Gnosis rating by one. The Garou's player must then roll Willpower (difficulty of the spirit's adjusted Gnosis). The number of successes indicates how long the spirit may be forced into service (one week per success). In the case of a talen, the spirit is bound until the object is used. See the Appendix for examples of spirits and a list of sample talens.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Boasting",
+        "rite_type": "Renown",
+        "description": "Boasting and bragging have always been a vital aspect of warrior cultures. Boasts serve to work up a warrior's courage while putting fear into the opponent. But to truly impress, the boaster must back up his claims. This rite is more than formalized bragging, for it forces the Garou to \"put up or shut up.\" Before a battle or mission, the Garou boasts before all assembled that he will perform a particularly impressive feat (for example, \"I will kill three Black Spirals with only my claws,\" \"I will scale the electrified razorwire of the refinery\" or \"I will be first to reach the shield wall, there to wrest the enemy's standard from his dead hand.\"). The boast is performed in a ritual fashion, with a short recitation of lineage and a summary of glorious deeds performed to date. If he makes good on his boast, he magnifies the Glory of the act. If he fails, the resulting derision of his peers costs him Glory; boasting is only respected if you can back it up. This rite is most commonly used among the Fianna, Get of Fenris and Wendigo, but most tribes have some version of it. System: For every two successes on a Charisma + Rituals roll (difficulty varies according to the feat proposed, with more difficult and glorious feats lowering the difficulty; the number should probably range from 4 to 8), the boast earns a potential extra temporary Glory, up to the amount of Glory the feat would ordinarily garner. If the rite is performed properly and the Garou successfully achieves his goal, he gains the Glory bonus. If he fails and lives, he loses that amount. If he dies while carrying out his deed, there is neither loss nor gain of extra Renown. A single pack may boast of a deed, but only the pack leader can perform the rite. In this case, difficulty is increased by one, and the entire pack gains or loses the Glory award.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Breeding",
+        "rite_type": "Mystic",
+        "description": "The rite is one of the secrets behind the Silver Fang's unusually high levels of Pure Breed. When a Fang feels that it is time for her to start a family, she enacts this rite and asks her house's totem to guide her to her best-matched mate. The werewolf meditates on her ancestry, using pictures, stories, photos, or keepsakes and then calls to the totem for guidance. If the rite is successful, the totem grants her a vision of herself carried aloft in the talons of the totem to the home of the best prospect for a strong, worthy child. The rite does not guarantee that the prospective mate will welcome the werewolf's advances; just that he is a good genetic and spiritual match. System: Standard roll. This rite normally takes place within the boundaries of the home caern and shows the Kinfolk most likely to prove a good mate within a few days' travel. The more successes achieved, the more details the vision gives about the prospective mate and his location. This ritual does not help with seducing or winning the heart of the Kinfolk in any way.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Cleansing",
+        "rite_type": "Accord",
+        "description": "This rite purifies a person, place or object, allowing it to be used without fear of Wyrm-taint. The most common form of this rite involves the ritemaster inscribing a circle on the earth, walking widdershins (counterclockwise) around the afflicted person(s) or object(s) while holding a smoldering branch or torch. She must use a branch (preferably willow or birch) dipped in pure water or snow to sprinkle the object or person cleansed. As the ritemaster does so, all Garou present release an eerie, otherworldly howl in an attempt to frighten away and thus banish the corrupting influence. Ideally, this rite is performed at dawn, but it can be performed at any time. System: This rite can be cast upon more than one person or object, but the leader must spend one Gnosis point on each extra thing or person in need of cleansing. The difficulty level depends on the level of taint. For instance, taint caused by a spirit might set a difficulty equal to the spirit's Gnosis. Only one success is required. If the character performs the rite at dawn, the difficulty of the rite decreases by one. Note that this rite cannot heal wounds or damage caused by Wyrm-taint; it removes only any existing contamination. This rite cannot cleanse taint of the most innate sort, either. The rite inflicts agonizing pain when performed on a fomor, vampire, unrepentant Black Spiral Dancer or other similarly accursed creature, but it cannot wash the recipient clean.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Contrition",
+        "rite_type": "Accord",
+        "description": "This rite is a form of apology used to prevent dfilnmity of spirits or Garou whom an individual has annoyed, or to prevent war between septs or tribes. The rite most often involves the enactor dropping to her belly and sliding forward. The ritemaster may also whine and lick his paws or hands. If performed well, however, a simple inclination of the head may suffice. To enact this rite successfully, the Garou must either give a small gift to the offended individual or, in the case of a spirit, possess some aspect of the spirit in question (for example, a clay falcon if the Garou is appealing to the totem spirit Falcon). System: The difficulty level of the rite equals the Rage of the target spirit or werewolf. A single success suffices for a gracious apology, but it may not be enough to mend friendships or forgive grievous errors. The more successes, the greater the wrong that can be forgiven. Werewolves who refuse to recognize a Rite of Contrition are looked upon badly by elders. Most spirits will always accept a well-performed rite. This effect lasts until the Garou performs another action that could harm or insult the other.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Feeding the Wolf",
+        "rite_type": "Mystic",
+        "description": "The Glass Walkers may be masters of adapting to the urban environment, but it has come at some cost. The wolf blood in them has grown thin, and it has become perilously easy to lose the wolf or fall into Harano out of simple neglect for their wilder side. Some Glass Walkers use this rite as a means of reconnecting with their more primal self. Sadly enough, the rite is not of Glass Walker origin; it was pioneered by another tribe (some say the Red Talons) as a means of reinforcing their identity in the hostile urban environment. The rite was allegedly shared with the Glass Walkers as an act of friendship, which casts some doubt on the idea that it was a Talon creation. System: The Garou must go to a wild place, even if it's a vacant lot overgrown with mimosa or ailanthus trees, and act in a feral, animalistic fashion for long enough to become sweaty and filthy. He may be in any form while doing this. The player rolls Primal-Urge + Expression, difficulty 6 in a wild place with animals and plants, 8 in a wild place without animals larger than rats, and 9 in a tame place such as a nicely kept lawn. The player may add one to his Rage for each success on the roll, for the remainder of the scene. The Storyteller may wish to award a bonus success to players who get sufficiently into the spirit of the rite to roleplay it with great fervor.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Growth",
+        "rite_type": "Mystic",
+        "description": "This rite is a remarkable backup measure for traditional City Farmers, allowing them to cause plants to grow in strange locations. The plants do not grow unusually quickly, but can grow in plastic, concrete or other unusual places, drawing nutrients from the source. Three Garou are needed to make this rite work. The ritemaster makes an indentation in the surface using a claw, and plants the seed of the plant into it. The three then hold hands in a triangle around it, kneeling, and request the spirit of the material that it nurture and care for the plant. If the spirit agrees, a small green shoot will appear immediately. System: The ritemaster rolls Wits + Rituals. The difficulty depends on the surface and area. An abandoned lot is 5, a typical city building is 7, an oil spill would be 9. Each success yields an acre of improved cropland for the next year.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Heritage",
+        "rite_type": "Mystic",
+        "description": "This genealogical rite is a favorite of Skalds and Forseti alike, albeit for slightly different reasons. Some Fenrir use it to verify the identity of a hero's descendants before passing on an inheritance; others use it to identify the father of a metis cub if none is forthcoming. The ritemaster draws the blood of the subject with a silver knife and sings a long paean to the ancestor-spirits of his tribe and any others that might be watching over the subject. As he completes the song, the ancestor-spirits whisper the subject's heritage into his ears. System: The ritemaster rolls Wits + Rituals, difficulty 7, as normal. Success reveals the subject's true heritage for one generation back per success (for example, two successes would reveal the subject's heritage as far back as his grandparents). In addition, the ritemaster receives the answer to one specific question about the subject's heritage per success, e.g., \"What was this cub's paternal grandfather's profession?\" or \"Does the blood of any other tribe run in this cub's veins?\" The answer will be accurate, as long as the answer can be found within the number of generations revealed; if the ritemaster gained four successes, for example, he could not ask \"Is this child descended from Frode?\" but he could accurately tell if the child's great-great-grandfather claimed descent from Frode or not. The Rite of Heritage works just as well with humans or wolves (although wolves, lacking names, are harder to accurately identify), even non-Kin or magi. It does not, however, work on the undead or on fae.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Motherhood",
+        "rite_type": "Accord",
+        "description": "This simple Rite marks a Fury's shift from Maiden status to Mother status. As is noted elsewhere, the title \"Maiden\" is not strictly accurate: the spirits begin to treat a Fury as a Mother as soon as she becomes pregnant. In some septs, this spiritual change is sufficient, while in others it might take until the child is born, and in the most conservative septs a Fury is considered a Maiden until she gives birth to a child who lives for one lunar year. Regardless of when the sept declares the Fury to be a Mother, when the time is right, this ritual is performed. Mother and child are separated, and the young mother is bound — this may be simply a symbolic binding, a rope lightly draped over her, or it may be shackles and chains. The mother breaks free of the bonds and comes to her child's side while the Mothers and Crones of the sept watch; when she reaches her child again, the older women of the tribe welcome her. System: There are no game mechanics to this rite, though the Fury may have to make a Strength or Willpower roll to escape from sufficiently strong bonds.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Remembrance",
+        "rite_type": "Death",
+        "description": "To perform this rite, the werewolves in mourning for a dead Garou gather in solemnity. Occasionally, human Kinfolk are invited to join, if they were particularly close to the departed Garou, or of her bloodline. Everyone in attendance at the rite should bring with them an object or item: one that belonged to the deceased, was given to them by the deceased, or commemorates something about her life and deeds. Then, during the rite, each participant should step forward and display the item, relating its story. The objects are often collected into a medicine bundle, or stored in a ritually carved box or chest, although what is done with the items varies from tribe to tribe. The items and the sadness all should be sacrificed, regardless. The box can be burnt, sending the collected smoke of all the memories onto the wind, into the next world along with the spirit of the dead Garou; or the box can be buried for a period of time (usually a lunar year) until the pain of mourning has lessened, then unearthed to signify the continuance of life, before being destroyed. The place where the box is buried is considered sacred, like a caern, for the duration of its interment. System: The ritemaster indicates who is to tell their story, usually in order of rank, from lowest to highest. Enemies of the deceased Garou have been known to attend a Rite of Remembrance. Unlike a simple Gathering for the Departed, which sometimes can make a connection to the spirit world through the power of released emotion, this is a rite performed chiefly to aid in the grieving of the living, and does not influence the spirits of the dead or any other ancestor-spirits. At the Storyteller's discretion, this rite may improve the Renown of the dead Garou; a particularly good story may also give the teller a point of Wisdom Renown as well, especially if she is a Galliard.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Rune Carving",
+        "rite_type": "Mystic",
+        "description": "Get of Fenris Crescent Moons learn early on to respect and appreciate the power of the written rune, whether it takes the form of Garou glyphs or of runes of human origin. This rite is a prerequisite to the Rite of Rune Casting (below); it is with this rite that the rune-seer creates her talismans. The runes must be carved into the bones of enemies slain in battle, but may take whatever form is most spiritually relevant to the ritemaster. Most Fenrir choose Garou glyphs or the Futhark runes of the Norse, but a few Get have been able to make rune-bones carved with the Cherokee alphabet and even I Ching trigrams function. System: Standard roll; the rite lasts for eight hours of carving and ritual empowerment. At the rite's completion, the Garou must spend a Gnosis point to \"charge\" the runes. The runes are commonly stored in a bag, and drawn forth just one to three at a time.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Silence",
+        "rite_type": "Mystic",
+        "description": "Garou who need to be silent use this rite to make up for any lack in natural ability. For the duration of this rite, the Garou are incapable of making any noise even if they bang on a drum or shatter glass. With the assistance of Ravenspirits, the Garou can sneak through dry underbrush or over a gravel road without making a sound. System: The Garou invoking this rite confines herself in a dark room or cave. She whispers her darkest secret and then utters an oath of silence. Raven-spirits, attracted by her secret, carry any sound she makes into the Umbra once she leaves her confinement. If the werewolf chooses to speak for any reason, the rite ends immediately. The Raven-spirits, disappointed that the Garou did not reveal any more secrets, return the sounds they carried. For several minutes, the Garou is surrounded by a cacophony she created earlier. This rite silences only those sounds the Garou would have made directly. If she were to throw a rock at a window, for instance, the whistle of the rock through the air would be silent, but the shattering glass would not. If she punched the glass with her bare hand, the breaking window would not make a sound.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Talisman Dedication",
+        "rite_type": "Mystic",
+        "description": "This rite allows a werewolf to bind objects to her body, allowing these objects to fit her various forms (jeans will grow to accommodate the size increase of the Crinos form, for instance) and accompany the Garou into the Umbra. Such talismans are most commonly mundane items, for spiritual items such as fetishes and talens remain with the werewolf in all forms automatically. A werewolf most often performs this rite during the phase of the moon under which he was born. Each auspice has its own peculiar ritual. System: The cost is one Gnosis point per object dedicated, and a character may never have more objects bound to himself than his Gnosis score. Certain large objects (Storyteller's discretion) are considered to be more than one for the purposes of cost. Similarly, the Storyteller may allow multiple objects to count as one object if they are sufficiently related (and not an abuse of the rite). The most common example is permitting a set of clothes to count as one object rather than one shirt, one pair of pants and so on. A generous Storyteller might allow a container's contents (at the time of dedication) to count as part of the container — if, again, the players aren't abusing the rite by doing so. The Storyteller and the player should decide what happens to the object when the character assumes certain forms. For example, when the character assumes Crinos form, her backpack's straps may simply grow to fit around her shoulders (although the pack still cannot hold more items than normal). When the character is in Hispo form, her knife may meld with her body. In such cases, the object will appear as a tattoo. Others must spend a Willpower point to remove the object from the character.",
+        "values": [1],
+
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Hunting Ground",
+        "rite_type": "Accord",
+        "description": "Lupus Garou mark their territory by urinating on trees and bushes. After the rite, no wolf or Garou can come into the area without immediately realizing they have entered another's territory. There is no compunction not to enter, however. System: Typically, the Garou must spend an hour marking her territory. Special messages, such as a greeting to other Garou, can be left with an Intelligence + Primal-Urge roll (difficulty 7).",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Meeting",
+        "rite_type": "Accord",
+        "description": "The population of living Stargazers is growing thin, and as such, many of the tribe consider themselves fortunate when encountering a new (or previously unmet) Stargazer. This rite, known in India as the Rite of Namah-te and in China as the Rite of GongXi, is meant to allow two tribe members to greet one another with proper respect. The rite is a traditional greeting that's been used for many centuries. Two Stargazers meeting for the first time place the flat of their palms against their chest and bow their heads at one another. They hold the bow for as long as necessary, and then each Garou takes a small smear of ash or soil and anoints the other's forehead with it. Finally, both Stargazers utter a prayer to Gaia. The meanings to this ritual meeting are many. It is a wish for extended friendship, but in it is also the unspoken wish to have both minds joined in service to both Gaia (the Emerald Mother) and the Jade Emperor. Both Garou are equal in the eyes of those two cosmic forces, even if they are not technically equal in rank. In this meeting, egos are set aside and the two are — however briefly — conjoined in the service of Gaia. System: A Stargazer may only enact this rite when meeting another Stargazer for the first time. If the two have met previously, the rite may be performed, but without any spiritual benefits. Each Stargazer bows his Head for a number of minutes equal to the other Stargazer's Rank. When the rite is completed, the player rolls Charisma + Rituals (difficulty 6). If 1-2 successes are rolled, the Stargazer gains a single die on any Social roll involving the encountered Garou. However, if 3 or more successes are rolled, the Stargazer also gains a Willpower point alongside the bonus die.",
+        "values": [1],
+
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Totem",
+        "rite_type": "Mystic",
+        "description": "This rite allows a Garou to forge a temporary connection with a totem spirit. The connection lasts for only a short time but allows the Garou to gain insight and guidance from the totem. The ritemaster must have some connection to the totem being called, either through personal experience or through possessing an item sacred to that totem. System: The ritemaster spends one Gnosis point and rolls Charisma + Rituals (difficulty 7). Success creates a temporary link with the totem that lasts one scene per success. During this time, the Garou gains the basic insight of the totem and may ask it for guidance. The totem's responses are usually symbolic or cryptic.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Pack's Blood",
+        "rite_type": "Mystic",
+        "description": "This rite is used to bind a pack together in blood, making them true brothers and sisters in the eyes of Gaia. Each member of the pack cuts their palm and mingles their blood in a ceremonial bowl. The ritemaster then adds sacred herbs and chants prayers to Gaia and the pack's totem. Each pack member then drinks from the bowl, completing the blood bond. System: The ritemaster rolls Charisma + Rituals (difficulty 7). Success creates a mystical bond between pack members that lasts for one lunar month. During this time, pack members can sense when another is in danger and can locate each other within a mile radius. The bond also grants a +1 bonus to all pack tactics rolls.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Pizza",
+        "rite_type": "Mystic",
+        "description": "A modern rite created by urban Garou, particularly Glass Walkers and Bone Gnawers. The rite transforms ordinary pizza into a feast that can feed many more people than it normally would. The ritemaster must bless the pizza while it's still hot and fresh, invoking the spirits of sustenance and community. System: The ritemaster spends one Gnosis point and rolls Charisma + Rituals (difficulty 6). Each success allows the pizza to feed an additional person beyond its normal serving size without diminishing in quantity. The enhanced pizza remains fresh and hot for the duration of the scene.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Pregnant Mule",
+        "rite_type": "Mystic",
+        "description": "This rite allows a Garou to temporarily increase the carrying capacity of a vehicle or beast of burden. The ritemaster must touch the vehicle or animal while performing the rite, calling upon spirits of strength and endurance. The target glows faintly with a silver light when the rite is successful. System: The ritemaster rolls Manipulation + Rituals (difficulty 7). Each success doubles the normal carrying capacity of the target for one hour. The enhancement doesn't affect the target's speed or maneuverability, but prevents damage from the extra load.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Remembered Path",
+        "rite_type": "Mystic",
+        "description": "This rite helps a Garou retrace their steps through either the physical world or the Umbra. The ritemaster burns sacred herbs and focuses on a specific memory of a journey they wish to retrace. As the smoke rises, it forms into a trail visible only to those participating in the rite. System: The ritemaster spends one Gnosis point and rolls Intelligence + Rituals (difficulty 7). Success creates a visible trail showing the exact path previously taken. The trail remains visible for one hour per success. The rite only works if retracing a path the ritemaster has personally traveled before.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Shrouded Glen",
+        "rite_type": "Mystic",
+        "description": "This rite creates a temporary area of concealment, hiding those within from both physical and spiritual detection. The ritemaster must walk the perimeter of the area to be concealed while burning sacred herbs and chanting prayers to spirits of secrecy and shadow. System: The ritemaster spends one Gnosis point and rolls Wits + Rituals (difficulty 7). Each success allows the rite to conceal an area roughly 10 feet in diameter for one hour. Those within the area are hidden from both physical and spiritual detection unless they take aggressive action.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Spirit Brew",
+        "rite_type": "Mystic",
+        "description": "This rite transforms ordinary water into a spiritually charged drink that can restore Gnosis. The ritemaster must perform the rite under moonlight, adding sacred herbs and chanting prayers to Luna and Gaia. The water takes on a silvery glow when successfully enchanted. System: The ritemaster rolls Gnosis (difficulty 8) and must spend one Gnosis point. Each success creates one dose of spirit brew. Each dose can restore one point of Gnosis when consumed, but a Garou can only benefit from one dose per day.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Urban Jungle",
+        "rite_type": "Mystic",
+        "description": "This Glass Walker rite temporarily awakens the spirits of urban features, making the city itself aid the Garou. Street lights might conveniently malfunction, security cameras might turn away at crucial moments, and subway trains might delay or speed up to aid the Garou's travel. System: The ritemaster rolls Charisma + Rituals (difficulty 7) and must spend one Gnosis. Success means the urban spirits in a three-block radius will subtly aid the Garou for one hour per success. This provides a -1 difficulty to urban navigation, stealth, and survival rolls in the affected area.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the First Fruits",
+        "rite_type": "Accord",
+        "description": "This rite gives thanks to the spirits for a bountiful harvest. Usually performed by Wendigo Kinfolk of the lakes region, some Wendigo participate in the rite to solidify their bonds with their human Kin. System: No roll is necessary for this rite, but all the participants bring a small bowl of rice to a central place, where smoke from sacred tobacco is used to alert the spirits to the presence of the rice. Grains of rice are then scattered in the four directions as gifts to the spirits, thus ensuring their continuing favor in future seasons of harvest.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Auspicious Season",
+        "rite_type": "Mystic",
+        "description": "This rite not only honors the Incarna that rules a particular lunar month but also serves to petition that Incarna for help in certain undertakings which involve the Incarna's patronage. Although the basic format of the rite does not change, the specific details such as the songs, dances or incantations, use of incense or special colors and costumes and the inclusion of symbolic objects appropriate to the Incarna may vary. Garou may perform this rite at any time for any of the planetary Incarnae, though the effects are stronger if the rite coincides with the appropriate astrological month. For example, a rite to gain Nerigal's favor for a coming confrontation with a hive of Black Spiral Dancers may be more effective when conducted in the month ruled by Nerigal or under the full moon, his favored auspice. System: The ritemaster rolls Wits + Rituals (difficulty of 6 if the month, auspice, or character's tribe corresponds with the Incarna for whom the rite is performed; otherwise, the difficulty is 7). Three successes are necessary to gain the attention and favor of the Incarna unless the rite occurs in the Aetherial Realm. In that case, only one success is necessary. No successes (or fewer than three for rites conducted in the physical world) indicates a simple failure of the rite; a botch gains the Incarna's attention, but not in a favorable manner. If the rite succeeds, all participants may gain a slight bonus to some appropriate Attribute or Ability, or else receive some other sign of the Incarna's favor. The Storyteller can determine what benefits result from a successful performance.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Cardboard Palace",
+        "rite_type": "Mystic",
+        "description": "Through this rite, a Garou can transform any flimsy structure into a decent place to sleep. This often involves a lot of cardboard and newspaper, but the rite can be invoked just about anywhere you want to call home for the night. The new walls of your home become water-resistant and insulated, keeping everyone inside warm and dry. Not surprisingly, you can perform this rite in full view of the mundane populace without breaking the Veil. For some travelers, performing this ritual is just a matter of habit. It may simply involve making a few personal touches to make your space feel secure and safe. For powerful Theurges, the cardboard palace becomes a place of healing as well. System: When performing this rite, roll Intelligence + Survival (difficulty 6); with at least one success, you can turn an ordinary shelter into a comfortable place to sleep. If you spend a point of Gnosis before the roll, the shelter is more than just comfortable. The Garou (or other shapechanger) living in the cardboard palace can roll Stamina for every day of rest; three successes heal an additional aggravated wound. Whether the space is dedicated or not, it can be cast on anyone's structure — not just the ritualist's.",
+        "values": [1],
+
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Honorable Oath",
+        "rite_type": "Accord",
+        "description": "The Silver Fangs take their oaths of service very seriously indeed. When anyone wishes to swear service to a Silver Fang Lord who follows the old traditions of the tribe, the Lord may ask them to undergo this rite, but will never press the point. Many Silver Fangs voluntarily undergo it if offering service to another werewolf, but are offended if others demand it of them. To swear the oath, the character swears to undertake a single task, which is outlined by the recipient of the oath and repeated by the character undergoing it. The character offering service then gives a small object of value to himself to the recipient of the oath. Should the oath taker stay true to their word, he will receive Renown whether or not the mission is successful. The recipient of the oath should return the gifted item at the conclusion of the service.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Midwife",
+        "rite_type": "Accord",
+        "description": "This rite is taught as a rite of accord because it is enacted to protect a newborn from harm or taint by hurrying or delaying its birth. The unsullied focus necessary for this rite is an owl's feather, as Owl intercedes on the mother's behalf. The mother must ordinarily be a Silent Strider or one of their Kinfolk, though Owl may be convinced with proper chiminage to intercede on the behalf of Garou or Kinfolk of other tribes, or even a normal human woman. The rite may be performed for several days in a row to achieve the necessary result — in fact, it may be necessary to do so. This rite is often considered the province of female Striders, though most are willing to teach it to any male Strider who wishes to learn. System: The 'midwife' and the mother must first decide whether they will try to hurry the delivery of the child or delay it. Then the ritemaster's player must spend one point of Gnosis and roll Charisma + Rituals (target 7). Simple success delays or hastens the birth by one day. If the rite is begun at the onset of labor, it ceases immediately and will not begin again for a full day — in all other cases it is difficult to be sure if the rite was effective at all. It may require several days of ritual to bring a child into the world early; usually, it is considered preferable to delay the birth unless a healer is sure the child is viable, or the mother is headed into great danger.",
+        "values": [1],
+
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Opened Caern",
+        "rite_type": "Caern",
+        "description": "Caerns are highly spiritual places that are sacred to those who create them. Each caern has a specific power associated with it, generally of a beneficial nature. Thus, there are caerns of Rage, caerns of Gnosis, Strength, Enigmas and so on. If a character is knowledgeable enough, she may tap into the caern's power and use it herself. Doing so is commonly called 'opening' a caern. Opening a caern should not be attempted lightly. Caerns do not give up their energies easily, and failure to harness such power properly can result in serious damage to the Garou. Each caem has its own requirements of the ritemaster. The ritemaster must prove herself worthy of the caern's energies. In order to open a caern of Enigmas, a Garou might walk a spiral path while calling out the Greek myth of Persephone. To open a caem of Rage, the Garou might transform into Crinos and chant the litany of his ancestors who have fallen to the Wyrm. The key is forging a connection to the particular spirit of the caem. System: To open a caern, a character engages in a resisted, extended success test of Wits + Rituals (difficulty 7). The number of successes needed equals the caern's level. The character must overcome the caern spirit to prove herself worthy. The caern spirit uses its caern level as a dice pool. Its difficulty equals the character's Gnosis, while the number of successes needed equals the character's Willpower. The first one to gamer the necessary number of successes wins. If the character wins the test, she can add the caern's rating to her dice pool when performing actions appropriate to that caern's focus. If she loses, however, she takes wounds equal to the number of success by which the caern beat her. A botch indicates that the wounds are aggravated. These physical and spiritual wounds are the results of a backlash of spiritual energy. See Caerns Mechanics (p. 226) for a list of caern types, their powers and the spirits that can be encountered near them.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Pack",
+        "rite_type": "Accord",
+        "description": "This rite formally recognizes a pack's existence and binds its members together under their chosen totem. The rite requires that all members of the pack be present and that they have already chosen a totem spirit to which they have some connection. The ritemaster leads the group in a long ceremony involving ritual body painting, howling, dancing and chanting. The rite culminates in the pack hunting and bringing down prey without using any tools or weapons. The totem spirit usually manifests in some way during the rite to show its approval of the pack. System: The difficulty of the rite depends on the power of the totem spirit being called. A Jaggling (Rank 1) requires only difficulty 6, while an Incarna (Rank 5+) requires difficulty 10. The number of successes needed equals the totem's Rank. If successful, the rite creates a pack and forges a connection between the pack and its totem spirit. The totem spirit's benefits apply to all pack members.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Sacred Hunt",
+        "rite_type": "Death",
+        "description": "This rite formally declares a target as prey for a sacred hunt. Once declared prey through this rite, the target may be killed without breaking the Litany's law against murder. The rite requires the presence of at least three Garou of the sept (though more are preferable), one of whom must be of a higher rank than the target. The ritemaster must present evidence of the target's guilt of a crime punishable by death. If the assembled Garou agree that the evidence warrants death, they participate in a ritual hunt led by the ritemaster. The hunt begins with a howl announcing the prey's crime and status as prey. System: The ritemaster rolls Charisma + Rituals (difficulty 7). Success means the rite has been properly performed and the target is now considered legal prey. The target loses any protection the Litany's law against murder would have provided. The rite remains in effect until the target is killed or the hunt is formally called off by the sept's leader.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Spirit Drum",
+        "rite_type": "Mystic",
+        "description": "This rite awakens a spirit within a drum, allowing it to be used for spirit calling and other mystical purposes. The drum must be crafted by hand using traditional methods and materials. The hide used must come from an animal the Garou has hunted personally. During the rite, the ritemaster plays the drum continuously while chanting prayers and burning sacred herbs. System: The ritemaster must spend one Gnosis point and roll Charisma + Rituals (difficulty 7). Success means the drum is now inhabited by a spirit and can be used to aid in other rites and ceremonies. When used in other rites, the spirit drum adds one die to the ritemaster's roll. The drum's spirit must be fed one Gnosis point per month to maintain its power.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Warrior's Rest",
+        "rite_type": "Death",
+        "description": "This solemn rite is performed for Garou who fall in battle. It ensures their spirits find their way to the spirit world and aren't trapped or corrupted by the Wyrm. The rite involves cleaning and preparing the body, then burning it on a pyre while the assembled Garou howl their grief and respect. The ashes are scattered in a place of significance to the fallen warrior. System: The ritemaster rolls Charisma + Rituals (difficulty 6). Success ensures the fallen warrior's spirit passes safely to the spirit world. Additional successes grant the spirit extra strength in resisting any attempts by the Wyrm to corrupt it during its journey.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Veil",
+        "rite_type": "Mystic",
+        "description": "This rite allows a Garou to temporarily mask their true nature from supernatural detection. The ritemaster must burn sacred herbs and chant prayers to spirits of concealment while focusing on maintaining the veil of secrecy. System: The ritemaster spends one Gnosis point and rolls Wits + Rituals (difficulty 7). Each success allows the Garou to appear as a normal human or wolf (depending on their current form) to supernatural detection for one hour. This does not affect physical appearance, only supernatural detection methods.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Winter Wolf",
+        "rite_type": "Mystic",
+        "description": "This rite grants protection against extreme cold and winter weather. The ritemaster must burn sacred herbs and howl to the spirits of winter, beseeching them for protection. The protected Garou's fur takes on a silvery sheen when in lupine forms. System: The ritemaster rolls Stamina + Rituals (difficulty 7). Each success grants one person protection from cold and winter weather for one day. Protected individuals can survive in temperatures as low as -40°F without discomfort and gain two extra dice on all rolls to resist cold-based damage.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Wounded Earth",
+        "rite_type": "Mystic",
+        "description": "This rite helps heal an area that has been damaged by pollution, development, or other human activities. The ritemaster must spend time cleansing the area physically while calling upon spirits of nature to aid in its restoration. System: The ritemaster spends one Gnosis point and rolls Wits + Rituals (difficulty varies by the extent of damage: 6 for minor damage, 8 for severe damage, 9 for toxic waste sites). Each success accelerates the natural healing process of the area by one month. The rite must be performed monthly to maintain the accelerated healing.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Soothe the Land",
+        "rite_type": "Mystic",
+        "description": "This rite calms an area that has been disturbed by violence or strong negative emotions. The ritemaster walks the perimeter of the area, burning sage and other sacred herbs while chanting prayers of peace and healing. System: The ritemaster rolls Charisma + Rituals (difficulty 7). Success calms the spiritual resonance of the area for one day per success. This makes the area less likely to attract malevolent spirits and can help prevent the formation of Haunts.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Stone of Power",
+        "rite_type": "Mystic",
+        "description": "This rite enchants a small stone to store Gnosis for later use. The stone must be naturally formed and untouched by human tools. The ritemaster spends time meditating with the stone while channeling Gnosis into it. System: The ritemaster rolls Gnosis (difficulty 8) and may store one point of Gnosis in the stone per success. The stored Gnosis can be retrieved later by any Garou who knows this rite. The stone can only be used once, crumbling to dust when the last point of Gnosis is extracted.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Thanksgiving Rite",
+        "rite_type": "Accord",
+        "description": "This rite is performed to thank spirits for their aid and to maintain good relations with them. The ritemaster offers appropriate gifts to the spirits being thanked - typically items that correspond to the spirit's nature. System: The ritemaster rolls Charisma + Rituals (difficulty 6). Success ensures the spirits' continued goodwill, while exceptional success (3 or more successes) may earn their particular favor in the future.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Voice of the Ancestors",
+        "rite_type": "Mystic",
+        "description": "This rite allows a Garou to communicate with the spirits of their ancestors for guidance. The ritemaster must meditate in a place of power or significance to their tribe while burning sacred herbs and chanting the names of their ancestors. System: The ritemaster spends one Gnosis point and rolls Intelligence + Rituals (difficulty 7). Success allows communication with ancestral spirits for one turn per success. The spirits' answers are often cryptic but can provide valuable insight into current problems.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Walking with Spirits",
+        "rite_type": "Mystic",
+        "description": "This rite allows a Garou to perceive spirits more clearly in the physical world. The ritemaster anoints their eyes with a mixture of sacred herbs and their own blood while chanting prayers to the spirits. System: The ritemaster rolls Perception + Rituals (difficulty 7). Success allows the Garou to see and interact with spirits in the physical world more easily for one scene per success, reducing the difficulty of all spirit-related rolls by 1.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Song of the Longest Night",
+        "rite_type": "Seasonal",
+        "description": "This rite is performed on the winter solstice to honor Luna and to ask her blessing for the coming year. The participants gather at midnight and sing songs of praise to Luna, accompanied by drums and other instruments. The songs grow increasingly complex and intense as the night progresses. System: The ritemaster rolls Charisma + Performance (difficulty 7). Success grants all participants one additional die on all rolls involving Luna's influence (such as stepping sideways or using moon-based Gifts) until the next new moon. Additional successes extend this benefit to subsequent lunar phases.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Song of the Sentinel",
+        "rite_type": "Mystic",
+        "description": "This rite awakens the spirits within trees to serve as watchful guardians. The ritemaster must walk a circle around the area to be protected, touching each tree and singing to its spirit. The awakened trees will alert the ritemaster to any intruders who enter their domain. System: The ritemaster rolls Charisma + Rituals (difficulty 7). Success awakens the tree spirits for one night per success. The trees cannot move or attack, but they can communicate the presence and general nature of intruders to the ritemaster through spiritual whispers.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Spirit Brew",
+        "rite_type": "Mystic",
+        "description": "This rite creates a special drink that allows non-Garou to temporarily perceive spirits. The ritemaster must brew the drink under moonlight using special herbs and a drop of Garou blood. System: The ritemaster spends one Gnosis point and rolls Intelligence + Rituals (difficulty 7). Success creates enough spirit brew for one person per success. Those who drink it can perceive spirits in the physical world for one scene, though they cannot interact with them.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Spirit Hunt",
+        "rite_type": "Death",
+        "description": "This rite allows Garou to track and hunt spirits that have fled into the Umbra. The ritemaster must have something connected to the target spirit - a fragment of its essence, an object it possessed, or even just knowing its true name. System: The ritemaster spends one Gnosis point and rolls Perception + Rituals (difficulty 8). Success allows the hunting party to track the spirit through the Umbra for one day per success. The spirit cannot hide its trail from those empowered by this rite.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Summons",
+        "rite_type": "Mystic",
+        "description": "This rite allows a Garou to send a spiritual call to another Garou, who will feel compelled to come to the summoner's location. The ritemaster must have something belonging to the target or know their true name. System: The ritemaster rolls Charisma + Rituals (difficulty 7). Success sends the summons to the target, who feels a strong urge to seek out the summoner. The target knows who is calling and roughly where they are, but may resist the summons by spending a Willpower point.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Tobacco Offering",
+        "rite_type": "Accord",
+        "description": "This rite is used to show respect to spirits and gain their favor. The ritemaster offers sacred tobacco to the spirits while speaking prayers and singing songs of praise. The tobacco must be of high quality and properly prepared. System: The ritemaster rolls Charisma + Rituals (difficulty 6). Success means the spirits accept the offering and look favorably upon the Garou. This reduces the difficulty of the next roll involving those spirits by one.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Washing the Spirit",
+        "rite_type": "Mystic",
+        "description": "This rite cleanses a Garou's spirit of corruption and negative influences. The ritemaster bathes the subject in sacred water while burning purifying herbs and chanting prayers of cleansing. System: The ritemaster rolls Gnosis (difficulty 7). Success removes all spiritual impurities from the subject and grants them one temporary point of Willpower. The effect lasts until the next sunrise.",
+        "values": [1],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Baptism of the Warrior",
+        "rite_type": "Mystic",
+        "description": "This rite prepares a Garou for battle by marking them with sacred war paint and blessing their weapons. The ritemaster uses a mixture of their own blood and sacred herbs to paint tribal symbols on the warrior's body while chanting ancient battle prayers. System: The ritemaster rolls Charisma + Rituals (difficulty 7). Success grants the warrior an additional die to all combat rolls for the duration of the next battle. Each additional success adds one point of temporary Rage.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Descent into the Underworld",
+        "rite_type": "Mystic",
+        "description": "This rite allows a Garou to safely travel into the Dark Umbra to commune with the spirits of the dead. The ritemaster must burn sacred herbs and create a circle of protection while chanting prayers to the spirits of death. System: The ritemaster spends two Gnosis points and rolls Gnosis (difficulty 8). Success allows safe passage into and out of the Dark Umbra for one hour per success. The traveler must stay within the spiritual territory claimed by their tribe or risk becoming lost.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Fetish",
+        "rite_type": "Mystic",
+        "description": "This complex rite binds a spirit into an object to create a fetish. The ritemaster must first locate and convince a spirit to inhabit the object, then perform the binding ritual. The object must be of high quality and appropriate to the spirit's nature. System: The ritemaster must spend two Gnosis points and roll Manipulation + Rituals (difficulty 8). The number of successes needed equals the power of the spirit being bound. A botch usually results in the spirit attacking the ritemaster.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Spirit Awakening",
+        "rite_type": "Mystic",
+        "description": "This rite awakens a slumbering spirit within an object or location. The ritemaster must spend time communing with the dormant spirit, offering it gifts and convincing it to awaken. System: The ritemaster spends two Gnosis points and rolls Charisma + Rituals (difficulty 7). Success awakens the spirit, making it receptive to communication and potential bargaining. The spirit remains awake for one day per success.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Totem Bond",
+        "rite_type": "Mystic",
+        "description": "This rite creates a temporary bond between a Garou and a totem spirit. Unlike the Rite of the Pack, this bond is personal and temporary. The ritemaster must have some connection to the totem being invoked and must make appropriate offerings. System: The ritemaster spends two Gnosis points and rolls Charisma + Rituals (difficulty 8). Success creates a bond that lasts for one week per success. During this time, the Garou gains the basic benefits of the totem's blessings.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Sacred Hunt",
+        "rite_type": "Death",
+        "description": "This rite declares an individual or group as prey for a sacred hunt. Once declared prey through this rite, the target may be killed without breaking the Litany's law against murder. The ritemaster must present evidence of the target's crimes to the sept's elders and receive their approval. System: The ritemaster spends two Gnosis points and rolls Charisma + Rituals (difficulty 7). Success marks the target as legitimate prey. The rite remains in effect until the prey is killed or the hunt is formally called off by the sept's leader.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Cleansing the Blight",
+        "rite_type": "Mystic",
+        "description": "This powerful rite cleanses an area of Wyrm taint and corruption. The ritemaster must spend hours or even days performing cleansing rituals, burning sacred herbs, and calling upon spirits of purification. System: The ritemaster spends two Gnosis points and rolls Gnosis (difficulty 8). The number of successes determines how thoroughly the area is cleansed. The area affected is roughly 100 square feet per success. The cleansing lasts until new corruption takes root in the area.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Storm's Call",
+        "rite_type": "Mystic",
+        "description": "This rite calls forth a powerful storm. The ritemaster must perform the rite outdoors, calling to spirits of wind, rain, and thunder. The type and intensity of the storm depend on the local weather conditions and the ritemaster's skill. System: The ritemaster spends two Gnosis points and rolls Manipulation + Rituals (difficulty varies by current weather conditions: 6 for stormy conditions, 8 for clear weather). Success brings forth a storm that lasts for one hour per success.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Spirit Walking",
+        "rite_type": "Mystic",
+        "description": "This rite allows a Garou to temporarily separate their spirit from their body to travel in the Umbra. The ritemaster must enter a deep trance while other Garou maintain a vigil over their physical form. System: The ritemaster spends two Gnosis points and rolls Gnosis (difficulty 8). Success allows the Garou's spirit to leave their body and travel in the Umbra for one hour per success. The physical body remains in a coma-like state until the spirit returns.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Spirit Dance",
+        "rite_type": "Mystic",
+        "description": "This elaborate ritual involves hours of dancing and chanting to call forth and bind a specific type of spirit. The ritemaster must know the spirit's true name or nature and create an appropriate offering. System: The ritemaster spends two Gnosis points and rolls Charisma + Rituals (difficulty 8). Success calls the spirit forth and makes it amenable to negotiation. The spirit remains present for one scene per success.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Summoning",
+        "rite_type": "Mystic",
+        "description": "This powerful rite allows a Garou to summon another Garou from anywhere in the world. The ritemaster must possess something belonging to the target or know their true name. The summoning creates a strong compulsion to travel to the ritemaster's location. System: The ritemaster spends two Gnosis points and rolls Charisma + Rituals (difficulty 8). Success creates a spiritual compulsion that lasts for one day per success. The target knows who is summoning them and roughly where they are. They may resist the compulsion by spending a Willpower point each day.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Warrior's Shield",
+        "rite_type": "Mystic",
+        "description": "This protective rite creates a spiritual shield around a warrior, helping to deflect both physical and spiritual attacks. The ritemaster paints protective symbols on the warrior's body using a mixture of sacred herbs and their own blood. System: The ritemaster spends two Gnosis points and rolls Stamina + Rituals (difficulty 7). Success grants the warrior one extra die to soak rolls for the duration of the next battle. Each additional success adds another soak die.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Beltane",
+        "rite_type": "Seasonal",
+        "description": "Beltane (April 30-May 1): The celebration of the dawning of the light half of the year is as abandoned as that of the dark half (Samhain) is reflective. Just after dark, the ritemaster bids every fire in the caern extinguished; after a few minutes of darkness, a new fire is lit, and its flame distributed to rekindle all the others, symbolizing a fresh start and the return of light. Music, food, dancing and loving are the order of the night. Kinfolk are especially welcomed to the party, not only to share the fun; children conceived during Beltane are reputed to have a greater chance of breeding true. On the downside, the Litany is very fragile on this night as the heat of passion burns away all rationality; elders watch over the cubs, but even the older sept members have occasionally succumbed to temptation. Beltane is a festival celebrating new vitality. Those who participate in a successful Beltane rite gain an extra dot of Stamina for the next three days. During the festival, Rites of Cleansing and other purification rituals are at -1 difficulty.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Buying Back the Soul",
+        "rite_type": "Death",
+        "description": "Also called the \"Rite of Lalu-chilu,\" this rite is meant to help a Stargazer track the next incarnation of another of his tribe. Incarnations are important to the Stargazers — when one dies, it's believed that, while their spirit may linger for a time, the Emerald Mother returns them quickly to the world to do her work once again. The quandary is then, why aren't there the same number of Stargazers now as there were in the beginning? The problem is, new Garou aren't being born. The body is like a vessel, and while in the womb it sits, vacant of the ancestral incarnation. But the biology is already determined. While the ancestral spirit may \"become\" the new child, that new child is more than likely not a Stargazer werewolf. Hence, the incarnations are still being born, but into the bodies of kin, not Garou. To perform this rite, the ritemaster must be present at the death of the Stargazer whose soul he wishes to track. Once the Garou has departed, this rite must be performed within twelve hours, or it will provide no answers. The one performing the rite mixes some of the fallen Garou's blood in a bowl with equal parts milk. The liquid must be stirred by the ritemaster's own fingers or hands, and then a piece of cake or bread must be soaked thoroughly in the mixture. The ritemaster eats the bread or cake, and when next he sleeps, he will be granted a vision of the newborn meant to house the next incarnation of the dead Stargazer. System: The Stargazer must enact the rite as described above, with all conditions present. The player rolls Perception + Rituals, and the difficulty of the roll is the departed Garou's permanent Rage score. The greater the successes, the longer the vision. This allows the ritemaster to more clearly see details of the identity (or other pertinent information) regarding the child.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Communion with the Storm",
+        "rite_type": "Mystic",
+        "description": "It is easy to lose oneself in the intricacies of Garou society, and to forget that the ultimate goal of all the politicking of the Shadow Lords is the defeat of the Wyrm and the restoration of Gaia to her normal state. Many Shadow Lords thus turn to this rite to remind themselves of why they're fighting, and of what it is that they're supposed to be fighting for. In the process, they focus their Rage and their ambition so that they may more effectively accomplish their tasks. This rite is always performed in the midst of a heavy thunderstorm, but that is its only constant. It may be performed singly or in groups, at any time of day or night, and in any part of the world. So long as Grandfather Thunder's touch is present, that is all that matters. System: Standard roll. While this rite is in effect, all Enigmas rolls have difficulties three lower than normal (minimum 4). In addition, the ritemaster may bring any single problem (usually nominated beforehand) to the attention of Grandfather Thunder in an attempt to seek his counsel. If he is invoked with a successful Wits + Enigmas roll (difficulty 8), Grandfather Thunder presents them with an appropriate course of action and girds their resolve with either a point of Rage or a point of Gnosis, depending on the nature of the problem.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Curse of the Crone",
+        "rite_type": "Crone",
+        "description": "Curse of the Crone is reserved for philanderers; rapists deserve vengeance, not the mockery and numbness this rite creates. This rite renders a male target infertile and impotent, physically causing his member to shrivel into near-uselessness. System: The rite requires something distinctly male about the target — this can be nearly anything from a dirty undershirt to a drop of his semen. This physical element is torn and scattered, while the Crone quietly murmurs an incantation to Gaia. Roll Charisma + Primal-Urge against a target of 6; every success indicates a week of duration for Curse of the Crone's effects. The Crone can undo her own curse with the snap of a twig and a magic word — if she so chooses.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Feast for the Spirits",
+        "rite_type": "Mystic",
+        "description": "Since the dawn of religion, worshippers have made offerings of food to gods and spirits. The Fianna do so to honor ancestors at feasts, reminding them of their former lives and strengthening their ties to kith and kin. Theurges also enact the rite as chimnage to spirits who want a taste (literally) of what the living enjoy. System: The ritemaster sings or plays a tune of welcome for the spirits while investing Gnosis in the food (one point is good for a plate of food and a drink), and rolls Wits + Rituals (difficulty of the local Gauntlet). Only one success is required to make the essence of the food as tangible to spirits in the Penumbra as it is to the Garou in the physical realm. Once its essence has been consumed, the physical food and drink loses any appealing taste or texture as well as much of its nutritional value.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Gathering the Wanderers",
+        "rite_type": "Caern",
+        "description": "Even though the Silent Striders hold caerns in the far-flung places of the world, the tribe must occasionally meet in the bare wilderness, far from any wellspring of Gaia's power. The Garou present take their places in the circle as they would around the heart of a caern. As their howls reverberate, a silent call races through the Umbra, summoning an Engling into the circle to sanctify the proceedings. The Striders say that the location of one vagabond moot, where great deeds were done and great stories told, was later successfully opened as a caern by another tribe. System: The player whose character leads the rite must roll Wits + Enigmas (target 7). If successful, the Engling arrives at the center of the circle within the hour. The leader of the rite must give the Engling a point of Gnosis; also, each Garou who wishes to bring a matter before the moot must also donate a point of Gnosis. When the moot is over, the Engling returns to the Umbra without having been hunted.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Imbolc",
+        "rite_type": "Seasonal",
+        "description": "Imbolc (Feb 1-Feb 2): Imbolc is a festival of fertility and of hope; though many cold nights may lay ahead, winter is ebbing before the promise of spring. Ritual bonfires dot the caern, and the night is filled with tales of struggles won and the surety of better times ahead. It is also the sacred festival honoring the goddess Brigid, and deemed a favorable time to ask for the spirits' aid in endeavors of art or craft. Children born of Garou on this day are considered especially lucky, for more often than not their Garou blood runs true. Participants in the Imbolc rite regain Willpower equal to the ritemaster's successes. Furthermore, Fianna that have overcome Harano often claim that taking part in the Imbolc rite was the moment they began to claw their way back.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Winter Solstice",
+        "rite_type": "Seasonal",
+        "description": "At Winter Solstice, the Fianna gather and have a festival of light, sometimes with candles, other times with bonfires. This is a time for poetry and song. Many septs follow the tradition of calling the Wild Hunt on the first Full Moon after the Winter Solstice to drive the Wyrm from the land.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Vernal Equinox",
+        "rite_type": "Seasonal",
+        "description": "In spring, we celebrate the reawakening of the land. For most Fianna, it is a time of feasting as the influence of the Wyrm wanes. Spring Equinox is a victory party in honor of the defeat of winter and the return of life.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Midsummer's Eve",
+        "rite_type": "Seasonal",
+        "description": "The Summer Solstice marks the peak of faerie magic during the year. This moot is often a solemn affair (compared to most Fianna moots) where great rites are performed to aid the septs and packs. Many elders create fetishes at Summer Solstice.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Autumnal Equinox",
+        "rite_type": "Seasonal",
+        "description": "The Autumn Equinox is a time of rest after the harvests of the land. Like the Spring equinox, it tends to be a glorious party.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Lesser Rite of Mourning",
+        "rite_type": "Death",
+        "description": "Through the Lesser Rite of Mourning the Garou honor a dead hero with a small personal ceremony commemorating the great deeds and virtues of the dead. Unlike the Gathering for the Departed or Rite of Lasting Glory, which takes place once and soon after death, the Rite of Mourning can take place many times (often annually). There should be no more than ten participants at this rite, and only those closest to the memory of the departed partake in this intimate ceremony; loved ones, offspring, packmates and the closest of allies. The execution of the rite varies greatly from situation to situation and from tribe to tribe, but the most common version is moderately complex. The ritemaster calls the participants to him, and declares the name and deeds of the one to be honored. This can take the form of a long mournful cry, or a barely audible groan. This is followed by a small period of silent contemplation by everyone involved as they meditate upon what is lost. Then one by one the participants approach the site of worship (a dedicated shrine, a grave marker or something else representing the deceased) to offer a small token or gift of remembrance. The token may be a physical object like a weapon or fetish, or a symbolic offering like a teardrop or a smear of one's own blood. Upon the offering each one offers a remark on why they honor the deceased (whether for a personal reason, or for some quality or virtue they believe the deceased embodied in their life). As the mourners settle in front of the site of worship the ritemaster leads them in a sharing of tales of the deceased, where everyone shares their fond memories. This is often followed by a chant or song led by the ritemaster, but performed by all, calling on the deceased to watch over them and lend them his strength and virtue in their continuous struggle. As the song concludes the deceased may sometimes appear for a small delicate period of time to be with those closest to him again in his life. (It is not unheard of for those so honored to become ancestor-spirits due to the love and respect offered them during this ritual. After the spirit dissipates, if it shows at all, the participants give a farewell howl before breaking company or partaking in some revelry or another. System: The ritemaster must succeed on a Charisma + Rituals roll, difficulty 8 minus the rank of the honored Garou, with additional minus 1 for every five participants. On a marginal success (one success) the honored receives one posthumous point of Honor. On a moderate success (two successes), the honoree receives an amount of posthumous Renown equal to the number of participants, to be distributed among the categories the deceased is being remembered for. The participants all receive one point of Honor. On a complete success (three successes), the deceased receives Renown equal to the total ranks of all participants divided by two. The participants all receive an Honor reward equal to the rank of the deceased. With four or five successes the deceased has a chance of appearing as an apparition to comfort the participants; if this happens, the participants all have their Willpower replenished. If six or more successes are achieved the spirit is sure to appear unless somehow restrained, and the Storyteller should consider rewarding the participants with an extra point in the Ancestors Background, representing the ancestor-spirit of the deceased. Although the rite can be performed more than once for any given hero, all rites of mourning after the first have no game effect, Renown gains or otherwise.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Lughnassa",
+        "rite_type": "Seasonal",
+        "description": "Lughnassa (August 1-2): In the ancient agrarian communities, this was the celebration of the beginning of harvest. For the Fianna it represents the fruits of labor, and the gathering of strength for the coming winter. Bread made from grain of the year, and fresh-made mead and beer as well, are ceremoniously consumed. Those who participate in a successful Lughnassa rite gain an extra dot of Strength for the next three days. During the festival, rolls involving lore and wisdom are at -1 difficulty, as the Fianna find it easier to remember the fruits of mental labor as well.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Sacred Fire",
+        "rite_type": "Mystic",
+        "description": "This rite creates a sacred fire that burns with spiritual power. The flames can purify objects, ward against evil spirits, or serve as a gateway to communicate with spirits. The ritemaster must gather special woods and herbs to create the fire, then perform the ritual as the fire is lit. System: The ritemaster spends two Gnosis points and rolls Gnosis (difficulty 7). Success creates a sacred fire that burns for one hour per success. The fire's spiritual properties depend on the ritemaster's intent when casting the rite.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Samhain",
+        "rite_type": "Seasonal",
+        "description": "Samhain (October 31-November 1): The beginning of winter and the dark half of the year, Samhain is a time when the barrier between worlds grows thin. The sept gathers to remember those who have fallen in the past year, telling tales of their deeds and offering songs of mourning. Feasting and drinking are part of the celebration, but the mood is more somber than at other festivals. The Garou believe that the spirits of the dead sometimes return on this night to visit their living kin or to complete unfinished business. System: Those who participate in a successful Samhain rite may communicate with ancestor-spirits more easily. The difficulty of all rolls involving ancestor-spirits is reduced by two for the duration of the festival.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Spirit Binding",
+        "rite_type": "Mystic",
+        "description": "This more powerful version of the level one Rite of Binding allows a Garou to bind more powerful spirits or bind spirits for longer periods. The ritemaster must have something that belongs to or represents the spirit being bound. System: The ritemaster spends two Gnosis points and rolls Willpower (difficulty of the spirit's Gnosis). Each success allows the spirit to be bound for one month. The spirit may resist with its own Willpower roll.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Sacred Hunt",
+        "rite_type": "Death",
+        "description": "This rite declares an individual or group as prey for a sacred hunt. Once declared prey through this rite, the target may be killed without breaking the Litany's law against murder. The ritemaster must present evidence of the target's crimes to the sept's elders and receive their approval. System: The ritemaster spends two Gnosis points and rolls Charisma + Rituals (difficulty 7). Success marks the target as legitimate prey. The rite remains in effect until the prey is killed or the hunt is formally called off by the sept's leader.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Spirit Dance",
+        "rite_type": "Mystic",
+        "description": "This elaborate ritual involves hours of dancing and chanting to call forth and communicate with spirits. The ritemaster leads the participants in complex dance patterns that mirror the spiritual essence of the type of spirit being called. System: The ritemaster spends two Gnosis points and rolls Charisma + Performance (difficulty 7). Success allows communication with spirits of the appropriate type for one scene per success. More successes allow for clearer communication and better chances of gaining the spirits' favor.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Spirit Witness",
+        "rite_type": "Mystic",
+        "description": "This rite calls upon spirits to witness an important event or agreement. The spirits serve as supernatural notaries, ensuring that all parties honor their commitments. The ritemaster must make appropriate offerings to the type of spirits being called. System: The ritemaster spends two Gnosis points and rolls Charisma + Rituals (difficulty 7). Success summons spirit witnesses who will remember the event or agreement perfectly. Breaking a spirit-witnessed oath often brings supernatural consequences.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Feast of Fire",
+        "rite_type": "Seasonal",
+        "description": "This rite is performed at the height of summer, when the sun's power is strongest. The sept gathers around a great bonfire, sharing food and drink while telling tales of great deeds. The fire is fed with sacred woods and herbs throughout the night. System: The ritemaster rolls Charisma + Rituals (difficulty 7). Success grants all participants temporary immunity to fire damage for one day per success, and adds one die to all fire-based attacks.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Forge the Pack",
+        "rite_type": "Mystic",
+        "description": "This rite formally binds a group of Garou into a pack, creating spiritual bonds between them and establishing their connection to a totem spirit. The ritemaster leads the pack in ritual hunts, shared meals, and spiritual ceremonies over several days. System: The ritemaster spends two Gnosis points and rolls Charisma + Rituals (difficulty 8). Success creates the pack bond and establishes their connection to their chosen totem. The number of successes determines how strong the initial bond is.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Greet the Moon",
+        "rite_type": "Seasonal",
+        "description": "This rite is performed at moonrise during each phase of the moon. The sept gathers to honor Luna and receive her blessing. Different aspects of the moon grant different blessings to those born under that auspice. System: The ritemaster rolls Charisma + Rituals (difficulty 6). Success grants all participants of the appropriate auspice an additional die to their auspice ability for the night.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Memorial Day",
+        "rite_type": "Seasonal",
+        "description": "Though we belong to many nations, the only one that counts in our hearts (for most of us) is the nation of Gaia and the Garou. Every nation has a day to honor its fallen in war, and on that day, we honor ours. At dawn on Memorial Day (which, by the way, varies from country to country; we observe similar holidays in every land), every Glass Walker in the city gathers in the Hall of Honor. It's similar to the Grave of the Hallowed Heroes, but is kept within a caern only if that's our only caern within the city. In the Hall is a record of the name of every Glass Walker in the city that died serving Gaia or Cockroach. Sometimes it's a dedicated computer with a touch screen monitor, other times a more dignified statue or engraved marble wall serves. During the rite, we add any new names to the record and then call a spirit of the city into the Hall. In exchange for a favor, the spirit agrees to keep the Hall, and by symbolic extension the souls of the fallen, safe for another year. May they rest in peace. System: The ritemaster rolls Wits + Rituals (difficulty 6). If the roll is successful the spirit agrees to guard the Memorial Hall for a year. If the roll is botched, the spirit attacks all those gathered.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Murmur Rite",
+        "rite_type": "Caern",
+        "description": "Developed by the Lords of the Summit, this rite is one of the many ways Shadow Lords keep their activities a secret. A Lord needs to know the Murmur Rite if he plans on leading a Shadow Moot, since it is used to open the moot and keep the discussions therein private. Though normally used to mask the conversations of many werewolves, this rite can be performed with as few as two Garou. System: Each of the Garou taking part in the rite contributes one Gnosis at the ritemaster's prompting. Once the Gnosis is collected, the conversations of all of the rite's participants are masked for the duration of the scene. Any Gifts, technology, or supernatural abilities that allow an individual to eavesdrop on private discussions automatically fail. If the eavesdropper botches whatever roll she was using to try to listen in, she actually gains some piece of misinformation that serves to mask further the activities of the rite's participants.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of Ostracism",
+        "rite_type": "Punishment",
+        "description": "This rite formally expels a Garou from their sept, declaring them outcast. The ritemaster leads the sept in a ceremony where the outcast's name is struck from sept records, and all members turn their backs on the condemned. System: The ritemaster rolls Charisma + Rituals (difficulty 7). Success means the outcast is formally expelled and loses all sept privileges. The outcast suffers a +2 difficulty penalty on all social interactions with members of their former sept.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rite of the Sacred Hunt",
+        "rite_type": "Death",
+        "description": "This rite formally declares a target as prey for a sacred hunt. Once declared prey through this rite, the target may be killed without breaking the Litany's law against murder. The ritemaster must present evidence of the target's crimes to the sept's elders and receive their approval before performing the rite. The rite involves ritual marking of the hunters with war paint and the blessing of their weapons. System: The ritemaster spends two Gnosis points and rolls Charisma + Rituals (difficulty 7). Success marks the target as legitimate prey and grants all participants in the hunt two extra dice for tracking and pursuit rolls. The rite remains in effect until the prey is killed or the hunt is formally called off by the sept's leader.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Promethean Daze",
+        "rite_type": "Seasonal",
+        "description": "At first glance, this rite appears almost generic. A week of feasting and cleansing isn't unique to the Glass Walkers. But look at when we hold it, and the reason behind the rite becomes clearer. The Promethean Daze happens right at the end of the year, along with human celebrations like Christmas, Kwanzaa, Chanukah, and, of course, the New Year. We're often called the \"tribe of Man\" and this rite certainly gives some weight to the moniker. This rite breaks down into two parts. The first part is marked by gluttony, and as a result tends to take up most of the week. We eat, drink, fight and make love (to Kinfolk, in theory) to our hearts' content. During that time, we supposedly work to throw off our limitations. It all happens through conversations, old grudges break down over wine and dinnertime conversations find an informality that lets us find simpler ways of operating. But as our Elizabeth proved, it can also happen in grander ways. Thanks to GWnet and video conferencing, this rite is becoming more global every year, and thus it can make a great platform for political moves. Elizabeth sighs: If there had been a better way to get the word out, I swear I'd have used it. I just hope I haven't doomed us to endless shock announcements every Daze. The second part begins when everyone is too full to eat anymore and too hung over to party. In this, we try to foresee the oncoming year. It happens in various ways. Theurges call on spirits for guidance, while others try to use clever deduction to make logical predictions. We all try to see concrete ways in which the tribe could further its spiritual, Garou, and human ties. In so doing, we renew ourselves. This aspect of the rite refers to the second portion of the week. (All that is necessary to ensure the success of the first portion is good food, wine and company.) The ritemaster supervises the assembled Garou in their predictions and closes the week with a toast to the sept's good fortune for the oncoming year. Afterwards, everyone gathered bows their head in a moment's silence. Sometimes this aspect of the rite is performed after other seasonal rites, but delaying the rite is rare. System: The ritemaster rolls Wits + Rituals, difficulty 7. If a simple success is achieved, all participating Garou recover all Willpower to face the new year. If three successes are gained, one Garou also has a vision of a minor event in the oncoming year. If five are gained, several Garou might have minor visions, or one may have a vision of a very major event indeed. This is left to Storyteller discretion.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    }
+]
+

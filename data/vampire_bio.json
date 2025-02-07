@@ -40,22 +40,6 @@
         "values": []
     },
         {
-        "name": "Demeanor",
-        "description": "This is the personality your character presents to the world. Often different from Nature.",
-        "game_line": "Vampire: The Masquerade",
-        "category": "identity",
-        "stat_type": "personal",
-        "values": []
-    },
-        {
-        "name": "Concept",
-        "description": "Your 'character's' concept is a brief 'sketch' of who they are.",
-        "game_line": "Vampire: The Masquerade",
-        "category": "identity",
-        "stat_type": "personal",
-        "values": []
-    },
-        {
         "name": "Clan",
         "description": "The vampiric 'family' into which the character was Embraced.",
         "game_line": "Vampire: The Masquerade",
@@ -93,5 +77,13 @@
                    "Entelechy", "Sharia El-Sama", "Asakku", "Death and the Soul", "Honorable Accord", "Feral Heart", 
                    "Orion", "Power and the Inner Voice", "Lilith", "Caine", "Cathari", "Redemption", "Bones", "Typhon", 
                    "Paradox", "Blood", "Hive", "Humanity"]
+        },
+    {
+        "name": "Occupation",
+        "description": "A mortal character's occupation.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "identity",
+        "stat_type": "personal",
+        "values": []
     }
 ]
