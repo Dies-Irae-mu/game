@@ -3,7 +3,7 @@ Utility functions for handling virtue calculations across different character ty
 """
 from typing import Dict, Tuple
 
-# Mapping of paths/roads to their associated virtues
+# Mapping of paths to their associated virtues
 PATH_VIRTUES = {
     # Mortal/Mortal+ and default vampire path
     'Humanity': ('Conscience', 'Self-Control'),
@@ -76,16 +76,16 @@ def calculate_willpower(character):
     except (AttributeError, KeyError):
         return 1
 
-def calculate_road(character):
+def calculate_path(character):
     """
-    Calculate road/path rating based on virtues.
+    Calculate path rating based on virtues.
     
     This is used by both Mortals/Mortal+ and Vampires:
     - Mortals/Mortal+ always use Humanity (Conscience + Self-Control)
     - Vampires use either Humanity or another path with its associated virtues
     """
     # Get the character's splat
-    splat = character.get_stat('identity', 'personal', 'Splat')
+    splat = character.get_stat('other', 'splat', 'Splat', temp=False)
     virtues = character.db.stats.get('virtues', {}).get('moral', {})
 
     # For Mortals and Mortal+, always use Humanity virtues
@@ -93,8 +93,8 @@ def calculate_road(character):
         virtue1, virtue2 = PATH_VIRTUES['Humanity']
     else:
         # For Vampires, check their path
-        enlightenment = character.get_stat('identity', 'personal', 'Enlightenment', temp=False)
-        if enlightenment not in PATH_VIRTUES:
+        enlightenment = character.get_stat('identity', 'personal', 'Path of Enlightenment', temp=False)
+        if not enlightenment or enlightenment not in PATH_VIRTUES:
             # Default to Humanity if path not recognized
             virtue1, virtue2 = PATH_VIRTUES['Humanity']
         else:

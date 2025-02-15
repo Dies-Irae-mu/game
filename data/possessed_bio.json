@@ -17,23 +17,12 @@
     "values": []
 },
 {
-    "name": "Bane Type",
-    "description": "The type of Bane spirit the Fomori is possessed by.",
+    "name": "Spirit Type",
+    "description": "The type of spirit the character is possessed by.",
     "game_line": "Werewolf: The Apocalypse",
     "category": "identity",
     "stat_type": "lineage",
     "splat": "Possessed",
-    "possessed_type": "Fomori",
-    "values": []
-},
-{
-    "name": "Gaian Spirit",
-    "description": "The name of the spirit the Kami is possessed by.",
-    "game_line": "Werewolf: The Apocalypse",
-    "category": "identity",
-    "stat_type": "lineage",
-    "splat": "Possessed",
-    "possessed_type": "Kami",
     "values": []
 },
 {

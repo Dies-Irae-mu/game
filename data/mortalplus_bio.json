@@ -1,6 +1,6 @@
 [
     {
-        "name": "Mortalplus Type",
+        "name": "Mortal+ Type",
         "description": "Sorcerer, Psychic, Faithful, Ghoul, Kinain, Kinfolk, etc.",
         "game_line": "Various",
         "category": "identity",
@@ -40,5 +40,13 @@
         "stat_type": "lineage",
         "values": [],
         "splat": "Mortal+"
+    },
+    {
+        "name": "Affinity Realm",
+        "description": "The affinity realm of a Changeling or Kinain character.",
+        "game_line": "Changeling: the Dreaming",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Nature", "Time", "Prop", "Actor", "Fae", "Scene"]
     }
 ]

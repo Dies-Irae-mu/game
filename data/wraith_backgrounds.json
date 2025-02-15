@@ -1,0 +1,65 @@
+[
+    {
+        "name": "Eidolon",
+        "description": "Eidolon is a measure of spiritual fortitude. It is an indication of special potential in a particular wraith to resist the temptations, assaults, and insults of the Shadow. While it does not necessarily suggest that a wraith is objectively good or even moral, it does reveal a wholesome knack for metaphysical resistance. Eidolon is tied to a wraith's Psyche, and some Eidolons are so strong as to manifest occasionally as a separate entity, much like the Shadow.",
+        "game_line": "Wraith: The Oblivion",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Wraith"
+    },
+    {
+        "name": "Haunt",
+        "description": "It's not an accident that ghost stories refer to the tendency of spirits to inhabit certain buildings, crossroads, or other locations. Wraiths are often tied to a spot in the Shadowlands that corresponds to a place of special import for them in the Skinlands. In these places, the Shroud wears thin and a wraith can establish a Haunt, which serves as home, sanctuary, and refuge. When in her Haunt, a wraith can employ Arcanoi more easily and confront her Shadow in privacy and with confidence. Wraiths can Slumber in their Haunts, and many also fortify them as refuges against Maelstroms and other spectral incursions. Sometimes Haunts are shared between several wraiths, but these groups are invariably small, as the trust involved in sharing the privacy of a Haunt is seldom found in the Shadowlands.",
+        "game_line": "Wraith: The Oblivion",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Wraith"
+    },
+    {
+        "name": "Legacy",
+        "description": "It might be the desire of every living person to be remembered, but human memories are the very lifeblood of wraiths. Some individuals are remembered by few, some by many (this is covered by the Background Memoriam), but there are cases where a wraith's works are remembered long after her name has been forgotten. The Legacy Background covers this sort of memory, representing a wraith's creations that have lived on after her death. A Legacy can represent a variety of different things, from hard objects - buildings, statues, 1,000 planted trees - to less tangible things such as an art collection, a political theory, or a word that has become common usage.",
+        "game_line": "Wraith: The Oblivion",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Wraith"
+    },
+    {
+        "name": "Memoriam",
+        "description": "Memoriam is a measure of a wraith's ability to leave a lasting legacy. It is an indication of a wraith's ability to leave a lasting legacy. It is an indication of a wraith's ability to leave a lasting legacy. It is an indication of a wraith's ability to leave a lasting legacy.",
+        "game_line": "Wraith: The Oblivion",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Wraith"
+    },
+    {
+        "name": "Memoriam",
+        "description": "The essence of the dead is hard to define, but Pathos stems directly from emotion, and the emotion that the living feel for the dead is expressed as memory. After all, memory is the way in which the living interact with the dead. People have a tendency to remember those who are lost in strange ways, or to project thoughts and feeling onto those who are no longer there to represent themselves. Some wraiths can take comfort from the fact that they are remembered by many people (though not necessarily fondly). Others are recalled by few, one, or even none. There is an argument among the dead as to whether it is better for one person to remember you well than for an entire nation to recall your life with hate, envy, or resentment. However, Memoriam makes no judgments. Memoriam allows the wraith to access extra Pathos. By invoking the feelings the living have for her, once per session a wraith can roll her Memoriam rating (difficulty 8), with each success granting one point of Pathos. If a botch is rolled, one point of Memoriam is permanently lost, as the inevitable process of forgetfulness and myth obscures memories of the wraith. None: You lived and died alone. Few, if any, even remember your name. Alternatively, you lived so long ago that all memories of you have faded.",
+        "game_line": "Wraith: The Oblivion",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Wraith"
+    },
+    {
+        "name": "Notoriety",
+        "description": "Fame is an important issue for most of the living occupants of the western world. Those who are not actively pursuing or attempting to preserve it are constantly bombarded with images of those who are. Among the dead, mortal fame has little impact, though there are those who die with such a reputation that the Restless await them. However, it is also possible to cultivate a reputation, good or bad, beyond the grave. Renegades and other dissidents soon earn themselves reputations, and not ones to be envied. Notoriety is a measure of how well a wraith is known, how much he is talked about, and what expectations other wraiths have of him. There are some benefits to Notoriety - some wraiths will flock to attach themselves to a notorious figure, while others will flee or do whatever the wraith asks out of fear. At the same time, a wraith with a high rating in Notoriety may find that it can be a curse - other wraiths talk about him a great deal, project hopes and grievances onto him and demand favors and attention simply by virtue of his role as a public figure. Fame in life does not guarantee Notoriety after death, nor does a quiet and low profile life preclude a rise to prominence in the Shadowlands.",
+        "game_line": "Wraith: The Oblivion",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Wraith"
+    },
+    {
+        "name": "Relic",
+        "description": "Relics are things that once existed in the Skinlands, and that persisted in the Shadowlands after their destruction. The reasons for this psychic durability vary, but all invoked strong enough emotions while they existed to cross the Shroud on the strength of those memories. Some relics were important things in themselves, such as national treasures or badges of office. Others were articles that were acutely important to one person and acquired enough emotional weight from that individual to persist in the Shadowlands - wedding bands, stuffed animals and the like. A relic need not have belonged to the wraith in life or even to have had some great significance to her; property can be acquired by the Restless as well, and there is a huge market in buying, selling, and scavenging relics across the Underworld. Characters who take this Background can purchase it more than once with each purchase representing one relic of the appropriate level.",
+        "game_line": "Wraith: The Oblivion",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Wraith"
+    }
+]

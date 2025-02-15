@@ -65,7 +65,7 @@ class CmdJobs(MuxCommand):
     """
 
     key = "+jobs"
-    aliases = ["+requests", "+job", "+myjobs"]
+    aliases = ["+requests", "+request", "myjobs", "myjob", "+job", "+myjobs"]
     locks = "cmd:all()"
     help_category = "General"
     
@@ -86,7 +86,11 @@ class CmdJobs(MuxCommand):
             else:
                 self.list_jobs()
         elif self.args and not self.switches:
-            self.view_job()
+            # Check if this is a job creation request (contains =)
+            if "=" in self.args:
+                self.create_job_from_simple_syntax()
+            else:
+                self.view_job()
         elif "archive" in self.switches:
             self.view_archived_job()
         elif "create" in self.switches:
@@ -246,7 +250,9 @@ class CmdJobs(MuxCommand):
             title = title_desc.strip()
 
         # Validate category
-        valid_categories = ["REQ", "BUG", "PLOT", "BUILD", "MISC", "XP", "PRP", "SPLAT"]
+        valid_categories = ["REQ", "BUG", "PLOT", "BUILD", "MISC", "XP", 
+                            "PRP", "VAMP", "SHIFT", "MORT", "POSS", "COMP", 
+                            "LING", "MAGE"]
         if category not in valid_categories:
             self.caller.msg(f"Invalid category. Valid categories are: {', '.join(valid_categories)}")
             return
@@ -381,19 +387,23 @@ class CmdJobs(MuxCommand):
                 self.caller.msg("You don't have permission to add players to this job.")
                 return
 
-            player = self.caller.search(player_name)
+            # Use account_search for global search
+            player = search_account(player_name)
             if not player:
+                self.caller.msg(f"Could not find account '{player_name}'.")
                 return
-
-            if not hasattr(player, 'account'):
-                self.caller.msg("That is not a valid player.")
+            
+            if len(player) > 1:
+                self.caller.msg("Multiple matches found. Please be more specific.")
                 return
+                
+            player = player[0]
 
-            job.participants.add(player.account)
+            job.participants.add(player)
             job.save()
 
-            self.caller.msg(f"Player {player.name} added to job #{job_id}.")
-            self.post_to_jobs_channel(self.caller.name, job.id, f"added {player.name} to")
+            self.caller.msg(f"Player {player.username} added to job #{job_id}.")
+            self.post_to_jobs_channel(self.caller.name, job.id, f"added {player.username} to")
 
         except (ValueError, Job.DoesNotExist):
             self.caller.msg("Invalid job ID.")
@@ -413,23 +423,27 @@ class CmdJobs(MuxCommand):
                 self.caller.msg("You don't have permission to remove players from this job.")
                 return
 
-            player = self.caller.search(player_name)
+            # Use account_search for global search
+            player = search_account(player_name)
             if not player:
+                self.caller.msg(f"Could not find account '{player_name}'.")
+                return
+            
+            if len(player) > 1:
+                self.caller.msg("Multiple matches found. Please be more specific.")
+                return
+                
+            player = player[0]
+
+            if player not in job.participants.all():
+                self.caller.msg(f"{player.username} is not added to this job.")
                 return
 
-            if not hasattr(player, 'account'):
-                self.caller.msg("That is not a valid player.")
-                return
-
-            if player.account not in job.participants.all():
-                self.caller.msg(f"{player.name} is not added to this job.")
-                return
-
-            job.participants.remove(player.account)
+            job.participants.remove(player)
             job.save()
 
-            self.caller.msg(f"Player {player.name} removed from job #{job_id}.")
-            self.post_to_jobs_channel(self.caller.name, job.id, f"removed {player.name} from")
+            self.caller.msg(f"Player {player.username} removed from job #{job_id}.")
+            self.post_to_jobs_channel(self.caller.name, job.id, f"removed {player.username} from")
 
         except (ValueError, Job.DoesNotExist):
             self.caller.msg("Invalid job ID.")
@@ -449,20 +463,24 @@ class CmdJobs(MuxCommand):
                 self.caller.msg("You don't have permission to assign this job.")
                 return
 
-            staff = self.caller.search(staff_name)
+            # Use account_search instead of regular search for global search
+            staff = search_account(staff_name)
             if not staff:
+                self.caller.msg(f"Could not find account '{staff_name}'.")
                 return
-
-            if not hasattr(staff, 'account'):
-                self.caller.msg("That is not a valid staff member.")
+            
+            if len(staff) > 1:
+                self.caller.msg("Multiple matches found. Please be more specific.")
                 return
+                
+            staff = staff[0]
 
-            job.assignee = staff.account
+            job.assignee = staff
             job.status = 'claimed'
             job.save()
 
-            self.caller.msg(f"Job #{job_id} assigned to {staff.name}.")
-            self.post_to_jobs_channel(self.caller.name, job.id, f"assigned to {staff.name}")
+            self.caller.msg(f"Job #{job_id} assigned to {staff.username}.")
+            self.post_to_jobs_channel(self.caller.name, job.id, f"assigned to {staff.username}")
 
         except (ValueError, Job.DoesNotExist):
             self.caller.msg("Invalid job ID.")
@@ -721,18 +739,28 @@ class CmdJobs(MuxCommand):
             new_assignee_name = new_assignee_name.strip()
 
             job = Job.objects.get(id=job_id)
-            new_assignee = self.caller.search(new_assignee_name)
-
+            
+            # Use account_search for global search
+            new_assignee = search_account(new_assignee_name)
             if not new_assignee:
+                self.caller.msg(f"Could not find account '{new_assignee_name}'.")
                 return
+            
+            if len(new_assignee) > 1:
+                self.caller.msg("Multiple matches found. Please be more specific.")
+                return
+                
+            new_assignee = new_assignee[0]
 
-            job.assignee = new_assignee.account
+            job.assignee = new_assignee
             job.save()
-            self.caller.msg(f"Job '{job.title}' reassigned to {new_assignee.name}.")
-            if hasattr(new_assignee, 'sessions') and new_assignee.sessions.exists():
-                new_assignee.msg(f"You have been reassigned to the job '{job.title}'.")
+            self.caller.msg(f"Job '{job.title}' reassigned to {new_assignee.username}.")
+            
+            # Notify the new assignee
+            if new_assignee.is_connected:
+                new_assignee.msg(f"You have been reassigned to job '{job.title}'.")
 
-            self.post_to_jobs_channel(self.caller.name, job.id, f"reassigned to {new_assignee.name}")
+            self.post_to_jobs_channel(self.caller.name, job.id, f"reassigned to {new_assignee.username}")
 
         except (ValueError, Job.DoesNotExist):
             self.caller.msg("Invalid job ID.")
@@ -1125,6 +1153,88 @@ class CmdJobs(MuxCommand):
         except ArchivedJob.DoesNotExist:
             self.caller.msg(f"Archived job #{job_id} not found.")
 
+    def create_job_from_simple_syntax(self):
+        """Handle simplified job creation with automatic category detection."""
+        if not self.args or "=" not in self.args:
+            self.caller.msg("Usage: +jobs <title>=<description>")
+            return
+
+        title, description = self.args.split("=", 1)
+        title = title.strip()
+        description = description.strip()
+
+        if not title or not description:
+            self.caller.msg("Both title and description are required.")
+            return
+
+        # Default category
+        category = "REQ"
+
+        # For non-staff, determine category based on splat
+        if not self.caller.check_permstring("Admin"):
+            try:
+                # Get the character's stats
+                stats = self.caller.db.stats
+                if stats and 'other' in stats and 'splat' in stats['other'] and 'Splat' in stats['other']['splat']:
+                    splat = stats['other']['splat']['Splat']['perm']
+                    
+                    # Map splat to category
+                    splat_category_map = {
+                        'Mage': 'MAGE',
+                        'Vampire': 'VAMP',
+                        'Changeling': 'LING',
+                        'Companion': 'COMP',
+                        'Mortal': 'MORT',
+                        'Mortal+': 'MORT',
+                        'Possessed': 'POSS'
+                    }
+                    
+                    category = splat_category_map.get(splat, 'REQ')
+            except Exception as e:
+                self.caller.msg("Warning: Could not determine character type. Using default category REQ.")
+                category = "REQ"
+
+        try:
+            # Get or create the queue for this category
+            queue, created = Queue.objects.get_or_create(
+                name=category,
+                defaults={'automatic_assignee': None}
+            )
+
+            # Create the job
+            job = Job.objects.create(
+                title=title,
+                description=description,
+                requester=self.caller.account,
+                queue=queue,
+                status='open'
+            )
+
+            # Notify the creator
+            self.caller.msg(f"|gJob '{title}' created with ID {job.id} in category {category}.|n")
+            
+            # Post to the jobs channel for staff notification
+            self.post_to_jobs_channel(self.caller.name, job.id, f"created in {category}")
+
+            # Handle automatic assignment if configured
+            if queue.automatic_assignee:
+                job.assignee = queue.automatic_assignee
+                job.status = 'claimed'
+                job.save()
+                self.caller.msg(f"|yJob automatically assigned to {queue.automatic_assignee}.|n")
+                
+                # Notify the assignee
+                if queue.automatic_assignee != self.caller.account:
+                    self.caller.execute_cmd(
+                        f"@mail {queue.automatic_assignee.username}"
+                        f"=Job #{job.id} Auto-assigned"
+                        f"/You have been automatically assigned to Job #{job.id}: {title}"
+                    )
+
+        except Exception as e:
+            self.caller.msg(f"|rError creating job: {str(e)}|n")
+            return
+
 def create_jobs_help_entry():
     """Create or update the jobs help entry."""
     try:
@@ -1141,8 +1251,10 @@ def create_jobs_help_entry():
             help_entry.db_help_category = "General"
             help_entry.save()
 
-        # Set tags properly using the set() method
-        help_entry.db_tags.set(["jobs", "requests", "admin"], category="help")
+        # Clear existing tags first
+        help_entry.db_tags.clear()
+        # Add tags one by one
+        help_entry.db_tags.add("jobs", "requests", "admin")
         
         return help_entry
     except Exception as e:

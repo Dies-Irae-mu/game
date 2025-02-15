@@ -17,11 +17,11 @@ def format_stat(stat, value, width=25, default=None, tempvalue=None, allow_zero=
     elif stat == "Arete":
         # For Arete, don't show temporary value
         value_str = str(value)
-    elif tempvalue is not None and int(tempvalue) != int(value):  # Convert to int for comparison
+    elif tempvalue is not None and str(tempvalue) != str(value):  # Compare as strings to handle non-numeric values
         if not allow_zero and tempvalue == 0:
             tempvalue = 1
-        # Only show temporary value if it's numerically different
-        value_str = f"{value}({tempvalue})"
+        # Only show temporary value if it's different
+        value_str = f"{value}/{tempvalue}"  # Changed to use / instead of ()
     else:
         # Just show permanent value if temporary is same or not set
         value_str = str(value)
@@ -36,77 +36,112 @@ def format_stat(stat, value, width=25, default=None, tempvalue=None, allow_zero=
     # Add highlight black to dots and consistent spacing
     return f" {stat_str}|x{dots}|n {value_str}"
 
-def header(title, width=78,  color="|y", fillchar=ANSIString("|b-|n"), bcolor="|b"):
-    return ANSIString.center(ANSIString(f"{bcolor}<|n {color} {title} |n{bcolor}>|n"), width=width, fillchar=ANSIString(fillchar)) + "\n"
+def header(title, width=78, color="|y", fillchar="-", bcolor="|b"):
+    """Create a header with consistent width."""
+    # Ensure the title has proper spacing
+    title = f" {title} "
+    left_dashes = bcolor + fillchar * ((width - len(ANSIString(title).clean()) - 2) // 2) + "|n"
+    right_dashes = bcolor + fillchar * (width - len(ANSIString(title).clean()) - 2 - len(ANSIString(left_dashes).clean())) + "|n"
+    return f"{left_dashes}{color}{title}|n{right_dashes}\n"
 
-def footer(width=78, fillchar=ANSIString("|b-|n")):
-    return ANSIString(fillchar) * width + "\n"
+def footer(width=78, fillchar="-"):
+    """Create a footer with consistent width."""
+    return "|b" + fillchar * width + "|n\n"
 
-
-def divider(title, width=78, fillchar="-", color="|r", text_color="|n"):
-    """
-    Create a divider with a title.
-
-    Args:
-        title (str): The title to display in the divider.
-        width (int): The total width of the divider.
-        fillchar (str): The character to use for filling.
-        color (str): The color code for the divider line.
-        text_color (str): The color code for the title text.
-
-    Returns:
-        ANSIString: The formatted divider.
-    """
+def divider(title, width=78, fillchar="-", color="|b", text_color="|y"):
+    """Create a divider with consistent width."""
     if isinstance(fillchar, ANSIString):
         fillchar = fillchar[0]
     else:
         fillchar = fillchar[0]
 
-    colored_fillchar = f"{color}{fillchar}"
-    
     if title:
         # Calculate the width of the title text without color codes
         title_width = len(ANSIString(title).clean())
         
-        # Calculate padding on each side of the title
-        padding = (width - title_width - 2) // 2  # -2 for spaces around the title
-        
-        # Create the divider with title
-        left_part = colored_fillchar * padding
-        right_part = colored_fillchar * (width - padding - title_width - 2)
-        inner_content = f"{left_part} {text_color}{title}|n {right_part}"
+        # For column headers, center the title
+        if width <= 25:  # Column headers
+            padding = (width - title_width) // 2
+            title_str = title.center(width)
+            return f"{color}{title_str}|n"
+        else:  # Full-width dividers
+            # Calculate padding on each side of the title
+            padding = (width - title_width - 2) // 2  # -2 for spaces around the title
+            
+            # Create the divider with title
+            left_part = color + fillchar * padding + "|n"
+            right_part = color + fillchar * (width - padding - title_width - 2) + "|n"
+            return f"{left_part} {text_color}{title}|n {right_part}"
     else:
         # If no title, just create a line of fillchars
-        inner_content = colored_fillchar * width
-
-    # Remove any trailing whitespace and add the color terminator
-    return ANSIString(f"{inner_content.rstrip()}|n")
+        return color + fillchar * width + "|n"
 
 def format_abilities(character):
     """Format abilities section of character sheet."""
-    abilities = defaultdict(dict)
-    
-    # Get all standard abilities
-    for stat in Stat.objects.filter(stat_type__in=['talent', 'skill', 'knowledge']):
-        value = character.get_stat('abilities', stat.stat_type, stat.name)
-        if value is not None:
-            abilities[stat.category][stat.name] = value
+    # Base abilities for all characters
+    base_abilities = {
+        'Talents': ['Alertness', 'Athletics', 'Awareness', 'Brawl', 'Empathy', 
+                   'Expression', 'Intimidation', 'Leadership', 'Streetwise', 'Subterfuge'],
+        'Skills': ['Animal Ken', 'Crafts', 'Drive', 'Etiquette', 'Firearms', 
+                  'Larceny', 'Melee', 'Performance', 'Stealth', 'Survival', 'Technology'],
+        'Knowledges': ['Academics', 'Computer', 'Cosmology', 'Enigmas', 'Finance', 'Investigation', 
+                      'Law', 'Medicine', 'Occult', 'Politics', 'Science']
+    }
 
-    # Get splat-specific abilities
-    for stat in Stat.objects.filter(stat_type='ability'):
-        if character.can_have_ability(stat.name):
-            value = character.get_stat('abilities', 'ability', stat.name)
-            if value is not None:
-                # Add to appropriate category based on the ability's category
-                abilities[stat.category][stat.name] = value
-    
-    # Format output
-    output = []
+    # Get character's splat and type
+    splat = character.get_stat('other', 'splat', 'Splat', temp=False)
+    char_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+
+    # Add splat-specific abilities
+    if splat == 'Shifter':
+        base_abilities['Talents'].append('Primal-Urge')
+        if char_type in ['Corax', 'Camazotz', 'Mokole']:
+            base_abilities['Talents'].append('Flight')
+        base_abilities['Knowledges'].append('Rituals')
+    elif splat == 'Vampire' and char_type == 'Gargoyle':
+        base_abilities['Talents'].append('Flight')
+    elif splat == 'Changeling':
+        base_abilities['Talents'].append('Kenning')
+        base_abilities['Knowledges'].append('Gremayre')
+    elif splat == 'Companion':
+        base_abilities['Talents'].append('Flight')
+    # Format each category
+    formatted_abilities = []
     for category in ['Talents', 'Skills', 'Knowledges']:
-        if abilities[category]:
-            output.append(f"{category:^20}")
-            for name, value in sorted(abilities[category].items()):
-                if value is not None:
-                    output.append(f"{name:.<20}{value}")
-            
-    return "\n".join(output)
+        abilities = base_abilities[category]
+        for ability in sorted(abilities):
+            value = character.get_stat('abilities', category.lower()[:-1], ability, temp=False) or 0
+            formatted_abilities.append(format_stat(ability, value, width=25))
+
+    return formatted_abilities
+
+def format_secondary_abilities(character):
+    """Format secondary abilities section of character sheet."""
+    # Base secondary abilities
+    base_secondary = {
+        'Talents': ['Artistry', 'Carousing', 'Diplomacy', 'Intrigue', 'Lucid Dreaming', 'Mimicry', 
+                   'Scrounging', 'Seduction', 'Style'],
+        'Skills': ['Archery', 'Fencing', 'Fortune-Telling', 'Gambling', 'Jury-Rigging', 
+                  'Pilot', 'Torture'],
+        'Knowledges': ['Area Knowledge', 'Cultural Savvy', 'Demolitions', 'Herbalism', 
+                      'Media', 'Power-Brokering', 'Vice']
+    }
+
+    # Get character's splat
+    splat = character.get_stat('other', 'splat', 'Splat', temp=False)
+
+    # Add splat-specific secondary abilities
+    if splat == 'Mage':
+        base_secondary['Talents'].extend(['Blatancy', 'Flying', 'High Ritual'])
+        base_secondary['Skills'].extend(['Biotech', 'Do', 'Energy Weapons', 'Helmsman', 'Microgravity Ops'])
+        base_secondary['Knowledges'].extend(['Cybernetics', 'Hypertech', 'Paraphysics', 'Xenobiology'])
+
+    # Format each category
+    formatted_abilities = []
+    for category in ['Talents', 'Skills', 'Knowledges']:
+        abilities = base_secondary[category]
+        for ability in sorted(abilities):
+            value = character.get_stat('abilities', f'secondary_{category.lower()[:-1]}', ability, temp=False) or 0
+            formatted_abilities.append(format_stat(ability, value, width=25))
+
+    return formatted_abilities

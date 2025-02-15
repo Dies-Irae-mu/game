@@ -44,7 +44,7 @@
 
 	{
 	  "name": "Bestial Mutation",
-	  "description": "The fomor can shapeshift into the form of a hideous beast. Each fomor's bestial shape is different, but none are pleasant to see (or smell or hear, for that matter). No one would ever mistake one for a natural creature — these are the things nightmares are made of. Distinctive freaks can be identified through their odious aromas, unnatural hues, horrific hides or scales, or even sanity-shattering emanations from various orifices. (In other words, let your imagination mutate and go wild.)",
+	  "description": "The fomor can shapeshift into the form of a hideous beast. Each fomor's bestial shape is different, but none are pleasant to see (or smell or hear, for that matter). No one would ever mistake one for a natural creature - these are the things nightmares are made of. Distinctive freaks can be identified through their odious aromas, unnatural hues, horrific hides or scales, or even sanity-shattering emanations from various orifices. (In other words, let your imagination mutate and go wild.)",
 	  "system": "Shapeshifting takes the same time as it does for Garou (using Dexterity + Primal-Urge, though few fomor learn that skill.) The freak gains two additional dice for Physical Attributes, but the creature's Appearance in its Bestial Mutation drops to 0. Many of these freaks also have the Power: Claws and Fangs or the Extra Limbs power.",
 	  "game_line": "Werewolf: The Apocalypse",
 	  "category": "powers",
@@ -242,7 +242,7 @@
         "possessed_type": "General"
       },
       {
-        "name": "Wings",
+        "name": "Possessed Wings",
         "description": "The possessed has a means of flight, whether that's from retractable patagia under her arms, bloated gas bags that lift her up, proficient (yet painful) telekinesis, or some particularly unusual variety of demonic wingspan. Whatever form the wings take, the possessed can hover, glide, soar, or float.",
         "system": "The possessed can fly up to normal human jogging speed (13 yards/turn). With effort, the possessed can push her speed by adding her Dexterity score to her flight velocity for a short burst; this requires a point of Willpower (or Rage, if you've got it). Vertical movement is at less than one-quarter speed (3 yards/turn.)",
         "game_line": "Werewolf: The Apocalypse",
@@ -254,7 +254,7 @@
       {
         "name": "Beast of Burden",
         "description": "The Kami can accept the suffering, pain and injuries of another onto herself. Wounds heal, illnesses fade and diseases of the mind abate. Though the effect is normally temporary, the Kami can sacrifice her own permanent well-being to give succor in the long term.",
-        "system": "The Kami must touch the subject, skin to skin. For every point of Willpower the Kami spends, she may heal a single health level, derangement, or sickness from the target, though she also takes a level of lethal damage. As soon as the Kami's wounds heal, the illnesses, derangements and wounds return to the original bearer — though healed as if an equal amount of time has passed. Effectively, the Kami does the healing for the injured. Kami with Regeneration can stave off the automatic healing, else the wounds will return too quickly to be useful.",
+        "system": "The Kami must touch the subject, skin to skin. For every point of Willpower the Kami spends, she may heal a single health level, derangement, or sickness from the target, though she also takes a level of lethal damage. As soon as the Kami's wounds heal, the illnesses, derangements and wounds return to the original bearer - though healed as if an equal amount of time has passed. Effectively, the Kami does the healing for the injured. Kami with Regeneration can stave off the automatic healing, else the wounds will return too quickly to be useful.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "blessing",
@@ -264,7 +264,7 @@
       {
         "name": "Curse of Gaia",
         "description": "The Kami can leverage her own Geasa against a foe she believes is acting to the detriment of Gaia's will. In addition to imparting a semblance of her own obligation to Gaia, she can increase or decrease the severity of the punishment for breaking the taboo at a cost of her own spiritual strength. These punishments can manifest as bad luck, physical deformities and obvious, supernatural curses. Particularly invested Kami can even slay an offender, or turn them to brittle stone.",
-        "system": "The Kami speaks her Geas aloud so the subject can hear it, and rolls Perception + Occult with a difficulty equal to the subject's Willpower. If successful, she imparts her exact Geas on the subject for a day per success. Should he break it, she will become immediately aware, and can spend a point of Gnosis to deal a level of lethal damage to the offender. She can spend as much Gnosis as she rolled successes, minus one for every day the subject has obeyed the Geas. This manifests as the worst possible luck imaginable — twisted ankles, falling stones, cars driving too close to the road.",
+        "system": "The Kami speaks her Geas aloud so the subject can hear it, and rolls Perception + Occult with a difficulty equal to the subject's Willpower. If successful, she imparts her exact Geas on the subject for a day per success. Should he break it, she will become immediately aware, and can spend a point of Gnosis to deal a level of lethal damage to the offender. She can spend as much Gnosis as she rolled successes, minus one for every day the subject has obeyed the Geas. This manifests as the worst possible luck imaginable - twisted ankles, falling stones, cars driving too close to the road.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "blessing",
@@ -303,7 +303,7 @@
       },
       {
         "name": "Longevity",
-        "description": "This power is sometimes necessary for short-lived species to become Kami at all. In those cases, it manifests before the Kami has discovered any of her blessings — before she can really be called Kami. It allows Kami to live to great age, though it doesn't entirely halt the process. Kami aren't static creatures, even as mountains or glaciers. They age, but slower, and they never suffer the effects of infirmity.",
+        "description": "This power is sometimes necessary for short-lived species to become Kami at all. In those cases, it manifests before the Kami has discovered any of her blessings - before she can really be called Kami. It allows Kami to live to great age, though it doesn't entirely halt the process. Kami aren't static creatures, even as mountains or glaciers. They age, but slower, and they never suffer the effects of infirmity.",
         "system": "Each purchase of Longevity increases the Kami's lifespan by tenfold. It can be taken multiple times, but after five purchases the Kami's life will continue effectively without a natural end. Kami of the land are effectively immortal without purchasing this power.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -313,7 +313,7 @@
       },
       {
         "name": "Mercy",
-        "description": "Sometimes a Kami's nature is at odds with her purpose. This is never truer than with predators. It can be hard to put that nature aside, and work with creatures she's been eating all her life. With Mercy, a Kami can be less careful with her urges. It dulls her claws and blunts her teeth, giving her the freedom to let the animal out. In the case of humans and Kami that use tools, Mercy extends to them — drawing the fatality out of bullet and the sharpness from knives.",
+        "description": "Sometimes a Kami's nature is at odds with her purpose. This is never truer than with predators. It can be hard to put that nature aside, and work with creatures she's been eating all her life. With Mercy, a Kami can be less careful with her urges. It dulls her claws and blunts her teeth, giving her the freedom to let the animal out. In the case of humans and Kami that use tools, Mercy extends to them - drawing the fatality out of bullet and the sharpness from knives.",
         "system": "The Kami can activate this power as a reflexive action. Any damage a character does after the power is activated heals completely at the end of the scene. If the Kami kills her victim, they will wake from unconsciousness sometime in the next scene.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -394,7 +394,7 @@
       {
         "name": "Spirit Sense",
         "description": "Not only does this power give the Kami a Garou's ability to peek across the Gauntlet, it gives her the means to peer into the both worlds at once to recognize the spiritual nature of those around her.",
-        "system": "The Kami spends one point of Willpower and rolls Gnosis versus the local Gauntlet. If successful, she can peer into the Penumbra like any Garou. For an additional point of Willpower she can see in both words at once, and can identify Garou, Changing Breeds, and fomori by the interplay between worlds. A botch alerts local pattern-spiders — and while they may not be able to cross the Gauntlet themselves, agents of the Weaver will like be interested in their find.",
+        "system": "The Kami spends one point of Willpower and rolls Gnosis versus the local Gauntlet. If successful, she can peer into the Penumbra like any Garou. For an additional point of Willpower she can see in both words at once, and can identify Garou, Changing Breeds, and fomori by the interplay between worlds. A botch alerts local pattern-spiders - and while they may not be able to cross the Gauntlet themselves, agents of the Weaver will like be interested in their find.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "blessing",
@@ -474,7 +474,7 @@
       {
         "name": "Cause Insanity",
         "description": "The fomor can shatter sanity and twist minds. The exact method depends on the freak's perverted proclivities. Some gibber and blather in the Wyrm's true language; others project illusions that distort and distend their bodies into blasphemous, atavistic forms. Fomori with Gnosis (from the Power: Spirit Ties) may even allow a mortal to peer through the Umbra into the depths of a Hellhole. No matter what the method, it inevitably leads to madness.",
-        "system": "The target must be within line of sight; the fomor needs to engage the target, either through conversation or combat. Spend one Willpower point and roll Willpower (difficulty 8). — One or two successes inflicts a minor phobia for one scene, determined by the Storyteller. — With three or four successes, the victim gains an elaborate delusion or minor phobia for one hour or one scene (whichever is longer). — With five successes, the victim has a full-blown freak-out for one day. If the victim is a player character, that victim might go on a walkabout instead for one scene while under the control of the Storyteller. When it's over, the victim has no memory of that time.",
+        "system": "The target must be within line of sight; the fomor needs to engage the target, either through conversation or combat. Spend one Willpower point and roll Willpower (difficulty 8). - One or two successes inflicts a minor phobia for one scene, determined by the Storyteller. - With three or four successes, the victim gains an elaborate delusion or minor phobia for one hour or one scene (whichever is longer). - With five successes, the victim has a full-blown freak-out for one day. If the victim is a player character, that victim might go on a walkabout instead for one scene while under the control of the Storyteller. When it's over, the victim has no memory of that time.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "blessing",
@@ -513,7 +513,7 @@
       },
       {
         "name": "Dentata Orifice",
-        "description": "The fomor has a second, concealable mouth. The most common manifestation of this power is in the palms of the hands, the belly, or in place of a bodily orifice. When retracted, the dentata orifice is not visible — a fold of flesh hides the teeth, although the mound of skin that hides it usually looks disturbingly unhealthy.",
+        "description": "The fomor has a second, concealable mouth. The most common manifestation of this power is in the palms of the hands, the belly, or in place of a bodily orifice. When retracted, the dentata orifice is not visible - a fold of flesh hides the teeth, although the mound of skin that hides it usually looks disturbingly unhealthy.",
         "system": "When the fomor succeeds with a Grapple maneuver, he can immediately attempt an additional bite attack (as long as thick clothing doesn't separate his second mouth from the victim). Until the victim escapes from the grapple, the fomor can continue to make a bite attack each turn in addition to its attacks against other victims.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",

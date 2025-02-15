@@ -299,7 +299,7 @@
     {
         "name": "Lifesong",
         "description": "This power allows the Ventrue to assess any single statement made by the subject and look for the essence of that subject's being beneath the words she speaks. The Ventrue needs to speak no words himself; he simply interprets the statement offered to him.",
-        "system": "The player makes an Intelligence + Empathy roll (difficulty equal to the subject's Manipulation + Expression). With even a single success, the Ventrue determines the subject's Demeanor from the statement, finding profound meaning in the most common of utterances. This power works only upon living creatures — Kindred lack the spark of life that colors the words they speak.",
+        "system": "The player makes an Intelligence + Empathy roll (difficulty equal to the subject's Manipulation + Expression). With even a single success, the Ventrue determines the subject's Demeanor from the statement, finding profound meaning in the most common of utterances. This power works only upon living creatures - Kindred lack the spark of life that colors the words they speak.",
         "game_line": "Vampire: the Masquerade",
         "category": "powers",
         "stat_type": "combodiscipline",

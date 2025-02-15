@@ -53,7 +53,7 @@
     },
     {
         "name": "Phantasm",
-        "description": "The Garou creates an unmoving illusion that contains visual, auditory, olfactory and even tactile elements. A grain-spirit — the so-called 'spirit of spirits' — teaches this gift.",
+        "description": "The Garou creates an unmoving illusion that contains visual, auditory, olfactory and even tactile elements. A grain-spirit - the so-called 'spirit of spirits' - teaches this gift.",
         "system": "The player spends one Gnosis for each 10-foot area to be covered by the illusion and then rolls Intelligence + Expression. Anyone who doubts the illusion must roll Perception + Alertness and exceed the Garou's successes in order to see through it.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
@@ -384,7 +384,7 @@
     {
         "name": "Signal Rider",
         "description": "From the telegraph to the cell phone, the Glass Walkers have always kept up good relations with spirits of cutting-edge communication. This Gift allows the Garou to open a moon bridge that rides the back of a telephone signal, transporting her instantly to the location of whoever is on the other end of the line. A Pattern Spider teaches this Gift.",
-        "system": "The player spends one Willpower and one Gnosis to open the moon bridge. The Garou must have a connection between a telephone at her location and one at the target destination to use this Gift, although it doesn't discriminate between landlines or cell phones — some werewolves have even reported success in riding the back of online conferencing software, although doing so successfully requires a Wits + Computers roll (difficulty 7). Signal Rider can take the character no more than (Gnosis x 5) miles (or 8 km per Gnosis dot) — if the other end of the line isn't within that range, the Gift fails.",
+        "system": "The player spends one Willpower and one Gnosis to open the moon bridge. The Garou must have a connection between a telephone at her location and one at the target destination to use this Gift, although it doesn't discriminate between landlines or cell phones - some werewolves have even reported success in riding the back of online conferencing software, although doing so successfully requires a Wits + Computers roll (difficulty 7). Signal Rider can take the character no more than (Gnosis x 5) miles (or 8 km per Gnosis dot) - if the other end of the line isn't within that range, the Gift fails.",
         "source": "20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -1008,7 +1008,7 @@
     },
     {
         "name": "Touch of Rage",
-        "description": "Using this Gift, an Ahroun can channel a portion of her Rage to another, be the beneficiary Garou, human or animal. In the former case, the effect is fairly mundane, lending an ally strength in combat; in the latter, it grants an awesome and destructive quality to beings that do not normally possess such. On a social level, this Gift can be a potent source of inspiration (and instigation) as well — while Rage is an intensely visceral and difficult-to-control quality, it also bestows the ability to feel righteous anger at corruption and injustice — a faculty many humans have lost in the quiet apathy of the World of Darkness. A fury-spirit teaches this Gift.",
+        "description": "Using this Gift, an Ahroun can channel a portion of her Rage to another, be the beneficiary Garou, human or animal. In the former case, the effect is fairly mundane, lending an ally strength in combat; in the latter, it grants an awesome and destructive quality to beings that do not normally possess such. On a social level, this Gift can be a potent source of inspiration (and instigation) as well - while Rage is an intensely visceral and difficult-to-control quality, it also bestows the ability to feel righteous anger at corruption and injustice - a faculty many humans have lost in the quiet apathy of the World of Darkness. A fury-spirit teaches this Gift.",
         "system": "The Ahroun spends one Willpower, or two if bestowing Rage on a mortal. He then expends a number of temporary Rage points, and the target gains them and may spend them normally. Once any points above the target's normal maximum Rage (zero for humans) are spent, they are gone for good barring a second use of this Gift. This Gift cannot grant Rage to mages, ghosts or other kinds of supernatural beings that do not already possess Rage. Spirits already have a Rage Trait, but can receive the temporary points to use to gain extra actions in combat as Garou do.",
         "source": "Book of Auspices",
         "game_line": "Werewolf: The Apocalypse",
@@ -1021,8 +1021,8 @@
     },
     {
         "name": "Stoking Fury's Furnace",
-        "description": "No auspice is as closely tied to their Rage as the Ahroun, who is the master of directing his fury. This Gift — taught by a wolverine-spirit — allows him to channel his Rage even more effectively.",
-        "system": "The Garou regains one Rage point in any turn that he takes damage, and he does not have to check for frenzy from that specific stimulus (other stimuli induce frenzy checks as normal). In addition, the Garou can spend one Rage point — and only one — per turn without losing any temporary Rage. However, if he spends multiple Rage in any turn, they are marked off as usual.",
+        "description": "No auspice is as closely tied to their Rage as the Ahroun, who is the master of directing his fury. This Gift - taught by a wolverine-spirit - allows him to channel his Rage even more effectively.",
+        "system": "The Garou regains one Rage point in any turn that he takes damage, and he does not have to check for frenzy from that specific stimulus (other stimuli induce frenzy checks as normal). In addition, the Garou can spend one Rage point - and only one - per turn without losing any temporary Rage. However, if he spends multiple Rage in any turn, they are marked off as usual.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -1112,7 +1112,7 @@
     },
     {
         "name": "Umbral Dodge",
-        "description": "The Ragabash finds that the best way to deal with an enemy is to send him far away — perhaps to a place where he'll learn the folly of his ways. She may tear open a hole in the Gauntlet while dodging an enemy's attack, sending them to the land of spirits. A trapdoor spider-spirit teaches this Gift.",
+        "description": "The Ragabash finds that the best way to deal with an enemy is to send him far away - perhaps to a place where he'll learn the folly of his ways. She may tear open a hole in the Gauntlet while dodging an enemy's attack, sending them to the land of spirits. A trapdoor spider-spirit teaches this Gift.",
         "system": "When attempting to dodge a close-range attack, the player spends one Gnosis point and increases the difficulty of the dodge by one, or to the rating of the local Gauntlet, whichever is higher. If the dodge succeeds in avoiding the attack completely, the attacker is dropped into the Penumbra (or into the physical world if this Gift is used in the Penumbra).",
         "source": "20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
@@ -1203,7 +1203,7 @@
     },
     {
         "name": "Shadows by the Firelight",
-        "description": "By invoking the power of shadows and dreams, the Galliard may create interactive stories in which other take part — willingly or not. Shadows dance around the participants as they act out their roles (as directed by the Galliard). This Gift is used commonly at moots, allowing many Garou to take part in the same legend recounted by the Galliard. However, this Gift can also be used on unwilling, forcing them to participate in a story of the Garou's choosing. An ancestor-spirit teaches this Gift.",
+        "description": "By invoking the power of shadows and dreams, the Galliard may create interactive stories in which other take part - willingly or not. Shadows dance around the participants as they act out their roles (as directed by the Galliard). This Gift is used commonly at moots, allowing many Garou to take part in the same legend recounted by the Galliard. However, this Gift can also be used on unwilling, forcing them to participate in a story of the Garou's choosing. An ancestor-spirit teaches this Gift.",
         "system": "When using this Gift on the unwilling, the player must spend a variable amount of Gnosis and score three successes on a Manipulation + Performance roll (difficulty of the target's Willpower). If successful, the player may tell a story and force the victim to perform exactly as the story's character does. This effect lasts one turn per Gnosis point spent.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
@@ -1268,7 +1268,7 @@
     },
     {
         "name": "Bury the Wolf",
-        "description": "The war against the Wyrm isn't always a matter of slashing claws and righteous fury — sometimes duplicity is required. A werewolf can temporarily 'restrain' her inner wolf and appear to be a normal human. An ancestor-spirit teaches this Gift.",
+        "description": "The war against the Wyrm isn't always a matter of slashing claws and righteous fury - sometimes duplicity is required. A werewolf can temporarily 'restrain' her inner wolf and appear to be a normal human. An ancestor-spirit teaches this Gift.",
         "system": "The player spends one Gnosis point and rolls Gnosis (difficulty of her own Willpower). Success causes the character to appear human to all supernatural scrutiny. The Gift also nullifies the Curse and makes spending Rage impossible, and locks her in homid form so long as its effects persist. The number of successes determines the Gift's duration; to 'free the wolf' before that time elapses requires a full turn of concentration and another point of Gnosis. Successes - Duration / 1 - One Scene 2 - 12 hours 3 - One day 4 - One week 5 - One lunar cycle.",
         "source": "20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
@@ -1399,7 +1399,7 @@
     {
         "name": "Terror of the Dire Wolf",
         "description": "Wolves haunt the ancestral nightmares of humanity, and of those monsters that were once human. The werewolf lets out a fierce snarl that triggers primordial terror in opponents and drowns them in the Delirium. A wolf-spirit teaches this Gift.",
-        "system": "The player spends a point of Rage and rolls Manipulation + Primal-Urge (difficulty of the opponent's Willpower or, if he is affecting a group, the highest Willpower represented). If successful, the werewolf invokes the full effect of the Delirium on any human, formerly-human, or partly-human creature who can see her — including those normally immune to the Delirium, such as mages and vampires. Only other werewolves and Fera are immune. It may be used in any form, although Homid and Glabro raise the difficulty of the Primal-Urge roll by one.",
+        "system": "The player spends a point of Rage and rolls Manipulation + Primal-Urge (difficulty of the opponent's Willpower or, if he is affecting a group, the highest Willpower represented). If successful, the werewolf invokes the full effect of the Delirium on any human, formerly-human, or partly-human creature who can see her - including those normally immune to the Delirium, such as mages and vampires. Only other werewolves and Fera are immune. It may be used in any form, although Homid and Glabro raise the difficulty of the Primal-Urge roll by one.",
         "source": "20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",

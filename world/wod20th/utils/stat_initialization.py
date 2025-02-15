@@ -2,7 +2,7 @@
 Functions for initializing basic stats in the database.
 """
 from world.wod20th.models import Stat
-from world.wod20th.sheet_defaults import ATTRIBUTES, ABILITIES, ADVANTAGES
+from world.wod20th.utils.sheet_constants import ATTRIBUTES, ABILITIES, ADVANTAGES
 from typing import List, Tuple
 from django.db.models import Q
 

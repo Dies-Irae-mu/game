@@ -14,7 +14,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "identity",
         "stat_type": "lineage",
-        "values": ["Homid", "Metis", "Animal-Born", "Rodens", "Latrani", "Balaram", "Suchid", "Ahi", "Koji", "Roko", "Shinju", "Arachnid"],
+        "values": ["Homid", "Metis", "Animal-Born", "Rodens", "Latrani", "Balaram", "Vasuki", "Suchid", "Ahi", "Kojin", "Roko", "Shinju", "Arachnid", "Ursine", "Feline", "Corvid", "Squamus", "Chiropter"],
         "splat": "Shifter"
     },
     {
@@ -56,6 +56,38 @@
         "category": "identity",
         "stat_type": "lineage",
         "values": []
+    },
+    {
+        "name": "Patron Totem",
+        "description": "The Totem of a particular Shifter character.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": []
+    },
+    {
+        "name": "Jamak Spirit",
+        "description": "The Jamak Spirit of a Bastet character.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": []
+    },
+    {
+        "name": "Pack",
+        "description": "A Shifter's pack, which is a group of characters that share a totem.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": []
+    },
+    {
+        "name": "Pryio",
+        "description": "A Pryio is a subtle indicator of a Bastet's true personality; it determines how the cat approaches life and handles the challenges thrown their way.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Night", "Daylight", "Twilight"]
     },
     {
         "name": "Type",

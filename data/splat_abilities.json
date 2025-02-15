@@ -75,6 +75,14 @@
                 "stat_type": "secondary_talent",
                 "values": [1, 2, 3, 4, 5],
                 "splat": "Mage"
+            },
+            "Flying": {
+                "name": "Flying",
+                "category": "secondary_abilities",
+                "stat_type": "secondary_talent",
+                "values": [0, 1, 2, 3, 4, 5],
+                "description": "The ability to fly and maneuver in the air, as a Mage.",
+                "splat": "Mage"
             }
         },
         "secondary_skills": {
@@ -83,6 +91,15 @@
                 "description": "Training in zero-gravity environments.",
                 "game_line": "Mage",
                 "category": "secondary_abilities",
+                "stat_type": "secondary_skill",
+                "values": [1, 2, 3, 4, 5],
+                "splat": "Mage"
+            },
+            "Do": {
+                "name": "Do",
+                "description": "Do is the quintessential martial art. It is the original martial art created by the Akashic Brotherhood, and is the basis for all other martial arts. Do is the art of movement, and is the basis for all other martial arts.",
+                "game_line": "Mage: The Ascension",
+                "category": "abilities",
                 "stat_type": "secondary_skill",
                 "values": [1, 2, 3, 4, 5],
                 "splat": "Mage"

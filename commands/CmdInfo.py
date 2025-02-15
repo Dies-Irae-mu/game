@@ -50,20 +50,20 @@ class CmdInfo(MuxCommand):
         'rite', 'sphere', 'rote', 'art', 'splat', 'special_advantage',
         'realm', 'path', 'sorcery', 'faith', 'numina', 'enlightenment',
         'power', 'merit', 'flaw', 'trait', 'hedge_ritual', 'ritual',
-        'blessing', 'charm', 'sliver', 'thaum_ritual'
+        'blessing', 'charm', 'sliver', 'thaum_ritual', 'necromancy', 'necromancy_ritual',
+        'arcanos',
         # Ability subtypes
         'skill', 'knowledge', 'talent',
         'secondary_knowledge', 'secondary_talent', 'secondary_skill',
-        # Attribute types
-        'physical', 'social', 'mental',
-        # Other categories
-        'personal', 'supernatural', 'moral'
         # Game-specific
         'renown', 'arete', 'banality', 'glamour', 'essence',
         'quintessence', 'paradox',
         # Identity/Social
-        'kith', 'seeming', 'house', 'seelie-legacy', 'unseelie-legacy',
-        'court', 'mortalplus_type', 'varna', 'archetype'
+        'kith', 'seeming', 'house', 'seelie-legacy', 'unseelie-legacy', 'tribe', 'breed', 'nephandi_faction',
+        'court', 'mortalplus_type', 'varna', 'archetype', 'nunnehi_seeming', 'nunnehi_camp', 'nunnehi_family',
+        'nunnehi_totem', 'clan', 'path_of_enlightenment', 'kitsune_path', 'crown', 'plague', 'ananasi_cabal', 'ananasi_faction',
+        'possessed_type', 'companion_type', 'tradition', 'traditions_subfaction', 'methodology', 'phyla', 'convention',
+        'affiliation', 'society', 'fellowship', 'kitsune_faction', 'auspice', 'aspect'
     ]
     
     # Group similar stat types together based on CATEGORIES
@@ -71,15 +71,19 @@ class CmdInfo(MuxCommand):
         'Attributes': ['attribute'],
         'Abilities': ['skill', 'knowledge', 'talent', 'abilities'],
         'Secondary Abilities': ['secondary_knowledge', 'secondary_talent', 'secondary_skill', 'secondary_abilities'],
-        'Advantages': ['background', 'merit', 'flaw'],
+        'Advantages': ['renown'],
         'Powers': [
             'discipline', 'combodiscipline', 'thaumaturgy', 'gift', 'rite',
-            'sphere', 'rote', 'art', 'edge', 'bygone_power', 'realm',
-            'path', 'sorcery', 'faith', 'numina', 'power', 'hedge_ritual',
-            'blessing', 'charm', 'sliver', 'thaum_ritual'
+            'sphere', 'rote', 'art', 'realm', 'sorcery', 'faith', 'numina', 'hedge_ritual',
+            'blessing', 'charm', 'sliver', 'thaum_ritual', 'necromancy', 'necromancy_ritual',
+            'special_advantage', 'arcanos'
         ],
-        'Supernatural': ['lineage', 'enlightenment', 'supernatural'],
-        'Identity': ['kith', 'seeming', 'house', 'seelie-legacy', 'unseelie-legacy', 'court', 'mortalplus_type', 'varna'],
+        'Identity': ['Nunnehi Seeming', 'Nunnehi Camp', 'Nunnehi Family', 'Fellowship',
+                        'Nunnehi Totem', 'Clan', 'Path of Enlightenment', 'Kith', 'Seeming', 'House', 
+                         'Seelie Legacy', 'Unseelie Legacy', 'Tribe', 'Breed', 'Auspice', 
+                         'Tradition', 'Convention', 'Affiliation', 'Phyla', 'Traditions Subfaction', 'Methodology',
+                         'Society', 'Ananasi Cabal', 'Ananasi Faction', 'Plague', 'Crown', 'Kitsune Faction',
+                         'Stream', 'Kitsune Path', 'Varna', 'Possessed Type', 'Companion Type'],
         'Archetypes': ['archetype']
     }
     
@@ -145,6 +149,10 @@ class CmdInfo(MuxCommand):
             'powers': (['power', 'bygone_power'], 'Powers'),
             'art': (['art'], 'Powers'),
             'arts': (['art'], 'Powers'),
+            'realm': (['realm'], 'Powers'),
+            'realms': (['realm'], 'Powers'),
+            'arcanos': (['arcanos'], 'Powers'),
+            'arcanoi': (['arcanos'], 'Powers'),
             'sphere': (['sphere'], 'Powers'),
             'spheres': (['sphere'], 'Powers'),
             'path': (['path'], 'Powers'),
@@ -239,14 +247,12 @@ class CmdInfo(MuxCommand):
         string = self.format_header(f"+Info {display_name}", width=78)
         
         # Build the base query
-        if display_name == "Merits & Flaws":
+        if display_name == "Merits":
             # Split merits and flaws based on the input stat_types
             if 'merit' in stat_types and 'flaw' not in stat_types:
                 query = Q(stat_type='merit') | Q(category='merits')
-            elif 'flaw' in stat_types and 'merit' not in stat_types:
-                query = Q(stat_type='flaw') | Q(category='flaws')
-            else:
-                query = Q(stat_type__in=['merit', 'flaw']) | Q(category__in=['merits', 'flaws'])
+        elif display_name == "Flaws":
+            query = Q(stat_type='flaw') | Q(category='flaws')
         else:
             query = Q(stat_type__in=stat_types) | Q(category__in=stat_types)
         
@@ -265,12 +271,17 @@ class CmdInfo(MuxCommand):
                 # Show power subcategories even if no results
                 string += "Available Power Types:\n\n"
                 power_categories = {
-                    'Vampire Powers': ['discipline', 'combodiscipline', 'thaumaturgy'],
+                    'Vampire Powers': ['discipline', 'combodiscipline', 'thaumaturgy', 'necromancy', 'thaum_ritual', 'necromancy_ritual'],
                     'Werewolf Powers': ['gift', 'rite'],
-                    'Mage Powers': ['sphere', 'rote'],
+                    'Mage Powers': ['sphere'],
                     'Changeling Powers': ['art', 'realm'],
-                    'Sorcerer Powers': ['hedge_ritual', 'path', 'sorcery'],
-                    'Other Powers': ['faith', 'numina', 'power', 'blessing', 'charm', 'special_advantage', 'sliver']
+                    'Inanimae Powers': ['sliver'],
+                    'Sorcerer Powers': ['hedge_ritual', 'sorcery'],
+                    'Psychic Powers': ['numina'],
+                    'True Faith Powers': ['faith'],
+                    'Possessed Powers': ['blessing', 'charm'],
+                    'Companion Powers': ['special_advantage'],
+                    'Other Powers': ['arcanos']
                 }
                 
                 table = EvTable(border="none")

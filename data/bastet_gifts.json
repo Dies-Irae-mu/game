@@ -86,7 +86,7 @@
     {
         "name": "Perfect Passage",
         "description": "The Bastet may roam anywhere on the face of Gaia or beyond, passing through any material object she wishes without leaving a trace.",
-        "system": "The player spends one Gnosis point and rolls Wits + Larceny (difficulty 6); the Bastet (along with her clothing and any held objects) may pass through whatever non-living objects (including bullets and melee weapons!) she wishes for five minutes per success. If she wishes to pick something up, it becomes solid to her — and intangible to other objects — the second that she picks it up. She's still visible, and is vulnerable to unarmed attacks. Attackers wishing to use bullets or knives must surprise her or she takes no damage — and the Bastet's own blows ignore any non-living armor. She still breathes but cannot be affected by gasses.",
+        "system": "The player spends one Gnosis point and rolls Wits + Larceny (difficulty 6); the Bastet (along with her clothing and any held objects) may pass through whatever non-living objects (including bullets and melee weapons!) she wishes for five minutes per success. If she wishes to pick something up, it becomes solid to her - and intangible to other objects - the second that she picks it up. She's still visible, and is vulnerable to unarmed attacks. Attackers wishing to use bullets or knives must surprise her or she takes no damage - and the Bastet's own blows ignore any non-living armor. She still breathes but cannot be affected by gasses.",
         "source": "Bastet Breed Book",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -135,7 +135,7 @@
     },
     {
         "name": "Whisker Sight",
-        "description": "The Bastet gains perfect perception of everything within arm's reach of her — even if it's behind her or invisible.",
+        "description": "The Bastet gains perfect perception of everything within arm's reach of her - even if it's behind her or invisible.",
         "system": "The player rolls Perception + Primal-Urge (difficulty 7). This Gift lasts for one scene.",
         "source": "Bastet Breed Book",
         "game_line": "Werewolf: The Apocalypse",
@@ -226,7 +226,7 @@
     },
     {
         "name": "Vision Cloud",
-        "description": "By calling to the spirits of the air and the plants, the Balam can conjure the Vision Cloud, a swirling fog that wraps itself through the area, bringing mystic insights to those who seek them — and those who do not.",
+        "description": "By calling to the spirits of the air and the plants, the Balam can conjure the Vision Cloud, a swirling fog that wraps itself through the area, bringing mystic insights to those who seek them - and those who do not.",
         "system": "The player spends a Gnosis point and makes a Manipulation + Enigmas roll (difficulty 5). An area 50 feet in diameter fills up with a misty cloud that bestows visions to those that breathe it. The content of the visions are left up to the Storyteller, but should generally foreshadow possible future events or reveal lost lore.",
         "source": "Bastet Breed Book",
         "game_line": "Werewolf: The Apocalypse",
@@ -461,7 +461,7 @@
     {
         "name": "Water's Vision",
         "description": "The Qualmi can see through barriers to glimpse what lies beyond.",
-        "system": "The player rolls Perception + Primal-Urge against a difficulty of the local Gauntlet. The Qualmi can see through all solid objects for 100 feet per success — all things seem transparent and ephemeral.",
+        "system": "The player rolls Perception + Primal-Urge against a difficulty of the local Gauntlet. The Qualmi can see through all solid objects for 100 feet per success - all things seem transparent and ephemeral.",
         "source": "Bastet Breed Book",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",

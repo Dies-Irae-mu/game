@@ -289,7 +289,7 @@
     },
     {
         "name": "Cornered Rat",
-        "description": "When backed into a corner with nowhere to run, there are only two options — beg for mercy or turn and fight. Rat-spirits teach Bone Gnawers to excel at the latter.",
+        "description": "When backed into a corner with nowhere to run, there are only two options - beg for mercy or turn and fight. Rat-spirits teach Bone Gnawers to excel at the latter.",
         "system": "The player spends one Rage point and rolls Rage (difficulty 8). Each success grants the character an additional die to his Brawl pools for the rest of the combat. This Gift sends the Bone Gnawer into an automatic and unavoidable berserk frenzy; any magic that stops the frenzy also ends the Gift.",
         "source": "20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
@@ -302,7 +302,7 @@
     },
     {
         "name": "Between the Cracks",
-        "description": "Urban blight is the very underbelly of the Wyrm, and the Bone Gnawers know it better than any other tribe. The werewolf's instincts guide him to the nearest barren spot within an urban area — a place where no human has set foot in at least a week, one which is not only isolated and currently unoccupied, but also likely to remain so for the rest of the night. This may be a boarded-up, abandoned building, a vacant apartment, or even a dead subway station. Bone Gnawers find this Gift useful for securing ritual spaces, setting up ambushes while preserving the Litany, and finding a place to sleep for the night. Any urban spirit can teach this Gift.",
+        "description": "Urban blight is the very underbelly of the Wyrm, and the Bone Gnawers know it better than any other tribe. The werewolf's instincts guide him to the nearest barren spot within an urban area - a place where no human has set foot in at least a week, one which is not only isolated and currently unoccupied, but also likely to remain so for the rest of the night. This may be a boarded-up, abandoned building, a vacant apartment, or even a dead subway station. Bone Gnawers find this Gift useful for securing ritual spaces, setting up ambushes while preserving the Litany, and finding a place to sleep for the night. Any urban spirit can teach this Gift.",
         "system": "The player spends a point of Willpower and rolls Wits + Streetwise (difficulty 5). The more successes, the more secluded and difficult-to-locate the destination will be.",
         "source": "20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
@@ -489,7 +489,7 @@
     {
         "name": "Virgin Snow",
         "description": "Camp: Ghost Dance. Nunavut, to many Wendigo, remains a symbol of hope and preserved purity among Garou and Kinfolk alike. The Ghost Dance has always trusted in the power that tradition holds, and it reveres the perfect and simple ways that have been imparted from generation to generation. This Gift rewards any Garou who chooses to follow the path of the old ways rather than take a modern or Wyrmcomer shortcut.",
-        "system": "The player spends one Gnosis point, and then rolls Intelligence + Rituals, difficulty 6. If she succeeds, she may add one point to any ability roll she needs to make; she must be offered a choice between a human or Wyrmcomer way, and a Garou or Kinfolk way, both applicable to the same Ability — and consciously choose the Garou way. For example, a Wendigo who refuses penicillin, and chooses to fight an infection with a time-tested poultice of herbs and roots can add a point to her Medicine knowledge; a werewolf who leaves behind a nylon backpack, GPS, and freeze-dried food before a journey can add a point to her Survival skill. Similarly, a Garou who decides to travel on foot or by sled, instead of in a car or a snowmobile, can add a point to her Drive skill.",
+        "system": "The player spends one Gnosis point, and then rolls Intelligence + Rituals, difficulty 6. If she succeeds, she may add one point to any ability roll she needs to make; she must be offered a choice between a human or Wyrmcomer way, and a Garou or Kinfolk way, both applicable to the same Ability - and consciously choose the Garou way. For example, a Wendigo who refuses penicillin, and chooses to fight an infection with a time-tested poultice of herbs and roots can add a point to her Medicine knowledge; a werewolf who leaves behind a nylon backpack, GPS, and freeze-dried food before a journey can add a point to her Survival skill. Similarly, a Garou who decides to travel on foot or by sled, instead of in a car or a snowmobile, can add a point to her Drive skill.",
         "source": "Wendigo Tribebook (Revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -585,7 +585,7 @@
     },
     {
         "name": "Sense Silver",
-        "description": "As consummate warriors, Ahroun must be prepared for every eventuality — including silver weaponry. This Gift, taught by Lunes, allows the Ahroun to detect the presence of silver.",
+        "description": "As consummate warriors, Ahroun must be prepared for every eventuality - including silver weaponry. This Gift, taught by Lunes, allows the Ahroun to detect the presence of silver.",
         "system": "The Garou rolls Perception + Primal-Urge (difficulty 7). If successful, she can detect the presence of any nearby silver. Three successes allow him to pinpoint the silver's location.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
@@ -728,8 +728,8 @@
     },
     {
         "name": "Rooftop Sprint",
-        "description": "On occasion, a city Garou may find himself in a chase across the rooftops of his town. He may be pursuing a fleeing Wyrm-spirit or Black Spiral Dancer, or he might be running for his life from similar foes. Rooftop Sprint makes such a chase much more survivable — and even winnable — for the Garou who uses it. He becomes able to leap up and down several stories, and easily spring across open alleyways. The primary restriction on the character's movement is that he cannot touch the ground, or the Gift's effect ends at once.",
-        "system": "The player must spend a point of Rage and roll Dexterity + Athletics (difficulty 6). For every success achieved, the character can jump up or down one story (3 meters) or 3 meters horizontally, without danger or difficulty. Athletics rolls can improve jumping distances, just as always; the effects of those Athletics rolls just add to the result given by this Gift. The Gift's effects last for one scene, or until the character touches the ground at street level — if the Garou touches pavement, grass, or anything else commonly considered 'ground' he is considered to have touched ground, but if he leaps from car roof to car roof he should be okay. Rooftop Sprint is taught by an alleycat-spirit.",
+        "description": "On occasion, a city Garou may find himself in a chase across the rooftops of his town. He may be pursuing a fleeing Wyrm-spirit or Black Spiral Dancer, or he might be running for his life from similar foes. Rooftop Sprint makes such a chase much more survivable - and even winnable - for the Garou who uses it. He becomes able to leap up and down several stories, and easily spring across open alleyways. The primary restriction on the character's movement is that he cannot touch the ground, or the Gift's effect ends at once.",
+        "system": "The player must spend a point of Rage and roll Dexterity + Athletics (difficulty 6). For every success achieved, the character can jump up or down one story (3 meters) or 3 meters horizontally, without danger or difficulty. Athletics rolls can improve jumping distances, just as always; the effects of those Athletics rolls just add to the result given by this Gift. The Gift's effects last for one scene, or until the character touches the ground at street level - if the Garou touches pavement, grass, or anything else commonly considered 'ground' he is considered to have touched ground, but if he leaps from car roof to car roof he should be okay. Rooftop Sprint is taught by an alleycat-spirit.",
         "source": "Book of the City",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -754,7 +754,7 @@
     },
     {
         "name": "Jam Technology",
-        "description": "The werewolf can cause technological devices to cease functioning, albeit temporarily. Even the simplest of shaped objects will refuse to perform its function. A Gremlin — a type of Wyld-spirit that enjoys breaking things — teaches this Gift.",
+        "description": "The werewolf can cause technological devices to cease functioning, albeit temporarily. Even the simplest of shaped objects will refuse to perform its function. A Gremlin - a type of Wyld-spirit that enjoys breaking things - teaches this Gift.",
         "system": "The player spends one Gnosis point and rolls Manipulation + Crafts. The werewolf may choose the level of complexity she intends to 'jam.' All technological devices (i.e., any devices shaped from fabricated materials like metal or plastic) of that complexity within 50 feet cease functioning for one turn per success. The devices remain unchanged but inert. Knives won't cut, gunpowder won't ignite, gears won't turn and so on. The difficulty of the roll is based on the following chart: Computer: 4, Phone: 6, Automobile: 8, Gun: 9, Knife: 10",
         "source": "Core book revised / 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",

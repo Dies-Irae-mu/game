@@ -2,18 +2,18 @@
 
     {
         "name": "Full Name",
-        "description": "The 'character's' name — this may be anything from the 'character's' birth name to a pseudonym.",
+        "description": "The 'character's' name - this may be anything from the 'character's' birth name to a pseudonym.",
         "game_line": "Vampire: The Masquerade",
         "category": "identity",
         "stat_type": "personal",
         "values": []
     },{
         "name": "Splat",
-        "description": "What spehre does the character belong to?",
+        "description": "What sphere does the character belong to?",
         "game_line": "Various",
         "category": "other",
         "stat_type": "splat",
-        "values": ["Vampire", "Shifter", "Mortal", "Mage", "Changeling"]
+        "values": ["Vampire", "Shifter", "Mortal", "Mage", "Changeling", "Mortal+", "Possessed", "Companion"]
     },
         {
         "name": "Date of Birth",
@@ -33,7 +33,15 @@
     },
         {
         "name": "Nature",
-        "description": "This is the 'true' personality of your character — who she is deep down.",
+        "description": "This is the 'true' personality of your character - who she is deep down.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "identity",
+        "stat_type": "personal",
+        "values": []
+    },
+    {
+        "name": "Demeanor",
+        "description": "This is the public persona of your character - who she is on the surface.",
         "game_line": "Vampire: The Masquerade",
         "category": "identity",
         "stat_type": "personal",
@@ -68,7 +76,7 @@
 
     },
     {
-        "name": "Enlightenment",
+        "name": "Path of Enlightenment",
         "description": "The character's path of enlightenment.",
         "game_line": "Vampire: The Masquerade",
         "category": "identity",
@@ -81,6 +89,14 @@
     {
         "name": "Occupation",
         "description": "A mortal character's occupation.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "identity",
+        "stat_type": "personal",
+        "values": []
+    },
+    {
+        "name": "Concept",
+        "description": "A short description of the character's concept.",
         "game_line": "Vampire: The Masquerade",
         "category": "identity",
         "stat_type": "personal",

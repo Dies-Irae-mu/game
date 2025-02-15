@@ -11,7 +11,7 @@
     },
     {
         "name": "Blessing",
-        "description": "Someone out there has left its mark on you. That mark is usually beneficial, but it comes with uncanny side effects. Maybe you always find a few extra bucks when you need them but get stuck with the check when you grab some drinks with the girls. Perhaps you’re lucky in lust but can’t find a lasting partnership. This Background gives you a minor perk at the cost of a related quirk.",
+        "description": "Someone out there has left its mark on you. That mark is usually beneficial, but it comes with uncanny side effects. Maybe you always find a few extra bucks when you need them but get stuck with the check when you grab some drinks with the girls. Perhaps you're lucky in lust but can't find a lasting partnership. This Background gives you a minor perk at the cost of a related quirk.",
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
@@ -264,5 +264,14 @@
         "values": [1, 2, 3, 4, 5],
         "splat": "Mage",
         "instanced": true
+    },
+    {
+        "name": "Years",
+        "description": "The length of time that has passed since the Companion was created, summoned, or born.",
+        "game_line": "Mage: The Ascension",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Companion"
     }
 ]

@@ -1,10 +1,11 @@
 [
     {
-        "name": "Acute Smell",
-        "description": "The symphony of odors, the spectacle of sensation, the rich epics told by every passing breeze or warm surface — humans sense these things but dimly. Virtually every land animal and every creeping thing, however, knows and understands the language of smells. Level 1 (2 points): Adds two dice to Perception rolls involving scent. Level 2 (3 points): Adds three dice, making scent the dominant sense for virtually all Perception rolls.",
+        "name": "Companion Acute Smell",
+        "description": "The symphony of odors, the spectacle of sensation, the rich epics told by every passing breeze or warm surface - humans sense these things but dimly. Virtually every land animal and every creeping thing, however, knows and understands the language of smells. Level 1 (2 points): Adds two dice to Perception rolls involving scent. Level 2 (3 points): Adds three dice, making scent the dominant sense for virtually all Perception rolls.",
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2, 3]
     },
     {
@@ -13,6 +14,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers", 
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2, 4, 6]
     },
     {
@@ -21,6 +23,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -29,6 +32,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [3]
     },
     {
@@ -37,6 +41,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [1, 2, 3, 4]
     },
     {
@@ -45,6 +50,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [1, 3]
     },
     {
@@ -53,6 +59,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [1, 2, 3]
     },
     {
@@ -61,6 +68,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [1]
     },
     {
@@ -69,6 +77,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [4, 5, 6]
     },
     {
@@ -77,6 +86,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2, 4, 6, 8, 10]
     },
     {
@@ -85,14 +95,16 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [4, 6, 8]
     },
     {
-        "name": "Claws, Fangs, or Horns",
+        "name": "Companion Natural Weaponry",
         "description": "Natural weaponry that inflicts lethal damage. 3 points: One form of attack. 5 points: Two forms. 7 points: All three forms. Double cost for aggravated damage. Attacks use specific combat maneuvers: Bite (diff 5, Str+1), Claw (diff 6, Str+2), Gore (diff 7, Str+2 or Str+4 after charge).",
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [3, 5, 7]
     },
     {
@@ -101,6 +113,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2, 4, 6]
     },
     {
@@ -109,6 +122,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2, 3]
     },
     {
@@ -117,6 +131,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [1]
     },
     {
@@ -125,6 +140,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2]
     },
     {
@@ -133,14 +149,16 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [3, 5, 7, 10, 15]
     },
     {
-        "name": "Enhancement",
+        "name": "Companion Enhancement",
         "description": "Superior physical or mental attributes beyond human norm. Each five points allows purchase of one additional Attribute dot above 5, or one extra Health Level above 8. Maximum suggested cap of 8 total dots for Attributes and three extra Health Levels.",
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [5, 10, 15]
     },
     {
@@ -149,6 +167,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2]
     },
     {
@@ -157,6 +176,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2, 4, 6, 8]
     },
     {
@@ -165,6 +185,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2, 4, 6, 8]
     },
     {
@@ -173,6 +194,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2, 3, 4, 5, 6]
     },
     {
@@ -181,6 +203,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2, 4, 6, 8, 10]
     },
     {
@@ -189,6 +212,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [8, 10]
     },
     {
@@ -197,6 +221,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [3, 6]
     },
     {
@@ -205,6 +230,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [6]
     },
     {
@@ -213,6 +239,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [3]
     },
     {
@@ -221,6 +248,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2, 4, 6, 8, 10]
     },
     {
@@ -229,14 +257,16 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [3]
     },
     {
-        "name": "Nightsight",
+        "name": "Companion Nightsight",
         "description": "Clear vision in low light conditions. In total darkness, Perception + Alertness roll (difficulty 8) reveals vague outlines. May be hindered by specific environmental conditions at Storyteller's discretion.",
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [3]
     },
     {
@@ -245,6 +275,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [4]
     },
     {
@@ -253,6 +284,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2, 3, 4, 5, 6]
     },
     {
@@ -261,6 +293,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2, 4]
     },
     {
@@ -269,6 +302,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2, 4, 6, 8]
     },
     {
@@ -277,6 +311,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [3]
     },
     {
@@ -285,6 +320,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [1]
     },
     {
@@ -293,6 +329,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2, 4, 6]
     },
     {
@@ -301,6 +338,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [3, 5, 8]
     },
     {
@@ -309,14 +347,16 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [5, 7]
     },
     {
-        "name": "Size",
+        "name": "Companion Size",
         "description": "Significantly larger or smaller than human norm. 3 points: Slightly different. 5 points: Notably different. 8 points: Considerably different. 10 points: Immensely different. Each level affects Health Levels, Attributes, and detection difficulty.",
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [3, 5, 8, 10]
     },
     {
@@ -325,6 +365,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [8, 10, 15]
     },
     {
@@ -333,6 +374,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [3]
     },
     {
@@ -341,6 +383,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [3]
     },
     {
@@ -349,6 +392,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [5]
     },
     {
@@ -357,6 +401,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [3]
     },
     {
@@ -365,6 +410,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [5]
     },
     {
@@ -373,6 +419,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [5]
     },
     {
@@ -381,6 +428,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [3, 6, 9, 12, 15]
     },
     {
@@ -389,6 +437,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [4]
     },
     {
@@ -397,6 +446,7 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2, 5]
     },
     {
@@ -405,14 +455,16 @@
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [5]
     },
     {
-        "name": "Wings",
+        "name": "Companion Wings",
         "description": "Flight capability. 3 points: Normal jogging speed (13 yards/turn). 5 points: Up to 20 yards/turn. Can involve physical wings or mystical levitation.",
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [3, 5]
     },
     {
@@ -421,6 +473,7 @@
         "game_line": "The Bygone Bestiary",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2]
     },
     {
@@ -429,6 +482,7 @@
         "game_line": "The Bygone Bestiary",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [2, 5, 10, 15]
     },
     {
@@ -437,6 +491,7 @@
         "game_line": "The Bygone Bestiary",
         "category": "powers",
         "stat_type": "special_advantage",
+        "splat": "Companion",
         "values": [5, 7]
     }
 ]

@@ -164,7 +164,7 @@
 {
     "name": "Trash is Treasure",
     "description": "The refuse of humanity provides all the canny Bone Gnawer needs. Through the use of this Gift, any broken object can be temporarily restored to full functionality and usefulness. A raccoon-spirit teaches this Gift.",
-    "system": "The player takes hold of a broken object and rolls Wits + Crafts. The object functions perfectly for one turn per success, and also supplies its own power, fuel, or ammunition — a dull knife cuts, a busted microwave runs (without being plugged into anything), an old rusty Saturday night special fires even without bullets, a junked car starts up and runs. The lifespan of the object's renewed usefulness can be extended to one full day by spending a point of Willpower, but the object requires proper power, fuel, and ammunition in such circumstances.",
+    "system": "The player takes hold of a broken object and rolls Wits + Crafts. The object functions perfectly for one turn per success, and also supplies its own power, fuel, or ammunition - a dull knife cuts, a busted microwave runs (without being plugged into anything), an old rusty Saturday night special fires even without bullets, a junked car starts up and runs. The lifespan of the object's renewed usefulness can be extended to one full day by spending a point of Willpower, but the object requires proper power, fuel, and ammunition in such circumstances.",
     "source": "20th Anniversary Edition",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
@@ -320,7 +320,7 @@
 },
 {
     "name": "Create Element",
-    "description": "The metis has the power to create a small amount of one of the four basic elements — fire, air, earth or water. In this way, she can replenish the air supply in an airtight room, make a rock to throw at someone, create a fire without matches or wood, or even fill a bathtub without any faucet or pipes. The metis cannot create specialized forms of any element. Precious metals (especially silver), lethal gases and acid are beyond his reach. This Gift creates only natural air, earth, fire and water. Elementals teach this Gift.",
+    "description": "The metis has the power to create a small amount of one of the four basic elements - fire, air, earth or water. In this way, she can replenish the air supply in an airtight room, make a rock to throw at someone, create a fire without matches or wood, or even fill a bathtub without any faucet or pipes. The metis cannot create specialized forms of any element. Precious metals (especially silver), lethal gases and acid are beyond his reach. This Gift creates only natural air, earth, fire and water. Elementals teach this Gift.",
     "system": "The werewolf's player spends one Gnosis point and rolls Gnosis. Each success allows the character to create approximately one cubic foot of the desired element, to a maximum weight of 100 lbs, anywhere he can see within 60 feet. The element remains in existence until used up (breathed in the case of air or burned up in the case of fire without any fuel to keep it going). The flames created with this Gift are genuinely hot, but they are no substitute for a flame-thrower. They inflict one health level of damage per success, to a maximum of three health levels of damage.",
     "source": "Core book revised",
     "game_line": "Werewolf: The Apocalypse",
@@ -346,7 +346,7 @@
 },
 {
     "name": "Liar's Face",
-    "description": "The Ragabash wraps herself in such a deceitful attitude that nothing she says can be trusted — not even the clear and unvarnished truth. The werewolf may make a single truthful statement, and no human who hears it will believe her. A platypus-spirit teaches this Gift.",
+    "description": "The Ragabash wraps herself in such a deceitful attitude that nothing she says can be trusted - not even the clear and unvarnished truth. The werewolf may make a single truthful statement, and no human who hears it will believe her. A platypus-spirit teaches this Gift.",
     "system": "After the character makes a truthful statement, the player spends one Willpower point and rolls Charisma + Subterfuge (difficulty 7). This Gift is automatically effective on humans, causing them to believe the Ragabash is lying. Supernatural listeners whose Willpower rating is lower than the Ragabash's successes also refuse to believe the Ragabash's words.",
     "source": "20th Anniversary Edition",
     "game_line": "Werewolf: The Apocalypse",
@@ -360,7 +360,7 @@
 {
     "name": "Infectious Laughter",
     "description": "Laughter is the tool with which Gaia's tricksters promote enlightenment and the knife that slashes through the veil of Rage. When the Ragabash laughs, those around her are compelled to follow along, forgetting their grievances. A coyote- or hyena-spirit teaches this Gift.",
-    "system": "The Ragabash must make some comment mocking the present situation in which she finds herself, then laugh at it. The player then rolls Manipulation + Expression (difficulty of the highest Rage rating of anyone listening). Success causes those who hear the Ragabash's comment and laughter lose hold of their ire, and forget what it was that had them upset in the first place — although their temper will return if they are reminded of what the New Moon has made them forget.",
+    "system": "The Ragabash must make some comment mocking the present situation in which she finds herself, then laugh at it. The player then rolls Manipulation + Expression (difficulty of the highest Rage rating of anyone listening). Success causes those who hear the Ragabash's comment and laughter lose hold of their ire, and forget what it was that had them upset in the first place - although their temper will return if they are reminded of what the New Moon has made them forget.",
     "source": "20th Anniversary Edition",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
@@ -372,7 +372,7 @@
 },
 {
     "name": "Hush",
-    "description": "Though Ragabash are teachers, one thing they can't always teach is when to keep one's mouth shut. Maybe a brash Ahroun is about to say something unfortunate to a bigger Ahroun, or perhaps a talkative cub is about to reveal too much about what she knows. In such situations, this Gift acts as a temporary stopgap; it makes the target fumble for words, lose his train of thought or become momentarily distracted. Beside keeping friends from saying stupid things, the Gift can also be used against insulting rivals or the fomori calling in reinforcements. Because of the bond between packmates, it is easier to use this Gift within the pack — after all, it's for the greater good, right? A mockingbird-spirit teaches this Gift.",
+    "description": "Though Ragabash are teachers, one thing they can't always teach is when to keep one's mouth shut. Maybe a brash Ahroun is about to say something unfortunate to a bigger Ahroun, or perhaps a talkative cub is about to reveal too much about what she knows. In such situations, this Gift acts as a temporary stopgap; it makes the target fumble for words, lose his train of thought or become momentarily distracted. Beside keeping friends from saying stupid things, the Gift can also be used against insulting rivals or the fomori calling in reinforcements. Because of the bond between packmates, it is easier to use this Gift within the pack - after all, it's for the greater good, right? A mockingbird-spirit teaches this Gift.",
     "system": "The player rolls Wits + Subterfuge (difficulty is the target's Wits + 4; for a packmate reduce the difficulty by one). Every success stalls the target for one turn, preventing the target from communicating verbally (although other forms of communications, such as sign language or writing, are still possible.",
     "source": "Book of Auspices",
     "game_line": "Werewolf: The Apocalypse",
@@ -464,7 +464,7 @@
 {
     "name": "Brother's Scent",
     "description": "Drawing upon the universal brotherhood of all creatures of Gaia, the werewolf seems to fit in wherever he goes. Those given no reason to suspect the Child's presence simply overlook her. A servant of Unicorn teaches this Gift.",
-    "system": "The player spends a Gnosis point and rolls Appearance + Empathy (difficulty 6). All individuals not specifically on guard against intruders overlook any incongruity in the Garou's appearance — for example, a naked man covered in blood and carrying a grand klaive walking through a high-society ball would draw no particular notice, nor would a wolf wandering through a residential neighborhood. The Garou isn't invisible, he simply doesn't stand out when he otherwise should, and his appearance is considered unremarkable even when he's interacted with. If the werewolf's actions alone would draw attention to himself (shouting, starting a fight, attempting to kick down a locked door) the Gift's illusion is immediately broken. Those specifically on the lookout for individuals who don't belong (security guards at a private facility, for example) don't succumb to this Gift unless their Willpower is lower than the Garou's successes on the activation roll.",
+    "system": "The player spends a Gnosis point and rolls Appearance + Empathy (difficulty 6). All individuals not specifically on guard against intruders overlook any incongruity in the Garou's appearance - for example, a naked man covered in blood and carrying a grand klaive walking through a high-society ball would draw no particular notice, nor would a wolf wandering through a residential neighborhood. The Garou isn't invisible, he simply doesn't stand out when he otherwise should, and his appearance is considered unremarkable even when he's interacted with. If the werewolf's actions alone would draw attention to himself (shouting, starting a fight, attempting to kick down a locked door) the Gift's illusion is immediately broken. Those specifically on the lookout for individuals who don't belong (security guards at a private facility, for example) don't succumb to this Gift unless their Willpower is lower than the Garou's successes on the activation roll.",
     "source": "20th Anniversary Edition",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
@@ -541,7 +541,7 @@
 },
 {
     "name": "Faerie Light",
-    "description": "The Garou can conjure a small, bobbing sphere of light. The sphere illuminates only a three-foot area, but that is usually enough to provide the necessary light — or to lead foes into ambush. A marsh-spirit or faerie teaches this Gift.",
+    "description": "The Garou can conjure a small, bobbing sphere of light. The sphere illuminates only a three-foot area, but that is usually enough to provide the necessary light - or to lead foes into ambush. A marsh-spirit or faerie teaches this Gift.",
     "system": "The player rolls Wits + Enigmas (difficulty 6). The light can appear anywhere within the Garou's line of sight. It can move, bobbing along at 10 feet per turn, if bidden to do so. The light lasts for one turn per success, but the player can spend a point of Gnosis to make it last for the entire scene.",
     "source": "Core book revised / Tribebook: Fianna (revised)",
     "game_line": "Werewolf: The Apocalypse",
@@ -855,7 +855,7 @@
     "tribe": "Silver Fang"
 },
 {
-    "name": "Empathy",
+    "name": "Empathy Gift",
     "description": "The Silver Fang can feel the emotions of others. A unicorn-spirit teaches this Gift.",
     "system": "The player rolls Perception + Empathy (difficulty 7). Success allows the character to feel the target's emotions. The number of successes determines the degree of understanding.",
     "source": "Core book revised",
@@ -883,7 +883,7 @@
 {
     "name": "Balance",
     "description": "The Stargazer can maintain her footing on the most precarious surfaces, and can even run across things that shouldn't support her weight, such as clotheslines or falling leaves. A cat-spirit teaches this Gift.",
-    "system": "The player spends one Willpower point. For the rest of the scene, the character can walk or run normally across any surface that could even marginally support her weight. She could run across a sheet of paper stretched between two buildings, or along a clothesline. The surface must be at least theoretically able to support the character — she couldn't run across water or up a wall — but this Gift allows her to ignore the laws of physics to a significant degree.",
+    "system": "The player spends one Willpower point. For the rest of the scene, the character can walk or run normally across any surface that could even marginally support her weight. She could run across a sheet of paper stretched between two buildings, or along a clothesline. The surface must be at least theoretically able to support the character - she couldn't run across water or up a wall - but this Gift allows her to ignore the laws of physics to a significant degree.",
     "source": "20th Anniversary Edition",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
@@ -987,7 +987,7 @@
 {
     "name": "Apecraft's Blessings",
     "description": "Though many of Gaia's children use tools, none have mastered them so thoroughly as humanity. The homid focuses this mastery into the tools she uses, causing their spirits to awaken and lend her aid. An ancestor-spirit or spirit of a man-made object teaches this Gift.",
-    "system": "The werewolf spends a turn concentrating, and then the player rolls Wits + Crafts (difficulty 7). Each success reduces the difficulty by one on the next roll she makes for her character to employ a tool made by human hands. The purpose is irrelevant—this Gift is equally efficacious for attempts to repair an engine, drive a car or fire a gun.",
+    "system": "The werewolf spends a turn concentrating, and then the player rolls Wits + Crafts (difficulty 7). Each success reduces the difficulty by one on the next roll she makes for her character to employ a tool made by human hands. The purpose is irrelevant-this Gift is equally efficacious for attempts to repair an engine, drive a car or fire a gun.",
     "source": "20th Anniversary Edition",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
@@ -999,7 +999,7 @@
 },
 {
     "name": "City Running",
-    "description": "Called Climb Like an Ape in previous versions. Garou with this Gift find that moving vertically is just as easy as moving horizontally; whether they are walking along a sidewalk, climbing stairs, or scaling the side of a building, their pace doesn't change in the slightest, nor do they tire out more rapidly. This Gift doesn't make it any easier or less dangerous to climb in precarious circumstance — a ten-story fall is still a ten-story fall, and a sheer surface remains sheer — but the Gift does make sure that the character can climb as quickly as he walks.",
+    "description": "Called Climb Like an Ape in previous versions. Garou with this Gift find that moving vertically is just as easy as moving horizontally; whether they are walking along a sidewalk, climbing stairs, or scaling the side of a building, their pace doesn't change in the slightest, nor do they tire out more rapidly. This Gift doesn't make it any easier or less dangerous to climb in precarious circumstance - a ten-story fall is still a ten-story fall, and a sheer surface remains sheer - but the Gift does make sure that the character can climb as quickly as he walks.",
     "system": "The player spends a point of Rage. For the next scene the Garou's movement rate is unchanged whether he is climbing or walking; he moves at Dexterity +5 meters per turn, period. This Gift does not decrease the difficulty for Athletics rolls used to climb, but it does allow the Garou to run, or make an Athletics roll to improve his speed, just as he could while moving across an empty plain. This Gift is taught by a monkey-spirit.",
     "source": "Book of the City / 20th Anniversary Edition",
     "game_line": "Werewolf: The Apocalypse",
@@ -1129,8 +1129,8 @@
 },
 {
     "name": "Airt Perception",
-    "description": "Using this Gift, a Theurge can roughly identify a spirit by its airt — the trail left in the wake of a spirit's passing. This works essentially like tracking in the corporeal world, and is no more informative — a hunter can tell deer tracks from bison tracks, but can't learn anything meaningful about an unknown creature. Also, powerful and subtle spirits are often able to disguise their airts. Any ancestor-spirit renowned as a great hunter can teach this Gift.",
-    "system": "Treat this exactly as a Garou identifying and tracking animals (by scent or by looking for tracks, at the Theurge's discretion), but apply it to spirits instead. Note that Garou may not be able to go everywhere spirits do to follow the trail — remember, spirits can fly.",
+    "description": "Using this Gift, a Theurge can roughly identify a spirit by its airt - the trail left in the wake of a spirit's passing. This works essentially like tracking in the corporeal world, and is no more informative - a hunter can tell deer tracks from bison tracks, but can't learn anything meaningful about an unknown creature. Also, powerful and subtle spirits are often able to disguise their airts. Any ancestor-spirit renowned as a great hunter can teach this Gift.",
+    "system": "Treat this exactly as a Garou identifying and tracking animals (by scent or by looking for tracks, at the Theurge's discretion), but apply it to spirits instead. Note that Garou may not be able to go everywhere spirits do to follow the trail - remember, spirits can fly.",
     "source": "Book of Auspices",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",

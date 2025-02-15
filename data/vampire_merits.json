@@ -70,7 +70,7 @@
         "stat_type": "social",
         "category": "merits",
         "values": [1],
-        "description": "You spend an unusual amount of time in Elysium. You see and are seen to such an extent that all of the movers and shakers of Elysium at least know who you are. Extended time spent in Elysium also gives you extended opportunities to interact with the Harpies and other Kindred of that stature — and they'll know your name when you approach them.",
+        "description": "You spend an unusual amount of time in Elysium. You see and are seen to such an extent that all of the movers and shakers of Elysium at least know who you are. Extended time spent in Elysium also gives you extended opportunities to interact with the Harpies and other Kindred of that stature - and they'll know your name when you approach them.",
         "source": "V20 Pg 487",
         "notes": "This Merit is generally taken by vampires that respect and attend Elysium on a regular basis."
     },
@@ -95,22 +95,11 @@
         "game_line": "Vampire: The Masquerade"
     },
     {
-        "name": "Protégé",
-        "stat_type": "social",
-        "category": "merits",
-        "values": [1],
-        "description": "Your sire watched you for some time before Embracing you, and spoke glowingly of you to acquaintances. These vampires may be inclined to look favorably on you by dint of your sire's recommendation; you are at -1 difficulty on Social rolls with all those who've heard good things about you.",
-        "source": "V20 Pg 488",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
         "name": "Boon",
         "stat_type": "social",
         "category": "merits",
         "values": [1],
-        "description": "Someone owes you a favor. The vampire in your debt might be the lowliest neonate in the city or might be the Prince herself; it all depends on how many points the Merit costs. You only have that single favor owed you (unless you take the Merit multiple times), so using it properly is of paramount importance. Depending on status and other factors, the vampire who owes you a favor may well resent his debt, and might go out of his way to 'settle' it early — even going so far as to create situations from which he must 'rescue' you and thus clear the slate.",
+        "description": "Someone owes you a favor. The vampire in your debt might be the lowliest neonate in the city or might be the Prince herself; it all depends on how many points the Merit costs. You only have that single favor owed you (unless you take the Merit multiple times), so using it properly is of paramount importance. Depending on status and other factors, the vampire who owes you a favor may well resent his debt, and might go out of his way to 'settle' it early - even going so far as to create situations from which he must 'rescue' you and thus clear the slate.",
         "source": "V20 Pg 488",
         "notes": "",
         "splat": "Vampire",
@@ -121,7 +110,7 @@
         "stat_type": "social",
         "category": "merits",
         "values": [2],
-        "description": "An acquaintance from your breathing days was Embraced at the same time you were. Fortunately, your friendship has endured even death and unlife, and you find a constant source of support and aid in your old friend. She expects the same of you, which isn't always convenient, but at least you each have someone to hang onto who remembers the good old nights — and days. The Storyteller should play the Old Pal as a very loyal Ally.",
+        "description": "An acquaintance from your breathing days was Embraced at the same time you were. Fortunately, your friendship has endured even death and unlife, and you find a constant source of support and aid in your old friend. She expects the same of you, which isn't always convenient, but at least you each have someone to hang onto who remembers the good old nights - and days. The Storyteller should play the Old Pal as a very loyal Ally.",
         "source": "V20 Pg 488",
         "notes": "",
         "splat": "Vampire",

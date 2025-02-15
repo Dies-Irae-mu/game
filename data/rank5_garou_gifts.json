@@ -108,7 +108,7 @@
     {
         "name": "Riot",
         "description": "This Gift summons a horde of malevolent spirits to provoke the inhabitants of a city into violent rioting. The Gift plays on the hatred and fear of the down-and-outs of the city: the homeless, the poor and even stray animals. The Gnawer can direct the riot to a degree, but such things tend to escalate, and the Garou has no power to stop the riot from doing so. A rat-spirit teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Wits + Subterfuge (difficulty 8). If successful, the spirits direct their hosts against a target of the Garou's choice. The different hosts, however, will not necessarily work together — they may even begin to fight each other as the mob mentality takes over. The number of successes determines the area affected. Successes - Extent / 1 - Building 2 - Block 3 - Neighborhood 4 - District (the South Side, etc. ) 5 - Entire City.",
+        "system": "The player spends one Gnosis point and rolls Wits + Subterfuge (difficulty 8). If successful, the spirits direct their hosts against a target of the Garou's choice. The different hosts, however, will not necessarily work together - they may even begin to fight each other as the mob mentality takes over. The number of successes determines the area affected. Successes - Extent / 1 - Building 2 - Block 3 - Neighborhood 4 - District (the South Side, etc. ) 5 - Entire City.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -187,7 +187,7 @@
     {
         "name": "Song of the City-Beast",
         "description": "The lupus of many tribes know the Songs of the Great Beast, which can summon semi-legendary monsters such as giant sharks, apemen and dinosaurs. While skunk-apes, Jersey Devils and mothmen are not common in cities, the knowledgeable Glass Walker can call forces of equal power with this Gift. This Gift is usually taught by a City Father or Mother, often in return for the accomplishment of a great deed.",
-        "system": "The player spends two Gnosis points and rolls Charisma + Streetwise, difficulty 8. A City-Beast is less of an actual mythological entity and more of an event — rampaging construction machinery, a collapsing building, a plague of hell-rats, even an incredibly aggressive St. James Day parade or a block party gone riot. The Beast will stay long enough to assist in immobilizing or defeating Gaia's enemies. Its nature depends on the story but it is likely to be very powerful.",
+        "system": "The player spends two Gnosis points and rolls Charisma + Streetwise, difficulty 8. A City-Beast is less of an actual mythological entity and more of an event - rampaging construction machinery, a collapsing building, a plague of hell-rats, even an incredibly aggressive St. James Day parade or a block party gone riot. The Beast will stay long enough to assist in immobilizing or defeating Gaia's enemies. Its nature depends on the story but it is likely to be very powerful.",
         "source": "Book of the City",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -200,7 +200,7 @@
     {
         "name": "Family Debt",
         "description": "Only Dons of the Central House may learn this Gift, for they are the caretakers of the tribal debt and favors pool. The Garou can call upon the past lives of other Garou to return a favor owed to the Glass Walker tribe, even if the debt was made centuries ago. Using this Gift will cause another Garou with the Past Life Background to become possessed by the ancestor whom the Glass Walker summons. The living Garou must be of the same tribe as the ancestor who is called (a Glass Walker cannot make a Bone Gnawer summon a Silver Fang ancestor). The Gift is taught by any long-lived spirit, such as a turtle or an elephant, and the Glass Walker often have such spirits witness any business transactions they make with other Garou.",
-        "system": "The Garou spends one Willpower point and rolls Gnosis against a difficulty of 10 minus the target's Past Life Background rating. If there is no Garou with Past Life present, this Gift will not work; it requires a Garou with deep connections to her ancestors to act as a conduit. If successful, the desired ancestor is summoned and possesses the target. This ancestor will then perform a duty to make up for a favor the Glass Walkers did for him in his lifetime. The Central House keeps vast records of every debt owed the tribe. It usually requires a committee vote to summon one of their debtors and thus use up the favor owed. However, Dons who learn this Gift are considered to have the power to use it whenever desired, although Dons who abuse it may wind up being voted off the board, so to speak. The player should be allowed to create the original debt condition and the debtor. The Storyteller, however, is the ultimate arbiter of this Gift. It should be used to enhance a story, never to simply power game. If the Storyteller feels the player is asking a greater favor than what was originally given to the ancestor, he is free to have the ancestor deny the call. Glass Walker characters should also realize that most Garou do not like being puppets for their Past Lives simply at the whim of some damn city Urrah. They will usually try to get revenge at some later date — to do so immediately is to insult the ancestor.",
+        "system": "The Garou spends one Willpower point and rolls Gnosis against a difficulty of 10 minus the target's Past Life Background rating. If there is no Garou with Past Life present, this Gift will not work; it requires a Garou with deep connections to her ancestors to act as a conduit. If successful, the desired ancestor is summoned and possesses the target. This ancestor will then perform a duty to make up for a favor the Glass Walkers did for him in his lifetime. The Central House keeps vast records of every debt owed the tribe. It usually requires a committee vote to summon one of their debtors and thus use up the favor owed. However, Dons who learn this Gift are considered to have the power to use it whenever desired, although Dons who abuse it may wind up being voted off the board, so to speak. The player should be allowed to create the original debt condition and the debtor. The Storyteller, however, is the ultimate arbiter of this Gift. It should be used to enhance a story, never to simply power game. If the Storyteller feels the player is asking a greater favor than what was originally given to the ancestor, he is free to have the ancestor deny the call. Glass Walker characters should also realize that most Garou do not like being puppets for their Past Lives simply at the whim of some damn city Urrah. They will usually try to get revenge at some later date - to do so immediately is to insult the ancestor.",
         "source": "Glass Walker Tribebook",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -348,7 +348,7 @@
     {
         "name": "Gate of the Moon",
         "description": "This Gift creates a specialized moon bridge that takes the Strider to her destination instantly. At least a sliver of moon must be visible at her area of departure. A Lune teaches this Gift.",
-        "system": "The player spends one Gnosis point for every 100 miles the Garou needs to travel. She then rolls Intelligence + Alertness (difficulty varies on how far the journey is and how well the Garou knows the way). Success transports the character to her destination, but she will be disoriented for one turn unless the player scored three successes. A Botch takes the character miles in the wrong direction — possibly straight up.",
+        "system": "The player spends one Gnosis point for every 100 miles the Garou needs to travel. She then rolls Intelligence + Alertness (difficulty varies on how far the journey is and how well the Garou knows the way). Success transports the character to her destination, but she will be disoriented for one turn unless the player scored three successes. A Botch takes the character miles in the wrong direction - possibly straight up.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -791,7 +791,7 @@
     },
     {
         "name": "Geas",
-        "description": "This Gift places its target under a geas, a sacred oath to obey the Philodox's bidding. The geas cannot make the targets act contrary to their basic instincts (such as self-preservation). Therefore, she could send a group on a quest, but she could not make its members attack and try to kill each other — unless they were psychotics or werewolves without pack bonds. An Incarna avatar teaches this Gift.",
+        "description": "This Gift places its target under a geas, a sacred oath to obey the Philodox's bidding. The geas cannot make the targets act contrary to their basic instincts (such as self-preservation). Therefore, she could send a group on a quest, but she could not make its members attack and try to kill each other - unless they were psychotics or werewolves without pack bonds. An Incarna avatar teaches this Gift.",
         "system": "The player spends one Gnosis point and rolls Manipulation + Leadership (difficulty of the target's Willpower). In the case of a group, the difficulty is the highest Willpower among its members. The geas' compulsion lasts until the task is completed or until the target is dropped to the Incapacitated health level in pursuit of the quest. No victim can labor under more than one geas at a time; the first one laid always takes precedence.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
@@ -908,7 +908,7 @@
         },
         {
             "name": "Spirit Vessel",
-            "description": "One of the best kept secrets of the Theurge elders is the ability to channel a spirit. For a short time, Garou and spirit become one creature with the abilities of both. Usually, the Garou remains in control, adding the spirit's Charms to her repertoire — but sometimes things go awry.",
+            "description": "One of the best kept secrets of the Theurge elders is the ability to channel a spirit. For a short time, Garou and spirit become one creature with the abilities of both. Usually, the Garou remains in control, adding the spirit's Charms to her repertoire - but sometimes things go awry.",
             "system": "The player rolls her character's Gnosis and spends a Gnosis point to activate the Gift. The Rite of Summoning chart determines the difficulty of this Gift. Every success allows the Garou to use one of the spirit's Charms for up to one scene. A botch on the roll indicates the Garou accidentally channels a Bane that goes on to turn the Theurge against her friends.",
             "source": "Player's Guide Second Edition",
             "game_line": "Werewolf: The Apocalypse",
@@ -961,7 +961,7 @@
         {
             "name": "Head Games",
             "description": "This Gift embodies the Galliard's ability to manipulate emotion in its purest form. The Galliard can change a target's emotions as she pleases, from hate to love and back again.",
-            "system": "The Garou rolls Manipulation + Empathy (difficulty of the target's Willpower). Success allows the Garou to steer the emotions of any one individual. The more successes the player rolls, the more quickly the emotions manifest and the stronger they feel. Some emotions won't last without good cause. A Galliard could make someone fall in love with him, but the love won't last. (It may well even turn into justified resentment.) If the Galliard's actions would reinforce the emotion — treating a 'new friend' well or threatening a terrified foe — there's a better chance that the emotions will become the real thing.",
+            "system": "The Garou rolls Manipulation + Empathy (difficulty of the target's Willpower). Success allows the Garou to steer the emotions of any one individual. The more successes the player rolls, the more quickly the emotions manifest and the stronger they feel. Some emotions won't last without good cause. A Galliard could make someone fall in love with him, but the love won't last. (It may well even turn into justified resentment.) If the Galliard's actions would reinforce the emotion - treating a 'new friend' well or threatening a terrified foe - there's a better chance that the emotions will become the real thing.",
             "source": "Core book revised",
             "game_line": "Werewolf: The Apocalypse",
             "category": "powers",
@@ -1052,7 +1052,7 @@
         {
             "name": "Twist of Fate",
             "description": "Some Stargazer metis have used this Gift to deliver a fatal blow to unsuspecting enemies, even knowing that the cost will be their own lives. After a Garou has been dealt her own deathblow, if she invokes this Gift, she may strike her enemy once more ere she dies. It's bittersweet but often leads to an enemy falling dead alongside the metis warrior. This Gift is taught by a Cobra-spirit.",
-            "system": "The player need only spend one Rage point to get that final shot; no wound penalties apply. The attack doesn't automatically land, although the metis may spend Willpower to add to the attack roll's successes (even though she's already spent Rage in the turn). The metis' damage pool is increased by ten dice — a metis' parting shot channels a lifetime of Rage, and is almost always lethal.",
+            "system": "The player need only spend one Rage point to get that final shot; no wound penalties apply. The attack doesn't automatically land, although the metis may spend Willpower to add to the attack roll's successes (even though she's already spent Rage in the turn). The metis' damage pool is increased by ten dice - a metis' parting shot channels a lifetime of Rage, and is almost always lethal.",
             "source": "Guardians of the Caerns",
             "game_line": "Werewolf: The Apocalypse",
             "category": "powers",

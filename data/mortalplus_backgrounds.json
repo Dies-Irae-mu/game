@@ -1,13 +1,5 @@
 [
     {
-        "name": "Guide",
-        "description": "A mythical guide, often a spirit in a material body, bonded to the sorcerer.",
-        "game_line": "Sorcerer",
-        "category": "backgrounds",
-        "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
-    },
-    {
         "name": "Spirit Ridden",
         "description": "The ability to allow spirits to work through the character.",
         "game_line": "Sorcerer",
@@ -19,6 +11,14 @@
         "name": "Techne",
         "description": "The ability to maintain a pool of mana within one's pattern.",
         "game_line": "Sorcerer",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Faerie Blood",
+        "description": "The connection of a kinain character to their Fae heritage.",
+        "game_line": "Changeling: the Dreaming",
         "category": "backgrounds",
         "stat_type": "background",
         "values": [1, 2, 3, 4, 5]

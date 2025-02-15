@@ -1,7 +1,7 @@
 [
 {
     "name": "Benevolent Patron",
-    "description": "You intrigue a changeling ranked more highly than yourself. So long as the reason for this intrigue remains — whether it be looks, a field of expertise, or the way you composed yourself in the freehold — you hold the other changeling's attention and he has a vested interest in keeping you around. This Merit should be played like a 1-dot Mentor with a specific interest. However, unlike a Mentor, Benevolent Patron does not imply a permanent relationship.",
+    "description": "You intrigue a changeling ranked more highly than yourself. So long as the reason for this intrigue remains - whether it be looks, a field of expertise, or the way you composed yourself in the freehold - you hold the other changeling's attention and he has a vested interest in keeping you around. This Merit should be played like a 1-dot Mentor with a specific interest. However, unlike a Mentor, Benevolent Patron does not imply a permanent relationship.",
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "social",
@@ -19,7 +19,7 @@
 },
 {
     "name": "Faerie Eternity",
-    "description": "After you went through your Chrysalis, you had a birthday, and then another, and then another. Strangely, however — you didn't seem to be growing or getting older. You're touched with a vestige of the immortality that was the birthright of all fae. As long as your fae seeming is active, you will age at one-tenth that of a normal human or changeling. Should your fae seeming be permanently destroyed, or should you retreat into Banality, you begin to age normally.",
+    "description": "After you went through your Chrysalis, you had a birthday, and then another, and then another. Strangely, however - you didn't seem to be growing or getting older. You're touched with a vestige of the immortality that was the birthright of all fae. As long as your fae seeming is active, you will age at one-tenth that of a normal human or changeling. Should your fae seeming be permanently destroyed, or should you retreat into Banality, you begin to age normally.",
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "supernatural",
@@ -127,7 +127,7 @@
 },
 {
     "name": "Heir to the Throne",
-    "description": "You can produce a convincing claim to ownership or title over land, people, or inventory. This rank allows you to influence your peers and lessers with ease, as when invoking your title the difficulty of Social rolls is reduced by two. Nobles likely treat you with respect and most other changelings defer to you. A contingent — possibly comprising rival heirs — will however see you as a ripe target for kidnapping or assassination.",
+    "description": "You can produce a convincing claim to ownership or title over land, people, or inventory. This rank allows you to influence your peers and lessers with ease, as when invoking your title the difficulty of Social rolls is reduced by two. Nobles likely treat you with respect and most other changelings defer to you. A contingent - possibly comprising rival heirs - will however see you as a ripe target for kidnapping or assassination.",
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "social",
@@ -172,7 +172,7 @@
 },
 {
     "name": "Art Affinity",
-    "description": "You're able to utilize one of the Arts with a greater degree of ease than other changelings. In a previous incarnation, you were extremely proficient in one of the Arts — so much so you can draw a portion of that knowledge into this lifetime. Select an Art; the difficulty to use this particular Art is always reduced by two. This Merit may only be purchased once.",
+    "description": "You're able to utilize one of the Arts with a greater degree of ease than other changelings. In a previous incarnation, you were extremely proficient in one of the Arts - so much so you can draw a portion of that knowledge into this lifetime. Select an Art; the difficulty to use this particular Art is always reduced by two. This Merit may only be purchased once.",
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "supernatural",
@@ -299,7 +299,7 @@
 },
 {
     "name": "Lucky",
-    "description": "You were born lucky — or else the Devil looks after his own. Either way, you may repeat any three failed or botched rolls per story, but you may try only once per failed roll.",
+    "description": "You were born lucky - or else the Devil looks after his own. Either way, you may repeat any three failed or botched rolls per story, but you may try only once per failed roll.",
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "supernatural",
@@ -319,7 +319,7 @@
 },
 {
     "name": "Soul of the Muse",
-    "description": "You are an inspiration to creators of all types. Whether you are artistically gifted or not, other artists find it far easier to create masterworks when you are around. If you are in the presence of any creator — whether you are acting as a model, providing counsel, or singing a song — that creator reduces the difficulty to create his work by three. This creative stimulation applies to works of wonder and destruction alike, as you inspire all.",
+    "description": "You are an inspiration to creators of all types. Whether you are artistically gifted or not, other artists find it far easier to create masterworks when you are around. If you are in the presence of any creator - whether you are acting as a model, providing counsel, or singing a song - that creator reduces the difficulty to create his work by three. This creative stimulation applies to works of wonder and destruction alike, as you inspire all.",
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "social",
@@ -343,7 +343,7 @@
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "physical",
-    "values": [4],
+    "values": [2, 4],
     "splat": "Changeling",
     "source": "Changeling: the Dreaming p.188"
 },
@@ -379,7 +379,7 @@
 },
 {
     "name": "Boon",
-    "description": "Someone is in your debt. It could be a lowly fledge or the count of a freehold; it all depends on how many points the Merit costs. You only have that single favor owed you (unless you take the Merit multiple times,) so using it properly is of paramount importance. Depending on status and other factors, the being who owes you a favor may well go out of his way to \"settle\" it early — even going so far as to create situations from which he must \"rescue\" you and thus clean the slate.",
+    "description": "Someone is in your debt. It could be a lowly fledge or the count of a freehold; it all depends on how many points the Merit costs. You only have that single favor owed you (unless you take the Merit multiple times,) so using it properly is of paramount importance. Depending on status and other factors, the being who owes you a favor may well go out of his way to \"settle\" it early - even going so far as to create situations from which he must \"rescue\" you and thus clean the slate.",
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "social",

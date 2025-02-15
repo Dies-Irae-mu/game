@@ -2,7 +2,8 @@
 Utility functions for handling Shifter-specific character initialization and updates.
 """
 from world.wod20th.utils.banality import get_default_banality
-from typing import Dict, Union, List, Tuple
+from world.wod20th.utils.stat_mappings import SHIFTER_BACKGROUNDS
+from typing import Dict, Union, List, Tuple, Set
 
 # Valid shifter types
 SHIFTER_TYPE_CHOICES: List[Tuple[str, str]] = [
@@ -21,8 +22,44 @@ SHIFTER_TYPE_CHOICES: List[Tuple[str, str]] = [
     ('none', 'None')
 ]
 
-# Valid auspices
+# Valid Garou tribes
+GAROU_TRIBE_CHOICES: List[Tuple[str, str]] = [
+    ('none', 'None'),
+    ('black_fury', 'Black Fury'),
+    ('bone_gnawer', 'Bone Gnawer'),
+    ('child_of_gaia', 'Child of Gaia'),
+    ('fianna', 'Fianna'),
+    ('get_of_fenris', 'Get of Fenris'),
+    ('glass_walker', 'Glass Walker'),
+    ('red_talon', 'Red Talon'),
+    ('shadow_lord', 'Shadow Lord'),
+    ('silent_strider', 'Silent Strider'),
+    ('silver_fang', 'Silver Fang'),
+    ('stargazer', 'Stargazer'),
+    ('uktena', 'Uktena'),
+    ('wendigo', 'Wendigo')
+]
+
+# Valid auspices as a dictionary for game logic
+AUSPICE_CHOICES_DICT: Dict[str, List[str]] = {
+    'Garou': ['Ragabash', 'Theurge', 'Philodox', 'Galliard', 'Ahroun'],
+    'Rokea': ['Brightwater', 'Dimwater', 'Darkwater'],
+    'Nagah': ['Kamakshi', 'Kartikeya', 'Kamsa', 'Kali'],
+    'Mokole': ['Rising Sun', 'Noonday Sun', 'Shrouded Sun', 'Midnight Sun', 
+               'Decorated Sun', 'Solar Eclipse']
+}
+
+ASPECT_CHOICES_DICT: Dict[str, List[str]] = {
+    'Ajaba': ['Dawn', 'Midnight', 'Dusk'],
+    'Ananasi': ['Night', 'Daylight', 'Twilight'],
+    'Ratkin.1': ['Night', 'Daylight', 'Twilight'],
+    'Mokole': ['Rising Sun', 'Noonday Sun', 'Shrouded Sun', 'Midnight Sun', 
+               'Decorated Sun', 'Solar Eclipse']
+}
+
+# Valid auspices as a list of tuples for Django model choices
 AUSPICE_CHOICES: List[Tuple[str, str]] = [
+    ('none', 'None'),
     ('ragabash', 'Ragabash'),
     ('theurge', 'Theurge'),
     ('philodox', 'Philodox'),
@@ -30,23 +67,17 @@ AUSPICE_CHOICES: List[Tuple[str, str]] = [
     ('ahroun', 'Ahroun'),
     ('brightwater', 'Brightwater'),
     ('dimwater', 'Dimwater'),
-    ('darkwater', 'Darkwater'), 
-    ('arcas', 'Arcas'),
-    ('uzmati', 'Uzmati'),
-    ('kojubat', 'Kojubat'),
-    ('kieh', 'Kieh'),
-    ('rishi', 'Rishi'),
-    ('rising sun', 'Rising Sun'),
-    ('noonday sun', 'Noonday Sun'),
-    ('shrouded sun', 'Shrouded Sun'),
-    ('midnight sun', 'Midnight Sun'),
-    ('decorated sun', 'Decorated Sun'),
-    ('solar eclipse', 'Solar Eclipse'),
+    ('darkwater', 'Darkwater'),
     ('kamakshi', 'Kamakshi'),
     ('kartikeya', 'Kartikeya'),
     ('kamsa', 'Kamsa'),
     ('kali', 'Kali'),
-    ('none', 'None')
+    ('rising_sun', 'Rising Sun'),
+    ('noonday_sun', 'Noonday Sun'),
+    ('shrouded_sun', 'Shrouded Sun'),
+    ('midnight_sun', 'Midnight Sun'),
+    ('decorated_sun', 'Decorated Sun'),
+    ('solar_eclipse', 'Solar Eclipse')
 ]
 
 # Valid Bastet tribes
@@ -63,8 +94,35 @@ BASTET_TRIBE_CHOICES: List[Tuple[str, str]] = [
     ('none', 'None')
 ]
 
-# Valid breeds
+# Valid Gurahl tribes
+GURAHL_TRIBE_CHOICES: List[Tuple[str, str]] = [
+    ('forest_walkers', 'Forest Walkers'),
+    ('ice_stalkers', 'Ice Stalkers'),
+    ('river_keepers', 'River Keepers'),
+    ('mountain_guardians', 'Mountain Guardians'),
+    ('okuma', 'Okuma'),
+    ('none', 'None')
+]
+
+
+# Valid breeds as a dictionary for game logic
+BREED_CHOICES_DICT: Dict[str, List[str]] = {
+    'Garou': ['Homid', 'Metis', 'Lupus'],
+    'Bastet': ['Homid', 'Metis', 'Feline'],
+    'Rokea': ['Homid', 'Squamus'],
+    'Gurahl': ['Homid', 'Ursine'],
+    'Nuwisha': ['Homid', 'Latrani'],
+    'Ratkin': ['Homid', 'Metis', 'Rodens'],
+    'Corax': ['Homid', 'Corvid'],
+    'Nagah': ['Balaram', 'Vasuki', 'Ahi'],
+    'Ananasi': ['Homid', 'Arachnid'],
+    'Kitsune': ['Kojin', 'Shinju', 'Roko'],
+    'Mokole': ['Homid', 'Suchid']
+}
+
+# Valid breeds as a list of tuples for Django model choices
 BREED_CHOICES: List[Tuple[str, str]] = [
+    ('none', 'None'),
     ('homid', 'Homid'),
     ('metis', 'Metis'),
     ('lupus', 'Lupus'),
@@ -75,56 +133,40 @@ BREED_CHOICES: List[Tuple[str, str]] = [
     ('rodens', 'Rodens'),
     ('corvid', 'Corvid'),
     ('balaram', 'Balaram'),
-    ('suchid', 'Suchid'),
+    ('vasuki', 'Vasuki'),
     ('ahi', 'Ahi'),
     ('arachnid', 'Arachnid'),
     ('kojin', 'Kojin'),
-    ('roko', 'Roko'),
     ('shinju', 'Shinju'),
-    ('animal-born', 'Animal-Born'),
-    ('none', 'None')
-
-
+    ('roko', 'Roko'),
+    ('suchid', 'Suchid')
 ]
-
-# Valid Garou tribes
-GAROU_TRIBE_CHOICES: List[Tuple[str, str]] = [
-    ('black fury', 'Black Fury'),
-    ('bone gnawer', 'Bone Gnawer'),
-    ('child of gaia', 'Child of Gaia'),
-    ('fianna', 'Fianna'),
-    ('glass walker', 'Glass Walker'),
-    ('red talon', 'Red Talon'),
-    ('shadow lord', 'Shadow Lord'),
-    ('silent strider', 'Silent Strider'),
-    ('silver fang', 'Silver Fang'),
-    ('stargazer', 'Stargazer'),
-    ('uktena', 'Uktena'),
-    ('wendigo', 'Wendigo'),
-    ('none', 'None')
+# First, create a dictionary for personal identity stats that all characters should have
+PERSONAL_IDENTITY_STATS = [
+    'Full Name', 'Nature', 'Demeanor', 'Concept', 'Date of Birth'
 ]
 
 # Shifter identity stats for each type
 SHIFTER_IDENTITY_STATS = {
-    'Ajaba': ['Breed', 'Aspect', 'Deed Name'],
-    'Ananasi': ['Breed', 'Aspect', 'Deed Name'],
-    'Bastet': ['Breed', 'Tribe', 'Deed Name'],
-    'Corax': ['Breed', 'Deed Name'],
-    'Garou': ['Breed', 'Auspice', 'Tribe', 'Camp', 'Deed Name'],
-    'Gurahl': ['Breed', 'Auspice', 'Deed Name'],
-    'Kitsune': ['Breed', 'Path', 'Deed Name'],
-    'Mokole': ['Breed', 'Auspice', 'Stream', 'Varna', 'Deed Name'],
-    'Nagah': ['Breed', 'Auspice', 'Deed Name', 'Crown'],
-    'Nuwisha': ['Breed', 'Deed Name'],
-    'Ratkin': ['Breed', 'Aspect', 'Deed Name'],
-    'Rokea': ['Breed', 'Auspice', 'Deed Name']
+    'Ajaba': ['Rank', 'First Change Date', 'Type', 'Breed', 'Aspect', 'Deed Name'],
+    'Ananasi': ['Rank', 'First Change Date', 'Type', 'Breed', 'Aspect', 'Deed Name', 'Ananasi Faction', 'Ananasi Cabal'],
+    'Bastet': ['Rank', 'First Change Date', 'Type', 'Breed', 'Tribe', 'Deed Name', 'Pryio', 'Jamak Spirit'],
+    'Corax': ['Rank', 'First Change Date', 'Type', 'Breed', 'Deed Name'],
+    'Garou': ['Rank', 'First Change Date', 'Type', 'Breed', 'Auspice', 'Tribe', 'Camp', 'Deed Name', 'Lodge', 'Fang House'],
+    'Gurahl': ['Rank', 'First Change Date', 'Type', 'Breed', 'Auspice', 'Deed Name', 'Tribe'],
+    'Kitsune': ['Rank', 'First Change Date', 'Type', 'Breed', 'Kitsune Path', 'Kitsune Faction', 'Deed Name'],
+    'Mokole': ['Rank', 'First Change Date', 'Type', 'Breed', 'Auspice', 'Deed Name', 'Varna', 'Stream'],
+    'Nagah': ['Rank', 'First Change Date', 'Type', 'Breed', 'Auspice', 'Deed Name', 'Crown'],
+    'Nuwisha': ['Rank', 'First Change Date', 'Type', 'Breed', 'Deed Name'],
+    'Ratkin': ['Rank', 'First Change Date', 'Type', 'Breed', 'Aspect', 'Deed Name', 'Plague'],
+    'Rokea': ['Rank', 'First Change Date', 'Type', 'Breed', 'Auspice', 'Deed Name', 'Rokea Faction'],
+    'Camazotz': ['Rank', 'First Change Date', 'Type', 'Breed', 'Aspect', 'Deed Name']
 }
 
 # Common Breed-based Gnosis values used across multiple shifter types
 COMMON_BREED_GNOSIS = {
     'homid': 1,
     'metis': 3,
-    'lupus': 5,  # Animal-Born
     'animal-born': 5
 }
 
@@ -149,14 +191,36 @@ def initialize_shifter_type(character, shifter_type):
     # Initialize basic stats structure
     if 'identity' not in character.db.stats:
         character.db.stats['identity'] = {}
+    if 'personal' not in character.db.stats['identity']:
+        character.db.stats['identity']['personal'] = {}
     if 'lineage' not in character.db.stats['identity']:
         character.db.stats['identity']['lineage'] = {}
+    
+    # Initialize pools structure
+    if 'pools' not in character.db.stats:
+        character.db.stats['pools'] = {}
+    if 'dual' not in character.db.stats['pools']:
+        character.db.stats['pools']['dual'] = {}
+    if 'other' not in character.db.stats['pools']:
+        character.db.stats['pools']['other'] = {}
+    
+    # Initialize/preserve personal stats
+    for stat in PERSONAL_IDENTITY_STATS:
+        # Only initialize if it doesn't exist
+        if stat not in character.db.stats['identity']['personal']:
+            character.set_stat('identity', 'personal', stat, '', temp=False)
+            character.set_stat('identity', 'personal', stat, '', temp=True)
+    
+    # Set the shifter type in identity/lineage
+    character.set_stat('identity', 'lineage', 'Type', shifter_type, temp=False)
+    character.set_stat('identity', 'lineage', 'Type', shifter_type, temp=True)
     
     # Initialize all identity stats for the shifter type
     if shifter_type in SHIFTER_IDENTITY_STATS:
         for stat in SHIFTER_IDENTITY_STATS[shifter_type]:
-            character.set_stat('identity', 'lineage', stat, '', temp=False)
-            character.set_stat('identity', 'lineage', stat, '', temp=True)
+            if stat != 'Type':  # Skip Type since we already set it
+                character.set_stat('identity', 'lineage', stat, '', temp=False)
+                character.set_stat('identity', 'lineage', stat, '', temp=True)
     
     # Get breed safely with a default value
     breed = character.get_stat('identity', 'lineage', 'Breed')
@@ -180,16 +244,14 @@ def initialize_shifter_type(character, shifter_type):
     renown_types = SHIFTER_RENOWN.get(shifter_type, [])
     renown_message = None
     if renown_types:
+        # Clear any existing renown
+        character.db.stats['advantages']['renown'] = {}
+        # Add new renown types
         for renown_type in renown_types:
-            if renown_type not in character.db.stats['advantages']['renown']:
-                character.db.stats['advantages']['renown'][renown_type] = {'perm': 0, 'temp': 0}
+            character.db.stats['advantages']['renown'][renown_type] = {'perm': 0, 'temp': 0}
         renown_message = f"Set Renown to {', '.join(renown_types)}."
 
-    # Set default Banality based on shifter type
-    banality = get_default_banality('Shifter', subtype=shifter_type)
-    character.set_stat('pools', 'dual', 'Banality', banality, temp=False)
-    character.set_stat('pools', 'dual', 'Banality', banality, temp=True)
-
+    # Initialize type-specific stats first
     if shifter_type == 'Ajaba':
         initialize_ajaba(character, breed)
     elif shifter_type == 'Ananasi':
@@ -215,6 +277,12 @@ def initialize_shifter_type(character, shifter_type):
     elif shifter_type == 'Garou':
         initialize_garou(character, breed)
 
+    # Set default Banality based on shifter type
+    banality = get_default_banality('Shifter', subtype=shifter_type)
+    if banality:
+        character.db.stats['pools']['dual']['Banality'] = {'perm': banality, 'temp': banality}
+        character.msg(f"|gBanality set to {banality} (permanent).")
+
     return renown_message
 
 def initialize_ajaba(character, breed):
@@ -225,11 +293,10 @@ def initialize_ajaba(character, breed):
         'midnight': {'rage': 3, 'gnosis': 3},
         'dusk': {'rage': 1, 'gnosis': 5}
     }
-    
     # Set base Willpower for all Ajaba
     character.set_stat('pools', 'dual', 'Willpower', 3, temp=False)
     character.set_stat('pools', 'dual', 'Willpower', 3, temp=True)
-    
+    character.msg(f"|gWillpower set to 3 for Ajaba.")
     if aspect in AJABA_ASPECT_STATS:
         stats = AJABA_ASPECT_STATS[aspect]
         # Set Rage
@@ -238,6 +305,7 @@ def initialize_ajaba(character, breed):
         # Set Gnosis
         character.set_stat('pools', 'dual', 'Gnosis', stats['gnosis'], temp=False)
         character.set_stat('pools', 'dual', 'Gnosis', stats['gnosis'], temp=True)
+        character.msg(f"|gRage and Gnosis set to {stats['rage']} and {stats['gnosis']} for {aspect} aspect.")
 
 def initialize_ananasi(character, breed):
     """Initialize Ananasi-specific stats."""
@@ -247,17 +315,21 @@ def initialize_ananasi(character, breed):
     # Set Blood pool
     character.set_stat('pools', 'dual', 'Blood', 10, temp=False)
     character.set_stat('pools', 'dual', 'Blood', 10, temp=True)
+    character.msg(f"|gBlood pool set to 10 for Ananasi.")
     # Set breed-based stats
     if breed == 'homid':
+
         character.set_stat('pools', 'dual', 'Willpower', 3, temp=False)
         character.set_stat('pools', 'dual', 'Willpower', 3, temp=True)
         character.set_stat('pools', 'dual', 'Gnosis', 1, temp=False)
         character.set_stat('pools', 'dual', 'Gnosis', 1, temp=True)
+        character.msg(f"|gWillpower and Gnosis set to 3 and 1 for homid breed.")
     elif breed in ['arachnid', 'animal-born']:
         character.set_stat('pools', 'dual', 'Willpower', 4, temp=False)
         character.set_stat('pools', 'dual', 'Willpower', 4, temp=True)
         character.set_stat('pools', 'dual', 'Gnosis', 5, temp=False)
         character.set_stat('pools', 'dual', 'Gnosis', 5, temp=True)
+        character.msg(f"|gWillpower and Gnosis set to 4 and 5 for arachnid breed.")
 
 def initialize_bastet(character, breed):
     """Initialize Bastet-specific stats."""
@@ -278,9 +350,19 @@ def initialize_bastet(character, breed):
         character.set_stat('pools', 'dual', 'Rage', stats['rage'], temp=True)
         character.set_stat('pools', 'dual', 'Willpower', stats['willpower'], temp=False)
         character.set_stat('pools', 'dual', 'Willpower', stats['willpower'], temp=True)
-    if breed in COMMON_BREED_GNOSIS:
-        character.set_stat('pools', 'dual', 'Gnosis', COMMON_BREED_GNOSIS[breed], temp=False)
-        character.set_stat('pools', 'dual', 'Gnosis', COMMON_BREED_GNOSIS[breed], temp=True)
+        character.msg(f"|gRage and Willpower set to {stats['rage']} and {stats['willpower']} for {tribe} tribe.")
+    if breed == 'homid':
+        character.set_stat('pools', 'dual', 'Gnosis', 1, temp=False)
+        character.set_stat('pools', 'dual', 'Gnosis', 1, temp=True)
+        character.msg(f"|gGnosis set to 1 for {breed} breed.")
+    elif breed == 'metis':
+        character.set_stat('pools', 'dual', 'Gnosis', 3, temp=False)
+        character.set_stat('pools', 'dual', 'Gnosis', 3, temp=True)
+        character.msg(f"|gGnosis set to 3 for {breed} breed.")
+    elif breed == 'feline' or breed == 'animal-born':
+        character.set_stat('pools', 'dual', 'Gnosis', 5, temp=False)
+        character.set_stat('pools', 'dual', 'Gnosis', 5, temp=True)
+        character.msg(f"|gGnosis set to 5 for {breed} breed.")
 
 def initialize_corax(character):
     """Initialize Corax-specific stats."""
@@ -290,145 +372,163 @@ def initialize_corax(character):
     character.set_stat('pools', 'dual', 'Gnosis', 6, temp=True)
     character.set_stat('pools', 'dual', 'Willpower', 3, temp=False)
     character.set_stat('pools', 'dual', 'Willpower', 3, temp=True)
+    character.msg(f"|gRage, Willpower, and Gnosis set for Corax.\nRage: 1, Willpower: 3, Gnosis: 6|n")
 
 def initialize_gurahl(character, breed):
     """Initialize Gurahl-specific stats."""
     character.set_stat('pools', 'dual', 'Willpower', 6, temp=False)
     character.set_stat('pools', 'dual', 'Willpower', 6, temp=True)
+    character.msg(f"|gWillpower set to 6 for Gurahl.")
     if breed == 'homid':
         character.set_stat('pools', 'dual', 'Rage', 3, temp=False)
         character.set_stat('pools', 'dual', 'Rage', 3, temp=True)
         character.set_stat('pools', 'dual', 'Gnosis', 4, temp=False)
         character.set_stat('pools', 'dual', 'Gnosis', 4, temp=True)
-    elif breed in ['lupus', 'animal-born']:
+        character.msg(f"|gRage and Gnosis set to 3 and 4 for homid breed.")
+    elif breed in ['ursine', 'animal-born']:    
         character.set_stat('pools', 'dual', 'Rage', 4, temp=False)
         character.set_stat('pools', 'dual', 'Rage', 4, temp=True)
         character.set_stat('pools', 'dual', 'Gnosis', 5, temp=False)
         character.set_stat('pools', 'dual', 'Gnosis', 5, temp=True)
+        character.msg(f"|gRage and Gnosis set to 4 and 5 for ursine breed.")     
+
 
 def initialize_kitsune(character, breed):
     """Initialize Kitsune-specific stats."""
-    path = character.get_stat('identity', 'lineage', 'Path', '').lower()
+    path = character.get_stat('identity', 'lineage', 'Kitsune Path', '').title()  # Use title() for consistency
     
     # Set base Willpower
     character.set_stat('pools', 'dual', 'Willpower', 5, temp=False)
     character.set_stat('pools', 'dual', 'Willpower', 5, temp=True)
-    
+    character.msg(f"|gWillpower set to 5 for Kitsune.")
+
     # Set Path-based Rage
     KITSUNE_PATH_RAGE = {
-        'kataribe': 2,
-        'gukutsushi': 2,
-        'doshi': 3,
-        'eji': 4
+        'Kataribe': 2,
+        'Gukutsushi': 2,
+        'Doshi': 3,
+        'Eji': 4
     }
     if path in KITSUNE_PATH_RAGE:
-        character.set_stat('pools', 'dual', 'Rage', KITSUNE_PATH_RAGE[path], temp=False)
-        character.set_stat('pools', 'dual', 'Rage', KITSUNE_PATH_RAGE[path], temp=True)
-    
+        rage = KITSUNE_PATH_RAGE[path]
+        character.set_stat('pools', 'dual', 'Rage', rage, temp=False)
+        character.set_stat('pools', 'dual', 'Rage', rage, temp=True)
+        character.msg(f"|gRage set to {rage} for {path} path.")
+
     # Set Breed-based Gnosis
     KITSUNE_BREED_GNOSIS = {
-        'kojin': 3,
-        'homid': 3,
-        'roko': 5,
-        'animal-born': 5,
-        'shinju': 4,
-        'metis': 4
+        'Kojin': 3,
+        'Homid': 3,
+        'Roko': 5,
+        'Animal-Born': 5,
+        'Shinju': 4,
+        'Metis': 4
     }
+    breed = breed.title()  # Convert breed to title case
     if breed in KITSUNE_BREED_GNOSIS:
-        character.set_stat('pools', 'dual', 'Gnosis', KITSUNE_BREED_GNOSIS[breed], temp=False)
-        character.set_stat('pools', 'dual', 'Gnosis', KITSUNE_BREED_GNOSIS[breed], temp=True)
+        gnosis = KITSUNE_BREED_GNOSIS[breed]
+        character.set_stat('pools', 'dual', 'Gnosis', gnosis, temp=False)
+        character.set_stat('pools', 'dual', 'Gnosis', gnosis, temp=True)
+        character.msg(f"|gGnosis set to {gnosis} for {breed} breed.")
 
 def initialize_mokole(character, breed):
     """Initialize Mokole-specific stats."""
-    auspice = character.get_stat('identity', 'lineage', 'Auspice', '').lower()
-    varna = character.get_stat('identity', 'lineage', 'Varna', '').lower()
+    auspice = character.get_stat('identity', 'lineage', 'Auspice', '').title()  # Use title() for consistency
+    varna = character.get_stat('identity', 'lineage', 'Varna', '').title()  # Use title() for consistency
     
     # Set Breed-based Gnosis
     MOKOLE_BREED_GNOSIS = {
-        'homid': 2,
-        'animal-born': 4,
-        'suchid': 4  # Alternative name for animal-born
+        'Homid': 2,
+        'Animal-Born': 4,
+        'Suchid': 4  # Alternative name for animal-born
     }
+    breed = breed.title()  # Convert breed to title case
     if breed in MOKOLE_BREED_GNOSIS:
         character.set_stat('pools', 'dual', 'Gnosis', MOKOLE_BREED_GNOSIS[breed], temp=False)
         character.set_stat('pools', 'dual', 'Gnosis', MOKOLE_BREED_GNOSIS[breed], temp=True)
-    
+        character.msg(f"|gGnosis set to {MOKOLE_BREED_GNOSIS[breed]} for {breed} breed.")
+
     # Set Auspice-based Willpower
     MOKOLE_AUSPICE_WILLPOWER = {
-        'rising sun striking': 3,
-        'noonday sun unshading': 5,
-        'setting sun warding': 3,
-        'shrouded sun concealing': 4,
-        'midnight sun shining': 4,
-        'decorated suns gathering': 5,
-        'solar eclipse crowning': 5,
-        'hemanta': 2,
-        'zarad': 3,
-        'grisma': 4,
-        'vasanta': 5
+        'Rising Sun': 3,
+        'Noonday Sun': 5,
+        'Setting Sun': 3,
+        'Shrouded Sun': 4,
+        'Midnight Sun': 4,
+        'Decorated Sun': 5,
+        'Solar Eclipse': 5
     }
     if auspice in MOKOLE_AUSPICE_WILLPOWER:
-        character.set_stat('pools', 'dual', 'Willpower', MOKOLE_AUSPICE_WILLPOWER[auspice], temp=False)
-        character.set_stat('pools', 'dual', 'Willpower', MOKOLE_AUSPICE_WILLPOWER[auspice], temp=True)
-    
+        willpower = MOKOLE_AUSPICE_WILLPOWER[auspice]
+        character.set_stat('pools', 'dual', 'Willpower', willpower, temp=False)
+        character.set_stat('pools', 'dual', 'Willpower', willpower, temp=True)
+        character.msg(f"|gWillpower set to {willpower} for {auspice} auspice.")
+
     # Set Varna-based Rage
     MOKOLE_VARNA_RAGE = {
-        'champsa': 3,
-        'gharial': 4,
-        'halpatee': 4,
-        'karna': 3,
-        'makara': 3,
-        'ora': 5,
-        'piasa': 4,
-        'syrta': 4,
-        'unktehi': 5
+        'Champsa': 3,
+        'Gharial': 4,
+        'Halpatee': 4,
+        'Karna': 3,
+        'Makara': 3,
+        'Ora': 5,
+        'Piasa': 4,
+        'Syrta': 4,
+        'Unktehi': 5
     }
     if varna in MOKOLE_VARNA_RAGE:
-        character.set_stat('pools', 'dual', 'Rage', MOKOLE_VARNA_RAGE[varna], temp=False)
-        character.set_stat('pools', 'dual', 'Rage', MOKOLE_VARNA_RAGE[varna], temp=True)
+        rage = MOKOLE_VARNA_RAGE[varna]
+        character.set_stat('pools', 'dual', 'Rage', rage, temp=False)
+        character.set_stat('pools', 'dual', 'Rage', rage, temp=True)
+        character.msg(f"|gRage set to {rage} for {varna} varna.")
 
 def initialize_nagah(character, breed):
     """Initialize Nagah-specific stats."""
-    auspice = character.get_stat('identity', 'lineage', 'Auspice')
-    auspice = auspice.lower() if auspice else ''
+    auspice = character.get_stat('identity', 'lineage', 'Auspice', '').title()  # Use title() for consistency
     
     # Set base Willpower
     character.set_stat('pools', 'dual', 'Willpower', 4, temp=False)
     character.set_stat('pools', 'dual', 'Willpower', 4, temp=True)
-    
+    character.msg(f"|gWillpower set to 4 for Nagah.")
+
     # Set Breed-based Gnosis
     NAGAH_BREED_GNOSIS = {
-        'balaram': 1,  # specific homid name
-        'homid': 1,    # homid
-        'metis': 1,    # metis
-        'animal-born': 5,
-        'vasuki': 5    # animal-born specific name for nagah
+        'Balaram': 1,  # specific homid name
+        'Homid': 1,    # homid
+        'Ahi': 1,      # metis
+        'Vasuki': 5    # animal-born specific name for nagah
     }
+    breed = breed.title()  # Convert breed to title case
     if breed in NAGAH_BREED_GNOSIS:
         character.set_stat('pools', 'dual', 'Gnosis', NAGAH_BREED_GNOSIS[breed], temp=False)
         character.set_stat('pools', 'dual', 'Gnosis', NAGAH_BREED_GNOSIS[breed], temp=True)
-    
+        character.msg(f"|gGnosis set to {NAGAH_BREED_GNOSIS[breed]} for {breed} breed.")
+
     # Set Auspice-based Rage
     NAGAH_AUSPICE_RAGE = {
-        'kamakshi': 3,
-        'kartikeya': 4,
-        'kamsa': 3,
-        'kali': 4
+        'Kamakshi': 3,
+        'Kartikeya': 4,
+        'Kamsa': 3,
+        'Kali': 4
     }
     if auspice in NAGAH_AUSPICE_RAGE:
-        character.set_stat('pools', 'dual', 'Rage', NAGAH_AUSPICE_RAGE[auspice], temp=False)
-        character.set_stat('pools', 'dual', 'Rage', NAGAH_AUSPICE_RAGE[auspice], temp=True)
+        rage = NAGAH_AUSPICE_RAGE[auspice]
+        character.set_stat('pools', 'dual', 'Rage', rage, temp=False)
+        character.set_stat('pools', 'dual', 'Rage', rage, temp=True)
+        character.msg(f"|gRage set to {rage} for {auspice} auspice.")
 
 def initialize_nuwisha(character, breed):
     """Initialize Nuwisha-specific stats."""
     # Remove Rage if it exists
     if 'Rage' in character.db.stats.get('pools', {}):
+
         del character.db.stats['pools']['Rage']
-    
+    character.msg(f"|gRage removed for Nuwisha.")
     # Set base Willpower
     character.set_stat('pools', 'dual', 'Willpower', 4, temp=False)
     character.set_stat('pools', 'dual', 'Willpower', 4, temp=True)
-    
+    character.msg(f"|gWillpower set to 4 for Nuwisha.")
+
     # Set Breed-based Gnosis
     NUWISHA_BREED_GNOSIS = {
         'homid': 1,
@@ -438,20 +538,31 @@ def initialize_nuwisha(character, breed):
     if breed in NUWISHA_BREED_GNOSIS:
         character.set_stat('pools', 'dual', 'Gnosis', NUWISHA_BREED_GNOSIS[breed], temp=False)
         character.set_stat('pools', 'dual', 'Gnosis', NUWISHA_BREED_GNOSIS[breed], temp=True)
+        character.msg(f"|gGnosis set to {NUWISHA_BREED_GNOSIS[breed]} for {breed} breed.")
 
 def initialize_ratkin(character, breed):
     """Initialize Ratkin-specific stats."""
     aspect = character.get_stat('identity', 'lineage', 'Aspect')
     aspect = aspect.lower() if aspect else ''
-    
+
     # Set base Willpower
     character.set_stat('pools', 'dual', 'Willpower', 3, temp=False)
     character.set_stat('pools', 'dual', 'Willpower', 3, temp=True)
-    
+    character.msg(f"|gWillpower set to 3 for Ratkin.")
+
     # Set Breed-based Gnosis
-    if breed in COMMON_BREED_GNOSIS:
-        character.set_stat('pools', 'dual', 'Gnosis', COMMON_BREED_GNOSIS[breed], temp=False)
-        character.set_stat('pools', 'dual', 'Gnosis', COMMON_BREED_GNOSIS[breed], temp=True)
+    if breed == 'homid':
+        character.set_stat('pools', 'dual', 'Gnosis', 1, temp=False)
+        character.set_stat('pools', 'dual', 'Gnosis', 1, temp=True)
+        character.msg(f"|gGnosis set to 1 for homid breed.")
+    elif breed == 'metis':
+        character.set_stat('pools', 'dual', 'Gnosis', 3, temp=False)
+        character.set_stat('pools', 'dual', 'Gnosis', 3, temp=True)
+        character.msg(f"|gGnosis set to 3 for metis breed.")
+    elif breed == 'rodens' or breed == 'animal-born':
+        character.set_stat('pools', 'dual', 'Gnosis', 5, temp=False)
+        character.set_stat('pools', 'dual', 'Gnosis', 5, temp=True)
+        character.msg(f"|gGnosis set to 5 for rodens or animal-born breed.")
     
     # Set Aspect-based Rage
     RATKIN_ASPECT_RAGE = {
@@ -467,7 +578,7 @@ def initialize_ratkin(character, breed):
     if aspect in RATKIN_ASPECT_RAGE:
         character.set_stat('pools', 'dual', 'Rage', RATKIN_ASPECT_RAGE[aspect], temp=False)
         character.set_stat('pools', 'dual', 'Rage', RATKIN_ASPECT_RAGE[aspect], temp=True)
-
+        character.msg(f"|gRage set to {RATKIN_ASPECT_RAGE[aspect]} for {aspect} aspect.")
 def initialize_rokea(character, breed):
     """Initialize Rokea-specific stats."""
     auspice = character.get_stat('identity', 'lineage', 'Auspice')
@@ -476,7 +587,7 @@ def initialize_rokea(character, breed):
     # Set base Willpower
     character.set_stat('pools', 'dual', 'Willpower', 4, temp=False)
     character.set_stat('pools', 'dual', 'Willpower', 4, temp=True)
-    
+    character.msg(f"|gWillpower set to 4 for Rokea.")
     # Set Breed-based Gnosis
     ROKEA_BREED_GNOSIS = {
         'homid': 1,
@@ -486,7 +597,7 @@ def initialize_rokea(character, breed):
     if breed in ROKEA_BREED_GNOSIS:
         character.set_stat('pools', 'dual', 'Gnosis', ROKEA_BREED_GNOSIS[breed], temp=False)
         character.set_stat('pools', 'dual', 'Gnosis', ROKEA_BREED_GNOSIS[breed], temp=True)
-    
+        character.msg(f"|gGnosis set to {ROKEA_BREED_GNOSIS[breed]} for {breed} breed.")
     # Set Auspice-based Rage
     ROKEA_AUSPICE_RAGE = {
         'brightwater': 5,
@@ -496,7 +607,7 @@ def initialize_rokea(character, breed):
     if auspice in ROKEA_AUSPICE_RAGE:
         character.set_stat('pools', 'dual', 'Rage', ROKEA_AUSPICE_RAGE[auspice], temp=False)
         character.set_stat('pools', 'dual', 'Rage', ROKEA_AUSPICE_RAGE[auspice], temp=True)
-
+        character.msg(f"|gRage set to {ROKEA_AUSPICE_RAGE[auspice]} for {auspice} auspice.")
 def initialize_garou(character, breed):
     """Initialize Garou-specific stats."""
     auspice = character.get_stat('identity', 'lineage', 'Auspice')
@@ -515,12 +626,12 @@ def initialize_garou(character, breed):
     if auspice in GAROU_AUSPICE_RAGE:
         character.set_stat('pools', 'dual', 'Rage', GAROU_AUSPICE_RAGE[auspice], temp=False)
         character.set_stat('pools', 'dual', 'Rage', GAROU_AUSPICE_RAGE[auspice], temp=True)
-    
+        character.msg(f"|gRage set to {GAROU_AUSPICE_RAGE[auspice]} for {auspice} auspice.")
     # Set Breed-based Gnosis
     if breed in COMMON_BREED_GNOSIS:
         character.set_stat('pools', 'dual', 'Gnosis', COMMON_BREED_GNOSIS[breed], temp=False)
         character.set_stat('pools', 'dual', 'Gnosis', COMMON_BREED_GNOSIS[breed], temp=True)
-    
+        character.msg(f"|gGnosis set to {COMMON_BREED_GNOSIS[breed]} for {breed} breed.")
     # Set Tribe-based Willpower
     GAROU_TRIBE_WILLPOWER = {
         'black furies': 3,
@@ -540,6 +651,7 @@ def initialize_garou(character, breed):
     if tribe in GAROU_TRIBE_WILLPOWER:
         character.set_stat('pools', 'dual', 'Willpower', GAROU_TRIBE_WILLPOWER[tribe], temp=False)
         character.set_stat('pools', 'dual', 'Willpower', GAROU_TRIBE_WILLPOWER[tribe], temp=True) 
+        character.msg(f"|gWillpower set to {GAROU_TRIBE_WILLPOWER[tribe]} for {tribe} tribe.")
 
 def get_shifter_identity_stats(shifter_type: str) -> List[str]:
     """Get the identity stats for a specific shifter type."""
@@ -547,4 +659,411 @@ def get_shifter_identity_stats(shifter_type: str) -> List[str]:
 
 def get_shifter_renown(shifter_type: str) -> List[str]:
     """Get the renown types for a specific shifter type."""
-    return SHIFTER_RENOWN.get(shifter_type, []) 
+    return SHIFTER_RENOWN.get(shifter_type, [])
+
+def update_shifter_pools_on_stat_change(character, stat_name, new_value):
+    """
+    Update shifter pools when a relevant stat changes.
+    Called by CmdSelfStat after setting identity stats.
+    """
+    # Get character's shifter type
+    shifter_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+    if not shifter_type:
+        return
+        
+    # Convert to lowercase for comparison
+    stat_name = stat_name.lower()
+    shifter_type = shifter_type.lower()
+    new_value = new_value.lower() if isinstance(new_value, str) else new_value
+
+    if stat_name == 'type':
+        # When shifter type is set/changed, call the appropriate initialize function
+        initialize_shifter_type(character, new_value)
+    elif stat_name == 'breed':
+        update_breed_stats(character, new_value, shifter_type)
+    elif stat_name == 'aspect':
+        update_aspect_stats(character, new_value, shifter_type)
+    elif stat_name == 'auspice':
+        update_auspice_stats(character, new_value, shifter_type)
+    elif stat_name == 'tribe':
+        update_tribe_stats(character, new_value, shifter_type)
+    elif stat_name == 'kitsune path':
+        KITSUNE_PATH_RAGE = {
+            'kataribe': 2,
+            'gukutsushi': 2,
+            'doshi': 3,
+            'eji': 4
+        }
+        new_value = new_value.lower()
+        if new_value in KITSUNE_PATH_RAGE:
+            rage = KITSUNE_PATH_RAGE[new_value]
+            character.set_stat('pools', 'dual', 'Rage', rage, temp=False)
+            character.set_stat('pools', 'dual', 'Rage', rage, temp=True)
+            character.msg(f"|gRage set to {rage} for {new_value} path.")
+    elif stat_name == 'varna' and shifter_type == 'mokole':
+        MOKOLE_VARNA_RAGE = {
+            'champsa': 3,
+            'gharial': 4,
+            'halpatee': 4,
+            'karna': 3,
+            'makara': 3,
+            'ora': 5,
+            'piasa': 4,
+            'syrta': 4,
+            'unktehi': 5
+        }
+        new_value = new_value.lower()
+        if new_value in MOKOLE_VARNA_RAGE:
+            rage = MOKOLE_VARNA_RAGE[new_value]
+            character.set_stat('pools', 'dual', 'Rage', rage, temp=False)
+            character.set_stat('pools', 'dual', 'Rage', rage, temp=True)
+            character.msg(f"|gRage set to {rage} for {new_value} varna.")
+
+def update_breed_stats(character, breed, shifter_type):
+    """Update stats based on breed."""
+    breed = breed.lower()  # Convert breed to lowercase for comparison
+    
+    if shifter_type == 'nagah':
+        # Handle Nagah breeds specifically
+        NAGAH_BREED_GNOSIS = {
+            'balaram': 1,  # specific homid name
+            'homid': 1,    # homid
+            'ahi': 3,      # metis
+            'vasuki': 5    # animal-born specific name for nagah
+        }
+        if breed in NAGAH_BREED_GNOSIS:
+            gnosis = NAGAH_BREED_GNOSIS[breed]
+            character.set_stat('pools', 'dual', 'Gnosis', gnosis, temp=False)
+            character.set_stat('pools', 'dual', 'Gnosis', gnosis, temp=True)
+            character.msg(f"|gGnosis set to {gnosis} for {breed} breed.")
+            
+    elif shifter_type in ['ajaba', 'ratkin', 'rokea', 'garou', 'bastet', 'gurahl', 'kitsune', 'mokole', 'camazotz']:
+        gnosis_value = None
+        if breed in ['homid']:
+            gnosis_value = 1
+        elif breed in ['balaram']:
+            gnosis_value = 1
+        elif breed in ['kojin']:
+            gnosis_value = 3
+        elif breed in ['metis', 'ahi']:
+            gnosis_value = 3
+        elif breed in ['shinju']:
+            gnosis_value = 4
+        elif breed in ['lupus', 'feline', 'suchid', 'ursine', 'squamus', 'roko', 'rodens', 'vasuki', 'chiropter', 'animal-born']:
+            gnosis_value = 5
+            
+        if gnosis_value is not None:
+            character.set_stat('pools', 'dual', 'Gnosis', gnosis_value, temp=False)
+            character.set_stat('pools', 'dual', 'Gnosis', gnosis_value, temp=True)
+            character.msg(f"|gGnosis set to {gnosis_value} for {breed} breed.")
+            
+    elif shifter_type == 'ananasi':
+        gnosis_value = None
+        willpower_value = None
+        
+        if breed == 'homid':
+            gnosis_value = 1
+            willpower_value = 3
+        elif breed in ['arachnid', 'animal-born']:
+            gnosis_value = 5
+            willpower_value = 4
+            
+        if gnosis_value is not None and willpower_value is not None:
+            character.set_stat('pools', 'dual', 'Gnosis', gnosis_value, temp=False)
+            character.set_stat('pools', 'dual', 'Gnosis', gnosis_value, temp=True)
+            character.set_stat('pools', 'dual', 'Willpower', willpower_value, temp=False)
+            character.set_stat('pools', 'dual', 'Willpower', willpower_value, temp=True)
+            character.msg(f"|gGnosis and Willpower set to {gnosis_value} and {willpower_value} for {breed} breed.")
+            
+        # Ensure Blood pool is set and Rage is removed
+        character.set_stat('pools', 'dual', 'Blood', 10, temp=False)
+        character.set_stat('pools', 'dual', 'Blood', 10, temp=True)
+        character.msg(f"|gBlood set to 10 for ananasi.")
+        if 'Rage' in character.db.stats.get('pools', {}).get('dual', {}):
+            del character.db.stats['pools']['dual']['Rage']
+            character.msg(f"|gRage removed for Ananasi. Blood set to 10.")
+
+    elif shifter_type == 'nuwisha':
+        gnosis_value = None
+        if breed in ['homid']:
+            gnosis_value = 1
+        elif breed in ['latrani', 'animal-born']:
+            gnosis_value = 5
+            
+        if gnosis_value is not None:
+            character.set_stat('pools', 'dual', 'Gnosis', gnosis_value, temp=False)
+            character.set_stat('pools', 'dual', 'Gnosis', gnosis_value, temp=True)
+            character.msg(f"|gGnosis set to {gnosis_value} for {breed} breed.")
+            
+        # Remove Rage
+        if 'Rage' in character.db.stats.get('pools', {}).get('dual', {}):
+            del character.db.stats['pools']['dual']['Rage']
+            character.msg(f"|gRage removed for {breed} breed.")
+
+def update_aspect_stats(character, aspect, shifter_type):
+    """Update stats based on aspect."""
+    if shifter_type == 'ajaba':
+        AJABA_ASPECT_STATS = {
+            'dawn': {'rage': 5, 'gnosis': 1},
+            'midnight': {'rage': 3, 'gnosis': 3},
+            'dusk': {'rage': 1, 'gnosis': 5}
+        }
+        if aspect in AJABA_ASPECT_STATS:
+            stats = AJABA_ASPECT_STATS[aspect]
+            character.set_stat('pools', 'dual', 'Rage', stats['rage'], temp=False)
+            character.set_stat('pools', 'dual', 'Rage', stats['rage'], temp=True)
+            character.set_stat('pools', 'dual', 'Gnosis', stats['gnosis'], temp=False)
+            character.set_stat('pools', 'dual', 'Gnosis', stats['gnosis'], temp=True)
+            character.msg(f"|gRage set to {stats['rage']} and Gnosis set to {stats['gnosis']} for {aspect} aspect.")
+    elif shifter_type == 'ratkin':
+        RATKIN_ASPECT_RAGE = {
+            'tunnel runner': 1, 'shadow seer': 2, 'knife skulker': 3,
+            'warrior': 5, 'engineer': 2, 'plague lord': 3,
+            'munchmausen': 4, 'twitcher': 5
+        }
+        if aspect in RATKIN_ASPECT_RAGE:
+            character.set_stat('pools', 'dual', 'Rage', RATKIN_ASPECT_RAGE[aspect], temp=False)
+            character.set_stat('pools', 'dual', 'Rage', RATKIN_ASPECT_RAGE[aspect], temp=True)
+            character.msg(f"|gRage set to {RATKIN_ASPECT_RAGE[aspect]} for {aspect} aspect.")
+def update_auspice_stats(character, auspice, shifter_type):
+    """Update stats based on auspice."""
+    auspice = auspice.lower()  # Convert to lowercase for comparison
+    
+    if shifter_type == 'garou':
+        GAROU_AUSPICE_RAGE = {
+            'ahroun': 5, 'galliard': 4, 'philodox': 3,
+            'theurge': 2, 'ragabash': 1
+        }
+        if auspice in GAROU_AUSPICE_RAGE:
+            character.set_stat('pools', 'dual', 'Rage', GAROU_AUSPICE_RAGE[auspice], temp=False)
+            character.set_stat('pools', 'dual', 'Rage', GAROU_AUSPICE_RAGE[auspice], temp=True)
+            character.msg(f"|gRage set to {GAROU_AUSPICE_RAGE[auspice]} for {auspice} auspice.")
+    
+    elif shifter_type == 'rokea':
+        ROKEA_AUSPICE_RAGE = {
+            'brightwater': 5, 'dimwater': 4, 'darkwater': 3
+        }
+        if auspice in ROKEA_AUSPICE_RAGE:
+            character.set_stat('pools', 'dual', 'Rage', ROKEA_AUSPICE_RAGE[auspice], temp=False)
+            character.set_stat('pools', 'dual', 'Rage', ROKEA_AUSPICE_RAGE[auspice], temp=True)
+            character.msg(f"|gRage set to {ROKEA_AUSPICE_RAGE[auspice]} for {auspice} auspice.")
+    
+    elif shifter_type == 'nagah':
+        NAGAH_AUSPICE_RAGE = {
+            'kamakshi': 3,
+            'kartikeya': 4,
+            'kamsa': 3,
+            'kali': 4
+        }
+        if auspice in NAGAH_AUSPICE_RAGE:
+            rage = NAGAH_AUSPICE_RAGE[auspice]
+            character.set_stat('pools', 'dual', 'Rage', rage, temp=False)
+            character.set_stat('pools', 'dual', 'Rage', rage, temp=True)
+            character.msg(f"|gRage set to {rage} for {auspice} auspice.")
+    
+    elif shifter_type == 'mokole':
+        MOKOLE_AUSPICE_WILLPOWER = {
+            'rising sun': 3,
+            'noonday sun': 5,
+            'setting sun': 3,
+            'shrouded sun': 4,
+            'midnight sun': 4,
+            'decorated sun': 5,
+            'solar eclipse': 5
+        }
+        if auspice in MOKOLE_AUSPICE_WILLPOWER:
+            willpower = MOKOLE_AUSPICE_WILLPOWER[auspice]
+            character.set_stat('pools', 'dual', 'Willpower', willpower, temp=False)
+            character.set_stat('pools', 'dual', 'Willpower', willpower, temp=True)
+            character.msg(f"|gWillpower set to {willpower} for {auspice} auspice.")
+    
+    elif shifter_type == 'gurahl':
+        GURAHL_AUSPICE_STATS = {
+            'arcas': {'rage': 4, 'willpower': 3},
+            'uzmati': {'rage': 3, 'willpower': 4},
+            'kojubat': {'rage': 2, 'willpower': 5},
+            'kieh': {'rage': 1, 'willpower': 6},
+            'rishi': {'rage': 5, 'willpower': 2}
+        }
+        if auspice in GURAHL_AUSPICE_STATS:
+            stats = GURAHL_AUSPICE_STATS[auspice]
+            character.set_stat('pools', 'dual', 'Rage', stats['rage'], temp=False)
+            character.set_stat('pools', 'dual', 'Rage', stats['rage'], temp=True)
+            character.set_stat('pools', 'dual', 'Willpower', stats['willpower'], temp=False)
+            character.set_stat('pools', 'dual', 'Willpower', stats['willpower'], temp=True)
+            character.msg(f"|gRage set to {stats['rage']} and Willpower set to {stats['willpower']} for {auspice} auspice.")
+            
+def update_tribe_stats(character, tribe, shifter_type):
+    """Update stats based on tribe."""
+    if shifter_type == 'garou':
+        GAROU_TRIBE_WILLPOWER = {
+            'black furies': 3, 'bone gnawers': 4, 'children of gaia': 4,
+            'fianna': 3, 'get of fenris': 3, 'glass walkers': 3,
+            'red talons': 3, 'shadow lords': 3, 'silent striders': 3,
+            'silver fangs': 3, 'stargazers': 4, 'uktena': 3, 'wendigo': 4
+        }
+        if tribe in GAROU_TRIBE_WILLPOWER:
+            character.set_stat('pools', 'dual', 'Willpower', GAROU_TRIBE_WILLPOWER[tribe], temp=False)
+            character.set_stat('pools', 'dual', 'Willpower', GAROU_TRIBE_WILLPOWER[tribe], temp=True)
+            character.msg(f"|gWillpower set to {GAROU_TRIBE_WILLPOWER[tribe]} for {tribe} tribe.")
+    elif shifter_type == 'bastet':
+        BASTET_TRIBE_STATS = {
+            'balam': {'rage': 4, 'willpower': 3},
+            'bubasti': {'rage': 1, 'willpower': 5},
+            'ceilican': {'rage': 3, 'willpower': 3},
+            'khan': {'rage': 5, 'willpower': 2},
+            'pumonca': {'rage': 4, 'willpower': 4},
+            'qualmi': {'rage': 2, 'willpower': 5},
+            'simba': {'rage': 5, 'willpower': 2},
+            'swara': {'rage': 2, 'willpower': 4}
+        }
+        if tribe in BASTET_TRIBE_STATS:
+            stats = BASTET_TRIBE_STATS[tribe]
+            character.set_stat('pools', 'dual', 'Rage', stats['rage'], temp=False)
+            character.set_stat('pools', 'dual', 'Rage', stats['rage'], temp=True)
+            character.set_stat('pools', 'dual', 'Willpower', stats['willpower'], temp=False)
+            character.set_stat('pools', 'dual', 'Willpower', stats['willpower'], temp=True) 
+            character.msg(f"|gRage set to {stats['rage']} and Willpower set to {stats['willpower']} for {tribe} tribe.")
+
+def validate_shifter_stats(character, stat_name: str, value: str, category: str = None, stat_type: str = None) -> tuple[bool, str]:
+    """
+    Validate shifter-specific stats.
+    Returns (is_valid, error_message)
+    """
+    stat_name = stat_name.lower()
+    
+    # Get shifter type
+    shifter_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+    if not shifter_type:
+        return False, "Character must have a shifter type set"
+    
+    # Validate type
+    if stat_name == 'type':
+        return validate_shifter_type(value)
+        
+    # Validate breed
+    if stat_name == 'breed':
+        return validate_shifter_breed(shifter_type, value)
+        
+    # Validate auspice
+    if stat_name == 'auspice':
+        return validate_shifter_auspice(shifter_type, value)
+        
+    # Validate tribe
+    if stat_name == 'tribe':
+        return validate_shifter_tribe(shifter_type, value)
+        
+    # Validate aspect
+    if stat_name == 'aspect':
+        return validate_shifter_aspect(shifter_type, value)
+        
+    # Validate gifts
+    if category == 'powers' and stat_type == 'gift':
+        return validate_shifter_gift(character, stat_name, value)
+        
+    # Validate backgrounds
+    if category == 'backgrounds' and stat_type == 'background':
+        return validate_shifter_backgrounds(character, stat_name, value)
+    
+    return True, ""
+
+def validate_shifter_type(value: str) -> tuple[bool, str]:
+    """Validate a shifter type."""
+    valid_types = [t[1] for t in SHIFTER_TYPE_CHOICES if t[1] != 'None']
+    if value.title() not in valid_types:
+        return False, f"Invalid shifter type. Valid types are: {', '.join(sorted(valid_types))}"
+    return True, ""
+
+def validate_shifter_breed(shifter_type: str, value: str) -> tuple[bool, str]:
+    """Validate a shifter's breed based on their type."""
+    valid_breeds = BREED_CHOICES_DICT.get(shifter_type, [])
+    if not valid_breeds:
+        return False, f"No valid breeds found for {shifter_type}"
+    
+    if value.title() not in valid_breeds:
+        return False, f"Invalid breed for {shifter_type}. Valid breeds are: {', '.join(sorted(valid_breeds))}"
+    return True, ""
+
+def validate_shifter_auspice(shifter_type: str, value: str) -> tuple[bool, str]:
+    """Validate a shifter's auspice based on their type."""
+    valid_auspices = AUSPICE_CHOICES_DICT.get(shifter_type, [])
+    if not valid_auspices:
+        return False, f"{shifter_type} characters do not have auspices"
+    
+    if value.title() not in valid_auspices:
+        return False, f"Invalid auspice for {shifter_type}. Valid auspices are: {', '.join(sorted(valid_auspices))}"
+    return True, ""
+
+def validate_shifter_tribe(shifter_type: str, value: str) -> tuple[bool, str]:
+    """Validate a shifter's tribe based on their type."""
+    if shifter_type == 'Garou':
+        valid_tribes = [t[1] for t in GAROU_TRIBE_CHOICES if t[1] != 'None']
+    elif shifter_type == 'Bastet':
+        valid_tribes = [t[1] for t in BASTET_TRIBE_CHOICES if t[1] != 'None']
+    else:
+        return False, f"{shifter_type} characters do not have tribes"
+    
+    if value.title() not in valid_tribes:
+        return False, f"Invalid tribe for {shifter_type}. Valid tribes are: {', '.join(sorted(valid_tribes))}"
+    return True, ""
+
+def validate_shifter_aspect(shifter_type: str, value: str) -> tuple[bool, str]:
+    """Validate a shifter's aspect based on their type."""
+    valid_aspects = ASPECT_CHOICES_DICT.get(shifter_type, [])
+    if not valid_aspects:
+        return False, f"{shifter_type} characters do not have aspects"
+    
+    if value.title() not in valid_aspects:
+        return False, f"Invalid aspect for {shifter_type}. Valid aspects are: {', '.join(sorted(valid_aspects))}"
+    return True, ""
+
+def validate_shifter_gift(character, gift_name: str, value: str) -> tuple[bool, str]:
+    """Validate a shifter gift."""
+    # Import Stat here to avoid circular import
+    from world.wod20th.models import Stat
+    
+    # Get character's type and other relevant attributes
+    shifter_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+    
+    # Validate value first
+    try:
+        gift_value = int(value)
+        if gift_value < 0 or gift_value > 5:
+            return False, "Gift values must be between 0 and 5"
+    except ValueError:
+        return False, "Gift values must be numbers"
+    
+    # Check if the gift exists in the database
+    gift = Stat.objects.filter(
+        name__iexact=gift_name,
+        category='powers',
+        stat_type='gift'
+    ).first()
+    
+    if not gift:
+        return False, f"'{gift_name}' is not a valid gift"
+        
+    # If the gift exists but has a specific shifter_type requirement,
+    # validate that the character can use it
+    if gift.shifter_type and gift.shifter_type != shifter_type:
+        return False, f"'{gift_name}' is not available to {shifter_type}"
+        
+    return True, ""
+
+def validate_shifter_backgrounds(character, background_name: str, value: str) -> tuple[bool, str]:
+    """Validate shifter backgrounds."""
+    # Get list of available backgrounds
+    from world.wod20th.utils.stat_mappings import UNIVERSAL_BACKGROUNDS, SHIFTER_BACKGROUNDS
+    available_backgrounds = set(bg.title() for bg in UNIVERSAL_BACKGROUNDS + SHIFTER_BACKGROUNDS)
+    
+    if background_name.title() not in available_backgrounds:
+        return False, f"Invalid background '{background_name}'. Available backgrounds: {', '.join(sorted(available_backgrounds))}"
+    
+    # Validate value
+    try:
+        bg_value = int(value)
+        if bg_value < 0 or bg_value > 5:
+            return False, "Background values must be between 0 and 5"
+        return True, ""
+    except ValueError:
+        return False, "Background values must be numbers"

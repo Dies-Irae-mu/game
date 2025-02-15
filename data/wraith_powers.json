@@ -1,0 +1,162 @@
+[
+    {
+        "name": "Argos",
+        "description": "The Arcanos of travel",
+        "category": "powers",
+        "stat_type": "arcanos",
+        "guild": "Harbingers",
+        "guildmarks": "As Argos affects the Tempest, so too does a bit of the Tempest soak into each Harbinger. A wraith skilled in these arts gradually develops jet-black eyes, and her clothing flutters in intangible winds that gust with her emotions.",
+        "game_line": "Wraith: The Oblivion",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Castigation",
+        "description": "Allows wraiths to wrestle with others' Shadows",
+        "category": "powers",
+        "stat_type": "arcanos",
+        "guild": "Pardoners",
+        "guildmarks": "A Pardoner's fingers have black stains from where he's touched or grappled with the Shadow. As the Pardoner's experience and power increase, the stains work their way up the hands and arms. Since their split from the Solicitors (see below), the Pardoners' symbol has been an iron lantern. Hung outside a building, the lantern advertises a Pardoner's services; carried by her it illuminates his way in the darkest of places. Each lantern's unique to the Pardoner who owns it, for she creates it herself as part of his “apprenticeship” (or, more rarely, gets it from a master who knows her well), but most Pardoners favor traditional designs with baroque, macabre adornments. A Pardoner's lantern usually produces a pale, ghostly glow, but may change color or intensity depending on the Pardoner's mood or personality",
+        "game_line": "Wraith: The Oblivion",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Embody",
+        "description": "Lets a wraith manifest in the Skinlands",
+        "category": "powers",
+        "stat_type": "arcanos",
+        "guild": "Proctors",
+        "guildmarks": "The markings Embody leaves on Proctors reflect the foci the wraith use to materialize and the events she experiences in the Skinlands. A wraith who prefers to focus on visual input might have eyes that reflect the other side of the Shroud, while one who seeks out sources of heat may develop blisters or a heat shimmer on his fingers. If Corpus loss while manifested forces the wraith into a Harrowing, the injury that triggered the Harrowing often leaves a scar that even Moliate can't erase. A savvy observer with medical or supernatural experience can tell the difference between ordinary scarring and that which Embody inflicts",
+        "game_line": "Wraith: The Oblivion",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Fatalism",
+        "description": "Allows a wraith a glimpse at Fate",
+        "category": "powers",
+        "stat_type": "arcanos",
+        "guild": "Oracles",
+        "guildmarks": "Each Oracle bears raised scars or tattoo-like patterns representing his preferred form of divination. These markings move of their own accord, though attempts to interpret the changes rarely bring any usable insight. Many Guildwraiths choose the gaudiest possible attire and go about with their eyes hidden, though only the eldest remember this fashion's origins as an expression of solidarity with their ancient partners in the Harbingers' Guild. Many Oracles rely on a particular technique, tool, or meditation to focus their arts. Tarot cards, tea leaves, tongue-in-cheek relic Ouija boards, the entrails of rare plasmics: Nothing is too outré for the dedicated seer. This practice is as common outside the Oracles' Guild as it is within.",
+        "game_line": "Wraith: The Oblivion",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Flux",
+        "description": "The Arcanos of decay and reconstruction",
+        "category": "powers",
+        "stat_type": "arcanos",
+        "guild": "Alchemists",
+        "guildmarks": "As a wraith works with the echoes and reflections of inanimate objects, they, in turn, mold her self-image. Parts of every Alchemist look manufactured: hinged joints, rivets, welds, mold flashing paralleling her long bones, perhaps a manufacturer's mark from her birth city or a barcode of a personally significant phrase. These guildmarks evolve with the Alchemist's tastes, reflecting the types of relics with which she prefers to work.",
+        "game_line": "Wraith: The Oblivion",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Inhabit",
+        "description": "Lets wraiths possess machinery and computers",
+        "category": "powers",
+        "stat_type": "arcanos",
+        "guild": "Artificers",
+        "guildmarks": "Artificers accrue wear and tear mimicking that of the objects they Inhabit. Those who prefer simple objects or physical machinery manifest scuff marks and gouges, smell of exhaust and hot metal, and seep lubricant from under their fingernails. Circuit patterns flicker under the skin of wraiths with a more digital bent, while running error logs of their internal dialogues with their Shadows scroll across their eyes.",
+        "game_line": "Wraith: The Oblivion",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Intimation",
+        "description": "The Arcanos of creating and removing desires",
+        "category": "powers",
+        "stat_type": "arcanos",
+        "guild": "Solicitors",
+        "guildmarks": "Every Solicitor's left eye has a glimmer of toxic green fire that grows as her mastery of Intimation increases. It's normally the approximate luminosity of a candle, but when she actively uses an Intimation art, it brightens to momentary incandescence, sufficient for reading (if anyone wants to read by it). It's possible to cover or hood this light - the Stygian fashion for masks certainly enables it - but such deception is itself cause for suspicion among knowledgeable wraiths.",
+        "game_line": "Wraith: The Oblivion",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Keening",
+        "description": "The songs of the dead",
+        "category": "powers",
+        "stat_type": "arcanos",
+        "guild": "Chanteurs",
+        "guildmarks": "The Chanteurs' guildmark is aural rather than visible. If a wraith stands near a Chanteur and listens carefully, he can hear some version of the Chanteur's favorite song in life (or some other song with deep meaning for her) playing faintly, almost as if the Chanteur has her own soundtrack. Any significant noise, including any use of a Keening art, drowns out this background music (unless the wraith succeeds with a Perception + Awareness roll against difficulty 9), but it never goes away completely. Many Chanteurs also like to travel with some form of musical instrument or instrument iconography - a relic guitar, perhaps, or a brooch in the shape of a harp. These are affectations, however, and are more likely to be found on wannabes and followers of true Chanteurs than on the genuine article.",
+        "game_line": "Wraith: The Oblivion",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Lifeweb",
+        "description": "The Arcanos of working with Fetters",
+        "category": "powers",
+        "stat_type": "arcanos",
+        "guild": "Monitors",
+        "guildmarks": "Monitors never close their eyes. Ever. Some Monitors, enamored of their Arcanos' symbolism, affect styles in which webs and spiders feature prominently. Older Guildwraiths find this gauche, if not a foolhardy taunt of the many Restless who hold prejudices against the Guild.",
+        "game_line": "Wraith: The Oblivion",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Mnemosynis",
+        "description": "The Arcanos of memory",
+        "category": "powers",
+        "stat_type": "arcanos",
+        "guild": "Mnemoi",
+        "guildmarks": "Basic Mnemosynis lessons use mirror or crystal metaphors to help nascent Mnemoi visualize their work. The Arcanos' guildmarks reflect this in the wraith's Corpus, though no two Mnemoi exhibit the exact same manifestation. One Mnemos has eyes with mirrored pupils, another's fingernails and teeth are multifaceted gemstones, the face of a third shimmers into stained-glass perfection at one particular viewing angle, and a fourth's voice carries undertones of shattering crystal. Mnemosynis guildmarks become more pronounced when the wraith activates his arts.",
+        "game_line": "Wraith: The Oblivion",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Moliate",
+        "description": "Allows a wraith to reshape plasm",
+        "category": "powers",
+        "stat_type": "arcanos",
+        "guild": "Masquers",
+        "guildmarks": "Since a Masquer can change shape to remove or alter any physical feature, what identifies him as a Masquer is that he has one prominent, distinguishing characteristic he cannot change - it remains the same, mutatis mutandis, in every form or shape he adopts. The most common such feature is the color of his eyes, but other examples include: a notable scar or tattoo, a snaggle tooth, an oddly shaped finger, or a nose that was broken and set badly.",
+        "game_line": "Wraith: The Oblivion",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Outrage",
+        "description": "Permits a wraith to exert force in the lands of the living",
+        "category": "powers",
+        "stat_type": "arcanos",
+        "guild": "Spooks",
+        "guildmarks": "Outrage's raw physicality transposes itself onto the Corpus of its students. Novice Spooks display uneven, anatomically unlikely muscle development. More experienced Outrage users take on hulking, 'roided-out physiques.",
+        "game_line": "Wraith: The Oblivion",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Pandemonium",
+        "description": "Creates all manner of ghastly effects",
+        "category": "powers",
+        "stat_type": "arcanos",
+        "guild": "Haunters",
+        "guildmarks": "Even by the Underworld's standards, Haunters are quirky, exhibiting peculiar mannerisms that seem calculated to unnerve witnesses. Reflexive meddling and antiauthoritarianism, spatial and temporal anomalies, and eldritch hallucinations (or are they true visions?) nibble at the edges of the wraith's sanity. Other Arcanoi may sign a wraith's Corpus, but Pandemonium leaves its mark on the psyche. Many Haunters do affect cloaks, greatcoats, or other flowing garments that can billow dramatically on cue, but this is a fashion statement, not a true guildmark. What marks a true Haunter is the thing seen out of the corner of the eye, the disturbing hint of what's bubbling under the surface of the Haunter's self-control.",
+        "game_line": "Wraith: The Oblivion",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Phantasm",
+        "description": "Allows a wraith to work with dreams",
+        "category": "powers",
+        "stat_type": "arcanos",
+        "guild": "Sandmen",
+        "guildmarks": "Just as a person who tromps through marshes gets wet and muddy, a Sandman who glides through the morphean landscape becomes marked by dreamstuff - and that marking never entirely disappears. At the lower levels of power, fragmented scenes from dreams currently experienced by nearby sleeping mortals play out across his eyes. As he becomes more powerful, the 'screen' expands to cover first his face, and eventually his whole body. Additionally, most of the schools within the Guild (see below) adopt emblems or symbols that have special meaning for them. For example, members of the School of Guignol often paint a circle of blood (or at least blood-red makeup) around one eye, while the Dreamaturges use the traditional comic-tragic masques associated with theater.",
+        "game_line": "Wraith: The Oblivion",
+            "values": [1, 2, 3, 4, 5]
+        },
+    {
+        "name": "Puppetry",
+        "description": "The Arcanos of possession",
+        "category": "powers",
+        "stat_type": "arcanos",
+        "guild": "Puppeteers",
+        "guildmarks": "Puppeteers take on so many other forms that they can lose their own. Each Puppeteer's Corpus gradually becomes a blend of his hosts' appearances. Puppeteers who possess a wide range of subjects melt into an indistinct average appearance that approaches an uncanny valley of human norms. Those who specialize in a particular class of host undergo similar transformations, but with a bias toward their preferred vessels. Wraiths fond of possessing inhuman subjects become gradually less human-looking themselves, reflecting the physical traits of animals or the spiritual traits of supernatural hosts.",
+        "game_line": "Wraith: The Oblivion",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Usury",
+        "description": "Lets a wraith manipulate vital energies",
+        "category": "powers",
+        "stat_type": "arcanos",
+        "guild": "Usurers",
+        "guildmarks": "Usury demands precision from those who engage in its delicate give and take. Wraiths skilled in this Arcanos find their skin covered in a series of intricate markings. These patterns are in constant motion, momentarily resolving into the mathematical or currency symbols of the wraith's mortal culture before the slate wipes itself clean for the next equation.",
+        "game_line": "Wraith: The Oblivion",
+        "values": [1, 2, 3, 4, 5]
+    }   
+]

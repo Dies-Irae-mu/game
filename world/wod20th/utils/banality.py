@@ -1,6 +1,8 @@
 """
 Utility functions for handling Banality ratings and messages.
 """
+from world.wod20th.utils.sheet_constants import CLAN
+from world.wod20th.utils.stat_mappings import VALID_MORTALPLUS_TYPES
 
 def get_banality_message(banality_rating):
     """
@@ -42,25 +44,28 @@ def get_default_banality(splat, subtype=None, affiliation=None, tradition=None, 
     Returns:
         int: The default banality rating
     """
-    splat = splat.lower() if splat else ''
-    subtype = subtype.lower() if subtype else ''
-    affiliation = affiliation.lower() if affiliation else ''
-    tradition = tradition.lower() if tradition else ''
-    convention = convention.lower() if convention else ''
-    nephandi_faction = nephandi_faction.lower() if nephandi_faction else ''
+    # Handle empty or None values
+    splat = splat.lower() if splat else 'mortal'
+    subtype = subtype.lower() if subtype else None
+    affiliation = affiliation.lower() if affiliation else None
+    tradition = tradition.lower() if tradition else None
+    convention = convention.lower() if convention else None
+    nephandi_faction = nephandi_faction.lower() if nephandi_faction else None
 
     # Base cases by splat
     if splat == 'changeling':
-        return 3
-    elif splat in ['mortal', 'possessed']:
+        return 3  # Default Changeling Banality if no kith specified
+    elif splat == 'mortal':
         return 6
     
-    # Vampire cases
+    # Vampire cases - all vampires have Banality 5 except specific clans
     elif splat == 'vampire':
-        if subtype in ['malkavian', 'malkavian antitribu']:
-            return 3
-        elif subtype in ['daughters of cacophony']:
-            return 4
+        if subtype:
+            subtype = subtype.lower()
+            if subtype in ['malkavian', 'malkavian antitribu']:
+                return 3
+            elif subtype == 'daughters of cacophony':
+                return 4
         return 5  # Default vampire banality
     
     # Mage cases
@@ -86,32 +91,54 @@ def get_default_banality(splat, subtype=None, affiliation=None, tradition=None, 
                 return 4
             elif nephandi_faction == 'ironhands':
                 return 8
-            return 6  # Default nephandi banality
+            return 5  # Default nephandi banality
         return 5  # Default mage banality
     
     # Shifter cases
     elif splat == 'shifter':
-        if subtype == 'ratkin':
-            return 3
-        elif subtype in ['gurahl', 'mokole', 'corax', 'nuwisha', 'kitsune']:
-            return 4
-        elif subtype in ['garou', 'rokea', 'bastet']:
-            return 5
-        elif subtype == 'nagah':
-            return 6
-        elif subtype == 'ananasi':
-            return 7
+        if subtype:
+            subtype = subtype.lower()
+            if subtype == 'ratkin':
+                return 3
+            elif subtype in ['gurahl', 'mokole', 'corax', 'nuwisha', 'kitsune']:
+                return 4
+            elif subtype in ['garou', 'rokea', 'bastet']:
+                return 5
+            elif subtype == 'nagah':
+                return 6
+            elif subtype == 'ananasi':
+                return 7
         return 5  # Default shifter banality
     
     # Mortal+ cases
     elif splat == 'mortal+':
-        if subtype == 'kinain':
-            return 3
-        elif subtype in ['sorcerer', 'kinfolk', 'psychic']:
-            return 5
-        elif subtype in ['ghoul', 'faithful']:
-            return 6
+        if subtype:
+            subtype = subtype.lower()
+            if subtype == 'kinain':
+                return 3
+            elif subtype in ['sorcerer', 'kinfolk', 'psychic']:
+                return 5
+            elif subtype in ['ghoul', 'faithful']:
+                return 6
         return 6  # Default mortal+ banality
+    
+    # Companion cases
+    elif splat == 'companion':
+        if subtype:
+            subtype = subtype.lower()
+            if subtype == 'spirit':
+                return 4
+            elif subtype == 'construct':
+                return 7
+            elif subtype == 'robot':
+                return 8
+            elif subtype == 'alien':
+                return 3
+            elif subtype == 'bygone':
+                return 4
+            elif subtype == 'familiar':
+                return 4
+        return 6  # Default companion banality
     
     # Possessed cases
     elif splat == 'possessed':

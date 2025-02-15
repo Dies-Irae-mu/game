@@ -181,5 +181,13 @@
         "stat_type": "lineage",
         "values": [],
         "splat": "companion"
+    },
+    {
+        "name": "Date of Awakening",
+        "description": "The date of awakening of a Mage character.",
+        "game_line": "Mage: The Ascension",
+        "category": "identity",
+        "stat_type": "personal",
+        "values": []
     }
 ]

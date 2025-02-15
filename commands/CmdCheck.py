@@ -78,7 +78,7 @@ class CmdCheck(MuxCommand):
         'quintessence': 0.25,  # 1 per 4 dots
         'sphere': 7,
         'discipline': 7,
-        'road': 2,
+        'path': 2,
         'numina': 7,
         'sorcery': 7,
         'hedge_ritual': 3,
@@ -100,7 +100,7 @@ class CmdCheck(MuxCommand):
         'arete': 8,
         'quintessence': 1,  # per point
         'discipline': 5,
-        'road': 2,
+        'path': 2,
         'art': 4,
         'glamour': 3,
         'realm': 2,
@@ -415,18 +415,18 @@ class CmdCheck(MuxCommand):
             if missing_virtues:
                 results['errors'].append(f"Missing required virtues for {enlightenment}: {', '.join(missing_virtues)}")
 
-            # Check Road rating against virtue total and cap for non-Humanity paths
-            road = character.get_stat('pools', 'moral', 'Road', temp=False) or 0
-            if enlightenment != 'Humanity' and road > 5:
-                results['errors'].append(f"Non-Humanity paths cannot have Road rating above 5 at character creation (currently {road})")
-            if road > virtue_total:
-                results['errors'].append(f"Road rating cannot exceed sum of virtues ({virtue_total}) but is {road}")
+            # Check path rating against virtue total and cap for non-Humanity paths
+            path = character.get_stat('pools', 'moral', 'path', temp=False) or 0
+            if enlightenment != 'Humanity' and path > 5:
+                results['errors'].append(f"Non-Humanity paths cannot have path rating above 5 at character creation (currently {path})")
+            if path > virtue_total:
+                results['errors'].append(f"path rating cannot exceed sum of virtues ({virtue_total}) but is {path}")
             
-            # Calculate freebie points spent on Road
-            freebies_spent_on_road = (road - virtue_total) * self.FREEBIE_COSTS['road'] if road > virtue_total else 0
+            # Calculate freebie points spent on path
+            freebies_spent_on_path = (path - virtue_total) * self.FREEBIE_COSTS['path'] if path > virtue_total else 0
             
-            # Add virtue and road freebie costs to total
-            results['freebies_spent'] = results.get('freebies_spent', 0) + freebies_spent_on_virtues + freebies_spent_on_road
+            # Add virtue and path freebie costs to total
+            results['freebies_spent'] = results.get('freebies_spent', 0) + freebies_spent_on_virtues + freebies_spent_on_path
 
             # Check Willpower against Courage
             willpower = character.get_stat('pools', 'dual', 'Willpower', temp=False) or 0
@@ -767,7 +767,7 @@ class CmdCheck(MuxCommand):
             if total_discipline_dots > 3:  # Free dots
                 spent_freebies += (total_discipline_dots - 3) * self.FREEBIE_COSTS['discipline']
 
-            # Calculate virtue and road costs
+            # Calculate virtue and path costs
             virtues = character.db.stats.get('virtues', {}).get('moral', {})
             enlightenment = character.db.stats.get('identity', {}).get('lineage', {}).get('Enlightenment', {}).get('perm')
             
@@ -791,11 +791,11 @@ class CmdCheck(MuxCommand):
                                 remaining_free_dots = 0
                             else:
                                 remaining_free_dots -= (value - 1)
-                # Calculate Road costs
-                road = character.get_stat('pools', 'moral', 'Road', temp=False) or 0
+                # Calculate path costs
+                path = character.get_stat('pools', 'moral', 'path', temp=False) or 0
                 virtue_total = sum(values.get('perm', 0) for values in virtues.values())
-                if road > virtue_total:
-                    spent_freebies += (road - virtue_total) * self.FREEBIE_COSTS['road']
+                if path > virtue_total:
+                    spent_freebies += (path - virtue_total) * self.FREEBIE_COSTS['path']
 
         elif splat == 'changeling':
             # Calculate Art costs

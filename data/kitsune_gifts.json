@@ -30,17 +30,7 @@
         "splat": "Shifter"
     },
     {
-        "name": "Persuasion",
-        "description": "This Gift allows a homid to become more persuasive when dealing with others, in such a way that his statements and arguments are imbued with added meaning or credibility.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Seduction",
+        "name": "Seduction Gift",
         "description": "A Fox with this Gift can cause humans to fall in love with her.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -60,38 +50,8 @@
         "splat": "Shifter"
     },
     {
-        "name": "Burrow",
-        "description": "As the metis Gift. Those who learn this Gift gain the ability to burrow through the earth. They make a real tunnel, and others can follow them through it. The digger creates a burrow just large enough for her to go through.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Cricket Leap",
-        "description": "As the lupus Gift: Hare's Leap. By invoking this Gift, the werewolf may leap incredible distances.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Heightened Senses",
-        "description": "As the lupus Gift. The werewolf with this Gift tunes in to the world around him, increasing his senses vastly. When in Homid or Glabro form, her senses become as sharp as those of a wolf, allowing him to hear sounds beyond his normal range, granting him superior night vision and making his sense of smell stronger than that of any dog.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
         "name": "Flow of Aura",
-        "description": "The Kitsune feels the emotional aura of a place — the imprint left behind by events of great sorrow, joy, aggression, and the like.",
+        "description": "The Kitsune feels the emotional aura of a place - the imprint left behind by events of great sorrow, joy, aggression, and the like.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -461,7 +421,7 @@
     },
     {
         "name": "Bolt",
-        "description": "The Kitsune calls a bolt of raw elemental force to strike his foe — fire, lightning, and freezing wind are all possibilities.",
+        "description": "The Kitsune calls a bolt of raw elemental force to strike his foe - fire, lightning, and freezing wind are all possibilities.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -621,7 +581,7 @@
     },
     {
         "name": "Shadows by the Firelight",
-        "description": "As the Galliard Gift. By invoking the power of shadows and dreams, the Galliard may create interactive stories in which others take part — willingly or not.",
+        "description": "As the Galliard Gift. By invoking the power of shadows and dreams, the Galliard may create interactive stories in which others take part - willingly or not.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",

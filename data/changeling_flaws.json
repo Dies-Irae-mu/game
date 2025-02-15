@@ -131,7 +131,7 @@
     },
     {
         "name": "Intolerance",
-        "description": "You have an unreasoning dislike of a certain thing. This may be a class of person, a situation, or just about anything else. The difficulties of all dice rolls involving the subject — such as conflict, dealing with the lower classes, or having to break bread with a certain kith — are increased by two. Note that some dislikes may be too trivial for this Flaw. The Storyteller is the final arbiter on what you can pick to dislike.",
+        "description": "You have an unreasoning dislike of a certain thing. This may be a class of person, a situation, or just about anything else. The difficulties of all dice rolls involving the subject - such as conflict, dealing with the lower classes, or having to break bread with a certain kith - are increased by two. Note that some dislikes may be too trivial for this Flaw. The Storyteller is the final arbiter on what you can pick to dislike.",
         "game_line": "Changeling: The Dreaming",
         "category": "flaws",
         "stat_type": "mental",
@@ -151,7 +151,7 @@
     },
     {
         "name": "Possessive",
-        "description": "You obsess over and jealously hoard your possessions. When others attempt to use your equipment — whether it be your car, sword, clothes, or bed — you must make a Willpower roll (difficulty 7). On a failure you vehemently refuse to allow anyone to touch your things, and will lash out if they push the subject. On a botch you immediately act violently when someone attempts to handle anything you own.",
+        "description": "You obsess over and jealously hoard your possessions. When others attempt to use your equipment - whether it be your car, sword, clothes, or bed - you must make a Willpower roll (difficulty 7). On a failure you vehemently refuse to allow anyone to touch your things, and will lash out if they push the subject. On a botch you immediately act violently when someone attempts to handle anything you own.",
         "game_line": "Changeling: The Dreaming",
         "category": "flaws",
         "stat_type": "mental",
@@ -300,16 +300,6 @@
         "source": "Changeling: the Dreaming p.179"
     },
     {
-        "name": "Enemy",
-        "description": "You have an enemy, or perhaps a group of enemies, who want you harmed. The value of the Flaw determines how powerful these enemies are. The most powerful enemies (kings or impossible horrors from the Dreaming) would be five-point Flaws, while someone nearer to or below your own power would be worth only one point. You must decide who your enemy is and how you earned such enmity in the first place.",
-        "game_line": "Changeling: The Dreaming",
-        "category": "flaws",
-        "stat_type": "social",
-        "values": [1, 2, 3, 4, 5],
-        "splat": "Changeling",
-        "source": "Changeling: the Dreaming p.184"
-    },
-    {
         "name": "Geas",
         "description": "You are under a geas at the beginning of play, most likely a Ban, but possibly a long-term quest. This geas may be a family curse or duty you inherited, or a changeling Art imposed it on you. The difficulty of the geas determines how great a Flaw it is. Something minor, such as a Ban against harming animals, would only be worth one point. More difficult geas are worth more points. A five-point geas is something that rules your entire life, like a quest that requires you to render aid to anyone in need you encounter. The Storyteller decides the exact value of whatever geas you choose.",
         "game_line": "Changeling: The Dreaming",
@@ -331,7 +321,7 @@
     },
     {
         "name": "Oathbound",
-        "description": "Your life depends on something you must or must not do. It may be something that has always been upon you, or a sacred oath you swore. Someone who witnessed it will always hold you to it. If you disobey, the consequences will be dire. You may have several oaths, and these may come into conflict. Most changelings keep their prohibitions and imperatives secret, lest enemies use them as weapons. Storytellers should examine each oath and assign a point value to it, as well as to the punishment for violating it. Easily avoided circumstances, such as \"Never break bread with a redhaired man,\" are worth one point, while more common, or difficult, things, such as \"Stop and pet every cat you see,\" are worth two points, and particularly drastic or dangerous circumstances, such as \"Never back down from a fight,\" are worth three (or more) points. Consequences are worth points as well. Automatically botching the next major cantrip you do is worth one point, having bad luck for the rest of your life is worth two, losing all your friends and worldly possessions is worth three, dying is worth four, and being deserted by your faerie soul five. If you accidentally violate your oath, you may attempt to atone for the crime, fixing whatever you did wrong. However, if you violate an oath willingly and with full knowledge — and survive — you become an oathbreaker, one of the foulest epithets among changelings.",
+        "description": "Your life depends on something you must or must not do. It may be something that has always been upon you, or a sacred oath you swore. Someone who witnessed it will always hold you to it. If you disobey, the consequences will be dire. You may have several oaths, and these may come into conflict. Most changelings keep their prohibitions and imperatives secret, lest enemies use them as weapons. Storytellers should examine each oath and assign a point value to it, as well as to the punishment for violating it. Easily avoided circumstances, such as \"Never break bread with a redhaired man,\" are worth one point, while more common, or difficult, things, such as \"Stop and pet every cat you see,\" are worth two points, and particularly drastic or dangerous circumstances, such as \"Never back down from a fight,\" are worth three (or more) points. Consequences are worth points as well. Automatically botching the next major cantrip you do is worth one point, having bad luck for the rest of your life is worth two, losing all your friends and worldly possessions is worth three, dying is worth four, and being deserted by your faerie soul five. If you accidentally violate your oath, you may attempt to atone for the crime, fixing whatever you did wrong. However, if you violate an oath willingly and with full knowledge - and survive - you become an oathbreaker, one of the foulest epithets among changelings.",
         "game_line": "Changeling: The Dreaming",
         "category": "flaws",
         "stat_type": "supernatural",

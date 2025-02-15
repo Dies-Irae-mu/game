@@ -221,7 +221,7 @@
     },
     {
         "name": "Supernatural Companion",
-        "description": "You have a friend or ally who happens to be a vampire, mage, wraith, changeling, or other non-werewolf supernatural creature. Although you may call upon her in time of need, she also has the right to call upon you (after all, you are friends). This relationship, however, does not have the sanction of your kind or hers, and you'll likely face scandal — or worse — if you are found out. Meeting places and methods of communication are always risky. The Storyteller creates and controls your companion, but does not reveal to you her full powers (or secret motivations).",
+        "description": "You have a friend or ally who happens to be a vampire, mage, wraith, changeling, or other non-werewolf supernatural creature. Although you may call upon her in time of need, she also has the right to call upon you (after all, you are friends). This relationship, however, does not have the sanction of your kind or hers, and you'll likely face scandal - or worse - if you are found out. Meeting places and methods of communication are always risky. The Storyteller creates and controls your companion, but does not reveal to you her full powers (or secret motivations).",
         "game_line": "Werewolf: The Apocalypse",
         "category": "merits",
         "stat_type": "social",
@@ -254,7 +254,7 @@
     },
     {
         "name": "Spirit Magnet",
-        "description": "You naturally attract the attention of the spirits whenever you cross the Gauntlet into the Umbra. Most of the time, the Umbral inhabitants are simply curious, gathering around you to see who you are and what you're doing in their \"neck of the woods.\" Occasionally you attract more than you bargained for — Banes are also likely to come calling. None of the spirits who collect in your vicinity are under your command unless you use a Gift that allows you to command them or influence them in some way.",
+        "description": "You naturally attract the attention of the spirits whenever you cross the Gauntlet into the Umbra. Most of the time, the Umbral inhabitants are simply curious, gathering around you to see who you are and what you're doing in their \"neck of the woods.\" Occasionally you attract more than you bargained for - Banes are also likely to come calling. None of the spirits who collect in your vicinity are under your command unless you use a Gift that allows you to command them or influence them in some way.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "merits",
         "stat_type": "supernatural",

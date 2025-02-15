@@ -1,0 +1,34 @@
+[
+    {
+        "name": "Shadow",
+        "description": "The Shadow is the hidden half of a wraith, the version of her personality where the worst of her impulses and cruelty reside. No matter how vicious or kind she was in life, those dark aspects were present, a part of who she was.",
+        "category": "identity",
+        "stat_type": "lineage",
+        "game_line": "Wraith: The Oblivion",
+        "values": ["Delver", "Abuser", "Director", "False Friend", "Parent", "Martyr", "Monster", "Somnambulist", "Perfectionist", "Voice of Hope", "Stormcrow"]
+    },
+    {
+        "name": "Mortal Life",
+        "description": "The wraith's mortal life, what they did before they died.",
+        "category": "identity",
+        "stat_type": "lineage",
+        "game_line": "Wraith: The Oblivion",
+        "values": []
+    },
+    {
+        "name": "Death",
+        "description": "The wraith's death, how they died.",
+        "category": "identity",
+        "stat_type": "lineage",
+        "game_line": "Wraith: The Oblivion",
+        "values": []
+    },
+    {
+        "name": "Regret",
+        "description": "The primary regret that a wraith has, usually their reason for still being around.",
+        "category": "identity",
+        "stat_type": "lineage",
+        "game_line": "Wraith: The Oblivion",
+        "values": []
+    }
+]

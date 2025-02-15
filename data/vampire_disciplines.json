@@ -238,5 +238,109 @@
         "category": "powers",
         "stat_type": "discipline",
         "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Sepulchre Path", 
+        "description": "This path allows the necromancer to command, interact with and combat ghosts.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "necromancy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Bone Path",
+        "description": "This path allows the necromancer to animate and control the dead corpses of animals and people, letting them create zombies of a sort.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "necromancy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Ash Path",
+        "description": "This path allows the necromancer to pierce the Shroud and enter the Shadowlands that the various ghosts and wraiths dwell in.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "necromancy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Vitreous Path",
+        "description": "The proprietary path of the Nagaraja, it allows for more refined control over wraiths than even the Sepulchre Path; a master of the path may gain sustenance from them. It was introduced in Vampire Storytellers Handbook Revised as a replacement for the Nihilistics Discipline.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "necromancy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Cenotaph Path",
+        "description": "A rare path mainly practised by the African Ghiberti family of the Giovanni which allows the necromancer control and even reassignment of a wraith's fetter.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "necromancy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Path of Abombo",
+        "description": "A path practised by the Laibon of Africa, focussing on the connection between the dead and the living; similar to but distinct from the Cenotaph Path.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "necromancy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Path of Woe",
+        "description": "This Path is the province of the Rosselini family within Clan Giovanni. While the Giovanni prefer the subtlety of the Sepulchre Path, most Rosselini instead focus directly on dominating and breaking their victims.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "necromancy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Nightshade Path",
+        "description": "Developed by the Lilith-worshipping Drakaina of the Tal'Mahe'Ra, the Nightshade Path offers a limited variant of necrosynthesis, combining the principles of life and death.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "necromancy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Path of Haunting",
+        "description": "A path practiced by the Maeghar and also pioneered by Giovanni during their time as a bloodline of the Cappadocians. It revolves around the ephemeral nature of the Shadowlands and the fascination associated with death.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "necromancy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Grave's Decay",
+        "description": "The classical Mortis path of Grave's Decay channels the force of decay through the user's victims.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "necromancy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Path of Skulls",
+        "description": "A nearly extinct Path that was the purview of a secretive cabal of Cappadocians intending to strengthen the political power of the Clan.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "necromancy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Twilight Garden",
+        "description": "Also known as the 'Path of Four Humors', this was the specialty of the Lamia bloodline of the Dark Ages.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "necromancy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Corpse in the Monster",
+        "description": "The classical Mortis path of the Corpse in the Monster is the study of understanding the unliving form, and its powers allow the user to affect change based in it.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "necromancy",
+        "values": [1, 2, 3, 4, 5]
     }
 ]

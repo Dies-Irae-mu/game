@@ -45,7 +45,7 @@
     },
     {
         "name": "Strict Carnivore",
-        "description": "\"Vegetarian\" is just another way of saying \"lazy hunter.\" Vegetables and grains give you no nutritional benefit; you can only subsist on meat — the closer to raw, the better. You have real problems in areas where meat is scarce.",
+        "description": "\"Vegetarian\" is just another way of saying \"lazy hunter.\" Vegetables and grains give you no nutritional benefit; you can only subsist on meat - the closer to raw, the better. You have real problems in areas where meat is scarce.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "flaws",
         "stat_type": "physical",
@@ -133,7 +133,7 @@
     },
     {
         "name": "Twisted Upbringing",
-        "description": "The Garou who found you after your First Change, and who oversaw your Rite of Passage and early entry into Garou society, taught you everything they knew — and it was all wrong. Whether they did this out of ignorance or perversity is up to you and your Storyteller to decide. Your wrong assumptions and skewed beliefs cause you a great deal of grief until someone straightens you out. Eventually you may overcome the problems caused by this Flaw (and be able to pay the experience point cost to buy it off), but in the meantime, it should present you with a number of good roleplaying opportunities.",
+        "description": "The Garou who found you after your First Change, and who oversaw your Rite of Passage and early entry into Garou society, taught you everything they knew - and it was all wrong. Whether they did this out of ignorance or perversity is up to you and your Storyteller to decide. Your wrong assumptions and skewed beliefs cause you a great deal of grief until someone straightens you out. Eventually you may overcome the problems caused by this Flaw (and be able to pay the experience point cost to buy it off), but in the meantime, it should present you with a number of good roleplaying opportunities.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "flaws",
         "stat_type": "social",
@@ -221,7 +221,7 @@
     },
     {
         "name": "Dark Fate",
-        "description": "You labor under some future doom, marked by Fate for a horrible end. All you strive for will amount to nothing. From time to time, you receive flashes of visions regarding your destined fate, causing you to suffer prematurely. You can overcome your morbid moods by spending Willpower, but this only works temporarily. Sooner or later, you will meet your fate (when is left up to your Storyteller, but it will happen during the course of the chronicle —otherwise, this Flaw would be worth no points). In the meantime, however, you can still attempt to achieve something worthwhile. You may do so with a sense of freedom and abandon, since you know that unless a situation leads directly to your ultimate doom, you stand a good chance of surviving and succeeding. This Flaw works well in conjunction with the Fate Background (p. 137), which allows you to survive lesser potential bad ends so that you can meet the true doom laid on you.",
+        "description": "You labor under some future doom, marked by Fate for a horrible end. All you strive for will amount to nothing. From time to time, you receive flashes of visions regarding your destined fate, causing you to suffer prematurely. You can overcome your morbid moods by spending Willpower, but this only works temporarily. Sooner or later, you will meet your fate (when is left up to your Storyteller, but it will happen during the course of the chronicle -otherwise, this Flaw would be worth no points). In the meantime, however, you can still attempt to achieve something worthwhile. You may do so with a sense of freedom and abandon, since you know that unless a situation leads directly to your ultimate doom, you stand a good chance of surviving and succeeding. This Flaw works well in conjunction with the Fate Background (p. 137), which allows you to survive lesser potential bad ends so that you can meet the true doom laid on you.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "flaws",
         "stat_type": "supernatural",
@@ -232,7 +232,7 @@
     },
     {
         "name": "Taint of Corruption",
-        "description": "Somehow, the Wyrm has touched you and left its taint upon your spirit. When other Garou invoke the Gift: Sense Wyrm, you register as strongly Wyrm-tainted. The taint is innate, and cannot be removed by a Rite of Cleansing (which serves only to make you ill and sore). Minions of the Wyrm trouble your sleep, attempting to lure you fully into the service of the Destroyer. You are at +2 difficulty on any rolls made to resist the powers of \"fellow\" Wyrmspawn — fomori powers, Black Spiral Dancer Gifts, Bane Charms, vampiric Disciplines, or the like. Only your pack can keep you from succumbing to the Wyrm, provided they give you their support and assistance. Ridding yourself of this Flaw requires a major quest and can provide the heart of a character-driven chronicle.",
+        "description": "Somehow, the Wyrm has touched you and left its taint upon your spirit. When other Garou invoke the Gift: Sense Wyrm, you register as strongly Wyrm-tainted. The taint is innate, and cannot be removed by a Rite of Cleansing (which serves only to make you ill and sore). Minions of the Wyrm trouble your sleep, attempting to lure you fully into the service of the Destroyer. You are at +2 difficulty on any rolls made to resist the powers of \"fellow\" Wyrmspawn - fomori powers, Black Spiral Dancer Gifts, Bane Charms, vampiric Disciplines, or the like. Only your pack can keep you from succumbing to the Wyrm, provided they give you their support and assistance. Ridding yourself of this Flaw requires a major quest and can provide the heart of a character-driven chronicle.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "flaws",
         "stat_type": "supernatural",

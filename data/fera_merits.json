@@ -12,7 +12,7 @@
     },
     {
         "name": "Manshape",
-        "description": "The character's Archid form is very humanoid — a callback to the Lizard Kings with a reptilian head, the size of a Crinos Garou. The character must have the Archid characteristics: Upright Walking and Grasping Hands to buy this Merit. Manshape allows the Mokolé in Archid form to pass as human in poor light, though anyone seeing the character's scaly skin still suffers the Delirium.",
+        "description": "The character's Archid form is very humanoid - a callback to the Lizard Kings with a reptilian head, the size of a Crinos Garou. The character must have the Archid characteristics: Upright Walking and Grasping Hands to buy this Merit. Manshape allows the Mokolé in Archid form to pass as human in poor light, though anyone seeing the character's scaly skin still suffers the Delirium.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "merits",
         "stat_type": "physical",
@@ -34,7 +34,7 @@
     },
     {
         "name": "Gauntlet Runner",
-        "description": "The character is able to squeeze through the Gauntlet in the presence of any manner of company — even in front of a room full of human witnesses.",
+        "description": "The character is able to squeeze through the Gauntlet in the presence of any manner of company - even in front of a room full of human witnesses.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "merits",
         "stat_type": "supernatural",
@@ -133,7 +133,7 @@
     },
     {
         "name": "Gender-Morph",
-        "description": "The character can change their human sex at will, by breaking into the Crawlerling form and reforming as a human again. This can come in handy when being chased; not only are pursuers unlikely to confuse a man for a woman, but the character's scent even changes in order to throw off Garou and other keen-nosed hunters. Aside from the sex switch, this doesn't grant a radical change in appearance — both sexes have similar features and look sufficiently alike to be siblings.",
+        "description": "The character can change their human sex at will, by breaking into the Crawlerling form and reforming as a human again. This can come in handy when being chased; not only are pursuers unlikely to confuse a man for a woman, but the character's scent even changes in order to throw off Garou and other keen-nosed hunters. Aside from the sex switch, this doesn't grant a radical change in appearance - both sexes have similar features and look sufficiently alike to be siblings.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "merits",
         "stat_type": "physical",
@@ -144,7 +144,7 @@
     },
     {
         "name": "Cat Magic",
-        "description": "In addition to the blessings of Luna and Gaia, the character has a rare aptitude for lesser human magic—she is capable of learning what mages call 'hedge magic.' The character can use this talent to mimic Gifts and rites from any Changing Breed, and can develop her own mystic rites given time and Storyteller approval. For a more in-depth treatment of hedge magic, see Sorcerer Revised.",
+        "description": "In addition to the blessings of Luna and Gaia, the character has a rare aptitude for lesser human magic-she is capable of learning what mages call 'hedge magic.' The character can use this talent to mimic Gifts and rites from any Changing Breed, and can develop her own mystic rites given time and Storyteller approval. For a more in-depth treatment of hedge magic, see Sorcerer Revised.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "merits",
         "stat_type": "supernatural",
@@ -155,7 +155,7 @@
     },
     {
         "name": "Fox Magic",
-        "description": "In addition to the blessings of Luna and Gaia, the character has a rare aptitude for lesser human magic—she is capable of learning what mages call 'hedge magic.' The character can use this talent to mimic Gifts and rites from any Changing Breed, and can develop her own mystic rites given time and Storyteller approval. For a more in-depth treatment of hedge magic, see Sorcerer Revised.",
+        "description": "In addition to the blessings of Luna and Gaia, the character has a rare aptitude for lesser human magic-she is capable of learning what mages call 'hedge magic.' The character can use this talent to mimic Gifts and rites from any Changing Breed, and can develop her own mystic rites given time and Storyteller approval. For a more in-depth treatment of hedge magic, see Sorcerer Revised.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "merits",
         "stat_type": "supernatural",

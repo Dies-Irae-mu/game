@@ -68,7 +68,7 @@
     },
     {
         "name": "Bacchantes' Rage",
-        "description": "When deep in the wilds, the Black Furies can use this Gift to inflict extra damage. Even the toughest Get have walked away with a battle scar due to the effects of this potent Gift — and some couldn't walk away at all. This Gift is taught by a Wyld-spirit.",
+        "description": "When deep in the wilds, the Black Furies can use this Gift to inflict extra damage. Even the toughest Get have walked away with a battle scar due to the effects of this potent Gift - and some couldn't walk away at all. This Gift is taught by a Wyld-spirit.",
         "system": "The Garou spends two Gnosis points to activate the Gift. During combat, she may spend Rage points to deal extra damage after a wounding hit; every point spent causes one additional, unsoakable Health Level of damage.",
         "source": "Player's Guide Second Edition",
         "game_line": "Werewolf: The Apocalypse",
@@ -252,7 +252,7 @@
     {
         "name": "Speech of All Things",
         "description": "The Children of Gaia must communicate if they wish to accomplish their goals of unity and understanding. This Gift is a greater version of the Homid Gift: Speech of the World. The Garou can understand, read, write and speak any language as fluently as she physically can. She can emulate the roars of the Simba, but any member of that Breed would know the difference since she does not have the vocal capacity to make the correct sounds. Within those limits, she can speak the languages of various Changing Breeds, she knows the secret rune language of dead magi, and if she were so inclined, she could even understand the dread tongues of the Wyrm. This Gift does not protect the Garou mind from what she hears. A servant of Unicorn teaches this Gift.",
-        "system": "The character can understand any language once she had learned this Gift. With an Intelligence + Academics roll (difficulty 7) she can read and write in those languages for the scene. If the language is not in common usage by more than a single, small group or culture — or does not have a written form — the difficulty increases to 9.",
+        "system": "The character can understand any language once she had learned this Gift. With an Intelligence + Academics roll (difficulty 7) she can read and write in those languages for the scene. If the language is not in common usage by more than a single, small group or culture - or does not have a written form - the difficulty increases to 9.",
         "source": "Rage Across the World W20",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -291,7 +291,7 @@
     {
         "name": "Serenity",
         "description": "The Garou can share her peaceful nature with others, calming their violent urges. An unicorn-spirit teaches this Gift.",
-        "system": "The player rolls Charisma + Empathy (difficulty 7). Success allows the Garou to subtract dice from the Rage pools of all beings (even spirits) within 20 feet. The number of dice subtracted equals the number of successes rolled. The effect lasts for one scene, and the Rage points return at the end of the scene. The Gift affects all beings in the area — friend and foe alike. Only beings with a Rage score of 1 or more are affected.",
+        "system": "The player rolls Charisma + Empathy (difficulty 7). Success allows the Garou to subtract dice from the Rage pools of all beings (even spirits) within 20 feet. The number of dice subtracted equals the number of successes rolled. The effect lasts for one scene, and the Rage points return at the end of the scene. The Gift affects all beings in the area - friend and foe alike. Only beings with a Rage score of 1 or more are affected.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -409,7 +409,7 @@
     {
         "name": "Singing Dog's Cry",
         "description": "The New Guinea Singing Dog is known for its intense, loud vocalizations. Alone, they can express complex, very clear sounds over great distances. As a group, they harmonize into a full choir. With this Gift, the Garou reaches out with the power and intimacy of her voice, and can touch others with her song. As long as a subject can hear her voice, she's considered to be touching them. Singing Dog teaches this Gift.",
-        "system": "Spend a point of Gnosis to activate Singing Dog's Cry to for the scene. Roll Charisma + Expression, difficulty 7. For each success, the Garou can effectively \"touch\" one person that hears her voice, as long as she continues singing. Each \"touch\" caused by this Gift uses one success, even if she touches the same character twice in a row. This \"touch\" counts for the purpose of other Gifts activation — she may use Falling Touch over a mile away, as long as the victim hears her baying cries. She can \"touch\" as many subjects as she wishes simultaneously, up to the limit of her successes.",
+        "system": "Spend a point of Gnosis to activate Singing Dog's Cry to for the scene. Roll Charisma + Expression, difficulty 7. For each success, the Garou can effectively \"touch\" one person that hears her voice, as long as she continues singing. Each \"touch\" caused by this Gift uses one success, even if she touches the same character twice in a row. This \"touch\" counts for the purpose of other Gifts activation - she may use Falling Touch over a mile away, as long as the victim hears her baying cries. She can \"touch\" as many subjects as she wishes simultaneously, up to the limit of her successes.",
         "source": "Rage Across the World W20",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -434,7 +434,7 @@
     },
     {
         "name": "Elude the Posse",
-        "description": "The Garou using this Gift is transported to another location — via the Umbra — no less than ten miles from her original location. However, she cannot necessarily control where she arrives. This Gift is taught by a Wyld-spirit.",
+        "description": "The Garou using this Gift is transported to another location - via the Umbra - no less than ten miles from her original location. However, she cannot necessarily control where she arrives. This Gift is taught by a Wyld-spirit.",
         "system": "The Garou spends one Gnosis point and rolls Wits + Occult (difficulty 7). Only one success is required. However, additional successes allow her to choose her destination. Successes - Destination / 1 - Storyteller chooses destination 3 - Character can choose either a city or wilderness, if such exists within 10 miles 5 - Character chooses destination Botch - Character is \"caught\" sideways (see Werewolf 20th Anniversary Edition, p.309-310)",
         "source": "Outcasts",
         "game_line": "Werewolf: The Apocalypse",
@@ -553,7 +553,7 @@
     },
     {
         "name": "Purity of Spirit",
-        "description": "Many Galliards relate stories describing the werewolves' weakness to silver as a kind of chiminage — the price Luna extracts from her children for the gift of Rage. Using this Gift, the werewolf can, at great cost, briefly shield himself against silver's damaging power with his own spiritual energies. A Lune teaches this Gift.",
+        "description": "Many Galliards relate stories describing the werewolves' weakness to silver as a kind of chiminage - the price Luna extracts from her children for the gift of Rage. Using this Gift, the werewolf can, at great cost, briefly shield himself against silver's damaging power with his own spiritual energies. A Lune teaches this Gift.",
         "system": "The Garou spends a number of Gnosis points and immediately receives this many automatic successes to soak damage from silver, even if she has no dice to roll. The effects lasts for a number of turns equal to the Gnosis spent, not including the remainder of the turn in which it was activated. The Gift does not take an action to activate, and indeed can be activated immediately if the Garou has been struck by surprise with a silver bullet or blade to help ameliorate the damage… as long as the user hasn't spent any Rage that turn of course. This Gift cannot be active at the same time as Luna's Armor; whichever is activated last cancels the prior Gift.",
         "source": "Book of Auspices",
         "game_line": "Werewolf: The Apocalypse",
@@ -579,7 +579,7 @@
     },
     {
         "name": "Combat Healing",
-        "description": "The Ahroun are famous for their ability to fight — it's their purpose in life. This Gift allows a Garou to heal wounds during combat without hesitation or even a moment's pause. While other Garou are licking their wounds, the Ahroun with this Gift keeps fighting. Wolverine-spirits teach this Gift, although they usually have to be bested in combat first.",
+        "description": "The Ahroun are famous for their ability to fight - it's their purpose in life. This Gift allows a Garou to heal wounds during combat without hesitation or even a moment's pause. While other Garou are licking their wounds, the Ahroun with this Gift keeps fighting. Wolverine-spirits teach this Gift, although they usually have to be bested in combat first.",
         "system": "The player spends two Rage points to activate this Gift. The Garou no longer need pause for a turn to heal a Health Level or roll Stamina to heal during combat. Every round, the Ahroun heals one nonaggravated Health Level, regardless of her actions.",
         "source": "Player's Guide Second Edition",
         "game_line": "Werewolf: The Apocalypse",
@@ -683,7 +683,7 @@
     },
     {
         "name": "Reshape Object",
-        "description": "The werewolf can shape once-living material (but not undead!) into a variety of objects instantly. Trees may become shelter, buck antlers become spears, animal hides become armor, and flowers become perfumes. The item will resemble the object from which it was shaped (e.g., the aforementioned spear is made of antler, not wood). A Pattern Spider — one of the Weaver's spirits — teaches this Gift.",
+        "description": "The werewolf can shape once-living material (but not undead!) into a variety of objects instantly. Trees may become shelter, buck antlers become spears, animal hides become armor, and flowers become perfumes. The item will resemble the object from which it was shaped (e.g., the aforementioned spear is made of antler, not wood). A Pattern Spider - one of the Weaver's spirits - teaches this Gift.",
         "system": "The player rolls Manipulation + Crafts against a variable difficulty (5 to turn a broken tree limb into a spear, 8 to turn a plant into a floatable raft) and spends a Gnosis point. The created object will last a length of time according to successes: One - 5 minutes, Two - 10 minutes, Three - One scene, Four - One story, Five - Permanent. Expending an additional Gnosis point allows a created weapon to inflict aggravated damage for the scene's duration or until the object returns to its original form. This effect can be made permanent with the sacrifice of a permanent point of Gnosis if the object itself is changed permanently.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",

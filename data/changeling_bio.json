@@ -45,6 +45,24 @@
         "splat": "Changeling"
     },
     {
+        "name": "Summer Legacy",
+        "description": "The fae personality archetypes of a Kinain. A Kinain has two legacies and may have two from the same Court.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "identity",
+        "stat_type": "legacy",
+        "values": ["Chief", "Grower", "Healer", "Hunter", "Mker", "Scout", "Spiritguide", "Storyteller", "Warrior", "Wise One"],
+        "splat": "Changeling"
+    },
+    {
+        "name": "Winter Legacy",
+        "description": "The fae personality archetypes of a Kinain. A Kinain has two legacies and may have two from the same Court.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "identity",
+        "stat_type": "legacy",
+        "values": ["Cannibal", "Fool", "Forked-Tongue", "Hoarder", "Outcast", "Raider", "Scalp-Taker", "Spoiler", "Troublemaker", "Witch"],
+        "splat": "Changeling"
+    },
+    {
         "name": "First Legacy",
         "description": "Kinain have two legacies; they may take legacies from either Seelie or Unseelie, and may also have two from the same Court.",
         "game_line": "Changeling: The Dreaming",

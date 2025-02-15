@@ -69,14 +69,31 @@ class CmdSpendGain(default_cmds.MuxCommand):
             new_value = current_temp - amount
             action = "spent"
         else:  # +gain
-            new_value = min(current_temp + amount, max_value)  # Can't exceed permanent value
-            if new_value == current_temp and new_value == max_value:
-                caller.msg(f"You are already at maximum {pool} ({max_value}).")
-                return
+            # Special handling for Banality - allow it to exceed permanent value
+            if pool.lower() == 'banality':
+                new_value = current_temp + amount
+                # Check if new value hits or exceeds 10
+                if new_value >= 10 and current_temp < 10:
+                    # Increase permanent Banality by 1
+                    caller.db.stats['pools']['dual']['Banality']['perm'] = max_value + 1
+                    # Reset temporary Banality to new permanent value
+                    new_value = max_value + 1
+                    caller.msg("|rYour temporary Banality has reached 10. Your permanent Banality has increased by 1.|n")
+                caller.msg(f"You have gained {amount} point{'s' if amount > 1 else ''} of {pool}.")
+            else:
+                # All other pools can't exceed permanent value
+                new_value = min(current_temp + amount, max_value)
+                if new_value == current_temp and new_value == max_value:
+                    caller.msg(f"You are already at maximum {pool} ({max_value}).")
+                    return
             action = "gained"
 
         # Update the temporary value
         caller.db.stats['pools']['dual'][pool.capitalize()]['temp'] = new_value
+
+        # Get updated max_value for message (in case it changed)
+        if pool.lower() == 'banality':
+            max_value = caller.db.stats['pools']['dual']['Banality']['perm']
 
         # Prepare the message
         msg = f"You have {action} {amount} point{'s' if amount > 1 else ''} of {pool}."
@@ -91,6 +108,8 @@ class CmdSpendGain(default_cmds.MuxCommand):
         if reason:
             log_msg += f" for: {reason}"
         log_msg += f" (New value: {new_value}/{max_value})"
+        if pool.lower() == 'banality' and new_value >= 10 and current_temp < 10:
+            log_msg += " - Permanent Banality increased by 1"
         self.log_action(log_msg)
 
     def log_action(self, message):

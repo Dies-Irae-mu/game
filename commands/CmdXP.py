@@ -257,75 +257,49 @@ class CmdXP(default_cmds.MuxCommand):
                     return
 
                 try:
+                    # Parse input
+                    if "=" not in self.args:
+                        self.caller.msg("Usage: +xp/spend <stat name> <rating>=<reason>")
+                        return
+                        
                     stat_info, reason = self.args.split("=", 1)
                     stat_info = stat_info.strip()
                     reason = reason.strip()
 
-                    # parse stat info
+                    # Parse stat info
                     stat_parts = stat_info.split()
                     if len(stat_parts) < 2:
                         self.caller.msg("Usage: +xp/spend <stat name> <rating>=<reason>")
                         return
                     
-                    # get new rating
-                    new_rating = int(stat_parts[-1])
+                    # Get new rating
+                    try:
+                        new_rating = int(stat_parts[-1])
+                        if new_rating < 0:
+                            self.caller.msg("Rating must be a positive number.")
+                            return
+                    except ValueError:
+                        self.caller.msg("Rating must be a number.")
+                        return
+                        
                     stat_name = " ".join(stat_parts[:-1])
 
-                    # determine category
+                    # Determine category and subcategory
                     category, subcategory = self._determine_stat_category(stat_name)
-                    if not category:
+                    if not category or not subcategory:
                         self.caller.msg(f"Invalid stat name: {stat_name}")
                         return
 
-                    # what is the current rating?
-                    current_rating = self.caller.get_stat(category, subcategory, stat_name) or 0
-                    
-                    # at desired rating already?
-                    if current_rating == new_rating:
-                        self.caller.msg(f"You already have {stat_name} at rating {new_rating}.")
-                        return
-                    elif current_rating > new_rating:
-                        self.caller.msg(f"You cannot reduce {stat_name} from {current_rating} to {new_rating}.")
-                        return
-
-                    # check for cost
-                    cost, requires_approval = self.caller.calculate_xp_cost(
-                        stat_name, 
-                        new_rating, 
-                        category=category,
-                        subcategory=subcategory,
-                        current_rating=current_rating
+                    # Attempt to spend XP
+                    success, message = self.caller.spend_xp(
+                        stat_name, new_rating,
+                        category, subcategory,
+                        reason
                     )
                     
-                    if cost == 0:
-                        self.caller.msg("Invalid stat or no increase needed")
-                        return
-                        
-                    if requires_approval:
-                        self.caller.msg("This purchase requires staff approval.")
-                        return
-
-                    # do we have enough xp?
-                    if self.caller.db.xp['current'] < cost:
-                        self.caller.msg(f"Not enough XP. Cost: {cost}, Available: {self.caller.db.xp['current']}")
-                        return
-
-                    # can we buy it?
-                    success, message = self.caller.buy_stat(
-                        stat_name, 
-                        new_rating, 
-                        category=category,
-                        subcategory=subcategory,
-                        reason=reason
-                    )
-                    
-                    if not success:
-                        self.caller.msg(f"Failed to spend XP: {message}")
-                        return
-                        
                     self.caller.msg(message)
-
-                    self._display_xp(self.caller)
+                    if success:
+                        self._display_xp(self.caller)
 
                 except ValueError as e:
                     self.caller.msg(f"Error: Invalid input - {str(e)}")
@@ -588,69 +562,63 @@ class CmdXP(default_cmds.MuxCommand):
 
     @staticmethod
     def _determine_stat_category(stat_name):
-        """Determine the category and type of a stat based on its name."""
-        # Basic attributes (in physical/social/mental subcategories)
-        physical_attrs = ['Strength', 'Dexterity', 'Stamina']
-        social_attrs = ['Charisma', 'Manipulation', 'Appearance']
-        mental_attrs = ['Perception', 'Intelligence', 'Wits']
-        
-        if stat_name in physical_attrs:
+        """
+        Determine the category and type of a stat based on its name.
+        Uses the stat mappings from world.wod20th.utils.stat_mappings.
+        """
+        from world.wod20th.utils.stat_mappings import (
+            STAT_TYPE_TO_CATEGORY, STAT_VALIDATION,
+            TALENTS, SKILLS, KNOWLEDGES,
+            SECONDARY_TALENTS, SECONDARY_SKILLS, SECONDARY_KNOWLEDGES,
+            UNIVERSAL_BACKGROUNDS
+        )
+        from world.wod20th.utils.sheet_constants import (
+            ATTRIBUTES, ABILITIES, SECONDARY_ABILITIES, BACKGROUNDS,
+            POWERS, POOLS
+        )
+
+        # Convert stat name to title case for comparison
+        stat_name = stat_name.title()
+
+        # Check attributes
+        if stat_name in ATTRIBUTES.get('Strength', {}):
             return ('attributes', 'physical')
-        elif stat_name in social_attrs:
+        elif stat_name in ATTRIBUTES.get('Charisma', {}):
             return ('attributes', 'social')
-        elif stat_name in mental_attrs:
+        elif stat_name in ATTRIBUTES.get('Perception', {}):
             return ('attributes', 'mental')
 
-        # Basic abilities (in talent/skill/knowledge subcategories)
-        talents = ['Alertness', 'Athletics', 'Awareness', 'Brawl', 'Empathy',
-                  'Expression', 'Intimidation', 'Leadership', 'Streetwise', 'Subterfuge']
-        skills = ['Animal Ken', 'Crafts', 'Drive', 'Etiquette', 'Firearms',
-                 'Larceny', 'Melee', 'Performance', 'Stealth', 'Survival']
-        knowledges = ['Academics', 'Computer', 'Finance', 'Investigation', 'Law',
-                     'Medicine', 'Occult', 'Politics', 'Science', 'Technology',
-                     'Cosmology', 'Enigmas']
-        
-        if stat_name in talents:
+        # Check primary abilities
+        if stat_name in TALENTS:
             return ('abilities', 'talent')
-        elif stat_name in skills:
+        elif stat_name in SKILLS:
             return ('abilities', 'skill')
-        elif stat_name in knowledges:
+        elif stat_name in KNOWLEDGES:
             return ('abilities', 'knowledge')
 
-        # Secondary abilities
-        secondary_talents = ['Carousing', 'Diplomacy', 'Intrigue', 'Mimicry', 'Scrounging', 'Seduction', 'Style']
-        secondary_skills = ['Archery', 'Fortune-Telling', 'Fencing', 'Gambling', 'Jury-Rigging', 'Pilot', 'Torture']
-        secondary_knowledges = ['Area Knowledge', 'Cultural Savvy', 'Demolitions', 'Herbalism', 'Media', 'Power-Brokering', 'Vice']
+        # Check secondary abilities
+        if stat_name in SECONDARY_TALENTS:
+            return ('secondary_abilities', 'secondary_talent')
+        elif stat_name in SECONDARY_SKILLS:
+            return ('secondary_abilities', 'secondary_skill')
+        elif stat_name in SECONDARY_KNOWLEDGES:
+            return ('secondary_abilities', 'secondary_knowledge')
 
-        if stat_name in secondary_talents:
-            return ('abilities', 'secondary_talent')
-        elif stat_name in secondary_skills:
-            return ('abilities', 'secondary_skill')
-        elif stat_name in secondary_knowledges:
-            return ('abilities', 'secondary_knowledge')
-
-        # Backgrounds
-        backgrounds = ['Resources', 'Contacts', 'Allies', 'Backup', 'Herd', 'Library',
-                      'Kinfolk', 'Spirit Heritage', 'Ancestors']
-        if stat_name in backgrounds:
+        # Check backgrounds
+        if stat_name in UNIVERSAL_BACKGROUNDS:
             return ('backgrounds', 'background')
 
-        # Garou Gifts
-        garou_gifts = {
-            # Breed Gifts
-            'Spirit Speech', 'Master of Fire', 'Sense Wyrm', 'Create Element',
-            'Primal Anger', 'Scent of Running Water', 'Scent of the True Form',
-            'Burrow', 'Articulate Blood-Dream', 'Gnaw',
-            # Add more Garou gifts here
-        }
-        
-        if stat_name in garou_gifts:
-            return ('powers', 'gift')
+        # Check powers
+        for power_type in POWERS:
+            if stat_name in POWERS[power_type]:
+                return ('powers', power_type.lower())
 
-        # Pools
-        if stat_name in ['Willpower', 'Rage', 'Gnosis']:
-            return ('pools', 'dual')
+        # Check pools
+        for pool_type in POOLS:
+            if stat_name in POOLS[pool_type]:
+                return ('pools', 'dual')
 
+        # If no match found
         return None, None
 
     def _get_ability_list(self):
@@ -699,3 +667,208 @@ class CmdXP(default_cmds.MuxCommand):
             
         self.caller.msg(f"\n|wDetailed XP History for {character.name}|n")
         self.caller.msg(str(table)) 
+
+    def calculate_xp_cost(self, stat_name, new_rating, current_rating, category=None, subcategory=None):
+        """
+        Calculate XP cost for increasing a stat.
+        Returns (cost, requires_approval)
+        """
+        # Validate inputs
+        if new_rating <= current_rating:
+            return 0, False
+            
+        # Get character's splat
+        splat = self.get_stat('other', 'splat', 'Splat', temp=False)
+        if not splat:
+            return 0, False
+
+        # Base costs per category
+        costs = {
+            'attributes': {
+                'base': 5,
+                'multiplier': 'new',  # cost = base * new_rating
+                'max_without_approval': 5
+            },
+            'abilities': {
+                'base': 2,
+                'multiplier': 'new',
+                'max_without_approval': 5
+            },
+            'secondary_abilities': {
+                'base': 2,
+                'multiplier': 'new',
+                'max_without_approval': 5
+            },
+            'backgrounds': {
+                'base': 3,
+                'multiplier': 'new',
+                'max_without_approval': 5
+            },
+            'powers': {
+                'base': 7,
+                'multiplier': 'new',
+                'max_without_approval': 5
+            },
+            'pools': {
+                'base': 8,
+                'multiplier': 'new',
+                'max_without_approval': 10
+            }
+        }
+
+        # Get cost settings for this category
+        if category not in costs:
+            return 0, False
+        cost_settings = costs[category]
+
+        # Check if new rating exceeds limit
+        requires_approval = new_rating > cost_settings['max_without_approval']
+
+        # Calculate base cost
+        if cost_settings['multiplier'] == 'new':
+            # Cost is base * new rating
+            total_cost = cost_settings['base'] * new_rating
+        else:
+            # Cost is base * number of increases
+            total_cost = cost_settings['base'] * (new_rating - current_rating)
+
+        # Special handling for different splats and power types
+        if category == 'powers':
+            # Adjust costs based on splat and power type
+            if splat == 'Vampire':
+                if subcategory == 'discipline':
+                    # Out-of-clan disciplines cost more
+                    clan = self.get_stat('identity', 'lineage', 'Clan', temp=False)
+                    if clan:
+                        from world.wod20th.utils.vampire_utils import get_clan_disciplines
+                        clan_disciplines = get_clan_disciplines(clan)
+                        if stat_name not in clan_disciplines:
+                            total_cost *= 2  # Double cost for out-of-clan disciplines
+
+            elif splat == 'Mage':
+                if subcategory == 'sphere':
+                    # Adjust costs based on affinity sphere
+                    affinity_sphere = self.get_stat('identity', 'personal', 'Affinity Sphere', temp=False)
+                    if affinity_sphere and stat_name != affinity_sphere:
+                        total_cost *= 1.5  # Higher cost for non-affinity spheres
+
+            elif splat == 'Changeling':
+                if subcategory == 'art':
+                    # Check for affinity art
+                    affinity_art = self.get_stat('identity', 'personal', 'Affinity Art', temp=False)
+                    if affinity_art and stat_name != affinity_art:
+                        total_cost *= 1.5  # Higher cost for non-affinity arts
+
+        return total_cost, requires_approval
+
+    def validate_xp_purchase(self, stat_name, new_rating, category=None, subcategory=None):
+        """
+        Validate if a character can purchase a stat increase.
+        Returns (can_purchase, error_message)
+        """
+        # Get character's splat
+        splat = self.get_stat('other', 'splat', 'Splat', temp=False)
+        if not splat:
+            return False, "Character splat not set"
+
+        # Get current rating
+        current_rating = self.get_stat(category, subcategory, stat_name, temp=False) or 0
+
+        # Validate rating increase
+        if new_rating <= current_rating:
+            return False, "New rating must be higher than current rating"
+
+        # Check if stat exists and is valid for character's splat
+        if category == 'powers':
+            # Validate power based on splat
+            if splat == 'Vampire':
+                from world.wod20th.utils.vampire_utils import validate_vampire_stats
+                is_valid, error_msg = validate_vampire_stats(self, stat_name, str(new_rating), category, subcategory)
+            elif splat == 'Mage':
+                from world.wod20th.utils.mage_utils import validate_mage_stats
+                is_valid, error_msg = validate_mage_stats(self, stat_name, str(new_rating), category, subcategory)
+            elif splat == 'Changeling':
+                from world.wod20th.utils.changeling_utils import validate_changeling_stats
+                is_valid, error_msg = validate_changeling_stats(self, stat_name, str(new_rating), category, subcategory)
+            elif splat == 'Shifter':
+                from world.wod20th.utils.shifter_utils import validate_shifter_stats
+                is_valid, error_msg = validate_shifter_stats(self, stat_name, str(new_rating), category, subcategory)
+            elif splat == 'Mortal+':
+                from world.wod20th.utils.mortalplus_utils import validate_mortalplus_stats
+                is_valid, error_msg = validate_mortalplus_stats(self, stat_name, str(new_rating), category, subcategory)
+            elif splat == 'Possessed':
+                from world.wod20th.utils.possessed_utils import validate_possessed_stats
+                is_valid, error_msg = validate_possessed_stats(self, stat_name, str(new_rating), category, subcategory)
+            elif splat == 'Companion':
+                from world.wod20th.utils.companion_utils import validate_companion_stats
+                is_valid, error_msg = validate_companion_stats(self, stat_name, str(new_rating), category, subcategory)
+            else:
+                is_valid, error_msg = False, "Invalid splat type"
+
+            if not is_valid:
+                return False, error_msg
+
+        return True, ""
+
+    def spend_xp(self, stat_name, new_rating, category, subcategory, reason):
+        """
+        Spend XP to increase a stat.
+        Returns (success, message)
+        """
+        # Get current rating
+        current_rating = self.get_stat(category, subcategory, stat_name, temp=False) or 0
+
+        # Calculate cost
+        cost, requires_approval = self.calculate_xp_cost(
+            stat_name, new_rating, current_rating,
+            category=category, subcategory=subcategory
+        )
+        
+        if cost == 0:
+            return False, "Invalid stat or no increase needed"
+            
+        if requires_approval:
+            return False, "This purchase requires staff approval"
+
+        # Check if we have enough XP
+        if self.db.xp['current'] < cost:
+            return False, f"Not enough XP. Cost: {cost}, Available: {self.db.xp['current']}"
+
+        # Validate the purchase
+        can_purchase, error_msg = self.validate_xp_purchase(
+            stat_name, new_rating,
+            category=category, subcategory=subcategory
+        )
+        
+        if not can_purchase:
+            return False, error_msg
+
+        # All checks passed, make the purchase
+        try:
+            # Update the stat
+            self.set_stat(category, subcategory, stat_name, new_rating, temp=False)
+            self.set_stat(category, subcategory, stat_name, new_rating, temp=True)
+
+            # Deduct XP
+            self.db.xp['current'] -= cost
+            self.db.xp['spent'] += cost
+
+            # Log the spend
+            spend_entry = {
+                'type': 'spend',
+                'amount': float(cost),
+                'stat_name': stat_name,
+                'previous_rating': current_rating,
+                'new_rating': new_rating,
+                'reason': reason,
+                'timestamp': datetime.now().isoformat()
+            }
+            
+            if 'spends' not in self.db.xp:
+                self.db.xp['spends'] = []
+            self.db.xp['spends'].insert(0, spend_entry)
+
+            return True, f"Successfully increased {stat_name} to {new_rating} (Cost: {cost} XP)"
+
+        except Exception as e:
+            return False, f"Error processing purchase: {str(e)}" 

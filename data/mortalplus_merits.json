@@ -116,7 +116,7 @@
     },
     {
         "name": "Gall",
-        "description": "Audacity, guts, pluck — you've got it. You aren't afraid to stand up to anyone, from hoodlums to tribal leaders. This isn't brash, foolhardy behavior; you simply don't get the shakes when the Silver Fang Ahroun comes to speak to you.",
+        "description": "Audacity, guts, pluck - you've got it. You aren't afraid to stand up to anyone, from hoodlums to tribal leaders. This isn't brash, foolhardy behavior; you simply don't get the shakes when the Silver Fang Ahroun comes to speak to you.",
         "game_line": "Werewolf the Apocalypse",
         "category": "merits",
         "splat": "Mortal+",
@@ -228,7 +228,7 @@
     },
     {
         "name": "Detached",
-        "description": "The power of your mind is beyond the anchor of your body — physical existence separated from psychic phenomena. You do not suffer wound penalties on uses of your psychic powers until you are Incapacitated. When you are Incapacitated, you may spend a Willpower point to attempt to manifest a psychic power at half the normal die pool (rounded down). You can only try this once per scene, after which you fall unconscious.",
+        "description": "The power of your mind is beyond the anchor of your body - physical existence separated from psychic phenomena. You do not suffer wound penalties on uses of your psychic powers until you are Incapacitated. When you are Incapacitated, you may spend a Willpower point to attempt to manifest a psychic power at half the normal die pool (rounded down). You can only try this once per scene, after which you fall unconscious.",
         "game_line": "Sorcerer",
         "category": "merits",
         "splat": "Mortal+",
@@ -272,7 +272,7 @@
     },
     {
         "name": "Twin Link",
-        "description": "Your psychic character shares a permanent psychic connection to another person. This duplicates the benefit of the Level Two Synergy effect. The linked psychics gain +2 to their Empathy score to determine the other party’s feelings. As a 6pt Merit, the bonded characters can purchase the Synergy power, in addition to other psychic powers they may have at a lower cost — 7 freebie points per dot, 3 experience points per dot to increase. This Synergy power only works on their bonded partner.",
+        "description": "Your psychic character shares a permanent psychic connection to another person. This duplicates the benefit of the Level Two Synergy effect. The linked psychics gain +2 to their Empathy score to determine the other party's feelings. As a 6pt Merit, the bonded characters can purchase the Synergy power, in addition to other psychic powers they may have at a lower cost - 7 freebie points per dot, 3 experience points per dot to increase. This Synergy power only works on their bonded partner.",
         "game_line": "Sorcerer",
         "category": "merits",
         "splat": "Mortal+", 
@@ -304,17 +304,6 @@
         "source": "Sorcerer: Paths of Power"    
     },
     {
-        "name": "Sterile",
-        "description": "Put simply, your sorcerer cannot have children. For those who practice Tantric rituals or require sex as a focus, but do not desire pregnancy or unwanted children, this is a Merit. For those who belong to cultures, strong families or marriages that expect them to have children, this is a Flaw.",
-        "game_line": "Sorcerer",
-        "category": "merits",
-        "splat": "Mortal+", 
-        "mortalplus_type": "Sorcerer",
-        "stat_type": "social",
-        "values": [1],
-        "source": "Sorcerer: Revised"
-    },
-    {
         "name": "Faction Favorite",
         "description": "Awakened mages may be the visionaries who help the Traditions and Conventions build the future, but it is the linear mages who provide the bedrock foundation upon which new recruits, cultural identity, stable Chantries and hopes for the future are actually built. Whether due to a special distinction for conserving the past glories of a Tradition or a solid reputation as one of the backbones of organizational power, you command respect in your Tradition or Convention. This is important because the worldwide influences of the mighty keystone associations of magicians transcend most of the smaller societies that manage to survive the ages. Modify all social rolls connected to Tradition or Convention Status or decision-making by two points of difficulty in your favor.",
         "game_line": "Sorcerer",
@@ -339,7 +328,7 @@
     },
     {
         "name": "Psychic Ritual",
-        "description": "Your psychic is a true rarity amongst the pure practitioners of the Arts of mental magic. Some realization of the importance of the universe has crept into his consciousness sufficiently that he has even managed to create a ritual that allows him to perform some extended psychic effect. You need to create a ritual, approved of by your Storyteller, for one of the levels of one of your character’s psychic Paths. When your character performs this ritual, you may use the normal rules for rituals and extended magic rules, with minor necessary changes. Obviously, as your psychic does not gain Paradox, the penalty for a botch falls to the Storyteller, greatly increasing the horrific effects of the catastrophic failure. Your roll is limited to no more dice than your psychic’s Stamina + Parapsychology.",
+        "description": "Your psychic is a true rarity amongst the pure practitioners of the Arts of mental magic. Some realization of the importance of the universe has crept into his consciousness sufficiently that he has even managed to create a ritual that allows him to perform some extended psychic effect. You need to create a ritual, approved of by your Storyteller, for one of the levels of one of your character's psychic Paths. When your character performs this ritual, you may use the normal rules for rituals and extended magic rules, with minor necessary changes. Obviously, as your psychic does not gain Paradox, the penalty for a botch falls to the Storyteller, greatly increasing the horrific effects of the catastrophic failure. Your roll is limited to no more dice than your psychic's Stamina + Parapsychology.",
         "game_line": "Sorcerer",
         "category": "merits",  
         "splat": "Mortal+",
@@ -350,7 +339,7 @@
     },
     {
         "name": "Blood Magic",
-        "description": "Perhaps you learned magic from a particularly dark cult. Maybe your spirit needs additional energy, beyond your strength of will, to enact magic. Perhaps you foolishly studied under a vampire or from tomes plundered from vampires. Whatever the reason, your sorcerer’s use of magic always requires the sacrifice of his own blood. In some cases, it will simply burn away from inside. In others, the magician must cut himself and include it in the ritual. Each use of magic causes an unsoakable level of bashing damage. Furthermore, the Resonance of your magic is likely to be dark, or at the very least, martyred in nature.",
+        "description": "Perhaps you learned magic from a particularly dark cult. Maybe your spirit needs additional energy, beyond your strength of will, to enact magic. Perhaps you foolishly studied under a vampire or from tomes plundered from vampires. Whatever the reason, your sorcerer's use of magic always requires the sacrifice of his own blood. In some cases, it will simply burn away from inside. In others, the magician must cut himself and include it in the ritual. Each use of magic causes an unsoakable level of bashing damage. Furthermore, the Resonance of your magic is likely to be dark, or at the very least, martyred in nature.",
         "game_line": "Sorcerer",
         "category": "merits",
         "splat": "Mortal+",

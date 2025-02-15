@@ -1,4 +1,6 @@
-# mygame/server/conf/models.py
+"""
+Models for the World of Darkness 20th Anniversary Edition game.
+"""
 import re
 from django.db import models
 from django.db.models import JSONField  # Use the built-in JSONField
@@ -8,7 +10,7 @@ from django.conf import settings
 from evennia.accounts.models import AccountDB
 from evennia.objects.models import ObjectDB
 from evennia.utils.idmapper.models import SharedMemoryModel
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional, Any
 
 from world.wod20th.utils.stat_mappings import CATEGORIES, STAT_TYPES
 from world.wod20th.utils.shifter_utils import (
@@ -21,10 +23,12 @@ from world.wod20th.utils.mortalplus_utils import (
 )
 from world.wod20th.utils.asset_utils import Asset, ActionTemplate, Action
 
+def get_character_models():
+    """Get the CharacterSheet and CharacterImage models lazily."""
+    return CharacterSheet, CharacterImage
+
 class Stat(models.Model):
-    """
-    Model for storing stat definitions.
-    """
+    """Model for storing game statistics."""
     name = models.CharField(max_length=100)
     description = models.TextField(default='')  # Changed to non-nullable with default empty string
     game_line = models.CharField(max_length=100)
@@ -44,7 +48,7 @@ class Stat(models.Model):
     )    
     hidden = models.BooleanField(default=False)
     locked = models.BooleanField(default=False)
-    instanced = models.BooleanField(default=False, null=True)
+    instanced = models.BooleanField(default=None, null=True, help_text="If True, requires an instance. If False, disallows instances. If null, instances are optional.")
     default = models.CharField(max_length=100, blank=True, null=True, default=None)
     auspice = models.CharField(
         max_length=100,
@@ -88,13 +92,19 @@ class Stat(models.Model):
         blank=True,
         help_text="Type of Mortal+ character"
     )
-
+    guildmarks = models.CharField(
+        max_length=200,
+        default='none',
+        blank=True,
+        help_text="Type of guildmarks"
+    )
+    
     class Meta:
         app_label = 'wod20th'
-        unique_together = ('name', 'stat_type')
-
+        unique_together = ('name', 'category', 'stat_type', 'splat')
+        
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.category}/{self.stat_type})"
 
     @property
     def lock_storage(self):
@@ -152,6 +162,7 @@ class Stat(models.Model):
                     raise ValidationError({'tribe': f'Invalid tribe: {tribe}'})
 
 class CharacterSheet(SharedMemoryModel):
+    """Model for storing character sheets."""
     account = models.OneToOneField(AccountDB, related_name='character_sheet', on_delete=models.CASCADE, null=True)
     character = models.OneToOneField(ObjectDB, related_name='character_sheet', on_delete=models.CASCADE, null=True, unique=True)
     db_object = models.OneToOneField('objects.ObjectDB', related_name='db_character_sheet', on_delete=models.CASCADE, null=True)
@@ -159,9 +170,58 @@ class CharacterSheet(SharedMemoryModel):
     class Meta:
         app_label = 'wod20th'
 
+    def get_stat(self, category: str, stat_type: str, stat_name: str, temp: bool = False) -> Optional[Any]:
+        """Get a stat value from the character's stats."""
+        try:
+            if not hasattr(self.character, 'db') or not hasattr(self.character.db, 'stats'):
+                return None
+            
+            stat_dict = self.character.db.stats.get(category, {}).get(stat_type, {})
+            if not stat_dict:
+                return None
+            
+            stat_value = stat_dict.get(stat_name, {})
+            if isinstance(stat_value, dict) and 'temp' in stat_value and 'perm' in stat_value:
+                return stat_value['temp'] if temp else stat_value['perm']
+            return stat_value
+        except (AttributeError, KeyError):
+            return None
 
-from django.db import models
-from evennia.utils.idmapper.models import SharedMemoryModel
+    def set_stat(self, category: str, stat_type: str, stat_name: str, value: Any, temp: bool = False) -> None:
+        """Set a stat value in the character's stats."""
+        if not hasattr(self.character, 'db') or not hasattr(self.character.db, 'stats'):
+            self.character.db.stats = {}
+        
+        if category not in self.character.db.stats:
+            self.character.db.stats[category] = {}
+        if stat_type not in self.character.db.stats[category]:
+            self.character.db.stats[category][stat_type] = {}
+            
+        current_value = self.character.db.stats[category][stat_type].get(stat_name, {})
+        if isinstance(current_value, dict) and ('temp' in current_value or 'perm' in current_value):
+            if temp:
+                current_value['temp'] = value
+            else:
+                current_value['perm'] = value
+                if 'temp' not in current_value:
+                    current_value['temp'] = value
+            self.character.db.stats[category][stat_type][stat_name] = current_value
+        else:
+            if temp:
+                self.character.db.stats[category][stat_type][stat_name] = {'perm': current_value, 'temp': value}
+            else:
+                self.character.db.stats[category][stat_type][stat_name] = value
+
+    def get_all_stats(self, category: Optional[str] = None, stat_type: Optional[str] = None) -> Dict[str, Any]:
+        """Get all stats for a category and/or type."""
+        if not hasattr(self.character, 'db') or not hasattr(self.character.db, 'stats'):
+            return {}
+        
+        if category and stat_type:
+            return self.character.db.stats.get(category, {}).get(stat_type, {})
+        elif category:
+            return self.character.db.stats.get(category, {})
+        return self.character.db.stats
 
 def calculate_willpower(character):
     """Calculate Willpower based on virtues."""
@@ -190,6 +250,7 @@ def calculate_willpower(character):
         return 1
 
 def calculate_road(character):
+    """Calculate Road value based on virtues."""
     enlightenment = character.get_stat('identity', 'personal', 'Enlightenment', temp=False)
     virtues = character.db.stats.get('virtues', {}).get('moral', {})
 
@@ -231,6 +292,7 @@ def calculate_road(character):
         return 0
 
 class ShapeshifterForm(models.Model):
+    """Model for storing shapeshifter forms."""
     name = models.CharField(max_length=50)
     shifter_type = models.CharField(max_length=50)
     description = models.TextField()
@@ -282,6 +344,7 @@ class CharacterImage(SharedMemoryModel):
     is_primary = models.BooleanField(default=False)
 
     class Meta:
+        app_label = 'wod20th'
         ordering = ['-is_primary', '-uploaded_at']
 
     def save(self, *args, **kwargs):

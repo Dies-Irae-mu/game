@@ -313,7 +313,7 @@
     },
     {
         "name": "Pacifist",
-        "description": "You’ve chosen to cause no intentional harm to anyone, be it a religious restriction or a moral decision you made. You may defend yourself with magic, and this may be something that you have specialized in for that purpose. If you take this Flaw, you should be prepared to play with these restrictions sincerely.",
+        "description": "You've chosen to cause no intentional harm to anyone, be it a religious restriction or a moral decision you made. You may defend yourself with magic, and this may be something that you have specialized in for that purpose. If you take this Flaw, you should be prepared to play with these restrictions sincerely.",
         "game_line": "Sorcerer",
         "category": "flaws",
         "stat_type": "supernatural",

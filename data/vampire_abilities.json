@@ -112,14 +112,6 @@
         "values": [1, 2, 3, 4, 5]
     },
     {
-        "name": "Do",
-        "description": "Do is the quintessential martial art. It is the original martial art created by the Akashic Brotherhood, and is the basis for all other martial arts. Do is the art of movement, and is the basis for all other martial arts.",
-        "game_line": "Mage: The Ascension",
-        "category": "abilities",
-        "stat_type": "secondary_skill",
-        "values": [1, 2, 3, 4, 5]
-    },
-    {
         "name": "Etiquette",
         "description": "Etiquette covers the social niceties, your ability to interact with people from all walks of life and to present yourself in the best possible light. Whether it's hobnobbing with high society, cutting a business deal, or simply knowing how to behave in a given situation, Etiquette ensures that you won't embarrass yourself or your allies.",
         "game_line": "Various",
@@ -177,7 +169,7 @@
     },
     {
         "name": "Academics",
-        "description": "This catchall Knowledge covers the character's erudition in the humanities: literature, history, art, philosophy, and other 'liberal' arts and sciences. A character with dots in Academics is generally well rounded in these fields, and at high levels may be considered an expert in one or more areas of study. Not only can this Knowledge impress at salons and other Elysium functions, but it can also offer valuable clues to certain past — and future — movements in the Jyhad.",
+        "description": "This catchall Knowledge covers the character's erudition in the humanities: literature, history, art, philosophy, and other 'liberal' arts and sciences. A character with dots in Academics is generally well rounded in these fields, and at high levels may be considered an expert in one or more areas of study. Not only can this Knowledge impress at salons and other Elysium functions, but it can also offer valuable clues to certain past - and future - movements in the Jyhad.",
         "game_line": "Various",
         "category": "abilities",
         "stat_type": "knowledge",
@@ -233,7 +225,7 @@
     },
     {
         "name": "Medicine",
-        "description": "You have an understanding of how the human body — and to a lesser extent the vampiric body — works. This Ability covers knowledge of medicines, ailments, first-aid procedures, and diagnosis or treatment of disease. Medicine is of great use to those Kindred with an interest in repairing, damaging, or reworking the human body.",
+        "description": "You have an understanding of how the human body - and to a lesser extent the vampiric body - works. This Ability covers knowledge of medicines, ailments, first-aid procedures, and diagnosis or treatment of disease. Medicine is of great use to those Kindred with an interest in repairing, damaging, or reworking the human body.",
         "game_line": "Various",
         "category": "abilities",
         "stat_type": "knowledge",
@@ -265,7 +257,7 @@
     },
     {
         "name": "Technology",
-        "description": "The Technology Knowledge represents a broad acumen with electronics, computer hardware, and devices more elaborate than 'machines,' which fall under the Crafts Skill. If it has a processor, a transistor, or an integrated circuit — if it's electronic rather than electrical — manipulating it uses the Technology Knowledge. This is the wide-ranging Ability used to build one's own computer, install (or subvert) a security system, repair a mobile phone, or kitbash a shortwave radio. You must always choose a specialization in Technology, even though you possess some skill in multiple fields.",
+        "description": "The Technology Knowledge represents a broad acumen with electronics, computer hardware, and devices more elaborate than 'machines,' which fall under the Crafts Skill. If it has a processor, a transistor, or an integrated circuit - if it's electronic rather than electrical - manipulating it uses the Technology Knowledge. This is the wide-ranging Ability used to build one's own computer, install (or subvert) a security system, repair a mobile phone, or kitbash a shortwave radio. You must always choose a specialization in Technology, even though you possess some skill in multiple fields.",
         "game_line": "Various",
         "category": "abilities",
         "stat_type": "skill",
@@ -368,6 +360,14 @@
         "values": [1, 2, 3, 4, 5]
     },
     {
+        "name": "Martial Arts",
+        "description": "Martial Arts Skill represents your ability to use lethal force with in hand-to-hadn combat.",
+        "game_line": "Various",
+        "category": "secondary_abilities",
+        "stat_type": "secondary_skill",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
         "name": "Pilot",
         "description": "Pilot Skill represents your ability to fly an aircraft.",
         "game_line": "Various",
@@ -446,14 +446,6 @@
         "values": [0, 1, 2, 3, 4, 5],
         "description": "The ability to fly and maneuver in the air.",
         "splat": "Various"
-    },
-    {
-        "name": "Flying",
-        "category": "secondary_abilities",
-        "stat_type": "secondary_talent",
-        "values": [0, 1, 2, 3, 4, 5],
-        "description": "The ability to fly and maneuver in the air, as a Mage.",
-        "splat": "Mage: The Ascension"
     },
     {
         "name": "Artistry",

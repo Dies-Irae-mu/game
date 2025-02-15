@@ -2,9 +2,10 @@
 
 from evennia import Command
 from evennia.utils.evmenu import EvMenu
+from world.wod20th.utils.mortalplus_utils import MORTALPLUS_TYPES
 from world.wod20th.models import Stat
 from world.wod20th.utils.shifter_utils import SHIFTER_IDENTITY_STATS, SHIFTER_RENOWN
-from world.wod20th.utils.virtue_utils import calculate_willpower, calculate_road
+from world.wod20th.utils.virtue_utils import calculate_willpower, calculate_path
 from typeclasses.characters import Character
 from evennia.commands.default.muxcommand import MuxCommand
 from world.jobs.models import Job, Queue

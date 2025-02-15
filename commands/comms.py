@@ -16,6 +16,9 @@ CHANNEL_DEFAULT_TYPECLASS = settings.BASE_CHANNEL_TYPECLASS
 class CustomCmdChannel(MuxCommand):
     """
     channel[/switches] [channel] [= message]
+    The commands to join and leave a channel are:
+    channel/sub [channel] = [alias]. Note that you MUST put in an alias.
+    channel/unsub [channel]
 
     switches:
       /list       - show all channels you are subscribed to
@@ -40,15 +43,14 @@ class CustomCmdChannel(MuxCommand):
       /purge      - purge all channel aliases
 
     Example:
-      channel public = Hello!
       pub Hello!                  (using an alias)
-      channel/sub public          (subscribe to channel)
+      channel/sub public = pub    (set alias)
       channel/unsub public        (unsubscribe)
       channel/alias pub = public  (set alias)
+      channel/unalias pub         (remove alias)
       channel/who public          (show subscribers)
       channel/history public      (show history)
       channel/mute public         (mute channel)
-      channel/create pub          (create new channel)
     """
     key = "channel"
     aliases = ["chan"]

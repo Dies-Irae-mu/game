@@ -81,7 +81,7 @@
         }
     },
     {
-        "name": "Essence",
+        "name": "Essence Energy",
         "description": "Essence is a pool of power that can be used to fuel certain effects by Familiars (Companion Type).",
         "game_line": "Mage: The Ascension",
         "category": "pools",
