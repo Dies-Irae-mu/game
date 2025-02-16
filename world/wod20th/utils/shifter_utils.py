@@ -25,19 +25,20 @@ SHIFTER_TYPE_CHOICES: List[Tuple[str, str]] = [
 # Valid Garou tribes
 GAROU_TRIBE_CHOICES: List[Tuple[str, str]] = [
     ('none', 'None'),
-    ('black_fury', 'Black Fury'),
-    ('bone_gnawer', 'Bone Gnawer'),
-    ('child_of_gaia', 'Child of Gaia'),
+    ('black_furies', 'Black Furies'),
+    ('bone_gnawers', 'Bone Gnawers'),
+    ('children_of_gaia', 'Children of Gaia'),
     ('fianna', 'Fianna'),
     ('get_of_fenris', 'Get of Fenris'),
-    ('glass_walker', 'Glass Walker'),
-    ('red_talon', 'Red Talon'),
-    ('shadow_lord', 'Shadow Lord'),
-    ('silent_strider', 'Silent Strider'),
-    ('silver_fang', 'Silver Fang'),
-    ('stargazer', 'Stargazer'),
+    ('glass_walkers', 'Glass Walkers'),
+    ('red_talons', 'Red Talons'),
+    ('shadow_lords', 'Shadow Lords'),
+    ('silent_striders', 'Silent Striders'),
+    ('silver_fangs', 'Silver Fangs'),
+    ('stargazers', 'Stargazers'),
     ('uktena', 'Uktena'),
-    ('wendigo', 'Wendigo')
+    ('wendigo', 'Wendigo'),
+    ('black_spiral_dancers', 'Black Spiral Dancers')
 ]
 
 # Valid auspices as a dictionary for game logic
@@ -171,12 +172,15 @@ COMMON_BREED_GNOSIS = {
 }
 
 # Renown types for each shifter type
-SHIFTER_RENOWN: Dict[str, Union[List[str], Dict[str, Dict[str, List[int]]]]] = {
+SHIFTER_RENOWN: Dict[str, Union[List[str], Dict[str, List[str]]]] = {
     "Ajaba": ["Cunning", "Ferocity", "Obligation"],
     "Ananasi": ["Cunning", "Obedience", "Wisdom"],
     "Bastet": ["Cunning", "Ferocity", "Honor"],
     "Corax": ["Glory", "Honor", "Wisdom"],
-    "Garou": ["Glory", "Honor", "Wisdom"],
+    "Garou": {
+        "default": ["Glory", "Honor", "Wisdom"],
+        "Black Spiral Dancers": ["Power", "Infamy", "Cunning"]
+    },
     "Gurahl": ["Honor", "Succor", "Wisdom"],
     "Kitsune": ["Cunning", "Honor", "Glory"],
     "Mokole": ["Glory", "Honor", "Wisdom"],
@@ -240,9 +244,17 @@ def initialize_shifter_type(character, shifter_type):
     if 'renown' not in character.db.stats['advantages']:
         character.db.stats['advantages']['renown'] = {}
 
-    # Set renown types based on shifter type
-    renown_types = SHIFTER_RENOWN.get(shifter_type, [])
+    # Set renown types based on shifter type and tribe for Garou
     renown_message = None
+    if shifter_type == 'Garou':
+        tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
+        if tribe and tribe.lower() == 'black spiral dancers':
+            renown_types = SHIFTER_RENOWN['Garou']['Black Spiral Dancers']
+        else:
+            renown_types = SHIFTER_RENOWN['Garou']['default']
+    else:
+        renown_types = SHIFTER_RENOWN.get(shifter_type, [])
+        
     if renown_types:
         # Clear any existing renown
         character.db.stats['advantages']['renown'] = {}
@@ -635,6 +647,7 @@ def initialize_garou(character, breed):
     # Set Tribe-based Willpower
     GAROU_TRIBE_WILLPOWER = {
         'black furies': 3,
+        'black spiral dancers': 3,
         'bone gnawers': 4,
         'children of gaia': 4,
         'fianna': 3,
@@ -895,17 +908,46 @@ def update_auspice_stats(character, auspice, shifter_type):
             
 def update_tribe_stats(character, tribe, shifter_type):
     """Update stats based on tribe."""
+    tribe = tribe.lower() if tribe else ''
+    
     if shifter_type == 'garou':
+        # Handle Black Spiral Dancer special renown
+        if tribe == 'black spiral dancers':
+            # Clear existing renown
+            if 'advantages' in character.db.stats and 'renown' in character.db.stats['advantages']:
+                character.db.stats['advantages']['renown'] = {}
+            # Set BSD renown types
+            bsd_renown = {'Power': {'perm': 0, 'temp': 0},
+                         'Infamy': {'perm': 0, 'temp': 0},
+                         'Cunning': {'perm': 0, 'temp': 0}}
+            character.db.stats['advantages']['renown'] = bsd_renown
+            character.msg("|gRenown set to Power, Infamy, and Cunning for Black Spiral Dancers.")
+        else:
+            # Reset to standard Garou renown if changing from BSD
+            if 'advantages' in character.db.stats and 'renown' in character.db.stats['advantages']:
+                # Only reset if current renown is BSD renown
+                current_renown = set(character.db.stats['advantages']['renown'].keys())
+                if current_renown == {'Power', 'Infamy', 'Cunning'}:
+                    character.db.stats['advantages']['renown'] = {
+                        'Glory': {'perm': 0, 'temp': 0},
+                        'Honor': {'perm': 0, 'temp': 0},
+                        'Wisdom': {'perm': 0, 'temp': 0}
+                    }
+                    character.msg("|gRenown reset to Glory, Honor, and Wisdom for standard Garou.")
+        
+        # Set Willpower based on tribe
         GAROU_TRIBE_WILLPOWER = {
             'black furies': 3, 'bone gnawers': 4, 'children of gaia': 4,
             'fianna': 3, 'get of fenris': 3, 'glass walkers': 3,
             'red talons': 3, 'shadow lords': 3, 'silent striders': 3,
-            'silver fangs': 3, 'stargazers': 4, 'uktena': 3, 'wendigo': 4
+            'silver fangs': 3, 'stargazers': 4, 'uktena': 3, 'wendigo': 4,
+            'black spiral dancers': 3  # Added BSD willpower
         }
         if tribe in GAROU_TRIBE_WILLPOWER:
             character.set_stat('pools', 'dual', 'Willpower', GAROU_TRIBE_WILLPOWER[tribe], temp=False)
             character.set_stat('pools', 'dual', 'Willpower', GAROU_TRIBE_WILLPOWER[tribe], temp=True)
             character.msg(f"|gWillpower set to {GAROU_TRIBE_WILLPOWER[tribe]} for {tribe} tribe.")
+    
     elif shifter_type == 'bastet':
         BASTET_TRIBE_STATS = {
             'balam': {'rage': 4, 'willpower': 3},

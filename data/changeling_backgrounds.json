@@ -68,7 +68,7 @@
         "game_line": "Changeling: The Dreaming",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5],
+        "values": [1, 2, 3],
         "splat": "Changeling"
     },
     {

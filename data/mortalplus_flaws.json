@@ -138,7 +138,7 @@
         "category": "flaws",
         "stat_type": "physical",
         "values": [1],
-        "splat": "Various",
+        
         "source": "Ghouls & Revenants"
     },
     {
@@ -170,7 +170,7 @@
         "category": "flaws",
         "stat_type": "physical",
         "values": [3],
-        "splat": "Various",
+        
         "source": "Ghouls & Revenants"
     },
     {
@@ -293,7 +293,7 @@
     },
     {
         "name": "Isolated Upbringing",
-        "description": "You were raised within a reclusive environment and have had little contact with the “mundane” world. This could mean you were the child of Arcanum scholars, were born in a Uzome ile, or were extensively home-schooled away from society. This gives you a limited understanding of how the “normal” world works, and whenever you are outside of your childhood Affiliation, you have a –1 die penalty to all social skills.",
+        "description": "You were raised within a reclusive environment and have had little contact with the mundane world. This could mean you were the child of Arcanum scholars, were born in a Uzome ile, or were extensively home-schooled away from society. This gives you a limited understanding of how the normal world works, and whenever you are outside of your childhood Affiliation, you have a –1 die penalty to all social skills.",
         "game_line": "Sorcerer",
         "category": "flaws",
         "stat_type": "social",

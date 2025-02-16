@@ -9,6 +9,14 @@ from typing import Dict, List, Set, Tuple
 # Valid seemings
 SEEMING = {'Childing', 'Wilder', 'Grump'}
 
+FAE_COURTS = {'Seelie Court', 'Unseelie Court', 'Shadow Court'}
+
+HOUSES = {
+    "Beaumayn", "Dougal", "Eiluned", "Fiona", "Gwydion", "Liam", 
+    "Scathach", "Aesin", "Ailil", "Balor", "Danaan", "Daireann", 
+    "Leanhaun", "Varich"
+}
+
 # Valid kiths
 KITH = {
     'Boggan', 'Clurichaun', 'Eshu', 'Nocker', 'Piskie', 'Pooka', 'Redcap', 'Satyr', 
@@ -113,7 +121,8 @@ def get_changeling_identity_stats(kith: str = None) -> List[str]:
         'Date of Birth',
         'Date of Chrysalis',
         'Kith',
-        'Seeming'
+        'Seeming',
+        'Fae Name'
     ]
     
     # Add kith-specific stats

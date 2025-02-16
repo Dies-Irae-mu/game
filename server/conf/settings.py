@@ -28,6 +28,81 @@ put secret game- or server-specific settings in secret_settings.py.
 from evennia.settings_default import *
 import os
 from evennia.contrib.base_systems import color_markups
+
+# Configure logging
+import logging.handlers
+
+# Ensure log directory exists
+LOG_DIR = os.path.join(GAME_DIR, "server", "logs")
+os.makedirs(LOG_DIR, exist_ok=True)
+
+# Server log file with rotation
+SERVER_LOG_FILE = os.path.join(LOG_DIR, "server.log")
+SERVER_LOG_DAY_ROTATION = 7
+SERVER_LOG_MAX_SIZE = 1000000
+
+# Portal log file with rotation
+PORTAL_LOG_FILE = os.path.join(LOG_DIR, "portal.log")
+PORTAL_LOG_DAY_ROTATION = 7
+PORTAL_LOG_MAX_SIZE = 1000000
+
+# HTTP log file
+HTTP_LOG_FILE = os.path.join(LOG_DIR, "http_requests.log")
+
+# Lock warning log file
+LOCKWARNING_LOG_FILE = os.path.join(LOG_DIR, "lockwarnings.log")
+
+# Channel log settings
+CHANNEL_LOG_NUM_TAIL_LINES = 20
+CHANNEL_LOG_ROTATE_SIZE = 1000000
+
+# Custom logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s %(levelname)s %(name)s %(message)s'
+        }
+    },
+    'handlers': {
+        'server_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': SERVER_LOG_FILE,
+            'maxBytes': SERVER_LOG_MAX_SIZE,
+            'backupCount': SERVER_LOG_DAY_ROTATION,
+            'formatter': 'verbose',
+            'encoding': 'utf-8'
+        },
+        'portal_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': PORTAL_LOG_FILE,
+            'maxBytes': PORTAL_LOG_MAX_SIZE,
+            'backupCount': PORTAL_LOG_DAY_ROTATION,
+            'formatter': 'verbose',
+            'encoding': 'utf-8'
+        }
+    },
+    'loggers': {
+        'evennia': {
+            'handlers': ['server_file'],
+            'level': 'INFO',
+            'propagate': False
+        },
+        'twisted': {
+            'handlers': ['portal_file'],
+            'level': 'INFO',
+            'propagate': False
+        }
+    },
+    'root': {
+        'handlers': ['server_file'],
+        'level': 'WARNING'
+    }
+}
+
 SITE_ID = 1  # This tells Django which site object to use
 DEBUG = True
 
@@ -39,13 +114,41 @@ SERVERNAME = "Dies Irae"
 DEBUG = True
 SITE_ID = 1
 DEFAULT_CMDSETS = [
-    'commands.mycmdset.MyCmdset'
+    'diesirae.commands.mycmdset.MyCmdset'
 ]
 
 TELNET_PORTS = [4201]  
 WEBSERVER_PORTS = [(4200, 4005)] 
 WEBSOCKET_CLIENT_PORT = 4202
 EVENNIA_ADMIN=False
+
+# this is where the magic happens
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(GAME_DIR, 'server', 'evennia.db3'),
+        'OPTIONS': {
+            'timeout': 30,
+            'isolation_level': None,
+        }
+    }
+}
+
+# define what the hell configuring sqlite means please
+def _configure_sqlite(connection, **kwargs):
+    cursor = connection.cursor()
+    cursor.execute('PRAGMA journal_mode=WAL')
+    cursor.execute('PRAGMA cache_size=-64000')  # 64MB cache
+    cursor.execute('PRAGMA foreign_keys=ON')
+    cursor.execute('PRAGMA synchronous=NORMAL')
+    cursor.execute('PRAGMA mmap_size=33554432')  # 32MB memory-mapped I/O
+
+# custom router via digitalocean
+DATABASE_ROUTERS = []
+CONN_MAX_AGE = 60
+
+# can't believe this didn't exist even before these changes, note to self
+DATABASES['default']['CONN_MAX_AGE'] = 60
 """
 
 SERVERNAME = "beta.diesiraemu.com"
@@ -62,9 +165,12 @@ CSRF_TRUSTED_ORIGINS = ['https://beta.diesiraemu.com', 'http://beta.diesiraemu.c
 """
 
 BASE_ROOM_TYPECLASS = "typeclasses.rooms.RoomParent"
+BASE_EXIT_TYPECLASS = "typeclasses.exits.Exit"
+BASE_CHANNEL_TYPECLASS = "typeclasses.channels.Channel"
+
 LOCK_FUNC_MODULES = [
     "evennia.locks.lockfuncs",
-    "world.wod20th.locks", 
+    "world.wod20th.locks"
 ]
 MAX_NR_CHARACTERS = 5
 
@@ -84,12 +190,16 @@ INSTALLED_APPS += (
     "world.wod20th",
     "wiki",
     "world.jobs",
+    "world.plots",
+    "world.hangouts",
 )
 
-BASE_ROOM_TYPECLASS = "typeclasses.rooms.RoomParent"
-BASE_CHANNEL_TYPECLASS = "typeclasses.channels.Channel"
+# Use custom server config to prevent channel recreation
+SERVER_CONFIG_CLASS = "server.conf.server_services_plugins.CustomServerConfig"
 
-  # Change 8001 to your desired websocket port
+# Prevent automatic channel creation on server restart
+DEFAULT_CHANNELS = []
+
 ######################################################################
 # Settings given in secret_settings.py override those in this file.
 ######################################################################
@@ -258,5 +368,79 @@ MUX_COLOR_ANSI_XTERM256_BRIGHT_BG_EXTRA_MAP = [
 
 AT_SERVER_STARTSTOP_MODULE = "world.wod20th.scripts"
 
-from world.wod20th.locks import LOCK_FUNCS
+# Import our custom lock functions
+from world.wod20th.locks import LOCK_FUNCS as WOD_LOCK_FUNCS
 
+# Lock function modules
+LOCK_FUNC_MODULES = [
+    "evennia.locks.lockfuncs",
+    "world.wod20th.locks"
+]
+
+# Add our custom lock functions to Evennia's lock system
+LOCK_FUNCS = {
+    # Basic type checks
+    "has_splat": WOD_LOCK_FUNCS["has_splat"],
+    "has_type": WOD_LOCK_FUNCS["has_type"],
+    "subscribed": WOD_LOCK_FUNCS["subscribed"],
+    "tenant": WOD_LOCK_FUNCS["tenant"],
+
+    # Primary abilities
+    "has_talent": WOD_LOCK_FUNCS["has_talent"],
+    "has_skill": WOD_LOCK_FUNCS["has_skill"],
+    "has_knowledge": WOD_LOCK_FUNCS["has_knowledge"],
+    
+    # Secondary abilities
+    "has_secondary_talent": WOD_LOCK_FUNCS["has_secondary_talent"],
+    "has_secondary_skill": WOD_LOCK_FUNCS["has_secondary_skill"],
+    "has_secondary_knowledge": WOD_LOCK_FUNCS["has_secondary_knowledge"],
+    
+    # Advantages
+    "has_merit": WOD_LOCK_FUNCS["has_merit"],
+    
+    # Vampire
+    "has_clan": WOD_LOCK_FUNCS["has_clan"],
+
+    # Garou/some shifters
+    "has_tribe": WOD_LOCK_FUNCS["has_tribe"],
+    "has_auspice": WOD_LOCK_FUNCS["has_auspice"],
+
+    # Mage stuff
+    "has_tradition": WOD_LOCK_FUNCS["has_tradition"],
+    "has_affiliation": WOD_LOCK_FUNCS["has_affiliation"],
+    "has_convention": WOD_LOCK_FUNCS["has_convention"],
+    "has_nephandi_faction": WOD_LOCK_FUNCS["has_nephandi_faction"],
+    
+    # Changeling specifics
+    "has_court": WOD_LOCK_FUNCS["has_court"],
+    "has_kith": WOD_LOCK_FUNCS["has_kith"],
+
+}
+
+# Media files (Uploaded files)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(GAME_DIR, 'web', 'media')
+
+# Ensure the media directory exists
+os.makedirs(MEDIA_ROOT, exist_ok=True)
+
+######################################################################
+# Logging configuration
+######################################################################
+
+# Use our custom logger
+from .logger import get_robust_file_observer
+
+# Simple observer functions that return new instances each time
+PORTAL_LOG_OBSERVER = lambda: get_robust_file_observer("portal.log", LOG_DIR)
+SERVER_LOG_OBSERVER = lambda: get_robust_file_observer("server.log", LOG_DIR)
+
+def at_server_start():
+    """
+    This is called every time the server starts up.
+    """
+    # Import here to avoid circular imports
+    from world.wod20th.scripts import start_all_scripts
+    start_all_scripts()
+
+AT_SERVER_START_HOOK = "server.conf.settings.at_server_start"

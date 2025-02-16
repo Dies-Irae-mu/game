@@ -260,7 +260,7 @@ class CmdSheet(MuxCommand):
                          'Tradition', 'Convention', 'Affiliation', 'Phyla', 'Traditions Subfaction', 'Methodology',
                          'Spirit Type', 'Spirit Name', 'Domitor', 'Society', 'Order', 'Coven', 'Cabal', 'Plague', 'Crown', 
                          'Stream', 'Kitsune Path', 'Varna', 'Deed Name', 'Motivation', 'Possessed Type', 'Date of Possession',
-                         'Companion Type', 'Patron Totem', 'Pack', 'Rank', 'Affinity Realm']:
+                         'Companion Type', 'Patron Totem', 'Pack', 'Rank', 'Affinity Realm', 'Affinity Realm', 'Fae Court', 'Fae Name']:
                 value_str = 'None'
             else:
                 value_str = ''
@@ -294,48 +294,19 @@ class CmdSheet(MuxCommand):
         return string
 
     def get_identity_stats(self, character, splat):
-        """Get the list of identity stats for a character."""
-        # Base personal stats that all characters should have
-        base_stats = ['Full Name', 'Concept', 'Date of Birth']
+        """Get the list of identity stats for a character based on their splat."""
+        from world.wod20th.utils.stat_mappings import get_identity_stats
         
-        # Add Nature/Demeanor for non-Changeling/Kinain characters
-        if splat.lower() != 'changeling' and not (splat.lower() == 'mortal+' and 
-            character.get_stat('identity', 'lineage', 'Type', temp=False) == 'Kinain'):
-            base_stats.extend(['Nature', 'Demeanor'])
+        # Get character type (e.g., Garou for Shifter)
+        char_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
         
-        # Get subtype and affiliation if applicable
-        subtype = None
-        affiliation = None
+        # Get tribe for Garou characters
+        tribe = None
+        if char_type and char_type.lower() == 'garou':
+            tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
         
-        if splat.lower() == 'vampire':
-            from world.wod20th.utils.vampire_utils import get_vampire_identity_stats
-            return get_vampire_identity_stats()
-        elif splat.lower() == 'shifter':
-            subtype = character.get_stat('identity', 'lineage', 'Type', temp=False)
-            # Get shifter-specific stats from SHIFTER_IDENTITY_STATS
-            if subtype and subtype in SHIFTER_IDENTITY_STATS:
-                # Combine base personal stats with shifter lineage stats
-                return base_stats + SHIFTER_IDENTITY_STATS[subtype]
-        elif splat.lower() == 'mage':
-            affiliation = character.get_stat('identity', 'lineage', 'Affiliation', temp=False)
-            return get_identity_stats(splat, subtype, affiliation)
-        elif splat.lower() == 'changeling':
-            from world.wod20th.utils.changeling_utils import get_changeling_identity_stats
-            kith = character.get_stat('identity', 'lineage', 'Kith', temp=False)
-            return get_changeling_identity_stats(kith)
-        elif splat.lower() == 'possessed':
-            subtype = character.get_stat('identity', 'lineage', 'Possessed Type', temp=False)
-            return get_identity_stats(splat, subtype, affiliation)
-        elif splat.lower() == 'companion':
-            subtype = character.get_stat('identity', 'lineage', 'Companion Type', temp=False)
-            return get_identity_stats(splat, subtype, affiliation)
-        elif splat.lower() == 'mortal+':
-            subtype = character.get_stat('identity', 'lineage', 'Type', temp=False)
-            return get_identity_stats(splat, subtype, affiliation)
-        elif splat.lower() == 'mortal':
-            subtype = character.get_stat('identity', 'lineage', 'Type', temp=False)
-            return get_identity_stats(splat, subtype, affiliation)
-        return base_stats  # Default to base stats if no specific handling
+        # Get identity stats based on splat, type, and tribe
+        return get_identity_stats(splat, char_type, tribe)
 
     def format_attributes_section(self, character):
         """Format the attributes section of the character sheet."""
@@ -483,36 +454,21 @@ class CmdSheet(MuxCommand):
         formatted_secondary_knowledges = []
 
         # Get the secondary abilities from the character's stats
-        secondary_abilities = character.db.stats.get('secondary_abilities', {})
-        none_category = character.db.stats.get(None, {})
+        secondary_abilities = character.db.stats.get('abilities', {}).get('secondary_abilities', {})
 
         # Process talents
         for talent in sorted(base_secondary_talents):
-            value = 0
-            # Check in secondary_abilities first
-            if 'secondary_talent' in secondary_abilities:
-                value = secondary_abilities['secondary_talent'].get(talent, {}).get('perm', 0)
-            # If not found and exists in None category, use that value
-            if value == 0 and 'secondary_talent' in none_category:
-                value = none_category['secondary_talent'].get(talent, {}).get('perm', 0)
+            value = secondary_abilities.get(talent, {}).get('perm', 0)
             formatted_secondary_talents.append(format_stat(talent, value, default=0, width=25))
 
         # Process skills
         for skill in sorted(base_secondary_skills):
-            value = 0
-            if 'secondary_skill' in secondary_abilities:
-                value = secondary_abilities['secondary_skill'].get(skill, {}).get('perm', 0)
-            if value == 0 and 'secondary_skill' in none_category:
-                value = none_category['secondary_skill'].get(skill, {}).get('perm', 0)
+            value = secondary_abilities.get(skill, {}).get('perm', 0)
             formatted_secondary_skills.append(format_stat(skill, value, default=0, width=25))
 
         # Process knowledges
         for knowledge in sorted(base_secondary_knowledges):
-            value = 0
-            if 'secondary_knowledge' in secondary_abilities:
-                value = secondary_abilities['secondary_knowledge'].get(knowledge, {}).get('perm', 0)
-            if value == 0 and 'secondary_knowledge' in none_category:
-                value = none_category['secondary_knowledge'].get(knowledge, {}).get('perm', 0)
+            value = secondary_abilities.get(knowledge, {}).get('perm', 0)
             formatted_secondary_knowledges.append(format_stat(knowledge, value, default=0, width=25))
 
         # Ensure all columns have the same length
@@ -1070,6 +1026,26 @@ class CmdSheet(MuxCommand):
                 temp_value = values.get('temp', 0)
                 self.virtues_list.append(format_stat(renown_type, value, width=25, tempvalue=temp_value))
 
+        # Handle Changeling virtues and special stats
+        elif splat == 'Changeling':
+            # Add standard virtues first
+            virtues = character.db.stats.get('virtues', {}).get('moral', {})
+            if virtues:
+                for virtue_name, values in sorted(virtues.items()):
+                    virtue_value = values.get('perm', 0)
+                    temp_value = values.get('temp', virtue_value)
+                    self.virtues_list.append(format_stat(virtue_name, virtue_value, width=25, tempvalue=temp_value))
+            
+            # Add Nightmare
+            nightmare = character.get_stat('pools', 'other', 'Nightmare', temp=False)
+            nightmare_temp = character.get_stat('pools', 'other', 'Nightmare', temp=True)
+            self.virtues_list.append(format_stat('Nightmare', nightmare or 0, width=25, tempvalue=nightmare_temp))
+            
+            # Add Willpower Imbalance
+            imbalance = character.get_stat('pools', 'other', 'Willpower Imbalance', temp=False)
+            imbalance_temp = character.get_stat('pools', 'other', 'Willpower Imbalance', temp=True)
+            self.virtues_list.append(format_stat('Willpower Imbalance', imbalance or 0, width=25, tempvalue=imbalance_temp))
+
         # Handle standard virtues for Mortal and Mortal+
         elif splat in ['Mortal', 'Mortal+', 'Possessed']:
             virtues = ['Conscience', 'Self-Control', 'Courage']
@@ -1120,7 +1096,7 @@ class CmdSheet(MuxCommand):
                 self.virtues_list.append(format_stat('Resonance', resonance_value, width=25, tempvalue=temp_value))
 
         else:
-            # Handle other splats (Changeling, etc.)
+            # Handle other splats
             virtues = character.db.stats.get('virtues', {}).get('moral', {})
             if virtues:
                 for virtue_name, values in sorted(virtues.items()):

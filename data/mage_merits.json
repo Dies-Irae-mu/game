@@ -6,7 +6,7 @@
         "category": "merits",
         "stat_type": "mental",
         "values": [1],
-        "splat": "Various",
+        
         "source": "M20 p. 643"
     },
     {
@@ -21,7 +21,7 @@
     },
     {
         "name": "Stormwarden",
-        "description": "Despite the fury of the Avatar Storm, some people remain immune. With this Merit, you possess that precious rare immunity – the ability to reach through and travel beyond the Gauntlet without suffering the effects of the Storm.",
+        "description": "Despite the fury of the Avatar Storm, some people remain immune. With this Merit, you possess that precious rare immunity - the ability to reach through and travel beyond the Gauntlet without suffering the effects of the Storm.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
@@ -31,7 +31,7 @@
     },
     {
         "name": "Too Tough to Die",
-        "description": "You're badass enough to shrug off injuries. They still harm you, but they don't stop you. Game-wise, this Merit allows your character to soak lethal damage – NOT aggravated damage.",
+        "description": "You're badass enough to shrug off injuries. They still harm you, but they don't stop you. Game-wise, this Merit allows your character to soak lethal damage - NOT aggravated damage.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "physical",
@@ -76,7 +76,7 @@
         "category": "merits",
         "stat_type": "social",
         "values": [1, 2, 3],
-        "splat": "Various",
+        
         "source": "M20 p. 643"
     },
     {
@@ -86,7 +86,7 @@
         "category": "merits",
         "stat_type": "social",
         "values": [1, 2, 3],
-        "splat": "Various",
+        
         "source": "M20 p. 643"
     },
     {
@@ -116,7 +116,7 @@
         "category": "merits",
         "stat_type": "social",
         "values": [2],
-        "splat": "Various",
+        
         "source": "M20 p. 643"
     },
     {
@@ -146,7 +146,7 @@
         "category": "merits",
         "stat_type": "social",
         "values": [3],
-        "splat": "Various",
+        
         "source": "M20 p. 643"
     },
     {
@@ -201,7 +201,7 @@
     },
     {
         "name": "Circumspect Avatar",
-        "description": "You've never seen your Avatar, and probably doubt that such a thing exists. Sure, you have a shadow, and a reflection, or maybe a little dog who's followed you around since you were a kid and seems no older even though he should have died of old age years ago, but an Avatar? Nah – that's a buncha New Age hippie crap!",
+        "description": "You've never seen your Avatar, and probably doubt that such a thing exists. Sure, you have a shadow, and a reflection, or maybe a little dog who's followed you around since you were a kid and seems no older even though he should have died of old age years ago, but an Avatar? Nah - that's a buncha New Age hippie crap!",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
@@ -241,7 +241,7 @@
     },
     {
         "name": "Cyclic Magick",
-        "description": "The strength or weakness of your Arts is tied to some periodic cycle – the phases of the moon, night or day, your menstrual periods, the rise and fall of the stock market, and so forth.",
+        "description": "The strength or weakness of your Arts is tied to some periodic cycle - the phases of the moon, night or day, your menstrual periods, the rise and fall of the stock market, and so forth.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
@@ -286,7 +286,7 @@
         "category": "merits",
         "stat_type": "supernatural",
         "values": [3],
-        "splat": "Various",
+        
         "source": "M20 p. 643"
     },
     {
@@ -311,7 +311,7 @@
     },
     {
         "name": "Parlor Trick",
-        "description": "You've honed a special trick – a simple, specific, non-combat application of your Arts – which you can perform without making a casting roll.",
+        "description": "You've honed a special trick - a simple, specific, non-combat application of your Arts - which you can perform without making a casting roll.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
@@ -321,7 +321,7 @@
     },
     {
         "name": "Spirit Magnet",
-        "description": "Ephemeral entities flock to your presence. The essence of who you are – benign or malignant – draws spirits to you, and they, in turn, affect the essence of who you are.",
+        "description": "Ephemeral entities flock to your presence. The essence of who you are - benign or malignant - draws spirits to you, and they, in turn, affect the essence of who you are.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
@@ -386,7 +386,7 @@
         "category": "merits",
         "stat_type": "supernatural",
         "values": [4],
-        "splat": "Various",
+        
         "source": "M20 p. 643"
     },
     {
@@ -421,7 +421,7 @@
     },
     {
         "name": "Inner Knight",
-        "description": "In your heart of hearts, you're a hero. While your companions work toward their own selfish ends, you embody a higher purpose. This purpose guides you in uncanny ways that feel, at times, as if you're being moved by a force greater than yourself – a noble force, naturally, but one that transcends even your personal Enlightenment.",
+        "description": "In your heart of hearts, you're a hero. While your companions work toward their own selfish ends, you embody a higher purpose. This purpose guides you in uncanny ways that feel, at times, as if you're being moved by a force greater than yourself - a noble force, naturally, but one that transcends even your personal Enlightenment.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
@@ -456,7 +456,7 @@
         "category": "merits",
         "stat_type": "supernatural",
         "values": [6],
-        "splat": "Various",
+        
         "source": "M20 p. 643"
     },
     {
@@ -476,7 +476,7 @@
         "category": "merits",
         "stat_type": "supernatural",
         "values": [7],
-        "splat": "Various",
+        
         "source": "M20 p. 643"
     },
     {
@@ -486,7 +486,7 @@
         "category": "merits",
         "stat_type": "mental",
         "values": [2],
-        "splat": "Various",
+        
         "source": "M20 Book of Secrets p. 44"
     }
 ]

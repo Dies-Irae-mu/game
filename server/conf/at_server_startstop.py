@@ -35,6 +35,7 @@ def at_server_start():
         from world.wod20th.locks import LOCK_FUNCS  # Import the lock functions
         from django.conf import settings
         from evennia.locks import lockfuncs
+        from evennia.scripts.models import ScriptDB
         import os
         
         # Get the absolute path to the data directory
@@ -46,6 +47,19 @@ def at_server_start():
         # Register the lock functions
         for name, func in LOCK_FUNCS.items():
             setattr(lockfuncs, name, func)
+            
+        # Initialize WeeklyXPScript if it's not already running
+        if not ScriptDB.objects.filter(db_typeclass_path="world.wod20th.scripts.WeeklyXPScript").exists():
+            from evennia import create_script
+            try:
+                script = create_script("world.wod20th.scripts.WeeklyXPScript", key="WeeklyXP", 
+                                    interval=604800, persistent=True, desc="Weekly XP distribution script")
+                if script:
+                    print("Started WeeklyXPScript successfully")
+                else:
+                    print("Failed to create WeeklyXPScript")
+            except Exception as e:
+                print(f"Error creating WeeklyXPScript: {e}")
         
         print("Initialized shapeshifter forms, stats, and custom locks")
     except Exception as e:

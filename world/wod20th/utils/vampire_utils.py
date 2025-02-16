@@ -69,7 +69,7 @@ __all__ = [
 ]
 
 def get_clan_disciplines(clan):
-    """Helper function to get clan disciplines."""
+    """Helper function to do what it says on the tin."""
     CLAN_DISCIPLINES = {
         'Ahrimanes': ['Animalism', 'Presence', 'Spiritus'],
         'Assamite': ['Celerity', 'Obfuscate', 'Quietus'],

@@ -96,6 +96,7 @@ class Stat(models.Model):
         max_length=200,
         default='none',
         blank=True,
+        null=True,
         help_text="Type of guildmarks"
     )
     

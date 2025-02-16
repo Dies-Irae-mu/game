@@ -1,24 +1,15 @@
 """
-
-Server plugin services
-
-This plugin module can define user-created services for the Server to
-start.
-
-This module must handle all imports and setups required to start a
-twisted service (see examples in evennia.server.server). It must also
-contain a function start_plugin_services(application). Evennia will
-call this function with the main Server application (so your services
-can be added to it). The function should not return anything. Plugin
-services are started last in the Server startup process.
-
+Custom server services for Dies Irae.
 """
+from evennia.server.service import ServerConfig
 
-
-def start_plugin_services(server):
+class CustomServerConfig(ServerConfig):
     """
-    This hook is called by Evennia, last in the Server startup process.
-
-    server - a reference to the main server application.
+    Custom server config that doesn't recreate channels.
     """
-    pass
+    
+    def create_default_channels(self):
+        """
+        Override to prevent channel recreation.
+        """
+        pass  # Do nothing

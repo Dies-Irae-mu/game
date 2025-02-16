@@ -1,6 +1,6 @@
 from evennia import CmdSet
 from django.db import models, transaction, connection
-from evennia.utils import create, evtable
+from evennia.utils import create, evtable, logger
 from evennia.comms.models import ChannelDB
 from evennia.commands.default.muxcommand import MuxCommand
 from world.jobs.models import Job, JobTemplate, Queue, JobAttachment, ArchivedJob, Queue
@@ -1239,26 +1239,29 @@ def create_jobs_help_entry():
     """Create or update the jobs help entry."""
     try:
         help_entry, created = HelpEntry.objects.get_or_create(
-            db_key="jobs",
+            db_key="jobs_system",
             defaults={
                 "db_help_category": "General",
-                "db_entrytext": CmdJobs.__doc__
+                "db_entrytext": CmdJobs.__doc__,
+                "db_lock_storage": "view:all()"
             }
         )
         
         if not created:
             help_entry.db_entrytext = CmdJobs.__doc__
-            help_entry.db_help_category = "General"
-            help_entry.save()
-
-        # Clear existing tags first
-        help_entry.db_tags.clear()
-        # Add tags one by one
-        help_entry.db_tags.add("jobs", "requests", "admin")
+            help_entry.db_lock_storage = "view:all()"
         
+        # Handle tags separately after creation/update
+        help_entry.db_tags.clear()
+        # Add tags one by one with their category
+        help_entry.tags.add("jobs", category="help")
+        help_entry.tags.add("system", category="help")
+        help_entry.tags.add("help", category="help")
+            
+        help_entry.save()
         return help_entry
     except Exception as e:
-        print(f"Error creating help entry: {str(e)}")
+        logger.error(f"Error creating jobs help entry: {e}")
         return None
 
 # Call this when the module is loaded

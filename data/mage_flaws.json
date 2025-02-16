@@ -6,7 +6,7 @@
         "category": "flaws",
         "stat_type": "supernatural",
         "values": [1, 2, 3, 4, 5],
-        "splat": "Various",
+        
         "source": "M20 p. 646"
     },
     {
@@ -106,7 +106,7 @@
         "category": "flaws",
         "stat_type": "mental",
         "values": [2],
-        "splat": "Various",
+        
         "source": "M20 Book of Secrets, p. 48"
     },
     {
@@ -116,7 +116,7 @@
         "category": "flaws",
         "stat_type": "mental",
         "values": [2, 3],
-        "splat": "Various",
+        
         "source": "M20 Book of Secrets, p. 50"
     },
     {
@@ -126,7 +126,7 @@
         "category": "flaws",
         "stat_type": "mental",
         "values": [3],
-        "splat": "Various",
+        
         "source": "M20 Book of Secrets, p. 50"
     },
     {
@@ -136,7 +136,7 @@
         "category": "flaws",
         "stat_type": "mental",
         "values": [3],
-        "splat": "Various",
+        
         "source": "M20 Book of Secrets, p. 51"
     },
     {
@@ -206,7 +206,7 @@
         "category": "flaws",
         "stat_type": "social",
         "values": [1],
-        "splat": "Various",
+        
         "source": "M20 Book of Secrets, p. 64"
     },
     {
@@ -236,7 +236,7 @@
         "category": "flaws",
         "stat_type": "social",
         "values": [2],
-        "splat": "Various",
+        
         "source": "M20 Book of Secrets, p. 64"
     },
     {
@@ -316,7 +316,7 @@
         "category": "flaws",
         "stat_type": "social",
         "values": [3],
-        "splat": "Various",
+        
         "source": "M20 Book of Secrets, p. 66"
     },
     {
@@ -356,7 +356,7 @@
         "category": "flaws",
         "stat_type": "social",
         "values": [4],
-        "splat": "Various",
+        
         "source": "M20 Book of Secrets, p. 68"
     },
     {
@@ -546,7 +546,7 @@
         "category": "flaws",
         "stat_type": "supernatural",
         "values": [3],
-        "splat": "Various",
+        
         "source": "M20 Book of Secrets, p. 90"
     },
     {
@@ -606,7 +606,7 @@
         "category": "flaws",
         "stat_type": "supernatural",
         "values": [5],
-        "splat": "Various",
+        
         "source": "M20 Book of Secrets, p. 92"
     },
     {
@@ -676,7 +676,7 @@
         "category": "flaws",
         "stat_type": "supernatural",
         "values": [3, 4, 5],
-        "splat": "Various",
+        
         "source": "M20 Book of Secrets, p. 89"
     },
     {
@@ -686,7 +686,7 @@
         "category": "flaws",
         "stat_type": "social",
         "values": [3],
-        "splat": "Various",
+        
         "source": "M20 Book of Secrets, p. 66"
     }
 ]

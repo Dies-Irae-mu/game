@@ -36,6 +36,7 @@ from commands.building import (
     CmdSetLock
 )
 from commands.CmdInit import CmdInit
+from commands.CmdRoomLog import CmdRoomLog
 
 from commands.CmdUmbraInteraction import CmdUmbraInteraction
 from commands.communication import CmdMeet, CmdPlusIc, CmdPlusOoc, CmdOOC, CmdSummon, CmdJoin
@@ -193,6 +194,8 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdTestLock())
         self.add(CmdResetBBS())
         self.add(CmdNPC())
+        self.add(CmdRoomLog())
+
 class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):
     """
     Command set available to the Session before being logged in.  This

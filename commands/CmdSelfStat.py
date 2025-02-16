@@ -5,6 +5,22 @@ from world.wod20th.utils.sheet_constants import (
     SEEMING, PATHS_OF_ENLIGHTENMENT, SECT, AFFILIATION, TRADITION,
     CONVENTION, NEPHANDI_FACTION
 )
+from world.wod20th.utils.stat_mappings import (
+    CATEGORIES, STAT_TYPES, STAT_TYPE_TO_CATEGORY,
+    IDENTITY_STATS, SPLAT_STAT_OVERRIDES,
+    POOL_TYPES, POWER_CATEGORIES, ABILITY_TYPES,
+    ATTRIBUTE_CATEGORIES, SPECIAL_ADVANTAGES,
+    STAT_VALIDATION, VALID_SPLATS, GENERATION_MAP,
+    GENERATION_FLAWS, BLOOD_POOL_MAP, get_identity_stats,
+    UNIVERSAL_BACKGROUNDS, VAMPIRE_BACKGROUNDS,
+    CHANGELING_BACKGROUNDS, MAGE_BACKGROUNDS,
+    TECHNOCRACY_BACKGROUNDS, TRADITIONS_BACKGROUNDS,
+    NEPHANDI_BACKGROUNDS, SHIFTER_BACKGROUNDS,
+    SORCERER_BACKGROUNDS, IDENTITY_PERSONAL, IDENTITY_LINEAGE,
+    ARTS, REALMS, VALID_DATES, MERIT_VALUES, FLAW_VALUES,
+    MERIT_CATEGORIES, FLAW_CATEGORIES, MERIT_SPLAT_RESTRICTIONS,
+    FLAW_SPLAT_RESTRICTIONS
+)
 from world.wod20th.models import Stat
 from world.wod20th.utils.vampire_utils import (
     calculate_blood_pool, initialize_vampire_stats, update_vampire_virtues_on_path_change, 
@@ -23,7 +39,7 @@ from world.wod20th.utils.shifter_utils import (
     validate_shifter_stats
 )
 from world.wod20th.utils.changeling_utils import (
-    initialize_changeling_stats, KITH, SEEMING, ARTS, REALMS,
+    FAE_COURTS, HOUSES, initialize_changeling_stats, KITH, SEEMING, ARTS, REALMS,
     SEELIE_LEGACIES, UNSEELIE_LEGACIES, KINAIN_LEGACIES,
     validate_changeling_stats
 )
@@ -43,20 +59,6 @@ from world.wod20th.utils.companion_utils import (
 )
 from world.wod20th.utils.virtue_utils import (
     calculate_willpower, calculate_path, PATH_VIRTUES
-)
-from world.wod20th.utils.stat_mappings import (
-    CATEGORIES, STAT_TYPES, STAT_TYPE_TO_CATEGORY,
-    IDENTITY_STATS, SPLAT_STAT_OVERRIDES,
-    POOL_TYPES, POWER_CATEGORIES, ABILITY_TYPES,
-    ATTRIBUTE_CATEGORIES, SPECIAL_ADVANTAGES,
-    STAT_VALIDATION, VALID_SPLATS, GENERATION_MAP,
-    GENERATION_FLAWS, BLOOD_POOL_MAP, get_identity_stats,
-    UNIVERSAL_BACKGROUNDS, VAMPIRE_BACKGROUNDS,
-    CHANGELING_BACKGROUNDS, MAGE_BACKGROUNDS,
-    TECHNOCRACY_BACKGROUNDS, TRADITIONS_BACKGROUNDS,
-    NEPHANDI_BACKGROUNDS, SHIFTER_BACKGROUNDS,
-    SORCERER_BACKGROUNDS, IDENTITY_PERSONAL, IDENTITY_LINEAGE,
-    ARTS, REALMS, VALID_DATES
 )
 from world.wod20th.utils.stat_initialization import (
     find_similar_stats, check_stat_exists
@@ -455,57 +457,92 @@ class CmdSelfStat(MuxCommand):
         """Map user-provided category/type to correct internal values."""
         category_or_type = category_or_type.lower()
         
-        # Direct category mappings
+        # Direct category mappings based on STAT_TYPE_TO_CATEGORY structure
         category_map = {
+            # Attributes
+            'physical': ('attributes', 'physical'),
+            'social': ('attributes', 'social'),
+            'mental': ('attributes', 'mental'),
+            
+            # Abilities
             'ability': ('abilities', 'talent'),  # Default to talent, will be adjusted in validation
             'talent': ('abilities', 'talent'),
             'skill': ('abilities', 'skill'),
             'knowledge': ('abilities', 'knowledge'),
+            'secondary_ability': ('abilities', 'secondary_abilities'),
+            'secondary_talent': ('abilities', 'secondary_abilities'),
+            'secondary_skill': ('abilities', 'secondary_abilities'),
+            'secondary_knowledge': ('abilities', 'secondary_abilities'),
+            
+            # Identity
+            'personal': ('identity', 'personal'),
+            'lineage': ('identity', 'lineage'),
+            'identity': ('identity', 'identity'),
             'archetype': ('identity', 'personal'),
-            'secondary_ability': ('secondary_abilities', 'secondary_talent'), # Default to talent, will be adjusted in validation
-            'secondary_talent': ('secondary_abilities', 'secondary_talent'),
-            'secondary_skill': ('secondary_abilities', 'secondary_skill'),
-            'secondary_knowledge': ('secondary_abilities', 'secondary_knowledge'),
+            
+            # Powers
             'discipline': ('powers', 'discipline'),
+            'combodiscipline': ('powers', 'combodiscipline'),
+            'thaumaturgy': ('powers', 'thaumaturgy'),
             'gift': ('powers', 'gift'),
+            'rite': ('powers', 'rite'),
             'sphere': ('powers', 'sphere'),
-            'realm': ('powers', 'realm'),
+            'rote': ('powers', 'rote'),
             'art': ('powers', 'art'),
+            'realm': ('powers', 'realm'),
             'blessing': ('powers', 'blessing'),
             'charm': ('powers', 'charm'),
+            'sorcery': ('powers', 'sorcery'),
+            'faith': ('powers', 'faith'),
+            'numina': ('powers', 'numina'),
+            'hedge_ritual': ('powers', 'hedge_ritual'),
             'special_advantage': ('powers', 'special_advantage'),
-            'background': ('backgrounds', 'background'),
+            
+            # Merits and Flaws
             'merit': ('merits', 'merit'),
+            'physical_merit': ('merits', 'physical'),
+            'social_merit': ('merits', 'social'),
+            'mental_merit': ('merits', 'mental'),
+            'supernatural_merit': ('merits', 'supernatural'),
             'flaw': ('flaws', 'flaw'),
-            'willpower': ('pools', 'dual'),
-            'rage': ('pools', 'dual'),
-            'gnosis': ('pools', 'dual'),
-            'glamour': ('pools', 'dual'),
-            'banality': ('pools', 'dual'),
-            'nightmare': ('pools', 'other'),
-            'blood': ('pools', 'dual'),
-            'quintessence': ('pools', 'dual'),
-            'paradox': ('pools', 'dual'),
-            'path': ('pools', 'moral'),# Alias for path
-            'road': ('pools', 'moral'),  
-            'arete': ('pools', 'advantage'),
-            'enlightenment': ('pools', 'advantage'),
-            'resonance': ('pools', 'resonance'),
+            'physical_flaw': ('flaws', 'physical'),
+            'social_flaw': ('flaws', 'social'),
+            'mental_flaw': ('flaws', 'mental'),
+            'supernatural_flaw': ('flaws', 'supernatural'),
+            
+            # Virtues
+            'virtue': ('virtues', 'moral'),
             'conscience': ('virtues', 'moral'),
             'conviction': ('virtues', 'moral'),
             'self-control': ('virtues', 'moral'),
             'instinct': ('virtues', 'moral'),
             'courage': ('virtues', 'moral'),
-            'dynamic': ('virtues', 'synergy'),  
-            'static': ('virtues', 'synergy'),
-            'entropic': ('virtues', 'synergy'),
-            'date of birth': ('identity', 'personal'),
-            'date of embrace': ('identity', 'personal'),
-            'date of chrysalis': ('identity', 'personal'),
-            'date of awakening': ('identity', 'personal'),
-            'first change date': ('identity', 'personal'),
-            'date of possession': ('identity', 'personal'),
-            # Add some common aliases/variations
+            
+            # Backgrounds
+            'background': ('backgrounds', 'background'),
+            
+            # Advantages
+            'renown': ('advantages', 'renown'),
+            
+            # Pools
+            'willpower': ('pools', 'dual'),
+            'rage': ('pools', 'dual'),
+            'gnosis': ('pools', 'dual'),
+            'glamour': ('pools', 'dual'),
+            'banality': ('pools', 'dual'),
+            'blood': ('pools', 'dual'),
+            'quintessence': ('pools', 'dual'),
+            'paradox': ('pools', 'dual'),
+            'path': ('pools', 'moral'),
+            'road': ('pools', 'moral'),
+            'arete': ('pools', 'advantage'),
+            'enlightenment': ('pools', 'advantage'),
+            'resonance': ('pools', 'resonance'),
+            'dynamic': ('pools', 'resonance'),
+            'static': ('pools', 'resonance'),
+            'entropic': ('pools', 'resonance'),
+            
+            # Common aliases
             'disciplines': ('powers', 'discipline'),
             'gifts': ('powers', 'gift'),
             'spheres': ('powers', 'sphere'),
@@ -519,9 +556,14 @@ class CmdSelfStat(MuxCommand):
             'flaws': ('flaws', 'flaw'),
             'pools': ('pools', 'dual'),
             'virtues': ('virtues', 'moral'),
-            'identity': ('identity', 'personal'),
-            'personal': ('identity', 'personal'),
-            'lineage': ('identity', 'lineage'),
+            
+            # Special cases
+            'date of birth': ('identity', 'personal'),
+            'date of embrace': ('identity', 'personal'),
+            'date of chrysalis': ('identity', 'personal'),
+            'date of awakening': ('identity', 'personal'),
+            'first change date': ('identity', 'personal'),
+            'date of possession': ('identity', 'personal'),
             'patron totem': ('identity', 'lineage'),
             'totem': ('backgrounds', 'background'),
             'possessed wings': ('powers', 'blessing'),
@@ -546,10 +588,16 @@ class CmdSelfStat(MuxCommand):
                 self.category, self.stat_type = value
                 return
                 
-        # If not found in map, set both and let validation handle errors
+        # If not found in map, try to determine from STAT_TYPE_TO_CATEGORY
+        for category, subcats in STAT_TYPE_TO_CATEGORY.items():
+            if category_or_type_lower in subcats:
+                self.category = category
+                self.stat_type = category_or_type_lower
+                return
+                
+        # If still not found, set both and let validation handle errors
         self.category = category_or_type
         self.stat_type = category_or_type
-
 
     def detect_ability_category(self, stat_name: str) -> tuple[str, str]:
         """
@@ -559,43 +607,131 @@ class CmdSelfStat(MuxCommand):
         # Convert stat name to title case for comparison
         stat_title = stat_name.title()
 
-        # Special case for Generation
-        if stat_title == 'Generation':
-            return 'backgrounds', 'background'
-
-        # Get the stat definition first
-        from world.wod20th.models import Stat
-        stat = Stat.objects.filter(name__iexact=stat_name).first()
-        if stat:
-            # Handle pool stats
-            if stat.category == 'pools':
-                return 'pools', stat.stat_type
-
-            # Handle power types
-            power_types = {
-                'gift', 'charm', 'blessing', 'discipline', 'thaumaturgy',
-                'thaum_ritual', 'hedge_ritual', 'necromancy_ritual', 'numina',
-                'ritual', 'combodiscipline', 'faith', 'arcanos', 'special_advantage',
-                'sphere', 'sorcery'  # Add sphere to power types
-            }
-            if stat.stat_type.lower() in power_types:
-                return 'powers', stat.stat_type.lower()
-
         # Check identity stats first
-        identity_cat = self._detect_identity_category(stat_name)
-        if identity_cat:
-            return identity_cat
+        if stat_title in IDENTITY_PERSONAL:
+            return 'identity', 'personal'
+        elif stat_title in IDENTITY_LINEAGE:
+            return 'identity', 'lineage'
+        elif stat_title in ['House', 'Fae Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
+                          'Type', 'Tribe', 'Breed', 'Auspice', 'Clan', 'Generation', 'Affiliation',
+                          'Tradition', 'Convention', 'Methodology', 'Traditions Subfaction',
+                          'Nephandi Faction', 'Possessed Type', 'Companion Type']:
+            return 'identity', 'lineage'
+        elif stat_title in ['Full Name', 'Concept', 'Date of Birth', 'Date of Chrysalis', 'Date of Awakening',
+                          'First Change Date', 'Date of Embrace', 'Date of Possession', 'Nature', 'Demeanor',
+                          'Path of Enlightenment', 'Fae Name', 'Rite Name']:
+            return 'identity', 'personal'
 
-        # Check if it's a sphere (from static mapping)
-        if stat_title in MAGE_SPHERES:
-            return 'powers', 'sphere'
+        # Check virtues first since they're specific
+        if stat_title in ['Conscience', 'Self-Control', 'Courage', 'Conviction', 'Instinct']:
+            return 'virtues', 'moral'
 
-        # Check if it's an attribute
-        attribute_category = self._detect_attribute_category(stat_title)
-        if attribute_category:
-            return 'attributes', attribute_category
+        # Check vampire powers since they're most specific
+        splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+        if splat and splat.lower() == 'vampire':
+            # Get the stat definition from the database
+            from world.wod20th.utils.vampire_utils import get_clan_disciplines
+            
+            # Check if it's a base discipline
+            if stat_title in ['Animalism', 'Auspex', 'Celerity', 'Chimerstry', 'Dementation', 
+                            'Dominate', 'Fortitude', 'Necromancy', 'Obfuscate', 'Obtenebration', 
+                            'Potence', 'Presence', 'Protean', 'Quietus', 'Serpentis', 'Thaumaturgy', 
+                            'Vicissitude', 'Temporis', 'Daimoinon', 'Sanguinus', 'Melpominee', 
+                            'Mytherceria', 'Obeah', 'Thanatosis', 'Valeren', 'Spiritus']:
+                return 'powers', 'discipline'
+                
+            # Check if it's a Thaumaturgy path
+            if stat_title in ['Path of Blood', 'Lure of Flames', 'Movement of the Mind', 
+                            'Path of Conjuring', 'Path of Corruption', 'Path of Mars', 
+                            'Hands of Destruction', 'Neptune\'s Might', 'Path of Technomancy', 
+                            'Path of the Father\'s Vengeance', 'Green Path', 'Elemental Mastery', 
+                            'Weather Control', 'Gift of Morpheus', 'Oneiromancy', 'Path of Mercury', 
+                            'Spirit Manipulation', 'Two Centimes Path', 'Path of Transmutation', 
+                            'Path of Warding', 'Countermagic', 'Thaumaturgical Countermagic']:
+                return 'powers', 'thaumaturgy'
+                
+            # Check if it's a Necromancy path
+            if stat_title in ['Sepulchre Path', 'Bone Path', 'Ash Path', 'Cenotaph Path', 
+                            'Vitreous Path', 'Mortis Path', 'Grave\'s Decay']:
+                return 'powers', 'necromancy'
+                
+            # Check if it's a ritual
+            from world.wod20th.models import Stat
+            stat = Stat.objects.filter(name__iexact=stat_name).first()
+            if stat:
+                if stat.stat_type in ['discipline', 'combodiscipline', 'thaumaturgy', 'thaum_ritual', 'necromancy', 'necromancy_ritual']:
+                    return 'powers', stat.stat_type.lower()
 
-        # Check if it's a background
+        # Check pools first since they're most specific
+        stat_title = stat_name.title()
+        
+        # Check dual pools
+        if stat_title in POOL_TYPES['dual'].keys():
+            return 'pools', 'dual'
+            
+        # Check resonance pools
+        if stat_title in ['Dynamic', 'Static', 'Entropic']:
+            return 'pools', 'resonance'
+            
+        # Check moral pools
+        if stat_title in POOL_TYPES['moral'].keys():
+            return 'pools', 'moral'
+            
+        # Check advantage pools
+        if stat_title in POOL_TYPES['advantage'].keys():
+            return 'pools', 'advantage'
+
+        # Check renown stats
+        if stat_title in ['Glory', 'Honor', 'Wisdom', 'Cunning', 'Ferocity', 'Obligation', 'Obedience', 
+                         'Humor', 'Infamy', 'Valor', 'Harmony', 'Innovation', 'Power']:
+            return 'advantages', 'renown'
+
+        # Check attributes
+        for category, attributes in ATTRIBUTE_CATEGORIES.items():
+            if stat_title in attributes:
+                return 'attributes', category
+
+        # Check standard abilities
+        if stat_title in TALENTS:
+            return 'abilities', 'talent'
+        elif stat_title in SKILLS:
+            return 'abilities', 'skill'
+        elif stat_title in KNOWLEDGES:
+            return 'abilities', 'knowledge'
+
+        # Check secondary abilities
+        if stat_title in SECONDARY_TALENTS:
+            return 'abilities', 'secondary_abilities'
+        elif stat_title in SECONDARY_SKILLS:
+            return 'abilities', 'secondary_abilities'
+        elif stat_title in SECONDARY_KNOWLEDGES:
+            return 'abilities', 'secondary_abilities'
+
+        # Check merits
+        for merit_type, merits in MERIT_CATEGORIES.items():
+            # Convert stat_name to title case for each word and also try exact case
+            stat_title_words = ' '.join(word.title() for word in stat_name.split())
+            if stat_title_words in merits or stat_name in merits:
+                return 'merits', merit_type
+            # Try case-insensitive match
+            stat_lower = stat_name.lower()
+            for merit in merits:
+                if merit.lower() == stat_lower:
+                    return 'merits', merit_type
+
+        # Check flaws
+        for flaw_type, flaws in FLAW_CATEGORIES.items():
+            # Convert stat_name to title case for each word and also try exact case
+            stat_title_words = ' '.join(word.title() for word in stat_name.split())
+            if stat_title_words in flaws or stat_name in flaws:
+                return 'flaws', flaw_type
+            # Try case-insensitive match
+            stat_lower = stat_name.lower()
+            for flaw in flaws:
+                if flaw.lower() == stat_lower:
+                    return 'flaws', flaw_type
+
+        # Check backgrounds
         if stat_title in (
             UNIVERSAL_BACKGROUNDS +
             VAMPIRE_BACKGROUNDS +
@@ -609,6 +745,14 @@ class CmdSelfStat(MuxCommand):
         ):
             return 'backgrounds', 'background'
 
+        # Check powers
+        if stat_title in POWER_CATEGORIES:
+            return 'powers', stat_title.lower()
+
+        # Check if it's a sphere (from static mapping)
+        if stat_title in MAGE_SPHERES:
+            return 'powers', 'sphere'
+
         # Check if it's a Changeling Art
         if stat_title in ARTS:
             return 'powers', 'art'
@@ -617,20 +761,10 @@ class CmdSelfStat(MuxCommand):
         if stat_title in REALMS:
             return 'powers', 'realm'
 
-        # Check standard abilities
-        if stat_title in TALENTS:
-            return 'abilities', 'talent'
-        elif stat_title in SKILLS:
-            return 'abilities', 'skill'
-        elif stat_title in KNOWLEDGES:
-            return 'abilities', 'knowledge'
-        # Then check secondary abilities
-        elif stat_title in SECONDARY_TALENTS:
-            return 'secondary_abilities', 'secondary_talent'
-        elif stat_title in SECONDARY_SKILLS:
-            return 'secondary_abilities', 'secondary_skill'
-        elif stat_title in SECONDARY_KNOWLEDGES:
-            return 'secondary_abilities', 'secondary_knowledge'
+        # Check identity stats
+        identity_cat = self._detect_identity_category(stat_name)
+        if identity_cat:
+            return identity_cat
 
         # Check pool stats that might not be in the database
         pool_stats = {
@@ -649,6 +783,24 @@ class CmdSelfStat(MuxCommand):
         
         if stat_name.lower() in pool_stats:
             return pool_stats[stat_name.lower()]
+
+        # Get the stat definition from the database as a last resort
+        from world.wod20th.models import Stat
+        stat = Stat.objects.filter(name__iexact=stat_name).first()
+        if stat:
+            # Handle pool stats
+            if stat.category == 'pools':
+                return 'pools', stat.stat_type
+
+            # Handle power types
+            power_types = {
+                'gift', 'charm', 'blessing', 'discipline', 'thaumaturgy',
+                'thaum_ritual', 'hedge_ritual', 'necromancy_ritual', 'numina',
+                'rite', 'combodiscipline', 'faith', 'arcanos', 'special_advantage',
+                'sphere', 'sorcery', 'sliver', 'art', 'realm', 'necromancy'
+            }
+            if stat.stat_type.lower() in power_types:
+                return 'powers', stat.stat_type.lower()
 
         return None, None
 
@@ -966,7 +1118,7 @@ class CmdSelfStat(MuxCommand):
                 return
 
         # When setting Changeling-specific stats
-        elif self.stat_name.lower() in ['kith', 'seeming', 'seelie legacy', 'unseelie legacy']:
+        elif self.stat_name.lower() in ['kith', 'seeming', 'seelie legacy', 'unseelie legacy', 'fae name']:
             splat = self.caller.get_stat('identity', 'personal', 'Splat', temp=False)
             if splat and splat.lower() == 'changeling':
                 if self.stat_name.lower() == 'kith':
@@ -999,6 +1151,20 @@ class CmdSelfStat(MuxCommand):
                     is_valid, matched_value = self.case_insensitive_in(self.value_change, UNSEELIE_LEGACIES)
                     if not is_valid:
                         self.caller.msg(f"|rInvalid Unseelie Legacy. Valid legacies are: {', '.join(sorted(UNSEELIE_LEGACIES))}|n")
+                        return
+                    self.value_change = matched_value
+                    return ('identity', 'lineage')
+                elif self.stat_name.lower() == 'fae court':
+                    is_valid, matched_value = self.case_insensitive_in(self.value_change, UNSEELIE_LEGACIES)
+                    if not is_valid:
+                        self.caller.msg(f"|rInvalid Fae Court. Valid courts are: {', '.join(sorted(FAE_COURTS))}|n")
+                        return
+                    self.value_change = matched_value
+                    return ('identity', 'lineage')
+                elif self.stat_name.lower() == 'house':
+                    is_valid, matched_value = self.case_insensitive_in(self.value_change, HOUSES)
+                    if not is_valid:
+                        self.caller.msg(f"|rInvalid House. Valid houses are: {', '.join(sorted(HOUSES))}|n")
                         return
                     self.value_change = matched_value
                     return ('identity', 'lineage')
@@ -1298,6 +1464,76 @@ class CmdSelfStat(MuxCommand):
                         self.caller.msg("|rBanality must be a number.|n")
                         return
 
+            # Special handling for Gnosis (can be both merit and pool)
+            if self.stat_name.lower() == 'gnosis':
+                try:
+                    value_int = int(self.value_change)
+                    # Get character's splat and type
+                    char_splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+                    char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+                    
+                    # Check if character is Kinfolk
+                    if char_splat and char_splat.lower() == 'mortal+' and char_type and char_type.lower() == 'kinfolk':
+                        # Kinfolk can only take Gnosis as a merit
+                        if value_int not in [5, 6, 7]:
+                            self.caller.msg("|rKinfolk can only take Gnosis as a merit (values 5-7).|n")
+                            return
+                        self.category = 'merits'
+                        self.stat_type = 'supernatural'
+                    else:
+                        # For all other characters, Gnosis is a pool
+                        if value_int < 0 or value_int > 10:
+                            self.caller.msg("|rGnosis pool must be between 0 and 10.|n")
+                            return
+                        self.category = 'pools'
+                        self.stat_type = 'dual'
+                    new_value = value_int
+                except ValueError:
+                    self.caller.msg("|rGnosis value must be a number.|n")
+                    return
+
+            # Special handling for other pool stats
+            elif self.stat_name.lower() in ['willpower', 'rage', 'glamour', 'blood', 'quintessence', 'paradox']:
+                try:
+                    pool_value = int(self.value_change)
+                    if pool_value < 0 or pool_value > 10:
+                        self.caller.msg(f"|r{self.stat_name} pool must be between 0 and 10.|n")
+                        return
+                    self.category = 'pools'
+                    self.stat_type = 'dual'
+                    new_value = pool_value
+                except ValueError:
+                    self.caller.msg(f"|r{self.stat_name} pool must be a number.|n")
+                    return
+
+            # Special handling for resonance pools
+            elif self.stat_name.lower() in ['resonance', 'dynamic', 'static', 'entropic']:
+                try:
+                    pool_value = int(self.value_change)
+                    if pool_value < 0 or pool_value > 10:
+                        self.caller.msg(f"|r{self.stat_name} pool must be between 0 and 10.|n")
+                        return
+                    self.category = 'pools'
+                    self.stat_type = 'resonance'
+                    new_value = pool_value
+                except ValueError:
+                    self.caller.msg(f"|r{self.stat_name} pool must be a number.|n")
+                    return
+
+            # Special handling for advantage pools
+            elif self.stat_name.lower() in ['arete']:
+                try:
+                    pool_value = int(self.value_change)
+                    if pool_value < 0 or pool_value > 10:
+                        self.caller.msg(f"|r{self.stat_name} pool must be between 0 and 10.|n")
+                        return
+                    self.category = 'pools'
+                    self.stat_type = 'advantage'
+                    new_value = pool_value
+                except ValueError:
+                    self.caller.msg(f"|r{self.stat_name} pool must be a number.|n")
+                    return
+
         except (ValueError, TypeError) as e:
             self.caller.msg(f"|rError converting value: {str(e)}|n")
             return
@@ -1322,10 +1558,78 @@ class CmdSelfStat(MuxCommand):
             self.caller.msg(f"|rInvalid splat type. Valid types are: {', '.join(VALID_SPLATS)}|n")
             return
 
-        # Initialize base structure with all categories
+        # Initialize base structure according to STAT_TYPE_TO_CATEGORY
         base_stats = {}
-        for category, _ in CATEGORIES:
-            base_stats[category] = {}
+        
+        # Initialize attributes with categories
+        base_stats['attributes'] = {
+            'physical': {},
+            'social': {},
+            'mental': {}
+        }
+        
+        # Initialize abilities with categories
+        base_stats['abilities'] = {
+            'skill': {},
+            'knowledge': {},
+            'talent': {},
+            'secondary_abilities': {
+                'secondary_knowledge': {},
+                'secondary_talent': {},
+                'secondary_skill': {}
+            }
+        }
+        
+        # Initialize identity categories
+        base_stats['identity'] = {
+            'personal': {},
+            'lineage': {},
+            'identity': {}
+        }
+        
+        # Initialize powers categories
+        base_stats['powers'] = {}
+        for power_type in POWER_CATEGORIES:
+            base_stats['powers'][power_type] = {}
+        
+        # Initialize merits and flaws with their categories
+        base_stats['merits'] = {
+            'physical': {},
+            'social': {},
+            'mental': {},
+            'supernatural': {}
+        }
+        base_stats['flaws'] = {
+            'physical': {},
+            'social': {},
+            'mental': {},
+            'supernatural': {}
+        }
+        
+        # Initialize virtues
+        base_stats['virtues'] = {
+            'moral': {},
+            'advantage': {},
+            'resonance': {}
+        }
+        
+        # Initialize backgrounds
+        base_stats['backgrounds'] = {
+            'background': {}
+        }
+        
+        # Initialize advantages
+        base_stats['advantages'] = {
+            'renown': {}
+        }
+        
+        # Initialize pools with their types
+        base_stats['pools'] = {
+            'dual': {},
+            'moral': {},
+            'advantage': {},
+            'resonance': {}
+        }
 
         # Set the splat using the title case version for display
         base_stats['other'] = {'splat': {'Splat': {'perm': splat_title, 'temp': splat_title}}}
@@ -1337,10 +1641,6 @@ class CmdSelfStat(MuxCommand):
         if splat_lower == 'vampire':
             initialize_vampire_stats(character, '')
             # Set default Banality for Vampires
-            if 'pools' not in character.db.stats:
-                character.db.stats['pools'] = {}
-            if 'dual' not in character.db.stats['pools']:
-                character.db.stats['pools']['dual'] = {}
             character.db.stats['pools']['dual']['Banality'] = {'perm': 5, 'temp': 5}
         elif splat_lower == 'mage':
             initialize_mage_stats(character, '')
@@ -1350,24 +1650,11 @@ class CmdSelfStat(MuxCommand):
                 allowed_backgrounds.update(bg.title() for bg in TECHNOCRACY_BACKGROUNDS)
         elif splat_lower == 'shifter':
             initialize_shifter_type(character, '')
-            # Initialize shifter-specific categories
-            character.db.stats['powers']['gift'] = {}
-            character.db.stats['powers']['rite'] = {}
-            character.db.stats['advantages']['renown'] = {}
         elif splat_lower == 'changeling':
             initialize_changeling_stats(character, '')
         elif splat_lower == 'mortal+':
             initialize_mortalplus_stats(character, '')
         elif splat_lower == 'possessed':
-            # Only initialize basic structure, type-specific initialization happens when type is set
-            if 'powers' not in character.db.stats:
-                character.db.stats['powers'] = {}
-            if 'pools' not in character.db.stats:
-                character.db.stats['pools'] = {}
-            if 'dual' not in character.db.stats['pools']:
-                character.db.stats['pools']['dual'] = {}
-            if 'other' not in character.db.stats['pools']:
-                character.db.stats['pools']['other'] = {}
             # Initialize power categories
             for category in ['blessing', 'charm', 'gift']:
                 if category not in character.db.stats['powers']:
@@ -1483,62 +1770,163 @@ class CmdSelfStat(MuxCommand):
             else:
                 new_value = value
 
-            # Special case handling first
-            if stat_name.lower() == 'generation background':
+            # If no category/type specified yet, try to determine it from the stat name
+            if not category or not stat_type or category == 'None' or stat_type == 'None':
+                detected_category, detected_type = self.detect_ability_category(stat_name)
+                if detected_category and detected_type:
+                    category = detected_category
+                    stat_type = detected_type
+
+            # Special handling for attributes
+            if stat_name in ATTRIBUTE_CATEGORIES['physical']:
+                category = 'attributes'
+                stat_type = 'physical'
+            elif stat_name in ATTRIBUTE_CATEGORIES['social']:
+                category = 'attributes'
+                stat_type = 'social'
+            elif stat_name in ATTRIBUTE_CATEGORIES['mental']:
+                category = 'attributes'
+                stat_type = 'mental'
+            
+            # Special handling for abilities
+            elif stat_name in TALENTS:
+                category = 'abilities'
+                stat_type = 'talent'
+            elif stat_name in SKILLS:
+                category = 'abilities'
+                stat_type = 'skill'
+            elif stat_name in KNOWLEDGES:
+                category = 'abilities'
+                stat_type = 'knowledge'
+            elif stat_name in SECONDARY_TALENTS:
+                category = 'abilities'
+                stat_type = 'secondary_abilities'
+            elif stat_name in SECONDARY_SKILLS:
+                category = 'abilities'
+                stat_type = 'secondary_abilities'
+            elif stat_name in SECONDARY_KNOWLEDGES:
+                category = 'abilities'
+                stat_type = 'secondary_abilities'
+
+            # Special handling for virtues
+            elif stat_name.title() in ['Conscience', 'Self-Control', 'Courage', 'Conviction', 'Instinct']:
+                category = 'virtues'
+                stat_type = 'moral'
                 try:
-                    gen_value = int(new_value)
-                    if gen_value < -2 or gen_value > 7:
-                        self.caller.msg("|rGeneration background must be between -2 (15th) and 7 (6th).|n")
+                    virtue_value = int(new_value)
+                    if virtue_value < 1 or virtue_value > 5:
+                        self.caller.msg(f"|r{stat_name} must be between 1 and 5.|n")
                         return
-                    
-                    # Convert background value to actual generation
-                    generation_map = {
-                        -2: "15th", -1: "14th", 0: "13th",
-                        1: "12th", 2: "11th", 3: "10th",
-                        4: "9th", 5: "8th", 6: "7th",
-                        7: "6th"
-                    }
-                    
-                    # Set the background value
-                    self.caller.set_stat('backgrounds', 'background', 'Generation', gen_value, temp=False)
-                    self.caller.set_stat('backgrounds', 'background', 'Generation', gen_value, temp=True)
-                    
-                    # Set the actual generation in identity/lineage
-                    generation = generation_map.get(gen_value, "13th")
-                    self.caller.set_stat('identity', 'lineage', 'Generation', generation, temp=False)
-                    self.caller.set_stat('identity', 'lineage', 'Generation', generation, temp=True)
-                    
-                    # Update blood pool based on generation
-                    blood_pool = calculate_blood_pool(gen_value)
-                    self.caller.set_stat('pools', 'dual', 'Blood', blood_pool, temp=False)
-                    self.caller.set_stat('pools', 'dual', 'Blood', blood_pool, temp=True)
-                    
-                    self.caller.msg(f"|gGeneration set to {generation} (Blood Pool: {blood_pool}).|n")
-                    return
+                        
+                    # Update Path rating when virtues change
+                    if stat_name.title() in ['Conscience', 'Self-Control', 'Conviction', 'Instinct']:
+                        path_rating = calculate_path(self.caller)
+                        self.caller.set_stat('pools', 'moral', 'Path', path_rating, temp=False)
+                        self.caller.set_stat('pools', 'moral', 'Path', path_rating, temp=True)
+                        self.caller.msg(f"|gCalculated new Path rating: {path_rating}|n")
+                        
+                    # Update Willpower when Courage changes
+                    if stat_name.title() == 'Courage':
+                        # For Vampire, Mortal, Possessed, or Mortal+, set Willpower equal to Courage
+                        splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+                        if splat and splat.lower() in ['vampire', 'mortal', 'possessed', 'mortal+']:
+                            self.caller.set_stat('pools', 'dual', 'Willpower', virtue_value, temp=False)
+                            self.caller.set_stat('pools', 'dual', 'Willpower', virtue_value, temp=True)
+                            self.caller.msg(f"|gWillpower increased to match Courage: {virtue_value}|n")
+                            
                 except ValueError:
-                    self.caller.msg("|rGeneration background must be a number.|n")
+                    self.caller.msg(f"|r{stat_name} must be a number.|n")
                     return
 
-            # If no category/type specified yet, try to determine it from the stat name
-            if not category or not stat_type:
-                category, stat_type = self.detect_ability_category(stat_name)
+            # Special handling for merits and flaws
+            elif stat_name.title() in MERIT_VALUES:
+                category = 'merits'
+                # Find the merit type
+                for merit_type, merits in MERIT_CATEGORIES.items():
+                    if stat_name.title() in merits:
+                        stat_type = merit_type
+                        break
+                # Validate merit value
+                valid_values = MERIT_VALUES[stat_name.title()]
+                try:
+                    merit_value = int(new_value)
+                    if merit_value not in valid_values:
+                        self.caller.msg(f"|rInvalid value for merit {stat_name}. Valid values are: {', '.join(map(str, valid_values))}|n")
+                        return
+                    # Check splat restrictions
+                    if stat_name.title() in MERIT_SPLAT_RESTRICTIONS:
+                        restriction = MERIT_SPLAT_RESTRICTIONS[stat_name.title()]
+                        if restriction['splat'] and restriction['splat'] != splat:
+                            self.caller.msg(f"|rThe merit '{stat_name}' is only available to {restriction['splat']} characters.|n")
+                            return
+                        if restriction['splat_type'] and restriction['splat_type'] != char_type:
+                            self.caller.msg(f"|rThe merit '{stat_name}' is only available to {restriction['splat_type']} characters.|n")
+                            return
+                except ValueError:
+                    self.caller.msg(f"|rMerit value must be a number.|n")
+                    return
+
+            elif stat_name.title() in FLAW_VALUES:
+                category = 'flaws'
+                # Find the flaw type
+                for flaw_type, flaws in FLAW_CATEGORIES.items():
+                    if stat_name.title() in flaws:
+                        stat_type = flaw_type
+                        break
+                # Validate flaw value
+                valid_values = FLAW_VALUES[stat_name.title()]
+                try:
+                    flaw_value = int(new_value)
+                    if flaw_value not in valid_values:
+                        self.caller.msg(f"|rInvalid value for flaw {stat_name}. Valid values are: {', '.join(map(str, valid_values))}|n")
+                        return
+                    # Check splat restrictions
+                    if stat_name.title() in FLAW_SPLAT_RESTRICTIONS:
+                        restriction = FLAW_SPLAT_RESTRICTIONS[stat_name.title()]
+                        if restriction['splat'] and restriction['splat'] != splat:
+                            self.caller.msg(f"|rThe flaw '{stat_name}' is only available to {restriction['splat']} characters.|n")
+                            return
+                        if restriction['splat_type'] and restriction['splat_type'] != char_type:
+                            self.caller.msg(f"|rThe flaw '{stat_name}' is only available to {restriction['splat_type']} characters.|n")
+                            return
+                except ValueError:
+                    self.caller.msg(f"|rFlaw value must be a number.|n")
+                    return
+
+            # If still no category/type, check other mappings
+            if not category or not stat_type or category == 'None' or stat_type == 'None':
+                # Check if it's a power
+                if stat_name in POWER_CATEGORIES:
+                    category = 'powers'
+                    stat_type = stat_name.lower()
+                # Check if it's a background
+                elif stat_name in (UNIVERSAL_BACKGROUNDS + VAMPIRE_BACKGROUNDS + 
+                                CHANGELING_BACKGROUNDS + MAGE_BACKGROUNDS + 
+                                TECHNOCRACY_BACKGROUNDS + TRADITIONS_BACKGROUNDS + 
+                                NEPHANDI_BACKGROUNDS + SHIFTER_BACKGROUNDS + 
+                                SORCERER_BACKGROUNDS):
+                    category = 'backgrounds'
+                    stat_type = 'background'
 
             # Initialize the category/type structure if needed
-            self._initialize_stat_structure(category, stat_type)
+            if category and stat_type and category != 'None' and stat_type != 'None':
+                self._initialize_stat_structure(category, stat_type)
 
-            # Set the stat value
-            self.caller.set_stat(category, stat_type, full_stat_name, new_value, temp=False)
-            self.caller.set_stat(category, stat_type, full_stat_name, new_value, temp=True)
+                # Set the stat value
+                self.caller.set_stat(category, stat_type, full_stat_name, new_value, temp=False)
+                self.caller.set_stat(category, stat_type, full_stat_name, new_value, temp=True)
 
-            # Update any dependent stats
-            self._update_dependent_stats(stat_name, new_value)
+                # Update any dependent stats
+                self._update_dependent_stats(stat_name, new_value)
 
-            # For shifters, update pools when identity stats change
-            if splat == 'Shifter' and category == 'identity' and stat_type == 'lineage':
-                from world.wod20th.utils.shifter_utils import update_shifter_pools_on_stat_change
-                update_shifter_pools_on_stat_change(self.caller, stat_name, new_value)
+                # For shifters, update pools when identity stats change
+                if splat == 'Shifter' and category == 'identity' and stat_type == 'lineage':
+                    from world.wod20th.utils.shifter_utils import update_shifter_pools_on_stat_change
+                    update_shifter_pools_on_stat_change(self.caller, stat_name, new_value)
 
-            self.caller.msg(f"|gSet {full_stat_name} to {new_value}.|n")
+                self.caller.msg(f"|gSet {full_stat_name} to {new_value} in {category}.{stat_type}.|n")
+            else:
+                self.caller.msg(f"|rCould not determine proper category and type for {stat_name}. Please specify category/type.|n")
 
         except Exception as e:
             self.caller.msg(f"|rError setting stat: {str(e)}|n")

@@ -163,5 +163,16 @@
             "perm": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             "temp": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         }
+    },
+    {
+        "name": "Power",
+        "description": "Power measures a character's ability to control or influence others. It is a moral trait, and its rating is used to determine how much a character is willing to control or influence others.",
+        "game_line": "Black Spiral Dancers",
+        "category": "advantages",
+        "stat_type": "renown",
+        "values": {
+            "perm": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            "temp": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        }
     }
 ]

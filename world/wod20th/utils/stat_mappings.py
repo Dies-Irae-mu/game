@@ -118,7 +118,7 @@ IDENTITY_STATS = {
         'Full Name', 'Concept', 'Date of Birth', 'Date of Embrace', 
         'Nature', 'Demeanor', 'Motivation', 'Form', 'Occupation',
         'Date of Chrysalis', 'Date of Awakening', 'First Change Date',
-        'Date of Possession', 'Enlightenment'
+        'Date of Possession', 'Enlightenment', 'Rite Name'
     ],
     'lineage': [
         'Sire', 'Clan', 'Generation', 'Enlightenment', 'Type', 'Tribe', 
@@ -131,7 +131,7 @@ IDENTITY_STATS = {
         'Possessed Type', 'Mortal+ Type', 'Varna', 'Ananasi Faction', 'Ananasi Cabal',
         'Totem', 'Pack', 'Society', 'Fellowship', 'Domitor', 'Companion Type', 
         'Motivation', 'Form', 'Phyla', 'Seeming', 'House', 'Fae Court', 'Nunnehi Camp',
-        'Nunnehi Seeming', 'Nunnehi Family', 'Nunnehi Totem'
+        'Nunnehi Seeming', 'Nunnehi Family', 'Nunnehi Totem', 'Affinity Realm'
     ]
 }
 
@@ -737,7 +737,7 @@ def organize_by_type(items, category):
     return organized
 
 # Path to data directory
-DATA_DIR = Path(__file__).parent.parent / 'data'
+DATA_DIR = Path(__file__).parent.parent.parent.parent / 'data'
 
 # Load all merit/flaw data
 MERIT_FILES = [
@@ -955,7 +955,7 @@ def get_identity_stats(splat: str, subtype: str = None, affiliation: str = None)
     Args:
         splat (str): The splat type (Vampire, Shifter, Mage, etc.)
         subtype (str, optional): The character's subtype (e.g., Garou for Shifter, Traditions for Mage)
-        affiliation (str, optional): Further specialization (e.g., specific Tradition)
+        affiliation (str, optional): Further specialization (e.g., specific Tradition or Tribe)
         
     Returns:
         List[str]: List of identity stat names in display order
@@ -987,7 +987,13 @@ def get_identity_stats(splat: str, subtype: str = None, affiliation: str = None)
         if subtype:
             subtype = subtype.lower()
             if subtype == 'garou':
-                stats.extend(['Auspice', 'Tribe', 'Camp', 'Pack', 'Totem'])
+                stats.extend(['Auspice', 'Tribe', 'Camp', 'Pack', 'Totem', 'Deed Name'])
+                # Add Fang House and Lodge for Silver Fang tribe
+                if affiliation and affiliation.lower() == 'silver fang':
+                    stats.extend(['Fang House', 'Lodge'])
+                # Add Rite Name for Black Spiral Dancers
+                elif affiliation and affiliation.lower() == 'black spiral dancers':
+                    stats.append('Rite Name')
             elif subtype == 'bastet':
                 stats.extend(['Tribe', 'Pack', 'Totem'])
             elif subtype == 'ajaba':
@@ -1036,12 +1042,13 @@ def get_identity_stats(splat: str, subtype: str = None, affiliation: str = None)
             'Seeming',
             'Seelie Legacy',
             'Unseelie Legacy',
-            'Fae Court'
+            'Fae Court',
+            'Affinity Realm'
         ]
         
         if subtype:
             subtype = subtype.lower()
-            if subtype in ['autumn sidhe', 'arcadian sidhe']:
+            if subtype in ['autumn sidhe', 'arcadian sidhe', 'boggan', 'nocker', 'troll', 'sluagh', 'satyr', '']:
                 stats.append('House')
             elif subtype == 'inanimae':
                 stats.append('Phyla')

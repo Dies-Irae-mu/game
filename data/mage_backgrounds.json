@@ -44,7 +44,7 @@
         "category": "backgrounds",
         "stat_type": "background",
         "values": [1, 2, 3, 4, 5],
-        "splat": "Various",
+        
         "instanced": true
     },
     {
@@ -62,7 +62,7 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
-        "splat": "Various",
+        
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -91,7 +91,7 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
-        "splat": "Various",
+        
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -100,7 +100,7 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
-        "splat": "Various",
+        
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -148,7 +148,7 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
-        "splat": "Various",
+        
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -167,7 +167,7 @@
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
-        "splat": "Various",
+        
         "values": [1, 2, 3, 4, 5]
     },
     {
@@ -204,7 +204,7 @@
         "game_line": "Mage: The Ascension",
         "category": "backgrounds",
         "stat_type": "background",
-        "splat": "Various",
+        
         "values": [1, 2, 3, 4, 5]
     },
     {

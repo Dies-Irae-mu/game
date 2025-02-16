@@ -195,5 +195,13 @@
         "category": "identity",
         "stat_type": "lineage",
         "values": []
+    },
+    {
+        "name": "Rite Name",
+        "description": "The first sound a Black Spiral Dancer makes when dancing the spiral.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "personal",
+        "values": []
     }
 ]
