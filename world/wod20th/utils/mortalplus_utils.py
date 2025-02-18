@@ -206,6 +206,51 @@ def get_kinain_identity_stats() -> List[str]:
         'Affinity Realm'
     ]
 
+def get_mortalplus_identity_stats(mortalplus_type: str) -> List[str]:
+    """Get the list of identity stats for a Mortal+ character based on type."""
+    base_stats = [
+        'Full Name',
+        'Nature',
+        'Demeanor',
+        'Concept',
+        'Date of Birth'
+    ]
+    
+    if mortalplus_type == 'Ghoul':
+        return base_stats + [
+            'Domitor',
+            'Path of Enlightenment',
+        ]
+    elif mortalplus_type == 'Kinain':
+        return base_stats + [
+            'Fae Name',
+            'First Legacy',
+            'Second Legacy',
+            'Affinity Realm'
+        ]
+    elif mortalplus_type == 'Kinfolk':
+        return base_stats + [
+            'Tribe',
+            'Pack',
+            'Totem'
+        ]
+    elif mortalplus_type == 'Sorcerer':
+        return base_stats + [
+            'Society',
+            'Order',
+            'Coven'
+        ]
+    elif mortalplus_type == 'Psychic':
+        return base_stats + [
+            'Society'
+        ]
+    elif mortalplus_type == 'Faithful':
+        return base_stats + [
+            'Order'
+        ]
+    
+    return base_stats
+
 def initialize_kinain_stats(character):
     """Initialize Kinain-specific stats."""
     # Initialize identity categories if they don't exist
@@ -328,20 +373,16 @@ def validate_mortalplus_powers(character, power_type, value):
     elif mortalplus_type == 'Kinain':
         if power_type in ['Arts', 'Realms']:
             # Get Kinain Merit level
-            merits = character.db.stats.get('merits', {}).get('merit', {})
-            kinain_merit = next((merit_value.get('perm', 0) 
-                               for merit, merit_value in merits.items() 
-                               if merit.lower() == 'fae blood'), 0)
+            backgrounds = character.db.stats.get('backgrounds', {}).get('background', {})
+            kinain_background = next((background_value.get('perm', 0) 
+                             for background, background_value in backgrounds.items() 
+                               if background.lower() == 'faerie blood'), 0)
             
             # Calculate maximums based on Merit level
-            max_arts = kinain_merit // 2
-            max_art_dots = min(3, kinain_merit // 2)
+            max_arts = kinain_background
             
             if power_type == 'Arts' and len(character.get_all_powers('Arts')) >= max_arts:
-                return False, f"Kinain can only learn {max_arts} Arts with current Merit level"
-            
-            if int(value) > max_art_dots:
-                return False, f"Kinain can only have up to {max_art_dots} dots in {power_type}"
+                return False, f"Kinain can only learn {max_arts} Arts with current Faerie Blood background level"
 
     return True, ""
 
@@ -378,6 +419,11 @@ def validate_mortalplus_stats(character, stat_name: str, value: str, category: s
     # Validate type
     if stat_name == 'type':
         return validate_mortalplus_type(value)
+        
+    # Special handling for Path of Enlightenment/Enlightenment for Ghouls
+    if mortalplus_type == 'Ghoul' and stat_name in ['path of enlightenment', 'enlightenment']:
+        from world.wod20th.utils.vampire_utils import validate_vampire_path
+        return validate_vampire_path(value)
         
     # Validate powers
     if category == 'powers':

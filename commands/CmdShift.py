@@ -504,27 +504,30 @@ class CmdShift(default_cmds.MuxCommand):
         """Apply stat modifiers from the form."""
         # If shifting to Homid, just reset stats to permanent values
         if form.name.lower() == 'homid':
-            self._reset_stats(character)
+            for category in ['physical', 'social', 'mental']:
+                if category in character.db.stats.get('attributes', {}):
+                    for stat, values in character.db.stats['attributes'][category].items():
+                        perm_value = values.get('perm', 0)
+                        character.db.stats['attributes'][category][stat] = {
+                            'perm': perm_value,
+                            'temp': perm_value
+                        }
             return
-        
-        # For non-Homid forms, first reset all stats to permanent values
-        self._reset_stats(character)
-        
-        # List of forms that set Appearance to 0
-        zero_appearance_forms = [
-            'crinos',      # All shapeshifters
-            'anthros',     # Ajaba war form
-            'arthren',     # Gurahl war form
-            'sokto',       # Bastet war form
-            'chatro'       # Bastet battle form
-        ]
 
-        # Then apply form modifiers
+        # For non-Homid forms, first get all permanent values
+        permanent_values = {}
+        for category in ['physical', 'social', 'mental']:
+            if category in character.db.stats.get('attributes', {}):
+                permanent_values[category] = {}
+                for stat, values in character.db.stats['attributes'][category].items():
+                    permanent_values[category][stat] = values.get('perm', 0)
+
+        # Then apply form modifiers while preserving permanent values
         for stat, mod in form.stat_modifiers.items():
             stat_obj = Stat.objects.get(name__iexact=stat, category='attributes')
             if stat_obj.category and stat_obj.stat_type:
-                # Get permanent value
-                perm_value = character.get_stat(stat_obj.category, stat_obj.stat_type, stat_obj.name, temp=False)
+                # Get permanent value from our saved values
+                perm_value = permanent_values.get(stat_obj.stat_type, {}).get(stat_obj.name, 0)
                 # Calculate new temporary value
                 temp_value = max(0, perm_value + mod)  # Ensure non-negative
                 
@@ -539,12 +542,12 @@ class CmdShift(default_cmds.MuxCommand):
                     'perm': perm_value,
                     'temp': temp_value
                 }
-                print(f"DEBUG: Set {stat} perm={perm_value}, temp={temp_value}")
 
-        # Handle Appearance last (after other modifiers)
+        # Handle special cases for Appearance and Manipulation
+        zero_appearance_forms = ['crinos', 'anthros', 'arthren', 'sokto', 'chatro']
         if form.name.lower() in zero_appearance_forms:
             # Get the permanent Appearance value
-            appearance_perm = character.db.stats.get('attributes', {}).get('social', {}).get('Appearance', {}).get('perm', 0)
+            appearance_perm = permanent_values.get('social', {}).get('Appearance', 0)
             
             # Ensure the social subcategory exists
             if 'social' not in character.db.stats['attributes']:
@@ -555,13 +558,11 @@ class CmdShift(default_cmds.MuxCommand):
                 'perm': appearance_perm,
                 'temp': 0
             }
-            print(f"DEBUG: Set Appearance perm={appearance_perm}, temp=0")
             
             # Also handle Manipulation in Crinos form
             if form.name.lower() == 'crinos':
-                manip_perm = character.db.stats.get('attributes', {}).get('social', {}).get('Manipulation', {}).get('perm', 0)
+                manip_perm = permanent_values.get('social', {}).get('Manipulation', 0)
                 character.db.stats['attributes']['social']['Manipulation'] = {
                     'perm': manip_perm,
                     'temp': max(0, manip_perm - 2)  # -2 penalty in Crinos
                 }
-                print(f"DEBUG: Set Manipulation perm={manip_perm}, temp={max(0, manip_perm - 2)}")

@@ -55,27 +55,54 @@ class CmdPage(DefaultCmdPage):
                 number = int(self.args)
                 pages = pages_we_sent[:number]
                 if pages:
-                    msg = "\n".join(
-                        "|w%s|n |c%s|n: %s"
-                        % (
-                            msg.date_created.strftime("%Y-%m-%d %H:%M:%S"),
-                            ",".join(obj.key for obj in msg.receivers),
-                            msg.message,
-                        )
-                        for msg in pages
-                    )
-                    self.msg("Your last %i pages:\n%s" % (len(pages), msg))
+                    try:
+                        formatted_pages = []
+                        for msg in pages:
+                            try:
+                                receivers = ",".join(obj.key for obj in msg.receivers)
+                            except AttributeError:
+                                # Handle case where receivers might be stored as strings
+                                receivers = ",".join(str(obj) for obj in msg.receivers)
+                            formatted_pages.append(
+                                "|w%s|n |c%s|n: %s" % (
+                                    msg.date_created.strftime("%Y-%m-%d %H:%M:%S"),
+                                    receivers,
+                                    msg.message
+                                )
+                            )
+                        msg = "\n".join(formatted_pages)
+                        self.msg(f"Your last {len(pages)} pages:\n{msg}\nEnd of message history.")
+                    except Exception as e:
+                        # If any error occurs, still try to show what we can
+                        self.msg(f"Error displaying full history: {str(e)}\nShowing what we can:")
+                        for msg in pages:
+                            try:
+                                receivers = ",".join(str(obj) for obj in msg.receivers)
+                                self.msg("|w%s|n |c%s|n: %s" % (
+                                    msg.date_created.strftime("%Y-%m-%d %H:%M:%S"),
+                                    receivers,
+                                    msg.message
+                                ))
+                            except:
+                                continue
+                        self.msg("End of message history.")
                 else:
                     self.msg("You haven't paged anyone yet.")
                 return
             else:
-                # No = sign, just a message - send to last person paged
+                # No = sign, just a message - send to last person(s) paged
                 if pages_we_sent:
-                    # Get the last recipient and construct the command
-                    last_recipient = pages_we_sent[0].receivers[0]
-                    recipient_name = last_recipient.puppet.name if hasattr(last_recipient, 'puppet') and last_recipient.puppet else last_recipient.key
+                    # Get all recipients from the last message
+                    last_recipients = pages_we_sent[0].receivers
+                    # Get their character names
+                    recipient_names = []
+                    for recipient in last_recipients:
+                        if hasattr(recipient, 'puppet') and recipient.puppet:
+                            recipient_names.append(recipient.puppet.name)
+                        else:
+                            recipient_names.append(recipient.key)
                     # Recursively call the command with the properly formatted string
-                    self.caller.execute_cmd(f"page {recipient_name}={self.args}")
+                    self.caller.execute_cmd(f"page {','.join(recipient_names)}={self.args}")
                     return
                 else:
                     self.msg("You haven't paged anyone yet.")
@@ -169,15 +196,15 @@ class CmdPage(DefaultCmdPage):
             # Format the header
             if other_recipients:
                 others = f"{', '.join(other_recipients[:-1])} and {other_recipients[-1]}" if len(other_recipients) > 1 else other_recipients[0]
-                header = f"(To: {char_name} and {others}) From afar,"
+                header = f"From afar, (To {char_name} and {others}),"
             else:
-                header = f"(To: {char_name}) From afar,"
+                header = f"From afar,"
             
             # Format and send the message
             if message.startswith(":"):
-                formatted_message = f"From afar, {caller_name} {message[1:].strip()}"
+                formatted_message = f"{header} {caller_name} {message[1:].strip()}"
             else:
-                formatted_message = f"{caller_name} pages: {message}"
+                formatted_message = f"{header} {caller_name} pages: {message}"
                 
             target.msg(formatted_message)
             received.append(f"|c{char_name}|n")

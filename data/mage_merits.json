@@ -16,7 +16,6 @@
         "category": "merits", 
         "stat_type": "social",
         "values": [3],
-        "splat": "Mage",
         "source": "M20 p. 643"
     },
     {
@@ -36,7 +35,6 @@
         "category": "merits",
         "stat_type": "physical",
         "values": [5],
-        "splat": "Mage",
         "source": "M20 p. 644"
     },
     {
@@ -46,7 +44,6 @@
         "category": "merits",
         "stat_type": "mental",
         "values": [1],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 44"
     },
     {
@@ -96,7 +93,6 @@
         "category": "merits",
         "stat_type": "social",
         "values": [1],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 54"
     },
     {
@@ -106,7 +102,6 @@
         "category": "merits",
         "stat_type": "social",
         "values": [2, 4, 6],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 55"
     },
     {
@@ -126,7 +121,6 @@
         "category": "merits",
         "stat_type": "social",
         "values": [2],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 56"
     },
     {
@@ -136,7 +130,6 @@
         "category": "merits",
         "stat_type": "social",
         "values": [2],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 56"
     },
     {
@@ -150,23 +143,12 @@
         "source": "M20 p. 643"
     },
     {
-        "name": "Rising Star",
-        "description": "Within your group, you're an up-and-coming luminary. Your superiors favor you, your peers respect you, handfuls of haters despise you (of course!), and folks who pay attention to the group's activities have noticed your progress, and they approve.",
-        "game_line": "Mage: The Ascension",
-        "category": "merits",
-        "stat_type": "social",
-        "values": [3],
-        "splat": "Mage",
-        "source": "M20 Book of Secrets p. 58"
-    },
-    {
         "name": "Master of Red Tape",
         "description": "A savant of bureaucracy, you slash your way through official obstructionism. When red tape unspools across your path, you know who to talk to, which forms to fill out, and where the loopholes are.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "social",
         "values": [4],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 58"
     },
     {
@@ -286,7 +268,6 @@
         "category": "merits",
         "stat_type": "supernatural",
         "values": [3],
-        
         "source": "M20 p. 643"
     },
     {
@@ -320,13 +301,12 @@
         "source": "M20 Book of Secrets p. 73"
     },
     {
-        "name": "Spirit Magnet",
+        "name": "Spirit Magnet Merit",
         "description": "Ephemeral entities flock to your presence. The essence of who you are - benign or malignant - draws spirits to you, and they, in turn, affect the essence of who you are.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [3, 4, 5, 6, 7],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 73"
     },
     {
@@ -470,23 +450,12 @@
         "source": "M20 Book of Secrets p. 79"
     },
     {
-        "name": "True Faith",
-        "description": "You possess an unwavering faith that grants supernatural protection.",
-        "game_line": "Mage: The Ascension",
-        "category": "merits",
-        "stat_type": "supernatural",
-        "values": [7],
-        
-        "source": "M20 p. 643"
-    },
-    {
         "name": "Natural Linguist",
         "description": "You have a natural talent for languages. Each purchase of the Language Merit gives you two languages instead of just one.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "mental",
         "values": [2],
-        
         "source": "M20 Book of Secrets p. 44"
     }
 ]

@@ -2,39 +2,39 @@ from evennia.utils.ansi import ANSIString
 from collections import defaultdict
 from world.wod20th.models import Stat
 
-def format_stat(stat, value, width=25, default=None, tempvalue=None, allow_zero=False):
-    """Format a stat for display with proper spacing and temporary values."""
-    if default is not None and (value is None or (not allow_zero and value == 0) or value == ""):
-        value = default
-        tempvalue = default  # Also set tempvalue to default if value is defaulted
-
-    # Don't add leading space here anymore
-    stat_str = stat
+def format_stat(name: str, value: int, default: int = 0, tempvalue: int = None, width: int = 25, allow_zero: bool = False) -> str:
+    """
+    Format a stat for display on a character sheet.
     
-    if stat == "Paradox":
-        # For Paradox, only show the temporary value
-        value_str = str(tempvalue) if tempvalue is not None else "None"
-    elif stat == "Arete":
-        # For Arete, don't show temporary value
-        value_str = str(value)
-    elif tempvalue is not None and str(tempvalue) != str(value):  # Compare as strings to handle non-numeric values
-        if not allow_zero and tempvalue == 0:
-            tempvalue = 1
-        # Only show temporary value if it's different
-        value_str = f"{value}/{tempvalue}"  # Changed to use / instead of ()
+    Args:
+        name: The name of the stat
+        value: The permanent value of the stat
+        default: The default value if none is set
+        tempvalue: The temporary value of the stat (if different from permanent)
+        width: The width to pad the output to
+        allow_zero: Whether to allow zero values (default False)
+        
+    Returns:
+        A formatted string representing the stat
+    """
+    # Handle None values
+    if value is None:
+        value = default
+    if tempvalue is None:
+        tempvalue = value
+
+    # Format the value part
+    if not allow_zero and value == 0:
+        value_str = "0"
     else:
-        # Just show permanent value if temporary is same or not set
         value_str = str(value)
 
-    # Truncate the stat name if it's too long
-    max_stat_length = width - len(value_str) - 4  # 4 for the dots and spaces
-    if len(stat_str) > max_stat_length:
-        stat_str = stat_str[:max_stat_length-3] + "..."
+    # If temporary value differs from permanent, show both
+    if tempvalue != value:
+        value_str = f"{value}({tempvalue})"
 
-    # Calculate dots needed for spacing
-    dots = "." * (width - len(stat_str) - len(value_str) - 2)  # -2 for the spaces we'll add
-    # Add highlight black to dots and consistent spacing
-    return f" {stat_str}|x{dots}|n {value_str}"
+    # Format the full string with padding
+    return f" {name}{'.' * (width - len(name) - len(value_str) - 2)} {value_str}"
 
 def header(title, width=78, color="|y", fillchar="-", bcolor="|b"):
     """Create a header with consistent width."""

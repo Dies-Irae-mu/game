@@ -437,6 +437,10 @@ SORCERER_BACKGROUNDS = [
     'Techne'
 ]
 
+KINAIN_BACKGROUNDS = [
+    'Faerie Blood'
+]
+
 # Category Mappings
 STAT_TYPE_TO_CATEGORY = {
     'attributes': {'physical': {}, 'social': {}, 'mental': {}},
@@ -974,14 +978,14 @@ def get_identity_stats(splat: str, subtype: str = None, affiliation: str = None)
             'Generation',
             'Clan',
             'Sire',
-            'Enlightenment'
+            'Path of Enlightenment'  # Make sure this is included
         ]
-        
     elif splat.lower() == 'shifter':
         stats = base_stats + [
             'First Change Date',
             'Type',
-            'Breed'
+            'Breed',
+            'Rank'
         ]
         
         if subtype:

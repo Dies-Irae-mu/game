@@ -361,8 +361,9 @@ def validate_archetype(archetype_name: str) -> tuple[bool, str]:
     Validate that an archetype exists and is valid.
     Returns (is_valid, error_message) tuple.
     """
-    archetype_name = archetype_name.lower()
-    if archetype_name not in ARCHETYPES:
+    # Convert spaces to hyphens and lowercase for dictionary lookup
+    lookup_key = archetype_name.lower().replace(' ', '-')
+    if lookup_key not in ARCHETYPES:
         valid_archetypes = ', '.join(sorted([a['name'] for a in ARCHETYPES.values()]))
         return False, f"Invalid archetype. Valid archetypes are: {valid_archetypes}"
     return True, ""
@@ -372,4 +373,6 @@ def get_archetype_info(archetype_name: str) -> dict:
     Get the full information for an archetype.
     Returns None if archetype doesn't exist.
     """
-    return ARCHETYPES.get(archetype_name.lower()) 
+    # Convert spaces to hyphens and lowercase for dictionary lookup
+    lookup_key = archetype_name.lower().replace(' ', '-')
+    return ARCHETYPES.get(lookup_key) 

@@ -100,6 +100,12 @@ def calculate_path(character):
         else:
             virtue1, virtue2 = PATH_VIRTUES[enlightenment]
 
+    # Get the values for both virtues, defaulting to 0 if not found
     value1 = virtues.get(virtue1, {}).get('perm', 0)
     value2 = virtues.get(virtue2, {}).get('perm', 0)
-    return value1 + value2 
+
+    # Debug output
+    #character.msg(f"|wDEBUG: Path calculation - {virtue1}={value1} + {virtue2}={value2} = {value1 + value2}|n")
+
+    # Simply add the two values together
+    return value1 + value2

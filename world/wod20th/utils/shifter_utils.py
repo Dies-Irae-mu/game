@@ -219,10 +219,14 @@ def initialize_shifter_type(character, shifter_type):
     character.set_stat('identity', 'lineage', 'Type', shifter_type, temp=False)
     character.set_stat('identity', 'lineage', 'Type', shifter_type, temp=True)
     
+    # Initialize Rank for all shifter types
+    character.set_stat('identity', 'lineage', 'Rank', 0, temp=False)
+    character.set_stat('identity', 'lineage', 'Rank', 0, temp=True)
+    
     # Initialize all identity stats for the shifter type
     if shifter_type in SHIFTER_IDENTITY_STATS:
         for stat in SHIFTER_IDENTITY_STATS[shifter_type]:
-            if stat != 'Type':  # Skip Type since we already set it
+            if stat not in ['Type', 'Rank']:  # Skip Type and Rank since we already set them
                 character.set_stat('identity', 'lineage', stat, '', temp=False)
                 character.set_stat('identity', 'lineage', stat, '', temp=True)
     
@@ -967,17 +971,17 @@ def update_tribe_stats(character, tribe, shifter_type):
             character.set_stat('pools', 'dual', 'Willpower', stats['willpower'], temp=True) 
             character.msg(f"|gRage set to {stats['rage']} and Willpower set to {stats['willpower']} for {tribe} tribe.")
 
-def validate_shifter_stats(character, stat_name: str, value: str, category: str = None, stat_type: str = None) -> tuple[bool, str]:
+def validate_shifter_stats(character, stat_name: str, value: str, category: str = None, stat_type: str = None) -> tuple[bool, str, str]:
     """
     Validate shifter-specific stats.
-    Returns (is_valid, error_message)
+    Returns (is_valid, error_message, corrected_value)
     """
     stat_name = stat_name.lower()
     
     # Get shifter type
     shifter_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
     if not shifter_type:
-        return False, "Character must have a shifter type set"
+        return False, "Character must have a shifter type set", None
     
     # Validate type
     if stat_name == 'type':
@@ -1007,59 +1011,98 @@ def validate_shifter_stats(character, stat_name: str, value: str, category: str 
     if category == 'backgrounds' and stat_type == 'background':
         return validate_shifter_backgrounds(character, stat_name, value)
     
-    return True, ""
+    return True, "", value
 
-def validate_shifter_type(value: str) -> tuple[bool, str]:
+def validate_shifter_type(value: str) -> tuple[bool, str, str]:
     """Validate a shifter type."""
     valid_types = [t[1] for t in SHIFTER_TYPE_CHOICES if t[1] != 'None']
-    if value.title() not in valid_types:
-        return False, f"Invalid shifter type. Valid types are: {', '.join(sorted(valid_types))}"
-    return True, ""
+    value_title = value.title()
+    if value_title in valid_types:
+        return True, "", value_title
+    return False, f"Invalid shifter type. Valid types are: {', '.join(sorted(valid_types))}", None
 
-def validate_shifter_breed(shifter_type: str, value: str) -> tuple[bool, str]:
+def validate_shifter_breed(shifter_type: str, value: str) -> tuple[bool, str, str]:
     """Validate a shifter's breed based on their type."""
     valid_breeds = BREED_CHOICES_DICT.get(shifter_type, [])
     if not valid_breeds:
-        return False, f"No valid breeds found for {shifter_type}"
+        return False, f"No valid breeds found for {shifter_type}", None
     
-    if value.title() not in valid_breeds:
-        return False, f"Invalid breed for {shifter_type}. Valid breeds are: {', '.join(sorted(valid_breeds))}"
-    return True, ""
+    # Try title case and case-insensitive match
+    value_title = value.title()
+    if value_title in valid_breeds:
+        return True, "", value_title
+        
+    value_lower = value.lower()
+    for breed in valid_breeds:
+        if breed.lower() == value_lower:
+            return True, "", breed
+            
+    # If no match found, return full list of valid breeds
+    return False, f"Invalid breed for {shifter_type}. Valid breeds are: {', '.join(sorted(valid_breeds))}", None
 
-def validate_shifter_auspice(shifter_type: str, value: str) -> tuple[bool, str]:
+def validate_shifter_auspice(shifter_type: str, value: str) -> tuple[bool, str, str]:
     """Validate a shifter's auspice based on their type."""
     valid_auspices = AUSPICE_CHOICES_DICT.get(shifter_type, [])
     if not valid_auspices:
-        return False, f"{shifter_type} characters do not have auspices"
+        return False, f"{shifter_type} characters do not have auspices", None
     
-    if value.title() not in valid_auspices:
-        return False, f"Invalid auspice for {shifter_type}. Valid auspices are: {', '.join(sorted(valid_auspices))}"
-    return True, ""
+    # Try title case and case-insensitive match
+    value_title = value.title()
+    if value_title in valid_auspices:
+        return True, "", value_title
+        
+    value_lower = value.lower()
+    for auspice in valid_auspices:
+        if auspice.lower() == value_lower:
+            return True, "", auspice
+            
+    # If no match found, return full list of valid auspices
+    return False, f"Invalid auspice for {shifter_type}. Valid auspices are: {', '.join(sorted(valid_auspices))}", None
 
-def validate_shifter_tribe(shifter_type: str, value: str) -> tuple[bool, str]:
+def validate_shifter_tribe(shifter_type: str, value: str) -> tuple[bool, str, str]:
     """Validate a shifter's tribe based on their type."""
     if shifter_type == 'Garou':
         valid_tribes = [t[1] for t in GAROU_TRIBE_CHOICES if t[1] != 'None']
     elif shifter_type == 'Bastet':
         valid_tribes = [t[1] for t in BASTET_TRIBE_CHOICES if t[1] != 'None']
+    elif shifter_type == 'Gurahl':
+        valid_tribes = [t[1] for t in GURAHL_TRIBE_CHOICES if t[1] != 'None']
     else:
-        return False, f"{shifter_type} characters do not have tribes"
+        return False, f"{shifter_type} characters do not have tribes", None
     
-    if value.title() not in valid_tribes:
-        return False, f"Invalid tribe for {shifter_type}. Valid tribes are: {', '.join(sorted(valid_tribes))}"
-    return True, ""
+    # Try title case and case-insensitive match
+    value_title = value.title()
+    if value_title in valid_tribes:
+        return True, "", value_title
+        
+    value_lower = value.lower()
+    for tribe in valid_tribes:
+        if tribe.lower() == value_lower:
+            return True, "", tribe
+            
+    # If no match found, return full list of valid tribes
+    return False, f"Invalid tribe for {shifter_type}. Valid tribes are: {', '.join(sorted(valid_tribes))}", None
 
-def validate_shifter_aspect(shifter_type: str, value: str) -> tuple[bool, str]:
+def validate_shifter_aspect(shifter_type: str, value: str) -> tuple[bool, str, str]:
     """Validate a shifter's aspect based on their type."""
     valid_aspects = ASPECT_CHOICES_DICT.get(shifter_type, [])
     if not valid_aspects:
-        return False, f"{shifter_type} characters do not have aspects"
+        return False, f"{shifter_type} characters do not have aspects", None
     
-    if value.title() not in valid_aspects:
-        return False, f"Invalid aspect for {shifter_type}. Valid aspects are: {', '.join(sorted(valid_aspects))}"
-    return True, ""
+    # Try title case and case-insensitive match
+    value_title = value.title()
+    if value_title in valid_aspects:
+        return True, "", value_title
+        
+    value_lower = value.lower()
+    for aspect in valid_aspects:
+        if aspect.lower() == value_lower:
+            return True, "", aspect
+            
+    # If no match found, return full list of valid aspects
+    return False, f"Invalid aspect for {shifter_type}. Valid aspects are: {', '.join(sorted(valid_aspects))}", None
 
-def validate_shifter_gift(character, gift_name: str, value: str) -> tuple[bool, str]:
+def validate_shifter_gift(character, gift_name: str, value: str) -> tuple[bool, str, str]:
     """Validate a shifter gift."""
     # Import Stat here to avoid circular import
     from world.wod20th.models import Stat
@@ -1071,9 +1114,9 @@ def validate_shifter_gift(character, gift_name: str, value: str) -> tuple[bool, 
     try:
         gift_value = int(value)
         if gift_value < 0 or gift_value > 5:
-            return False, "Gift values must be between 0 and 5"
+            return False, "Gift values must be between 0 and 5", None
     except ValueError:
-        return False, "Gift values must be numbers"
+        return False, "Gift values must be numbers", None
     
     # Check if the gift exists in the database
     gift = Stat.objects.filter(
@@ -1083,29 +1126,29 @@ def validate_shifter_gift(character, gift_name: str, value: str) -> tuple[bool, 
     ).first()
     
     if not gift:
-        return False, f"'{gift_name}' is not a valid gift"
+        return False, f"'{gift_name}' is not a valid gift", None
         
     # If the gift exists but has a specific shifter_type requirement,
     # validate that the character can use it
     if gift.shifter_type and gift.shifter_type != shifter_type:
-        return False, f"'{gift_name}' is not available to {shifter_type}"
+        return False, f"'{gift_name}' is not available to {shifter_type}", None
         
-    return True, ""
+    return True, "", value
 
-def validate_shifter_backgrounds(character, background_name: str, value: str) -> tuple[bool, str]:
+def validate_shifter_backgrounds(character, background_name: str, value: str) -> tuple[bool, str, str]:
     """Validate shifter backgrounds."""
     # Get list of available backgrounds
     from world.wod20th.utils.stat_mappings import UNIVERSAL_BACKGROUNDS, SHIFTER_BACKGROUNDS
     available_backgrounds = set(bg.title() for bg in UNIVERSAL_BACKGROUNDS + SHIFTER_BACKGROUNDS)
     
     if background_name.title() not in available_backgrounds:
-        return False, f"Invalid background '{background_name}'. Available backgrounds: {', '.join(sorted(available_backgrounds))}"
+        return False, f"Invalid background '{background_name}'. Available backgrounds: {', '.join(sorted(available_backgrounds))}", None
     
     # Validate value
     try:
         bg_value = int(value)
         if bg_value < 0 or bg_value > 5:
-            return False, "Background values must be between 0 and 5"
-        return True, ""
+            return False, "Background values must be between 0 and 5", None
+        return True, "", value
     except ValueError:
-        return False, "Background values must be numbers"
+        return False, "Background values must be numbers", None

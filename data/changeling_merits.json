@@ -32,17 +32,15 @@
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "social",
-    "values": [1],
-    "splat": "Changeling"
+    "values": [1]
 },
 {
     "name": "Protege",
-    "description": "An important changeling once mentored you, and spoke glowingly of you to acquaintances. Others may be inclined to look favorably on you by dint of the recommendation; you are at -2 difficulty on Social rolls with all those who've heard good things about you.",
+    "description": "An important changeling (or vampire or garou, and so on depending on your species) once mentored you, and spoke glowingly of you to acquaintances. Others may be inclined to look favorably on you by dint of the recommendation; you are at -2 difficulty on Social rolls with all those who've heard good things about you.",
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "social",
-    "values": [1],
-    "splat": "Changeling"
+    "values": [1]
 },
 {
     "name": "Dextrous Toes",
@@ -86,8 +84,7 @@
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "social",
-    "values": [2],
-    "splat": "Changeling"
+    "values": [2]
 },
 {
     "name": "Sage",
@@ -140,8 +137,7 @@
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "social",
-    "values": [3],
-    "splat": "Changeling"
+    "values": [3]
 },
 {
     "name": "Blood of the Wolf",

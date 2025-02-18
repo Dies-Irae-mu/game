@@ -28,7 +28,6 @@
         "category": "flaws",
         "stat_type": "physical",
         "values": [1],
-        "splat": "Shifter",
         "shifter_type": "Garou",
         "source": "W20 p. 473"
     },
@@ -88,35 +87,12 @@
         "source": "W20 p. 477"
     },
     {
-        "name": "Short Fuse",
-        "description": "You are closer to the Wyrm than most Garou; your Rage burns hotter within you than most. Your difficulty for Rage rolls is decreased by two, and you fall more readily into the \"thrall of the Wyrm.\" Be careful when choosing this Flaw; it can bring worlds of trouble down upon you and your pack.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "mental",
-        "values": [2],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 478"
-    },
-    {
         "name": "Territorial",
         "description": "You have the wolf's territorial nature. You dislike leaving your home turf or having people you don't know infringe upon your claimed space. Before play starts, work with your Storyteller to define your territory. You must roll to avoid frenzying whenever strangers enter your territory without your permission, and are reluctant to leave there except under desperate circumstances.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "flaws",
         "stat_type": "mental",
         "values": [2],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 478"
-    },
-    {
-        "name": "Vengeful",
-        "description": "You have a score to settle; perhaps Black Spiral Dancers murdered your family or a Pentex First Team destroyed your original pack. Taking revenge on the individual or group responsible is your overriding priority in any situation where you encounter them, or have the opportunity to come closer to your revenge. You may temporarily resist your need for vengeance by spending a Willpower point.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "mental",
-        "values": [2],
-        "splat": "Shifter",
         "shifter_type": "Garou",
         "source": "W20 p. 478"
     },
@@ -127,7 +103,6 @@
         "category": "flaws",
         "stat_type": "mental",
         "values": [1],
-        "splat": "Shifter",
         "shifter_type": "Garou",
         "source": "W20 p. 480"
     },
@@ -160,7 +135,6 @@
         "category": "flaws",
         "stat_type": "social",
         "values": [2],
-        "splat": "Shifter",
         "shifter_type": "Garou",
         "source": "W20 p. 481"
     },
@@ -171,7 +145,6 @@
         "category": "flaws",
         "stat_type": "social",
         "values": [3],
-        "splat": "Shifter",
         "shifter_type": "Garou",
         "source": "W20 p. 481"
     },
@@ -226,7 +199,6 @@
         "category": "flaws",
         "stat_type": "supernatural",
         "values": [5],
-        "splat": "Shifter",
         "shifter_type": "Garou",
         "source": "W20 p. 485"
     },

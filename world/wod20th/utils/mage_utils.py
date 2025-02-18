@@ -226,6 +226,12 @@ def initialize_mage_stats(character, affiliation, tradition=None, convention=Non
     character.set_stat('pools', 'dual', 'Paradox', 0, temp=False)
     character.set_stat('pools', 'dual', 'Paradox', 0, temp=True)
     
+    if affiliation.lower() == 'technocracy':
+        character.set_stat('pools', 'advantage', 'Enlightenment', 1, temp=False)
+        character.set_stat('pools', 'advantage', 'Enlightenment', 1, temp=True)
+        character.delete_stat('pools', 'advantage', 'Arete', temp=False)
+        character.delete_stat('pools', 'advantage', 'Arete', temp=True)
+        
     # Set affiliation-specific stats
     if affiliation.lower() == 'traditions' and tradition:
         initialize_tradition_stats(character, tradition)

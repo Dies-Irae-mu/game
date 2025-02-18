@@ -12,7 +12,7 @@
     },
     {
         "name": "Eat Food",
-            "stat_type": "physical",
+        "stat_type": "physical",
         "category": "merits",
         "values": [1],
         "description": "You have the capacity to eat food and even savor its taste. While you cannot derive any nourishment from eating regular foods, this ability will serve you well in pretending to be human. Of course, you can't digest what you eat, and there will be some point during the evening when you have to heave it back up.",
@@ -332,7 +332,6 @@
         "description": "You have an innate serenity that makes it easier to resist frenzy. The difficulty to resist frenzy is reduced by two. This Merit is particularly common among Salubri.",
         "source": "Lore of the Clans Pg 43",
         "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -387,7 +386,6 @@
         "description": "You can awaken more easily than most vampires during the day. The difficulty to rouse yourself during daylight hours is reduced by two. This Merit is common among Assamites.",
         "source": "Lore of the Clans Pg 44",
         "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -398,7 +396,6 @@
         "description": "You have a natural affinity for spirits and the dead. You can see and communicate with ghosts without using Necromancy, though you cannot control them. This Merit is particularly common among Giovanni.",
         "source": "Lore of the Clans Pg 44",
         "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -409,7 +406,6 @@
         "description": "You have a natural charisma that makes others want to follow you. You receive two extra dice on all Leadership rolls, and others are more likely to accept you as their leader in crisis situations.",
         "source": "Lore of the Clans Pg 44",
         "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -435,17 +431,6 @@
         "game_line": "Vampire: The Masquerade"
     },
     {
-        "name": "Efficient Digestion",
-        "stat_type": "supernatural",
-        "category": "merits",
-        "values": [3],
-        "description": "You can sustain yourself on less blood than most vampires. Reduce all blood point costs by one (to a minimum of one). This includes costs for healing, waking, and using Disciplines.",
-        "source": "Ghouls & Revenants Pg 76",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
         "name": "Iron Will",
         "stat_type": "mental",
         "category": "merits",
@@ -453,7 +438,6 @@
         "description": "Your willpower is virtually unshakeable. Add two dice to all rolls to resist Dominate, blood bonds, and other supernatural attempts to control your mind.",
         "source": "Ghouls & Revenants Pg 77",
         "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -464,7 +448,6 @@
         "description": "You have uncanny good fortune. Once per story, you may reroll any one failed roll. You must accept the results of the second roll.",
         "source": "Ghouls & Revenants Pg 77",
         "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -475,7 +458,6 @@
         "description": "You have extensively studied another Clan or bloodline. You know their common habits, traditions, and weaknesses. Add two dice to all rolls involving knowledge of that group.",
         "source": "Ghouls & Revenants Pg 77",
         "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -486,7 +468,6 @@
         "description": "One of your senses is exceptionally sharp. Add two dice to all Perception rolls involving that sense. This Merit may be taken multiple times for different senses.",
         "source": "V20 Dark Ages Pg 288",
         "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -497,18 +478,6 @@
         "description": "You can use both hands with equal effectiveness. You do not suffer the usual -2 penalty for using your off-hand. In situations where you can use both hands, you gain an extra die to your pool.",
         "source": "V20 Dark Ages Pg 288",
         "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Code of Honor",
-        "stat_type": "mental",
-        "category": "merits",
-        "values": [2],
-        "description": "You have a strong personal code that you follow strictly. While this code may sometimes inconvenience you, it also makes you highly resistant to Derangements. Add two dice to all rolls to resist gaining Derangements.",
-        "source": "V20 Dark Ages Pg 288",
-        "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -519,7 +488,6 @@
         "description": "You have a significant amount of practical wisdom. The Storyteller can make a roll using your common sense as a pool whenever you are about to do something particularly foolish.",
         "source": "V20 Dark Ages Pg 288",
         "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -530,7 +498,6 @@
         "description": "You have the ability to focus your mind and shut out distractions. You may ignore up to two dice of penalties from distracting circumstances.",
         "source": "V20 Dark Ages Pg 289",
         "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -541,7 +508,6 @@
         "description": "Your joints are extremely flexible. You gain two extra dice on any roll involving contorting your body, and you can automatically escape from any mundane restraints.",
         "source": "V20 Dark Ages Pg 289",
         "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -552,7 +518,6 @@
         "description": "You have discovered true love with another person. This love gives you strength in difficult times - you may add two dice to any Willpower roll when your love is threatened or when you are acting to aid them. However, you must also make a Willpower roll (difficulty 6) to take any action that would harm your love.",
         "source": "V20 Dark Ages Pg 289",
         "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     }
 ] 

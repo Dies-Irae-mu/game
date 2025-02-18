@@ -6,7 +6,7 @@ from world.wod20th.utils.sheet_constants import (
     CONVENTION, NEPHANDI_FACTION
 )
 from world.wod20th.utils.stat_mappings import (
-    CATEGORIES, STAT_TYPES, STAT_TYPE_TO_CATEGORY,
+    CATEGORIES, KINAIN_BACKGROUNDS, STAT_TYPES, STAT_TYPE_TO_CATEGORY,
     IDENTITY_STATS, SPLAT_STAT_OVERRIDES,
     POOL_TYPES, POWER_CATEGORIES, ABILITY_TYPES,
     ATTRIBUTE_CATEGORIES, SPECIAL_ADVANTAGES,
@@ -24,7 +24,7 @@ from world.wod20th.utils.stat_mappings import (
 from world.wod20th.models import Stat
 from world.wod20th.utils.vampire_utils import (
     calculate_blood_pool, initialize_vampire_stats, update_vampire_virtues_on_path_change, 
-    CLAN_CHOICES, get_clan_disciplines, validate_vampire_stats
+    CLAN_CHOICES, get_clan_disciplines, validate_vampire_stats, validate_vampire_path
 )
 from world.wod20th.utils.mage_utils import (
     initialize_mage_stats, AFFILIATION, TRADITION, CONVENTION,
@@ -90,7 +90,18 @@ class CmdSelfStat(MuxCommand):
     aliases = ["selfstat"]
     locks = "cmd:all()"  # All players can use this command
     help_category = "Character"
-
+    def __init__(self):
+        """Initialize the command."""
+        super().__init__()
+        self.switches = []
+        self.is_specialty = False  # Add this line
+        self.specialty = None      # Add this line
+        self.stat_name = ""
+        self.instance = None
+        self.category = None
+        self.value_change = None
+        self.stat_type = None
+        
     # Helper Methods
     def _display_instance_requirement_message(self, stat_name: str) -> None:
         """Display message indicating an instance is required for a stat."""
@@ -158,23 +169,37 @@ class CmdSelfStat(MuxCommand):
 
     def case_insensitive_in(self, value: str, valid_set: set) -> tuple[bool, str]:
         """
-        Check if a value exists in a set, ignoring case.
+        Check if a value exists in a set while ignoring case.
         Returns (bool, matched_value) where matched_value is the correctly-cased version if found.
         """
         if not value:
             return False, None
-        # Try direct match first
-        if value in valid_set:
-            return True, value
+            
         # Try title case
         if value.title() in valid_set:
             return True, value.title()
+            
         # Try case-insensitive match
         value_lower = value.lower()
         for valid_value in valid_set:
             if valid_value.lower() == value_lower:
                 return True, valid_value
-        return False, None
+            
+        # If no match found, suggest similar values
+        similar_values = []
+        for valid_value in valid_set:
+            # Check if the input is a substring of any valid value
+            if value_lower in valid_value.lower():
+                similar_values.append(valid_value)
+            # Check if input matches the beginning of any word in the valid value
+            elif any(word.lower().startswith(value_lower) 
+                    for word in valid_value.split()):
+                similar_values.append(valid_value)
+                
+        if similar_values:
+            return False, f"Invalid value. Did you mean one of these?: {', '.join(sorted(similar_values))}"
+        else:
+            return False, f"Invalid value. Valid options are: {', '.join(sorted(valid_set))}"
 
     def case_insensitive_in_nested(self, value: str, nested_dict: dict, parent_value: str) -> tuple[bool, str]:
         """
@@ -183,8 +208,40 @@ class CmdSelfStat(MuxCommand):
         """
         if not value or not parent_value:
             return False, None
+            
+        # Get valid values for this parent
         valid_values = nested_dict.get(parent_value, [])
-        return self.case_insensitive_in(value, set(valid_values))
+        if not valid_values:
+            # If no values found for this parent, check all values
+            all_values = set()
+            for values in nested_dict.values():
+                all_values.update(values)
+            # Try to find similar values across all categories
+            similar_values = []
+            value_lower = value.lower()
+            for valid_value in all_values:
+                if value_lower in valid_value.lower() or any(word.lower().startswith(value_lower) for word in valid_value.split()):
+                    similar_values.append(valid_value)
+            if similar_values:
+                return False, f"Invalid value. Similar values found in other categories: {', '.join(sorted(similar_values))}"
+            return False, f"Invalid value. No valid options found for {parent_value}"
+            
+        # Try direct match first
+        is_valid, matched_value = self.case_insensitive_in(value, set(valid_values))
+        if is_valid:
+            return True, matched_value
+            
+        # If no match, suggest similar values for this parent
+        value_lower = value.lower()
+        similar_values = []
+        for valid_value in valid_values:
+            if value_lower in valid_value.lower() or any(word.lower().startswith(value_lower) for word in valid_value.split()):
+                similar_values.append(valid_value)
+                
+        if similar_values:
+            return False, f"Invalid value for {parent_value}. Did you mean one of these?: {', '.join(sorted(similar_values))}"
+        else:
+            return False, f"Invalid value for {parent_value}. Valid options are: {', '.join(sorted(valid_values))}"
 
     def get_stat_category(self, stat_name: str, stat_type: str, splat: str = None) -> str:
         """
@@ -223,30 +280,138 @@ class CmdSelfStat(MuxCommand):
     def validate_stat_value(self, stat_name: str, value: str, category: str = None, stat_type: str = None) -> tuple:
         """
         Validate a stat value based on its type and category.
-        Returns (is_valid, error_message)
+        Returns (is_valid, error_message, corrected_value)
         """
-        # Get character's splat for validation
-        splat = self.splat
+        # Get character's splat and type
+        splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+        char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+        
         if not splat:
-            return True, ""  # No validation needed if no splat set
+            return False, "Character must have a splat set", None
+
+        # Special handling for Path of Enlightenment and Enlightenment
+        if stat_name.lower() in ['path of enlightenment', 'enlightenment']:
+            # For Vampires and Ghouls
+            if splat == 'Vampire' or (splat == 'Mortal+' and char_type == 'Ghoul'):
+                # Always use Path of Enlightenment in identity.personal
+                self.stat_name = 'Path of Enlightenment'
+                self.category = 'identity'
+                self.stat_type = 'personal'
+                
+                # Validate the path value
+                from world.wod20th.utils.vampire_utils import validate_vampire_path
+                is_valid, error_msg = validate_vampire_path(value)
+                if not is_valid:
+                    return False, error_msg, None
+                
+                # If valid, return success
+                return True, "", value
+            
+            # For Technocracy Mages
+            elif splat == 'Mage':
+                affiliation = self.caller.get_stat('identity', 'lineage', 'Affiliation', temp=False)
+                if affiliation == 'Technocracy':
+                    try:
+                        val = int(value)
+                        if val < 1 or val > 5:
+                            return False, "Enlightenment must be between 1 and 5 for Technocracy mages", None
+                        # Set in pools/advantage
+                        self.category = 'pools'
+                        self.stat_type = 'advantage'
+                        return True, "", str(val)
+                    except ValueError:
+                        return False, "Enlightenment must be a number", None
+                else:
+                    return False, "Only Technocracy mages can have Enlightenment", None
+            
+            else:
+                return False, "Only Technocracy mages, Vampires, and Ghouls can have Enlightenment", None
+
+        # Define categories that must be numeric
+        numeric_categories = {
+            'attributes': True,
+            'abilities': True,
+            'backgrounds': True,
+            'powers': True,
+            'merits': True,
+            'flaws': True,
+            'virtues': True,
+            'pools': True
+        }
+
+        # Check if this stat belongs to a numeric category
+        if category in numeric_categories:
+            # Special case for charms, which are powers but not numeric
+            if stat_type == 'charm':
+                return True, "", value
+                
+            try:
+                numeric_value = int(value)
+                # Add range validation based on category
+                if category == 'attributes':
+                    if numeric_value < 1 or numeric_value > 5:
+                        return False, f"{stat_name} must be between 1 and 5", None
+                elif category in ['abilities', 'powers', 'virtues']:
+                    if numeric_value < 0 or numeric_value > 5:
+                        return False, f"{stat_name} must be between 0 and 5", None
+                elif category == 'backgrounds':
+                    if numeric_value < 0 or numeric_value > 10:
+                        return False, f"{stat_name} must be between 0 and 10", None
+                elif category == 'pools':
+                    if numeric_value < 0 or numeric_value > 10:
+                        return False, f"{stat_name} must be between 0 and 10", None
+                return True, "", str(numeric_value)
+            except ValueError:
+                return False, f"{stat_name} must be a number", None
+
+        # Handle Shifter-specific validation
+        if splat == 'Shifter':
+            from world.wod20th.utils.shifter_utils import validate_shifter_stats
+            result = validate_shifter_stats(self.caller, stat_name, value, category, stat_type)
+            if len(result) == 2:
+                is_valid, error_msg = result
+                return is_valid, error_msg, value if is_valid else None
+            return result
             
         # Call appropriate validation function based on splat
         if splat == 'Vampire':
-            return validate_vampire_stats(self.caller, stat_name, value, category, stat_type)
+            result = validate_vampire_stats(self.caller, stat_name, value, category, stat_type)
+            if len(result) == 2:
+                is_valid, error_msg = result
+                return is_valid, error_msg, value if is_valid else None
+            return result
         elif splat == 'Mage':
-            return validate_mage_stats(self.caller, stat_name, value, category, stat_type)
-        elif splat == 'Shifter':
-            return validate_shifter_stats(self.caller, stat_name, value, category, stat_type)
+            result = validate_mage_stats(self.caller, stat_name, value, category, stat_type)
+            if len(result) == 2:
+                is_valid, error_msg = result
+                return is_valid, error_msg, value if is_valid else None
+            return result
         elif splat == 'Changeling':
-            return validate_changeling_stats(self.caller, stat_name, value, category, stat_type)
+            result = validate_changeling_stats(self.caller, stat_name, value, category, stat_type)
+            if len(result) == 2:
+                is_valid, error_msg = result
+                return is_valid, error_msg, value if is_valid else None
+            return result
         elif splat == 'Mortal+':
-            return validate_mortalplus_stats(self.caller, stat_name, value, category, stat_type)
+            result = validate_mortalplus_stats(self.caller, stat_name, value, category, stat_type)
+            if len(result) == 2:
+                is_valid, error_msg = result
+                return is_valid, error_msg, value if is_valid else None
+            return result
         elif splat == 'Possessed':
-            return validate_possessed_stats(self.caller, stat_name, value, category, stat_type)
+            result = validate_possessed_stats(self.caller, stat_name, value, category, stat_type)
+            if len(result) == 2:
+                is_valid, error_msg = result
+                return is_valid, error_msg, value if is_valid else None
+            return result
         elif splat == 'Companion':
-            return validate_companion_stats(self.caller, stat_name, value, category, stat_type)
+            result = validate_companion_stats(self.caller, stat_name, value, category, stat_type)
+            if len(result) == 2:
+                is_valid, error_msg = result
+                return is_valid, error_msg, value if is_valid else None
+            return result
         
-        return True, ""
+        return True, "", value
 
     def get_identity_category(self, stat_name: str) -> str:
         """
@@ -322,6 +487,18 @@ class CmdSelfStat(MuxCommand):
             return 'identity', 'personal'
         elif stat_title in IDENTITY_LINEAGE:
             return 'identity', 'lineage'
+        elif stat_title in ['House', 'Fae Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
+                          'Type', 'Tribe', 'Breed', 'Auspice', 'Clan', 'Generation', 'Affiliation',
+                          'Tradition', 'Convention', 'Methodology', 'Traditions Subfaction',
+                          'Nephandi Faction', 'Possessed Type', 'Companion Type', 'Pryio', 'Lodge',
+                          'Camp', 'Fang House', 'Crown', 'Plague', 'Ananasi Faction', 'Ananasi Cabal',
+                          'Kitsune Path', 'Kitsune Faction', 'Ajaba Faction', 'Rokea Faction',
+                          'Stream', 'Varna', 'Deed Name', 'Aspect', 'Jamak Spirit', 'Rank']:
+            return 'identity', 'lineage'
+        elif stat_title in ['Full Name', 'Concept', 'Date of Birth', 'Date of Chrysalis', 'Date of Awakening',
+                          'First Change Date', 'Date of Embrace', 'Date of Possession', 'Nature', 'Demeanor',
+                          'Path of Enlightenment', 'Fae Name', 'Rite Name']:
+            return 'identity', 'personal'
             
         # If not in direct mappings, check if it's a valid identity stat for the character's splat
         splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
@@ -362,7 +539,10 @@ class CmdSelfStat(MuxCommand):
         self.category = None
         self.value_change = None
         self.temp = False
-        self.stat_type = None 
+        self.stat_type = None
+        self.is_specialty = False
+        self.specialty = None
+        
         args = self.args.strip()
         if not args:
             return
@@ -376,8 +556,18 @@ class CmdSelfStat(MuxCommand):
             first_part = args
             self.value_change = None
 
-        # Parse stat name, instance, and category/type
         try:
+            # Check for specialty syntax first: ability[specialty]
+            if '[' in first_part and ']' in first_part:
+                ability_part, specialty = first_part.split('[', 1)
+                if not specialty.endswith(']'):
+                    raise ValueError("Malformed specialty syntax. Use: ability[specialty]")
+                specialty = specialty[:-1].strip()  # Remove the closing bracket
+                self.stat_name = ability_part.strip()
+                self.is_specialty = True
+                self.specialty = specialty
+                return  # Exit early for specialty handling
+
             # Get the stat definition first
             from world.wod20th.models import Stat
             stat = Stat.objects.filter(name__iexact=first_part.split('(')[0].strip()).first()
@@ -469,10 +659,9 @@ class CmdSelfStat(MuxCommand):
             'talent': ('abilities', 'talent'),
             'skill': ('abilities', 'skill'),
             'knowledge': ('abilities', 'knowledge'),
-            'secondary_ability': ('abilities', 'secondary_abilities'),
-            'secondary_talent': ('abilities', 'secondary_abilities'),
-            'secondary_skill': ('abilities', 'secondary_abilities'),
-            'secondary_knowledge': ('abilities', 'secondary_abilities'),
+            'secondary_talent': ('secondary_abilities', 'secondary_talent'),
+            'secondary_skill': ('secondary_abilities', 'secondary_skill'),
+            'secondary_knowledge': ('secondary_abilities', 'secondary_knowledge'),
             
             # Identity
             'personal': ('identity', 'personal'),
@@ -615,7 +804,10 @@ class CmdSelfStat(MuxCommand):
         elif stat_title in ['House', 'Fae Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
                           'Type', 'Tribe', 'Breed', 'Auspice', 'Clan', 'Generation', 'Affiliation',
                           'Tradition', 'Convention', 'Methodology', 'Traditions Subfaction',
-                          'Nephandi Faction', 'Possessed Type', 'Companion Type']:
+                          'Nephandi Faction', 'Possessed Type', 'Companion Type', 'Pryio', 'Lodge',
+                          'Camp', 'Fang House', 'Crown', 'Plague', 'Ananasi Faction', 'Ananasi Cabal',
+                          'Kitsune Path', 'Kitsune Faction', 'Ajaba Faction', 'Rokea Faction',
+                          'Stream', 'Varna', 'Deed Name', 'Aspect', 'Jamak Spirit', 'Rank']:
             return 'identity', 'lineage'
         elif stat_title in ['Full Name', 'Concept', 'Date of Birth', 'Date of Chrysalis', 'Date of Awakening',
                           'First Change Date', 'Date of Embrace', 'Date of Possession', 'Nature', 'Demeanor',
@@ -701,11 +893,11 @@ class CmdSelfStat(MuxCommand):
 
         # Check secondary abilities
         if stat_title in SECONDARY_TALENTS:
-            return 'abilities', 'secondary_abilities'
+            return 'secondary_abilities', 'secondary_talent'
         elif stat_title in SECONDARY_SKILLS:
-            return 'abilities', 'secondary_abilities'
+            return 'secondary_abilities', 'secondary_skill'
         elif stat_title in SECONDARY_KNOWLEDGES:
-            return 'abilities', 'secondary_abilities'
+            return 'secondary_abilities', 'secondary_knowledge'
 
         # Check merits
         for merit_type, merits in MERIT_CATEGORIES.items():
@@ -739,9 +931,10 @@ class CmdSelfStat(MuxCommand):
             MAGE_BACKGROUNDS +
             TECHNOCRACY_BACKGROUNDS +
             TRADITIONS_BACKGROUNDS +
-            NEPHANDI_BACKGROUNDS +
+            NEPHANDI_BACKGROUNDS +  
             SHIFTER_BACKGROUNDS +
-            SORCERER_BACKGROUNDS
+            SORCERER_BACKGROUNDS +
+            KINAIN_BACKGROUNDS
         ):
             return 'backgrounds', 'background'
 
@@ -826,10 +1019,15 @@ class CmdSelfStat(MuxCommand):
         if self.caller.db.approved:
             self.caller.msg("|rError: Approved characters cannot use chargen commands. Please contact staff for any needed changes.|n")
             return
-            
+
         if not self.stat_name:
             self.caller.msg("|rUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
             return
+
+        # Get character's splat type and character type first
+        splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+        char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+
 
         # Get character's splat type and character type first
         splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
@@ -1098,25 +1296,6 @@ class CmdSelfStat(MuxCommand):
                 self.caller.msg(f"|gSet clan to {proper_clan}.|n")
                 return
 
-        # Special handling for Path of Enlightenment changes
-        elif self.stat_name.lower() == 'path of enlightenment':
-            splat = self.splat
-            if splat and splat.lower() == 'vampire':
-                is_valid, proper_path, error_msg = self._validate_path(self.value_change)
-                if not is_valid:
-                    self.caller.msg(error_msg)
-                    return
-                
-                # Set the path in identity/personal
-                self._initialize_stat_structure('identity', 'personal')
-                self.caller.db.stats['identity']['personal']['Path of Enlightenment'] = {'perm': proper_path, 'temp': proper_path}
-                
-                # Update path-specific stats
-                self._update_path_stats(proper_path)
-                
-                self.caller.msg(f"|gSet Path of Enlightenment to {proper_path}.|n")
-                return
-
         # When setting Changeling-specific stats
         elif self.stat_name.lower() in ['kith', 'seeming', 'seelie legacy', 'unseelie legacy', 'fae name']:
             splat = self.caller.get_stat('identity', 'personal', 'Splat', temp=False)
@@ -1206,11 +1385,23 @@ class CmdSelfStat(MuxCommand):
                 return ('identity', 'lineage')
 
         # When setting Shifter-specific stats
-        elif self.stat_name.lower() in ['breed', 'auspice', 'tribe', 'aspect']:
+        elif self.stat_name.lower() in ['breed', 'auspice', 'tribe', 'aspect', 'rank']:
             splat = self.caller.get_stat('identity', 'personal', 'Splat', temp=False)
             shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
             
             if splat and splat.lower() == 'shifter' and shifter_type:
+                # Handle Rank
+                if self.stat_name.lower() == 'rank':
+                    try:
+                        rank_value = int(self.value_change)
+                        if rank_value < 0 or rank_value > 5:
+                            self.caller.msg("|rRank must be between 0 and 5.|n")
+                            return
+                        self.value_change = rank_value
+                        return ('identity', 'lineage')
+                    except ValueError:
+                        self.caller.msg("|rRank must be a number.|n")
+                        return
                 # Breed validation
                 if self.stat_name.lower() == 'breed':
                     is_valid, matched_value, error_msg = self._validate_breed(shifter_type, self.value_change)
@@ -1414,20 +1605,33 @@ class CmdSelfStat(MuxCommand):
                 is_restricted, required_splat, error_msg = self.get_background_splat_restriction(self.stat_name)
                 if is_restricted and splat != required_splat:
                     self.caller.msg(error_msg)
-                return
+                    return
 
             # Regular stat removal handling
-            if stat.category in self.caller.db.stats and stat.stat_type in self.caller.db.stats[stat.category]:
-                if full_stat_name in self.caller.db.stats[stat.category][stat.stat_type]:
-                    del self.caller.db.stats[stat.category][stat.stat_type][full_stat_name]
-                    self.caller.msg(f"|gRemoved stat '{full_stat_name}'.|n")
-                    return
+            if stat.category in self.caller.db.stats:
+                # Special handling for secondary abilities
+                if stat.category == 'abilities' and stat.stat_type.startswith('secondary_'):
+                    if 'secondary_abilities' in self.caller.db.stats['abilities']:
+                        if full_stat_name in self.caller.db.stats['abilities']['secondary_abilities']:
+                            del self.caller.db.stats['abilities']['secondary_abilities'][full_stat_name]
+                            self.caller.msg(f"|gRemoved stat '{full_stat_name}'.|n")
+                            # Update any dependent stats after removal
+                            self._update_dependent_stats(full_stat_name, None)
+                            return
+                # Handle regular stats
+                elif stat.stat_type in self.caller.db.stats[stat.category]:
+                    if full_stat_name in self.caller.db.stats[stat.category][stat.stat_type]:
+                        del self.caller.db.stats[stat.category][stat.stat_type][full_stat_name]
+                        self.caller.msg(f"|gRemoved stat '{full_stat_name}'.|n")
+                        # Update any dependent stats after removal
+                        self._update_dependent_stats(full_stat_name, None)
+                        return
             self.caller.msg(f"|rStat '{full_stat_name}' not found.|n")
             return
 
         # Validate the stat if it's being set (not removed)
         if self.value_change != '':
-            is_valid, error_message = self.validate_stat_value(self.stat_name, self.value_change, self.category, self.stat_type)
+            is_valid, error_message, corrected_value = self.validate_stat_value(self.stat_name, self.value_change, self.category, self.stat_type)
             if not is_valid:
                 self.caller.msg(f"|r{error_message}|n")
                 return
@@ -1472,22 +1676,41 @@ class CmdSelfStat(MuxCommand):
                     char_splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
                     char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
                     
-                    # Check if character is Kinfolk
-                    if char_splat and char_splat.lower() == 'mortal+' and char_type and char_type.lower() == 'kinfolk':
-                        # Kinfolk can only take Gnosis as a merit
-                        if value_int not in [5, 6, 7]:
-                            self.caller.msg("|rKinfolk can only take Gnosis as a merit (values 5-7).|n")
-                            return
-                        self.category = 'merits'
-                        self.stat_type = 'supernatural'
-                    else:
-                        # For all other characters, Gnosis is a pool
+                    # For Shifters and Possessed, handle Gnosis as a pool
+                    if char_splat and char_splat.lower() in ['shifter', 'possessed']:
                         if value_int < 0 or value_int > 10:
                             self.caller.msg("|rGnosis pool must be between 0 and 10.|n")
                             return
                         self.category = 'pools'
                         self.stat_type = 'dual'
-                    new_value = value_int
+                        # Set the pool value
+                        self.caller.set_stat('pools', 'dual', 'Gnosis', value_int, temp=False)
+                        self.caller.set_stat('pools', 'dual', 'Gnosis', value_int, temp=True)
+                        self.caller.msg(f"|gSet Gnosis pool to {value_int}.|n")
+                        return
+                    
+                    # For Kinfolk, handle Gnosis as a merit
+                    elif char_splat and char_splat.lower() == 'mortal+' and char_type and char_type.lower() == 'kinfolk':
+                        if value_int not in [5, 6, 7]:
+                            self.caller.msg("|rKinfolk can only take Gnosis as a merit (values 5-7).|n")
+                            return
+                        self.category = 'merits'
+                        self.stat_type = 'supernatural'
+                        # Calculate and set Gnosis pool (Merit rating - 4 = Gnosis pool)
+                        gnosis_pool = value_int - 4
+                        # Set the merit first
+                        self.caller.set_stat('merits', 'supernatural', 'Gnosis', value_int, temp=False)
+                        self.caller.set_stat('merits', 'supernatural', 'Gnosis', value_int, temp=True)
+                        # Then set the pool
+                        self.caller.set_stat('pools', 'dual', 'Gnosis', gnosis_pool, temp=False)
+                        self.caller.set_stat('pools', 'dual', 'Gnosis', gnosis_pool, temp=True)
+                        self.caller.msg(f"|gSet Gnosis merit to {value_int} and Gnosis pool to {gnosis_pool}.|n")
+                        return
+                    
+                    # For other splats, don't allow setting Gnosis
+                    else:
+                        self.caller.msg("|rOnly Shifters, Possessed, and Kinfolk characters can have Gnosis.|n")
+                        return
                 except ValueError:
                     self.caller.msg("|rGnosis value must be a number.|n")
                     return
@@ -1686,7 +1909,14 @@ class CmdSelfStat(MuxCommand):
             
         if stat_type and stat_type not in self.caller.db.stats[category]:
             self.caller.db.stats[category][stat_type] = {}
-
+        
+        # Special handling for secondary abilities
+        if category == 'secondary_abilities':
+            if stat_type not in self.caller.db.stats[category]:
+                self.caller.db.stats[category][stat_type] = {}
+        else:
+            if stat_type not in self.caller.db.stats[category]:
+                self.caller.db.stats[category][stat_type] = {}
     def _update_dependent_stats(self, stat_name: str, value: any) -> None:
         """
         Update any stats that depend on the changed stat.
@@ -1798,15 +2028,30 @@ class CmdSelfStat(MuxCommand):
             elif stat_name in KNOWLEDGES:
                 category = 'abilities'
                 stat_type = 'knowledge'
-            elif stat_name in SECONDARY_TALENTS:
-                category = 'abilities'
-                stat_type = 'secondary_abilities'
-            elif stat_name in SECONDARY_SKILLS:
-                category = 'abilities'
-                stat_type = 'secondary_abilities'
-            elif stat_name in SECONDARY_KNOWLEDGES:
-                category = 'abilities'
-                stat_type = 'secondary_abilities'
+            elif stat_name.title() in SECONDARY_TALENTS:
+                category = 'secondary_abilities'
+                stat_type = 'secondary_talent'
+                # Initialize secondary_abilities structure if needed
+                if 'secondary_abilities' not in self.caller.db.stats['abilities']:
+                    self.caller.db.stats['abilities']['secondary_abilities'] = {}
+                # Use proper case from the constant
+                stat_name = next(name for name in SECONDARY_TALENTS if name.lower() == stat_name.lower())
+            elif stat_name.title() in SECONDARY_SKILLS:
+                category = 'secondary_abilities'
+                stat_type = 'secondary_skill'
+                # Initialize secondary_abilities structure if needed
+                if 'secondary_abilities' not in self.caller.db.stats['abilities']:
+                    self.caller.db.stats['abilities']['secondary_abilities'] = {}
+                # Use proper case from the constant
+                stat_name = next(name for name in SECONDARY_SKILLS if name.lower() == stat_name.lower())
+            elif stat_name.title() in SECONDARY_KNOWLEDGES:
+                category = 'secondary_abilities'
+                stat_type = 'secondary_knowledge'
+                # Initialize secondary_abilities structure if needed
+                if 'secondary_abilities' not in self.caller.db.stats['abilities']:
+                    self.caller.db.stats['abilities']['secondary_abilities'] = {}
+                # Use proper case from the constant
+                stat_name = next(name for name in SECONDARY_KNOWLEDGES if name.lower() == stat_name.lower())
 
             # Special handling for virtues
             elif stat_name.title() in ['Conscience', 'Self-Control', 'Courage', 'Conviction', 'Instinct']:
@@ -1818,7 +2063,11 @@ class CmdSelfStat(MuxCommand):
                         self.caller.msg(f"|r{stat_name} must be between 1 and 5.|n")
                         return
                         
-                    # Update Path rating when virtues change
+                    # First store the new virtue value
+                    self.caller.set_stat('virtues', 'moral', stat_name.title(), virtue_value, temp=False)
+                    self.caller.set_stat('virtues', 'moral', stat_name.title(), virtue_value, temp=True)
+                        
+                    # Then update Path rating when virtues change
                     if stat_name.title() in ['Conscience', 'Self-Control', 'Conviction', 'Instinct']:
                         path_rating = calculate_path(self.caller)
                         self.caller.set_stat('pools', 'moral', 'Path', path_rating, temp=False)
@@ -1832,7 +2081,7 @@ class CmdSelfStat(MuxCommand):
                         if splat and splat.lower() in ['vampire', 'mortal', 'possessed', 'mortal+']:
                             self.caller.set_stat('pools', 'dual', 'Willpower', virtue_value, temp=False)
                             self.caller.set_stat('pools', 'dual', 'Willpower', virtue_value, temp=True)
-                            self.caller.msg(f"|gWillpower increased to match Courage: {virtue_value}|n")
+                            self.caller.msg(f"|gWillpower set to match Courage: {virtue_value}|n")
                             
                 except ValueError:
                     self.caller.msg(f"|r{stat_name} must be a number.|n")
@@ -1931,3 +2180,53 @@ class CmdSelfStat(MuxCommand):
         except Exception as e:
             self.caller.msg(f"|rError setting stat: {str(e)}|n")
             return
+
+        # Special handling for Path of Enlightenment and Enlightenment
+        if self.stat_name.lower() in ['path of enlightenment', 'enlightenment']:
+            if splat == 'Vampire' or (splat == 'Mortal+' and char_type == 'Ghoul'):
+                # Always use Path of Enlightenment in identity.personal
+                self.stat_name = 'Path of Enlightenment'
+                self.category = 'identity'
+                self.stat_type = 'personal'
+                
+                # Validate the path value
+                from world.wod20th.utils.vampire_utils import validate_vampire_path
+                is_valid, error_msg = validate_vampire_path(self.value_change)
+                if not is_valid:
+                    self.caller.msg(f"|r{error_msg}|n")
+                    return
+                
+                # Remove any existing Enlightenment entry in identity.lineage
+                if 'Enlightenment' in self.caller.db.stats.get('identity', {}).get('lineage', {}):
+                    del self.caller.db.stats['identity']['lineage']['Enlightenment']
+                
+                # Set the path and update virtues
+                self.caller.set_stat('identity', 'personal', 'Path of Enlightenment', self.value_change, temp=False)
+                self.caller.set_stat('identity', 'personal', 'Path of Enlightenment', self.value_change, temp=True)
+                
+                # Update virtues based on the new path
+                from world.wod20th.utils.vampire_utils import update_vampire_virtues_on_path_change
+                update_vampire_virtues_on_path_change(self.caller, self.value_change)
+                
+                self.caller.msg(f"|gSet Path of Enlightenment to {self.value_change}.|n")
+                return
+            elif splat == 'Mage':
+                affiliation = self.caller.get_stat('identity', 'lineage', 'Affiliation', temp=False)
+                if affiliation == 'Technocracy':
+                    try:
+                        val = int(self.value_change)
+                        if val < 1 or val > 5:
+                            self.caller.msg("|rEnlightenment must be between 1 and 5 for Technocracy mages.|n")
+                            return
+                        # Set in pools/advantage
+                        self.category = 'pools'
+                        self.stat_type = 'advantage'
+                        self.stat_name = 'Enlightenment'
+                    except ValueError:
+                        self.caller.msg("|rEnlightenment must be a number.|n")
+                        return
+                else:
+                    self.caller.msg("|rOnly Technocracy mages can have Enlightenment.|n")
+                    return
+            else:
+                self.caller.msg("|rOnly Technocracy mages, Vampires, and Ghouls can have Enlightenment.|n")

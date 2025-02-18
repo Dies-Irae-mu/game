@@ -23,7 +23,7 @@ from world.wod20th.utils.vampire_utils import get_clan_disciplines, initialize_v
 from world.wod20th.utils.mage_utils import initialize_mage_stats
 from world.wod20th.utils.shifter_utils import initialize_shifter_type, SHIFTER_IDENTITY_STATS
 from world.wod20th.utils.changeling_utils import initialize_changeling_stats, get_changeling_identity_stats
-from world.wod20th.utils.mortalplus_utils import initialize_mortalplus_stats
+from world.wod20th.utils.mortalplus_utils import initialize_mortalplus_stats, get_mortalplus_identity_stats
 from world.wod20th.utils.possessed_utils import initialize_possessed_stats
 from world.wod20th.utils.companion_utils import initialize_companion_stats
 
@@ -234,6 +234,7 @@ class CmdSheet(MuxCommand):
         display_stat = 'Subfaction' if stat == 'Traditions Subfaction' else display_stat
         display_stat = 'Type' if stat == 'possessed_type' else display_stat
         display_stat = 'Type' if stat == 'companion_type' else display_stat
+        display_stat = 'Enlightenment' if stat == 'Path of Enlightenment' else display_stat
 
         stat_str = f" {display_stat}"
 
@@ -260,7 +261,7 @@ class CmdSheet(MuxCommand):
                          'Tradition', 'Convention', 'Affiliation', 'Phyla', 'Traditions Subfaction', 'Methodology',
                          'Spirit Type', 'Spirit Name', 'Domitor', 'Society', 'Order', 'Coven', 'Cabal', 'Plague', 'Crown', 
                          'Stream', 'Kitsune Path', 'Varna', 'Deed Name', 'Motivation', 'Possessed Type', 'Date of Possession',
-                         'Companion Type', 'Patron Totem', 'Pack', 'Rank', 'Affinity Realm', 'Affinity Realm', 'Fae Court', 'Fae Name']:
+                         'Companion Type', 'Patron Totem', 'Pack', 'Affinity Realm', 'Fae Court', 'Fae Name']:
                 value_str = 'None'
             else:
                 value_str = ''
@@ -281,11 +282,18 @@ class CmdSheet(MuxCommand):
             left_stat = all_stats[i]
             right_stat = all_stats[i+1] if i+1 < len(all_stats) else None
 
-            left_value = self.get_stat_value(character, left_stat)
+            # Special handling for Path of Enlightenment
+            if left_stat == 'Path of Enlightenment':
+                left_value = character.get_stat('identity', 'personal', left_stat, temp=False)
+            else:
+                left_value = self.get_stat_value(character, left_stat)
             left_formatted = self.format_stat_with_dots(left_stat, left_value)
 
             if right_stat:
-                right_value = self.get_stat_value(character, right_stat)
+                if right_stat == 'Path of Enlightenment':
+                    right_value = character.get_stat('identity', 'personal', right_stat, temp=False)
+                else:
+                    right_value = self.get_stat_value(character, right_stat)
                 right_formatted = self.format_stat_with_dots(right_stat, right_value)
                 string += f"{left_formatted}  {right_formatted}\n"
             else:
@@ -296,9 +304,14 @@ class CmdSheet(MuxCommand):
     def get_identity_stats(self, character, splat):
         """Get the list of identity stats for a character based on their splat."""
         from world.wod20th.utils.stat_mappings import get_identity_stats
+        from world.wod20th.utils.mortalplus_utils import get_mortalplus_identity_stats
         
         # Get character type (e.g., Garou for Shifter)
         char_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+        
+        # Special handling for Mortal+ characters
+        if splat == 'Mortal+':
+            return get_mortalplus_identity_stats(char_type)
         
         # Get tribe for Garou characters
         tribe = None
@@ -349,9 +362,10 @@ class CmdSheet(MuxCommand):
                 if attr == 'Appearance' and (is_zero_appearance_clan or is_zero_appearance_form):
                     row_string += format_stat(attr, 0, default=0, tempvalue=0, allow_zero=True, width=25)
                 else:
-                    value = character.db.stats.get('attributes', {}).get(category, {}).get(attr, {}).get('perm', 1)
-                    temp_value = character.db.stats.get('attributes', {}).get(category, {}).get(attr, {}).get('temp', value)
-                    row_string += format_stat(attr, value, default=1, tempvalue=temp_value, width=25)
+                    # Get both permanent and temporary values
+                    perm_value = character.db.stats.get('attributes', {}).get(category, {}).get(attr, {}).get('perm', 1)
+                    temp_value = character.db.stats.get('attributes', {}).get(category, {}).get(attr, {}).get('temp', perm_value)
+                    row_string += format_stat(attr, perm_value, default=1, tempvalue=temp_value, width=25)
                 
                 # Add padding for mental attributes
                 if category == 'mental':
@@ -1046,16 +1060,16 @@ class CmdSheet(MuxCommand):
             imbalance_temp = character.get_stat('pools', 'other', 'Willpower Imbalance', temp=True)
             self.virtues_list.append(format_stat('Willpower Imbalance', imbalance or 0, width=25, tempvalue=imbalance_temp))
 
-        # Handle standard virtues for Mortal and Mortal+
-        elif splat in ['Mortal', 'Mortal+', 'Possessed']:
+        # Handle standard virtues for Mortal and Mortal+ (except Ghouls)
+        elif splat in ['Mortal', 'Possessed'] or (splat == 'Mortal+' and char_type != 'Ghoul'):
             virtues = ['Conscience', 'Self-Control', 'Courage']
             for virtue in virtues:
                 value = character.get_stat('virtues', 'moral', virtue, temp=False) or 0
                 temp_value = character.get_stat('virtues', 'moral', virtue, temp=True)
                 self.virtues_list.append(format_stat(virtue, value, width=25, tempvalue=temp_value))
 
-        # Handle Vampire virtues and paths
-        elif splat == 'Vampire':
+        # Handle Vampire and Ghoul virtues and paths
+        elif splat == 'Vampire' or (splat == 'Mortal+' and char_type == 'Ghoul'):
             # Get the character's path
             path = character.get_stat('identity', 'personal', 'Path of Enlightenment', temp=False)
             
@@ -1140,6 +1154,12 @@ class CmdSheet(MuxCommand):
         if stat_name in ['Nunnehi Seeming', 'Nunnehi Camp', 'Nunnehi Family', 'Nunnehi Totem', 
                         'Summer Legacy', 'Winter Legacy', 'Phyla']:
             value = character.get_stat('identity', 'lineage', stat_name, temp=False)
+            if value:
+                return value
+            
+        # Special handling for Path of Enlightenment
+        if stat_name == 'Path of Enlightenment':
+            value = character.get_stat('identity', 'personal', stat_name, temp=False)
             if value:
                 return value
             
@@ -1249,6 +1269,13 @@ class CmdSheet(MuxCommand):
                 banality = self.format_pool_value(character, 'Banality')
                 self.pools_list.append(format_stat('Glamour', glamour, width=25))
                 self.pools_list.append(format_stat('Banality', banality, width=25))
+            elif mortalplus_type == 'Kinfolk':
+                # Check if they have the Gnosis merit
+                gnosis_merit = character.get_stat('merits', 'supernatural', 'Gnosis', temp=False)
+                if gnosis_merit:
+                    # Display Gnosis pool
+                    gnosis = self.format_pool_value(character, 'Gnosis')
+                    self.pools_list.append(format_stat('Gnosis', gnosis, width=25))
 
         # Add Banality for any character that has it, except Changelings and Kinain who already have it
         # This should be added after other pools since it's a universal trait
