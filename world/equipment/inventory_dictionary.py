@@ -719,5 +719,6 @@ inventory_dictionary = {
         clip=1,
         conceal="None",
         resources=5,
-    )
+    ),
+    
 }

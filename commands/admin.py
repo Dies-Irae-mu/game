@@ -107,7 +107,7 @@ class CmdUnapprove(AdminCommand):
 
 class CmdMassUnapprove(AdminCommand):
     """
-    Set all connected characters to unapproved status.
+    Set all characters (both online and offline) to unapproved status.
 
     Usage:
       +massunapprove
@@ -115,6 +115,7 @@ class CmdMassUnapprove(AdminCommand):
 
     This command will list all characters that will be affected when run
     without the /confirm switch. Use /confirm to actually make the changes.
+    This command affects ALL characters in the game, both online and offline.
     """
 
     key = "+massunapprove"
@@ -126,35 +127,40 @@ class CmdMassUnapprove(AdminCommand):
         caller = self.caller
         confirm = "confirm" in self.switches
 
-        # Get all connected characters
-        from evennia.server.sessionhandler import SESSIONS
-        connected_chars = [session.get_puppet() for session in SESSIONS.get_sessions() 
-                         if session.get_puppet()]
+        # Get all characters, both online and offline
+        from evennia.utils.search import search_object
+        all_chars = search_object("", typeclass='typeclasses.characters.Character')
         
-        if not connected_chars:
-            caller.msg("No connected characters found.")
+        # Filter to only get approved characters
+        approved_chars = [char for char in all_chars 
+                        if char.db.approved or char.tags.has("approved", category="approval")]
+        
+        if not approved_chars:
+            caller.msg("No approved characters found.")
             return
 
         if not confirm:
             # Just show what would be affected
             msg = "The following characters would be set to unapproved:\n"
-            for char in connected_chars:
-                msg += f"- {char.name} (currently {'approved' if char.db.approved else 'unapproved'})\n"
+            for char in approved_chars:
+                online_status = "online" if char.has_account else "offline"
+                msg += f"- {char.name} ({online_status})\n"
+            msg += f"\nTotal characters to be affected: {len(approved_chars)}"
             msg += "\nUse +massunapprove/confirm to execute the changes."
             caller.msg(msg)
             return
 
         # Actually make the changes
         count = 0
-        for char in connected_chars:
-            if char.db.approved:
-                char.db.approved = False
-                char.tags.add("unapproved", category="approval")
-                if char.tags.has("approved", category="approval"):
-                    char.tags.remove("approved", category="approval")
+        for char in approved_chars:
+            char.db.approved = False
+            char.tags.add("unapproved", category="approval")
+            if char.tags.has("approved", category="approval"):
+                char.tags.remove("approved", category="approval")
+            if char.has_account:  # Only message online characters
                 char.msg("Your character has been set to unapproved status.")
-                count += 1
-                logger.log_info(f"{char.name} has been mass-unapproved by {caller.name}")
+            count += 1
+            logger.log_info(f"{char.name} has been mass-unapproved by {caller.name}")
 
         caller.msg(f"Successfully set {count} character(s) to unapproved status.")
 

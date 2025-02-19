@@ -7,7 +7,7 @@ from world.wod20th.utils.stat_mappings import ARTS, REALMS
 from typing import Dict, List, Set, Tuple
 
 # Valid seemings
-SEEMING = {'Childing', 'Wilder', 'Grump'}
+SEEMING = {'Childling', 'Wilder', 'Grump'}
 
 FAE_COURTS = {'Seelie Court', 'Unseelie Court', 'Shadow Court'}
 
@@ -152,6 +152,60 @@ def get_changeling_identity_stats(kith: str = None) -> List[str]:
         'Unseelie Legacy'
     ]
 
+def initialize_glamour(seeming):
+    """Calculate initial Glamour based on seeming."""
+    seeming = seeming.lower() if seeming else ''
+    if seeming == 'childling':
+        return 5  # Base 4 + 1 for Childling
+    elif seeming == 'wilder':
+        return 4  # Base 4
+    elif seeming == 'grump':
+        return 4  # Base 4
+    return 4  # Default value is 4
+
+def adjust_pools_for_seeming(character, old_seeming, new_seeming):
+    """
+    Adjust Willpower and Glamour pools based on Seeming changes.
+    
+    Args:
+        character: The character being modified
+        old_seeming: The character's previous seeming (or None)
+        new_seeming: The new seeming being set
+    """
+    # Handle Willpower adjustments for Grump
+    current_willpower = character.get_stat('pools', 'dual', 'Willpower', temp=False) or 4
+    
+    # Remove Grump bonus if changing from Grump to something else
+    if old_seeming and old_seeming.lower() == 'grump' and new_seeming.lower() != 'grump':
+        # Only reduce if we previously added the bonus
+        if current_willpower == 5:
+            character.set_stat('pools', 'dual', 'Willpower', 4, temp=False)
+            character.set_stat('pools', 'dual', 'Willpower', 4, temp=True)
+            character.msg("|yYour Willpower is set to base 4 as you are no longer a Grump.|n")
+    
+    # Add Grump bonus if changing to Grump
+    elif new_seeming.lower() == 'grump' and (not old_seeming or old_seeming.lower() != 'grump'):
+        character.set_stat('pools', 'dual', 'Willpower', 5, temp=False)
+        character.set_stat('pools', 'dual', 'Willpower', 5, temp=True)
+        character.msg("|gYour Willpower is set to 5 due to your Grump seeming.|n")
+    
+    # Handle Glamour adjustments for Childling
+    current_glamour = character.get_stat('pools', 'dual', 'Glamour', temp=False) or 4
+    
+    # Remove Childling bonus if changing from Childling to something else
+    if old_seeming and old_seeming.lower() == 'childling' and new_seeming.lower() != 'childling':
+        # Only reduce if we previously added the bonus
+        if current_glamour == 5:
+            character.set_stat('pools', 'dual', 'Glamour', 4, temp=False)
+            character.set_stat('pools', 'dual', 'Glamour', 4, temp=True)
+            character.msg("|yYour Glamour is set to base 4 as you are no longer a Childling.|n")
+    
+    # Add Childling bonus if changing to Childling
+    elif new_seeming.lower() == 'childling' and (not old_seeming or old_seeming.lower() != 'childling'):
+        character.set_stat('pools', 'dual', 'Glamour', 5, temp=False)
+        character.set_stat('pools', 'dual', 'Glamour', 5, temp=True)
+        character.msg("|gYour Glamour is set to 5 due to your Childling seeming.|n")
+
 def initialize_changeling_stats(character, kith):
     """Initialize specific stats for a changeling character."""
     # Initialize basic stats structure
@@ -189,8 +243,8 @@ def initialize_changeling_stats(character, kith):
         character.db.stats['pools']['other'] = {}
     
     # Set base pools
-    character.db.stats['pools']['dual']['Willpower'] = {'perm': 3, 'temp': 3}
-    character.db.stats['pools']['dual']['Glamour'] = {'perm': 3, 'temp': 3}
+    character.db.stats['pools']['dual']['Willpower'] = {'perm': 4, 'temp': 4}
+    character.db.stats['pools']['dual']['Glamour'] = {'perm': 4, 'temp': 4}
     
     # Set Nightmare and Willpower Imbalance in pools/other
     character.db.stats['pools']['other']['Nightmare'] = {'perm': 0, 'temp': 0}
@@ -211,6 +265,9 @@ def initialize_changeling_stats(character, kith):
     
     # Set kith if provided
     if kith:
+        # Store old seeming for pool adjustments
+        old_seeming = character.get_stat('identity', 'lineage', 'Seeming', temp=False)
+        
         character.set_stat('identity', 'lineage', 'Kith', kith, temp=False)
         character.set_stat('identity', 'lineage', 'Kith', kith, temp=True)
         
@@ -285,21 +342,15 @@ def initialize_changeling_stats(character, kith):
     character.set_stat('pools', 'dual', 'Glamour', glamour, temp=False)
     character.set_stat('pools', 'dual', 'Glamour', glamour, temp=True)
     
+    # Adjust pools based on seeming changes
+    new_seeming = character.get_stat('identity', 'lineage', 'Seeming', temp=False)
+    if new_seeming:
+        adjust_pools_for_seeming(character, old_seeming, new_seeming)
+    
     if kith.lower() == 'inanimae':
         initialize_inanimae_stats(character)
     else:
         initialize_standard_changeling_stats(character)
-
-def initialize_glamour(seeming):
-    """Calculate initial Glamour based on seeming."""
-    seeming = seeming.lower() if seeming else ''
-    if seeming == 'childing':
-        return 5
-    elif seeming == 'wilder':
-        return 4
-    elif seeming == 'grump':
-        return 3
-    return 3  # Default value
 
 def initialize_standard_changeling_stats(character):
     """Initialize stats for standard changelings."""
@@ -374,7 +425,13 @@ def validate_changeling_stats(character, stat_name: str, value: str, category: s
         
     # Validate seeming
     if stat_name == 'seeming':
-        return validate_changeling_seeming(character, value)
+        is_valid, error_msg = validate_changeling_seeming(character, value)
+        if is_valid:
+            # Store old seeming for pool adjustments
+            old_seeming = character.get_stat('identity', 'lineage', 'Seeming', temp=False)
+            # After validation passes, adjust pools based on seeming change
+            adjust_pools_for_seeming(character, old_seeming, value)
+        return is_valid, error_msg
         
     # Validate house (only for non-Nunnehi)
     if stat_name == 'house' and kith != 'Nunnehi':
@@ -447,7 +504,7 @@ def validate_changeling_seeming(character, value: str) -> tuple[bool, str]:
     if kith == 'Nunnehi':
         valid_seemings = ["Youngling", "Brave", "Elder"]
     else:
-        valid_seemings = ["Childing", "Wilder", "Grump"]
+        valid_seemings = ["Childling", "Wilder", "Grump"]
     
     if value.title() not in valid_seemings:
         return False, f"Invalid seeming. Valid seemings are: {', '.join(sorted(valid_seemings))}"

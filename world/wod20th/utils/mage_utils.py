@@ -229,8 +229,8 @@ def initialize_mage_stats(character, affiliation, tradition=None, convention=Non
     if affiliation.lower() == 'technocracy':
         character.set_stat('pools', 'advantage', 'Enlightenment', 1, temp=False)
         character.set_stat('pools', 'advantage', 'Enlightenment', 1, temp=True)
-        character.delete_stat('pools', 'advantage', 'Arete', temp=False)
-        character.delete_stat('pools', 'advantage', 'Arete', temp=True)
+        character.del_stat('pools', 'advantage', 'Arete', temp=False)
+        character.del_stat('pools', 'advantage', 'Arete', temp=True)
         
     # Set affiliation-specific stats
     if affiliation.lower() == 'traditions' and tradition:
@@ -257,7 +257,8 @@ def initialize_convention_stats(character, convention):
 def initialize_nephandi_stats(character, nephandi_faction):
     """Initialize Nephandi-specific stats."""
     # Additional Nephandi-specific initialization can be added here
-    pass 
+    if nephandi_faction in NEPHANDI_FACTION:
+        character.db.stats.setdefault('identity', {}).setdefault('lineage', {})['Nephandi Faction'] = nephandi_faction
 
 def get_tradition_subfactions(tradition: str) -> List[str]:
     """Get the subfactions for a specific tradition."""

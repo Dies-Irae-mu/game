@@ -42,7 +42,7 @@ class CmdBBS(default_cmds.MuxCommand):
       +bbs/grant staff = Bob/readonly
     """
     key = "+bbs"
-    aliases = ["@bbs", "bbs"]
+    aliases = ["bbs", "@bbs", "bb", "+bb"]
     locks = "cmd:all()"
     help_category = "Event & Bulletin Board"
 
@@ -72,6 +72,8 @@ class CmdBBS(default_cmds.MuxCommand):
                 self.do_edit()
             elif switch == "delete":
                 self.do_delete()
+            elif switch == "scan":
+                self.do_scan()
             
             # Admin/Builder commands
             elif switch in ["create", "lock", "pin", "unpin", "grant", "revoke", "deleteboard"]:
@@ -337,6 +339,82 @@ class CmdBBS(default_cmds.MuxCommand):
         result = controller.delete_board(board_name)
         self.caller.msg(result)
 
+    def do_scan(self):
+        """Handle the scan switch - show unread posts on all accessible boards."""
+        controller = get_or_create_bbs_controller()
+        boards = controller.db.boards
+        if not boards:
+            self.caller.msg("No boards available.")
+            return
+
+        # Count total unread posts
+        total_unread = 0
+        unread_boards = []
+
+        # Sort boards by ID
+        sorted_boards = sorted(boards.items(), key=lambda x: x[0])
+
+        for board_id, board in sorted_boards:
+            if not controller.has_access(board_id, self.caller.key):
+                continue
+
+            unread_posts = controller.get_unread_posts(board_id, self.caller.key)
+            if not unread_posts:
+                continue
+
+            total_unread += len(unread_posts)
+            unread_boards.append((board['name'], len(unread_posts)))
+
+        # If this is a login notification (no explicit command), show concise output
+        if not hasattr(self, 'session') or not self.session:
+            if total_unread > 0:
+                board_summary = ", ".join(f"{name}: {count}" for name, count in unread_boards)
+                self.caller.msg(f"|wYou have {total_unread} unread post{'s' if total_unread != 1 else ''} "
+                              f"on the bulletin board ({board_summary}).|n")
+            return
+
+        # Otherwise show detailed scan output
+        # Table Header
+        output = []
+        output.append("-" * 78)
+        output.append("Unread Postings on the Global Bulletin Board")
+        output.append("-" * 78)
+
+        for board_id, board in sorted_boards:
+            if not controller.has_access(board_id, self.caller.key):
+                continue
+
+            unread_posts = controller.get_unread_posts(board_id, self.caller.key)
+            if not unread_posts:
+                continue
+
+            # Format unread posts numbers
+            unread_str = ", ".join(str(x) for x in unread_posts)
+            
+            # Get board access type indicators
+            access_type = ""
+            if not board['public']:
+                access_type = "*"  # restricted
+            elif not controller.has_write_access(board_id, self.caller.key):
+                if board['public']:
+                    access_type = "-"  # read only
+                else:
+                    access_type = "(-)"  # read only but can write
+
+            # Format board name with access type
+            board_name = f"{board['name']} {access_type}"
+            
+            output.append(f"{board_name} (#{board_id}): {len(unread_posts)} unread ({unread_str})")
+
+        # Add footer with capacity information
+        output.append("-" * 78)
+        if total_unread > 0:
+            capacity = (total_unread / sum(len(b['posts']) for b in boards.values())) * 100
+            output.append(f"{capacity:.1f}% of posts available are unread.")
+        output.append("-" * 78)
+
+        self.caller.msg("\n".join(output))
+
     # Keep the existing list_boards, list_posts, and read_post methods
     def list_boards(self, controller):
         """List all available boards."""
@@ -419,6 +497,9 @@ class CmdBBS(default_cmds.MuxCommand):
             return
         post = posts[post_number - 1]
         edit_info = f"(edited on {post['edited_at']})" if post['edited_at'] else ""
+
+        # Mark the post as read
+        controller.mark_post_read(board_ref, post_number - 1, self.caller.key)
 
         self.caller.msg(f"{'-'*40}")
         self.caller.msg(f"Title: {post['title']}")

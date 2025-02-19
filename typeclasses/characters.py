@@ -97,6 +97,70 @@ class Character(DefaultCharacter):
                 self.db.prelogout_location = self.location
                 self.location = None
 
+    def at_post_puppet(self, **kwargs):
+        """
+        Called just after puppeting has been completed and all
+        Account<->Object links have been established.
+        """
+        # Send connection message to room
+        if self.location:
+            def message(obj, from_obj):
+                obj.msg(
+                    "{name} has connected.".format(
+                        name=self.get_display_name(obj),
+                    ),
+                    from_obj=from_obj,
+                )
+            self.location.for_contents(message, exclude=[self], from_obj=self)
+
+            # Show room description
+            self.msg((self.at_look(self.location)))
+
+        # Display login notifications
+        self.display_login_notifications()
+
+    def display_login_notifications(self):
+        """Display notifications for unread BBS posts, mail, and jobs."""
+        # Check for unread BBS posts
+        from world.wod20th.utils.bbs_utils import get_or_create_bbs_controller
+        controller = get_or_create_bbs_controller()
+        
+        # Run bbs/scan silently (capture output)
+        from commands.bbs.bbs_all_commands import CmdBBS
+        cmd = CmdBBS()
+        cmd.caller = self
+        cmd.args = ""
+        cmd.switches = ["scan"]
+        cmd.func()
+
+        # Check for unread mail
+        from evennia.comms.models import Msg
+        if self.account:
+            # Get mail messages that are tagged as 'new'
+            unread_mail = Msg.objects.get_by_tag(category="mail").filter(
+                db_receivers_accounts=self.account,
+                db_tags__db_key="new"
+            ).count()
+            
+            if unread_mail > 0:
+                self.msg(f"|wYou have {unread_mail} new mail message{'s' if unread_mail != 1 else ''}.|n")
+
+        # Check for job updates
+        from world.jobs.models import Job
+        if self.account:
+            # Get jobs where the character is requester or participant
+            jobs = Job.objects.filter(
+                models.Q(requester=self.account) |
+                models.Q(participants=self.account),
+                status__in=['open', 'claimed']
+            )
+            
+            # Count jobs with updates since last view
+            updated_jobs = sum(1 for job in jobs if job.is_updated_since_last_view(self.account))
+
+            if updated_jobs > 0:
+                self.msg(f"|wYou have {updated_jobs} job{'s' if updated_jobs != 1 else ''} with new activity.|n")
+
     @lazy_property
     def notes(self):
         return Note.objects.filter(character=self)

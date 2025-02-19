@@ -141,25 +141,6 @@ class CmdSubmit(MuxCommand):
         except Exception as e:
             caller.msg("|rError submitting character: {0}|n".format(e))
 
-def node_select_ability_category(caller):
-    text = "Select priority for ability categories (Primary: 13 points, Secondary: 9 points, Tertiary: 5 points)"
-    remaining_categories = [cat for cat in ABILITY_CATEGORIES if cat not in caller.db.chargen.get('ability_order', [])]
-    
-    if not remaining_categories:
-        return "node_distribute_ability_points"
-        
-    options = [{"key": str(i+1), "desc": category, "goto": (_set_ability_category, {"category": category})} 
-               for i, category in enumerate(remaining_categories)]
-    return text, options
-
-def _set_ability_category(caller, raw_string, **kwargs):
-    category = kwargs.get("category")
-    if 'ability_order' not in caller.db.chargen:
-        caller.db.chargen['ability_order'] = []
-    caller.db.chargen['ability_order'].append(category)
-    caller.msg(f"Added {category} to ability priority order")
-    return "node_abilities"
-
 def setup_mortalplus_character(character, mortalplus_type):
     """
     Set up initial stats and powers for Mortal+ characters
@@ -178,19 +159,77 @@ def setup_mortalplus_character(character, mortalplus_type):
     # Special handling for each type
     if mortalplus_type == 'Ghoul':
         # Initialize Blood pool
-        character.set_stat('pools', 'temporary', 'Blood', {'perm': 1, 'temp': 1})
+        character.set_stat('pools', 'dual', 'Blood', 3, temp=False)
+        character.set_stat('pools', 'dual', 'Blood', 3, temp=True)
     
     elif mortalplus_type == 'Kinfolk':
         # Kinfolk start with no special powers - they're merit-gated
         pass
     
     elif mortalplus_type == 'Kinain':
-        # Initialize Glamour pool based on Fae Blood Merit
-        merits = character.db.stats.get('merits', {}).get('merit', {})
-        fae_blood = next((value.get('perm', 0) for merit, value in merits.items() 
-                         if merit.lower() == 'fae blood'), 0)
-        if fae_blood:
-            max_glamour = fae_blood // 2
-            character.set_stat('pools', 'temporary', 'Glamour', 
-                             {'perm': max_glamour, 'temp': max_glamour})
+        # Initialize Glamour pool
+        character.set_stat('pools', 'dual', 'Glamour', 2, temp=False)
+        character.set_stat('pools', 'dual', 'Glamour', 2, temp=True)
+
+class CmdRename(MuxCommand):
+    """
+    Change your character's name during character generation.
+
+    Usage:
+      +rename <new name>
+
+    This command allows you to change your character's name before approval.
+    Once your character is approved, you will need staff assistance to change your name.
+
+    The new name must be appropriate for the game's setting and follow naming conventions.
+    Names should be properly capitalized and not contain special characters.
+    """
+
+    key = "+rename"
+    aliases = ["rename"]
+    locks = "cmd:all()"
+    help_category = "Chargen & Character Info"
+
+    def func(self):
+        """Execute the command."""
+        caller = self.caller
+
+        # Check if character is approved
+        if caller.db.approved:
+            caller.msg("|rError: Approved characters cannot use chargen commands. Please contact staff for any needed changes.|n")
+            return
+
+        if not self.args:
+            caller.msg("Usage: +rename <new name>")
+            return
+
+        new_name = self.args.strip()
+
+        # Basic name validation
+        if len(new_name) < 2:
+            caller.msg("|rError: Name must be at least 2 characters long.|n")
+            return
+
+        if len(new_name) > 30:
+            caller.msg("|rError: Name cannot be longer than 30 characters.|n")
+            return
+
+        if not new_name.replace(" ", "").isalnum():
+            caller.msg("|rError: Name can only contain letters, numbers, and spaces.|n")
+            return
+
+        # Store the old name for the message
+        old_name = caller.name
+
+        # Change the name
+        caller.db.original_name = new_name  # Store original name
+        caller.name = new_name
+        caller.db.display_name = new_name  # Update display name
+        
+        # Update any existing aliases to include the new name
+        if old_name in caller.aliases.all():
+            caller.aliases.remove(old_name)
+        caller.aliases.add(new_name)
+
+        caller.msg(f"|gYour name has been changed from {old_name} to {new_name}.|n")
 

@@ -5,6 +5,7 @@ from django.utils import timezone
 from evennia.utils.idmapper.models import SharedMemoryModel
 from django.utils.functional import lazy
 from django.db.models import Max
+from evennia.accounts.models import AccountDB
 
 # Remove this line:
 # from evennia.utils import create
@@ -28,6 +29,7 @@ class Job(SharedMemoryModel):
     due_date = models.DateTimeField(null=True, blank=True)
     attached_objects = models.ManyToManyField(ObjectDB, through='JobAttachment', related_name="attached_jobs", blank=True)
     template = models.ForeignKey('JobTemplate', on_delete=models.SET_NULL, null=True, blank=True, related_name='jobs')
+    last_viewed = models.JSONField(default=dict)  # Store last viewed timestamps per user
 
     class Meta:
         app_label = 'jobs'
@@ -120,6 +122,38 @@ Comments:
             max_id = Job.objects.aggregate(Max('id'))['id__max'] or 0
             self.id = max_id + 1
         super().save(*args, **kwargs)
+
+    def mark_viewed(self, account):
+        """Mark the job as viewed by an account."""
+        if not self.last_viewed:
+            self.last_viewed = {}
+        self.last_viewed[str(account.id)] = timezone.now().isoformat()
+        self.save()
+
+    def is_updated_since_last_view(self, account):
+        """Check if the job has been updated since the account last viewed it."""
+        if not self.last_viewed or str(account.id) not in self.last_viewed:
+            return True
+            
+        last_viewed = timezone.datetime.fromisoformat(self.last_viewed[str(account.id)])
+        
+        # Check if any comments were added after last view
+        if self.comments:
+            latest_comment = max(
+                timezone.datetime.fromisoformat(comment['created_at']) 
+                for comment in self.comments
+            )
+            if latest_comment > last_viewed:
+                return True
+                
+        # Check if status changed after last view
+        if self.closed_at and self.closed_at > last_viewed:
+            return True
+            
+        # Check if assignee changed after last view
+        # Note: This would require adding a modified_at field to track such changes
+        
+        return False
 
 class JobAttachment(SharedMemoryModel):
     job = models.ForeignKey(Job, on_delete=models.CASCADE)

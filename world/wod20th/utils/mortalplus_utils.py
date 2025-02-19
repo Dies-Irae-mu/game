@@ -119,8 +119,8 @@ def initialize_mortalplus_stats(character, mortalplus_type):
         # Initialize disciplines category
         character.db.stats['powers']['discipline'] = {}
         # Set blood pool
-        character.set_stat('pools', 'dual', 'Blood', 10, temp=False)
-        character.set_stat('pools', 'dual', 'Blood', 10, temp=True)
+        character.set_stat('pools', 'dual', 'Blood', 3, temp=False)
+        character.set_stat('pools', 'dual', 'Blood', 3, temp=True)
         
     elif mortalplus_type == 'Kinain':
         # Initialize arts and realms categories
@@ -232,7 +232,7 @@ def get_mortalplus_identity_stats(mortalplus_type: str) -> List[str]:
         return base_stats + [
             'Tribe',
             'Pack',
-            'Totem'
+            'Patron Totem'
         ]
     elif mortalplus_type == 'Sorcerer':
         return base_stats + [

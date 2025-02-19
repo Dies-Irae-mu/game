@@ -470,6 +470,13 @@ class CmdSelfStat(MuxCommand):
         stat_title = stat_name.title()
         stat_lower = stat_name.lower()
 
+        # Special handling for Rank
+        if stat_lower == 'rank':
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            if splat and splat.lower() == 'shifter':
+                return 'identity', 'lineage'
+            return None, None
+
         # Handle date stats explicitly
         date_stats = {
             'date of birth',
@@ -645,11 +652,24 @@ class CmdSelfStat(MuxCommand):
 
     def map_category_and_type(self, category_or_type: str):
         """Map user-provided category/type to correct internal values."""
+        # Convert to title case for consistent comparison
+        stat_title = self.stat_name.title()
+        stat_lower = self.stat_name.lower()
+
+        # Special handling for Rank vs Organizational Rank
+        if stat_lower == 'rank':
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            if splat and splat.lower() == 'shifter':
+                return 'identity', 'lineage'
+            # If not a shifter, treat as Organizational Rank background
+            self.stat_name = 'Organizational Rank'
+            return 'backgrounds', 'background'
+
+        # Rest of the method remains unchanged
         category_or_type = category_or_type.lower()
         
         # Direct category mappings based on STAT_TYPE_TO_CATEGORY structure
-        category_map = {
-            # Attributes
+        category_map = {            # Attributes
             'physical': ('attributes', 'physical'),
             'social': ('attributes', 'social'),
             'mental': ('attributes', 'mental'),
@@ -727,9 +747,9 @@ class CmdSelfStat(MuxCommand):
             'arete': ('pools', 'advantage'),
             'enlightenment': ('pools', 'advantage'),
             'resonance': ('pools', 'resonance'),
-            'dynamic': ('pools', 'resonance'),
-            'static': ('pools', 'resonance'),
-            'entropic': ('pools', 'resonance'),
+            'dynamic': ('virtues', 'synergy'),
+            'static': ('virtues', 'synergy'),
+            'entropic': ('virtues', 'synergy'),
             
             # Common aliases
             'disciplines': ('powers', 'discipline'),
@@ -845,6 +865,8 @@ class CmdSelfStat(MuxCommand):
             # Check if it's a Necromancy path
             if stat_title in ['Sepulchre Path', 'Bone Path', 'Ash Path', 'Cenotaph Path', 
                             'Vitreous Path', 'Mortis Path', 'Grave\'s Decay']:
+                self.category = 'powers'
+                self.stat_type = 'necromancy'
                 return 'powers', 'necromancy'
                 
             # Check if it's a ritual
@@ -863,6 +885,8 @@ class CmdSelfStat(MuxCommand):
             
         # Check resonance pools
         if stat_title in ['Dynamic', 'Static', 'Entropic']:
+            return 'virtues', 'synergy'
+        elif stat_title == 'Resonance':  # Add explicit handling for Resonance
             return 'pools', 'resonance'
             
         # Check moral pools
@@ -931,11 +955,18 @@ class CmdSelfStat(MuxCommand):
             MAGE_BACKGROUNDS +
             TECHNOCRACY_BACKGROUNDS +
             TRADITIONS_BACKGROUNDS +
-            NEPHANDI_BACKGROUNDS +  
+            NEPHANDI_BACKGROUNDS +
             SHIFTER_BACKGROUNDS +
             SORCERER_BACKGROUNDS +
             KINAIN_BACKGROUNDS
         ):
+            # Special handling for Rank vs Organizational Rank
+            if stat_title.lower() == 'rank':
+                splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+                if splat and splat.lower() == 'shifter':
+                    return 'identity', 'lineage'
+                # If not a shifter, treat as Organizational Rank background
+                self.stat_name = 'Organizational Rank'
             return 'backgrounds', 'background'
 
         # Check powers
@@ -1013,12 +1044,32 @@ class CmdSelfStat(MuxCommand):
                 return category
         return None
 
+    def _fix_necromancy_paths(self):
+        """Fix incorrectly stored Necromancy paths by moving them to powers.necromancy."""
+        if 'necromancy' in self.caller.db.stats and 'necromancy' in self.caller.db.stats['necromancy']:
+            # Initialize powers.necromancy if it doesn't exist
+            if 'powers' not in self.caller.db.stats:
+                self.caller.db.stats['powers'] = {}
+            if 'necromancy' not in self.caller.db.stats['powers']:
+                self.caller.db.stats['powers']['necromancy'] = {}
+            
+            # Move each Necromancy path to powers.necromancy
+            for path, values in self.caller.db.stats['necromancy']['necromancy'].items():
+                self.caller.db.stats['powers']['necromancy'][path] = values
+            
+            # Delete the old necromancy category
+            del self.caller.db.stats['necromancy']
+            self.caller.msg("|gFixed Necromancy paths storage location.|n")
+
     def func(self):
         """Execute the command."""
         # Check if character is approved
         if self.caller.db.approved:
             self.caller.msg("|rError: Approved characters cannot use chargen commands. Please contact staff for any needed changes.|n")
             return
+
+        # Fix any incorrectly stored Necromancy paths
+        self._fix_necromancy_paths()
 
         if not self.stat_name:
             self.caller.msg("|rUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
@@ -1346,7 +1397,12 @@ class CmdSelfStat(MuxCommand):
                         self.caller.msg(f"|rInvalid House. Valid houses are: {', '.join(sorted(HOUSES))}|n")
                         return
                     self.value_change = matched_value
-                    return ('identity', 'lineage')
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                    self.caller.set_stat('identity', 'lineage', 'House', matched_value, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'House', matched_value, temp=True)
+                    self.caller.msg(f"|gSet House to {matched_value}.|n")
+                    return
 
         # When setting Arts and Realms
         elif self.stat_name.lower() in [art.lower() for art in ARTS] or self.stat_name.lower() in [realm.lower() for realm in REALMS]:
@@ -1730,17 +1786,17 @@ class CmdSelfStat(MuxCommand):
                     return
 
             # Special handling for resonance pools
-            elif self.stat_name.lower() in ['resonance', 'dynamic', 'static', 'entropic']:
+            elif self.stat_name.lower() in ['dynamic', 'static', 'entropic']:
                 try:
                     pool_value = int(self.value_change)
-                    if pool_value < 0 or pool_value > 10:
-                        self.caller.msg(f"|r{self.stat_name} pool must be between 0 and 10.|n")
+                    if pool_value < 0 or pool_value > 5:  # Changed from 10 to 5 since these are virtues
+                        self.caller.msg(f"|r{self.stat_name} virtue must be between 0 and 5.|n")
                         return
-                    self.category = 'pools'
-                    self.stat_type = 'resonance'
+                    self.category = 'virtues'  # Changed from 'advantage' to 'virtues'
+                    self.stat_type = 'synergy'  # Changed from 'resonance' to 'synergy'
                     new_value = pool_value
                 except ValueError:
-                    self.caller.msg(f"|r{self.stat_name} pool must be a number.|n")
+                    self.caller.msg(f"|r{self.stat_name} virtue must be a number.|n")
                     return
 
             # Special handling for advantage pools
@@ -1833,7 +1889,6 @@ class CmdSelfStat(MuxCommand):
         base_stats['virtues'] = {
             'moral': {},
             'advantage': {},
-            'resonance': {}
         }
         
         # Initialize backgrounds
@@ -1980,7 +2035,44 @@ class CmdSelfStat(MuxCommand):
         # Get character's splat and type
         splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
         char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-        
+
+        # Special handling for backgrounds
+        if stat_name in (UNIVERSAL_BACKGROUNDS + VAMPIRE_BACKGROUNDS + 
+                        CHANGELING_BACKGROUNDS + MAGE_BACKGROUNDS + 
+                        TECHNOCRACY_BACKGROUNDS + TRADITIONS_BACKGROUNDS + 
+                        NEPHANDI_BACKGROUNDS + SHIFTER_BACKGROUNDS + 
+                        SORCERER_BACKGROUNDS):
+            # Initialize backgrounds structure if needed
+            if 'backgrounds' not in self.caller.db.stats:
+                self.caller.db.stats['backgrounds'] = {}
+            if 'background' not in self.caller.db.stats['backgrounds']:
+                self.caller.db.stats['backgrounds']['background'] = {}
+            
+            try:
+                bg_value = int(value)
+                if bg_value < 0 or bg_value > 5:
+                    self.caller.msg(f"|rBackground value must be between 0 and 5.|n")
+                    return
+                self.caller.db.stats['backgrounds']['background'][stat_name] = {'perm': bg_value, 'temp': bg_value}
+                self.caller.msg(f"|gSet background {stat_name} to {bg_value}.|n")
+                return
+            except ValueError:
+                self.caller.msg("|rBackground value must be a number.|n")
+                return
+
+        # Special handling for House attribute - ensure it's in identity.lineage
+        if stat_name == 'House':
+            if 'identity' not in self.caller.db.stats:
+                self.caller.db.stats['identity'] = {}
+            if 'lineage' not in self.caller.db.stats['identity']:
+                self.caller.db.stats['identity']['lineage'] = {}
+            self.caller.db.stats['identity']['lineage']['House'] = {'perm': value, 'temp': value}
+            # Remove from incorrect location if it exists
+            if None in self.caller.db.stats and None in self.caller.db.stats[None]:
+                if 'House' in self.caller.db.stats[None][None]:
+                    del self.caller.db.stats[None][None]['House']
+            return
+
         # Define full_stat_name
         full_stat_name = stat_name
         
@@ -2230,3 +2322,26 @@ class CmdSelfStat(MuxCommand):
                     return
             else:
                 self.caller.msg("|rOnly Technocracy mages, Vampires, and Ghouls can have Enlightenment.|n")
+
+        # Special handling for Rank vs Organizational Rank
+        if stat_name.lower() == 'rank':
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            if splat and splat.lower() == 'shifter':
+                try:
+                    rank_value = int(value)
+                    if rank_value < 0 or rank_value > 5:
+                        self.caller.msg("|rRank must be between 0 and 5.|n")
+                        return
+                    # Set in identity/lineage
+                    self.caller.set_stat('identity', 'lineage', 'Rank', rank_value, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'Rank', rank_value, temp=True)
+                    self.caller.msg(f"|gSet Rank to {rank_value}.|n")
+                    return
+                except ValueError:
+                    self.caller.msg("|rRank must be a number.|n")
+                    return
+            else:
+                # For non-shifters, rename to Organizational Rank
+                stat_name = 'Organizational Rank'
+
+        # Rest of the method remains unchanged

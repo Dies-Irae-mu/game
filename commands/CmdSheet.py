@@ -261,7 +261,8 @@ class CmdSheet(MuxCommand):
                          'Tradition', 'Convention', 'Affiliation', 'Phyla', 'Traditions Subfaction', 'Methodology',
                          'Spirit Type', 'Spirit Name', 'Domitor', 'Society', 'Order', 'Coven', 'Cabal', 'Plague', 'Crown', 
                          'Stream', 'Kitsune Path', 'Varna', 'Deed Name', 'Motivation', 'Possessed Type', 'Date of Possession',
-                         'Companion Type', 'Patron Totem', 'Pack', 'Affinity Realm', 'Fae Court', 'Fae Name']:
+                         'Companion Type', 'Patron Totem', 'Pack', 'Affinity Realm', 'Fae Court', 'Fae Name', 'Camp', 'Lodge'
+                         'Fang House', 'Nephandi Faction']:
                 value_str = 'None'
             else:
                 value_str = ''
@@ -317,6 +318,22 @@ class CmdSheet(MuxCommand):
         tribe = None
         if char_type and char_type.lower() == 'garou':
             tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
+            # Get base stats from get_identity_stats
+            stats = get_identity_stats(splat, char_type, tribe)
+            
+            # Special handling for Silver Fangs
+            if tribe and tribe.lower() == 'silver fangs':
+                # Remove 'Camp' if it's in the list
+                if 'Camp' in stats:
+                    stats.remove('Camp')
+                # Add Silver Fang specific stats
+                stats.extend(['Fang House', 'Lodge'])
+            return stats
+        
+        # Special handling for Mage characters
+        if splat == 'Mage':
+            affiliation = character.get_stat('identity', 'lineage', 'Affiliation', temp=False)
+            return get_identity_stats(splat, char_type, affiliation)
         
         # Get identity stats based on splat, type, and tribe
         return get_identity_stats(splat, char_type, tribe)
@@ -451,39 +468,55 @@ class CmdSheet(MuxCommand):
         string += divider("Knowledges", width=25, fillchar=" ") + "\n"
 
         # Base secondary abilities for all characters
-        base_secondary_talents = ['Artistry', 'Carousing', 'Diplomacy', 'Intrigue', 'Lucid Dreaming', 'Mimicry', 'Scrounging', 'Seduction', 'Style']
-        base_secondary_skills = ['Archery', 'Fencing', 'Fortune-Telling', 'Gambling', 'Jury-Rigging', 'Martial Arts', 'Pilot', 'Torture']
-        base_secondary_knowledges = ['Area Knowledge', 'Cultural Savvy', 'Demolitions', 'Herbalism', 'Media', 'Power-Brokering', 'Vice']
+        base_secondary_talents = [
+            'Artistry', 'Carousing', 'Diplomacy', 'Intrigue', 'Lucid Dreaming',
+            'Mimicry', 'Scrounging', 'Seduction', 'Style'
+        ]
+        base_secondary_skills = [
+            'Archery', 'Fencing', 'Fortune-Telling', 'Gambling', 'Jury-Rigging',
+            'Martial Arts', 'Pilot', 'Torture'
+        ]
+        base_secondary_knowledges = [
+            'Area Knowledge', 'Cultural Savvy', 'Demolitions', 'Herbalism',
+            'Media', 'Power-Brokering', 'Vice'
+        ]
 
-        # Get splat-specific secondary abilities
+        # Get character's splat and add splat-specific abilities
         splat = character.get_stat('other', 'splat', 'Splat', temp=False)
-        if splat in ['Mage', 'mage']:
+        if splat and splat.lower() == 'mage':
             base_secondary_talents.extend(['Blatancy', 'Flying', 'High Ritual'])
             base_secondary_skills.extend(['Biotech', 'Do', 'Energy Weapons', 'Helmsman', 'Microgravity Ops'])
             base_secondary_knowledges.extend(['Cybernetics', 'Hypertech', 'Paraphysics', 'Xenobiology'])
+
+        # Sort all lists
+        base_secondary_talents.sort()
+        base_secondary_skills.sort()
+        base_secondary_knowledges.sort()
+
+        # Get secondary abilities from character stats
+        secondary_talents = character.db.stats.get('secondary_abilities', {}).get('secondary_talent', {})
+        secondary_skills = character.db.stats.get('secondary_abilities', {}).get('secondary_skill', {})
+        secondary_knowledges = character.db.stats.get('secondary_abilities', {}).get('secondary_knowledge', {})
 
         # Format abilities with values from character stats
         formatted_secondary_talents = []
         formatted_secondary_skills = []
         formatted_secondary_knowledges = []
 
-        # Get the secondary abilities from the character's stats
-        secondary_abilities = character.db.stats.get('abilities', {}).get('secondary_abilities', {})
-
         # Process talents
-        for talent in sorted(base_secondary_talents):
-            value = secondary_abilities.get(talent, {}).get('perm', 0)
-            formatted_secondary_talents.append(format_stat(talent, value, default=0, width=25))
+        for talent in base_secondary_talents:
+            value = secondary_talents.get(talent, {}).get('perm', 0)
+            formatted_secondary_talents.append(format_stat(talent, value, width=25))
 
         # Process skills
-        for skill in sorted(base_secondary_skills):
-            value = secondary_abilities.get(skill, {}).get('perm', 0)
-            formatted_secondary_skills.append(format_stat(skill, value, default=0, width=25))
+        for skill in base_secondary_skills:
+            value = secondary_skills.get(skill, {}).get('perm', 0)
+            formatted_secondary_skills.append(format_stat(skill, value, width=25))
 
         # Process knowledges
-        for knowledge in sorted(base_secondary_knowledges):
-            value = secondary_abilities.get(knowledge, {}).get('perm', 0)
-            formatted_secondary_knowledges.append(format_stat(knowledge, value, default=0, width=25))
+        for knowledge in base_secondary_knowledges:
+            value = secondary_knowledges.get(knowledge, {}).get('perm', 0)
+            formatted_secondary_knowledges.append(format_stat(knowledge, value, width=25))
 
         # Ensure all columns have the same length
         max_len = max(len(formatted_secondary_talents), len(formatted_secondary_skills), len(formatted_secondary_knowledges))
@@ -493,7 +526,7 @@ class CmdSheet(MuxCommand):
 
         # Combine columns
         for talent, skill, knowledge in zip(formatted_secondary_talents, formatted_secondary_skills, formatted_secondary_knowledges):
-            string += f"{talent}{skill}{knowledge}\n"
+            string += f"{talent} {skill} {knowledge}\n"
 
         return string
 

@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("objects", "0015_crisis_outcome_task"),
+        ("objects", "0001_initial"),
     ]
 
     operations = [

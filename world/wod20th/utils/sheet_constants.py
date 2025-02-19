@@ -9,6 +9,7 @@ TALENTS = {
     "Expression": 0,
     "Flight": 0,
     "Intimidation": 0,
+    "Kenning": 0,
     "Leadership": 0,
     "Primal-Urge": 0,
     "Streetwise": 0,
@@ -37,6 +38,7 @@ KNOWLEDGES = {
     "Cosmology": 0,
     "Enigmas": 0,
     "Finance": 0,
+    "Gremayre": 0,
     "Investigation": 0,
     "Law": 0,
     "Medicine": 0,
@@ -534,7 +536,7 @@ SECT = {
 }
 
 SEEMING = {
-    'Childing', 'Wilder', 'Grump'
+    'Childling', 'Wilder', 'Grump'
 }
 
 PATHS_OF_ENLIGHTENMENT = {

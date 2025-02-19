@@ -118,7 +118,8 @@ BREED_CHOICES_DICT: Dict[str, List[str]] = {
     'Nagah': ['Balaram', 'Vasuki', 'Ahi'],
     'Ananasi': ['Homid', 'Arachnid'],
     'Kitsune': ['Kojin', 'Shinju', 'Roko'],
-    'Mokole': ['Homid', 'Suchid']
+    'Mokole': ['Homid', 'Suchid'],
+    'Ajaba': ['Homid', 'Metis', 'Hyaenid']
 }
 
 # Valid breeds as a list of tuples for Django model choices
@@ -140,7 +141,8 @@ BREED_CHOICES: List[Tuple[str, str]] = [
     ('kojin', 'Kojin'),
     ('shinju', 'Shinju'),
     ('roko', 'Roko'),
-    ('suchid', 'Suchid')
+    ('suchid', 'Suchid'),
+    ('hyaenid', 'Hyaenid')
 ]
 # First, create a dictionary for personal identity stats that all characters should have
 PERSONAL_IDENTITY_STATS = [
@@ -322,6 +324,7 @@ def initialize_ajaba(character, breed):
         character.set_stat('pools', 'dual', 'Gnosis', stats['gnosis'], temp=False)
         character.set_stat('pools', 'dual', 'Gnosis', stats['gnosis'], temp=True)
         character.msg(f"|gRage and Gnosis set to {stats['rage']} and {stats['gnosis']} for {aspect} aspect.")
+    
 
 def initialize_ananasi(character, breed):
     """Initialize Ananasi-specific stats."""
@@ -754,7 +757,8 @@ def update_breed_stats(character, breed, shifter_type):
             character.set_stat('pools', 'dual', 'Gnosis', gnosis, temp=True)
             character.msg(f"|gGnosis set to {gnosis} for {breed} breed.")
             
-    elif shifter_type in ['ajaba', 'ratkin', 'rokea', 'garou', 'bastet', 'gurahl', 'kitsune', 'mokole', 'camazotz']:
+    # Skip breed-based Gnosis for Ajaba since it's determined by Aspect
+    elif shifter_type != 'ajaba' and shifter_type in ['ratkin', 'rokea', 'garou', 'bastet', 'gurahl', 'kitsune', 'mokole', 'camazotz']:
         gnosis_value = None
         if breed in ['homid']:
             gnosis_value = 1

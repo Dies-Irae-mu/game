@@ -129,7 +129,7 @@ IDENTITY_STATS = {
         'First Legacy', 'Second Legacy', 'Tradition Subfaction', 'Methodology',
         'Occupation', 'Signature', 'Essence', 'Affinity Sphere', 'Nephandi Faction',
         'Possessed Type', 'Mortal+ Type', 'Varna', 'Ananasi Faction', 'Ananasi Cabal',
-        'Totem', 'Pack', 'Society', 'Fellowship', 'Domitor', 'Companion Type', 
+        'Patron Totem', 'Pack', 'Society', 'Fellowship', 'Domitor', 'Companion Type', 
         'Motivation', 'Form', 'Phyla', 'Seeming', 'House', 'Fae Court', 'Nunnehi Camp',
         'Nunnehi Seeming', 'Nunnehi Family', 'Nunnehi Totem', 'Affinity Realm'
     ]
@@ -151,7 +151,7 @@ IDENTITY_LINEAGE = [
         'First Legacy', 'Second Legacy', 'Tradition Subfaction', 'Methodology',
         'Occupation', 'Signature', 'Essence', 'Affinity Sphere', 'Nephandi Faction',
         'Possessed Type', 'Mortal+ Type', 'Varna', 'Ananasi Faction', 'Ananasi Cabal',
-        'Totem', 'Pack', 'Society', 'Fellowship', 'Domitor', 'Companion Type', 
+        'Patron Totem', 'Pack', 'Society', 'Fellowship', 'Domitor', 'Companion Type', 
         'Motivation', 'Form', 'Phyla', 'Seeming', 'House', 'Fae Court', 'Nunnehi Camp',
         'Nunnehi Seeming', 'Nunnehi Family', 'Nunnehi Totem', 'Affinity Realm'
 ]
@@ -207,7 +207,7 @@ POOL_TYPES = {
         'Arete': {'min': 1, 'max': 10},
         'Enlightenment': {'min': 1, 'max': 10}
     },
-    'resonance': {
+    'synergy': {
         'Dynamic': {'min': 0, 'max': 5},
         'Entropic': {'min': 0, 'max': 5},
         'Static': {'min': 0, 'max': 5}
@@ -330,7 +330,7 @@ UNIVERSAL_BACKGROUNDS = [
     'Patron',
     'Alternate Identity',
     'Destiny',
-    'Rank',
+    'Organizational Rank',
     'Spies',
     'Totem',
     'Artifact',
@@ -493,7 +493,7 @@ STAT_TYPE_TO_CATEGORY = {
     'virtues': {
         'moral': {},
         'advantage': {},
-        'resonance': {}
+        'synergy': {}
     },
     'backgrounds': {
         'background': {}
@@ -991,7 +991,7 @@ def get_identity_stats(splat: str, subtype: str = None, affiliation: str = None)
         if subtype:
             subtype = subtype.lower()
             if subtype == 'garou':
-                stats.extend(['Auspice', 'Tribe', 'Camp', 'Pack', 'Totem', 'Deed Name'])
+                stats.extend(['Auspice', 'Tribe', 'Camp', 'Pack', 'Patron Totem', 'Deed Name'])
                 # Add Fang House and Lodge for Silver Fang tribe
                 if affiliation and affiliation.lower() == 'silver fang':
                     stats.extend(['Fang House', 'Lodge'])
@@ -999,15 +999,15 @@ def get_identity_stats(splat: str, subtype: str = None, affiliation: str = None)
                 elif affiliation and affiliation.lower() == 'black spiral dancers':
                     stats.append('Rite Name')
             elif subtype == 'bastet':
-                stats.extend(['Tribe', 'Pack', 'Totem'])
+                stats.extend(['Tribe', 'Pack', 'Patron Totem'])
             elif subtype == 'ajaba':
-                stats.extend(['Aspect', 'Pack', 'Totem'])
+                stats.extend(['Aspect', 'Pack', 'Patron Totem'])
             elif subtype == 'ananasi':
                 stats.extend(['Aspect', 'Ananasi Faction', 'Ananasi Cabal'])
             elif subtype == 'corax':
-                stats.extend(['Pack', 'Totem'])
+                stats.extend(['Pack', 'Patron Totem'])
             elif subtype == 'gurahl':
-                stats.extend(['Auspice', 'Pack', 'Totem'])
+                stats.extend(['Auspice', 'Pack', 'Patron Totem'])
             elif subtype == 'kitsune':
                 stats.extend(['Kitsune Path', 'Kitsune Faction', 'Kitsune Clan', 'Go-En', 'Sempai'])
             elif subtype == 'mokole':
@@ -1023,10 +1023,10 @@ def get_identity_stats(splat: str, subtype: str = None, affiliation: str = None)
     elif splat.lower() == 'mage':
         stats = base_stats + [
             'Date of Awakening',
+            'Affiliation',
             'Essence',
             'Signature',
-            'Affinity Sphere',
-            'Affiliation'
+            'Affinity Sphere'
         ]
         
         if affiliation:
@@ -1036,7 +1036,8 @@ def get_identity_stats(splat: str, subtype: str = None, affiliation: str = None)
             elif affiliation == 'technocracy':
                 stats.extend(['Convention', 'Methodology'])
             elif affiliation == 'nephandi':
-                stats.extend(['Nephandi Faction'])
+                stats.append('Nephandi Faction')
+        
         return stats
         
     elif splat.lower() == 'changeling':
@@ -1047,16 +1048,16 @@ def get_identity_stats(splat: str, subtype: str = None, affiliation: str = None)
             'Seelie Legacy',
             'Unseelie Legacy',
             'Fae Court',
+            'House',
             'Affinity Realm'
         ]
         
         if subtype:
             subtype = subtype.lower()
-            if subtype in ['autumn sidhe', 'arcadian sidhe', 'boggan', 'nocker', 'troll', 'sluagh', 'satyr', '']:
-                stats.append('House')
-            elif subtype == 'inanimae':
+            if subtype == 'inanimae':
                 stats.append('Phyla')
             elif subtype == 'nunnehi':
+                stats.remove('House')
                 stats.extend([
                     'Nunnehi Camp',
                     'Nunnehi Seeming',

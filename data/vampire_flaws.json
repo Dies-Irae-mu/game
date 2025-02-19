@@ -477,15 +477,6 @@
         "notes": ""
     },
     {
-        "name": "Cursed",
-        "stat_type": "supernatural",
-        "values": ["1 to 5"],
-        "category": "flaws",
-        "description": "You suffer from a supernatural curse. The severity and effects of the curse determine its point value. Examples include being unable to enter a dwelling without counting every grain of spilled rice (2 points), or finding that every reflection shows your true vampiric nature (4 points).",
-        "source": "Lore of the Clans Pg 46",
-        "notes": ""
-    },
-    {
         "name": "Repulsed by Garlic",
         "stat_type": "physical",
         "values": [1],

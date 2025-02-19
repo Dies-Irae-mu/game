@@ -12,6 +12,9 @@ class BBSController(DefaultObject):
         """
         Called when the server starts.
         """
+        # Initialize read_posts if it doesn't exist
+        if not self.attributes.has('read_posts'):
+            self.attributes.add('read_posts', {})
         return super().at_server_start()
 
     def at_object_creation(self):
@@ -21,6 +24,16 @@ class BBSController(DefaultObject):
         """
         self.db.boards = {}  # Dictionary to store all boards
         self.db.next_board_id = 1  # Start board numbering from 1
+        self.attributes.add('read_posts', {})  # Dictionary to store read posts per character
+
+    @property
+    def read_posts(self):
+        """
+        Property to ensure read_posts is always initialized.
+        """
+        if not self.attributes.has('read_posts'):
+            self.attributes.add('read_posts', {})
+        return self.attributes.get('read_posts')
 
     def _find_next_available_board_id(self):
         """
@@ -218,3 +231,76 @@ class BBSController(DefaultObject):
             board['locked'] = True
             return f"Board '{board['name']}' has been locked."
         return "Board not found"
+
+    def mark_post_read(self, board_reference, post_index, character_name):
+        """
+        Mark a post as read by a character.
+        :param board_reference: (str or int) The name or ID of the board.
+        :param post_index: (int) The index of the post.
+        :param character_name: (str) The name of the character who read the post.
+        """
+        board = self.get_board(board_reference)
+        if not board:
+            return False
+            
+        if not self.has_access(board_reference, character_name):
+            return False
+            
+        board_id = board['id']
+        read_posts = self.read_posts
+            
+        if character_name not in read_posts:
+            read_posts[character_name] = {}
+            
+        if board_id not in read_posts[character_name]:
+            read_posts[character_name][board_id] = set()
+            
+        read_posts[character_name][board_id].add(post_index)
+        self.attributes.add('read_posts', read_posts)
+        return True
+
+    def is_post_unread(self, board_reference, post_index, character_name):
+        """
+        Check if a post is unread by a character.
+        :param board_reference: (str or int) The name or ID of the board.
+        :param post_index: (int) The index of the post.
+        :param character_name: (str) The name of the character.
+        :return: (bool) True if the post is unread, False otherwise.
+        """
+        board = self.get_board(board_reference)
+        if not board:
+            return False
+            
+        if not self.has_access(board_reference, character_name):
+            return False
+            
+        board_id = board['id']
+        read_posts = self.read_posts
+            
+        if character_name not in read_posts:
+            return True
+            
+        if board_id not in read_posts[character_name]:
+            return True
+            
+        return post_index not in read_posts[character_name][board_id]
+
+    def get_unread_posts(self, board_reference, character_name):
+        """
+        Get a list of unread post indices for a character on a board.
+        :param board_reference: (str or int) The name or ID of the board.
+        :param character_name: (str) The name of the character.
+        :return: (list) List of unread post indices.
+        """
+        board = self.get_board(board_reference)
+        if not board:
+            return []
+            
+        if not self.has_access(board_reference, character_name):
+            return []
+            
+        unread = []
+        for i in range(len(board['posts'])):
+            if self.is_post_unread(board_reference, i, character_name):
+                unread.append(i + 1)  # Convert to 1-based index
+        return unread

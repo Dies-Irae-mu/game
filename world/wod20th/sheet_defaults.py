@@ -628,7 +628,7 @@ SECT = {
 }
 
 SEEMING = {
-    'Childing', 'Wilder', 'Grump'
+    'Childling', 'Wilder', 'Grump'
 }
 
 PATHS_OF_ENLIGHTENMENT = {

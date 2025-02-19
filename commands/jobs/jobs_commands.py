@@ -180,6 +180,9 @@ class CmdJobs(MuxCommand):
                 self.caller.msg("You don't have permission to view this job.")
                 return
 
+            # Mark the job as viewed by this account
+            job.mark_viewed(self.caller.account)
+
             output = header(f"Job {job.id}", width=78, fillchar="|r-|n") + "\n"
             output += f"|cTitle:|n {job.title}\n"
             output += f"|cStatus:|n {job.status}\n"
