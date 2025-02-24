@@ -233,9 +233,18 @@ BACKGROUNDS = {
 #Changeling Backgrounds
     "Chimerical Companion": 0,
     "Dreamers": 0,
+    "Title": 0,
+    "Digital Dreamers": 0,
     "Holdings": 0,
     "Remembrance": 0,
+    "Retinue": 0,
     "Treasure": 0,
+    "Chimerical Item": 0,
+    "Vision": 0,
+    "Spirit Companion": 0,
+    "Circle": 0,
+    "Husk": 0,
+    "Changeling Companion": 0,
 
 #Mage/Companion Backgrounds
     "Familiar": 0,

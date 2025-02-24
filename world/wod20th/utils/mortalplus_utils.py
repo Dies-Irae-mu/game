@@ -511,16 +511,20 @@ def validate_kinfolk_gifts(character, gift_name: str, value: str) -> tuple[bool,
 
 def validate_kinain_powers(character, power_name: str, value: str, power_type: str) -> tuple[bool, str]:
     """Validate a kinain's arts and realms."""
-    # Get Kinain Merit level
-    merit_value = character.get_stat('merits', 'merit', 'Fae Blood', temp=False)
-    if not merit_value or not isinstance(merit_value, dict):
-        return False, "Kinain must have the 'Fae Blood' Merit to learn Arts and Realms"
+    # Get Faerie Blood background level
+    faerie_blood = character.get_stat('backgrounds', 'background', 'Faerie Blood', temp=False) or 0
     
-    kinain_merit = merit_value.get('perm', 0)
+    # Calculate maximums based on Faerie Blood level
+    max_arts = {
+        0: 1,  # Can take 1 Art at Faerie Blood 0
+        1: 2,  # Can take 2 Arts at Faerie Blood 1
+        2: 3,  # Can take 3 Arts at Faerie Blood 2
+        3: 4,  # Can take 4 Arts at Faerie Blood 3
+        4: 5,  # Can take 5 Arts at Faerie Blood 4
+        5: 6   # Can take 6 Arts at Faerie Blood 5
+    }[faerie_blood]
     
-    # Calculate maximums based on Merit level
-    max_arts = kinain_merit // 2
-    max_art_dots = min(3, kinain_merit // 2)
+    max_art_dots = 5  # Kinain are limited to 5 dots in any Art
     
     if power_type == 'art':
         # Check if art exists
@@ -528,15 +532,20 @@ def validate_kinain_powers(character, power_name: str, value: str, power_type: s
             return False, f"Invalid art. Valid arts are: {', '.join(sorted(ARTS))}"
         
         # Check number of arts
-        current_arts = len(character.get_all_powers('art'))
-        if current_arts >= max_arts:
-            return False, f"Kinain can only learn {max_arts} Arts with current Merit level"
+        current_arts = len([art for art, values in character.get_stat('powers', 'art', None, temp=False).items() 
+                          if values.get('perm', 0) > 0])
+        
+        # If this is a new art (value > 0 and not currently known)
+        current_art_value = character.get_stat('powers', 'art', power_name, temp=False) or 0
+        if int(value) > 0 and current_art_value == 0:
+            if current_arts >= max_arts:
+                return False, f"Kinain with Faerie Blood {faerie_blood} can only learn {max_arts} Arts"
         
         # Validate value
         try:
             art_value = int(value)
             if art_value < 0 or art_value > max_art_dots:
-                return False, f"Art values must be between 0 and {max_art_dots}"
+                return False, f"Art values for Kinain must be between 0 and {max_art_dots}"
             return True, ""
         except ValueError:
             return False, "Art values must be numbers"
@@ -550,7 +559,7 @@ def validate_kinain_powers(character, power_name: str, value: str, power_type: s
         try:
             realm_value = int(value)
             if realm_value < 0 or realm_value > max_art_dots:
-                return False, f"Realm values must be between 0 and {max_art_dots}"
+                return False, f"Realm values for Kinain must be between 0 and {max_art_dots}"
             return True, ""
         except ValueError:
             return False, "Realm values must be numbers"
@@ -644,4 +653,75 @@ def validate_mortalplus_backgrounds(character, background_name: str, value: str)
             return False, "Background values must be between 0 and 5"
         return True, ""
     except ValueError:
-        return False, "Background values must be numbers" 
+        return False, "Background values must be numbers"
+
+def update_mortalplus_pools_on_stat_change(character, stat_name: str, new_value: str) -> None:
+    """
+    Update mortal+ pools when relevant stats change.
+    Called by CmdSelfStat after setting stats.
+    """
+    stat_name = stat_name.lower()
+    
+    # Get character's mortal+ type
+    mortalplus_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+    if not mortalplus_type:
+        return
+    
+    # Handle Type changes
+    if stat_name == 'type':
+        # Get default Banality based on mortal+ type
+        banality = get_default_banality('Mortal+', subtype=new_value)
+        if banality:
+            character.set_stat('pools', 'dual', 'Banality', banality, temp=False)
+            character.set_stat('pools', 'dual', 'Banality', banality, temp=True)
+            character.msg(f"|gBanality set to {banality} for {new_value}.|n")
+        
+        # Set type-specific pools
+        if new_value in MORTALPLUS_POOLS:
+            pools = MORTALPLUS_POOLS[new_value]
+            for pool_name, pool_data in pools.items():
+                # Skip Willpower if it's already set to a non-zero value
+                if pool_name == 'Willpower' and character.get_stat('pools', 'dual', 'Willpower', temp=False) > 0:
+                    continue
+                
+                # Set both permanent and temporary values
+                character.set_stat('pools', 'dual', pool_name, pool_data['default'], temp=False)
+                character.set_stat('pools', 'dual', pool_name, pool_data['default'], temp=True)
+                character.msg(f"|g{pool_name} set to {pool_data['default']} for {new_value}.|n")
+    
+    # Handle Gnosis Merit for Kinfolk
+    elif stat_name == 'gnosis' and mortalplus_type == 'Kinfolk':
+        try:
+            merit_value = int(new_value)
+            if merit_value >= 5:
+                gnosis_value = min(3, max(1, merit_value - 4))  # 5->1, 6->2, 7->3
+                character.set_stat('pools', 'dual', 'Gnosis', gnosis_value, temp=False)
+                character.set_stat('pools', 'dual', 'Gnosis', gnosis_value, temp=True)
+                character.msg(f"|gGnosis set to {gnosis_value} based on Merit value {merit_value}.|n")
+        except (ValueError, TypeError):
+            character.msg("|rError updating Gnosis pool - invalid Merit value.|n")
+            return
+    
+    # Handle Fae Blood background for Kinain
+    elif stat_name == 'faerie blood' and mortalplus_type == 'Kinain':
+        try:
+            bg_value = int(new_value)
+            # Always set Glamour to 2 for Kinain (their maximum)
+            character.set_stat('pools', 'dual', 'Glamour', 2, temp=False)
+            character.set_stat('pools', 'dual', 'Glamour', 2, temp=True)
+            character.msg("|gGlamour set to 2 (maximum for Kinain).|n")
+            
+            # Calculate maximum allowed Arts
+            max_arts = {
+                0: 1,  # Can take 1 Art at Faerie Blood 0
+                1: 2,  # Can take 2 Arts at Faerie Blood 1
+                2: 3,  # Can take 3 Arts at Faerie Blood 2
+                3: 4,  # Can take 4 Arts at Faerie Blood 3
+                4: 5,  # Can take 5 Arts at Faerie Blood 4
+                5: 6   # Can take 6 Arts at Faerie Blood 5
+            }[bg_value]
+            
+            character.msg(f"|gWith Faerie Blood {bg_value}, you can learn up to {max_arts} Arts at maximum rating 3.|n")
+        except (ValueError, TypeError):
+            character.msg("|rError updating pools - invalid Faerie Blood value.|n")
+            return 

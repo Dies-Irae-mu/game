@@ -13,13 +13,17 @@ def initialize_backgrounds():
     # Initialize universal backgrounds
     for bg in UNIVERSAL_BACKGROUNDS:
         try:
+            # Set instanced=True for backgrounds that require an instance
+            instanced = True if bg in ['Library', 'Status', 'Influence'] else None
+            
             Stat.objects.update_or_create(
                 name=bg,
                 stat_type='background',
                 defaults={
                     'category': 'backgrounds',
                     'game_line': 'Various',
-                    'values': [1, 2, 3, 4, 5]
+                    'values': [1, 2, 3, 4, 5],
+                    'instanced': instanced
                 }
             )
         except Exception as e:
@@ -28,6 +32,9 @@ def initialize_backgrounds():
     # Initialize vampire backgrounds
     for bg in VAMPIRE_BACKGROUNDS:
         try:
+            # Set instanced=True for backgrounds that require an instance
+            instanced = True if bg in ['Status', 'Influence'] else None
+            
             Stat.objects.update_or_create(
                 name=bg,
                 stat_type='background',
@@ -35,7 +42,8 @@ def initialize_backgrounds():
                     'category': 'backgrounds',
                     'game_line': 'Vampire: The Masquerade',
                     'splat': 'Vampire',
-                    'values': [1, 2, 3, 4, 5]
+                    'values': [1, 2, 3, 4, 5],
+                    'instanced': instanced
                 }
             )
         except Exception as e:
@@ -44,6 +52,9 @@ def initialize_backgrounds():
     # Initialize changeling backgrounds
     for bg in CHANGELING_BACKGROUNDS:
         try:
+            # Set instanced=True for backgrounds that require an instance
+            instanced = True if bg in ['Status', 'Influence'] else None
+            
             Stat.objects.update_or_create(
                 name=bg,
                 stat_type='background',
@@ -51,7 +62,8 @@ def initialize_backgrounds():
                     'category': 'backgrounds',
                     'game_line': 'Changeling: The Dreaming',
                     'splat': 'Changeling',
-                    'values': [1, 2, 3, 4, 5]
+                    'values': [1, 2, 3, 4, 5],
+                    'instanced': instanced
                 }
             )
         except Exception as e:
@@ -60,6 +72,9 @@ def initialize_backgrounds():
     # Initialize mage backgrounds
     for bg in MAGE_BACKGROUNDS:
         try:
+            # Set instanced=True for backgrounds that require an instance
+            instanced = True if bg in ['Status', 'Influence', 'Library'] else None
+            
             Stat.objects.update_or_create(
                 name=bg,
                 stat_type='background',
@@ -67,7 +82,8 @@ def initialize_backgrounds():
                     'category': 'backgrounds',
                     'game_line': 'Mage: The Ascension',
                     'splat': 'Mage',
-                    'values': [1, 2, 3, 4, 5]
+                    'values': [1, 2, 3, 4, 5],
+                    'instanced': instanced
                 }
             )
         except Exception as e:
@@ -76,6 +92,9 @@ def initialize_backgrounds():
     # Initialize technocracy backgrounds
     for bg in TECHNOCRACY_BACKGROUNDS:
         try:
+            # Set instanced=True for backgrounds that require an instance
+            instanced = True if bg in ['Status', 'Influence', 'Library'] else None
+            
             Stat.objects.update_or_create(
                 name=bg,
                 stat_type='background',
@@ -83,8 +102,8 @@ def initialize_backgrounds():
                     'category': 'backgrounds',
                     'game_line': 'Mage: The Ascension',
                     'splat': 'Mage',
-                    'affiliation': 'Technocracy',
-                    'values': [1, 2, 3, 4, 5]
+                    'values': [1, 2, 3, 4, 5],
+                    'instanced': instanced
                 }
             )
         except Exception as e:
@@ -93,6 +112,9 @@ def initialize_backgrounds():
     # Initialize traditions backgrounds
     for bg in TRADITIONS_BACKGROUNDS:
         try:
+            # Set instanced=True for backgrounds that require an instance
+            instanced = True if bg in ['Status', 'Influence', 'Library'] else None
+            
             Stat.objects.update_or_create(
                 name=bg,
                 stat_type='background',
@@ -100,8 +122,8 @@ def initialize_backgrounds():
                     'category': 'backgrounds',
                     'game_line': 'Mage: The Ascension',
                     'splat': 'Mage',
-                    'affiliation': 'Traditions',
-                    'values': [1, 2, 3, 4, 5]
+                    'values': [1, 2, 3, 4, 5],
+                    'instanced': instanced
                 }
             )
         except Exception as e:
@@ -110,6 +132,9 @@ def initialize_backgrounds():
     # Initialize nephandi backgrounds
     for bg in NEPHANDI_BACKGROUNDS:
         try:
+            # Set instanced=True for backgrounds that require an instance
+            instanced = True if bg in ['Status', 'Influence', 'Library'] else None
+            
             Stat.objects.update_or_create(
                 name=bg,
                 stat_type='background',
@@ -117,8 +142,8 @@ def initialize_backgrounds():
                     'category': 'backgrounds',
                     'game_line': 'Mage: The Ascension',
                     'splat': 'Mage',
-                    'affiliation': 'Nephandi',
-                    'values': [1, 2, 3, 4, 5]
+                    'values': [1, 2, 3, 4, 5],
+                    'instanced': instanced
                 }
             )
         except Exception as e:
@@ -127,6 +152,9 @@ def initialize_backgrounds():
     # Initialize shifter backgrounds
     for bg in SHIFTER_BACKGROUNDS:
         try:
+            # Set instanced=True for backgrounds that require an instance
+            instanced = True if bg in ['Status', 'Influence'] else None
+            
             Stat.objects.update_or_create(
                 name=bg,
                 stat_type='background',
@@ -134,7 +162,8 @@ def initialize_backgrounds():
                     'category': 'backgrounds',
                     'game_line': 'Werewolf: The Apocalypse',
                     'splat': 'Shifter',
-                    'values': [1, 2, 3, 4, 5]
+                    'values': [1, 2, 3, 4, 5],
+                    'instanced': instanced
                 }
             )
         except Exception as e:
@@ -143,14 +172,18 @@ def initialize_backgrounds():
     # Initialize sorcerer backgrounds
     for bg in SORCERER_BACKGROUNDS:
         try:
+            # Set instanced=True for backgrounds that require an instance
+            instanced = True if bg in ['Status', 'Influence', 'Library'] else None
+            
             Stat.objects.update_or_create(
                 name=bg,
                 stat_type='background',
                 defaults={
                     'category': 'backgrounds',
-                    'game_line': "Mage: The Sorcerer's Crusade",
+                    'game_line': 'Sorcerer',
                     'splat': 'Mortal+',
-                    'values': [1, 2, 3, 4, 5]
+                    'values': [1, 2, 3, 4, 5],
+                    'instanced': instanced
                 }
             )
         except Exception as e:

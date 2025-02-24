@@ -33,18 +33,9 @@ class CmdApprove(AdminCommand):
             self.caller.msg("Usage: +approve <character>")
             return
             
-        # First try direct name match
-        target = None
-        chars = self.caller.search(self.args, global_search=True, typeclass='typeclasses.characters.Character', quiet=True)
-        if chars:
-            target = chars[0] if isinstance(chars, list) else chars
-            
-        # If no direct match, try alias
+        # First try direct name match with global search
+        target = self.caller.search(self.args, global_search=True)
         if not target:
-            target = Character.get_by_alias(self.args.lower())
-
-        if not target:
-            self.caller.msg(f"Could not find character '{self.args}'.")
             return
 
         # Check both tag and attribute for approval status
@@ -127,9 +118,8 @@ class CmdMassUnapprove(AdminCommand):
         caller = self.caller
         confirm = "confirm" in self.switches
 
-        # Get all characters, both online and offline
-        from evennia.utils.search import search_object
-        all_chars = search_object("", typeclass='typeclasses.characters.Character')
+        # Get all characters, both online and offline using global search
+        all_chars = search_object("", typeclass='typeclasses.characters.Character', global_search=True)
         
         # Filter to only get approved characters
         approved_chars = [char for char in all_chars 
@@ -266,13 +256,11 @@ class CmdTestLock(MuxCommand):
             self.caller.msg("Usage: @testlock <character> = <lockstring>")
             return
             
-        # Search for character
-        chars = search_object(self.lhs)
-        if not chars:
-            self.caller.msg(f"Could not find '{self.lhs}'.")
+        # Search for character with global search
+        char = self.caller.search(self.lhs, global_search=True)
+        if not char:
             return
-        
-        char = chars[0]  # Take the first match
+            
         self.caller.msg(f"Found character: {char.key}")
         
         # Show relevant character stats
@@ -360,8 +348,8 @@ class CmdPuppetFreeze(MuxCommand):
         vacate_cmd.args = f"force {char.name}"
         vacate_cmd.func()
         
-        # Move to freeze room
-        freeze_room = self.caller.search("#1935")
+        # Move to freeze room - use global search
+        freeze_room = self.caller.search("#1935", global_search=True)
         if not freeze_room:
             self.caller.msg("Error: Freeze room #1935 not found!")
             return False
@@ -391,7 +379,7 @@ class CmdPuppetFreeze(MuxCommand):
         # Get previous location
         prev_location = char.db.pre_freeze_location
         if not prev_location or prev_location.id == 1935:  # If previous location was freeze room
-            prev_location = char.home or self.caller.search("#2")  # Fallback to limbo
+            prev_location = char.home or self.caller.search("#2", global_search=True)  # Fallback to limbo
             
         # Move character back
         char.move_to(prev_location, quiet=True)
@@ -409,7 +397,7 @@ class CmdPuppetFreeze(MuxCommand):
             
         # Handle unfreeze switch
         if "unfreeze" in self.switches:
-            char = self.caller.search(self.args.strip())
+            char = self.caller.search(self.args.strip(), global_search=True)
             if not char:
                 return
                 
@@ -423,7 +411,7 @@ class CmdPuppetFreeze(MuxCommand):
             name = name.strip()
             reason = reason.strip()
             
-            char = self.caller.search(name)
+            char = self.caller.search(name, global_search=True)
             if not char:
                 return
                 

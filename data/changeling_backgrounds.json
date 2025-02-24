@@ -1,7 +1,7 @@
 [
     {
-        "name": "Chimera",
-        "description": "Items or companions of yours that only exist in the chimerical world.",
+        "name": "Chimerical Companion",
+        "description": "Companions are living chimera either born of unconscious dreams or sculpted into existence from raw dream stuff, then breathed life by a changeling. While the character has either befriended or bound the chimera, powerful ones have motivations of their own that may occasionally conflict with those of their companions.",
         "game_line": "Changeling: The Dreaming",
         "category": "backgrounds",
         "stat_type": "background",
@@ -110,6 +110,15 @@
     {
         "name": "Changeling Companion",
         "description": "The Lycian has a changeling friend he trusts completely. His Companion might be a Kithain or one of the Gallain. Either way, they're seldom far from one another, they're close friends, and the assistance the changeling provides the character is invaluable.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5],
+        "splat": "Changeling"
+    },
+    {
+        "name": "Chimerical Item",
+        "description": "Every changeling's voile, his chimerical clothing, forms to suit him upon his Chrysalis. The Chimerical Item Background represents any chimerical items in his possession beyond this. The item's usefulness and power determine the rating for this Background.",
         "game_line": "Changeling: The Dreaming",
         "category": "backgrounds",
         "stat_type": "background",

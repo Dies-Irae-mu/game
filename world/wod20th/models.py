@@ -40,12 +40,18 @@ class Stat(models.Model):
     xp_cost = models.IntegerField(default=0, blank=True, null=True)
     prerequisites = models.CharField(max_length=100, blank=True, null=True)
     notes = models.CharField(max_length=100, blank=True, null=True)
-    shifter_type = models.CharField(
-        max_length=100, 
-        choices=SHIFTER_TYPE_CHOICES,
-        default='none',
-        blank=True
-    )    
+    shifter_type = models.JSONField(
+        default=list,
+        blank=True,
+        null=True,
+        help_text="List of shifter types that can learn this gift"
+    )
+    gift_alias = models.JSONField(
+        default=list,
+        blank=True,
+        null=True,
+        help_text="List of alternative names for this gift"
+    )
     hidden = models.BooleanField(default=False)
     locked = models.BooleanField(default=False)
     instanced = models.BooleanField(default=None, null=True, help_text="If True, requires an instance. If False, disallows instances. If null, instances are optional.")
@@ -138,11 +144,12 @@ class Stat(models.Model):
         
         # Validate type field based on splat
         if splat == 'shifter' and self.shifter_type:
-            if not isinstance(self.shifter_type, str):
-                raise ValidationError({'shifter_type': 'Must be a string'})
+            if not isinstance(self.shifter_type, list):
+                raise ValidationError({'shifter_type': 'Must be a list'})
             valid_types = [choice[0] for choice in SHIFTER_TYPE_CHOICES]
-            if self.shifter_type.lower() not in valid_types and self.shifter_type.lower() != 'none':
-                raise ValidationError({'shifter_type': f'Invalid shifter type: {self.shifter_type}'})
+            for type in self.shifter_type:
+                if type.lower() not in valid_types and type.lower() != 'none':
+                    raise ValidationError({'shifter_type': f'Invalid shifter type: {type}'})
                 
         elif splat == 'mortal+' and self.mortalplus_type:
             if not isinstance(self.mortalplus_type, str):

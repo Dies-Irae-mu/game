@@ -1,4 +1,4 @@
-from evennia import default_cmds
+from evennia import default_cmds, utils
 from evennia.utils import evtable
 from evennia.utils.utils import make_iter
 from evennia.commands.default.muxcommand import MuxCommand
@@ -111,6 +111,50 @@ class CmdNotes(MuxCommand):
                 return None
         return None
 
+    def get_note_by_name_or_id(self, target, note_identifier):
+        """Helper method to find a note by either name or ID."""
+        notes_dict = target.attributes.get('notes', {})
+        
+        # Clean up note identifier - strip any status markers and spaces
+        clean_identifier = note_identifier.strip().rstrip('*!').strip()
+        # Remove any '#' prefix from IDs
+        if clean_identifier.startswith('#'):
+            clean_identifier = clean_identifier[1:]
+        
+        # First try to find by ID
+        if clean_identifier in notes_dict:
+            note_data = notes_dict[clean_identifier]
+            if note_data and isinstance(note_data, (dict, utils.dbserialize._SaverDict)):
+                return clean_identifier, note_data
+        
+        # If not found by ID, try to find by name (case-insensitive)
+        clean_identifier_lower = clean_identifier.lower()
+        
+        # Iterate through all notes
+        for note_id, note_data in notes_dict.items():
+            # Skip if note_data is None or empty
+            if not note_data:
+                continue
+            
+            # Get the note name
+            note_name = str(note_data.get('name', '')).strip()
+            if not note_name:
+                continue
+                
+            note_name_lower = note_name.lower()
+            
+            # Compare the names (case-insensitive)
+            if note_name_lower == clean_identifier_lower:
+                return note_id, note_data
+            
+            # Also try matching without any special characters
+            note_name_clean = ''.join(c for c in note_name_lower if c.isalnum())
+            identifier_clean = ''.join(c for c in clean_identifier_lower if c.isalnum())
+            if note_name_clean == identifier_clean:
+                return note_id, note_data
+        
+        return None, None
+
     def list_notes(self):
         """List all notes for the character."""
         notes_dict = self.caller.attributes.get('notes', {})
@@ -173,8 +217,8 @@ class CmdNotes(MuxCommand):
                     row_notes = category_notes[i:i + cols_per_row]
                     row = ""
                     for note in row_notes:
-                        # Format note name with ID, truncate if too long
-                        note_display = note.name
+                        # Format note name with ID
+                        note_display = f"{note.name} (#{note.note_id})"
                         if len(note_display) > col_width - 2:
                             note_display = note_display[:col_width - 3] + "…"
                         # Pad with spaces to maintain column width
@@ -227,24 +271,6 @@ class CmdNotes(MuxCommand):
         else:
             self.caller.msg(f"Note '{note_id}' not found.")
 
-    def get_note_by_name_or_id(self, target, note_identifier):
-        """Helper method to find a note by either name or ID."""
-        notes_dict = target.attributes.get('notes', {})
-        
-        # First try to find by ID
-        if note_identifier in notes_dict:
-            note_data = notes_dict[note_identifier]
-            if note_data:
-                return note_identifier, note_data
-        
-        # If not found by ID, try to find by name (case-insensitive)
-        note_identifier_lower = note_identifier.lower()
-        for note_id, note_data in notes_dict.items():
-            if note_data and note_data.get('name', '').lower() == note_identifier_lower:
-                return note_id, note_data
-        
-        return None, None
-
     def view_note(self):
         """View a specific note."""
         if not self.args:
@@ -264,6 +290,9 @@ class CmdNotes(MuxCommand):
         else:
             target = self.caller
             note_identifier = self.args
+
+        # Debug output
+        self.caller.msg(f"Searching for note '{note_identifier}' on {target.name}")
 
         # Try to find note by name or ID
         note_id, note_data = self.get_note_by_name_or_id(target, note_identifier)
@@ -350,66 +379,31 @@ class CmdNotes(MuxCommand):
             col_width = 25  # Width for each note column
             cols_per_row = 3  # Number of columns per row
 
-            if is_staff:
-                # Staff view with detailed information
-                output = header(f"Notes for {target.name}", width=width, color="|y", fillchar="|b=|n", bcolor="|b")
+            output = header(f"Notes for {target.name}", width=width, color="|y", fillchar="|b=|n", bcolor="|b")
 
-                # Sort categories alphabetically
-                for category in sorted(notes_by_category.keys()):
-                    category_notes = notes_by_category[category]
-                    # Sort notes by name within each category
-                    category_notes.sort(key=lambda x: x.name.lower())
-                    
-                    # Category header with equals
-                    output += f"\n|b==> |y{category}|n |b<==|n" + "|b=|n" * (width - len(category) - 7) + "\n"
-                    
-                    # Process notes in rows of cols_per_row columns
-                    for i in range(0, len(category_notes), cols_per_row):
-                        row_notes = category_notes[i:i + cols_per_row]
-                        row = ""
-                        for note in row_notes:
-                            # Format note name with ID and status
-                            note_display = f"{note.name}"
-                            if not note.is_public:
-                                note_display += "*"  # Add asterisk for private notes
-                            if not note.is_approved:
-                                note_display += "!"  # Add exclamation for pending notes
-                            note_display += f" (#{note.note_id})"
-                            
-                            if len(note_display) > col_width - 2:
-                                note_display = note_display[:col_width - 3] + "…"
-                            # Pad with spaces to maintain column width
-                            row += f"{note_display:<{col_width}}"
-                        output += " " + row.rstrip() + "\n"
+            # Sort categories alphabetically
+            for category in sorted(notes_by_category.keys()):
+                category_notes = notes_by_category[category]
+                # Sort notes by name within each category
+                category_notes.sort(key=lambda x: x.name.lower())
+                
+                # Category header with equals
+                output += f"\n|b==> |y{category}|n |b<==|n" + "|b=|n" * (width - len(category) - 7) + "\n"
+                
+                # Process notes in rows of cols_per_row columns
+                for i in range(0, len(category_notes), cols_per_row):
+                    row_notes = category_notes[i:i + cols_per_row]
+                    row = ""
+                    for note in row_notes:
+                        # Format note name with ID
+                        note_display = f"{note.name} (#{note.note_id})"
+                        if len(note_display) > col_width - 2:
+                            note_display = note_display[:col_width - 3] + "…"
+                        # Pad with spaces to maintain column width
+                        row += f"{note_display:<{col_width}}"
+                    output += " " + row.rstrip() + "\n"
 
-                output += "|b=" + "=" * (width - 2) + "=|n"
-            else:
-                # Regular user view with tabular format
-                output = header(f"{target.name}'s Notes", width=width, color="|y", fillchar="|b=|n", bcolor="|b")
-
-                # Sort categories alphabetically
-                for category in sorted(notes_by_category.keys()):
-                    category_notes = notes_by_category[category]
-                    category_notes.sort(key=lambda x: x.name.lower())
-                    
-                    # Category header with dots
-                    output += f"\n|b==> |y{category}|n |b<==|n" + "." * (width - len(category) - 7) + "\n"
-                    
-                    # Process notes in rows of cols_per_row columns
-                    for i in range(0, len(category_notes), cols_per_row):
-                        row_notes = category_notes[i:i + cols_per_row]
-                        row = ""
-                        for note in row_notes:
-                            # Format note name, truncate if too long
-                            note_display = note.name
-                            if len(note_display) > col_width - 2:
-                                note_display = note_display[:col_width - 3] + "…"
-                            # Pad with spaces to maintain column width
-                            row += f"{note_display:<{col_width}}"
-                        output += " " + row.rstrip() + "\n"
-
-                output += "|b=" + "=" * (width - 2) + "=|n"
-
+            output += "|b=" + "=" * (width - 2) + "=|n"
             self.caller.msg(output)
             
         except Exception as e:

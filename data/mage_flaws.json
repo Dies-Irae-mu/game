@@ -16,7 +16,7 @@
         "category": "flaws",
         "stat_type": "supernatural",
         "values": [1, 2, 3, 4, 5],
-        "splat": "Mage",
+        "splat": ["Mage", "Changeling"],
         "source": "M20 p. 646"
     },
     {

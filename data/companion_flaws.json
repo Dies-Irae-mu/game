@@ -1,0 +1,92 @@
+[
+    {
+        "name": "Alien Impression",
+        "description": "Your appearance freaks people out. Perhaps it's your lidless serpentine stare, your cobalt-blue skin, or the wings jutting from between your shoulder blades. It might not even be a feature of your visual appearance, per se; maybe you've got a synthetic techno-voice, a crackling aura of prickly invisible energy, or an uncanny way of moving when you walk. Whatever the specifics might be, your presence evokes whispers, unease or - at the highest levels - outright fear. The more disturbing your impression, the more this Flaw (originally known as Alien Appearance) is worth: (1 point) Minor feature, generally concealable, that inspires minor discomfort from people who notice it. (2 points) Noticeable feature, hard to conceal, that inspires discomfort in people who notice it. (3 points) Major feature, difficult if not impossible to conceal, that weirds out most people who notice it. (4 points) Unmistakably alien feature that rather frightens most people. (5 points) You stand out almost anywhere a human mage might go. Minor features include oddly colored eyes, artificial tone of voice, eerie lightness or density of form, and so forth. Noticeable ones get stranger and more troubling for the average mundane (horns, sharp claws, animalistic hair), with major and unmistakable features becoming more overt and less 'natural' by earth-reality standards (winged people, six-legged horses, cybernetic wolves... you get the picture). Creatures at the highest level of this Flaw might not be frightening, but cannot blend into anything resembling 'normal' human society (dragons, 'gray'-style aliens, unicorns that clearly are not horses with a horn attached, that sort of thing). Obviously, this Flaw means nothing if your chronicle is set in some place where your character's 'alien' impression is normal. A unicorn in New York City is alien, but the same unicorn at a faerie festival seems perfectly mundane.",
+        "game_line": "Mage: The Ascension",
+        "category": "flaws",
+        "stat_type": "physical",
+        "values": [1, 2, 3, 4, 5],
+        "source": "Gods and Monsters"
+    },
+    {
+        "name": "Animal",
+        "description": "In a human-centric world, you aren't human. I mean, it's cool and everything that you're a fox or a bear or a cat or a raven, but the majority of your surroundings aren't made for you, folks call Animal Control when you walk around without a leash, bystanders keep trying to pet you, bus drivers refuse to let you on the bus, fleas burrow into your fur, adults speak to you in baby talk, etc. Obviously, this Flaw doesn't count if you can change into a human form. For Flaws dealing with an inability to manipulate human tools and so forth, see No Hands and Ungainly Fingers. If being an animal isn't a hinderance in your chronicle, then this Flaw does not apply at all.",
+        "game_line": "Mage: The Ascension",
+        "category": "flaws",
+        "stat_type": "social",
+        "values": [2],
+        "source": "Gods and Monsters"
+    },
+    {
+            "name": "Beta",
+            "description": "You are born to follow, not to lead. Although capable in your own right, you're the reliable support staff to your group's real leaders. Alpha dominance is not your style; instead, you keep the rest of your 'pack' in line while following the alpha's lead in all ways. Challenging authority seems alien to you, and where other companions of yours might seek status and ambition, your interests lay in doing what's (at least apparently) best for your group as a whole. That's your role and your duty, and you're damned proud of both.",
+        "game_line": "Mage: The Ascension",
+        "category": "flaws",
+        "stat_type": "social",
+        "values": [1], 
+        "source": "Gods and Monsters"
+    },
+    {
+        "name": "Broken",
+        "description": "Your will to resist has been trashed. Your master broke you to her service, and her wish is your command. Maybe she's the mad scientist who created you, the psi-ops Technocrat who destroyed your will, the necromancer who crafted you from the bodies of the dead, or the wizard who bound you with ancient pacts and potent spells. The abuse she used to break you may have been subtle: emotional manipulation, pervasive gaslighting, social isolation, and the like. Then again, she might tyrannize you with raw brutality, terrorize you with fears of damnation and destruction, compel obedience through blackmail, torment you with magick and crime... Hell, she might use every trick in the book to keep you in line. It works, too. What master says, you do. It's far too late to resist. A seriously nasty Flaw, this Trait reflects the ugly side of paranormal lore. Your character was, and remains, abused into servitude, and whatever your Willpower Trait might be with regards to other tasks, it's only 1 when it comes to standing up to your dominator. Circumstances can change this situation, of course, but the recovery from such staggering abuse should involve powerful roleplaying and long-term consequences for  every character involved. For many obvious reasons, this Flaw is trigger city for people who've been abused in real life and should be employed only with the full consent of all members of your gaming group. That consent can be withdrawn at any time, by any member of the group, and the abusive side of this relationship - if it gets played out in the  game at all - remains subject to the safewords and blackout rule detailed in the 'Triggers, Limits, and Boundaries' sidebar in Mage 20 (p. 345). The choice to assume or retain this Flaw belongs only to the player who chooses it. If that player decides to abandon the Flaw (and the relationship), the Storyteller should make allowances for that. The player will have to pay the points off, of course, but although your character may be broken, you always have the choice to change the game.",
+        "game_line": "Mage: The Ascension",
+        "category": "flaws",
+        "stat_type": "mental",
+        "values": [5],
+        "source": "Gods and Monsters"
+    },
+    {
+        "name": "Omega",
+        "description": "Like a beta, you occupy a low place in your social hierarchy. But while the beta still retains a position of honor, you don't. Instead, you occupy the bottom layer of your group's social structure. You get whatever they choose to give you and take whatever they dish out. Verbal and perhaps physical abuse are your daily lot, and although the group will generally protect you from outside forces, no one will protect you from your group. Although this Flaw generally raises the difficulty of your Social rolls by +2 when you deal with parties outside your group, and by +4 within that group, certain Social rolls (for Intimidation and perhaps Seduction) might remain unaffected if you're a dangerous sort of beast. After all, an omega wolf is still a wolf, and the beast who cowers from his packmates could still rip out a human's throat.",
+        "game_line": "Mage: The Ascension",
+        "category": "flaws",
+        "stat_type": "social",
+        "values": [4],
+        "source": "Gods and Monsters"
+    },
+    {
+        "name": "Power Source",
+        "description": "You require energy in order to function. Your makers thoughtfully provided a power source for you, but it tends to run out and must be periodically replaced if you're to stay in good working order. A common Flaw for robots and cyborgs, this Flaw's value depends upon the frequency with which your power source must be renewed. (1 point) You need a new power source or recharge every 30 days. (2 points) Every 15 days. (3 points) Every seven days. (4 points) Every three days. (5 points) Every day. For each day you go without a renewed power source, you lose one die from all of your dice pools until a new power source gets installed. The penalty applies to all dice pools equally - not different rates for different pools. When your highest dice pool runs out, you go inactive until you've received a new power source. Although that new power source starts you right back up again, an especially long period of inactivity might (Storyteller's option) damage your systems to the point where you function at half of your normal dice pools until an appropriately skilled technician can repair you. Characters with Technocratic power sources can be recharged easily so long as there's a supply of the correctly standardized power sources available. Characters with unusual, ancient, experimental, or unique power sources would be much harder to resupply, especially if only a limited number of such power sources exist. Although it's generally intended for mechanical characters, the power source in question might also by mystical (specially cut jade crystals bathed in sunlight), metaphysical (an hour of meditation with a properly trained monk), or else otherwise paranormal or immaterial (the light of the full moon, a gallon of bats' blood, rocks collected at the Burning Man festival, etc.).",
+        "game_line": "Mage: The Ascension",
+        "category": "flaws",
+        "stat_type": "physical",
+        "values": [1, 2, 3, 4, 5],
+        "source": "Gods and Monsters"
+    },
+    {
+        "name": "Thaumivore",
+        "description": "To survive in the material world, you must consume that lifeblood energy of Creation that mages call Quintessence. Without it, you suffer debilitating hunger, weaken steadily, and eventually perish and fade into nothingness. Ideally, you consume solidified Quintessence in the form of Tass. Your patron mage can feed you raw-energy Quintessence, but it's not terribly satisfying. Although a steady diet of it won't harm you, it will leave you grouchy enough to reconsider the terms of your relationship. Ideally, you'll be given a regular diet of metaphysically energized substances - magic toadstools, enchanted amulets, batteries charged with raw lightning pulled from the heavens, that sort of thing. The nature of your food, of course, must suit your innate nature; trying to feed a unicorn with Technocratic fuel cells will go about as poorly as trying to recharge a HIT Mark with goblin fruit. (In game terms, no - that won't work.) System-wise, your character must devour at least one point of Tass or Quintessence per day. Each day he goes without that nourishment, he loses one health level, and suffers a one-die penalty to all his dice pools. This damage cannot be soaked, of course, and if your character passes Incapacitated, he dies, and his body rapidly decays until nothing's left at all. (See 'Unbelief,' below.) Once he begins to feed again, all previous damage heals. His mood, however, might take quite a while to abate... This Flaw can (and probably should) be taken in connection with the Flaw: Unbelief.",
+        "game_line": "Mage: The Ascension",
+        "category": "flaws",
+        "stat_type": "physical",
+        "values": [5],
+        "source": "Gods and Monsters"
+    },
+    {
+        "name": "Unbelief",
+        "description": "Once upon a time, your kind may have freely wandered the mortal realm. The centuries, however, have not been kind to your sort, and now the weight of human disbelief has turned you into a walking paradox... or literally speaking, a Paradox. On the other hand, you might be a hypertech entity whose existence offends the natural world. Regardless of the details, you fit in only within certain surroundings, and violate reality in most others. Unless you remain hidden in a region where culture, solitude, or both protect you, the weight of disbelief soon crushes you out of existence. Thanks to this Flaw, you must remain within a Reality Zone (see Mage 20, pp. 611-617) that's appropriate to your essential nature. A pair of shisa hanging out in the Ryukyu Islands are literally part of the landscape so long as they don't bite the tourists; a devilish imp in a wizard's workshop is pretty much de rigueur for such a place;a white hart dashing through the English mists belongs to that land as surely as any human resident. Transplant such creatures to other settings, though, and the weight of the modern Consensus soon proves fatal... not for the hart, perhaps, but surely for any less-natural thing. In game terms, this Flaw reflects the character's affront to Consensus Reality outside of a specific sort of Reality Zone. That character remains healthy inside an appropriate Zone but suffers damage once she leaves the Zone and wanders around a world that's not ready to deal with her existence. That damage assumes two levels of severity: painful, in which the creature's essential nature clashes with the area she's in; and fatal, in which the creature's nature is so deeply opposed to that area that her body begins to break down under the force of Unbelief. For more information on reality zones, see Mage 20th anniversary, pg. 640.",
+        "game_line": "Mage: The Ascension",
+        "category": "flaws",
+        "stat_type": "social",
+        "values": [3, 5, 8],
+        "source": "Gods and Monsters"
+    },
+    {
+        "name": "Ungainly Fingers",
+        "description": "Although you can manipulate most human devices with your fingers, claws, or tentacles, you lack the physical shape, leverage, or reflexes to manipulate such things well. Add +2 to your difficulty when you're trying to employ a sophisticated object, fragile item, precision device, and so forth. This penalty does not reflect your overall lack of dexterity; you could, in fact, be far more agile  than those clumsy human beings. The human world, though, is built and shaped for people, however, and because you're not a person, you have a harder time working with stuff designed specifically for their hands and limbs.",
+        "game_line": "Mage: The Ascension",
+        "category": "flaws",
+        "stat_type": "physical",
+        "values": [2],
+        "source": "Gods and Monsters"
+    },
+    {
+        "name": "Weak Spot",
+        "description": "Thanks to an injury, a curse, or some other handicap, you've got a vulnerable spot. Attacks that strike that area inflict extra damage and might also incapacitate you. This infirmity could be a gap in your armor, a badly healed limb, weakened bones, a shut-off switch, or a joint that tends to dislocate. Whatever it may be, this weak spot allows an attacker to penetrate your usual defenses and take you down hard. A successful strike on your weak spot inflicts two unsoakable health levels of aggravated damage; if that damage would have been aggravated to begin with, it inflicts two more health levels' worth of damage than it would have if the attack had hit you elsewhere. Weak spots like this tend to be hard to spot and harder to exploit. To realize it exists, your opponent must first successfully roll her Perception or Intelligence (whichever is higher) + an Ability that might help her recognize your weak spot for what it is. A physical weak spot might involve Medicine; a mechanical one, Technology or Hypertech; a metaphysical one, Lore, Occult, or a suitable Esoterica discipline. The roll's difficulty is 8, but it might go higher under especially difficult  conditions (darkness, heavy rain, obscuring smoke, and so forth). Spotting the weak spot is easier than hitting the weak spot. A targeted shot at your vital area adds +4 to the attacker's difficulty when she's trying to strike it. As an optional rule, the Storyteller might declare that a random, untargeted attack that scores six successes or more when trying to hit you automatically inflicts the damage associated with your weak spot. If you define your weak spot as a flimsy joint, automatic shut-down system, or other liability, the Storyteller may replace the aggravated damage with an appropriate condition: Your leg dislocates, your systems deactivate, your cybernetic limb stops working, etc. However it is defined, this condition lasts until you manage to get it fixed, turned back on by a third party, and so forth. Regardless of its definition, location, and effects, Weak Spot can be a devastating Flaw. It's also traditional, though  - almost every epic monster has one. Mad inventors tend to install such failsafes in case their  creations get out of hand, too, and most Technocratic constructs have a suitable weakness that a properly trained operative can activate. These intentional design flaws, however, are changed out regularly, with their schematics provided only on a need-to-know basis to managers and agents with the proper security clearances. After all, the Union doesn't want random Deviants takingadvantage of backup safety systems designed for the use of Union personnel! Agents tasked with taking down a rogue construct, however, will probably get briefed about the nature and location of that construct's shut-down feature.",
+        "game_line": "Mage: The Ascension",
+        "category": "flaws",
+        "stat_type": "physical",
+        "values": [3],
+        "source": "Gods and Monsters"
+    }
+]

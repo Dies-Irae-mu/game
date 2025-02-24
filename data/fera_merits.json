@@ -150,7 +150,7 @@
         "stat_type": "supernatural",
         "values": [7],
         "splat": "Shifter",
-        "shifter_type": ["Bastet"],
+        "shifter_type": "Bastet",
         "source": "W20 Changing Breeds, pg. 208"
     },
     {
@@ -161,7 +161,7 @@
         "stat_type": "supernatural",
         "values": [7],
         "splat": "Shifter",
-        "shifter_type": ["Kitsune"],
+        "shifter_type": "Kitsune",
         "source": "W20 Changing Breeds, pg. 208"
     },
     {

@@ -1,17 +1,16 @@
 [
     {
         "name": "Language",
-        "description": "You understand another form of communication.",
+        "description": "Beyond your native language, you understand another form of communication. Each 1-pt. Language Merit reflects a single language, typically in its written form as well as the spoken one. Mages – especially Hermetic wizards, Syndicate diplomats, and Technocratic field ops – tend to know a number of languages, both common (French, Latin, Mandarin, Spanish) and obscure (Old Kingdom Hieroglyphics, High Akkadian, Jovitos). If you possess five Language Merits or more, then you’ve begun to understand the principles of language itself and can try to unravel languages you don’t already know (Intelligence + Enigmas, difficulty 7 or higher) Characters should have background-based reasons for understanding various languages. It’s perfectly reasonable to assume that a barrio teenager might know English, Portuguese, several dialects of Spanish, and possibly even Arabic. If she’s also got German, Sanskrit, and Classical Greek on her character sheet, however, then someone’s got some explaining to do. On Dies Irae, Language is a 1-10 point merit because we use a robust +languages system. See 'help +language' for more information. This Merit does not count toward your Merit cap.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "mental",
-        "values": [1],
-        
+        "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         "source": "M20 p. 643"
     },
     {
         "name": "Dark Triad",
-        "description": "A charming (and chilling) blend of narcissism, Machiavellianism, and sociopathy makes you a smooth-talking rule-breaker. Many people find your Fuck Authority attitude seductive, and they follow your lead even when it's not in their best interests to do so.",
+        "description": "A charming (and chilling) blend of narcissism, Machiavellianism, and sociopathy makes you a smooth-talking rule-breaker. Many people find your Fuck Authority attitude seductive, and they follow your lead even when it’s not in their best interests to do so. To you, however, these devotees are simply toys – useful and enjoyable, of course, but ultimately expendable. Your own pleasure and convenience are the only vital things in life. A natural Merit for cult leaders, tempters, Fallen mages, and corporate tycoons, the Dark Triad adds three dice to all of your Seduction, Manipulation, Leadership, Subterfuge, and Charisma-based rolls. The fact that your character doesn’t truly care about the people she inspires isn’t readily apparent except to people who know what to look for. Because social consequences do not hinder your character, people find her exhilarating to be around. As a result, folks continue to follow and defend her, even when her actions should be indefensible. Despite its obvious power, this Merit contains a significant story-based downside: Dark Triad folks are amoral bastards who act only according to their own perceived interests. Even on a malignant Path, such sociopathy becomes dangerous, especially when other people notice that individual’s behavior. Not even the Nephandi trust such a person once her tendencies become clear – after all, she might sell out the Fallen as easily as she sells out anybody else. The Storyteller may decide that this Merit isn’t suitable for player characters, and restrict it to supporting roles. For more details about extreme self-focus.",
         "game_line": "Mage: The Ascension",
         "category": "merits", 
         "stat_type": "social",
@@ -19,27 +18,26 @@
         "source": "M20 p. 643"
     },
     {
-        "name": "Stormwarden",
-        "description": "Despite the fury of the Avatar Storm, some people remain immune. With this Merit, you possess that precious rare immunity - the ability to reach through and travel beyond the Gauntlet without suffering the effects of the Storm.",
-        "game_line": "Mage: The Ascension",
-        "category": "merits",
-        "stat_type": "supernatural",
-        "values": [3, 5],
-        "splat": "Mage",
-        "source": "M20 p. 643"
-    },
-    {
         "name": "Too Tough to Die",
-        "description": "You're badass enough to shrug off injuries. They still harm you, but they don't stop you. Game-wise, this Merit allows your character to soak lethal damage - NOT aggravated damage.",
+        "description": "You’re badass enough to shrug off injuries. They still harm you, but they don’t stop you. Game-wise, this Merit allows your character to soak lethal damage – NOT aggravated damage. Story-wise, those gunshots, knife wounds, broken bones, and so forth still tear your character up – he’s not bouncing shotgun rounds off his chest. By soaking the associated health levels, however, your character can push on through wounds that would cripple or kill most folks. Lethal injuries require the usual amount of time to heal. Soaking is not healing. If the Storyteller decides to use the Cinematic Damage option (Chapter Nine, p. 412), this Merit has no purpose and does not apply. ",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "physical",
         "values": [5],
         "source": "M20 p. 644"
     },
+	{
+        "name": "Iron Will",
+        "description": "Even by Awakened standards, you possess a formidable will. When you make up your mind or dig in your heels against mental influence, your determination’s hard to break. System-wise, your character receives three extra dice for his Willpower rolls whenever he faces a challenge to his convictions, or resists attempts at Mind magick, torture, exhaustion, and other debilitating attacks. HOUSE RULED: Mortals Only. If an individual with this merit becomes no longer a plain mortal, they lose access to this merit. An individual gains +3 dice to their willpower as per above if they spend a willpower. Otherwise, it's a +1. ",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+        "stat_type": "mental",
+        "values": [3],
+        "source": "M20 Book of Secrets p. 45"
+    },
     {
         "name": "Time Sense",
-        "description": "You've got an intuitive sense of what time it is in your vicinity. Much like the Rank 1 Time Effect, but without the ability to spot ripples in the time stream, this Merit provides a sort of internal clock that helps you gauge the time of day and the passing of time even when you don't have access to windows, clocks, or other information about time.",
+        "description": "You’ve got an intuitive sense of what time it is in your vicinity. Much like the Rank 1 Time Effect, but without the ability to spot ripples in the time stream, this Merit provides a sort of internal clock that helps you gauge the time of day and the passing of time even when you don’t have access to windows, clocks, or other information about time. This Merit does not grant bonuses or decrease difficulties for Time Sphere-based magick-casting rolls. It does, however, give one of the benefits of basic Time Sphere perceptions to characters who do not employ the Time Sphere.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "mental",
@@ -48,47 +46,43 @@
     },
     {
         "name": "Scientific Mystic",
-        "description": "Certain unorthodox technomancers understand that 'mysticism' is just another form of science whose principles may be understood by a properly Enlightened mind. Although you pursue a technological practice and employ tech-based instruments, you can employ instruments that are traditionally considered to be 'magic' once you've had an opportunity to study them and fit those tools into your scientific paradigm.",
+        "description": "Certain unorthodox technomancers understand that “mysticism” is just another form of science whose principles may be understood by a properly Enlightened mind. Although you pursue a technological practice and employ tech-based instruments, you can employ instruments that are traditionally considered to be “magic” once you’ve had an opportunity to study them and fit those tools into your scientific paradigm. The Scientific Mystic Merit lets a dedicated technomancer – that is, a member of the Society of Ether, the Virtual Adepts, a tech-based “orphan,” or perhaps even a rogue Technocrat like the Disparates of Navalon – study metaphysical principles from mystic-paradigm mages for no extra point-cost if that technomancer has the focus practice Weird Science. (For details, see Can a Mage Who Uses One Type of Focus Learn Magick from a Mage Who Uses a Different Kind of Focus?, Chapter Three, p. 174, and the Weird Science entry in Mage 20, p. 584.) That technomancer can also choose traditionally “mystic” tools as up to half of her required instruments (as detailed under Arete, Focus, and Instruments in Mage 20, p. 329), and can discard those instruments as a mystic instead of as a technomancer (again, see Mage 20, p. 329). Essentially, this means that your approach to Enlightened science is flexible enough to embrace bizarre approaches to your metaphysical pursuits. Other scientists might consider such things impossible, but you realize that “possibility” is what you make of it. On the other side of that metaphysical coin, the Techgnosi Merit allows a dedicated mystic to do the exact same things, but with technological instruments and no extra cost involved in studying magick from technomancer peers, regardless of your practices. (See the Chapter Three entry cited above.) Yes, your soul belongs to the Mysteries, but you’ve recognized that technology has a place in those Mysteries as well.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "mental",
         "values": [3],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 45"
     },
     {
         "name": "Judge's Wisdom",
-        "description": "Through firm self-discipline, you have mastered your emotions to Vulcan perfection. No passion-based assault can rattle your judgment, and the base attacks of heart-twisting fiends have little hold on you.",
+        "description": "Through firm self-discipline, you have mastered your emotions to Vulcan perfection. No passion-based assault can rattle your judgment, and the base attacks of heart-twisting fiends have little hold on you. Rules-wise, you remain immune to Mind- or Life based Effects that influence emotions (as detailed in How Do You DO That?, pp. 60 and 120-122), and can shrug off the vampiric Discipline of Presence unless that bloodsucker has at least six dots in that Discipline. Emotion-based powers from werecreatures, faeries, and other such creatures cannot affect you, although you can still be possessed, mind-controlled, enchanted, and otherwise bent or broken so long as the assault is not based on wrangling an emotional response from your perfect serene command.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "mental",
         "values": [4],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 46"
     },
     {
         "name": "Family Support",
-        "description": "Your family accepts and supports your supernatural nature.",
+        "description": "General (1-3 points): Your family knows about your Awakened life – and for the most part, they approve of it. You might belong to an ancestral “fam trad” (a family tradition of magical /occult pursuits), a supportive New Ager-type of clan, an appropriately religious family (that is, relatives who follow the same creed as you do), a wealthy dynasty that backs your current life-choices, and so on. This family could be your proverbial “family of origin” (your blood relations), an adopted “family of choice” (people who are not your genetic kin but who function as your family now), or both. Either way, your family stands behind you. This Merit doesn’t extend to major economic help unless you also purchase the appropriate Backgrounds too (Resources, Retainers, and so on). Still, it’s good to have someplace to call home, and someone to be there when you need them. The more influential your family, and the more supportive of you they are, the more this Merit costs: (1 point) You’ve got a “typical” family for your culture, and their support is mostly emotional although you can get a few bucks, a favor, and a place to crash when you need it. • (2 points) Your family has status, wealth, and influence. While they expect you to stand on your own for the most part, you can still get help if and when you need some. • (3 points) A scion of wealth, power, and privilege, you can call upon favors and influence when need be. Your clan pulls strings on your behalf even when you don’t ask for help, and people defer to you because of your heritage. As anyone who’s been born into a wealthy yet dysfunctional clan can attest, you can have both Family Support and Family Issues (as the Flaw described below). Your rich dad could be an abusive prick, your loving uncle might be creepily possessive, and Mom’s support comes with more strings than a puppeteer’s convention. Both Traits could also represent a character whose family of origin is a mess, but whose family of choice supports her. For the purposes of coincidental magick, a family reflected in this Merit does not count as Sleeper witnesses when their beloved mage casts Effects. That benefit doesn’t usually extend to your companions, however, unless they employ the same sort of focus as you do, use magick that fits into your family’s world-view, or purchase this Merit to reflect being “adopted” into your family as a childhood friend, a spouse, or an otherwise beloved part of the clan. Werewolf (1 point): Your family knows what you are and accepts your new life wholeheartedly. Perhaps your parents are Kinfolk and have prepared themselves for the potential that you might be a full Garou. However they need not be actual Kin (of the sort purchased through the Kinfolk Background); they may not understand what you’ve become, but still believe you are “special” or “gifted.” While you can’t assume they will risk themselves for you or your pack, you can rely on their moral support and understanding — and maybe a place to crash on occasion.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "social",
         "values": [1, 2, 3],
-        
-        "source": "M20 p. 643"
+        "source": "M20 Book of Secrets p. 53"
     },
     {
         "name": "Favor",
-        "description": "Someone owes you a significant favor.",
+        "description": "Also known as a Boon, this Merit means that somebody owes you, big-time. You scratched their back, and will eventually call in some scratching of your own in due time. Maybe you aided a Master-level mage... or helped a vampire prince... or did a solid for a wealthy Sleeper, a spirit, a faerie, or a ranking member of the Changing Breeds. Regardless of their identity, this party is more powerful than you are, and can get things done on your behalf that you could not get done yourself. The value of this Merit depends upon the value of that favor. Minor acts of benevolence cost one point, significant boons are worth two, and a life-debt is worth three. You may purchase several Favors, either from a single party or from several different folks who owe you. A Storyteller may grant this Merit in place of experience points if your character has helped a supporting character and requested, earned or demanded a Favor in return. Once that favor has been performed, however, the Merit is spent. Long-lasting assistance would be counted as a Background like Mentor or Patron, or as one of the allies described in the section about Supernatural Merits.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "social",
         "values": [1, 2, 3],
-        
-        "source": "M20 p. 643"
+        "source": "M20 Book of Secrets p. 54"
     },
     {
         "name": "Prestigious Mentor",
-        "description": "Your Mentor (as in the Background Trait of that name) has a reputation that benefits you as well. When you're making social rolls to invoke your influential teacher, reduce the difficulty by -2.",
+        "description": "Your Mentor (as in the Background Trait of that name) has a reputation that benefits you as well. When you’re making social rolls to invoke your influential teacher, reduce the difficulty by -2. Of course, some folks will be somewhat less than impressed; for rolls that involve rivals or enemies of your mentor, add +2 to the difficulty unless that mentor scares the shit out of them... in which case, you had damned well better be able to live up to the fear his name invokes!",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "social",
@@ -96,27 +90,8 @@
         "source": "M20 Book of Secrets p. 54"
     },
     {
-        "name": "Hideaway",
-        "description": "When you need time to yourself, there's a place you can go to that no one knows about except you. It's small, yeah, and remote enough that your friends and enemies can't find you there.",
-        "game_line": "Mage: The Ascension",
-        "category": "merits",
-        "stat_type": "social",
-        "values": [2, 4, 6],
-        "source": "M20 Book of Secrets p. 55"
-    },
-    {
-        "name": "Natural Leader",
-        "description": "You have a natural talent for leadership and command.",
-        "game_line": "Mage: The Ascension",
-        "category": "merits",
-        "stat_type": "social",
-        "values": [2],
-        
-        "source": "M20 p. 643"
-    },
-    {
         "name": "Officially Dead",
-        "description": "According to the authorities, you're no longer among the living. Perhaps you've successfully faked your own death, or had it faked for you when you assumed a new identity.",
+        "description": "According to the authorities, you’re no longer among the living. Perhaps you’ve successfully faked your own death, or had it faked for you when you assumed a new identity. An especially common Merit among Technocratic operatives, Hermetic magi, and the Chakravanti, this erasure of your former life is often a required part of service within the New World Order, Iteration X, and certain Houses of Hermes. As far as your family, government, and old friends are concerned, you’re six feet under. Naturally, you’ll need to be discreet about your continued existence if you don’t want that death to become more permanent.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "social",
@@ -125,7 +100,7 @@
     },
     {
         "name": "Prestige",
-        "description": "Also known as Reputation, this Merit reveals you as an honored personage within your Tradition, Convention, Craft, or another sort of sect. Among your peers, you add three extra dice to all social rolls used to influence folks within that group.",
+        "description": "Also known as Reputation, this Merit reveals you as an honored personage within your Tradition, Convention, Craft, or another sort of sect. Among your peers, you add three extra dice to all social rolls used to influence folks within that group. Story-wise, allies of your group will tend to like you, and rivals or enemies will tend to... not. When you first select this Merit, decide upon the source of this prestige. Perhaps you earned it through deeds before the chronicle began, or won the Merit in place of experience points. It might represent an honored lineage to which you belong, or reflect a glorious mentor whose rep rubs off on you. Either way, folks expect great things of you, and usually defer to you so long as you live up to the reputation you currently enjoy. For the flipside of this Merit, see the Social Flaw: Infamy, pp. 62-63.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "social",
@@ -134,56 +109,61 @@
     },
     {
         "name": "Noted Messenger",
-        "description": "You are known and respected as a messenger between groups.",
+        "description": "A known emissary between groups, you’re treated with a certain amount of deference and courtesy that other mages would not receive. Even enemies of your group won’t try to kill you on general principle, though they might not be especially happy to see you. The things you have to say will be given a certain amount of weight, and your presence may open doors (literal or otherwise) that would remain shut for almost anybody else. That’s the upside; the downside is that you need to behave yourself (and keep a tight leash on your companions) when you’re on someone else’s turf. Passing false messages will undermine your credibility, and obnoxious behavior will get that welcome mat yanked out from under your feet rather quickly. It should go without saying that breaking a truce while acting in your official capacity (or even when you’re not!) will trash your reputation and reflect very poorly on your superiors. Also... well, some folks really do prefer to kill the messenger when things don’t go their way. Tread that red carpet carefully.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "social",
         "values": [3],
-        
-        "source": "M20 p. 643"
+        "source": "M20 Book of Secrets p. 58"
     },
     {
-        "name": "Master of Red Tape",
-        "description": "A savant of bureaucracy, you slash your way through official obstructionism. When red tape unspools across your path, you know who to talk to, which forms to fill out, and where the loopholes are.",
+        "name": "Master of the Red Tape",
+        "description": "A savant of bureaucracy, you slash your way through official obstructionism. When red tape unspools across your path, you know who to talk to, which forms to fill out, and where the loopholes are. A few calls to the right people, and official obstacles disappear as if by magic(k). After all, it’s not what you ask for but who you ask, and how. When faced with the near-inevitable morass of bureaucracy, subtract -2 from all difficulties that involve dealing with the system. To use this Merit, you need to decide what you want to accomplish and how you want to go about doing that. Your character makes the requisite calls to the requisite people, and the dice determine the rest. Backgrounds like Alternate Identity, Backup, Certification, Contacts, Influence, Rank, Requisitions, Retainers, Secret Weapons, and Spies often involve bureaucracies, and Allies, Chantry, Resources, and other Backgrounds might feature red tape if the Background in question comes from a larger organization. Although it’s most helpful for members of the Technocratic Union, any modern mage can find this Merit useful. Hermetic Chantries are infamous for byzantine bureaucracy, and the courts of classical China pretty much invented such things, making this an appropriate Merit for Wu Lung and certain monastic Akashayana.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "social",
         "values": [4],
         "source": "M20 Book of Secrets p. 58"
     },
+	{
+        "name": "Rising Star",
+        "description": "Mage: Within your group, you’re an up-and-coming luminary. Your superiors favor you, your peers respect you, handfuls of haters despise you (of course!), and folks who pay attention to the group’s activities have noticed your progress, and they approve. Many people within your group go out of their way to be your friend, and plum assignments keep coming your way. When dealing with members of your Tradition, Convention or whatever, subtract -1 from the difficulties of your social rolls, unless those rolls are meant to influence folks who want to see you fail. People are, of course, expecting great things from you, so don’t let them down... Changeling: You are one of the up-and-comers in the freehold. Everyone wants to know you and be your friend, even as those in power groom you for positions of greater responsibility. You are at a –3 difficulty on all social rolls against any changelings who aren’t actively opposing your ascent.",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+        "stat_type": "social",
+        "values": [3],
+        "source": "M20 Book of Secrets p. 58, C20 p. 184"
+    },
     {
         "name": "Burning Aura",
-        "description": "To those who can sense it, your aura burns with amazing brilliance and clarity. Even folks who can't actually perceive this bright corona of energy realize that you're 'different.'",
+        "description": "To those who can sense it, your aura burns with amazing brilliance and clarity. Even folks who can’t actually perceive this bright corona of energy realize that you’re “different.” Entities that can read your aura react accordingly; some will treat you with uncommon respect, while others will view you as a nice meal. The nature of your aura cannot be hidden easily (+2 to the difficulty of any attempt to do so), and while this is a dreadful disadvantage for, say, a Nephandus, people who prize forthright integrity may reduce their difficulties by -2 when they’re trying to make an impression that’s in accord with that vivid aura and affecting characters who can sense it. Assuming that you employ these optional Traits, your Resonance and Synergy each get a vivid, one-dot boost from this Merit – see Chapter Three, pp. 133-134, for details. For aura colors and tones, see Mage 20, p. 507.'",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [1],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 68"
     },
     {
         "name": "Green Thumb",
-        "description": "Plants flourish from your touch. Although they don't bloom and grow on contact, they do attain a healthy boost when you work with them.",
+        "description": "Plants flourish from your touch. Although they don’t bloom and grow on contact (a wildly paranormal effect which was part of this Merit’s original form), they do attain a healthy boost when you work with them. Reduce the difficulty of all non-Arete rolls by -2, and reduce the difficulty of Arete rolls by -1, when you work with plants, trees, and other forms of vegetation –algae, mold, fungus, seaweed, and the like. Story-wise, your aura pulsates with green vitality, plant matter grows fast and robust in your presence, and your Resonance and Synergy reflect a powerful connection to the green world. A common Merit among Verbena, Bata’a, and other primal mystics, this could also represent a strange acumen for vegetative biomass that certain technomancers enjoy.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [1],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 69"
     },
     {
         "name": "Bardic Gift",
-        "description": "Blessed with uncanny inspiration, you create profoundly evocative artwork. Truth echoes through your words, blazes from your canvas, resonates in song, speaks silently in dance.",
+        "description": "Blessed with uncanny inspiration, you create profoundly evocative artwork. Truth echoes through your words, blazes from your canvas, resonates in song, speaks silently in dance. Although artistic skill is, of course, important, this gift runs deeper than mere technique. Art is your passion, your spirit, your Truth. And that Truth manifests itself in whatever arts you pursue, up to and including the Magickal Arts. When making a roll with the Art Talent, reduce the difficulty by -2. Even when the attempt itself falls short of your expectations (that is, when you fail a roll), your creations feature an unmistakable gleam of brilliance and a preternatural expression of Truth. Although you’re not required (as a player) to employ artwork as part of your magickal focus, chances are good that your approach to magick does feature elements of painting, dance, music, and other manifestations of artistic expression.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [2],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 69"
     },
     {
         "name": "Circumspect Avatar",
-        "description": "You've never seen your Avatar, and probably doubt that such a thing exists. Sure, you have a shadow, and a reflection, or maybe a little dog who's followed you around since you were a kid and seems no older even though he should have died of old age years ago, but an Avatar? Nah - that's a buncha New Age hippie crap!",
+        "description": "You’ve never seen your Avatar, and probably doubt that such a thing exists. Sure, you have a shadow, and a reflection, or maybe a little dog who’s followed you around since you were a kid and seems no older even though he should have died of old age years ago, but an Avatar? Nah – that’s a buncha New Age hippie crap! You have yet to encounter any such thing, you don’t go on “seekings” or whatever they’re called, and you get your metaphysical insights the same way any normal person does: through everyday events in the everyday world. Essentially, this Merit grants a “silent” Avatar – one that, for whatever reason, does not hound or guide your character but merely drops hints, cues, and clues that the mage either figures out or doesn’t figure out on her own. Seekings and Epiphanies take place in the physical realm, typically as puzzles and dilemmas that happen to be related to issues that the mage needs to sort through in order to advance to the next level of understanding. During such situations, the Avatar may indeed appear (possibly even manifest – see the Merit: Manifest Avatar, p. 71), but only as some apparently mundane person, creature or thing, not as an obviously paranormal entity. You could, for instance, get a call from your mother that sends you into an introspective mood which, in turn, leads you to figure out an important riddle from your past; Mom, of course, denies even having called you. Huh. So who could that call have been from, anyway? Or did you, perhaps, just imagine it after all?",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
@@ -193,57 +173,52 @@
     },
     {
         "name": "Unaging",
-        "description": "The years seem to pass you by. Time moves on, but you remain essentially the same physical age as you were when this Merit stopped your aging process.",
+        "description": "The years seem to pass you by. Time moves on, but you remain essentially the same physical age as you were when this Merit stopped your aging process. Maybe you discovered the Fountain of Youth, upgraded yourself to perpetual stability, assumed an odd relationship with the time stream, or entered an uncanny bargain that preserved your current age. And so, although you continue to accumulate the scars, experience, and perspective of age, your body maintains a consistent state of chronological development. Note that this is not the same thing as immortality – injuries and sickness can kill you just as surely as they’ll kill any other person. Age-based decrepitude, however, is not something you’ll have to worry about.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [2],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 69"
     },
     {
         "name": "Celestial Affinity",
-        "description": "You get along especially well with a certain type of spirit entity. Depending upon your practice, you might relate well with nature spirits, High Umbral Courtiers, Digital Web entities, the Restless Dead, the Loa, angelic or demonic beings, and so forth.",
+        "description": "You get along especially well with a certain type of spirit entity. Depending upon your practice, you might relate well with nature spirits, High Umbral Courtiers, Digital Web entities, the Restless Dead, the Loa, angelic or demonic beings, and so forth. When you’re dealing with entities within a single selected category, you reduce the difficulty of your summoning and negotiation rolls by -2. (See the section that deals with Summoning, Binding, Bargaining, and Warding in How Do You DO That?, pp. 90-95.) This bonus does not apply to attempts to bind or ward against such beings, as it’s based upon goodwill, not force. It does, however, apply to the Arete rolls when casting the summoning Effect (within the normal modifier limits, as usual), because the entities in question are more inclined to show up when you call upon them. For three additional points per category, you may add another category of spirits, assuming that your practice favors an affinity for such spirits. (A BCD Void Engineer “ghost-buster,” for example, could not purchase an Affinity for ghosts, though a necromancer could certainly do so.) If you abuse this goodwill, as one might imagine, this bonus, and the Merit, both go away – and might wind up being replaced by a Flaw like Immortal Enemy (p. 93) if your mage behaves in an especially foolish manner.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [3],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 70"
     },
     {
         "name": "Cloak of the Seasons",
-        "description": "Adverse weather does not bother you. Regardless of your clothing or lack thereof, you're essentially immune to the effects of exposure to harsh climates.",
+        "description": "Adverse weather does not bother you. Regardless of your clothing or lack thereof, you’re essentially immune to the effects of exposure to harsh climates, as described in Mage 20, p. 435. You still need to eat, drink, and breathe – this Merit won’t save you from starvation or suffocation – and climate-based obstacles (fog, high winds, snowdrifts, ice, etc.) hinder you as badly as they’ll hinder anybody else. Aside from outright attacks by the elements, however, you remain untouched by extremes of temperature and climate. You might not always be comfortable, but you’ll survive.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [3],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 70"
     },
     {
         "name": "Cyclic Magick",
-        "description": "The strength or weakness of your Arts is tied to some periodic cycle - the phases of the moon, night or day, your menstrual periods, the rise and fall of the stock market, and so forth.",
+        "description": "The strength or weakness of your Arts is tied to some periodic cycle – the phases of the moon, night or day, your menstrual periods, the rise and fall of the stock market, and so forth. At the peak of your cycle, your magick flows most easily; at its nadir, you find it challenging to work with your magick at all. System-wise, this Trait is both a Merit and a Flaw, granting bonuses at one point in the cycle and penalties on its opposite point. At the highest point, you reduce your casting difficulties by -3 for one hour, while at the lowest point you increase them by +3 for one hour. On either end of that cycle, you subtract or add -1 /+1 to your casting difficulties for each hour on both sides – the surge and the ebb – of that cycle: -2 or + 2 for the two hours on each side of the peak or nadir, -1 or +1 on the two hours on the side of those two hours, and no modifiers during the rest of the time in between. If, for example, Victoria Ashley-Croft bani Flambeau has a peak at midnight and a low at noon, her player would receive a peak modifier of -3 difficulty at midnight, -2 difficulty at 11:00 PM and 1:00 AM, a -1 difficulty at 10:00 PM and 2:00 AM, and no modifiers otherwise, aside from the reverse modifiers (+3 at noon, +2 at 11:00 AM and 1:00 PM, and +1 at 10:00 AM and 2:00 PM) at the opposite end of that cycle. Naturally, you’ll need to decide just what this cycle is when you select this Trait, and then determine what the highest and lowest points of that cycle would be. This Merit must also be tied into your focus – intrinsically connected to the beliefs you hold and the practices you follow. Your choice of instruments is often tied to such cycles too; cycle-bound instruments include celestial alignments, crossroads and crossing-days, formulae and mathematics, group rites, money and wealth, music (peaks and lulls in a song, movements in a symphony, etc.), numbers and numerology, and offerings and sacrifices (“when the stars are right”). A stockbroker will be watching the peaks and ebbs on Wall Street, while a witch pays attention to the cycles of the moon or her blood. By observing your cycles, you’ll have a good idea about the best and worst times to use your Arts. And by observing you, your allies and enemies may be able to figure those things out too.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [3],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 70"
     },
     {
         "name": "Hands of Daedalus",
-        "description": "You've got an innate gift for crafting machines and technology. Such devices seem to come to life in your hands, fitting easily into place and functioning with incredible precision once you've worked with 'em.",
+        "description": "You’ve got an innate gift for crafting machines and technology. Such devices seem to come to life in your hands, fitting easily into place and functioning with incredible precision once you’ve worked with ‘em. Although this gift does not extend to the ins and outs of software technology, you can work on computer hardware (assuming that you know what you’re doing) as naturally as you can tune a ’58 Ford. From a systems standpoint, any rolls you make to craft, repair, invent, or otherwise modify mechanical technologies are at -2 difficulty when you’ve got the opportunity to put those Hands of Daedalus to work. Tech-based magickal instruments (see the Mage 20 entries for Armor, Devices and Machines, and other hardware-based technologies) and practices (see Craftwork and Hypertech in the Focus and the Arts section of Mage 20, Chapter Ten) function, in your hands, as Personalized Instruments (Mage 20, pp. 503 and 587-588) once you’ve had a chance to get familiar with them... and to have them get familiar with you.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [3],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 71"
     },
     {
         "name": "Manifest Avatar",
-        "description": "For most mages, the Avatar remains a mysterious figure, goading them from the sidelines and appearing primarily within a Seeking or during other moments of intense stress. For you, however, the Avatar is a vibrant presence in your life, as real to you as anyone else.",
+        "description": "For most mages, the Avatar remains a mysterious figure, goading them from the sidelines and appearing primarily within a Seeking or during other moments of intense stress. For you, however, the Avatar is a vibrant presence in your life, as real to you as anyone else. Essentially a character in its own right, this manifested Avatar interacts with you on an almost daily basis. In certain situations, it might interact with other people, as manifestly real as any other person in your world. The Manifest Avatar Merit embodies the Avatar as a full character under the Storyteller’s control. On its own, this Merit reflects that Avatar as a person who only the associated mage can see, hear, and interact with on a physical level; in conjunction with the Background: Allies, however, the Avatar becomes a character that everyone can see, hear, and feel. In both cases, the Avatar may come and go as it pleases, bound only by the physical laws with which it chooses to be bound. The physical Avatar’s shell can be injured or killed, but that in itself does not kill the Avatar – merely its body. For obvious reasons, that solid Avatar should have a guise that won’t be too vulgar or bizarre for the Consensus to endure – a cloaked, whispering figure, perhaps, but not a screeching, tentacled monstrosity. The manifested Avatar’s Traits depend upon the value of the Allies Background, as well as the physical form of that incarnation. An equine or lupine Avatar, for instance, will have different Traits than an Avatar that manifests as a crow, shadow, mirror, or child. Your Avatar does not hang a sign around her neck that proclaims Avatar. In the first edition Cult of Ecstasy Tradition Book, for example, Cassie deals with a manifested Avatar named Aria who never reveals herself to be anything other than a wild child who looks disturbingly like an alternate-reality version of Cassie and knows things no one else should know about Cassie’s past, present, future, and inner self. (For details, see that book, pp. 5-45.) Unless either the mage or the Avatar announces its true identity, other characters don’t usually think that your manifested Avatar is anything other than what it appears to be. Mages or Night-Folk who can see auras or souls might catch on, but most other folks remain clueless. An Avatar manifesting only for the mage can affect the material world only when no other characters or devices can see that entity, although it might appear to others as an online presence, a ghostly figure, as odd sounds, or through other phenomena. An Allies-based Avatar remains as solid as it wants to be, lacking the powers of a human mage but possessed (literally) of the power to fade in and blink out as it desires. Again, the Manifested Avatar is a Storyteller character, with agendas and behavioral quirks that confound both the mage and his player. Although that Avatar has its mage’s best interests at heart, it might play the role of a rival, lover, best friend, or nemesis... quite possibly all of them at once.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
@@ -253,56 +228,52 @@
     },
     {
         "name": "Mark of Favor",
-        "description": "A godlike entity has claimed you as its own, and has stamped your features with evidence of that claim. You might have the bushy red hair and sly eyes of Reynard the Fox, the hearty temper and brawny build of Thor, the compassionate fury of the Christ in your eyes, or Legba's lame leg and penchant for corncob pipes and tobacco.",
+        "description": "A godlike entity has claimed you as its own, and has stamped your features with evidence of that claim. You might have the bushy red hair and sly eyes of Reynard the Fox, the hearty temper and brawny build of Thor, the compassionate fury of the Christ in your eyes, or Legba’s lame leg and penchant for corncob pipes and tobacco. Folks who understand the lore of your associated god-form recognize this Mark of Favor, and even those who don’t know who you’re marked by realize that there’s something special about you. An excellent companion to the Background: Legend, and already an element of the Background: Totem (see Totem Mark in Mage 20, p. 327), this Trait provides a recognizable connection to a renowned god-form. Whether or not this actually is a sign of divine favor, of course, depends upon your Storyteller’s preferred theological metaphysics. As far as your character is concerned, it totally is. Note that such favor isn’t always a happy thing; mythology is full of people who shared dysfunctional relationships with divine parents and patrons! When dealing with people who recognize the Mark and respect the deity that bestowed it, you subtract -2 from the difficulty of related social rolls. Opponents of your divine patron consider you an enemy, and although intimidation-style rolls still receive the -2 reduction in difficulty, rolls that attempt to get on the good side of such people add +2 to the difficulty instead. A Mark of Favor may, at the Storyteller’s discretion, bestow other miraculous talents, too. Strange things happen, and those things remain beyond the Marked character’s control. Someone chosen by the Virgin Mary could possess a minor healing touch, while the chosen of Thor has a literally shocking touch when he gets mad. Again, these powers exist completely at the Storyteller’s whim, and suit the flavor of the story, not the desires of the player. Essentially, they’re miracles granted by your god, both given and taken in mysterious ways.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [3],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 71"
     },
     {
         "name": "Natural Channel",
-        "description": "You have an innate connection to the spirit world.",
+        "description": "You’ve got an innate affinity with the Otherworlds. Sliding through from the mortal realm to the Three Worlds is easier for you than it is for other Awakened folk. System-wise, you subtract -2 from the difficulty of your rolls to penetrate the Gauntlet. Story-wise, crossing over feels, to you, like a primal sort of homecoming, as if you exist between worlds on an elemental level.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [3],
-        "source": "M20 p. 643"
+        "source": "M20 Book of Secrets p. 72"
     },
     {
         "name": "Natural Shapeshifter",
-        "description": "Guided by an innate affinity for metamorphosis, you can change your shape more easily than most mages do. Such changes still demand the usual Life Sphere Ranks and Effects, but your difficulty for such rolls is reduced by -2.",
+        "description": "Guided by an innate affinity for metamorphosis, you can change your shape more easily than most mages do. Such changes still demand the usual Life Sphere Ranks and Effects, but your difficulty for such rolls is reduced by -2 (the usual limits apply), and you don’t need to worry about losing yourself in the new form, as described in How Do You DO That?, p. 20. Such talents don’t necessarily link you to the Night-Folk, although this Merit fits in well with Fae Blood or Shapechanger Kin (and the Mental Flaw: Feral Mind, as well; see p. 52). The gift does not, however, affect your ability to change other people’s shapes in any way. Such talent works for you alone. For a potentially related paradigm and practice, see the Chapter Three entries We are Meant to be Wild (p. 93) and Animalism (pp. 197-199)",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [3],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 72"
     },
     {
         "name": "Oracular Ability",
-        "description": "Everything, to you, has a richer significance than it might otherwise appear. The flight of birds, the fall of cards, the patterns of sand after a wave, a spatter of sacrificial blood... in your eyes, they're all clues to the Universal Mystery.",
+        "description": "Everything, to you, has a richer significance than it might otherwise appear. The flight of birds, the fall of cards, the patterns of sand after a wave, a spatter of sacrificial blood... in your eyes, they’re all clues to the Universal Mystery. You’re good at deciphering such clues, and so while many enigmas remain unanswered, you often spot insights that other people – even mages – fail to see. In game terms, you can make a Perception + Awareness roll (difficulty 7) whenever the Storyteller feels you’re in a position to perceive a hidden message in apparently random phenomena. If you do spot what appears to be a message, you can make a second roll of Perception + Esoterica (or Occult, whichever is higher) to see if you can interpret the message you think you see. The difficulty of this interpretation roll depends on how random the phenomena is; a deck of cards, for instance, is less random (difficulty 6 or 7) than a scatter of crow feathers (difficulty 8 or 9), and so is better suited for divination purposes. This doesn’t mean you can’t read that scatter of feathers, only that doing so is more challenging than interpreting a deck of cards! A successful interpretation roll wins a vague yet potentially valuable answer from the Storyteller – couched, of course, in symbolic metaphors and wide-open meanings. (Storytellers, see The Deeper Level in Mage 20, pp. 363-366, and Prophecy and Hindsight in How Do You DO That?, pp. 55-56, for guidance.) Such answers are not at all reliable, naturally, but they stand a decent chance of being accurate enough to help you read patterns in apparently random chance.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [3],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 72"
     },
     {
         "name": "Parlor Trick",
-        "description": "You've honed a special trick - a simple, specific, non-combat application of your Arts - which you can perform without making a casting roll.",
+        "description": "You’ve honed a special trick – a simple, specific, non-combat application of your Arts – which you can perform without making a casting roll. Such tricks include things like conjuring a business card, stirring a pot without touching the spoon (or the pot), igniting your cigarette without lighters or a match, producing a small amount of light without mechanical contrivance, changing your hair color with a shake of your head, and so on. To a Sleeper, these tricks look like something a normal person could do with a mysterious bit of skill. You, of course, realize that the skill in question is not quite what they think it is. Three important rules govern this Merit: • It cannot be a feat with direct damage-producing combat applications (though a “light your cigarette” trick could also work with a stream of flowing gasoline). No popping claws or conjuring firearms! • It must be a quick, simple action that a Sleeper witness could explain away as practiced sleight of hand. • These tricks are limited to things you could do with Sphere Ranks 1 to 3, apply to only one specific trick (conjuring a rose, say, not conjuring anything that’s roughly rose-sized), and you must have the Spheres necessary to perform the feat in the first place. This Merit does not allow you to cast Effects above your normal abilities! Each trick costs three points, and must suit your character’s metaphysical focus. You can take this Merit up to three times, total. Obviously vulgar feats (making yourself disappear in broad daylight) are prohibited, although a clever use of circumstances (the old Batman disappearance trick – see How Do You DO That?, p. 77) could be included in your bag of tricks. This Merit is intended to give your character and chronicle a little extra flair. It should not be allowed as an end-around to skirt the rules, or as a secret weapon that he can use without consequences like Paradox. Under unfamiliar and /or hostile circumstances, like stirring someone else’s pot in someone else’s kitchen, this Parlor Trick might not work at all.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [3],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 73"
     },
     {
         "name": "Spirit Magnet Merit",
-        "description": "Ephemeral entities flock to your presence. The essence of who you are - benign or malignant - draws spirits to you, and they, in turn, affect the essence of who you are.",
+        "description": "Ephemeral entities flock to your presence. The essence of who you are – benign or malignant – draws spirits to you, and they, in turn, affect the essence of who you are. For the most part, these entities cluster around you in the Penumbra, invisible to mortal perceptions; whenever you cross the Gauntlet, though (either with your perceptions or with your body), they’re waiting for you there. Spirits that can manifest physical forms may come across the Gauntlet to visit you, and those that cannot take on physical bodies still energize the spiritual atmosphere in your vicinity. Whether or not this is a good thing for you depends upon whether you select this Trait as a Merit or a Flaw: • The Merit form of Spirit Magnet draws generally benevolent spirits – Naturae, Lunes, totem and animal entities of the gentler variety, and so on. These spirits protect you from malignant entities, warn you of impending danger, offer advice, help you out when you visit the Otherworlds, and generally make your life easier. Folks who can sense those spirits (mediums, shamans, medicine-folk, werecreatures, etc.) tend to favor you; after all, if the better sorts of spirits like you, then you must be someone worth knowing. • The Flaw version represents the presence of malevolent spirits – Banes, demons, and other nasty Umbral beasts. Summoned by curses or spiritual corruption, these entities seek to tempt you, poison you, feed off your vitality, and otherwise turn your life into a self-contained Hell On Wheels. Spirit-sensitive folk will avoid you unless they’re into that sort of thing, and werewolves will consider you to be “of the Wyrm” (whatever the hell that means), if only because of the company you keep. Although you might not consider yourself a bad person at heart, your spiritual companions say otherwise! The value of this Merit of Flaw is, as always, based on how helpful or troublesome the spirits can be, how powerful they are, and how many of them you have to deal with when they appear. • (3 points) Minor entities occasionally offer aid or hindrance. • (4 points) Minor entities show up frequently, or in small numbers. • (5 points) Minor entities surround you often, whether you want them to or not, and more potent ones have taken interest in your existence. • (6 points) You have the interest of one or two entities of significance, and plenty of minor ones pay great attention to you. • (7 points) You’re never alone, even when you probably wish you could be. This spiritual companionship could be directly opposed to your true nature. A really awful person might attract be nevolent entities who want to save her, while a veritable St. Anthony could be plagued with demons intent on fucking up his soul. Even so, such constant presence does have an effect on your overall health. Mind, body, and spirit are interwoven whether we want to recognize that or not, and a mortal who attracts Otherworldly entities has got something unusual going on under the skin..",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
@@ -311,137 +282,566 @@
     },
     {
         "name": "Spirit Mentor",
-        "description": "A ghost, Loa, or other ephemeral entity has taken a special interest in you. As an expression of favor, this entity teaches you things few mortals ever have the opportunity to learn.",
+        "description": "A ghost, Loa, or other ephemeral entity has taken a special interest in you. As an expression of favor, this entity teaches you things few mortals ever have the opportunity to learn. Although those lessons do not include Sphere-based magick, you could learn insights that help you to expand your knowledge and better understand the nature of Reality. (See Raising or Learning Spheres in Mage 20, p. 337.) More often, though, this entity tells you secrets, offers you enigmas, and helps you work through situations that would leave most mortals scratching their heads or crying in corners. Your Spirit Mentor could also teach you new Abilities, or help you improve the ones you have, if such teaching seems appropriate to the spirit in question. A data-entity might be able to teach you about computers, while an incarnation of Zhengyi Zhenren’s tiger could teach you tiger-form kung fu. Such teaching tends to take place in the Otherworlds, or in dreams, rather than in the material realm, although a spirit who can Materialize (as the Charm of that name) could certainly teach a person in her own home realm. As with other character-related Traits, your mentor is a Storyteller character with its own agendas, personality, and so on. This Merit could be combined with the Backgrounds: Ally, Familiar, Mentor, or Totem to represent a spirit who plays several roles in your life. Depending on how active your ephemeral friend is in your everyday life, other folks might know about this mentor, consider it to be “part of the family,” or think you’re utterly out of your mind... and if that spirit clashes with the company you keep (like a Loa hanging with a Technocrat, or a demon with a Chorister), your friend might get you into hot water on the human side of your life!",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [3],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 74"
     },
     {
         "name": "Deathwalker",
-        "description": "The Underworld welcomes you. While most Umbral travelers are more or less barred from the Shadowlands and Low Umbra unless they possess special magicks (or have died), you can step sideways into the Dead Lands with a simple application of Spirit 3.",
+        "description": "The Underworld welcomes you. While most Umbral travelers are more or less barred from the Shadowlands and Low Umbra unless they possess special magicks (or have died), you can step sideways into the Dead Lands with a simple application of Spirit 3. When you do so, your aura assumes the pale tone of death, and you become essentially indistinguishable from a ghost unless some knowledgeable entity makes a successful Perception + Occult roll (difficulty 7) to see you for what you really are. If the Avatar Storm is still raging in your chronicle, you can pass into the Low Umbra without suffering the Storm’s effects. This sort of “gift” often leaves macabre traces on the mortals it favors. Hence, this Merit is well-suited for the Flaws: Echoes, Uncanny, and Primal Marks. Thanks to their innate ties to the Dead Lands, Deathwalkers, as a rule, view the Otherworlds through the Vidare Mortem, suffer from Morbidity Quiets, and tend to have a rather fatalistic view of life.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [4],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 74"
     },
     {
         "name": "Fae Blood",
-        "description": "Your veins pulse with the enigmatic blood of the fae. Although not a full changeling, you possess a distant tie to the Dreaming by way of your strange heritage.",
+        "description": "Your veins pulse with the enigmatic blood of the fae. Although not a full changeling, you possess a distant tie to the Dreaming by way of your strange heritage. In Changeling: The Dreaming terms, you’re kinain: a mortal human related to their kind. Your Banality rating is low (no higher than 4, and often lower than that), and you remain permanently enchanted in the sense that you perceive, and are affected by, the changeling world. As a default member of that eldritch fellowship, you also tend to get swept up in their odd intrigues, and know an uncomfortable amount about their hidden world. As with the Merit: Faerie Affinity, this Merit is forbidden to technomancers of all kinds. Their Banality is too high to sustain this gift of the blood.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [4],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 74"
     },
     {
         "name": "Shapechanger Kin",
-        "description": "Through a distant but noticeable quirk of lineage, you share a touch of the Changing Blood. In plain English, you're related to one of the were-breeds: werewolves, werecats, werecrows, and so forth.",
+        "description": "Through a distant but noticeable quirk of lineage, you share a touch of the Changing Blood. In plain English, you’re related to one of the were-breeds: werewolves, werecats, werecrows, and so forth. This gift does not grant you their powers or Gnosis, but you probably know a few secrets (in game terms, Lore Knowledge) about your kin. You remain immune to the primal-fear Delirium that affects most people in a werecreature’s presence (not that mages suffer from it anyway); can travel in the Otherworlds longer than most mortals manage, without suffering the Disconnection and Acclimation side-effects of such travel (detailed in Mage 20, pp. 482-483); and possibly enjoy some goodwill from your feral family, so long as you haven’t done anything to piss them off. Their enemies, however, are your enemies, which makes this an extremely double-edged Merit.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [4],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 74"
     },
     {
         "name": "Twin Souls",
-        "description": "To you, the term soulmate is literally true. Your Avatar has a twin that has been embodied within another mortal body. That other person (typically a human being, but potentially an animal) shares your Nature and Essence, and possibly your Demeanor as well.",
+        "description": "To you, the term soulmate is literally true. Your Avatar has a twin that has been embodied within another mortal body. That other person (typically a human being, but potentially an animal) shares your Nature and Essence, and possibly your Demeanor as well. Even so, your “twin” can be a very different person – different gender, different ethnicity, different culture, and again possibly even a “higher” animal like a wolf, bear, hawk, bison, and so forth. That person might live on the other side of the world, and may not even know that you exist. If soul-twins meet in person, though, both feel an unmistakable connection to one another. This connection, however, might not necessarily translate to goodwill. Blood-siblings often clash, and soulmates can clash as well. If that twin is also a mage (many twin Avatars are not yet Awakened), then both mages have the same Avatar rating. You can both share Quintessence and cast spells together if you happen to be physically touching (or, in the Umbra, ephemerally touching). In this case, the character with the highest Arete rating and Sphere Ranks is the one whose Traits get used to cast those Effects. Both mages, when they’re within arm’s reach, also get an amount of bonus Quintessence points that’s equal to their Avatar rating; if Ryan Summers and his twin Sylvia Jane have three dots in Avatar, they each get an additional three points of Quintessence when they’re close enough to touch one another. For details about collaborative spellcasting, see Acting in Concert in Mage 20, pp. 542-543. Shared souls, however, also share equally in any Paradox gathered by their magicks, with each twin separately getting the full amount of Paradox. If Ryan and Sylvia cast an Effect that earns 10 points of Paradox, then both Ryan and Sylvia get 10 Paradox points each. Whether or not your twin is a mage, you can use magick to keep track of them once you’ve met your twin. A single dot of Correspondence will let you know where your soulmate is, a single dot in Life will let you know their current state of health, and a single dot in Mind allows you to share thoughts with one another. A twin’s death, however, is a shattering event; if your twin dies, you must make a Willpower roll (difficulty 8) or else suffer the psychic shock of Things Man Was Not Meant to Know. Until that twin’s Avatar reincarnates (which might not happen in your own lifetime), and is met in person once again, you cannot use the shared powers you had once enjoyed. As with other character-based Traits, your twin is not a walking Merit but a character in their own right. Both twins could be roleplayed by different players in the same group, and probably should not be played by the same player. The quest to find a soulmate, a bitter dispute between soulmates, two soulmates on opposing factions of the Ascension War – such stories could provide the foundation for pivotal events and themes in your chronicle. This Merit goes well with the Background: Allies, the Merit: True Love, and the Flaws: Enemy, Sleeping with the Enemy, and Ward. Because of the already-Awakened natures of the Night-Folk, however, a soul-twin cannot be a vampire, werecreature, changeling, or other paranormal entity.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [4],
-        "splat": "Mage",
-        "source": "M20 Book of Secrets p. 75"
-    },
-    {
-        "name": "Unbondable",
-        "description": "You cannot be bound by supernatural means.",
-        "game_line": "Mage: The Ascension",
-        "category": "merits",
-        "stat_type": "supernatural",
-        "values": [4],
-        
-        "source": "M20 p. 643"
-    },
-    {
-        "name": "Ghoul",
-        "description": "The blood of vampiric Kindred has made you something more than human. Willingly or otherwise, you have supped on a vampire's blood, and although you're probably not bloodbound to her service any longer (unless you are), that creature's unnatural vitality has become your own.",
-        "game_line": "Mage: The Ascension",
-        "category": "merits",
-        "stat_type": "supernatural",
-        "values": [5],
         "splat": "Mage",
         "source": "M20 Book of Secrets p. 75"
     },
     {
         "name": "Clear Sighted",
-        "description": "Even without employing your Arts, you have a preternatural gift for seeing things as they are, not as they appear to be. Illusions, disguises, cloaking spells, and other forms of trickery rarely deceive your eyes.",
+        "description": "Even without employing your Arts, you have a preternatural gift for seeing things as they are, not as they appear to be. Illusions, disguises, cloaking spells, and other forms of trickery rarely deceive your eyes. In game terms, you can make a Perception + Awareness roll to see through metaphysical deception powers: vampiric Disciplines, faerie cantrips, werecreature Gifts, Sphere-based illusions, and other powers that are based on deceiving a witnesses’ perceptions. This roll works only against powers that deceive the target’s perceptions, not against any other form of Gift, Discipline, cantrip, and so forth. (Vampiric Obfuscate, for example, but not Presence or Dominate.) The difficulty for that roll is generally 5 + the highest Sphere Rank or other level involved in that power; a Forces 2 /Prime 2 illusion, then, would be difficulty 7, while a vampire’s Mask of a Thousand Faces (Obfuscate 3) would be difficulty 8. If a character could normally get a roll to see through the illusion (as shown in How Do You DO That?, pp. 129-132), then your character subtracts -3 from her difficulty when trying to do so. Your clear sight also reduces your difficulty by -3 when you try to see through a disguise, a cloaking spell or device, or other attempts to conceal the truth from an onlooker. It does not, however, allow you to see through darkness, notice stealthing or invisible characters, or otherwise perceive something that you would not be able to see without this Merit; combining this Merit with the physical Merit: Acute Senses, however, could make you a formidably perceptive character.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [5],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 75"
     },
     {
         "name": "Immortal",
-        "description": "Thanks to some uncanny gift, you age slowly (if at all) and are extremely hard to kill. This gift comes not from Sphere magick but from a metaphysical legacy or curse that transcends the fleeting nature of the flesh.",
+        "description": "Thanks to some uncanny gift, you age slowly (if at all) and are extremely hard to kill. This gift comes not from Sphere magick but from a metaphysical legacy or curse that transcends the fleeting nature of the flesh. You’re not truly immortal, as death will probably claim you eventually; by normal standards, though, you exist outside of the usual range of human mortality. This Merit features two levels: • (5 points) You age very slowly – perhaps one year for every passing decade – and eventually recover (at the usual speed) from any injuries and illnesses that do not immediately kill you outright. A wasting disease or infection, for instance, won’t kill you (though you might wish it would), but a bullet in the heart would do so. • (7 points) In addition to the slow-aging process, you’re also immune to death itself unless you meet your special doom (as described below) or have your body completely obliterated. Shooting won’t kill you, poison won’t kill you, starvation won’t kill you, but being incinerated or dissolved in acid would end your life for good. Otherwise, your wounds heal at the usual rate, eventually bringing you back from the dead... which, if you’ve been buried, embalmed, entombed, or otherwise trapped could be a very bad thing for you! Regardless of the level of this Merit, you must have at least one special doom: an event that will kill your ass dead for good. This doom could involve decapitation, burning of your body, immersion in salt water, removal of the eternal revivification unit installed within your heart, and so forth. This doom must be determined before the chronicle begins, and if it ever befalls you... well, life was fun while it lasted, right? This Merit goes well with Traits like the Background: Legend, the Supernatural Merits: Mark of Favor, Nephilim, Spark of Life, and Twin Souls, or the Supernatural Flaws: Phylactery and Primal Marks. (See the appropriate entries throughout this section.) It cannot be taken in addition to the Merit: Nine Lives (also in this section) and, for obvious reasons, this Merit might not be available to player characters within your chronicle at all.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [5, 7],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 76"
     },
     {
         "name": "Inner Knight",
-        "description": "In your heart of hearts, you're a hero. While your companions work toward their own selfish ends, you embody a higher purpose. This purpose guides you in uncanny ways that feel, at times, as if you're being moved by a force greater than yourself - a noble force, naturally, but one that transcends even your personal Enlightenment.",
+        "description": "In your heart of hearts, you’re a hero. While your companions work toward their own selfish ends, you embody a higher purpose. This purpose guides you in uncanny ways that feel, at times, as if you’re being moved by a force greater than yourself – a noble force, naturally, but one that transcends even your personal Enlightenment. In dreams, you see yourself as a Warrior of Reason, a Champion of Truth. A paladin. A genius. A knight of everything that is worth defending. Intended more for Technocratic operatives and skeptical technomancers than for mages who accept reincarnation as a metaphysical truth, this Merit grants you special gifts when it seems like all hope has been lost. These gifts allow you to... • access Traits you don’t possess, as per the Background: Dream (at a rating of 5) but without entering a trance; • add five temporary points to your Willpower Trait, to use during that “hope is lost” crisis; • ...and perhaps recall things from a previous life that the character could not possibly have known – a language she does not know, an escape route in a place he’s never visited, a person they’ve never met before, and so forth. These boosts last only through the current scene, but include a burst of vitalizing energy and a sense of your inner hero coming through to save the day again. This isn’t the sort of thing you talk about, of course, especially not if you’re an agent of the Technocratic Union. The benefits, though, cannot be denied, even if their source is clearly... well, improbable, at best. And while this Merit was originally created for the sourcebook Guide to the Technocracy, any mage with a sense of higher purpose can take it. Just remember that the biggest difference between a knight and a murderer is the side of his sword you happen to be on at the time.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [5],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 77"
     },
     {
         "name": "Legendary Attributes",
-        "description": "Gifted with the strength of Shango or the beauty of Lucifer, you may exceed the human capacity for one Attribute Trait. That Trait is not automatically higher than usual (you still need to spend points to raise the favored Attribute), but you may purchase up to six dots in a given Attribute for your character, exceeding the usual limit of five dots.",
+        "description": "Gifted with the strength of Shango or the beauty of Lucifer, you may exceed the human capacity for one Attribute Trait. That Trait is not automatically higher than usual (you still need to spend points to raise the favored Attribute), but you may purchase up to six dots in a given Attribute for your character, exceeding the usual limit of five dots. Beyond that higher maximum, you also get one heroic capability that’s linked to that Attribute. The Shango-strength mage might always inflict at least one health level of damage with hand-to-hand blows, while the Luciferian seducer could score an automatic success whenever he tries to charm someone who ought to know better. These bonuses are always subject to Storyteller approval, however, and they don’t kick in until you reach six dots in the given Trait. Not even Lucifer, after all, possessed his full charm when he was just a little devil...",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [5],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 77"
     },
     {
         "name": "Spark of Life",
-        "description": "Blessed with great vitality, you heal injuries with heroic speed and ease. Your own injuries from lethal damage heal as if they were bashing damage, and aggravated damage heals as if it were one level higher than it is.",
+        "description": "Blessed with great vitality, you heal injuries with heroic speed and ease. Your own injuries from lethal damage heal as if they were bashing damage (see the Healing Damage chart in Mage 20, p. 406), and aggravated damage heals as if it were one level higher than it is. (Wounded-level damage, for instance, would heal at the Injured-level rate.) Bashing damage, regardless of its extent, heals within an hour. If you’re trying to heal someone else, you subtract -2 from the difficul- ty of the roll, even if that roll involves casting a Life Sphere healing Effect. (The usual +3 maximum modifier and minimum difficulty of 3 still apply – see Mage 20, p.503.) As long as you remain in physical touch with the injured party, that character uses your healing rate as her own. Your touch also soothes minor pains – muscle spasms, headaches, and so forth – within a minute or two. Beyond its healing powers, this rush of life-energy simply feels good, too. Your aura shines with bright vitality, and your Resonance reflects your strong connection to the primal life-force. On the inevitable downside, vampires find your blood delicious – twice as potent as normal human vitae (worth double the usual blood points, for players of Vampire: The Masquerade) – and unspeakably refreshing.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [5],
-        "splat": "Mage",
         "source": "M20 Book of Secrets p. 78"
     },
     {
         "name": "Nine Lives",
-        "description": "You have an uncanny ability to survive deadly situations.",
+        "description": "Oh, you lucky bastard! Somehow, you manage to cheat the Reaper with hair-raising regularity. If a die roll would result in your character’s death, the person who made that roll must roll again. If the second roll allows your character to live, then you and /or your Storyteller mark off one of your nine “lives” and your character survives the thing that would otherwise have killed her. If that roll fails, then one “life” gets marked off anyway and another roll is made. The rolls continue until either the character survives or the lives get used up. As the name suggests, however, this Merit lasts only nine times, tops. And if the final die roll still results in your character’s death... well, your luck was bound to run out sooner or later anyway.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
         "values": [6],
-        
         "source": "M20 p. 643"
     },
     {
-        "name": "Quantum Voyager",
-        "description": "You can travel through the Digital Web without the usual need for a computer interface. Your consciousness simply slides into the virtual realm as if you were stepping sideways into any other Otherworld.",
+        "name": "Hyperflexible",
+        "description": "You are what’s commonly but erroneously known as “double-jointed” (as per the old Merit of that name). In reality, your joints are exceedingly flexible, perhaps due to intense training, magickal augmentation, or the medical condition known as Ehlers-Danlos Syndrome (EDS – see above, as well as the Impediment Flaw, below). Whatever the reason, you can stretch and flex in ways most people cannot. In game terms, this Merit allows you a -2 reduction in difficulty for rolls that involve physical flexibility – escape attempts, contortions, etc. Your character can also perform uncanny acts of hyperflexibility, as seen in Cirque Du Soleil, butoh dance, and extreme yoga postures.",
+        "category": "merits",
+        "stat_type": "physical",
+        "values": [1],
+        "source": "M20 Book of Secrets p. 36"
+    },
+    {
+        "name": "Natural Linguist",
+        "description": "You’re especially good at understanding how people communicate. Every purchase of the Language Merit secures two languages for you, not just one. You also get three bonus dice when making rolls based upon clear communications, typically ones employing Art, Expression, Etiquette, Leadership, and other Traits that involve “speaking their language” to impress someone else. This Merit does not add three dice to magickal casting rolls when using language as an instrument. It may, however, apply the bonus to a mundane roll that could enhance a magick- casting attempt.",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+        "stat_type": "mental",
+        "values": [2],
+        "source": "M20 Book of Secrets p. 45"
+    },
+	{
+        "name": "Ambidextrous",
+        "description": "The hemispheres of your brain are so attuned that you can use both hands with equal dexterity. In game terms, you do not suffer a higher difficulty if you use two weapons or perform some task with your off-hand. The normal rules for performing multiple actions still apply, but coordination between the left and right sides of your body is no problem at all.",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+		"stat_type": "physical",
+        "values": [1],
+        "source": "M20 Books of Secrets p. 36"
+    },
+    {
+        "name": "Common Sense",
+        "description": "If such sense were truly common, there wouldn’t be a Merit to represent it. Still, you have a gift for thinking one step ahead and assessing the potential consequences of your choices. Essentially, this Merit gives you a Get Out of Doing Something Stupid Free card; whenever you announce an action that wouldn’t be especially bright (for example, throwing a Time-Sphere spell at Old Man Wrinkle), the Storyteller may ask, “Are you sure you wanna do that?” Thus warned, you’re free to ignore the advice of your smarter angels. Still, you do get a momentary insight into potential dumbassery, which is more than most people get. Use it wisely.",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+		"stat_type": "mental",
+        "values": [1],
+		"source": "M20 Book of Secrets p. 43"
+    },
+    {
+        "name": "Concentration",
+        "description": "Even by mage standards, you’re especially good at tuning out distractions. When you’re attempting some sort of feat that demands focus (as most do), this Merit eliminates modifiers that would be caused by distracting circumstances – gunfire, thunderstorms, rampaging critters from beyond the stars, and so forth. Truly distracting situations (trying to hack a computer system during a tornado, for instance) might demand a successful Willpower roll in order to wipe out the potential penalty; the difficulty would depend upon the circumstances. For the most part, though, you get in and get stuff done, whatever else might be going on around you.",
+		"game_line": "Mage: The Ascension",
+        "category": "merits",
+		"stat_type": "mental",
+        "values": [1],
+        "source": "M20 Book of Secrets p. 43"        
+    },
+	{
+        "name": "Daredevil",
+        "description": "You laugh at danger. Even when daring the Fates with near-suicidal impulsiveness, you possess an innate knack for not getting yourself perished. Add three dice to non-combat and non-magickal rolls that involve some physical act of incomprehensible stupidity (leaping from roof to roof, diving into a waterfall, jumping a motorcycle onto the back of a moving train, etc.) that would turn the average mortal into hash.",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+		"stat_type": "physical",
+        "values": [3],
+		"source": "M20 Book of Secrets p. 38" 
+    },
+	{
+        "name": "Natural Leader",
+        "description": "Inspiring by nature, you’re the sort of person other people look to for guidance. As a result, your Leadership-based dice pools receive a two-die bonus. Obviously, you need a certain level of presence to inspire such loyalty, and so you must have three dots or more in your Charisma Attribute before you can hope to be such a commanding individual.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "social",
+        "values": [2],
+		"source": "M20 Book of Secrets p. 56"
+    },
+	{
+        "name": "Acute Senses",
+        "description": "Your physical senses are unusually sharp, capturing nuances that few people ever notice. In game terms, your character reduces the difficulty of her Perception-based rolls by -2. At the 1-point level, a single sense (vision, hearing, touch, taste, smell) is more acute than usual; at the 3-point level, all five physical senses are equally sharp.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "physical",
+        "values": [1, 3],
+		"source": "M20 p. 642"
+    },
+	{
+        "name": "Ties",
+        "description": "The writing of this original merit was confusing. This is our explanation of it: 'You have a particular reputation in a certain field and working with contacts or allies in it can be easier. You can take this merit once for each field in which your character has a reputation. If asking contacts or allies in that field to fulfil a subtle request, such as pulling a license number, scoring some goodies, or getting an invitation to an exclusive function, rolls have -2 difficulty. If asking them to do a significant favour, such as planting a news story, spreading a rumour, or tampering with evidence, rolls have -1 difficulty. Actions that could damage this reputation might result in the merit being removed. Potential Ties include: Local Police, Local Underworld, National Police, Organized Crime Cartel, Local Media Outlet, National Media Outlet, Black Market, Drug Trade, Hollywood, Interpol, Club Scene, Paparazzi, Local Journalism, Evangelical Community, Terrorism Underground, Counterterrorism Network, International Journalism, Corporations, and so forth.'",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "social",
+        "values": [3],
+		"source": "M20 p. 643 with edits"
+    },
+	{
+        "name": "Alcohol-Drug Tolerance",
+        "description": "You can drink folks under the table or otherwise party till everybody else drops. System-wise, this Merit lets you make a Stamina roll (difficulty 7) to shake off the effects of intoxication – a useful talent for hard-pounding Ecstatics and tough-as-leather Black Suits! In its one-point form, this Merit functions only for “natural” drugs (booze, pot, cocaine, etc.), not for lab-synthesized concoctions (LSD, meth, krokodil, etc.). For two points, however, the Merit can neutralize the psychoactive effects of any drug unless that drug has been created as the vector for a Sphere-based magickal Effect. (That is, say, a pill that delivers a Life 3 /Mind 3 Effect to the person who takes it, as opposed to an “ordinary” pill that a mage takes as part of the focus instruments Drugs and Poisons or Brews, Potions, and so forth, as detailed in Mage 20, pp. 588-600.) In the latter case, the character needs to use countermagick; this Merit will not help to counteract such drugs. “Awakened” substances, however (as per Mage 20, p. 443) are treated as “synthesized concoctions” even if they are, in all other forms, “natural. For a more comprehensive resistance to toxins, see Poison Resistance, below.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "physical",
+        "values": [1, 2],
+		"source": "M20 Book of Secrets p. 35"
+    },
+	{
+        "name": "Cast Iron Stomach",
+        "description": "You can eat more or less anything without gagging. Squirming bugs, synthetic goop, a freshly-gutted carcass with the innards still hanging out... hey, it’s all food, so chow down! Anything you can physically devour and digest is yours for the eating. This Merit does not in any way protect you from the effects of said substances (rotted meat can still poison you), but you can keep down a meal that would make the average person puke from its mere proximity... an especially useful gift if you have the supernatural Flaw: Bizarre Hunger (see p. 87).",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "physical",
+        "values": [1],
+		"source": "M20 Book of Secrets p. 36"
+    },
+	{
+        "name": "Light Sleeper",
+        "description": "General (1 point Merit): Four hours of sleep a night works just fine for you. And unlike most folks, you can wake up out of an apparently dead slumber more or less ready for action. You can, of course, enjoy longer periods of sleep too. But when deadlines, intruders, and end-of-the-world emergencies shake you out of bed, you get by with cat-naps and the occasional light snooze. Vampire (2 points Merit): When you rest, you retain a level of alertness above and beyond the norm. You wake at any unwanted disturbance in your environment, thereby making it very hard to surprise you while you sleep. You automatically succeed at any rolls to detect mundane attempts at surprise attacks while you sleep. Vampires with this Merit cannot take the Deep Sleeper Flaw.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "physical",
+        "values": [1, 2],
+		"source": "M20 Book of Secrets p. 36, V20 Dark Ages p. 422"
+    },
+	{
+        "name": "Noble Blood",
+        "description": "Although the modern world resists the old traditions of lineage as a mark of quality, your features link you to a powerful family; you’re a Kennedy, a Windsor, a Saud, a Rothschild – someone whose pedigree is obvious in your physical form and presence. In story terms, this Merit grants you the obvious physical features of a well-known “royal” family: the Kennedy smile, the Windsor ears, and so forth. The family in question doesn’t have to belong to a formal aristocracy, either; you might be a Kardashian, a Murdoch, or a Clinton, and may the gods have mercy on your soul. On the flipside, your distinct features might not be especially attractive (royal families are notoriously inbred), and will mark you out for enemies of the clan in question. In social situations, this Merit might be worth a -2 reduction for the difficulty of social rolls that involve people who care about things like aristocracy, but would also increase your difficulty by +2 if you’re dealing with folks who hate that noble family’s guts! In all cases, this Merit reflects an actual genetic connection, not simply a cosmetic resemblance... which could provide all kinds of complications when magick and its secret histories are involved. While it might be worth some social currency, this Merit does not in any way provide material wealth or other perks. For such goodies, see Backgrounds like Influence, Rank, Resources, and so forth in the Mage 20 rulebook, Chapter Six. For the social benefits of regal presence, see the Social Merit Regal Bearing, elsewhere in this chapter.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "physical",
+        "values": [1],
+		"source": "M20 Book of Secrets p. 36"
+    },
+	{
+        "name": "Physically Impressive",
+        "description": "You are one imposing sumbitch, not so much large as apparently dangerous no matter what mood you might be in at the time. This could be as obvious as scarring or an intimidating build, or as intangible as the proverbial “air of menace.” System-wise, the Merit adds two dice to all Social-Trait rolls that involve intimidating someone; story-wise, people find you unnerving – and quite possibly attractive in a dangerous way – even when you’re not trying to be impressive.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "physical",
+        "values": [2],
+		"source": "M20 Book of Secrets p. 37"
+    },
+	{
+        "name": "Enchanting Feature",
+        "description": "Blessed with magnificent eyes, sleek hair, mighty biceps, preternatural grace, ripped abs, a dazzling smile, or some other standout physical feature, you can enchant people with the raw perfection of that feature. The feature in question doesn’t need to be visually obvious, either; maybe you smell good, possess a seductive voice, move with animalistic allure, or enjoy some likewise wondrous physical asset. (Please be tasteful here, folks.) This Merit takes the place of related Physical Merits such as Enchanting Gaze, Soothing Voice, Graceful, and other potentially similar attributes. Story-wise, this Enchanting Feature becomes a standout part of your character’s description. System-wise, you reduce the difficulty by -2 when your character deploys the feature in question as part of some social feat. If your mage employs his Enchanting Feature Merit as part of his magickal focus (see the Instruments entries for Eye Contact, Dance and Movement, Ordeals and Exertions, Sex and Sensuality, Social Domination, and Voice and Vocalizations in Mage 20, Chapter Ten), then you could count this Merit as a personalized unique /specialized instrument (as detailed in Mage 20, pp. 503 and 588). On the plus side, this allows you to reduce certain casting difficulties by -2 when the feature in question is specifically employed in the casting of an Effect. On the not-so-good side, this might get your mage’s eyes gouged out, his face marred, his vocal cords cut, or... well, you get the picture... if a particularly ruthless enemy considers that feature to be 'the focus of his power'.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "physical",
+        "values": [2],
+		"source": "M20 Book of Secrets p. 37"
+    },
+	{
+        "name": "Poison Resistance",
+        "description": "Toxins may sicken you, but probably won’t kill you. Although magickal poisons may be the exception to this rule, your body shakes off the worst effects of natural and synthesized poisons. When attacked by such substances, add two dice to your character’s Stamina roll when resisting their effects; a successful roll reduces the intensity of powerful toxins, and eliminates the deadlier effects of lesser ones altogether. Sure, she might feel a little woozy and could get seriously ill, but even if you fail that roll your character probably won’t die. Although it works against toxic bacteria, this Merit does not protect against diseases spread from viruses, genetic conditions, and so forth. For details, see Drugs, Poisons, and Disease in Mage 20, pp. 441-444 and 456. And because intoxicants are toxins too, this Merit helps you survive overdoses of booze or drugs – see Alcohol /Drug Tolerance, above.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "physical",
+        "values": [2],
+		"source": "M20 Book of Secrets p. 37"
+    },
+	{
+        "name": "Poker Face",
+        "description": "Nothing rattles you. Nothing. The emergence of a titanic elder thing from the depths of space might warrant a concerned twitch of your mouth, but that’s really about it. Oh, this doesn’t mean you don’t feel anything – that’s the Mental Flaw: Icy, below. Your deadpan expression, blank eyes, and flat tone of voice, however, reveal nothing about your thoughts or intentions... which, for folks on the receiving end of you, can be quite disconcerting; reduce the difficulty of intimidation, subterfuge, and resistance-to-intimidation rolls by -2, while adding +2 to the difficulties of anyone who tries to rattle your cage or get under your skin, including attempts to read, seduce, torture, or otherwise get past that poker face.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "physical",
+        "values": [2],
+		"source": "M20 Book of Secrets p. 38"
+    },
+	{
+        "name": "Hypersensitivity",
+        "description": "Extraordinarily open to physical sensations, you possess a depth of sensitivity most folks cannot conceive of having. A mere sip of wine can reveal its vintage to you; a whiff of smoke betrays the quality (or lack thereof) and origins of its burnt tobacco; a faint touch can conjure up orgasmic ecstasies. Story-wise, you can easily “fall into” an enjoyable sensation, relishing it to a degree far beyond typical human sensitivity. System-wise, you reduce the difficulty by -2 if you’re trying to use a Perception + Alertness roll to identify details about a sensation. Assuming that you employ instruments like Bodywork, Drugs, Energy, Eye Contact, Food and Drink, or Sex and Sensuality (and you probably use most or all of them), you can get more “bang for your buck” from such sensations, which allows you to employ those instruments faster, and perhaps (Storyteller’s option) gives you a -2 reduction to the difficulty of associated Ability rolls. The normal modifier limits still apply. On the flipside, however, painful sensations and overstimulation can trigger paralyzing agonies and intense panic. Whenever you experience a painful sensation without your consent (that is, being flogged against your will, subjected to loud music that you didn’t wish to hear, or injured by something you didn’t want to be hurt by), you must make a Willpower roll to avoid being “dragged under” and stunned by the pain for a turn or two. (See Stunning in Mage 20, p. 417.) That roll’s difficulty depends upon the intensity of the pain – from difficulty 4 for a minor annoyance, to difficulty 10 for screaming agony. As any Cultist can tell you, ecstasy is indeed a two-way street! Although this Merit goes well with Acute Senses, it cannot be taken by a character who’s also Insensate to Pain (detailed below).",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "physical",
+        "values": [3],
+		"source": "M20 Book of Secrets p. 38"
+    },
+	{
+        "name": "Nightsight",
+        "description": "Unlike most people, you can see in near-total darkness. Only the complete absence of visible light will negate this ability. In even the dimmest light, your visual abilities remain essentially unimpaired. This Merit does not increase your character’s visual capacity – for that gift, see Acute Senses, above; it does, however, mean that low light does not impose any sort of penalty on her visual perception rolls. Other visual impediments, like smoke or fog, block her sight as usual, and magickally-imposed darkness (for instance, the sort caused by deflecting light with the Forces Sphere) negates this Merit if and when it involves the dispersal of light itself.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "physical",
+        "values": [3],
+		"source": "M20 Book of Secrets p. 38"
+    },
+	{
+        "name": "Huge Size",
+        "description": "You’re far bigger than usual – possibly over seven feet tall and/or over 400 pounds in weight. Such large people stand out in a crowd, and have a hard time literally “fitting in” to a world built for smaller human beings. Still, your character’s large build gives him one additional health level, which counts as an extra level of Bruised when it comes to wound-based penalties. If he shapeshifts into a smaller form that extra health level goes away. In his normal form, however, this large character can be quite imposing and hard to beat.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "physical",
+        "values": [4],
+		"source": "M20 Book of Secrets p. 38"
+    },
+	{
+        "name": "Insensate to Pain",
+        "description": "Nothing hurts until it kills you. Okay, it probably does hurt, but not enough to slow you down. Wound penalties do not affect your character at all; until she dies, she usually functions with her full dice pools intact. This Merit does not in any way change the way in which she takes damage – for that Merit, see below – but it radically changes the way said damage affects her ability to get things done. There is, of course, a downside to all this: Pain tells us that we’re not functioning properly and should probably stop while we’re ahead. And so, you’ll also do stuff like burn yourself by accident, try to walk on broken legs, and notice cuts only when the blood is seeping through your shirt. Although pain won’t slow you down, shattered bones and organs will. Injuries that inflict significant physical impairment (crushed legs, broken skull, gouged-out eyes, etc.) supersede your usual immunity to dice-pool penalties due to wounds, and you might inflict further lethal injury upon yourself (Storyteller’s option) if you keep going after your body tries to tell you to stop.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "physical",
+        "values": [5],
+		"source": "M20 Book of Secrets p. 38"
+    },
+	{
+        "name": "Artistically Gifted",
+        "description": "The Muses work their will through you, or so it appears. Whenever you employ your artistic talent (as in, the Talent: Art in Mage 20, p. 275), reduce the difficulty of those rolls by -2. As with other Merits of this kind, this Merit does not reduce the difficulty of magick-casting rolls, but may reduce the difficulty of Attribute + Ability rolls that are involved with magickal acts. (For more details, see Abilities Enhancing Magick, Mage 20, pp. 533.)",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "mental",
+        "values": [1],
+		"source": "M20 Book of Secrets p. 43"
+    },
+	{
+        "name": "Computer Aptitude",
+        "description": "A true child of the twenty-first century, you’re especially adept with computerized infotech. Reduce all difficulties involving computer-based rolls by -2, up to the usual modifier limit. This last caveat is especially important when dealing with computer-based magickal Effects, whose difficulties cannot be reduced by this Merit beyond the usual magick-roll modifier of -3, or below the minimum difficulty for magick-casting rolls. Even so, this Merit provides an edge for mages whose Arts include the guiding technology of our age. For detailed optional rules regarding computer usage, see Computer Systems in Chapter Two, pp. 116-127.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "mental",
+        "values": [1],
+		"source": "M20 Book of Secrets p. 43"
+    },
+	{
+        "name": "Expert Driver",
+        "description": "You were born to drive like a demon wherever the road takes you. All of your driving-roll difficulties are reduced by -2.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "mental",
+        "values": [1],
+		"source": "M20 Book of Secrets p. 44"
+    },
+	{
+        "name": "Lightning Calculator",
+        "description": "Your head is a calculator of impressive capability. With a few moments of thought, you can perform intricate mathematical feats – a useful talent for Hermetic wizards, Syndicate operatives, Enlightened engineers, and other mages who employ math and geometry in their work. System-wise, this Merit allows you to reduce the difficulties of math- and calculation-based rolls by -2. Simple calculations take no time at all, while sophisticated problems may demand a turn or more. Obviously, your character needs access to the proper data before she can work out calculations... and garbage in, garbage out, so make sure your data is accurate! For potential applications of math in magick, see the instrument entries for Circles and Geometric Designs, Formulae and Math, Money and Wealth, and Numbers and Numerology in Mage 20, pp. 590-596, as well as the practices of Hypereconomics (pg. 573), High Ritual Magick and Hypertech (pp. 578-579), and Reality Hacking (pp. 581-582). Remember that Merits cannot reduce the difficulty of a magick-casting roll below the minimum difficulty, or by more than -3. That said, fast and accurate calculations make useful aids when you’re using Mundane Skills and Magickal Effects, as described in the entry of that name (Mage 20, pp. 532-534). Depending upon the feat in question, this could employ a roll of Intelligence + Academics to work out most calculations, Perception + Academics to discern odds or geometrical dimensions, and Wits + Academics to belt out rapid guesstimates with only the roughest of data.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "mental",
+        "values": [1],
+		"source": "M20 Book of Secrets p. 44"
+    },
+	{
+        "name": "Mechanical Aptitude",
+        "description": "Oh, you technophile, you! Blessed by the machine gods, you’ve got a knack for mechanical gear. As with most Merits of this type, such aptitude allows you to reduce difficulties by -2 when you’re making rolls based around working with mechanical technology. No, you don’t have to be a technomancer to use such a gift, much less a member of the Technocracy; still, this aptitude does suggest that mechanical technology means a great deal to you, which – by extension – suggests that your paradigm, practice, and instruments have something to do with applications of mechanical principles and tech. For suggestions, see the paradigms A Mechanistic Cosmos, Everything is Data, and Tech Holds All the Answers in Mage 20, pp. 568-571, as well as the related practices and instruments and the related material in this book’s Chapter Three. For more practical applications of this Merit, meanwhile, see Mage 20’s section regarding The Technological World, pp. 458-464.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "mental",
+        "values": [1],
+		"source": "M20 Book of Secrets p. 44"
+    },
+	{
+        "name": "Code of Honor",
+        "description": "Guided by a strong sense of ethics, you follow a particular standard of conduct. This might be a military honor-code, a religious creed, the law of a given fellowship to which you belong, or possibly your personal moral center. Regardless of its origins, this code guides your decisions, informs your activities, and sometimes forces you to make hard choices that less-ethical people never face. Thanks to that code, your character gains two additional dice to all Willpower rolls when he acts in accordance with his code of honor, or when he resists some temptation or compulsion that might get him to betray that code. Obviously, you and your Storyteller should work out the specific tenets of this code during the character-creation process. If you do not honor that code, then you’ll probably lose the Merit... and suffer disgrace, as well, among other parties who know and respect your vows.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "mental",
+        "values": [2],
+		"source": "M20 Book of Secrets p. 44"
+    },
+	{
+        "name": "Eidetic Memory",
+        "description": "Gifted with the proverbial photographic memory, you clearly recall details about something you read, view, or otherwise experience. A serious boon for ritual magicians, field ops, and tech-minded magi, this Merit lets your character remember stuff even if you, the player, do not. Under most circumstances, your character easily recalls the memories in question. Really detailed memories, or ones gathered under stressful conditions, might require a Perception + Alertness roll before the character can remember essential elements of the moment she’s trying to recall. Memory, of course, is subjective, and so while this Merit allows you remember things as you perceive them, those memories will still be based upon your perspective – internal as well as external – which is not the same as having access to some objective god-view of that experience! Especially in a game about subjective reality, that’s an important distinction – one that also keeps this Merit from becoming a potential game-breaker. Folks with such memories are often subject to PTSD, as in the Flaw of that name. That’s especially true when people face Things Man Was Not Meant to Know, as described in Mage 20, p. 407. Vivid recall has its drawbacks, and in the traumatic world of a mage, some things really are best forgotten!",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "mental",
+        "values": [2],
+		"source": "M20 Book of Secrets p. 44"
+    },
+	{
+        "name": "Inner Strength",
+        "description": "Faced with adversity, you prevail. System-wise, this Merit reduces the difficulty of Willpower rolls by -2 when you struggle against apparently overwhelming odds.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "mental",
+        "values": [2],
+		"source": "M20 Book of Secrets p. 45"
+    },
+	{
+        "name": "Hyperfocus",
+        "description": "Given time and a lack of distractions, you can focus your mind to an uncanny extent. For every hour spent focusing without distractions on a mundane task (not on a magick-casting roll), you may add one die to your dice pool for each roll made during an extended action (as described in Mage 20, p. 389). This bonus has a limit of three dice, total. So if, for example, Nix has Hyperfocus and spends two hours on a task, zir player adds two extra dice to Nix’s dice pool; three hours’ focus provide three dice, but four hours of focus keeps those three dice. All two or three dice, however, get used every time Nix’s player makes a roll to complete that extended action. As noted above, this Merit does not assist magickal casting rolls. Due to the time required to focus – and the lack of distractions involved – Hyperfocus doesn’t help in combat situations either, although a strategy-minded character could hyperfocus on planning for a battle, but not on fighting it once the combat began. On a similar note, a mage could use Hyperfocus to aid in the mundane elements of a ritual – see Rituals and Mundane Abilities, Mage 20, p. 541. Extreme hyperfocus is often (though not exclusively) associated with people on the autistic spectrum, although some authorities claim that perseveration (see the Flaw: Mental Lock) is more a more accurate way of looking at that intense form of focus. With or without autism, this Merit comes in handy for Hermetics, technomancers, shamans, and other mages whose practices depend upon extreme dedication to certain tasks.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "mental",
+        "values": [3],
+		"source": "M20 Book of Secrets p. 45"
+    },
+	{
+        "name": "Jack-of-All-Trades",
+        "description": "You know a little about a lot. When attempting to make a roll using a Skill (not a Talent) that your character does not possess, you don’t suffer the usual penalty. (See Skills, Mage 20, p. 279.) If you’re trying to use a Knowledge your character does not possess, you can still make the roll but with an addition of +2 to the normal difficulty. (See Knowledges, Mage 20, p. 283.) Because Talent Traits represent innate gifts honed by practice, this Merit does not grant access to Talents that your character does not possess.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "mental",
+        "values": [3],
+		"source": "M20 Book of Secrets p. 45"
+    },
+	{
+        "name": "Self-Confident",
+        "description": "You are so sure of your own abilities that when you expend Willpower to gain an automatic success on an endeavor, you have a chance to gain the benefit of that expenditure without actually losing the Willpower. When you spend Willpower for an automatic success, you do not actually lose it unless the auto-success is the only one garnered in the roll. This Merit may only be used in challenging situations, that is, when the difficulty of your roll is six or higher. You may spend Willpower for an automatic success at other times, but if your difficulty is five or less, the Willpower will be spent regardless of what you roll.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "mental",
+        "values": [5],
+		"source": "M20 Book of Secrets p. 46"
+    },
+	{
+        "name": "Loyalty",
+        "description": "General (1 point): You’re especially devoted to a certain cause, group, creed or person. When someone tries to turn you against the object of your loyalty, you receive a two-die bonus to your dice pool when resisting that attempt with your Willpower. If the assault uses your Willpower Trait as the difficulty for the attack, then your attacker adds +2 to her difficulty while striving to undermine your loyalty. (See the feat Resisting on the Dramatic Feats chart in Mage 20, p. 403, and the Mind Sphere entry in the same book, p. 519.) Naturally, you must define the source and reasons for your devotion when you select this Merit. Such loyalty will influence many of your roleplaying choices too – your friends, enemies, priorities, magickal focus, and other things besides. For extra fun (ha ha), you can complement this Merit with the Flaw: Conflicting Loyalties, described below. Ghoul (5 points): Denotes a revenant's exceptional and rare allegiance to a particular vampire or Clan. This loyalty is highly regarded within the vampire community, often resulting in favor and trust from the overseeing Clan. The revenant might receive rewards and greater freedom, particularly advantageous when considered for the Embrace.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "social",
+        "values": [1, 5],
+		"source": "M20 Book of Secrets p. 53, Ghouls and Revenants p. 126"
+    },
+	{
+        "name": "Pitiable",
+        "description": "Oh, you poor thing! People want to help you, and you’re willing to let them do so. Although this Merit lowers the difficulty of your social rolls by -2 when you’re trying to get someone to take care of you, it adds +2 to the difficulty of rolls that attempt to intimidate people or otherwise impress folks into taking you seriously.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "social",
+        "values": [1],
+		"source": "M20 Book of Secrets p. 54"
+    },
+	{
+        "name": "Regal Bearing",
+        "description": "Aristocratic charisma is your birthright. Although you might not actually hail from a noble family, your presence radiates dignity. Posture, features, tone of voice, aura of dominion – you’ve got them all. People defer to you as a reflex; subtract -2 from the difficulty of your Social-Trait rolls whenever you’re trying to make an impression, and while certain folks will want to take you down a few pegs on general principle, most people are inclined to respect you even if they don’t necessarily like you.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "social",
+        "values": [1],
+		"source": "M20 Book of Secrets p. 54"
+    },
+	{
+        "name": "Unobtrusive",
+        "description": "You can pass without notice in most social situations. This is less about the uncanny Background: Arcane (although it can complement that Background) than it is a matter of simply seeming unremarkable. Unless you make a fuss of some kind, folks just don’t remember you. You’re... um, that dude... or that girl... or, well, damn, I don’t even remember exactly what sort of person you are, actually. And in some lines of work or walks of life, this is a very useful talent to have. Although it does not in any way render you invisible or untraceable, this Merit lets you blend in and slip from memory. Folks need to make a Perception roll (difficulty 6) in order to recall your features or name. On the flipside, you add +2 to the difficulty of any social rolls you need to make, because folks just don’t notice you under most circumstances. For obvious reasons, you can’t take any socially distinctive Merits, Flaws or Backgrounds – such Traits would make you memorable – or have especially distinctive features or clothing. Granted, “distinctive” depends upon who and where you are; the proverbial gray flannel suit, for example, stands out at places like Burning Man! Under most circumstances, though, you blend in wherever you go.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "social",
+        "values": [1],
+		"source": "M20 Book of Secrets p. 54"
+    },
+	{
+        "name": "Animal Magnetism",
+        "description": "Though it might not involve conventionally good looks, you possess a primal sort of attractiveness. Your social rolls subtract -2 from their difficulty when you’re trying to charm, seduce, or otherwise impress folks by appealing to their carnal natures. This benefit doesn’t usually apply to threats or intimidation attempts, although clever applications of raw sex appeal can be rather unnerving, which could facilitate rather effective threats...",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "social",
+        "values": [2],
+		"source": "M20 Book of Secrets p. 55"
+    },
+	{
+        "name": "Confidence",
+        "description": "You exude an aura of unshakable authority. Nothing seems to rattle you. Folks defer to you by default, and you expect nothing less. Even when you’re making things up off the top of your head, or lying your ass off about your true feelings or intentions, your self-confidence inspires an unusual degree of trust. Cool is your middle name, and the few people who try to get one over on you have a very hard time doing so. When dice start falling, subtract -2 from the difficulty of all social rolls based upon impressing other characters with your capabilities. Other players, however – the Storyteller included – add +2 to the difficulty of social rolls for characters who try to shake your confidence or shatter your calm.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "social",
+        "values": [2],
+		"source": "M20 Book of Secrets p. 55"
+    },
+	{
+        "name": "Perfect Liar",
+        "description": "Oh gods, you’re good at lying! Falsehoods slide from your tongue like water off a vine leaf, and even the folks who know you well tend to be taken in when you start talking. You also lack the usual “tells” that betray a liar: your vital signs remain stable, your eyes don’t twitch, and your voice never falters. Unless someone is outright reading your mind (as in, using Mind-Sphere magick or some other paranormal power), you still often appear to be telling the truth; even then, the mind-reader might assume that you at least believe you’re telling the truth! Story-wise, people usually believe what you say when you’re lying about small, casual things that are not immediately, obviously false. With regards to the dice, reduce the difficulty by -2 when you’re trying to lie about something important. Again, this Merit will not alter auras or change the thoughts in your head, although those folks who can’t actively monitor your soul will be inclined to give you the benefit of the doubt. (Suckers...)",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "social",
+        "values": [2],
+		"source": "M20 Book of Secrets p. 56"
+    },
+	{
+        "name": "Sanctity",
+        "description": "Although you might not actually be innocent, you project an impression of purity. People trust you even if you’re not trustworthy, and they’re inclined to think of you as some sort of paragon. Naturally, this can be an almighty pain in the ass too. When you get in trouble, though (and you will), the authorities will almost certainly go easy on you, friends will aid you, and even strangers may come to your defense because you couldn’t possibly be guilty of what you’re accused of doing!",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "social",
+        "values": [2],
+		"source": "M20 Book of Secrets p. 57"
+    },
+	{
+        "name": "Secret Code Language",
+        "description": "Language itself is a series of codes; folks who’ve been initiated into it (that is, folks who’ve learned the language) are considered members of the society in question. Some languages, however, are more exclusive and secretive than others. This Merit reflects your knowledge of a particular code known to only the “right people.” Mages are secretive by nature, and so mage society is full of secret codes. Even Sleepers, though, have their own initiatory languages: military jargon, the Language of Flowers, various hand-signals, ciphers, and passwords employed by people who need to communicate with each other in ways no one outside their group can understand... except, perhaps, for those who’ve learned those codes through some “unauthorized” source. As with the Merit: Language (p. 44), this Merit confers knowledge of a particular communication mode, which might not be in any way verbal. It could involve hand-signals, body postures, artwork, flags, symbolism, numbers, and so on. To uninitiated observers, that language appears to be gibberish (a word, incidentally, that refers to the coded writings of the alchemist Abu Musa Jabir ibn Hayyan); in many cases, a coded method of communication appears completely mundane unless you know what to look for, as with the encrypted artwork in The DaVinci Code. One vital caveat: A character must have a very good in-game reason for knowing the things she knows. Learning a Secret Code Language requires some story-based foundation for that knowledge: elite military training, mind-reading, time among the group in question, etc. Fortunately, code languages tend to be utilitarian, revealing essential things in a general manner. (“I’m hungry,” “Kill him,” “This area’s forbidden,” etc.) Even so, codes may have subtleties that aren’t readily apparent; a single gesture or stressed syllable might mark the difference between Knock him out and move on quickly and Torture him to his least breath, no matter how long it takes.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "social",
+        "values": [2],
+		"source": "M20 Book of Secrets p. 57"
+    },
+	{
+        "name": "Socially Networked",
+        "description": "Well-Connected on the Internet (as in the Virtual Adept Merit of that name), you enjoy a high online profile – a website, at least one blog, more Twitter followers and Facebook friends than you could possibly meet in Meatspace, and so on. When you post, folks read, share, and take it seriously. While this might or might not translate into folks you know in the Digital Web (and really – would you want it to?), you command global influence via the World Wide Web. As a result, you’ve got the sort of influence and resources that most folks cannot imagine: crowdfunding backers, instant information, places to crash all over the world if and when you want them... the details depend upon the sort of presence you maintain and the people you attract, but they go beyond anything you could accomplish without the Internet. Of course, you could fuck things up on a grand scale if you’re not careful – such attention can backfire on you if you post the wrong thing at the wrong time – and certain haters despise you on general principle. Considering that the Internet is a prime front in twenty-first century reality wars, though, this sort of network can provide a major edge for your side.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "social",
+        "values": [2],
+		"source": "M20 Book of Secrets p. 57"
+    },
+	{
+        "name": "Subculture Insider",
+        "description": "You’re innately familiar with a social environment that most folks never visit, much less understand. They know you there, and so even when you haven’t met a given person (human or otherwise) in that environment, they consider you to be an insider. Thanks to your familiarity, you can navigate certain elements of the physical environment there too – the security apparatuses, the “secret handshakes,” the hidden corners that an insider would know about and an outsider would never think to look for, and other obstacles that a subculture puts into place to make certain that only the “right” people can get around. When moving through your subculture of choice, subtract -2 from the difficulties of rolls that grant social or physical access to that subculture’s established turf. The subculture in question can be any kind of exclusive social environment that also includes the physical surroundings employed by that particular group: country clubs, drug cartels, the international mercenary network, the global espionage underworld, high-level finance executives, the fetish community, homeless transient communities, clannish rural communities, hip-hop networks, the jet set, rave festival culture, fantasy fans, the touring road-dog musical community, world financial leaders, “gypsy” Travelers, and so on. Although it can include mages and other Night-Folk, the community must be essentially “mortal” in terms of the majority of insiders. You can buy this Merit several times to reflect membership in several different communities. That insider status, however, takes time to acquire and a lot of attention to maintain. If you neglect your community, you’ll soon find those familiar doors slammed in your face.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "social",
+        "values": [2],
+		"source": "M20 Book of Secrets p. 58"
+    },
+	{
+        "name": "Local Hero",
+        "description": "You’ve done great things for your community, and people love you for it. You might have cleaned out the resident drug dealers, defied slumlords, established a halfway house or a center of worship – whatever it was that you did for the Masses, you get free food, “friends of the house” discounts, places to crash (possibly with happy bedmates!), and other offerings of thanks from the people you have helped. Also known as Folk Hero, this Merit reflects your popularity among the local Sleepers. You reduce the difficulty of your social rolls by -2 when you’re dealing with the people of your community, and receive constant aid and respect from those people whenever you need them. The catch, of course, is that you must live up to your heroic reputation; turn your back on these grateful souls, or take their goodwill for granted, and you’ll be “yesterday’s hero” in no time.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "social",
+        "values": [3],
+		"source": "M20 Book of Secrets p. 58"
+    },
+	{
+        "name": "Danger Sense",
+        "description": "A heightened state of awareness allows you to sense impending harm. This gift could originate from primal perceptiveness, intense conditioning, spirit voices that warn you of danger, nanotech sensors, or other methods of refined cognizance. Whatever the source of this Merit might be, your Storyteller must make a secret Perception + Alertness roll for you when some otherwise hidden threat is heading toward your character. The difficulty for this roll depends upon the immediacy of the danger; a distant, abstract sort of danger (like a plot to kill you) is far harder to sense than an onrushing disaster (like a sniper’s bullet), and would thus have a higher difficulty (say, difficulty 10 for the plot, difficulty 6 for the bullet). A simple success would tell you that something’s wrong, while a large number of successes could pinpoint the nature and location of the threat. Your Storyteller, of course, is under no obligation to give you objective details about that threat. She could be as vague as “A chill tightens across your scalp,” with perhaps a hint of the direction and nature of the danger’s source (“A sudden metallic clicking sound echoes in from behind your right side. What do you do?”).",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "supernatural",
+        "values": [3],
+		"source": "M20 Book of Secrets p. 70"
+    },
+	{
+        "name": "Medium",
+        "description": "General: You possess an unnerving affinity for the Restless Dead... or perhaps it’s that they possess an unnerving affinity for you. Although you cannot actually see ghosts unless you have at least one dot in the Spirit Sphere, those ghosts can talk to you, and you can talk to them. A successful Perception + Awareness roll allows you to sense their presence even if you can’t see or hear them nearby, and your aura shines faintly like a spirit-beacon in the Shadowlands. As a result, the dead tend to favor you (unless they’re trying to kill you), and can become quite chatty if they have something to say. Given how deeply mages prize information, such chattiness can be rather helpful and occasionally life-changing. Because “chatty” can quickly become “obnoxious,” this Merit is a double-sided blade. You reduce the difficulty of your social rolls by -2 when dealing with ghosts, and may perceive things that the living normally cannot understand. The things you perceive, though, aren’t always pleasant, and – seeing as how ghosts tend to stick around because they have unfinished business to attend to – the dead can get downright annoying with their requests. For details about the Restless Dead, see Wraith: The Oblivion. For system details about Sphere-based necromancy, see the section of that name in the M20 sourcebook How Do You DO That?, pp. 84-89. Changeling: You possess the natural affinity to sense and hear ghosts. Though you cannot see them, you can sense them, speak to them and, through pleading or cajoling, draw them to your presence. You may call upon them for aid or advice, but there will always be a price. Your difficulty is reduced by two for all rolls involving the spirits of the dead.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "supernatural",
+        "values": [2],
+		"source": "M20 Book of Secrets p. 70, C20 p. 186"
+    },
+	{
+        "name": "Hideaway",
+        "description": "When you need time to yourself, there’s a place you can go to that no one knows about except you. It’s small, yeah, and remote enough that your friends and enemies can’t find you there. Chances are, it’s a secret apartment or condo, a distant cottage, a mobile home, or a literal cave or grove or camping spot where you go to escape the stress of your usual life. It could even be a pocket Realm, accessible only to you and whomever you choose to share it with, should you be foolish enough to trust anyone else with this secret hideaway. Unless you give its location away, however, or wind up getting tracked to it by a dedicated stalker, this little getaway is your personal escape hatch. Use it wisely, and be careful when you come and go! Unlike the Merit: Property (see below), or the Backgrounds: Chantry, Node, and Sanctum, this discrete hidey-hole isn’t expansive, elaborate, or innately magickal. That said, it’s hidden from most forms of casual detection. You could combine this Merit with Property, Node or Sanctum, although those Traits would need to be purchased in addition to your Hideaway, and their existence must remain secret from other characters. Chantries are social by default, and so cannot also become a Hideaway. This place is stocked up with whatever you would need for a roughly two-week stay, and may, of course, be stocked up for longer periods if you bring in additional supplies. Although you might be traced to your hideaway with magick or other tracking methods, your little retreat is not linked to you by any searchable official channels: bills, lease, mail, Internet services, etc. Once per story – if events occur which could lead other people to your hideaway, if you do something that could reveal its location, or if someone dedicates time and effort trying to track you down – the Storyteller may roll two dice against difficulty 6. (Yes, this roll is done in secret, so you won’t know the results.) If that roll gets at least one success, then your secret remains hidden; one failure means that someone has gotten a clue but not your exact whereabouts; four successive failures reveal the location of your hideaway, and a botch on that roll exposes its location immediately. So long as you continue to cover your tracks, however, this place remains yours and yours alone. For four points, this Merit could also be purchased under the name Safehouse. In this case, it’s a secured getaway that features better facilities and protections than a typical Hideaway. Its store of supplies can provide for a dozen or so people for roughly two months, and the Merit includes a small dedicated staff (in game terms, two dots in Retainers or four dots in Backup) to maintain that site. Unlike a Hideaway, this area can withstand a minor-league assault, and features up to three offices /work areas, reinforced walls, bulletproof glass, and a vault-like panic room. This safehouse also includes a shielded communications array (-2 to attempts to hack or trace that system), and a simple but effective alarm and security camera system (again, -2 to subversion attempts). The downside is that the Merit is not your property; it belongs to your superiors, and can be taken away from you if you fall out with the folks who foot the bill for it. Generally, a Technocrat in good standing with her superiors can get a Safehouse Merit (or, for especially good service, be awarded with one), but other mages could obtain a similar facility as well. For six points, your refuge can be both a Safehouse and a Hideaway; in this case, the property belongs entirely to you. Enjoy your Batcave, Mr. Wayne!",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+        "stat_type": "social",
+        "values": [2, 4, 6],
+        "source": "M20 Book of Secrets p. 55"
+    },
+	{
+        "name": "Safehouse",
+        "description": "When you need time to yourself, there’s a place you can go to that no one knows about except you. It’s small, yeah, and remote enough that your friends and enemies can’t find you there. Chances are, it’s a secret apartment or condo, a distant cottage, a mobile home, or a literal cave or grove or camping spot where you go to escape the stress of your usual life. It could even be a pocket Realm, accessible only to you and whomever you choose to share it with, should you be foolish enough to trust anyone else with this secret hideaway. Unless you give its location away, however, or wind up getting tracked to it by a dedicated stalker, this little getaway is your personal escape hatch. Use it wisely, and be careful when you come and go! Unlike the Merit: Property (see below), or the Backgrounds: Chantry, Node, and Sanctum, this discrete hidey-hole isn’t expansive, elaborate, or innately magickal. That said, it’s hidden from most forms of casual detection. You could combine this Merit with Property, Node or Sanctum, although those Traits would need to be purchased in addition to your Hideaway, and their existence must remain secret from other characters. Chantries are social by default, and so cannot also become a Hideaway. This place is stocked up with whatever you would need for a roughly two-week stay, and may, of course, be stocked up for longer periods if you bring in additional supplies. Although you might be traced to your hideaway with magick or other tracking methods, your little retreat is not linked to you by any searchable official channels: bills, lease, mail, Internet services, etc. Once per story – if events occur which could lead other people to your hideaway, if you do something that could reveal its location, or if someone dedicates time and effort trying to track you down – the Storyteller may roll two dice against difficulty 6. (Yes, this roll is done in secret, so you won’t know the results.) If that roll gets at least one success, then your secret remains hidden; one failure means that someone has gotten a clue but not your exact whereabouts; four successive failures reveal the location of your hideaway, and a botch on that roll exposes its location immediately. So long as you continue to cover your tracks, however, this place remains yours and yours alone. For four points, this Merit could also be purchased under the name Safehouse. In this case, it’s a secured getaway that features better facilities and protections than a typical Hideaway. Its store of supplies can provide for a dozen or so people for roughly two months, and the Merit includes a small dedicated staff (in game terms, two dots in Retainers or four dots in Backup) to maintain that site. Unlike a Hideaway, this area can withstand a minor-league assault, and features up to three offices /work areas, reinforced walls, bulletproof glass, and a vault-like panic room. This safehouse also includes a shielded communications array (-2 to attempts to hack or trace that system), and a simple but effective alarm and security camera system (again, -2 to subversion attempts). The downside is that the Merit is not your property; it belongs to your superiors, and can be taken away from you if you fall out with the folks who foot the bill for it. Generally, a Technocrat in good standing with her superiors can get a Safehouse Merit (or, for especially good service, be awarded with one), but other mages could obtain a similar facility as well. For six points, your refuge can be both a Safehouse and a Hideaway; in this case, the property belongs entirely to you. Enjoy your Batcave, Mr. Wayne!",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+        "stat_type": "social",
+        "values": [2, 4, 6],
+        "source": "M20 Book of Secrets p. 55"
+    },
+	{
+        "name": "Berserker-Stress Atavism",
+        "description": "Folks don’t like you when you’re angry. In combat, you become a veritable monster, destroying everything and everyone in sight. In certain ways, this is a blessing, in others, a curse – for although your dedication to slaughter has undeniable benefits, it’s also a distinct liability... especially if you belong to a group that prizes discipline rather than brutality. As both a Merit and a Flaw, this Trait has the same effects: under intense stress (combat, injury, disgrace, the death or crippling of a comrade, and so forth), the red haze kicks in. A failed Willpower roll (difficulty 8) leads to a berserk rampage. Your character gains three temporary Bruised health levels, ignores wound penalties, and adds two dice to her Strength and one die to her Stamina until every enemy within easy reach or sight is dead or incapacitated. That’s the good part; the bad part is that everyone becomes your enemy. Allies, enemies, and bystanders alike all look like targets until the blood-trance fades. Magick and strategic thinking become impossible, and your character uses every weapon in her hands for maximum carnage. Unless someone knocks her unconscious, incapacitates or kills her, or simply leaves her alone for several minutes (during which time she destroys everything within reach), she remains stuck in kill mode. Is this a Merit or a Flaw? That depends. If your character belongs to a group that prizes bloodlust and has the luxury of mass murder in the modern world (that is, she’s a shock-troop “cleaner” or an elite warrior for a wetwork organization), then it’s a Merit; if she belongs to a group that demands subtlety, control, and restraint, then it’s a definite Flaw. Either way, your character is the loosest of cannons – aimed in a convenient direction and then left alone to burn out or explode.",
+		"game_line": "Mage: The Ascension",
+		"category": "merits",
+		"stat_type": "mental",
+        "values": [4],
+		"source": "M20 p. 644"
+    },
+	{
+        "name": "Umbral Affinity",
+        "description": "Something in your background grants you an innate affinity for the Otherworlds. Perhaps you have some distant relation to shapeshifter blood, or a Pagan heritage that links you to the oldest of Old Ways. Whatever the source might be, you can travel further and longer in the Otherworlds than most mortal humans can manage. Game-wise, your character suffers no ill effects from first and second-degree Acclimation (see Chapter Nine, pp. 482-483), and all other stages affect her at one stage less than usual. Beyond that, the character does not need to worry about Disembodiment until six full moon-cycles (roughly six months) have passed. In general, the character feels at home in most strange Umbral Realms, and she might be recognized as a natural traveler who has an innate right to be there.",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+        "stat_type": "supernatural",
+        "values": [4],
+        "source": "M20 p. 644"
+    },
+	{
+        "name": "Sphere Natural",
+        "description": "For a single element of magick – the Sphere of your choice – you enjoy an innate proficiency. The powers of that Sphere come to you more easily than usual, and you advance faster in that field of knowledge than you do in other Spheres. System-wise, you pay 70% of the usual experience cost, rounded up, when advancing in that Sphere. Naturally, such advancement costs even less when you’re raising your Affinity Sphere. Rank Cost /Affinity Sphere Cost New Sphere: 7 pts. 2 6 /5 pts. 3 11 /10 pts. 4 17 /15 pts. 5 23 /20 pts. The Mage 20 version of this Merit costs more than the version presented in previous editions because the cost of improving Spheres with experience has gone down, and so the benefits involved in this Merit have gone up. You may select this Merit only once, for a single Sphere, and that Sphere should have some intrinsic connection to your mage’s concept, backstory, and magickal focus. This is, after all, an Art that comes naturally to you, and so that predisposition should come through in many different aspects of your character’s personality.",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+        "stat_type": "supernatural",
+        "values": [6],
+        "splat": "Mage",
+        "source": "M20 Book of Secrets p. 79"
+    },
+	{
+        "name": "Avatar Companion",
+        "description": "From lifetime to lifetime, you share a bit of your Avatar with a companion who follows you through incarnations, recalling more about their details than you do. Although he’s not as powerful as you are, and lacks the metaphysical prowess of the Merits: Twin Soul this companion knows a great deal about your reincarnated self... quite a bit more about it than then you do. This loyal (if not always agreeable) character literally follows you for life, typically ending his life when you do; in the meantime, he provides insights, advice, information about previous lifetimes, and whatever other forms of aid he can possibly offer. Like the Merit: Guardian Angel, the Avatar Companion is essentially a walking boost from your Storyteller, subject to her whims but acting in your best interests... for the most part, anyway. Unless it’s purchased in addition to the Background: Allies, your companion isn’t anything special; he could be a person or animal, but not a vampire, a werebeast, or some other Night-Folk entity. Your Avatar Companion could also be a Ward, the focus of True Love, or perhaps an embodiment of a Manifest Avatar. Treat him badly enough, and he might become an Enemy. (See all appropriate entries for details.) As with all other character-based Traits, this companion has his own personality, desires, and so on. He may be loyal, but he’s not suicidal, and isn’t likely to be thrilled if the mage decides to abuse his loyalty!",
         "game_line": "Mage: The Ascension",
         "category": "merits",
         "stat_type": "supernatural",
@@ -449,13 +849,77 @@
         "splat": "Mage",
         "source": "M20 Book of Secrets p. 79"
     },
-    {
-        "name": "Natural Linguist",
-        "description": "You have a natural talent for languages. Each purchase of the Language Merit gives you two languages instead of just one.",
+	{
+        "name": "Dual Affiliation",
+        "description": "You’ve been initiated and trained in two different Awakened groups. Perhaps you were a Verbena who gravitated toward the Virtual Adepts, or a Man in Black who sought refuge among the Templars. Whatever your history and affiliations might be, you’re intimately familiar with both groups, have connections (not necessarily friends) in both groups, and may use and understand the practices, tools and beliefs (in short, the focus) of either group. Rules-wise, your mage enjoys the benefits of each affiliation. If he’s a former Technocrat who went over to the mystic side, he can still use technomagick while transcending the usual Technocratic bans regarding Arete and focus. When raising a Sphere, your character gets to use the Affinity Sphere rate for one Sphere per group. His former associates probably don’t view him very favorably, though, unless he “cross-trained” within friendly groups, like a Dreamspeaker who went Ecstatic or a Hermetic who joined the Children of Knowledge. For additional details about this subject, see Chapter Three’s Focus FAQ, p. 174.",
         "game_line": "Mage: The Ascension",
         "category": "merits",
-        "stat_type": "mental",
-        "values": [2],
-        "source": "M20 Book of Secrets p. 44"
-    }
+        "stat_type": "supernatural",
+        "values": [7],
+        "source": "M20 Book of Secrets p. 79"
+    },
+	{
+        "name": "Nephilim",
+        "description": "Long ago, it has been said, immortals walked the earth, siring offspring whose descendants still live among us now. The Hebrew Bible refers to them as nephilim, an ambiguous word that seems to be related to root words for “fallen,” “prisoners,” and “overseers.” Later transliterations refer to them as giants, monsters, watchers, and the fallen (or violent) ones. Were they gods? Angels? Demons? Not even the Awakened know for sure; you, however, have a bit of High Umbral essence within you, and this nephilim inheritance – known sometimes by the demon-blooded name of laham – marks you as something more than merely human (Awakened or otherwise). A living crossroads between the Astral Realm and the mortal world, you exist in a heightened state of spiritual essence. Your aura burns with unearthly intensity, and your presence frightens many Otherworldly denizens. Your connection to High Umbral entities might involve a distant relationship to primordial sires, or the far more recent activities of mortals and spirits who shared a distinctly carnal relationship. (“Mom, seriously – I need to know the truth about Dad”) Are you part-demon? Descended from an angel? Sired by an entity whose nature transcends mortal concepts like “good” and “evil”? You probably don’t even know, although events in your chronicle might reveal the truth whether you want to learn it or not. System-wise, this Merit confers the following drawbacks and benefits: • As noted above, your aura blazes with inhuman clarity and brilliance. • Your temperament favors your Umbral ancestor, and you tend to act accordingly. • You must take at least three points’ worth of Physical Flaws to reflect the unstable nature of your physical form and the surging metaphysical energies it contains. These Flaws do not count toward your total Flaw points, nor do you get points for taking those Flaws. • Those energies give you a Quintessence rating of 7, and those points automatically refresh up to that seven-point maximum each time you go to sleep, regardless of your Avatar rating. • If your chronicle employs the Resonance rules in Chapter Two, you begin play with three points in Resonance, not one. If not, you get three points’ worth of the Flaw: Echoes. Again, those phenomena reflect the tempera ment of your Umbral ancestor. • You subtract -1 from the difficulties of your casting rolls when you cast Effects using the Mind Sphere, the Spirit Sphere, or both in relation to the High Umbra. If, for example, the demon-blooded laham mage Jenatrix wanted to read someone’s mind, her casting difficulty would be normal; if she wanted to project her astral self into the High Umbra, however, she’d reduce the difficulty by -1. • You can travel physically into the High Umbra by using a Mind 4 /Spirit 3 Effect. • When attempting to intimidate, command, or bargain with High Umbral entities, you add two dice to whichever dice pool you happen to be using in that attempt. (For details, see The Bargaining Process in How Do You DO That? pp. 91-95.) Despite your advantage, however, using your uncanny heritage as leverage will not exactly endear you to the entities in question. In such negotiations, it’s generally more constructive to use a carrot than a stick. • On a related note, you suffer a penalty of +2 to the difficulty of your rolls to resist, soak or counter rituals cast by Hermetic High Ritual wizards or Awakened clerics from the Jewish, Muslim, and Christian denominations. These folks have spent millennia studying your kind, and be ye angel or be ye demon, they know how to deal with you more effectively than most mages do. (By rituals, we’re referring to extended-roll ceremonial magicks, not off-the-cuff spells. Your chances are as good as anybody else’s if a wizard tosses a lightning bolt at you; if he draws up a summoning circle, though, you’re kinda screwed.) • At the Storyteller’s option, you may also receive up to seven points in the Advantages described in Mage 20, p. 658 (and expanded further in the Mage 20 sourcebook Gods, Monsters & Familiar Strangers). Demon-blooded laham characters may, instead, take up to seven points in the demonic Investments described in the Mage: The Sorcerers Crusade sourcebook Infernalism: The Path of Screams or the Mage 20 supplement The Book of the Fallen. In either case, these additional and optional benefits get balanced out with a five-point Derangement Flaw of the Storyteller’s choice (see Mage 20, pp. 648-650). Although the player might not know what sort of entity her character is descended from, the Storyteller ought to determine the character’s heritage, and then plant clues (dreams, visions, weird greetings from characters who seem to know more about the mage than she knows about herself...) throughout the story. He ought to feed roleplaying notes to the player, too: This Realm seems familiar even though you don’t recall having been here before, You can almost taste the evil in that girl’s soul, Man, you just wanna rip that dude’s throat out and you’re not sure why... The player, of course, can draw her own conclusions – conclusions that might not necessarily be accurate at all. This Merit goes well with Merits like Legendary Attributes, Nine Lives, and Too Tough to Die, Flaws like Immortal Enemy, Primal Marks, or Cast No Shadow or Reflection, and Backgrounds like Cult, Demesne, and Past Life. As with the Merit: “Immortal,” (above) this Trait could be too powerful for player characters to take. Supporting characters, however, could be nephilim-descended, which would make for potent friends and memorable enemies.",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+        "stat_type": "supernatural",
+        "values": [7],
+        "source": "M20 Book of Secrets p. 79"
+    },
+	{
+        "name": "Laham",
+        "description": "Long ago, it has been said, immortals walked the earth, siring offspring whose descendants still live among us now. The Hebrew Bible refers to them as nephilim, an ambiguous word that seems to be related to root words for “fallen,” “prisoners,” and “overseers.” Later transliterations refer to them as giants, monsters, watchers, and the fallen (or violent) ones. Were they gods? Angels? Demons? Not even the Awakened know for sure; you, however, have a bit of High Umbral essence within you, and this nephilim inheritance – known sometimes by the demon-blooded name of laham – marks you as something more than merely human (Awakened or otherwise). A living crossroads between the Astral Realm and the mortal world, you exist in a heightened state of spiritual essence. Your aura burns with unearthly intensity, and your presence frightens many Otherworldly denizens. Your connection to High Umbral entities might involve a distant relationship to primordial sires, or the far more recent activities of mortals and spirits who shared a distinctly carnal relationship. (“Mom, seriously – I need to know the truth about Dad”) Are you part-demon? Descended from an angel? Sired by an entity whose nature transcends mortal concepts like “good” and “evil”? You probably don’t even know, although events in your chronicle might reveal the truth whether you want to learn it or not. System-wise, this Merit confers the following drawbacks and benefits: • As noted above, your aura blazes with inhuman clarity and brilliance. • Your temperament favors your Umbral ancestor, and you tend to act accordingly. • You must take at least three points’ worth of Physical Flaws to reflect the unstable nature of your physical form and the surging metaphysical energies it contains. These Flaws do not count toward your total Flaw points, nor do you get points for taking those Flaws. • Those energies give you a Quintessence rating of 7, and those points automatically refresh up to that seven-point maximum each time you go to sleep, regardless of your Avatar rating. • If your chronicle employs the Resonance rules in Chapter Two, you begin play with three points in Resonance, not one. If not, you get three points’ worth of the Flaw: Echoes. Again, those phenomena reflect the tempera ment of your Umbral ancestor. • You subtract -1 from the difficulties of your casting rolls when you cast Effects using the Mind Sphere, the Spirit Sphere, or both in relation to the High Umbra. If, for example, the demon-blooded laham mage Jenatrix wanted to read someone’s mind, her casting difficulty would be normal; if she wanted to project her astral self into the High Umbra, however, she’d reduce the difficulty by -1. • You can travel physically into the High Umbra by using a Mind 4 /Spirit 3 Effect. • When attempting to intimidate, command, or bargain with High Umbral entities, you add two dice to whichever dice pool you happen to be using in that attempt. (For details, see The Bargaining Process in How Do You DO That? pp. 91-95.) Despite your advantage, however, using your uncanny heritage as leverage will not exactly endear you to the entities in question. In such negotiations, it’s generally more constructive to use a carrot than a stick. • On a related note, you suffer a penalty of +2 to the difficulty of your rolls to resist, soak or counter rituals cast by Hermetic High Ritual wizards or Awakened clerics from the Jewish, Muslim, and Christian denominations. These folks have spent millennia studying your kind, and be ye angel or be ye demon, they know how to deal with you more effectively than most mages do. (By rituals, we’re referring to extended-roll ceremonial magicks, not off-the-cuff spells. Your chances are as good as anybody else’s if a wizard tosses a lightning bolt at you; if he draws up a summoning circle, though, you’re kinda screwed.) • At the Storyteller’s option, you may also receive up to seven points in the Advantages described in Mage 20, p. 658 (and expanded further in the Mage 20 sourcebook Gods, Monsters & Familiar Strangers). Demon-blooded laham characters may, instead, take up to seven points in the demonic Investments described in the Mage: The Sorcerers Crusade sourcebook Infernalism: The Path of Screams or the Mage 20 supplement The Book of the Fallen. In either case, these additional and optional benefits get balanced out with a five-point Derangement Flaw of the Storyteller’s choice (see Mage 20, pp. 648-650). Although the player might not know what sort of entity her character is descended from, the Storyteller ought to determine the character’s heritage, and then plant clues (dreams, visions, weird greetings from characters who seem to know more about the mage than she knows about herself...) throughout the story. He ought to feed roleplaying notes to the player, too: This Realm seems familiar even though you don’t recall having been here before, You can almost taste the evil in that girl’s soul, Man, you just wanna rip that dude’s throat out and you’re not sure why... The player, of course, can draw her own conclusions – conclusions that might not necessarily be accurate at all. This Merit goes well with Merits like Legendary Attributes, Nine Lives, and Too Tough to Die, Flaws like Immortal Enemy, Primal Marks, or Cast No Shadow or Reflection, and Backgrounds like Cult, Demesne, and Past Life. As with the Merit: “Immortal,” (above) this Trait could be too powerful for player characters to take. Supporting characters, however, could be nephilim-descended, which would make for potent friends and memorable enemies.",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+        "stat_type": "supernatural",
+        "values": [7],
+        "source": "M20 Book of Secrets p. 79"
+    },
+	{
+        "name": "Shadow Appeal",
+        "description": "Every human animal has secrets even from himself. In time, those secrets form a repressed self — a shadow — that collects all the things that person doesn’t want to recognize, either because they feel too awful to accept or too good to seem true. Thanks to their journeys through the shadow-side of existence, and the self-lacerating experiences they have in the process, many folks who’ve gone through the Cauls possess a frightening degree of insight about those shadows... and a fiendish gift for using those insights to their advantage. Story-wise, this insight allows a Nephandus to notice weak spots in another person’s psyche. Thus informed, she can exploit what she sees — flattering the egotist, undercutting the insecure, flirting with the lonely, and so on. That insight makes her very good at exploiting people — so good, in fact, that they rarely notice her mind games until it’s too late...if they ever notice them at all. Rules-wise, this Merit subtracts -2 from the difficulty of a Nephandic character’s rolls when she’s trying to manipulate social situations through appeals to the shadow aspects of her prey. The specifics depend on the characters involved, and the Merit helps her puzzle out and then employ the most effective tactics for the job. This deduction can lower a difficulty beyond the usual -3 modifier limit, which gives the Fallen an inhuman edge gained from their awful journey through the Cauls. Because this Merit reflects insights gained through Qlippothic Descent, it cannot be taken by characters who are not Caul-initiated Nephandi. The Trait adds an extra-sharp edge to Nephandic social tactics while showcasing the psychic insights of the Void. For more information about the shadow, see “Jung’s Long Shadow,”",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+        "stat_type": "supernatural",
+        "values": [3],
+        "source": "M20 Book of the Fallen p. 117"
+    },
+	{
+        "name": "Innocuous Aura",
+        "description": "Most Fallen mages have been marked by their travels through the Caul. One with this Merit has somehow escaped such deformations of the soul. Although she might alter her aura to conceal her true emotional state, she doesn’t need to hide the flickers of Qlippothic essence in her aura because in her case they aren’t there. This unearthly blessing makes her life a lot easier than it might be otherwise, and so Fallen Ones with the Merit make excellent deceivers, infiltrators, and double agents in places where Nephandi often cannot go.",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+        "stat_type": "supernatural",
+        "values": [5],
+        "source": "M20 Book of the Fallen p. 117"
+    },
+	{
+        "name": "Abyssal Mastery",
+        "description": "In space, no one can survive for long...according to science, anyway. Those who revere the Void, of course, have other ideas. Even so, the ability to endure the cold vacuum of deep space and the deeper Umbra demands a certain level of preternatural mastery. One does not simply step out of the airlock and let darkness take its course. Such survival requires deep affinity with the broken Qlippothic shells and the cold darkness which waits beyond them. Rules-wise, this Merit allows a Nephandus to pit herself against the rigors of deep space or the Deep Umbra with nothing more than Qlippothic understanding and a smug grin. Although she’ll still need some method of traveling the dizzying distances between celestial bodies, vehicles, and Realms, her body, mind, and soul may endure the Void without life-support gear. The Disembodiment phenomenon holds no terrors for her, either. No matter where she might roam or how long she remains apart from the earthly realm, this Nephandus retains her mortal form if and when she returns to Earth. A Fallen character with this Merit can also use Spirit 5 to escape immediately into the Qlippoth — a feat few mages, even Masters, can successfully attempt, much less survive. Generally, the broken vessels can be reached only through the tunnels, a Caul, or some portal into the Qlipha of Lilith. This Merit allows the Nephandus to reach any Qlipha she has already attained. As with nearly all of these Nephandic Traits, this Merit may be taken only by Fallen mages or, on account of their sublime madness, certain powerful Marauders whose sanity expands beyond earthly boundaries.",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+        "stat_type": "supernatural",
+        "values": [7],
+        "source": "M20 Book of the Fallen p. 117"
+    },
+	{
+        "name": "Saint of the Pit",
+        "description": "She has gone where few others of her kind have gone and survived to speak of it. So terrible is this master of infernal Realms that all but the most powerful malign entities defer to her commands. When she speaks, demons tremble and awful things obey. Even on the earthly plane, monsters know better than to mess with her. Often combined with other Traits like Echoes, Primal Marks and Infamy, this Merit reflects the kind of rep that makes devils step-to. This rare human monster has gathered such respect that even earth-bound creatures have heard her name. Rules-wise, this Merit lowers the difficulty of all Social-based rolls by -3 whenever the Nephandus wants to compel obedience, drive a bargain, demand a favor, or scare the shit out of some infernal entity. The greatest arch-demons, totems, and foul godheads remain immune to this effect, though they’ll probably give a lot of weight to the things she has to say. In the mortal realm, vampires, werecreatures, mages, and other monsters who’re familiar with the darker side of the occult will at least have heard of this Fallen Saint; in game terms, any character with three dots or more in Occult, Lore (Nephandi), or Esoterica (demonology) has heard of this character. What they choose to do with that knowledge is up to them, but when you’re dealing with someone this majestically evil, that response often involves getting the hell away from her before she decides to capture a new toy.",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+        "stat_type": "supernatural",
+        "values": [7],
+        "source": "M20 Book of the Fallen p. 118"
+    },
+	{
+        "name": "Taint of Corruption",
+        "description": "Evil has an intimate hold on you. Your spirit has been corrupted – possibly since birth, as with the reborn Nephandi known as widderslainte – and you are, as the werewolves put it, “of the Wyrm” whether you wish to be or not. This doesn’t necessarily mean you behave in an evil manner – you can choose to resist the evil inside you. On a metaphysical level, however, you bear an innate corruption which tests the ideal of Enlightened self-determination. You may, perhaps, defeat it, but it’ll be a hard struggle before you do. (Need we mention the Tragedy section again? I guess we just did.) From a story perspective, this Flaw could come from demonic possession, the aftermath of an awful Quiet or a badly botched high-level Seeking, corrupt Resonance, one too many deals with malignant Umbrood, a curse, a vile past life, wicked karma, Nephandic heritage, poor life-choices, the influence of the Wyrm, a collection of tainted texts or artifacts, time spent in a hell, or other forms of metaphysical poison. It almost certainly shapes your magickal focus, and the things you do in pursuit of your magicks (that is, your practices and instruments) may well perpetrate this corruption. (Hey, now, hey now now...) To entities who recognize such soul-stains, you are either a mortal enemy (as far as most werewolves are concerned), an object of pity and potential salvation (the nicer sorts of mages), or – most likely – both. (“Hey, it’s a mercy killing, right?”) Meanwhile, inside your skin, you wrestle with the urges born from that corruption. Whether or not you give in to them (which would, of course, just deepen the decay), your dreams and impulses hold a distinctly unpleasant edge. Working malignant magick is frighteningly easy for you (-2 to your difficulties, up to the usual modifier limits), but your “good” spells are harder to cast (+2 difficulty, as above) and have a tendency to leave traces of corruption even when you succeed. Your aura crackles or swirls with leprous stains, and your Merits, Flaws, Backgrounds, and other Traits reflect the damnation you carry inside. A truly epic quest might purge this evil (and buy off this Flaw), but maybe it’s just easier to go with the flow, even if that flow leads you straight into the gutter and beyond...",
+        "game_line": "Mage: The Ascension",
+        "category": "merits",
+        "stat_type": "supernatural",
+        "values": [7],
+        "splat": "Mage",
+        "source": "M20 Book of Secrets, p. 96"
+    }	
 ]

@@ -162,6 +162,11 @@
       "description": "The Dabbler is interested in everything but focuses on nothing. He flits from idea to idea, passion to passion, and project to project without actually finishing anything. Others may get swept up in the Dabbler's enthusiasm, and be left high and dry when he moves on to something else without warning. Most Dabblers have high Intelligence, Charisma, and Manipulation ratings, but not much in the way of Wits or Stamina. Toreador are often Dabblers, particularly those afflicted with the derisive sobriquet 'Poseurs.'"
     },
     {
+      "name": "Defender",
+      "system": "Protect something over yourself.",
+      "description": "Regain Willpower when you successfully defend your charge."
+    },
+    {
       "name": "Deviant",
       
       "system": "Regain a point of Willpower any time you are able to flout social mores without retribution.",
@@ -243,7 +248,7 @@
       "name": "Idealist",
       
       "system": "Regain a point of Willpower any time an action in pursuit of your ideals furthers your goals and brings your vision closer to fruition.",
-      "description": "The Idealist believes in a higher goal or morality. The object of his idealism may vary, from a specific code of honor to a noble ambition to a simple benevolent philosophy. Some Idealists are naïve or foolish, while others are inspiring leaders, able to stir the hearts of other werewolves with the justness of their cause. Many Garou Idealists have beliefs highly influenced by those of their tribe."
+      "description": "The Idealist believes in a higher goal or morality. The object of his idealism may vary, from a specific code of honor to a noble ambition to a simple benevolent philosophy. Some Idealists are naive or foolish, while others are inspiring leaders, able to stir the hearts of other werewolves with the justness of their cause. Many Garou Idealists have beliefs highly influenced by those of their tribe."
     },
     {
       "name": "Innovator",
@@ -495,5 +500,145 @@
       "name": "Steward",
       "system": "Regain Willpower when you defend a substantial asset entrusted to you from attack, or significantly expand an asset on another's behalf.",
       "description": "You defend what they won. You maintain what they created. Where the head leads, the hands act in their stead. Some call you steward, seneschal. Some regard you as nothing more than the silent figure in your master's shadow. As the custodian of a home, business, legacy, or place of power, you have control over a great deal of authority which you wield on another's behalf. You may be a servant in name only - your master may be long dead, your order inactive or shattered, your oaths of service impossible to complete. It doesn't matter. What you now have, you protect with total dedication, because it isn't yours to lose. The Dedication you show in defending your domain baffles your colleagues. Gifted with wealth, power, and responsibility, you resist the temptation to squander what you've been given. Instead, you choose to nurture, to build and expand, and to protect with force if you must. Command without the crown is a pitiable job. History remembers the king, not the vassal. When you give yourself over too much to your duties you risk Self-Sublimation as your own wants and objectives become alien to you. Blind loyalty can break your sense of self over time, and if you don't take measures to acknowledge your personal needs and desires you may lose yourself to identity-crushing subservience, and eternal duty without reward."
+    },
+    {
+      "name": "Addict",
+      "system": "Become utterly fixated on one passion.",
+      "description": "Regain Willpower when you gorge yourself on a chosen passion."
+    },
+    {
+      "name": "Adherent",
+      "system": "Pledge yourself to one cause above everything else.",
+      "description": "Regain Willpower when you remain loyal to your cause despite hardships."
+    },
+    {
+      "name": "Adjudicator",
+      "system": "Work to solve problems that affect your surroundings.",
+      "description": "Regain Willpower whenever your attempts at providing solutions yield immediate results."
+    },
+    {
+      "name": "Artist",
+      "system": "Try to reach others through your creations.",
+      "description": "Regain Willpower whenever you reach an audience through your works."
+    },
+    {
+      "name": "Barbarian",
+      "system": "Keep your distance from civilization, trusting the old ways.",
+      "description": "Regain Willpower when you prove the value of your “barbaric” ways over civilization."
+    },
+    {
+      "name": "Caretaker",
+      "system": "Shepherd those around you to safety.",
+      "description": "Regain Willpower when you avert a disaster for your flock."
+    },
+    {
+      "name": "Coward",
+      "system": "Hide your true self from others.",
+      "description": "Regain Willpower when you reveal something about yourself without being rejected."
+    },
+    {
+      "name": "Deviant",
+      "system": "Reject traditional social mores for your own.",
+      "description": "Regain Willpower whenever you manage to flout social customs."
+    },
+    {
+      "name": "Devil's Advocate",
+      "system": "Question the commands from your superiors.",
+      "description": "Regain Willpower when your questions reveal flaws in a plan or structure."
+    },
+    {
+      "name": "Futurist",
+      "system": "Pledge yourself to new concepts and ideals.",
+      "description": "Regain Willpower whenever you first come upon a progressive idea or object."
+    },
+    {
+      "name": "Heretic",
+      "system": "Refuse to accept a commonly held creed.",
+      "description": "Regain Willpower whenever you challenge commonly held convictions and convince others of your belief."
+    },
+    {
+      "name": "Hunter",
+      "system": "Always prepare yourself for the hunt.",
+      "description": "Regain Willpower whenever you outperform a rival or defeat your prey through cunning and patience."
+    },
+    {
+      "name": "Maniac",
+      "system": "Be compelled by internal voices to strange actions.",
+      "description": "Regain Willpower whenever you fulfill a goal of the voices that goes against your immediate self-interests."
+    },
+    {
+      "name": "Masquerader",
+      "system": "Leave no footprints to mortals.",
+      "description": "Regain Willpower whenever you resolve a situation without anyone realizing that you are more than an ordinary mortal."
+    },
+    {
+      "name": "Meddler",
+      "system": "Constantly try to interfere in others' affairs to aid them.",
+      "description": "Regain Willpower when your interference proves beneficial despite protests."
+    },
+    {
+      "name": "Melancholic",
+      "system": "Feel ennui at all that you have lost.",
+      "description": "Regain Willpower whenever you cause others to question their cursed natures."
+    },
+    {
+      "name": "Omega",
+      "system": "Accept your place at the bottom rung of your group.",
+      "description": "Regain Willpower whenever you achieve a deed worthy of recognition."
+    },
+    {
+      "name": "Outsider",
+      "system": "Define yourself by things you do not participate in.",
+      "description": "Regain Willpower whenever you learn something about yourself through decisions made by others."
+    },
+    {
+      "name": "Paragon",
+      "system": "Embody straightforwardness and simplicity.",
+      "description": "Regain Willpower whenever your straightforward approach proves more successful than deception."
+    },
+    {
+      "name": "Penitent",
+      "system": "Strive to do penance for your sins.",
+      "description": "Regain Willpower whenever you achieve absolution for a grievance."
+    },
+    {
+      "name": "Quaestor",
+      "system": "Yearn to answer life's questions.",
+      "description": "Regain Willpower whenever you reach a concise life lesson that could become a rule of thumb."
+    },
+    {
+      "name": "Recognition Seeker",
+      "system": "Seek to be recognized.",
+      "description": "Regain Willpower whenever someone realizes you are more than just another mortal."
+    },
+    {
+      "name": "Reluctant Reborn",
+      "system": "Struggle with accepting your new life.",
+      "description": "Gain one permanent point of Willpower upon realizing and accepting the truth about what you have become, then choose a new Nature."
+    },
+    {
+      "name": "Seer",
+      "system": "Glimpses of the future haunt you.",
+      "description": "Regain Willpower whenever your visions reveal an enigma or offer greater insights."
+    },
+    {
+      "name": "Stoic",
+      "system": "Maintain composure under all circumstances.",
+      "description": "Regain Willpower when you overcome setbacks and losses without succumbing to strong emotions."
+    },
+    {
+      "name": "Tycoon",
+      "system": "Constantly plot to expand your resources.",
+      "description": "Regain Willpower whenever your plans yield maximum influence and profit."
+    },
+    {
+      "name": "Vigilante",
+      "system": "Succeed in vengeance against a chosen target.",
+      "description": "Regain Willpower when you significantly hurt your target."
+    },
+    {
+      "name": "Wanderer",
+      "system": "Never stay in one place and avoid attachments.",
+      "description": "Regain one Willpower point whenever you complete your purpose in a place, then move on, leaving no loose ends."
     }
-  ]
+]

@@ -245,7 +245,8 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [3],
-        "shifter_type": "Garou",
+        "shifter_type": ["Garou", "Ajaba"],
+        "gift_alias": ["Clan Loyalty"],
         "splat": "Shifter",
         "tribe": "Bone Gnawer"
     },

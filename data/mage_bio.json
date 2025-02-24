@@ -189,5 +189,13 @@
         "category": "identity",
         "stat_type": "personal",
         "values": []
+    },
+    {
+        "name": "Fuel",
+        "description": "The power source of a Companion character.",
+        "game_line": "Mage: The Ascension",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": []
     }
 ]

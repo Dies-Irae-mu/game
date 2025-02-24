@@ -100,7 +100,26 @@ POWERS = {
         "Dementation": 0,
         "Chimerstry": 0,
         "Thaumaturgy": 0,
-        "Vicissitude": 0
+        "Vicissitude": 0,
+        "Abombwe": 0,
+        "Bardo": 0,
+        "Daimonion": 0,
+        "Deimos": 0,
+        "Kai": 0,
+        "Kineticism": 0,
+        "Maleficia": 0,
+        "Melpominee": 0,
+        "Mytherceria": 0,
+        "Nihilistics": 0,
+        "Obeah": 0,
+        "Rift": 0,
+        "Sanguinus": 0,
+        "Spiritus": 0,
+        "Striga": 0,
+        "Temporis": 0,
+        "Thanatosis": 0,
+        "Valeren": 0,
+        "Visceratika": 0
     },
     "Gifts": {
         "Blur of the Milky Eye": 1,
@@ -430,7 +449,9 @@ SHIFTER_TYPE = {
 
 KITH = {
     'Boggan', 'Clurichaun', 'Eshu', 'Nocker', 'Piskie', 'Pooka', 'Redcap', 'Satyr', 
-    'Selkie', 'Arcadian Sidhe', 'Autumn Sidhe', 'Sluagh', 'Troll'
+    'Selkie', 'Arcadian Sidhe', 'Autumn Sidhe', 'Sluagh', 'Troll', 'Inanimae', 'Hsien', 'Nunnehi',
+    'Korred', 'River Hag', 'Swan Maiden', 'Encanto', 'Sachamama', 'Morganed', 'Alicanto', 'Boraro', 
+    'Llorona', 'Merfolk', 'Wichtel', 'Wolpertinger'
 }
 
 CLAN = {
@@ -628,7 +649,7 @@ SECT = {
 }
 
 SEEMING = {
-    'Childling', 'Wilder', 'Grump'
+    'Childling', 'Wilder', 'Grump', 'Youngling', 'Brave', 'Elder'
 }
 
 PATHS_OF_ENLIGHTENMENT = {

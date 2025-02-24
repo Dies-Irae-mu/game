@@ -5,7 +5,7 @@
         "category": "merits",
         "values": [1],
         "description": "No one can explain it, but you seem to have the ability to work on less rest than your fellow vampires. You always seem to be the first to rise and the last to go to bed even if you've been out until dawn. Your Humanity or Path score is considered to be 10 for purposes of deciding when you rise each evening.",
-        "source": "V20 Pg 480",
+        "source": "V20 p. 480",
         "notes": "Vampires with this Merit cannot take the Deep Sleeper Flaw.",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
@@ -16,7 +16,7 @@
         "category": "merits",
         "values": [1],
         "description": "You have the capacity to eat food and even savor its taste. While you cannot derive any nourishment from eating regular foods, this ability will serve you well in pretending to be human. Of course, you can't digest what you eat, and there will be some point during the evening when you have to heave it back up.",
-        "source": "V20 Pg 480",
+        "source": "V20 p. 480",
         "notes": "",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
@@ -27,9 +27,19 @@
         "category": "merits",
         "values": [2],
         "description": "You look more hale and healthy in appearance than other vampires, allowing you to blend with human society much more easily. You still retain the color of a living mortal, and your skin feels only slightly cool to the touch.",
-        "source": "V20 Pg 480",
+        "source": "V20 p. 480",
         "notes": "",
         "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Enchanting Voice",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [2],
+        "description": "There is something about your voice that others cannot ignore. When you command, they are cowed. When you seduce, they swoon. Whether thundering, soothing, persuading, or simply talking, your voice commands attention. The difficulties of all rolls involving the use of the voice to persuade, charm, or command are reduced by two.",
+        "source": "V20 p. 480",
+        "notes": "",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -38,7 +48,7 @@
         "category": "merits",
         "values": [3],
         "description": "You are able to draw more than the usual amount of nourishment from blood. When feeding, you gain an additional point to your blood pool for every two points of blood you consume. This does not allow you to exceed your blood pool maximum.",
-        "source": "V20 Pg 480",
+        "source": "V20 p. 480",
         "notes": "",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
@@ -49,9 +59,8 @@
         "category": "merits",
         "values": [1],
         "description": "You have expertise in a specific field that makes your conversation intriguing to an older Kindred. So long as your knowledge holds the other vampire's attention, he has a vested interest in keeping you around. Then again, once he's pumped you for every iota of information you possess, that patronage may suddenly vanish.",
-        "source": "V20 Pg 484",
+        "source": "V20 p. 484",
         "notes": "This Merit should be played like a 1-dot Mentor with a specific interest. However, unlike a Mentor, Useful Knowledge does not imply a permanent relationship.",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -60,7 +69,7 @@
         "category": "merits",
         "values": [3],
         "description": "You are naturally calm and do not easily fly off the handle. You receive two extra dice when attempting to resist a frenzy.",
-        "source": "V20 Pg 485",
+        "source": "V20 p. 485",
         "notes": "Brujah may not take this Merit.",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
@@ -71,8 +80,9 @@
         "category": "merits",
         "values": [1],
         "description": "You spend an unusual amount of time in Elysium. You see and are seen to such an extent that all of the movers and shakers of Elysium at least know who you are. Extended time spent in Elysium also gives you extended opportunities to interact with the Harpies and other Kindred of that stature - and they'll know your name when you approach them.",
-        "source": "V20 Pg 487",
-        "notes": "This Merit is generally taken by vampires that respect and attend Elysium on a regular basis."
+        "source": "V20 p. 487",
+        "notes": "This Merit is generally taken by vampires that respect and attend Elysium on a regular basis.",
+        "game_line": "Vampire: The Masquerade"
     },
     {
         "name": "Former Ghoul",
@@ -80,8 +90,10 @@
         "category": "merits",
         "values": [1],
         "description": "You were introduced to the Blood long before you were made Kindred. Your long experience as a ghoul gives you insight into and comfort with vampiric society. You are at -1 difficulty on all Social rolls when in the presence of other neonates (particularly those who haven't been educated by their sires), and have a -1 difficulty on all rolls relating to vampiric knowledge.",
-        "source": "V20 Pg 487",
-        "notes": ""
+        "source": "V20 p. 487",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
     },
     {
         "name": "Prestigious Sire",
@@ -89,18 +101,18 @@
         "category": "merits",
         "values": [1],
         "description": "Your sire has or had great status in her Sect or Clan, and this has accorded you a certain amount of prestige. Though your sire may no longer have any dealings with you, the simple fact of your ancestry has marked you forever. This prestige might aid you greatly in dealings with other vampires, or it might engender jealousy or contempt.",
-        "source": "V20 Pg 488",
+        "source": "V20 p. 488",
         "notes": "",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
-    {
-        "name": "Boon",
+	{
+        "name": "Protegé",
         "stat_type": "social",
         "category": "merits",
         "values": [1],
-        "description": "Someone owes you a favor. The vampire in your debt might be the lowliest neonate in the city or might be the Prince herself; it all depends on how many points the Merit costs. You only have that single favor owed you (unless you take the Merit multiple times), so using it properly is of paramount importance. Depending on status and other factors, the vampire who owes you a favor may well resent his debt, and might go out of his way to 'settle' it early - even going so far as to create situations from which he must 'rescue' you and thus clear the slate.",
-        "source": "V20 Pg 488",
+        "description": "Your sire watched you for some time before Embracing you, and spoke glowingly of you to acquaintances. These vampires may be inclined to look favorably on you by dint of your sire's recommendation; you are at -1 difficulty on Social rolls with all those who've heard good things about you.",
+        "source": "V20 p. 488",
         "notes": "",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
@@ -111,7 +123,7 @@
         "category": "merits",
         "values": [2],
         "description": "An acquaintance from your breathing days was Embraced at the same time you were. Fortunately, your friendship has endured even death and unlife, and you find a constant source of support and aid in your old friend. She expects the same of you, which isn't always convenient, but at least you each have someone to hang onto who remembers the good old nights - and days. The Storyteller should play the Old Pal as a very loyal Ally.",
-        "source": "V20 Pg 488",
+        "source": "V20 p. 488",
         "notes": "",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
@@ -122,7 +134,7 @@
         "category": "merits",
         "values": [2],
         "description": "Unlike many Kindred, you like to travel. You have a solid knowledge of safe travel routes and methodologies, not to mention haven space available in any number of destinations. Unless someone out there knows your exact route and is specifically looking for you, you can move between cities unimpeded by random encounters with Lupines, overzealous state troopers, and the like.",
-        "source": "V20 Pg 488",
+        "source": "V20 p. 488",
         "notes": "",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
@@ -133,7 +145,7 @@
         "category": "merits",
         "values": [2],
         "description": "You have a reputation for having a good head on your shoulders and the honor to keep your word no matter what. As a result, your allies and sectmates ask you to mediate their disputes, even with other sects. This Merit allows your character to use her reputation as leverage to keep the peace during tense situations. Reduce the difficulty of all social rolls to keep the peace or to mediate honestly between factions (even other sects) by 2.",
-        "source": "Anarchs Unbound Pg 102",
+        "source": "Anarchs Unbound p. 102",
         "notes": "RESTRICTED",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
@@ -144,9 +156,8 @@
         "category": "merits",
         "values": [2],
         "description": "You belong to an Anarch gang with a violent, effective, or otherwise impressive reputation. The history of the gang might extend a hundred years before you were born, but so long as you hold membership and wear the colors of your crew, other Anarchs naturally tend to respect you. Some may even occasionally perform minor tasks for you to try to curry favor with the others. When your membership is known, reduce the difficulty of all Manipulation rolls with other Anarchs by 2 unless a given Anarch has a historical animosity with your gang.",
-        "source": "Anarchs Unbound Pg 102",
+        "source": "Anarchs Unbound p. 102",
         "notes": "RESTRICTED",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -155,9 +166,8 @@
         "category": "merits",
         "values": [3],
         "description": "You have an informer buried in one of your Sect's enemy organizations who funnels you all sorts of information as to what her peers are up to. What you do with the information is up to you, but abusing the knowledge might be a good way to get your informer killed. The other side has spies too...",
-        "source": "V20 Pg 489",
+        "source": "V20 p. 489",
         "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -166,9 +176,8 @@
         "category": "merits",
         "values": [3],
         "description": "You have some sort of special forum (a zine, a secure blog, a well-known podcast, or a social media account with a lot of followers) that allows your Anarch to express an opinion and have said opinion spread widely. The Soapbox Merit represents a social delivery mechanism that can influence Kindred outside of your character's normal social circle or class. Reduce the difficulty of Expression and Subterfuge rolls by 2 difficulty when dealing with vampires who read the Soapbox.",
-        "source": "Anarchs Unbound Pg 102",
+        "source": "Anarchs Unbound p. 102",
         "notes": "RESTRICTED",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
     {
@@ -177,7 +186,7 @@
         "category": "merits",
         "values": [4],
         "description": "You were once blood-bound but have secretly slipped the leash, and you are free to act as you will more. Your regnant has no idea that you are not in fact bound, and continues to treat you as if you were. At Storyteller discretion, the experience of having been bound once may render you immune to ever being enthralled again.",
-        "source": "V20 Pg 489",
+        "source": "V20 p. 489",
         "notes": "Restricted. Needs approval. Sabbat vampires cannot take this Merit.",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
@@ -188,7 +197,7 @@
         "category": "merits",
         "values": [1],
         "description": "Your aura is unnaturally bright and colorful for a vampire. You register as a mortal on all attempts to read your aura.",
-        "source": "V20 Pg 493",
+        "source": "V20 p. 493",
         "notes": "This Merit is only available to Alastor characters who have killed an Anathema and earned a Trophy.",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
@@ -199,7 +208,7 @@
         "category": "merits",
         "values": [1],
         "description": "Normally vampires can only seal the wounds they inflict from feeding by licking them. With but a touch, you can achieve the same effect, closing the puncture wounds left by drinking blood.",
-        "source": "V20 Pg 493",
+        "source": "V20 p. 493",
         "notes": "",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
@@ -210,7 +219,7 @@
         "category": "merits",
         "values": [1],
         "description": "With rare exceptions, animals usually despise the Kindred. Some flee, others attack, but all dislike being in the presence of a vampire. You have no such problem. Animals may not enjoy being in your company, but they don't actively flee from you.",
-        "source": "V20 Pg 493",
+        "source": "V20 p. 493",
         "notes": "",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
@@ -221,7 +230,7 @@
         "category": "merits",
         "values": [2],
         "description": "You have an inherent resistance to the rituals of the Tremere and the spells of the mages of other Clans. The difficulty of all such magic, both malicious and beneficent, is two higher when directed at you.",
-        "source": "V20 Pg 493",
+        "source": "V20 p. 493",
         "notes": "You may never learn magical Disciplines such as Thaumaturgy and Necromancy.",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
@@ -232,7 +241,7 @@
         "category": "merits",
         "values": [3],
         "description": "The tell-tale black streaks of diablerie do not manifest in your aura.",
-        "source": "V20 Pg 493",
+        "source": "V20 p. 493",
         "notes": "",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
@@ -243,8 +252,19 @@
         "category": "merits",
         "values": [5],
         "description": "You can take one additional Discipline (Storyteller discretion) as if it were a Clan Discipline. All costs to learn that Discipline are paid out as if it were native to your Clan.",
-        "source": "V20 Pg 494",
+        "source": "V20 p. 494",
         "notes": "A character cannot take this Merit more than once, and Caitiff vampires cannot take this Merit.",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Unbondable",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [5],
+        "description": "You are immune to being blood bound.",
+        "source": "V20 p. 494",
+        "notes": "Tremere cannot take this Merit.",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
@@ -254,8 +274,10 @@
         "category": "merits",
         "values": [1],
         "description": "You have a close friend in one of the Kindred sects. Perhaps you are a warrior who is in touch with one of the antitribu, a vizier who shares common business interests with some Camarilla Ventrue, or a sorcerer who corresponds with one of the rare blood magicians of the Anarch Movement. Your ally can help you navigate the currents of their sect, but they might want something in exchange from time to time.",
-        "source": "Lore of the Clans",
-        "notes": ""
+        "source": "Lore of the Clans p. 26",
+        "notes": "",
+		"game_line": "Vampire: The Masquerade"
+
     },
     {
         "name": "Fury's Focus",
@@ -263,17 +285,9 @@
         "category": "merits",
         "values": [3],
         "description": "Brujah who have devoted themselves to mastering their frenzies through the Path of Entelechy sometimes find tangible benefits resulting from their efforts. A Brujah with this Merit may briefly delay the full onset of frenzy. System: The player spends a Willpower point at the onset of frenzy and then rolls the Brujah's Entelechy rating. The difficulty is one higher than the original roll to resist frenzy. The Brujah still frenzies, but the player controls her character's actions for one turn per success. Furthermore, when the period of partial control ends and the Brujah loses control, the difficulty of any degeneration rolls triggered by sins committed during the frenzy are reduced by the number of successes rolled, to a minimum difficulty of 4.",
-        "source": "Lore of the Clans Pg. 48",
-        "notes": "Prerequisite: Path of Entelechy"
-    },
-    {
-        "name": "Drug Resistance",
-        "stat_type": "supernatural",
-        "category": "merits",
-        "values": [2],
-        "description": "The Setite religion is one fraught with vices, both to compromise enemies and to enlighten initiates. Cultists tend to build up a tolerance to the substances they take directly (if human or ghoul) or through the blood of prey (if Kindred). You are unusually resistant to alcohol, narcotics, and similar addictive substances. You can pretend to be far more under the influence than you are in order to take advantage of an opponent. All rolls to resist the effects of such substances are at -2 difficulty.",
-        "source": "Lore of the Clans Pg. 67",
-        "notes": ""
+        "source": "Lore of the Clans p. 48",
+        "notes": "Prerequisite: Path of Entelechy",
+		"game_line": "Vampire: The Masquerade"
     },
     {
         "name": "Addictive Blood",
@@ -281,8 +295,9 @@
         "category": "merits",
         "values": [3],
         "description": "You don't just peddle narcotics; through the blessings of the Dark God, you are the perfect drug. Your blood is especially delicious to others, Kindred or kine. Whoever tastes your blood must, during any subsequent scenes that they meet you, drink again or spend a Willpower point to avoid the pangs of craving. These cravings add +2 difficulty to any Mental or Social rolls. Setites with this Merit find it much easier to blood bond an opponent, as once they have tasted the tainted vitae, they will do almost anything to drink it again.",
-        "source": "Lore of the Clans Pg. 67",
-        "notes": ""
+        "source": "Lore of the Clans p. 67",
+        "notes": "",
+		"game_line": "Vampire: The Masquerade"
     },
     {
         "name": "Setite Initiate",
@@ -290,8 +305,9 @@
         "category": "merits",
         "values": [5],
         "description": "You were Embraced into a Clan other than the Followers of Set. However, you have accepted the Setite religion, undergone the vetting process and rites, and have been formally inducted into the cult. You have access to Serpentis and Setite Blood Sorcery (though you pay out-of-Clan costs to learn them,). You may even study one of their Paths of Enlightenment. It is important to note that 'Setites' from other Clans or bloodlines are not treated as second-class citizens. You are no longer a dupe they can string along. Once you are in, you are a sibling of faith, which is a much more important distinction than blood. An outsider accepting the Dark God is a joyous event, even to the most conservative elder. There are even rumors of non-Kindred supernatural beings joining the cult.",
-        "source": "Lore of the Clans Pg. 67",
-        "notes": "Setites Only"
+        "source": "Lore of the Clans p. 67",
+        "notes": "Setites Only",
+		"game_line": "Vampire: The Masquerade"
     },
     {
         "name": "Rugged Bad Looks",
@@ -299,8 +315,9 @@
         "category": "merits",
         "values": [5],
         "description": "While you are still hideous, you are not quite as monstrous as most Nosferatu. You still have an appearance of 0, but you might pass for human in the right light. It is a still a good idea to cover up and stay in the shadows, but the sight of you (or even the smell of you) is not an instant breach of the Masquerade. Having said that, you are still ugly enough to unnerve the crap out of most people.",
-        "source": "Lore of the Clans Pg. 161",
-        "notes": ""
+        "source": "Lore of the Clans p. 161",
+        "notes": "",
+		"game_line": "Vampire: The Masquerade"
     },
     {
         "name": "Antitoxin Blood",
@@ -308,40 +325,8 @@
         "category": "merits",
         "values": [1],
         "description": "Although vampires are typically immune to mortal drugs and poisons, there are supernatural venoms that can affect Kindred physiology. A Ravnos with this Merit is immune to all forms of drugs and poisons, including the venoms and toxins of supernatural creatures or those created by supernatural powers.",
-        "source": "Lore of the Clans Pg. 181",
+        "source": "Lore of the Clans p. 181",
         "notes": "Ravnos Only",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Bloodline Resistance",
-        "stat_type": "supernatural",
-        "category": "merits",
-        "values": [2],
-        "description": "You have an innate resistance to the powers of a specific bloodline. Add two dice to all rolls to resist the Disciplines of that bloodline. This Merit may be taken multiple times for different bloodlines.",
-        "source": "Lore of the Clans Pg 43",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Calm Heart",
-        "stat_type": "supernatural",
-        "category": "merits",
-        "values": [3],
-        "description": "You have an innate serenity that makes it easier to resist frenzy. The difficulty to resist frenzy is reduced by two. This Merit is particularly common among Salubri.",
-        "source": "Lore of the Clans Pg 43",
-        "notes": "",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Clearsight",
-        "stat_type": "supernatural",
-        "category": "merits",
-        "values": [3],
-        "description": "You can see through supernatural illusions and disguises more easily than most. The difficulty of all rolls to see through supernatural deception (including powers like Obfuscate and Chimerstry) is reduced by two.",
-        "source": "Lore of the Clans Pg 43",
-        "notes": "",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
@@ -350,174 +335,1425 @@
         "stat_type": "supernatural",
         "category": "merits",
         "values": [3],
-        "description": "You have strong ties to the city's homeless population. You can use them as information sources and they will generally help you if asked. This network can provide you with information about the city's underside and help you locate specific individuals.",
-        "source": "Lore of the Clans Pg 44",
-        "notes": "",
+        "description": "While you're not a Nosferatu, you know your way around the sewers, tunnels, ducts, subway tubes, and other subterranean passages of your hometown. The local Nosferatu (and any other creatures dwelling down in the muck) may not actually like you, but they're not inclined to kill you on sight when they see you in their territory. You are at -1 difficulty on any rolls involving the subterranean world (sneaking from place to place underground, finding routes into sub-basements, and so on).",
+        "source": "V20 p. 489",
+        "notes": "Nosferatu cannot purchase this Merit.",
         "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
-    {
-        "name": "Healing Touch",
-        "stat_type": "supernatural",
+   	{
+        "name": "Ecclesial Rank",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [1, 2, 3],
+        "description": "Though your status as an Inquisitor is a secret outside of the Society of Leopold, you are also an official member of the Roman Catholic Hierarchy. This Merit determines your standing, each point widening the scope of your service and influence. The one-point version grants you the rank of priest, presiding over one parish (and its deacons and laity). The twopoint version grants you the rank of Bishop, presiding over one diocese, consisting of many parishes (and their priests). The three-point version grants you the rank of Archbishop, presiding over several dioceses (and their bishops).",
+        "source": "Hunters Hunted II p. 123",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Sanctioned Witch",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [2],
+        "description": "You are known as a 'Judas Witch,' having received the Sanctuary of the Disciplina Arcani from the Inquisitor General herself. You cannot be punished or detained for occult study or the use of Numina (though the sanction can be revoked for misconduct). A tattoo of the Seal of Solomon, on the palm of your left hand, marks your credentials. This does not mean everyone in the Society trusts your expertise, as many despise the magic arts.",
+        "source": "Hunters Hunted II p. 123",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Inter-Agency Liaison",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [2],
+        "description": "Inter-Agency Liaison (2pt. Merit) You work for two agencies at the same time. Either you're a liaison officer between the two agencies - Homeland Security provides a handy cover for the CIA or NSA to poke their noses into the FBI and vice versa - or your current employers don't know who you really work for. Either way, you can draw on the intelligence and resources of both agencies when you need to. You must purchase the Rank Background for each agency separately, and your Rank at your 'home' agency must be equal to or greater than your Rank at your new agency.",
+        "source": "Hunters Hunted II p. 133",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Embedded Agent",
+        "stat_type": "social",
         "category": "merits",
         "values": [3],
-        "description": "Your blood has unusual healing properties. When used to heal others (mortal or vampire), each blood point spent heals two health levels instead of one. This Merit is particularly associated with the Salubri.",
-        "source": "Lore of the Clans Pg 44",
+        "description": "You're an accepted member of your intelligence agency, despite any weird side-project you work on. You might be an FBI agent with a sterling record who happens to moonlight for SAD, or an NSA intelligence analyst who just happens to spend a couple of weeks each quarter monitoring chaoscope reports. Because you spend more time around 'normal' agents, they accept you as one of their own. Add a bonus die to any Empathy, Leadership, or Investigation rolls when dealing with other members of your agency. You're also the last person anyone would think to name as a 'monster hunter,' which keeps you under the radar of otherwise well-informed supernatural creatures.",
+        "source": "Hunters Hunted II p. 133",
         "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
-    {
-        "name": "Hidden Diablerie",
-        "stat_type": "supernatural",
+	{
+        "name": "Non-Standard Access",
+        "stat_type": "social",
         "category": "merits",
         "values": [3],
-        "description": "Whether through supernatural means or simply a quirk of your blood, the black veins that normally appear in a diablerist's aura are not visible in yours. This makes it impossible to detect if you have committed diablerie through normal aura reading.",
-        "source": "Lore of the Clans Pg 44",
-        "notes": "Restricted",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Light Sleeper",
-        "stat_type": "supernatural",
-        "category": "merits",
-        "values": [2],
-        "description": "You can awaken more easily than most vampires during the day. The difficulty to rouse yourself during daylight hours is reduced by two. This Merit is common among Assamites.",
-        "source": "Lore of the Clans Pg 44",
+        "description": "Everyone working for one of the US Government's alphabet soup of agencies has access to information not available to the public, but you're privy to secrets that are way above your pay grade. Maybe someone in the Pentagon owes you his life, or you just find files in an old dead-drop. Once per story, the Storyteller will ensure that you receive classified information useful to your current operation. The information is always useful and accurate, but not necessarily complete. Though it's dangerous to explain how you came by your new knowledge, your informant is confidential and you haven't yet suffered a leak.",
+        "source": "Hunters Hunted II p. 133",
         "notes": "",
         "game_line": "Vampire: The Masquerade"
     },
-    {
-        "name": "Medium",
-        "stat_type": "supernatural",
+	{
+        "name": "Backup Identity",
+        "stat_type": "social",
         "category": "merits",
-        "values": [2],
-        "description": "You have a natural affinity for spirits and the dead. You can see and communicate with ghosts without using Necromancy, though you cannot control them. This Merit is particularly common among Giovanni.",
-        "source": "Lore of the Clans Pg 44",
+        "values": [3],
+        "description": "Most agents build up one or two cover identities, replete with backgrounds and supporting documents. You've gone one further, and got a cover identity that your agency doesn't know about. Your backup identity has a full set of documents, including a social security card and a passport, a bank account, and even owns a small apartment. Unlike most cover identities, nothing links you and your backup identity, meaning it can come in very handy when you need to work off the record, and as a get-out card when things get hairy. This Merit just provides documentation and a guarantee that intelligence agencies don't know about your alter ego. You still need the Alternate Identity Background if you want to play the part effectively.",
+        "source": "Hunters Hunted II p. 133",
         "notes": "",
         "game_line": "Vampire: The Masquerade"
     },
-    {
-        "name": "Natural Leader",
+	{
+        "name": "Ecstatic",
         "stat_type": "supernatural",
         "category": "merits",
         "values": [2],
-        "description": "You have a natural charisma that makes others want to follow you. You receive two extra dice on all Leadership rolls, and others are more likely to accept you as their leader in crisis situations.",
-        "source": "Lore of the Clans Pg 44",
+        "description": "You are prone to fits of religious ecstasy - stigmata, glossalia (speaking in tongues), visions, and trances. This is a Merit of dubious benefit. While some may distrust you as a religious hysteric, you find high regard among others of the faith as one 'touched by God.' Add one die to any Social dice pools when interacting with the Society (and possibly others with similar spiritual beliefs).",
+        "source": "Hunters Hunted II p. 124",
         "notes": "",
         "game_line": "Vampire: The Masquerade"
     },
-    {
-        "name": "Blood Empathy",
+	{
+        "name": "Ecumenist",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [4],
+        "description": "The Holy Spirit 'bloweth where it listeth.' You understand this. You see the fractal reflections of your God in other religions, and you remain humble in knowing how little of the divine you can know. Where others must brandish the holy symbols of their tradition when using True Faith, you see the supernal spark at the core of beliefs beyond your own, and you are able to use their religious icons and holy ground when confronting the supernatural. Likewise, in your presence, a group of individuals from different religions may pool their True Faith for greater effect. Such a communal pool requires only one person with this Merit. You can be the bridge that connects all faiths as brothers and sisters in the long, dark night of the soul.",
+        "source": "Hunters Hunted II p. 124",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Fist of God",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [7],
+        "description": "Some call you 'Witch-Hammer,' for your naked hands do grievous hurt to the children of the elder night. All your Brawling damage is considered aggravated against supernaturals. Work with the Storyteller to create a good reason for this rare effect, and how it developed. Only mortals with Humanity of seven or higher may purchase (or keep) this Merit.",
+        "source": "Hunters Hunted II p. 124",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Holy Aura",
         "stat_type": "supernatural",
         "category": "merits",
         "values": [2],
-        "description": "You can sense the emotional state of those whose blood you drink. When feeding, you automatically know the target's emotional state and can make an Intelligence + Empathy roll to gain deeper insights into their recent experiences.",
-        "source": "Ghouls & Revenants Pg 76",
+        "description": "No matter the color, your aura burns as a brilliant beacon of religious devotion. Even mortals who cannot see auras are drawn to your presence. Subtract one from the difficulty of all social interaction rolls. Some supernaturals will find this a positive aspect; others, particularly the Kindred, may likely be hostile toward you. Many will believe you possess great power (regardless of the truth).",
+        "source": "Hunters Hunted II p. 124",
         "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
-    {
-        "name": "Blood Sense",
-        "stat_type": "supernatural",
+	{
+        "name": "Occult Library",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [2, 4],
+        "description": "Your character owns an estimable collection of works on arcane lore. If he has access to his library, you can lower the difficulty of Intelligence-, Occult-, or research-related rolls by 1 when he's attempting to solve an occult mystery or generally learn more about the occult. Having this library doesn't automatically mean the hunter's an occult expert, it just means he has convenient access to some knowledge. If you have purchased the four-point version of this Merit, your character also has an Occult Laboratory stocked with strange and rare ingredients he might need for his Numina rituals.",
+        "source": "Hunters Hunted II p. 43",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Science Laboratory",
+        "stat_type": "social",
         "category": "merits",
         "values": [2],
-        "description": "You can detect the presence of other vampires by scent. Make a Perception + Awareness roll (difficulty 7) to detect any vampire within 20 yards. The difficulty increases with distance and obstacles.",
-        "source": "Ghouls & Revenants Pg 76",
+        "description": "Your character has access to a fully stocked laboratory with functional scientific apparatuses and research equipment. When she has access to her laboratory, your character can perform experiments, run tests, and collect data, and you may lower your difficulty by 2 for relevant Investigation or Science rolls, or lower the difficulty by 1 for other appropriate rolls (as determined by the Storyteller) while she uses the equipment.",
+        "source": "Hunters Hunted II p. 43",
         "notes": "",
-        "splat": "Vampire",
         "game_line": "Vampire: The Masquerade"
     },
-    {
-        "name": "Iron Will",
+	{
+        "name": "Poisonous Blood",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [5],
+        "description": "Due to mysterious circumstances, your character's blood is poisonous to vampires. Should a vampire drink from him, every blood point imbibed causes one health level of bashing damage to her. Vampires naturally resent mortals known to possess this blessing and may well seek their destruction. Storytellers are encouraged to have an explanation for this aberration in their chronicles, though the player (and likely character) may not be immediately privy to such knowledge. Some examples include holy protection from a higher power, a rare ritual of protection, or even a genetic abnormality.",
+        "source": "Hunters Hunted II p. 44",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Sanctuary",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [5],
+        "description": "Your character has a safe house that is a true sanctuary. Supernatural creatures require a successful Willpower check (difficulty 9) in order to enter her home without an invitation. It might be due some strange mystical occurrence, luck, a forgotten ritual, or perhaps your character's house stands on consecrated ground. This Merit must be assigned to a single building in which the character has a permanent residence. Good examples of a sanctuary might be a house, a small apartment building, or a church.",
+        "source": "Hunters Hunted II p. 44",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Cultural Chameleon",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [2],
+        "description": "You're able to quickly pick up on social cues, local customs, phrases, modes of dress, and other little things particular about a place. If you're able to address those (can change your clothes, able to speak the language, etc.), anyone attempting to discern if you don't belong there suffer a two die penalty. Either way, you receive two extra dice for any action to find others who don't belong somewhere.",
+        "source": "Hunters Hunted II p. 141",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Mental Sense Influence",
         "stat_type": "mental",
         "category": "merits",
         "values": [3],
-        "description": "Your willpower is virtually unshakeable. Add two dice to all rolls to resist Dominate, blood bonds, and other supernatural attempts to control your mind.",
-        "source": "Ghouls & Revenants Pg 77",
+        "description": "Through training and working with other experienced hunters, you have the ability to buy the Awareness Skill. Further, you can get a sense that someone is controlled by some supernatural influence or ghostly presence with a Perception + Awareness roll, difficulty 8.",
+        "source": "Hunters Hunted II p. 151",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Innocent",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [1],
+        "description": "You are always thought of in the most positive light, unless evidence exists to prove otherwise. If you do something wrong and the act is not easily attributed to you, it will most likely be blamed on someone else. This does not mean that you are 'an innocent' - it just means everyone thinks you are.",
+        "source": "Hunters Hunted II p. 142, Ghost Hunters p. 101",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Thugs",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [1],
+        "description": "When you purchase the Allies merit, you are acquiring hard-core members of the underworld rather than ordinary members of lawful society. Your Allies may be gang members, mafiosos, or members of your organized crime syndicate. Unlike normal Allies, these individuals are willing to pick fights with other mortals, murder innocents, intimidate locals, temporarily lock down an area of the city, or even commit crimes on your behalf.",
+        "source": "Hunters Hunted II p. 151",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Dead Zone",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [2],
+        "description": "Your exposure to death on a regular basis makes it difficult for ghosts to notice that you exist. You are considered to have one dot of Obfuscate (which works in the lands of the dead as well) against wraiths, spectres, and other such beings.",
+        "source": "Hunters Hunted II p. 151",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Bruiser",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [1],
+        "description": "Your appearance is sufficiently thug-like to inspire fear (or at least disquiet) in those who see you. While you're not necessarily ugly, you do radiate a quiet menace, to the point where people cross the street to avoid passing near you. All Intimidation rolls against those who have not demonstrated their physical superiority to you are at -1 difficulty.",
+        "source": "V20 p. 480",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Detached",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [4],
+        "description": "Your hunter has the rare ability to view his psychic abilities as separate from his physical existence and can maintain this distance even under adverse conditions. Wound penalties don't affect the use of Psychic Numina until your character reaches Incapacitated. If he's Incapacitated, then you may spend a Willpower point to use a Psychic Numina power at half the normal dice pool (rounded down). This action may be performed only once per scene, after which the character falls unconscious, so choose last-ditch efforts carefully. Note: This Merit may be used in conjunction only with Psychic Numina.",
+        "source": "Hunters Hunted II p. 42",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Coldly Logical",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [1],
+        "description": "While some might refer to you as a 'cold fish,' you have a knack for separating factual reporting from emotional or hysterical coloration. You may or may not be emotional yourself, but you can see clearly when others are clouding the facts with their feelings (-1 difficulty on all related rolls).",
+        "source": "V20 p. 484",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Harmless",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [1],
+        "description": "Everyone in the city knows you, and knows that you're no threat to their plans. While that sort of estimation may seem insulting, it's also what's kept you from being killed. No one considers you worth their time to deal with, and that low opinion keeps you safe. If you start acting in a way that demonstrates that you are no longer harmless, others' reactions to you will likely change as a result.",
+        "source": "V20 p. 484",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Introspection",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [1],
+        "description": "You have keen insight into the ulterior motives of all your actions. Through this nightly exercise, you also have incredible insight into the underlying motives of others' actions. Add two dice to your Perception dice pool when you must take an action against someone with the same Nature or Demeanor as you.",
+        "source": "V20 p. 484",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Temperature-Sensitive",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [1],
+        "description": "You can easily sense the change in atmospheric temperature if it rapidly rises or falls. Your sensitivity can provide a special recognition of where a possible spirit is trying to manifest. This also can give you a really good idea of where the drafts are in a building, providing the ability to rule out false positives.",
+        "source": "Ghost Hunters p. 101",
         "notes": "",
         "game_line": "Vampire: The Masquerade"
     },
     {
-        "name": "Lucky",
+        "name": "Alley Cat",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [2],
+        "description": "Your curiosity sometimes gets the best of you, but for the most part it has worked out to your benefit. Because you have explored so much of your local surroundings you know, once per session, where something can be found. This could mean knowing where you can get five cases of black candles (obviously, your local Santa Muerte shrine hidden in the back room of that one awesome taqueria) or perhaps that one necklace that makes men black out when they wear it (that dirty pawn shop owned by the guy with the one white eye). If you saw it, you just kind of remember where it was. Lower the difficulty of any Investigation or Awareness roll by 1.",
+        "source": "Ghost Hunters p. 101",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Ashen",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [2],
+        "description": "You just know when there is a ghost by you. You can feel the ash of the Deadlands on your skin. You get this gritty, slick feeling on your body when a wraith is around you. Your hair stands on end and shivers travel up and down your body. It is rather unsettling and something you have probably kept to yourself as you don't want other people to think strangely of you.",
+        "source": "Ghost Hunters p. 101",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Human Lie Detector",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [2],
+        "description": "You can tell when individuals are not being completely forward with the truth. This doesn't allow you to know what the truth is, just that you're being manipulated. All empathy rolls have a -2 difficulty.",
+        "source": "Ghost Hunters p. 101",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Lucid Dreamer",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [2],
+        "description": "Whether through training or in-born skill, you are an incredibly vivid dreamer. With your dreaming mind, you can build connections that you would otherwise have missed or make leaps of logic that appear psychic to everyone else. This can involve insight about locations or people you have recently encountered or problems that are on your mind. Your dreamscape is so well-developed that, in rare cases, a spirit may attempt communication through your dreams, though it usually comes in the form of images that may be confusing and jumbled to you. This merit provides a -2 difficulty on all Investigation rolls for the following day after a full 8 hours' rest.",
+        "source": "Ghost Hunters p. 101",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Bribes",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [3],
+        "description": "Everyone wants something, even if they don't know they want it. But you do. You can tell from a mile away what people want and how badly they want it. When trying to coerce someone into providing you what you want, you are given a -2 difficulty as your knowledge of what they need gives you leverage over them.",
+        "source": "Ghost Hunters p. 101",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Cultural Aficionado",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [3],
+        "description": "You have a passion for understanding the history, folklore, and cultural practices of the world around you, which greatly helps you on the job. Whenever put in a situation where cultural norms are different from your own, you are socially nimble enough to do what is appropriate and not offend others. You have a -1 difficulty on all Social-based rolls when a situation like this arises.",
+        "source": "Ghost Hunters p. 101",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Frequency",
         "stat_type": "supernatural",
         "category": "merits",
         "values": [3],
-        "description": "You have uncanny good fortune. Once per story, you may reroll any one failed roll. You must accept the results of the second roll.",
-        "source": "Ghouls & Revenants Pg 77",
+        "description": "You can hear and see a much wider spectrum of vibrational frequencies than other human beings. Like a human EVP/EMF device, but more accurate and with better range. You can hear and sometimes see ghosts, or their spiritual wakes. This does not mean they can hear or interact with you, though if you spend a Willpower point you can talk to those across the Shroud for one scene or hour.",
+        "source": "Ghost Hunters p. 101",
         "notes": "",
         "game_line": "Vampire: The Masquerade"
     },
-    {
-        "name": "Scholar of Others",
+	{
+        "name": "Magician's Understanding",
         "stat_type": "supernatural",
         "category": "merits",
+        "values": [3],
+        "description": "Someone in your past family line had the gift of Second Sight, and you have inherited the faintest touch of their ability. Although you have no conscious control over these psychic abilities, and thus cannot turn them on or off at will, you are often able to get a sense of a location and can tell whether a spirit is present or if you are being deceived by some sort of charlatan. It doesn't give your character the understanding of how someone is faking a phenomenon, just that it is fake.",
+        "source": "Ghost Hunters p. 101",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Circles",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [3],
+        "description": "You've got a guy, or a lady, or something. You walked into the wrong place at the wrong time but for some reason, either your own social nuance or just dumb luck, they liked you, like really liked you. From time to time you can tap into these circles of 'people' and ask them for the word on the streets. But be very careful, as sometimes knowledge comes at a price. This acts as a free point of the Allies Background and can effectively raise that Background above the 5-dot cap.",
+        "source": "Ghost Hunters p. 102",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Pop Culture Queen",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [5],
+        "description": "Your encyclopedic understanding and consumption of horror movies, books, podcasts, and television shows provide you a mental reference library for every supernatural situation you encounter, often leading to insight that benefits you and the people around you. Whenever dealing with a situation outside the realm of understanding you can turn to your Storyteller once per scene for some cinematic reasoning. They do not have to give you the answer to your question or the magic 'key' to fix the situation, but they can certainly give your character some advice to move forward in a way advantageous to themself and their cohort.",
+        "source": "Ghost Hunters p. 102",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Houses of the Holy",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [7],
+        "description": "You have a place where you go and think. It will always be safe, no matter what. You know that you can always show up to this place and the world will just make sense again. Be it by the word of a kindly old priest, a meal homemade by your local pagan priestess, or just a familiar lab in the science building at the university you teach at, this place provides sanctuary. For gameplay purposes, regain a point of temporary Willpower for every hour spent in this location, up to your permanent rating. Also, this Merit serves as a protection against enemies that may be threatening the character. No supernatural enemy may set foot inside their sanctuary, though this does not mean mortal agents of the enemy in question could not be directed to do so.",
+        "source": "Ghost Hunters p. 102",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Aura of Command",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [3],
+        "description": "Whether you are good at barking orders or simply have a commanding tone, people tend to do what you tell them to do. You are not so much a natural leader as a born commander. When using the Leadership skill to get others to obey you, the difficulty is reduced by two.",
+        "source": "Lore of the Clans p. 122",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Secret Stash",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [2, 3, 4, 5],
+        "description": "You have several resources, sleeper agents, or followers hidden away for a rainy day. For each level of this Merit you have one unassigned background point 'sitting in storage' (2 gives you one point, 3 gives you two points, and so on). At any time, you may spend as many of them as you like to increase your level in Allies, Contacts, Herd, Influence, Mentor, Resources, or Retainers. Once spent, the points remain assigned permanently, but until then they cannot be affected by anything. This allows the individual to create a new resource in an instant, without requiring the expenditure of experience points or awaiting a downtime. The vampire is not really gaining new levels, but revealing levels he has had all along.",
+        "source": "Lore of the Clans p. 122",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Bigger Boys Came",
+        "stat_type": "social",
+        "category": "merits",
         "values": [2],
-        "description": "You have extensively studied another Clan or bloodline. You know their common habits, traditions, and weaknesses. Add two dice to all rolls involving knowledge of that group.",
-        "source": "Ghouls & Revenants Pg 77",
+        "description": "When someone uses their contacts to their advantage, you can try to use yours to overrule them. You might get an editor to quash a reporter's story, or get a gang boss to stop his thugs taking down a rival. To do this you must make a roll using Manipulation + Contacts (difficulty 8). If you can get more successes than the Contacts rating of your opponent, their contacts fail to come through for them.",
+        "source": "Lore of the Clans p. 121",
         "notes": "",
         "game_line": "Vampire: The Masquerade"
     },
-    {
-        "name": "Acute Sense",
-        "stat_type": "physical",
-        "category": "merits",
-        "values": [1],
-        "description": "One of your senses is exceptionally sharp. Add two dice to all Perception rolls involving that sense. This Merit may be taken multiple times for different senses.",
-        "source": "V20 Dark Ages Pg 288",
-        "notes": "",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Ambidextrous",
-        "stat_type": "physical",
-        "category": "merits",
-        "values": [2],
-        "description": "You can use both hands with equal effectiveness. You do not suffer the usual -2 penalty for using your off-hand. In situations where you can use both hands, you gain an extra die to your pool.",
-        "source": "V20 Dark Ages Pg 288",
-        "notes": "",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Common Sense",
-        "stat_type": "mental",
-        "category": "merits",
-        "values": [1],
-        "description": "You have a significant amount of practical wisdom. The Storyteller can make a roll using your common sense as a pool whenever you are about to do something particularly foolish.",
-        "source": "V20 Dark Ages Pg 288",
-        "notes": "",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Concentration",
-        "stat_type": "mental",
-        "category": "merits",
-        "values": [1],
-        "description": "You have the ability to focus your mind and shut out distractions. You may ignore up to two dice of penalties from distracting circumstances.",
-        "source": "V20 Dark Ages Pg 289",
-        "notes": "",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Double Jointed",
-        "stat_type": "physical",
-        "category": "merits",
-        "values": [1],
-        "description": "Your joints are extremely flexible. You gain two extra dice on any roll involving contorting your body, and you can automatically escape from any mundane restraints.",
-        "source": "V20 Dark Ages Pg 289",
-        "notes": "",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "True Love",
+	{
+        "name": "Long-Term Planning",
         "stat_type": "social",
         "category": "merits",
         "values": [4],
-        "description": "You have discovered true love with another person. This love gives you strength in difficult times - you may add two dice to any Willpower roll when your love is threatened or when you are acting to aid them. However, you must also make a Willpower roll (difficulty 6) to take any action that would harm your love.",
-        "source": "V20 Dark Ages Pg 289",
+        "description": "You never leave anything to chance; every action is a carefully considered stratagem. Once per session you may declare an action you are about to take is actually 'all part of your plan' and reduce its difficulty by two points. The Storyteller may veto the use of this ability on particular rolls. The player and Storyteller should keep a note of each of these occasions and decide how they are linking together into a grand scheme.",
+        "source": "Lore of the Clans p. 123",
         "notes": "",
         "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Call of the Sea",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [2],
+        "description": "There is something about the sea that makes you feel at home. You are in tune with the tides and rhythm of the ocean. When on a boat in the ocean or on a river, you may add a die to all your dice pools except for supernatural powers.",
+        "source": "Lore of the Clans p. 122",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Long Fingers",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [1],
+        "description": "You have been blessed with unusually long and graceful fingers. This means you have an easier time with fine manipulation as well as grappling tasks, gaining an extra die when attempting such actions.",
+        "source": "Lore of the Clans p. 160",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Tunnel Rat",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [1, 2, 3, 4, 5],
+        "description": "You are remarkably adept at moving through the underground tunnels that you call your home. When attempting to navigate, escape, or track through sewers and underground places you know, you gain an additional die for every point you have in this Merit.",
+        "source": "Lore of the Clans p. 161",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Entrepreneur",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [2],
+        "description": "Making money comes naturally to you, and you know what it takes to succeed. All rolls involving acquiring money through business dealings have their difficulty reduced by 2.",
+        "source": "The Black Hand p. 178",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Legerdemain",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [1],
+        "description": "You're extremely good at sleight of hand and other physical tricks. Difficulties when using Subterfuge for physical trickery, shell games, card tricks, and so forth, are decreased by two.",
+        "source": "Lore of the Clans p. 182",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Thousand Meter Killer",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [1],
+        "description": "You have proven yourself worthy to join the Thousand Meter Club through your remarkable skill with the sniper rifle. The difficulty of all rolls associated with sniping is reduced by -1. You also double the normal range when using a sniper rifle as a weapon.",
+        "source": "Lore of the Clans p. 26",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Brahmin",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [1],
+        "description": "As a member of the Brahmin jati, you are a priest, artist, teacher, or other pillar of society. Perhaps you keep the lore of the Clan, or perhaps you act as an advisor to other Ravnos in need of wisdom. Once per session, if you fail an Academics or Expression roll, you may immediately reroll it. You do not have to purchase this Merit to be a member of the Brahmin jati, but only members of the Brahmin jati may have this Merit.",
+        "source": "Lore of the Clans p. 182",
+        "notes": "You do not have to purchase this Merit to be a member of the Brahmin jati, but only members of the Brahmin jati may have this Merit.",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Kshatriya",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [1],
+        "description": "You are a member of the Kshatriya jati; perhaps you are a warrior, a descendant of rulers, or a member of the military. Your role is to protect the Ravnos in war, and govern in peace. Once per session, you regain a Willpower when you successfully use a combat maneuver (see V20, pp. 274-278). You do not have to purchase this Merit to be a member of the Kshatriya jati, but only members of the Kshatriya jati may have this Merit.",
+        "source": "Lore of the Clans p. 182",
+        "notes": "You do not have to purchase this Merit to be a member of the Kshatriya jati, but only members of the Kshatriya jati may have this Merit.",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Vaishya",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [1],
+        "description": "The Vaishya jati are tasked with utilizing influence, maintaining the human herds, and keeping finances. They are often seen as traders and merchants, but to the Ravnos, they are also a critical part of maintaining the Masquerade that hides vampires from mortal hunters. Once per session, you may call on of your Backgrounds as if you had an extra dot in that Background (up to the normal maximum of 5). You do not have to purchase this Merit to be a member of the Vaishya jati, but only members of the Vaishya jati may have this Merit.",
+        "source": "Lore of the Clans p. 182",
+        "notes": "You do not have to purchase this Merit to be a member of the Vaishya jati, but only members of the Vaishya jati may have this Merit.",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Mute Devotion",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [1],
+        "description": "Your Animalism carries an unusual side effect: it lingers in the minds of the beasts you speak with or control, lending them a certain resistance to others. When someone else attempts to command a creature you have previously controlled with Animalism, their difficulty levels are at +2.",
+        "source": "Lore of the Clans p. 182",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Critters",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [2],
+        "description": "You're excellent with animals - so much so that they constantly seek to befriend you. Wherever you go, the animals are happy to see you, and more often than not, happy to help you when you ask for their aid. You receive a bonus die on Social rolls to affect small animals. Further, animal companions who have had continual interaction with you see you as something of a pet, and occasionally bring you small useful things. Once per game session, animals will bring you a useful piece of information or a small item relevant to events. This item might occasionally play into the individual Ravnos' particular vice, as the animals quickly pick up on what pleases their friend.",
+        "source": "Lore of the Clans p. 182",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Heart of Needles",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [3],
+        "description": "Your natural abilities with illusions have rendered you particularly jaded and unimpressible. How can anything be as perfect as your own imagination? Because of this, your heart is harder than most, and you have a significant resistance to emotion control. All powers and Social challenges that attempt to manipulate you emotionally are made at a +2 difficulty.",
+        "source": "Lore of the Clans p. 182",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Indelible",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [1, 2],
+        "description": "Whereas other vampires' bodies return to the state they were in at the Embrace each evening, any body modifications you get after the Embrace remain as they are until you actively spend a Willpower point to return your body to its tabula rasa state. This Merit applies to changes as simple as dying or cutting your hair to modifications as complicated as tattoos, piercings, or even small implants. If the Merit only allows for cosmetic alterations, it is worth 1 point. If it allows for more utilitarian alterations, such as RFID implants that activate certain electronic devices, then it is worth 2 points.",
+        "source": "Lore of the Clans p. 200",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Impressive Restraint",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [2],
+        "description": "When you haven't eaten, it can be torturous to be near mortals. The pounding thrum of blood through their veins does not leave you nearly as tempted as it might other Kindred. When opportunity presents itself, the difficulty of all Self-Control rolls to resist hunger are made against a -2 difficulty. Characters on Paths of Enlightenment that require Instinct cannot take this Merit.",
+        "source": "Lore of the Clans p. 200",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Master of the Masquerade",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [2],
+        "description": "There are many small tics, nervous habits, and autonomous bodily functions (like breathing) that Kindred simply forget to do. They can be unnervingly still or forget to breathe, particularly when they think they're alone. You never let down your guard. The act of breathing remains unconscious habit to you, and you never lapse into that eerie statue-like stillness, even when transfixed or concentrating. Consequently, the difficulties of all Social rolls are lowered by one when interacting with mortals. This Merit does not allow you to eat food or benefit from the blush of health (V20, p. 480) - those Merits are still required to be a true master of the Masquerade.",
+        "source": "Lore of the Clans p. 200",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Slowed Degeneration",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [2],
+        "description": "Your Humanity is strong and can more easily withstand the Beast's assaults. You gain two additional dice on any Conscience roll. This degree of moral resilience allows a well-behaved vampire to lose Humanity at a much slower rate than would otherwise be possible. Only vampires following Humanity may take this Merit, and the Merit is lost forever in the event that the vampire takes up another Path of Enlightenment.",
+        "source": "Lore of the Clans p. 200",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Embraced without the Cup",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [1],
+        "description": "For some reason you did not drink the blood of the elders when you were inducted into Clan Tremere. More dangerously, it may have had no effect on you. As a result, you are not bound to the Clan the way most Tremere are. Should it be discovered, it will usually be corrected, but one might almost believe there was some purpose to this lapse, as the Tremere don't make mistakes. Perhaps the Clan has a special task in mind for you, one where you might be forced to act against the Clan to maintain a cover....",
+        "source": "Lore of the Clans p. 218",
+        "notes": "Tremere only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Secret Society Member",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [1],
+        "description": "You have found and joined one of the many secret societies in Clan Tremere. Your character must be suitable to join, such as having Necromancy to join the Covenant. You might pick one of the societies listed here or create one of your own. In most cases, your society membership should be kept secret, but your allegiance to it is not considered a crime. While your society expects you to uphold its tenets and agenda, they can also be counted upon to back you up and help you increase your power within the pyramid.",
+        "source": "Lore of the Clans p. 218",
+        "notes": "Tremere only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Keys to the Library",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [1, 2, 3, 4, 5],
+        "description": "You have one of the most sought after positions in the chantry: a librarian. It is one of your duties to catalogue and maintain the magical lore kept in your chantry. This means you have complete access to it, and get to decide who can see it and who can't. A vast array of rituals and Thaumaturgical knowledge resides here, making it simple to learn many of the secrets of magic. No matter how restrictive your chantry, you have complete access to the library for research. The cost of this merit is the same as the chantry's Library rating (see pp. 221-222).",
+        "source": "Lore of the Clans p. 218",
+        "notes": "Tremere only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Outside Haven",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [2],
+        "description": "You maintain your own private haven outside the chantry and Tremere control. Most Tremere are expected to rest in the chantry, where the Clan can keep an eye on them. However, you have been trusted with a little more privacy. This might be because you have already proved your loyalty, or perhaps because they are testing it.",
+        "source": "Lore of the Clans p. 219",
+        "notes": "Tremere only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Unmarked Antitribu",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [2, 5],
+        "description": "While you are part of the Sabbat and a traitor to House and Clan Tremere, somehow you remain unmarked by the antitribu curse. You are not easily recognized as a renegade Tremere, and the magic that burned so many of your brethren cannot target you. Further, other Sabbat members cannot judge you at a glance. Those of the Telyavelic bloodline can purchase this Merit at 2 points, while other Tremere pay 5 points.",
+        "source": "Lore of the Clans p. 219",
+        "notes": "Tremere only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Quartermaster",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [3],
+        "description": "You are one of the Kindred responsible for maintaining and organizing the chantry's mundane supplies. You may take anything from the chantry's stores as defined by the chantry's Stores rating. While you will have to return or replace anything you borrow, you have access the whole range of equipment appropriate to the size of the chantry. This might range from assault weapons and explosives to advanced medical and scientific equipment.",
+        "source": "Lore of the Clans p. 219",
+        "notes": "Tremere only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Bioluminescence",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [1],
+        "description": "Perhaps through biological expertise, or perhaps by unlocking something primordial within, you have accessed the secrets of bioluminescence. Using the Vicissitude, you may grant yourself (through Malleable Visage) or others (via Fleshcraft - both as per V20, p. 241) the ability to emit a soft glow. With muscle control and practice, you can control the color and pattern of the illumination. This can light a soft glow in the dark, create beautiful displays, or even act as a primal form of communication. Some Fiends grant their ghouls or childer bioluminescence, developing an eerily nuanced and wordless language with their thralls and broods. Only characters with at least one dot of Vicissitude may purchase this Merit.",
+        "source": "Lore of the Clans p. 238",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Pain Tolerance",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [2],
+        "description": "Perhaps through biological expertise, or perhaps by unlocking something primordial within, you have accessed the secrets of bioluminescence. Using the Vicissitude, you may grant yourself (through Malleable Visage) or others (via Fleshcraft - both as per V20, p. 241) the ability to emit a soft glow. With muscle control and practice, you can control the color and pattern of the illumination. This can light a soft glow in the dark, create beautiful displays, or even act as a primal form of communication. Some Fiends grant their ghouls or childer bioluminescence, developing an eerily nuanced and wordless language with their thralls and broods. Only characters with at least one dot of Vicissitude may purchase this Merit.",
+        "source": "Lore of the Clans p. 238",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Dracon's Temperament",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [3],
+        "description": "You emulate the ideal of Azi Dahaka within and without, to levels visceral and abstract. Your psyche flows with the permutable nature of change. Like the protean Dracon, you are a whirlwind of temperaments. This is not multiple personalities. You are one identity shown through the prism of ever-shifting Natures. No anchor fetters your sense of self. You can be any you. At the start of each story, you may choose one Personality Archetype to function as your Nature, spending the rest of the story perceiving the world through that perspective. You also regain Willpower according to your new Nature and may be affected by other effects or Discipline powers as per your new Nature as well.",
+        "source": "Lore of the Clans p. 238",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Haven Affinity",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [3],
+        "description": "You are the land. The land is you. The home soil calls to you. You give to it, and it gives to you. Your connection to the earth of your prime haven grants you an extra die to all dice pools when operating there. It also acts as a mystic beacon, allowing you to home in on its location with a standard Perception + Survival roll (difficulty 6), +1 difficulty when a state or country separates you; +2 if you're halfway across the globe. This applies only to your primary haven.",
+        "source": "Lore of the Clans p. 238",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Revenant Disciplines",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [3],
+        "description": "The blood of your revenant family runs deep, deeper than the Embrace. The Disciplines that were innate to you as a ghoul have remained so as a Cainite. At character creation, select the ghoul family from which you hail (V20, pp. 503-506). Instead of the Tzimisce's standard complement of Animalism, Auspex, and Vicissitude, you draw from your three family Disciplines for your starting allocation (though you may buy other Disciplines with freebies, as normal). You trade in the entire set of Tzimisce Clan Disciplines for the set of revenant family Disciplines, for the purposes of in-Clan Experience cost.",
+        "source": "Lore of the Clans p. 238",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Promethean Clay",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [5],
+        "description": "Your flesh ripples and molds itself to your preternatural will, almost before you consciously invoke the change. The difficulty to use any Vicissitude power on yourself is two less than normal, and you may activate Vicissitude powers reflexively at your full dice pool while taking other actions. Powers that require multiple turns to activate still require the usual duration. The change simply occurs without conscious direction. As a final benefit, you need no physical sculpting to use the first three levels of Vicissitude on yourself, as your flesh undulates and extrudes to its desired shape. Only characters with at least one dot of Vicissitude may purchase this Merit.",
+        "source": "Lore of the Clans p. 238",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Connoisseur",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [2],
+        "description": "Your study of the Auspex Discipline, combined with your rarified tastes, allows you powerful insights into the character of any whose blood you taste. System: The character tastes another's blood (potentially risking blood bond), and player rolls Perception + Empathy (difficulty 6 for mortals or 8 for Kindred). If the blood came from a mortal, each success allows him to learn one of the following: the mortal's Nature, her Demeanor, any Derangements she may possess, whether she is blood bonded, and whether she carries any blood-borne diseases. If the vitae came from a vampire, he can learn all of the previous information, plus anything discoverable with the first level of the Path of Blood (see V20, p. 213). The Ventrue may taste the blood of a mortal who does not fit within his feeding restriction long enough to use this ability, but he must immediately spit it out afterwards. Vampires that do not have Auspex •• cannot take this Merit.",
+        "source": "Lore of the Clans p. 261",
+        "notes": "Vampires that do not have Auspex 2 cannot take this Merit.",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Blessed by St. Gustav",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [4],
+        "description": "Many Ventrue antitribu replace their traditional affinity for Presence with an aptitude for Auspex by means of the ignobilis ritus known as the Prayer to St. Gustav (see sidebar). For your piety and devotion to the Sabbat cause, you have been especially blessed and have an affinity for both Disciplines. System: This Merit is identical to Additional Discipline Merit found on V20, p. 494, except that it can only be used to add Auspex as a fourth in-Clan discipline. Only Ventrue antitribu can take this Merit.",
+        "source": "Lore of the Clans p. 261",
+        "notes": "Only Ventrue antitribu can take this Merit.",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Personal Masquerade",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [3],
+        "description": "Thorough charm, manipulation, or just plain luck, you have managed to convince other vampires that you are a member of one of the Clans. Any social interactions with vampires ignorant of your true nature ignore your usual penalty for being Caitiff. However, you must constantly be vigilant of your ruse. Should anyone come to realize you have been playing them for fools, their vengeance will be swift. The higher you climb in Kindred politics, the more likely this becomes. The Clan Weakness Flaw can actually prove to be a boon in supporting your Masquerade. Others, however, must be that much more careful.",
+        "source": "Lore of the Clans p. 269",
+        "notes": "Caitiff.",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Mark of Caine",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [4],
+        "description": "Over the course of history, some of these rituals have been lost, either due to the death of Sect members, or because the ritus simply was not as integral to the Sect's survival in the modern world. One of these lost ritae was the Mark of the Father, which offered protection against weapons of faith. As faith has declined in the modern world, the ritus was used less and less, until eventually, priests who know the ritae have become all but extinct. Some vampires who participated in the lost Mark of Caine ritus were especially blessed, and still bear a faint sign of favor. Such vampires are always old, pre-dating the first Sabbat Civil War, and once had this ritual cast upon them by a powerful practitioner. These vampires have a small, faded mark upon their forehead that resembles the Hebraic letter tav. System: Those who bear the Mark of Caine gain a twisted form of True Faith. They can use the effects of the first dot of True Faith (V20, pp. 372-373) - they must use symbols of Caine as 'holy symbols.' Further, they get +2 dice to resist mortal True Faith. Only vampires on spiritual Paths of Enlightenment can use this Merit - if a Cainite reverts to Humanity or succumbs to wassail, all benefit from this Merit is lost forever.",
+        "source": "Rites of the Blood p. 41",
+        "notes": "Only vampires on spiritual Paths of Enlightenment can use this Merit - if a Cainite reverts to Humanity or succumbs to wassail, all benefit from this Merit is lost forever.",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Discerning Palate",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [4],
+        "description": "Your naturally selective palate allows you to discern specific traits inherent to a sample of blood. With but a taste, you can determine potency, freshness, species, or whether a blood sample is contaminated, as well as attempt to identify the Generation, age, and even Clan of other vampires. If you sample even a single drop of blood, roll Perception + Awareness (difficulty 8). • One success allows you to identify the relative potency and freshness of the blood, a species whose blood you have previously tasted and know to be of a specific kind, the Generation of another vampire within two steps of your own, if the blood is either under one hundred or over one hundred years old, and if it is of your same Clan. • Two successes identifies whether the blood is contaminated by disease or poison, the Generations of vampires within four steps of your own, the approximate age within fifty years (if less than three hundred years old), and any Clan whose blood you've previously tasted. • With three or more successes, you identify specific contaminates you've sampled before, Generations within six steps of your own, the vintage of blood within twenty-five years (if less than six hundred years old), and any Clan as well as family of vampires whose blood you've tasted previously.",
+        "source": "The Black Hand p. 177",
+        "notes": "",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Arcane",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [1, 2, 3, 4, 5],
+        "description": "Some vampires have a strange ability to slip from notice, which manifests as an aura of forgetfulness. Those trying to remember the vampire experience a sensation of jamais-vu. The ability may be deliberately developed, or the Kindred could simply be too ordinary to pay attention to. Though not similar to Obfuscate, Arcane doesn't help in combat situations - the vampire can't literally vanish. However, someone searching for them may well fail, as no one remembers the vampire or can give a reliable description. Each point taken subtracts one die from any dice pools used to actively locate the vampire or recall her from memory. Those with this Merit can choose to 'turn off' Arcane if they wish. As a passive trait, it doesn't help on Stealth rolls or other overt attempts to hide. If you have any dots in Status or Fame, Arcane ceases to function while you possess them..",
+        "source": "The Black Hand p. 177",
+        "notes": "",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Paragon",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [7],
+        "description": "Others find you particularly compelling. Select one Background from the following group: Allies, Contacts, Domain, Fame, Herd, Influence, Mentor, Resources, Retainers, or Status. You receive one free dot in that Background, and your maximum Trait score in that Background may exceed normal Generational limits by one.",
+        "source": "The Black Hand p. 178",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Without a Trace",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [2],
+        "description": "When in the wilderness, the earth fills in your footprints. You leave no noticeable traces, not even a scent. Normal attempts at tracking automatically fail. Supernatural attempts are done with a +2 difficulty.",
+        "source": "The Black Hand p. 179",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Psychic Leech",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [5],
+        "description": "At the cost of one Willpower point, you may feed on the Willpower of your victims from a distance. The consumed Willpower strengthens the potency of your own blood, effectively transforming it into temporary blood that dissipates at the end of the night. These temporary blood points may be spent just like regular blood points, but cannot be lost due to damage or blood drain, do not affect hunger rolls for frenzy, and may not be used to create or sustain blood bonds or ghouls. To activate this ability, the target must have at least one of your blood points in their system, and must be engaged in eye contact with you.",
+        "source": "The Black Hand p. 179",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "The High Price",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [3],
+        "description": "The burden of acquiring truth or power always comes at a high price. None know that more than these Baali, who sacrifice a part of their own soul in aspiration of greatness. Their physical body is wracked with weakness and pain, capping any Physical Attributes at four dots and costing 1 Willpower point every evening when they rise. In exchange for this tribute, the Baali receive +2 dice to any Discipline-related checks.",
+        "source": "Lore of the Bloodlines p. 16",
+        "notes": "Baali only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Simply Waiting",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [4],
+        "description": "The Baali knows their place within the order of the universe, and where they stand against other vampires or those of their own bloodline. They also know the end of the world is coming, sooner rather than later. They appear apathetic to the world around them, but in truth, they are simply resigned to their fate and remain unmoved if others try to get them to stray from their path. All Social rolls against them are increased by +2 difficulty, as the Baali knows the true end of it all.",
+        "source": "Lore of the Bloodlines p. 16",
+        "notes": "Baali only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Simply Waiting",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [4],
+        "description": "The Baali knows their place within the order of the universe, and where they stand against other vampires or those of their own bloodline. They also know the end of the world is coming, sooner rather than later. They appear apathetic to the world around them, but in truth, they are simply resigned to their fate and remain unmoved if others try to get them to stray from their path. All Social rolls against them are increased by +2 difficulty, as the Baali knows the true end of it all.",
+        "source": "Lore of the Bloodlines p. 16",
+        "notes": "Baali only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Chorus Trained",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [3, 5],
+        "description": "The character has learned how to use the Fugue to tune in to her sisters and work together with far more efficiency. For 3 points, this Merit grants the character 2 extra dice to any Melpominee dice pool when using the power with another character with this Merit. For 5 points, the bonus 2 dice can be added for any action being performed by a partner with this Merit, such as making art or even fighting together.",
+        "source": "Lore of the Bloodlines p. 26",
+        "notes": "Daughters of Cacophony only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Fugue Instinct",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [3],
+        "description": "You can hear warnings and gain insight by listening to the Fugue more deeply. You must forego one of your actions to listen properly to the Fugue within. During this time, you may defend yourself but take no active actions. If you do, then you gain an insight for your next action that grants you +2 dice to whatever dice pool you use.",
+        "source": "Lore of the Bloodlines p. 26",
+        "notes": "Daughters of Cacophony only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Stillness of Death",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [2],
+        "description": "Gargoyles often hide themselves as statuary. The difficulty for any searches to find you are increased by 2 when you stay perfectly still.",
+        "source": "Lore of the Bloodlines p. 37",
+        "notes": "Gargoyles only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Heavy Hands",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [3],
+        "description": "One of the effects of becoming a vampire is strange changes happening to your body. The obvious alterations to your hands have made them tougher, harder, and more impervious to pain. All difficulties for damage rolls using unarmed attacks go down by 1.",
+        "source": "Lore of the Bloodlines p. 37",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Disciple of Lazarus",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [2],
+        "description": "You speak for the powers-that-be within your bloodline, and bear the clean, white death mask of a respected Harbinger lost to one of the historic purges suffered by your people. Most Harbingers of Skulls will listen to what you say, and take your words at face value. This Merit adds two dice to any Social roll when you invoke the name of Lazarus or Japheth.",
+        "source": "Lore of the Bloodlines p. 48",
+        "notes": "Harbingers of Skulls only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Disciple of Japheth",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [2],
+        "description": "You speak for the powers-that-be within your bloodline, and bear the clean, white death mask of a respected Harbinger lost to one of the historic purges suffered by your people. Most Harbingers of Skulls will listen to what you say, and take your words at face value. This Merit adds two dice to any Social roll when you invoke the name of Lazarus or Japheth.",
+        "source": "Lore of the Bloodlines p. 48",
+        "notes": "Harbingers of Skulls only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Styx Baptism",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [3],
+        "description": "You pledged fealty to the Harbingers of Skulls and swore to work against the machinations of Ashur, despite not being Embraced into the bloodline. You were escorted to the Shadowlands, where you were baptized head-first in the churning waters of the Styx. The flesh upon your head sloughed off with contact over the coming month, leaving just rotten patches or bare bone, reducing your Appearance Rating to 0 permanently. You're now held in esteem by Lazarenes, gaining any one of the bloodline's Disciplines as a Clan Discipline in place of one of your own.",
+        "source": "Lore of the Bloodlines p. 48",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Half-Life",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [6],
+        "description": "You're more than just a vampire; you're a wraith in vampire form. Your awareness of the realities of death enables you to spend half the regular experience points cost for increasing Necromancy Paths after the first point, and permits you to move between Shadowlands and Skinlands through the expenditure of a Willpower point. You cannot be controlled as a normal spirit through use of Necromancy, but should other vampires discover what you are, you can expect to be hunted mercilessly. You suffer the same weaknesses and have the same strengths as a vampire, but if viewed with a power such as Aura Perception (V20, p. 135) the aura appears as a double-exposure, with a wavering, translucent humanoid shape merging in and out of yours.",
+        "source": "Lore of the Bloodlines p. 48",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Prized Collection",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [1, 2],
+        "description": "Kiasyd have appreciation for compilations of books, records, vintages of blood, and other collectable items among Cainites. You possess a collection that may not be worth much (1pt.) or could be worth a lot to the right buyer (2pt.). Importantly, it's a point of interest for any visiting Kiasyd or expert in the field, and they're likely to treat you well just to get access to it.",
+        "source": "Lore of the Bloodlines p. 59",
+        "notes": "Kiasyd only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Alien Perfection",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [2],
+        "description": "You possess beauty unsettling in its perfection. People stand in awe of your flawless form, while inexplicable nausea subconsciously creeps up. The difficulty of any Appearance roll is reduced by three. A Stamina roll is required by anyone in your presence for longer than one scene, if this is the first time they've encountered you. Failure drives them away from you with a sickness wracking their body.",
+        "source": "Lore of the Bloodlines p. 59",
+        "notes": "Kiasyd only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Paranormal Link",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [2],
+        "description": "You're linked to another weird species of the world, and unconsciously find yourself able to understand their parlance, codes, and rituals. Difficulties to decipher the hidden rites and languages of one society (selected when this Merit is purchased) are reduced by three.",
+        "source": "Lore of the Bloodlines p. 60",
+        "notes": "Kiasyd only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Skin of Porcelain",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [4],
+        "description": "Through concoctions imbibed or by a fluke of your Embrace, you possess a ceramic-like coating to your skin. In order for this to have any effect beyond looking strange, a Stamina roll is required (difficulty 8). Success allows you to convert up to three points of aggravated damage from a fire source to lethal damage before attempts to soak. The hardening dissipates for the remainder of the current story.",
+        "source": "Lore of the Bloodlines p. 60",
+        "notes": "Kiasyd only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Vitae Mutation",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [5],
+        "description": "You've drank the liquid essence of entities both strange and powerful. Whether the vitae of Methuselahs, the boiling blood of lupines, or bottled dreams of fae, the volume and combination of the brews you've consumed have forever altered you. Each night a Willpower roll is required (difficulty 7) for you to manifest a single point of Auspex, Chimerstry, or Dementation. This point can be added to an existing rating in the Discipline, but disappears the following night.",
+        "source": "Lore of the Bloodlines p. 60",
+        "notes": "Kiasyd only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Extra Sharp",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [2],
+        "description": "All Nagaraja already have sharpened fangs for the purposes of cutting into flesh with ease. A character with this Merit, however, has additional rows of fangs, similar to a shark, each one poised to inflict the most pain possible. Instead of dealing 1 unsoakable lethal damage per bite, they deal 2 lethal instead. Some Nagaraja like this gift since it makes their victims stop squirming much quicker. Others fear it creates a connection to the painful bite of the Giovanni, and may see Nagaraja with this Merit almost as outsiders.",
+        "source": "Lore of the Bloodlines p. 70",
+        "notes": "Nagaraja only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Speed Eater",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [2, 4],
+        "description": "The vampire's jaws have been strengthened to allow for faster devouring of one's prey. For 2 points, he can devour 2 blood points worth of flesh per minute, or he may devour 3 blood points worth for 4 points. Must have at least Stamina 3 in order to gain this Merit. Otherwise, his undead form cannot support the influx of blood and viscera at such a fast pace.",
+        "source": "Lore of the Bloodlines p. 70",
+        "notes": "Must have at least Stamina 3 in order to gain this Merit. Otherwise, his undead form cannot support the influx of blood and viscera at such a fast pace.",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Wolverine's Palate",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [3],
+        "description": "Though many do not know this, the dreaded wolverine is one of only a few creatures in the world that can eat their prey entirely, whether larger or smaller. The Nagaraja with this Merit has the ability to eat bone just as easily as flesh, sapping even more spiritual essence from her victim and converting it to blood points. With one bite, she can cut through flesh and bone and swallow it all at once with no ill effect. This also means she may gain up to 5 additional blood points from a body by consuming the bones.",
+        "source": "Lore of the Bloodlines p. 70",
+        "notes": "Nagaraja only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Scent of the Other",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [1],
+        "description": "'You don't seem like a soul-sucker...' For whatever reason, your third eye shuts tightly when you choose to hide it, and your blood and aura don't give away your Clan. You might be regarded as a Caitiff, or as a member of another Clan. In any case, Tremere or other Salubri hunters are thrown off your trail, unless you do something to reveal yourself again.",
+        "source": "Lore of the Bloodlines p. 80",
+        "notes": "Salubri only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Sight Beyond Sight",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [3],
+        "description": "Your third eye occasionally experiences visions and pierces illusions. When your eye is open (via use of Auspex or Obeah), you occasionally pierce Obfuscate or Chimerstry. Some past Salubri have seen through faerie miens or glimpsed the dead lands of ghosts. You have no control over what your eye sees, though it'll sometimes open involuntarily in response to the above phenomena.",
+        "source": "Lore of the Bloodlines p. 80",
+        "notes": "Salubri only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Warrior's Heart",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [3],
+        "description": "Steel sits in the placid heart of the Salubri bloodline, and Adonai's resurrection has caused your own heart to flutter ever so slightly. Like the Healers of old, you may learn the Valeren powers of the antitribu at a cost of current rating x6; if you know the first two dots of Obeah and Valeren, you gain a 2-die bonus to using the first two Discipline dots. However, your warrior's heart suffers from the Precept of Samiel, the well-defined wanderlust that affects many Salubri - for every week you spend in the same location, you lose a point of Willpower, as your soul agitates without action. The antitribu might have a similar Merit allowing them to learn Obeah at a cost of always helping someone in need, at the Storyteller's discretion.",
+        "source": "Lore of the Bloodlines p. 80",
+        "notes": "Salubri only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Death Grip",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [3],
+        "description": "Thanks to your connection with death, you have a keen insight few other Kindred possess. When in contact with a dead body, you make a Wits + Alertness roll (difficulty 7). On a success, you intuitively know how the body died. On a failure, you suffer an illusory version of the wound that saps a point of Willpower. On a botch, your body mirrors the wound and hurts itself in the same manner, causing lethal damage equal to the final blow.",
+        "source": "Lore of the Bloodlines p. 91",
+        "notes": "Samedi only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Stitcher",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [3],
+        "description": "Getting blown apart isn't a big deal. When parts of your body are cut off or otherwise removed due to damage, you may make a Dexterity + Medicine (difficulty 7) to sew the part back in place properly. If successful, the cost of healing the wound is reduced by one blood point.",
+        "source": "Lore of the Bloodlines p. 91",
+        "notes": "Samedi only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Advanced Tech",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [1, 2, 3, 4, 5],
+        "description": "You have a device (or possibly a few) of an advanced design. While the True Brujah are not especially good at innovation, they are good at making improvements. So this device has no special functions unavailable to its contemporaries, but it does work a lot better. It reduces the chance of a mechanical fault (such as a jam) by half and all uses of the device are made with a -1 to the difficulty. The Storyteller should decide on the cost of the Merit, depending on how many items the character has, and how powerful they are.",
+        "source": "Lore of the Bloodlines p. 99",
+        "notes": "True Brujah only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Fatalist",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [3],
+        "description": "The character's study of time has led them to believe that what is done is simply done. Destiny is a fixed path and therefore we are all the slaves of our own futures. As such, nothing can truly be our fault, for nothing is entirely under our control. It therefore becomes a lot easier to excuse themselves from their worst excesses. The character subtracts 2 from the difficulty of all degeneration rolls against losses of Humanity or Path of Enlightenment.",
+        "source": "Lore of the Bloodlines p. 99",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "True Celerity",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [5],
+        "description": "The True Brujah have an odd relationship with Celerity. It often comes easily to them, but a few refuse to learn it, as it has become a symbol of the traitor Brujah. However, many find it a useful skill for masquerading as Brujah within the Camarilla or Sabbat, and so a few True Brujah have developed a slightly different form of the Discipline. A character with this Merit has the ability to learn True Celerity. While it works exactly the same as Celerity, it feels very different. Instead of the character moving quickly, they slow time down all around them. This Merit confers no Discipline points for the character, but does allow it to be bought with experience as if Celerity was a Clan discipline. While this power functions the same as Celerity, it cannot be taught to anyone who does not have any levels of the Temporis Discipline.",
+        "source": "Lore of the Bloodlines p. 99",
+        "notes": "True Brujah only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Sturdy",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [4],
+        "description": "Training, hardships, or natural ability have inured your body to pain and damage. While you are not necessarily a hulking brute, anyone who has seen you in action knows that you can take more damage than the average individual. You gain an additional Bruised health level and the Storyteller may award you with any appropriate bonuses when your innate toughness comes into play.",
+        "source": "V20 Dark Ages p. 420",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Celestial Attunement",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [1],
+        "description": "You innately know what time of day it is and are able to accurately guess the hour of sunrise and sunset within a few minutes. With a moment's concentration, you may also estimate the position of the stars, even without the aid of a star chart.",
+        "source": "V20 Dark Ages p. 422",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "The Company of Saints and Heroes",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [1],
+        "description": "Life (and possibly unlife) experiences have brought you close to august religious figures, political entities, and legendary heroes. They do truly know you and think well of you, but you are not necessarily close. Use the Allies background to represent a tighter relationship. This Merit allows you to name-drop your famous connection and reduce the difficulty to applicable Social rolls by one.",
+        "source": "V20 Dark Ages p. 423",
+        "notes": "",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Clan Apostate",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [2],
+        "description": "Having undergone the Baali Rite of Apostasy, you now belong to a brood. Replace any one in-clan Discipline with Daimoinon but also gain the Baali clan weakness in addition to your default clan weakness. You still pass for a member of your former clan with relative ease, and anyone you Embrace will also belong to your original clan. You do not lose levels in the Discipline you chose in exchange for Daimoinon, but further levels in that Discipline are purchased at out-of-clan cost.",
+        "source": "V20 Dark Ages p. 425",
+        "notes": "Baali only",
+        "splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Spirit Mentor",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [3],
+        "description": "A ghost has chosen to guide and protect you. This ghost could be the soul of a departed loved one, a former teacher, or close friend or something more sinister, such as a spirit you have bound through dark rituals. The mentor offers you tutelage and support in the same way a mortal or Cainite mentor might, though perhaps less restricted by the conventions of society and the inconveniences of (un)living flesh. Your spirit mentor may also need to be called upon by a specific rite or an incantation.",
+        "source": "V20 Dark Ages p. 426",
+        "notes": "",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Blasphemous Pact",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [6],
+        "description": "In your recent past or long ago, you knowingly made a pact with a being of unadulterated wickedness. Whether the being was a demon of immense power, a reaper wishing to claim your soul, or some greater monster seeking knowledge in exchange for its foul blessing, your pact resulted in your receipt of a gift. This gift allows you to stave off the Curse of Caine, to a degree. Perhaps your gift allows you the ability to walk in daytime while under cover. Maybe you can eat uncooked meat, still running with blood. The gift may allow you to breed. The dark nature of the pact means all this comes at a price. The entity with whom you consort will one night take everything you own, and bring it to ruin. It will destroy all relationships, any reputation, and any good you may achieve. It will claim your soul, and likely the souls of those close to you. Speak to the Storyteller about the nature of your gift. The Storyteller will decide on the price you must pay.",
+        "source": "V20 Dark Ages Tome of Secrets p. 108",
+        "notes": "Restricted",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Demonic Patron",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [5],
+        "description": "Your actions drew the attention of a demonic entity. Maybe you deliberately sought it as a means to gain power, or perhaps it wheedled its way into your existence and now won't let go. The entity became a patron of yours, offering guidance when sought and assistance against your foes. One night it will turn on you and demand something. You will be unable to refuse its request. Until that time, your patron counts as three dots in Mentor and two dots in Allies.",
+        "source": "V20 Dark Ages Tome of Secrets p. 108",
+        "notes": "Restricted",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Profane Trappings",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [4],
+        "description": "You befoul everything you touch. Whether through intent or unfortunate happenstance, your Domain, Retainers, Herd, and trappings are all tainted with the unholy. While this pollutes your surroundings with a constant aura of nausea and unease, it does make any infernal acts easier to perform in their presence. By taking this Merit, any Disciplines you use are considered infernal; at the Storyteller's discretion, using your Disciplines on land you hold, on servants in your employ, or with objects you possess, reduces the difficulty of the roll by -2.",
+        "source": "V20 Dark Ages Tome of Secrets p. 108",
+        "notes": "Restricted",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Hive-Minded",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [1, 2],
+        "description": "Your Animalism works on insects and other creepy-crawlies in addition to mammalian animals. If you select the two-point version of this merit, your Protean forms may take the form of an insectoid swarm rather than a single creature (though the swarm must be of a size equivalent to a wolf or a bat, as appropriate).",
+        "source": "Lore of the Clans p. 86",
+        "notes": "Gangrel only",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Skald",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [2],
+        "description": "Anytime you make an Occult roll to know a fact about vampiric history, you may add a die to your dice pool. Further, you have exceptional memory for oral histories, and you are a quick study when it comes to memorizing large amounts of rote information. This is not true eidetic memory, but constitutes the ability to memorize poetic eddas, codes, or complex messages with only a few hours of study.",
+        "source": "Lore of the Clans p. 87",
+        "notes": "",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Lesser Mark of the Beast",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [4],
+        "description": "Common to the Gangrel known as the Knights of Avalon, you are able to control how your Beast manifests more than others do. Whenever you would gain an animalistic feature (V20, p. 55), roll your current Willpower (difficulty 12 - Humanity rating, maximum 9). If successful, you manage to channel your humanity to avoid gaining an animalistic feature. However, your Beast is further from you, making you at +2 difficulty to rolls involving Animalism or Protean (or combo Disciplines involving those powers) for the rest of the evening. Vampires on a Path of Enlightenment lose all access to this Merit.",
+        "source": "Lore of the Clans p. 87",
+        "notes": "Gangrel only",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Totemic Change",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [5],
+        "description": "Your Protean forms are flexible; you may choose a different animal form each time you change shape. The form you choose each time must follow all the conventions and rules of standard Protean animal shapes (see p. 91); you simply may choose to appear as a different animal each time you take Beast Form.",
+        "source": "Lore of the Clans p. 87",
+        "notes": "Gangrel only",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Cannibal",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [1],
+        "description": "Most vampires can't eat food, and even those who can force it down, don't gain sustenance from it. Like them, you still can't stomach the crap most mortals eat. Human meat, on the other hand, brings you great joy. It can be baked, fried, or even raw, and you can tuck right in, and even gain sustenance. Even other vampires look askance at Kindred who devour their prey, though the Dunsirn applaud your respect for tradition. In addition to the blood points every human can provide, you can cannibalize a mortal and gain even more. An average human can provide up to seven helpings of meat (one per health level). Each helping provides you with one blood point.",
+        "source": "Lore of the Clans p. 106",
+        "notes": "Giovanni only",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Consanguineous Resistance",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [1],
+        "description": "Your character cannot be blood bound by anyone who shares his mortal bloodline. That is, if you were born into the Giovanni family, you cannot be bound by anyone else who was born a Giovanni, though you can still be bound by, say, a Pisanob of the Giovanni Clan, or by Kindred of any other Clan. Similarly, a Dunsirn with Consanguineous Resistance could not be bound by others who were born into the mortal Dunsirn family, but could be bound by a Milliner of the Giovanni Clan. The Giovanni are extremely suspicious of anyone known to manifest this quirk. Although this blood-borne aberration hasn't been documented, a few savvy Giovanni have a rough idea of what it is and does. It's generally associated with being a rebellious young smartass who needs to be put down. This is not as unfair as it sounds; by the time a bond resistance is really obvious, it's likely because a punishment isn't working. A character who is discovered to have this trait probably earns her sire's hostility at the very least.",
+        "source": "Lore of the Clans p. 106",
+        "notes": "Giovanni only",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Mortuario",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [2, 4],
+        "description": "You died. Perhaps you were murdered, or simply had a car accident. Whatever the cause, you were gone. But your sire found you too useful, or couldn't let you go. You were Embraced using the Ferryman's Recall ritual (see p. 109). The Embrace left you with the scars of your death, eternal tracework reminders of your trip to the other side. It also left you with the taut, pallid complexion of the dead. In addition to the traditional weakness of your Clan, you also suffer disfigurement from your time as a true corpse. While you are able to heal yourself just like any other vampire, the wounds do not heal cleanly. You retain the scars of every experience. Depending on the nature of the damage, this can make social dealings exceedingly difficult, and may decrease your Appearance dots over time (even to 0). However, your time across the Shroud also gave you a natural feel for necromantic blood magic. The difficulties of all Necromancy rolls are reduced by two. This trait costs 4 points for characters who already have an appearance of 0 (such as Samedi and the Harbingers of Skulls), or 2 points for any other Kindred. It is an incredibly rare condition even among the Giovanni, and essentially unknown outside the Clan. Giovanni with this Merit generally arouse the superstition of their Clan, and are treated with a definite wariness, particularly by Anziani. Characters with the Mortuario Merit may not also possess the Sanguine Incongruity Merit or similar flaws such as Monstrous.",
+        "source": "Lore of the Clans p. 106",
+        "notes": "Giovanni only",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Sanguine Incongruity",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [5],
+        "description": "Giovanni with this atavism are few and far between. Kindred possessing it do not bear the traditional Giovanni Clan weakness, the so-called Curse of Lamia; their Kiss causes no more damage than the blood loss itself. These vampires acquire a peculiar pallor upon their Embrace, however - they look like corpses, and no amount of blood ingestion can flush their features (as other vampires are able to do). Indeed, the bearer of this Merit more closely resembles the Clan's Cappadocian ancestors, and they have a slightly unnerving air about them. As a result, all rolls involving a Social attribute (Charisma, Manipulation, or Appearance) are at +1 difficulty. Giovanni with this Merit are afforded wide berth, as the Giovanni tend to be quite superstitious about it. Characters with the Sanguine Incongruity Merit may not also possess the Mortuario Merit.",
+        "source": "Lore of the Clans p. 106",
+        "notes": "Giovanni only",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Court Favorite",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [1, 2, 3, 4, 5],
+        "description": "While the Courts of Blood are usually difficult to sway, you have become very good at shifting the balance. A mixture of experience and political empathy allow you to know just the right way to nudge the decision in your direction, or perhaps for that of your client. Any roll made that will affect the decision in a Court of Blood is granted a bonus or penalty (whichever is in your favor) in dice equal to the level you have of this Merit.",
+        "source": "Lore of the Clans p. 121",
+        "notes": "Lasombra only",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Eyes of Shadow",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [1, 2, 3, 4],
+        "description": "There is something about your eyes that makes you look dark and dangerous. Making eye contact with you is like staring into the Abyss. It may not be obvious why, but anyone you talk to gets a chill when they meet your gaze. The difficulty for any Intimidation roll is reduced by the number of points in this Merit (to a minimum of 2).",
+        "source": "Lore of the Clans p. 121",
+        "notes": "Lasombra only",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Controllable Night Sight",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [2],
+        "description": "Your night vision is extraordinarily good, even for a vampire. The deepest shadows are like looking into a well-lit room for you. However, in normal light or bright conditions, you have to switch back to less-sensitive vision, or the weakest light quickly blinds you. While your night sight is active, you suffer no penalties for the dark and can see perfectly well. Should you use it in well-lit conditions; you suffer a penalty inversely proportional to the usual penalties for darkness.",
+        "source": "Lore of the Clans p. 122",
+        "notes": "",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Instrument of God",
+        "stat_type": "mental",
+        "category": "merits",
+        "values": [5],
+        "description": "Your self-confidence comes not from a belief in your own abilities, but due to a direct manifesto from the Lord. You have a divine purpose and He works through you, even though your goals may seem anything but holy. Whether it is because of you powerful will or an actual connection to the divine, you gain three additional dice to resist the powers of True Faith when they are used against you.",
+        "source": "Lore of the Clans p. 123",
+        "notes": "",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Lizard Limbs",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [1],
+        "description": "Like a lizard, you are able to actually shed parts of your body. By spending a blood point and a little effort, you can detach a hand or foot, or even an arm or leg. This might be to escape bonds or a grapple. Unfortunately, the appendage will not reattach, and you will have to regrow that over time (usually a couple of days for a hand or foot, and a week for a limb). You also suffer a -3 dice pool penalty to actions that would require the use of more limbs.",
+        "source": "Lore of the Clans p. 160",
+        "notes": "Nosferatu and Samedi only",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Monstrous Maw",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [1],
+        "description": "You have either oversized tusks for fangs, or a huge mouth full of sharp teeth. Whatever form it takes, your mouth is that of a monster. When attacking with a bite you do an additional point of damage. You may also add a die to your Intimidation dice pool when you smile.",
+        "source": "Lore of the Clans p. 160",
+        "notes": "Nosferatu and Nagaraja only",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Slimy",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [1],
+        "description": "You secrete an ooze, which is as disgusting as it sounds. The ooze covers your entire body and soaks into your clothes. It makes you slippery and difficult to hold, requiring opponents to gain two more successes to grapple you. The dampness also makes you a little fire resistant, reducing your difficulty to soak fire damage by 1.",
+        "source": "Lore of the Clans p. 161",
+        "notes": "Nosferatu only",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Spawning Pool",
+        "stat_type": "social",
+        "category": "merits",
+        "values": [1, 2, 3],
+        "description": "You have a spawning pool of your own (or possibly donate heavily to the Clan's main pool). Creating such a pool takes time, and requires regular infusions of blood, at least six blood points a week for a year. The Merit grants its level as a dice pool bonus to the Nosferatu's use of Animalism in their home city, but only with animals considered vermin, such as rats and cockroaches. Essentially the bonus is only available for creatures that might conceivably drink regularly from the tainted blood. Once established, the spawning pool requires twice its level in blood points each week to it. Without proper maintenance, its level will drop by one. It can be rebuilt by maintaining it at the new level and adding four additional blood points each week for six months. The Merit cannot be improved above its initial level, as this also represents the convenience of its location and the variety of creatures that might find it.",
+        "source": "Lore of the Clans p. 161",
+        "notes": "Nosferatu only",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Sleep Unseen",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [2],
+        "description": "The power of Obfuscate usually requires you to concentrate at least a little. However, you are able to lock the power on, allowing you to sleep while remaining hidden. To do so requires the expenditure of another blood point, but it will last throughout the day's rest. Those with Auspex can still attempt to detect you, but mortals will be unaware of your sanctuary. This can be a useful trick for Kindred who like to travel.",
+        "source": "Lore of the Clans p. 161",
+        "notes": "Nosferatu only",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Tough Hide",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [2],
+        "description": "Your skin is much tougher than usual, possibly like that of a rhino or a lizard. This hide protects you against most normal damage, granting you an extra die when making a soak roll. However, this bonus does not apply against fire and sunlight. HR: Must be represented in the description of your PC.",
+        "source": "Lore of the Clans p. 161",
+        "notes": "",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "False Reflection",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [3],
+        "description": "Even when using their Obfuscate abilities, Nosferatu still show up in their true form when noticed by machines, such as cameras or video surveillance. With this ability, the Nosferatu can extend their power to recorded images and media. However, as with Mask of the Thousand Faces, the original image isn't actually changed; it is just that people see it the way the Nosferatu wants it seen. Unfortunately, computers are not so easily fooled: if the image is used for facial recognition software (for instance), the computer will see the Nosferatu's real face and fail to find a match. The Nosferatu has best take care how this power is used, as it may wear off in time. Some archived photos have given librarians a nasty surprise, years after going into storage.",
+        "source": "Lore of the Clans p. 161",
+        "notes": "",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Patagia",
+        "stat_type": "physical",
+        "category": "merits",
+        "values": [4],
+        "description": "Your arms and legs have leathery flaps of skin between them, similar to that of a flying squirrel. While they make finding clothes a nightmare, they also allow you to glide for short distances, given enough height and a decent wind. The Storyteller might require an Athletics roll when it comes to landing.",
+        "source": "Lore of the Clans p. 161",
+        "notes": "",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
+    },
+	{
+        "name": "Apostate",
+        "stat_type": "supernatural",
+        "category": "merits",
+        "values": [2],
+        "description": "Since their inception, Nergali Baali have subverted members of other Clans into their own ranks. Known as Apostates, initiates are first drained completely by a Baali nest-master, who then extracts the still-beating heart from a mortal victim, fills it with his own blood, and buries it in a pool of gore within a Well of Sacrifice. The initiate swims through the dismembered bodies and viscous remains to find and consume the heart. In this way, Nergali do not make a victim of those they Embrace; prospective members must claim it through strength of will. Apostates replace any one in-Clan Discipline with Daimoinon, but in turn gain the Baali Clan weakness on top of their standard Clan weakness. Apostates can still pass with relative ease for members of their former Clans, but any childe they Embrace is indistinguishable from a standard Baali. Further, such a childe shares none of the Clan Disciplines or weaknesses of their sire's former Clan, save those Disciplines that are innate to the Baali. Apostates do not lose levels in the Discipline they choose to exchange for Daimoinon, but further levels in that Discipline are purchased at out-of-Clan costs. Baali may not take this Merit.",
+        "source": "The Black Hand p. 178",
+        "notes": "Highly Restricted",
+		"splat": "Vampire",
+        "game_line": "Vampire: The Masquerade"
     }
-] 
+]

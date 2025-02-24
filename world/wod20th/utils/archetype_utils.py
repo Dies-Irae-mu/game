@@ -353,6 +353,146 @@ ARCHETYPES = {
         'name': 'Visionary',
         'system': 'Regain Willpower whenever you convince others to follow your dream or unique perspective.',
         'description': 'The Visionary sees what others cannot - or will not - see. They are driven by their unique perspective and their desire to make others understand their vision. Whether their insights are brilliant or mad (or both), they are compelled to share them with the world.'
+    },
+    'addict': {
+        'name': 'Addict',
+        'system': 'Become utterly fixated on one passion.',
+        'description': 'Regain Willpower when you gorge yourself on a chosen passion.'
+    },
+    'adherent': {
+        'name': 'Adherent',
+        'system': 'Pledge yourself to one cause above everything else.',
+        'description': 'Regain Willpower when you remain loyal to your cause despite hardships.'
+    },
+    'adjudicator': {
+        'name': 'Adjudicator',
+        'system': 'Work to solve problems that affect your surroundings.',
+        'description': 'Regain Willpower whenever your attempts at providing solutions yield immediate results.'
+    },
+    'artist': {
+        'name': 'Artist',
+        'system': 'Try to reach others through your creations.',
+        'description': 'Regain Willpower whenever you reach an audience through your works.'
+    },
+    'barbarian': {
+        'name': 'Barbarian',
+        'system': 'Keep your distance from civilization, trusting the old ways.',
+        'description': 'Regain Willpower when you prove the value of your “barbaric” ways over civilization.'
+    },
+    'caretaker': {
+        'name': 'Caretaker',
+        'system': 'Shepherd those around you to safety.',
+        'description': 'Regain Willpower when you avert a disaster for your flock.'
+    },
+    'coward': {
+        'name': 'Coward',
+        'system': 'Hide your true self from others.',
+        'description': 'Regain Willpower when you reveal something about yourself without being rejected.'
+    },
+    'deviant': {
+        'name': 'Deviant',
+        'system': 'Reject traditional social mores for your own.',
+        'description': 'Regain Willpower whenever you manage to flout social customs.'
+    },
+    'devil\'s-advocate': {
+        'name': "Devil's Advocate",
+        'system': 'Question the commands from your superiors.',
+        'description': 'Regain Willpower when your questions reveal flaws in a plan or structure.'
+    },
+    'futurist': {
+        'name': 'Futurist',
+        'system': 'Pledge yourself to new concepts and ideals.',
+        'description': 'Regain Willpower whenever you first come upon a progressive idea or object.'
+    },
+    'heretic': {
+        'name': 'Heretic',
+        'system': 'Refuse to accept a commonly held creed.',
+        'description': 'Regain Willpower whenever you challenge commonly held convictions and convince others of your belief.'
+    },
+    'hunter': {
+        'name': 'Hunter',
+        'system': 'Always prepare yourself for the hunt.',
+        'description': 'Regain Willpower whenever you outperform a rival or defeat your prey through cunning and patience.'
+    },
+    'maniac': {
+        'name': 'Maniac',
+        'system': 'Be compelled by internal voices to strange actions.',
+        'description': 'Regain Willpower whenever you fulfill a goal of the voices that goes against your immediate self-interests.'
+    },
+    'meddler': {
+        'name': 'Meddler',
+        'system': 'Constantly try to interfere in others\' affairs to aid them.',
+        'description': 'Regain Willpower when your interference proves beneficial despite protests.'
+    },
+    'melancholic': {
+        'name': 'Melancholic',
+        'system': 'Feel ennui at all that you have lost.',
+        'description': 'Regain Willpower whenever you cause others to question their cursed natures.'
+    },
+    'omega': {
+        'name': 'Omega',
+        'system': 'Accept your place at the bottom rung of your group.',
+        'description': 'Regain Willpower whenever you achieve a deed worthy of recognition.'
+    },
+    'outsider': {
+        'name': 'Outsider',
+        'system': 'Define yourself by things you do not participate in.',
+        'description': 'Regain Willpower whenever you learn something about yourself through decisions made by others.'
+    },
+    'paragon': {
+        'name': 'Paragon',
+        'system': 'Embody straightforwardness and simplicity.',
+        'description': 'Regain Willpower whenever your straightforward approach proves more successful than deception.'
+    },
+    'penitent': {
+        'name': 'Penitent',
+        'system': 'Strive to do penance for your sins.',
+        'description': 'Regain Willpower whenever you achieve absolution for a grievance.'
+    },
+    'quaestor': {
+        'name': 'Quaestor',
+        'system': 'Yearn to answer life\'s questions.',
+        'description': 'Regain Willpower whenever you reach a concise life lesson that could become a rule of thumb.'
+    },
+    'reluctant-reborn': {
+        'name': 'Reluctant Reborn',
+        'system': 'Struggle with accepting your new life.',
+        'description': 'Gain one permanent point of Willpower upon realizing and accepting the truth about what you have become, then choose a new Nature.'
+    },
+    'seer': {
+        'name': 'Seer',
+        'system': 'Glimpses of the future haunt you.',
+        'description': 'Regain Willpower whenever your visions reveal an enigma or offer greater insights.'
+    },
+    'stoic': {
+        'name': 'Stoic',
+        'system': 'Maintain composure under all circumstances.',
+        'description': 'Regain Willpower when you overcome setbacks and losses without succumbing to strong emotions.'
+    },
+    'tycoon': {
+        'name': 'Tycoon',
+        'system': 'Constantly plot to expand your resources.',
+        'description': 'Regain Willpower whenever your plans yield maximum influence and profit.'
+    },
+    'vigilante': {
+        'name': 'Vigilante',
+        'system': 'Succeed in vengeance against a chosen target.',
+        'description': 'Regain Willpower when you significantly hurt your target.'
+    },
+    'wanderer': {
+        'name': 'Wanderer',
+        'system': 'Never stay in one place and avoid attachments.',
+        'description': 'Regain one Willpower point whenever you complete your purpose in a place, then move on, leaving no loose ends.'
+    },
+    'defender': {
+        'name': 'Defender',
+        'system': 'Protect something over yourself.',
+        'description': 'Regain Willpower when you successfully defend your charge.'
+    },
+    'prophet': {
+        'name': 'Prophet',
+        'system': 'Insight is your greatest strength. Prophets tend to see things that are hidden to most people: secrets, omens, visions of the future, and so forth. Even if you lack the blessing/ curse of prophecy, few mysteries escape your sight. Ruthlessness is the traditional flaw of prophets. Driven by their vision of Truth, such people tend to be impatient, fanatical, and defiant of mortal power. You\'ll probably score lots of points for guts, but you might find those guts roasting on a spit in some ruler\'s torture garden. True prophets often meet unhappy ends... and they tend to take their followers down with them when they go.',
+        'description': 'Regain Willpower when you speak Truth to power and inspire a successful change.'
     }
 }
 

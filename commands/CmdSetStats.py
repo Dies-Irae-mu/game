@@ -21,7 +21,7 @@ from world.wod20th.utils.possessed_utils import (
 )
 from world.wod20th.utils.companion_utils import (
     initialize_companion_stats, COMPANION_TYPES,
-    POWER_SOURCE_TYPES, COMPANION_POWERS
+    COMPANION_POWERS
 )
 from world.wod20th.utils.virtue_utils import (
     calculate_willpower, calculate_path, PATH_VIRTUES
@@ -506,14 +506,16 @@ class CmdStats(default_cmds.MuxCommand):
         # Split left side on first / to get character and rest
         if '/' in left:
             char_name, rest = left.split('/', 1)
-            self.target = self.caller.search(char_name.strip())
+            # Use global search for finding characters
+            self.target = self.caller.search(char_name.strip(), global_search=True)
             if not self.target:
                 return
             # Continue parsing rest as before for stat/category
             self.parse_stat_and_category(rest)
         else:
             # Handle case where only character name is provided (for reset)
-            self.target = self.caller.search(left)
+            # Use global search here too
+            self.target = self.caller.search(left, global_search=True)
             return
 
     def parse_stat_and_category(self, stat_string):

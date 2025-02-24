@@ -792,6 +792,19 @@
         "breed": "Metis"
     },
     {
+        "name": "Curse of Aeolus",
+        "description": "The Fury calls up a thick, eerie fog that obscures vision and unnerves her opponents. The Fury can see through the fog, but all other have trouble navigating by sight. A spirit in service to Aeolus, the fog totem, teaches this Gift. The player makes a Gnosis roll. The difficulty varies according to the surrounding terrain and humidity: 4 near the sea, 6 under normal circumstances, 9 in a desert. The Black Fury can see normally, but others caught in this fog halve their Perception scores (with regards to sight only). The fog is quite unnerving, and everyone except the Fury and her packmates loses a die from all Willpower dice pools.",
+        "system": "The player makes a Gnosis roll. The difficulty varies according to the surrounding terrain and humidity: 4 near the sea, 6 under normal circumstances, 9 in a desert. The Black Fury can see normally, but others caught in this fog halve their Perception scores (with regards to sight only). The fog is quite unnerving, and everyone except the Fury and her packmates loses a die from all Willpower dice pools.",
+        "source": "Core book revised",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [1, 2],
+        "shifter_type": ["Garou", "Bastet", "Kitsune", "Nagah"],
+        "splat": "Shifter",
+        "gift_alias": ["Hunter's Mists", "Breath of Yu-Chiang", "Indra's Cloak"]
+    },
+    {
         "name": "Burrow",
         "description": "Those who learn this Gift gain the ability to burrow through the earth. They make a real tunnel, and others can follow them through it. The digger creates a burrow just large enough for her to go through. Others may follow, but they are limited by the size of the hole. The werewolf must be in Crinos, Hispo or Lupus form to use this Gift as she needs her claws for digging (although even metis without claws can use this Gift). The tunnel is not structurally sound, and it will collapse over time. Mole kindly teaches this Gift to all metis who seek him.",
         "system": "The player rolls Strength + Athletics against a difficulty depending on the substance to be excavated (4 for loose mud, 9 for solid rock). Some alloyed metals (such as titanium steel) and other reinforced structures will not yield to the werewolf no matter how hard she digs. The character can burrow one yard per turn for each success. After the initial roll, the character doe snot need to roll again to continue at the same speed.",

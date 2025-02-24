@@ -33,7 +33,7 @@ from commands.CmdRenown import CmdRenown
 from commands.building import (
     CmdSetRoomResources, CmdSetRoomType, CmdSetUmbraDesc, 
     CmdSetGauntlet, CmdUmbraInfo, CmdSetHousing, CmdManageBuilding, 
-    CmdSetLock
+    CmdSetLock, CmdDesc
 )
 from commands.CmdInit import CmdInit
 from commands.CmdRoomLog import CmdRoomLog
@@ -85,24 +85,24 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
     """
 
     key = "DefaultCharacter"
-    priority = 1
+    
     def at_cmdset_creation(self):
         """
         Populates the cmdset
         """
+        # Call super() to load all default commands
         super().at_cmdset_creation()
-        #
-        # any commands you add below will overload the default ones.
-        #
+        
+        # Add our custom channel command
         self.add(CustomCmdChannel())
         
+        # Add all our custom commands
         self.add(CmdGradientName())
         self.add(CmdBBS())
         self.add(OssCmdSet)
         self.add(CmdFaeDesc())
         self.add(CmdStats())
         self.add(CmdPST())
-        
         self.add(CmdSheet())
         self.add(CmdInfo())
         self.add(CmdHurt())
@@ -197,6 +197,7 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdResetBBS())
         self.add(CmdNPC())
         self.add(CmdRoomLog())
+        self.add(CmdDesc()) 
 
 class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):
     """

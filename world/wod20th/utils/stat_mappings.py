@@ -372,7 +372,8 @@ CHANGELING_BACKGROUNDS = [
     'Circle',
     'Spirit Companion',
     'Vision',
-    'Changeling Companion'
+    'Changeling Companion',
+    'Chimerical Item'
 ]
 
 MAGE_BACKGROUNDS = [
@@ -699,7 +700,7 @@ SPECIAL_ADVANTAGES = {
         'wall-crawling': {'valid_values': [4], 'desc': "Ability to climb sheer surfaces easily"},
         'water breathing': {'valid_values': [2, 5], 'desc': "Can breathe underwater"},
         'webbing': {'valid_values': [5], 'desc': "Can spin webs with various uses"},
-        'wings': {'valid_values': [3, 5], 'desc': "Wings 3 grants Flight 2, Wings 5 grants Flight 4"}
+        'companion wings': {'valid_values': [3, 5], 'desc': "Wings 3 grants Flight 2, Wings 5 grants Flight 4"}
     } 
 
 VALID_DATES = {
@@ -750,7 +751,8 @@ MERIT_FILES = [
     'garou_merits.json',
     'mage_merits.json',
     'mortalplus_merits.json',
-    'vampire_merits.json'
+    'vampire_merits.json',
+    'companion_merits.json'
 ]
 
 FLAW_FILES = [
@@ -759,7 +761,14 @@ FLAW_FILES = [
     'garou_flaws.json',
     'mage_flaws.json',
     'mortalplus_flaws.json',
-    'vampire_flaws.json'
+    'vampire_flaws.json',
+    'companion_flaws.json'
+]
+
+# Rite files
+RITE_FILES = [
+    'garou_rites.json',
+    'fera_bsd_rites.json'
 ]
 
 # Load and combine all merit data
@@ -775,6 +784,27 @@ for file_name in FLAW_FILES:
     file_path = DATA_DIR / file_name
     if file_path.exists():
         ALL_FLAWS.extend(load_json_data(file_path))
+
+# Load and combine all rite data
+ALL_RITES = []
+for file_name in RITE_FILES:
+    file_path = DATA_DIR / file_name
+    if file_path.exists():
+        ALL_RITES.extend(load_json_data(file_path))
+
+# Create validation mappings for rites
+RITE_VALUES = {
+    item['name']: item['values'] if isinstance(item['values'], list) else [item['values']]
+    for item in ALL_RITES if 'name' in item and 'values' in item
+}
+
+RITE_SPLAT_RESTRICTIONS = {
+    item['name']: {
+        'splat': item.get('splat'),
+        'splat_type': item.get('shifter_type')
+    }
+    for item in ALL_RITES if 'name' in item
+}
 
 # Organize merits by type
 MERIT_CATEGORIES = organize_by_type(ALL_MERITS, 'merits')
@@ -999,7 +1029,7 @@ def get_identity_stats(splat: str, subtype: str = None, affiliation: str = None)
                 elif affiliation and affiliation.lower() == 'black spiral dancers':
                     stats.append('Rite Name')
             elif subtype == 'bastet':
-                stats.extend(['Tribe', 'Pack', 'Patron Totem'])
+                stats.extend(['Tribe', 'Jamak Spirit', 'Pryio'])
             elif subtype == 'ajaba':
                 stats.extend(['Aspect', 'Pack', 'Patron Totem'])
             elif subtype == 'ananasi':
@@ -1096,7 +1126,9 @@ def get_identity_stats(splat: str, subtype: str = None, affiliation: str = None)
     elif splat.lower() == 'companion':
         return base_stats + [
             'Companion Type',
-            'Power Source'
+            'Fuel',
+            'Affiliation', 
+            'Motivation'
         ]
         
     else:  # Mortal or other

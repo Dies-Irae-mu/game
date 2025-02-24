@@ -203,11 +203,11 @@ def initialize_possessed_stats(character, possessed_type):
 def validate_possessed_powers(character, power_type, power_name, value):
     """
     Validate power selections for Possessed characters.
-    Returns (bool, str) tuple - (is_valid, error_message)
+    Returns (bool, str, str) tuple - (is_valid, error_message, corrected_value)
     """
     possessed_type = character.get_stat('identity', 'lineage', 'Possessed Type', temp=False)
     if not possessed_type:
-        return False, "Character is not a Possessed type"
+        return False, "Character is not a Possessed type", None
 
     # Validate Gifts
     if power_type.lower() == 'gift':
@@ -218,64 +218,92 @@ def validate_possessed_powers(character, power_type, power_name, value):
             stat_type='gift'
         ).exists()
         if not gift_exists:
-            return False, f"'{power_name}' is not a valid Gift"
+            return False, f"'{power_name}' is not a valid Gift", None
+        try:
+            gift_value = int(value)
+            if gift_value < 0 or gift_value > 5:
+                return False, "Gift values must be between 0 and 5", None
+            return True, "", str(gift_value)
+        except ValueError:
+            return False, "Gift value must be a number", None
 
     # Validate Blessings
     elif power_type.lower() == 'blessing':
         if possessed_type not in POSSESSED_POWERS:
-            return False, f"Invalid Possessed type: {possessed_type}"
+            return False, f"Invalid Possessed type: {possessed_type}", None
         
         available_blessings = POSSESSED_POWERS[possessed_type].get('blessing', [])
         if power_name not in available_blessings:
-            return False, f"'{power_name}' is not a valid Blessing for {possessed_type}"
+            return False, f"'{power_name}' is not a valid Blessing for {possessed_type}", None
+        try:
+            blessing_value = int(value)
+            if blessing_value < 0 or blessing_value > 5:
+                return False, "Blessing values must be between 0 and 5", None
+            return True, "", str(blessing_value)
+        except ValueError:
+            return False, "Blessing value must be a number", None
 
     # Validate Charms
     elif power_type.lower() == 'charm':
         if possessed_type not in POSSESSED_POWERS:
-            return False, f"Invalid Possessed type: {possessed_type}"
+            return False, f"Invalid Possessed type: {possessed_type}", None
         
         available_charms = POSSESSED_POWERS[possessed_type].get('charm', [])
         if power_name not in available_charms:
-            return False, f"'{power_name}' is not a valid Charm for {possessed_type}"
+            return False, f"'{power_name}' is not a valid Charm for {possessed_type}", None
+        try:
+            charm_value = int(value)
+            if charm_value < 0 or charm_value > 5:
+                return False, "Charm values must be between 0 and 5", None
+            return True, "", str(charm_value)
+        except ValueError:
+            return False, "Charm value must be a number", None
 
-    return True, ""
+    return True, "", value
 
-def validate_possessed_stats(character, stat_name: str, value: str, category: str = None, stat_type: str = None) -> tuple[bool, str]:
+def validate_possessed_stats(character, stat_name: str, value: str, category: str = None, stat_type: str = None) -> tuple[bool, str, str]:
     """
     Validate possessed-specific stats.
-    Returns (is_valid, error_message)
+    Returns (is_valid, error_message, corrected_value)
     """
     stat_name = stat_name.lower()
     
-    # Get possessed type
+    # Get character info
+    splat = character.get_stat('other', 'splat', 'Splat', temp=False)
     possessed_type = character.get_stat('identity', 'lineage', 'Possessed Type', temp=False)
-    print(f"\nValidating possessed stats:")
-    print(f"stat_name: {stat_name}")
-    print(f"value: {value}")
-    print(f"category: {category}")
-    print(f"stat_type: {stat_type}")
-    print(f"possessed_type: {possessed_type}")
     
-    # Validate type
-    if stat_name == 'possessed type':
-        return validate_possessed_type(value)
-        
-    # Validate powers
-    if category == 'powers':
-        if stat_type == 'blessing':
-            result = validate_possessed_blessing(character, stat_name.title(), value)
-            print(f"Blessing validation result: {result}")
-            return result
-        elif stat_type == 'charm':
-            result = validate_possessed_charm(character, stat_name.title(), value)
-            print(f"Charm validation result: {result}")
-            return result
-        elif stat_type == 'gift':
-            result = validate_possessed_gift(character, stat_name.title(), value)
-            print(f"Gift validation result: {result}")
-            return result
+    # Special handling for Berserker
+    if stat_name == 'berserker':
+        # For Possessed, Berserker is a blessing
+        if splat == 'Possessed':
+            try:
+                blessing_value = int(value)
+                if blessing_value < 0 or blessing_value > 5:
+                    return False, "Berserker blessing must be between 0 and 5", None
+                
+                # Set up powers.blessing structure if needed
+                if 'powers' not in character.db.stats:
+                    character.db.stats['powers'] = {}
+                if 'blessing' not in character.db.stats['powers']:
+                    character.db.stats['powers']['blessing'] = {}
+                
+                # Set the blessing
+                character.db.stats['powers']['blessing']['Berserker'] = {'perm': blessing_value, 'temp': blessing_value}
+                
+                # If Berserker is taken, set Rage pool to 5
+                if blessing_value > 0:
+                    if 'pools' not in character.db.stats:
+                        character.db.stats['pools'] = {}
+                    if 'dual' not in character.db.stats['pools']:
+                        character.db.stats['pools']['dual'] = {}
+                    character.db.stats['pools']['dual']['Rage'] = {'perm': 5, 'temp': 5}
+                    character.msg("|gBerserker blessing grants Rage pool of 5.|n")
+                
+                return True, "", str(blessing_value)
+            except ValueError:
+                return False, "Blessing value must be a number", None
     
-    return True, ""
+    return True, "", value
 
 def validate_possessed_type(value: str) -> tuple[bool, str]:
     """Validate a possessed type."""
@@ -358,3 +386,45 @@ def validate_possessed_gift(character, gift_name: str, value: str) -> tuple[bool
         return True, ""
     except ValueError:
         return False, "Gift values must be numbers"
+
+def update_possessed_pools_on_stat_change(character, stat_name: str, new_value: str) -> None:
+    """
+    Update possessed pools when relevant stats change.
+    Called by CmdSelfStat after setting stats.
+    """
+    stat_name = stat_name.lower()
+    
+    # Handle Possessed Type changes
+    if stat_name == 'possessed type':
+        # Get default Banality based on possessed type
+        banality = get_default_banality('Possessed', subtype=new_value)
+        if banality:
+            character.set_stat('pools', 'dual', 'Banality', banality, temp=False)
+            character.set_stat('pools', 'dual', 'Banality', banality, temp=True)
+            character.msg(f"|gBanality set to {banality} for {new_value}.|n")
+        
+        # Set base pools based on type
+        if new_value in POSSESSED_POOLS:
+            pools = POSSESSED_POOLS[new_value]
+            for pool_name, pool_data in pools.items():
+                # Skip Willpower if it's already set to a non-zero value
+                if pool_name == 'Willpower' and character.get_stat('pools', 'dual', 'Willpower', temp=False) > 0:
+                    continue
+                
+                # Set both permanent and temporary values
+                character.set_stat('pools', 'dual', pool_name, pool_data['default'], temp=False)
+                character.set_stat('pools', 'dual', pool_name, pool_data['default'], temp=True)
+                character.msg(f"|g{pool_name} set to {pool_data['default']} for {new_value}.|n")
+    
+    # Handle Berserker blessing
+    elif stat_name == 'berserker':
+        try:
+            blessing_value = int(new_value)
+            if blessing_value > 0:
+                # If Berserker is taken, set Rage pool to 5
+                character.set_stat('pools', 'dual', 'Rage', 5, temp=False)
+                character.set_stat('pools', 'dual', 'Rage', 5, temp=True)
+                character.msg("|gRage set to 5 due to Berserker blessing.|n")
+        except (ValueError, TypeError):
+            character.msg("|rError updating Rage pool - invalid Berserker value.|n")
+            return

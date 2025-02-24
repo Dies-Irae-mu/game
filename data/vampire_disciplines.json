@@ -342,5 +342,157 @@
         "category": "powers",
         "stat_type": "necromancy",
         "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Abombwe",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Bardo",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Daimonion",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Deimos",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Kai",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Kineticism",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Maleficia",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Mytherceria",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Melpominee",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Nihilistics",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Obeah",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Rift",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Sanguinus",
+        "description": "",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Spiritus",
+        "description": "",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Striga",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Temporis",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Thanatosis",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Valeren",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Visceratika",
+        "description": "To be added.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "discipline",
+        "values": [1, 2, 3, 4, 5]
     }
 ]

@@ -236,7 +236,7 @@
     {
         "name": "Blood Hunted",
         "stat_type": "social",
-        "values": ["4 or 6"],
+        "values": [4, 6],
         "category": "flaws",
         "description": "You have been made the target of a blood hunt, and for you to return to your home city is death. For four points, this Flaw means that only your home city is offlimits to you. For six, it means that the entire Camarilla is howling for your vitae. This Flaw can only be taken by Camarilla vampires.",
         "source": "V20 Pg 493",
@@ -335,7 +335,7 @@
     {
         "name": "Phobia",
         "stat_type": "mental",
-        "values": ["2 or 4"],
+        "values": [2, 4],
         "category": "flaws",
         "description": "You have an overpowering fear of something. Spiders, snakes, crowds, and heights are examples of common phobias. You must make a Courage roll every time you encounter the object of your fear. The difficulty of the roll is determined by the Storyteller. If you fail the roll, you must retreat from the object.",
         "source": "V20 Pg 486",

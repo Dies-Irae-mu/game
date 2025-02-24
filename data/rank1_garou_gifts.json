@@ -436,6 +436,19 @@
     "auspice": "Galliard"
 },
 {
+    "name": "Persuasion",
+    "description": "The Garou can persuade others to do her bidding. A magpie-spirit teaches this Gift.",
+    "system": "The player rolls Charisma + Expression (difficulty 7). Success allows the character to persuade a single target to do her bidding for the duration of the scene.",
+    "source": "Core book revised",
+    "game_line": "Werewolf: The Apocalypse",
+    "category": "powers",
+    "stat_type": "gift",
+    "values": [1],
+    "shifter_type": ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole"],
+    "splat": "Shifter",
+    "gift_alias": ["Sweet Hunter's Smile"]
+},
+{
     "name": "Perfect Recall",
     "description": "The Galliard can remember any event she has ever experienced with perfect clarity. A magpie-spirit teaches this Gift.",
     "system": "The player rolls Intelligence + Alertness (difficulty 6). Success allows the character to recall any one event, conversation, or sight she has ever experienced with perfect clarity. Three successes allow her to remember every detail of an entire day.",

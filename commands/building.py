@@ -910,8 +910,10 @@ class CmdDesc(MuxCommand):
     describe yourself or another object
 
     Usage:
-      desc <description>
-      desc <obj> = <description>
+      @desc <description>
+      @desc me=<description>
+      @desc here=<description>
+      @desc <obj> = <description>
       @desc/edit [<obj>]        - Edit description in a line editor
 
     Sets the "desc" attribute on an object. If no object is given,
@@ -924,21 +926,64 @@ class CmdDesc(MuxCommand):
     """
 
     key = "@desc"
-    aliases = ["@desc/edit"]
+    aliases = ["@desc/edit", "desc", "@describe", "describe"]
     switch_options = ("edit",)
-    locks = "cmd:perm(desc) or perm(Builder) or self()"
+    locks = "cmd:all()" 
     help_category = "Building and Housing"
+    account_caller = True  # This ensures it works at account level
+
+    def parse(self):
+        """
+        Handle parsing of the command
+        """
+        super().parse()
+        self.target_is_self = False
+        if self.args:
+            if self.lhs and self.lhs.lower() in ["me", "here"]:
+                self.target_is_self = True
+            elif not "=" in self.args:
+                self.target_is_self = True
+
+    def access(self, srcobj, access_type="cmd", default=False):
+        """
+        Override the access check. Allow if:
+        1) They have general command access (cmd:all())
+        2) They are trying to describe themselves
+        """
+        if access_type != "cmd":
+            return super().access(srcobj, access_type, default)
+            
+        # Always allow access - we'll do specific permission checks in func()
+        return True
 
     def edit_handler(self):
         if self.rhs:
             self.msg("|rYou may specify a value, or use the edit switch, but not both.|n")
             return
+
+        # Get the current puppet
+        puppet = None
+        if self.session:
+            puppet = self.caller.get_puppet(self.session)
+        if not puppet:
+            puppet = self.caller.puppet
+
+        if not puppet:
+            self.caller.msg("You must have a character puppet to edit descriptions.")
+            return
+
         if self.args:
             obj = self.caller.search(self.args)
         else:
-            obj = self.caller.location or self.msg("|rYou can't describe oblivion.|n")
+            obj = puppet.location or self.msg("|rYou can't describe oblivion.|n")
         if not obj:
             return
+
+        # Check if object is a room - require builder permissions
+        if obj.is_typeclass("typeclasses.rooms.Room") or obj.is_typeclass("typeclasses.rooms.RoomParent"):
+            if not self.caller.check_permstring("Builder"):
+                self.msg("You must be a Builder or higher to edit room descriptions.")
+                return
 
         if not (obj.access(self.caller, "control") or obj.access(self.caller, "edit")):
             self.msg(f"You don't have permission to edit the description of {obj.key}.")
@@ -958,28 +1003,72 @@ class CmdDesc(MuxCommand):
 
     def func(self):
         """Define command"""
-
         caller = self.caller
+        
         if not self.args and "edit" not in self.switches:
-            caller.msg("Usage: desc [<obj> =] <description>")
+            caller.msg("Usage: @desc [<obj> =] <description>")
             return
 
         if "edit" in self.switches:
             self.edit_handler()
             return
 
+        # Get the current puppet
+        puppet = None
+        if self.session:
+            puppet = caller.get_puppet(self.session)
+        if not puppet:
+            puppet = caller.puppet
+
+        if not puppet:
+            caller.msg("You must have a character puppet to set descriptions.")
+            return
+
         if "=" in self.args:
             # We have an =
-            obj = caller.search(self.lhs)
+            obj_name = self.lhs.strip().lower()
+            # Handle special keywords
+            if obj_name == "me":
+                if puppet:
+                    obj = puppet
+                else:
+                    caller.msg("You must have a character puppet to set its description.")
+                    return
+            elif obj_name == "here":
+                obj = puppet.location
+                if not obj:
+                    caller.msg("You don't have a location to describe.")
+                    return
+            else:
+                obj = caller.search(self.lhs)
             if not obj:
                 return
             desc = self.rhs or ""
         else:
             # No = means we're trying to desc ourselves
-            obj = caller
+            if puppet:
+                obj = puppet
+            else:
+                caller.msg("You must have a character puppet to set its description.")
+                return
             desc = self.args
             
-        if obj == caller or obj.access(self.caller, "control") or obj.access(self.caller, "edit"):
+        # Process special characters
+        desc = desc.replace("%r", "\n").replace("%R", "\n")
+        desc = desc.replace("%t", "\t").replace("%T", "\t")
+            
+        # Check if object is a room - require builder permissions
+        if obj.is_typeclass("typeclasses.rooms.Room") or obj.is_typeclass("typeclasses.rooms.RoomParent"):
+            if not caller.check_permstring("Builder"):
+                caller.msg("You must be a Builder or higher to edit room descriptions.")
+                return
+            # If they are a builder, allow them to edit the room
+            obj.db.desc = desc
+            caller.msg(f"The description was set on {obj.get_display_name(caller)}.")
+            return
+                
+        # For non-room objects, use standard permission checks
+        if obj == puppet or obj.access(caller, "control") or obj.access(caller, "edit"):
             obj.db.desc = desc
             caller.msg(f"The description was set on {obj.get_display_name(caller)}.")
         else:

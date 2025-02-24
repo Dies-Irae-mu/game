@@ -190,8 +190,11 @@ class CmdSheet(MuxCommand):
         # Process advantages section
         string += self.process_advantages(character, string)
 
-        # Display Pools, Virtues & Status
-        string += header("Pools, Virtues & Status", width=78, color="|y")
+        # Display Pools & Status (or Pools, Virtues & Status for non-Companions)
+        if splat in ['Companion', 'Possessed']:
+            string += header("Pools & Status", width=78, color="|y")
+        else:
+            string += header("Pools, Virtues & Status", width=78, color="|y")
 
         # Process pools
         self.process_pools(character)
@@ -203,18 +206,31 @@ class CmdSheet(MuxCommand):
         health_status = format_damage_stacked(character)
         self.status_list.extend(health_status)
 
-        # Handle virtues
-        self.process_virtues(character, splat)
-
-        # Ensure all columns have the same number of rows
-        max_len = max(len(self.pools_list), len(self.virtues_list), len(self.status_list))
-        self.pools_list.extend(["".ljust(25)] * (max_len - len(self.pools_list)))
-        self.virtues_list.extend(["".ljust(25)] * (max_len - len(self.virtues_list)))
-        self.status_list.extend(["".ljust(25)] * (max_len - len(self.status_list)))
+        # Handle virtues for non-Companions and Possessed
+        if splat not in ['Companion', 'Possessed']:
+            self.process_virtues(character, splat)
 
         # Display the pools, virtues and status in columns with adjusted spacing
-        for pool, virtue, status in zip(self.pools_list, self.virtues_list, self.status_list):
-            string += f"{pool:<25}  {virtue:>25}  {status}\n"
+        if splat in ['Companion', 'Possessed']:
+            # Add headers for the two-column layout
+           
+            # Ensure pools and status lists have the same length
+            max_len = max(len(self.pools_list), len(self.status_list))
+            self.pools_list.extend(["".ljust(38)] * (max_len - len(self.pools_list)))
+            self.status_list.extend(["".ljust(40)] * (max_len - len(self.status_list)))
+            
+            # Display in two columns with adjusted spacing
+            for pool, status in zip(self.pools_list, self.status_list):
+                string += f"{pool:<38}     {status}\n"
+        else:
+            # Three column layout for other splats
+            max_len = max(len(self.pools_list), len(self.virtues_list), len(self.status_list))
+            self.pools_list.extend(["".ljust(25)] * (max_len - len(self.pools_list)))
+            self.virtues_list.extend(["".ljust(25)] * (max_len - len(self.virtues_list)))
+            self.status_list.extend(["".ljust(25)] * (max_len - len(self.status_list)))
+            
+            for pool, virtue, status in zip(self.pools_list, self.virtues_list, self.status_list):
+                string += f"{pool:<25}  {virtue:>25}  {status}\n"
 
         # Check approval status and add it at the end
         if character.db.approved:
@@ -229,11 +245,14 @@ class CmdSheet(MuxCommand):
         """Format a stat with dots for display."""
         # Initialize display_stat with the original stat name
         display_stat = stat
-        
-        # Map old stat names to new ones for display
-        display_stat = 'Subfaction' if stat == 'Traditions Subfaction' else display_stat
-        display_stat = 'Type' if stat == 'possessed_type' else display_stat
-        display_stat = 'Type' if stat == 'companion_type' else display_stat
+        if '(' in stat and ')' in stat:
+            # Keep the instance in the display
+            display_stat = stat
+        else:
+            # Map old stat names to new ones for display
+            display_stat = 'Subfaction' if stat == 'Traditions Subfaction' else display_stat
+            display_stat = 'Type' if stat == 'possessed_type' else display_stat
+            display_stat = 'Type' if stat == 'companion_type' else display_stat
         display_stat = 'Enlightenment' if stat == 'Path of Enlightenment' else display_stat
 
         stat_str = f" {display_stat}"
@@ -262,7 +281,7 @@ class CmdSheet(MuxCommand):
                          'Spirit Type', 'Spirit Name', 'Domitor', 'Society', 'Order', 'Coven', 'Cabal', 'Plague', 'Crown', 
                          'Stream', 'Kitsune Path', 'Varna', 'Deed Name', 'Motivation', 'Possessed Type', 'Date of Possession',
                          'Companion Type', 'Patron Totem', 'Pack', 'Affinity Realm', 'Fae Court', 'Fae Name', 'Camp', 'Lodge'
-                         'Fang House', 'Nephandi Faction']:
+                         'Fang House', 'Nephandi Faction', 'Fuel']:
                 value_str = 'None'
             else:
                 value_str = ''
@@ -604,10 +623,13 @@ class CmdSheet(MuxCommand):
         char_backgrounds = character.db.stats.get('backgrounds', {}).get('background', {})
         has_backgrounds = False
         if char_backgrounds:
-            for background, values in sorted(char_backgrounds.items()):
+            # Sort backgrounds, keeping instance information intact
+            sorted_backgrounds = sorted(char_backgrounds.items(), key=lambda x: x[0].split('(')[0])
+            for background, values in sorted_backgrounds:
                 background_value = values.get('perm', 0)
                 if background_value > 0:
                     has_backgrounds = True
+                    # Keep the full background name (including instance) for display
                     left_column.append(format_stat(background, background_value, width=38))
         if not has_backgrounds:
             left_column.append("None".ljust(38))
@@ -834,11 +856,16 @@ class CmdSheet(MuxCommand):
             powers.append(divider("Gifts", width=38, color="|b"))
             gifts = character.db.stats.get('powers', {}).get('gift', {})
             has_gifts = False
-            for gift, values in sorted(gifts.items()):
+            
+            # Process each gift
+            for gift_name, values in sorted(gifts.items()):
                 gift_value = values.get('perm', 0)
                 if gift_value > 0:
                     has_gifts = True
-                    powers.append(format_stat(gift, gift_value, default=0, width=self.POWERS_WIDTH))
+                    
+                    # Use the display name method to get the proper name
+                    display_name = character.get_display_name_for_gift(gift_name)
+                    powers.append(format_stat(display_name, gift_value, default=0, width=self.POWERS_WIDTH))
             if not has_gifts:
                 powers.append("None".ljust(38))
 
@@ -1012,7 +1039,7 @@ class CmdSheet(MuxCommand):
                     powers.append(format_stat(gift, gift_value, default=0, width=self.POWERS_WIDTH))
             if not has_gifts:
                 powers.append(" None".ljust(38))
-
+        
         # Process charms
         charms = character.db.stats.get('powers', {}).get('charm', {})
         if charms:
@@ -1037,24 +1064,45 @@ class CmdSheet(MuxCommand):
         # Process all standard power types first
         powers = self.process_general_powers(character, powers, add_none=False)
         
-        # Process special advantages
+        # Always show Special Advantages section
+        powers.append(divider("Special Advantages", width=38, color="|b"))
         special_advantages = character.db.stats.get('powers', {}).get('special_advantage', {})
+        has_advantages = False
         if special_advantages:
-            powers.append(divider("Special Advantages", width=38, color="|b"))
-            for advantage, values in sorted(special_advantages.items()):
+            # Track seen advantages to prevent duplicates
+            seen_advantages = set()
+            # Sort by proper case name from SPECIAL_ADVANTAGES
+            for advantage_name, values in sorted(special_advantages.items(), key=lambda x: x[0].lower()):
+                if advantage_name.lower() in seen_advantages:
+                    continue
                 advantage_value = values.get('perm', 0)
-                powers.append(format_stat(advantage, advantage_value, default=0, width=self.POWERS_WIDTH))
+                if advantage_value > 0:
+                    has_advantages = True
+                    # Properly capitalize each word in the advantage name
+                    display_name = ' '.join(word.capitalize() for word in advantage_name.split())
+                    # Special case for "Aww!"
+                    if advantage_name.lower() == "aww!":
+                        display_name = "Aww!"
+                    powers.append(format_stat(display_name, advantage_value, width=self.POWERS_WIDTH))
+                    seen_advantages.add(advantage_name.lower())
+        if not has_advantages:
+            powers.append(" None".ljust(38))
 
-        # Process charms
+        # Add spacing between sections
+        powers.append(" " * 38)
+
+        # Always show Charms section
+        powers.append(divider("Charms", width=38, color="|b"))
         charms = character.db.stats.get('powers', {}).get('charm', {})
+        has_charms = False
         if charms:
-            # Add spacing if special advantages exists
-            if special_advantages:
-                powers.append(" " * 38)
-            powers.append(divider("Charms", width=38, color="|b"))
             for charm, values in sorted(charms.items()):
                 charm_value = values.get('perm', 0)
-                powers.append(format_stat(charm, charm_value, default=0, width=self.POWERS_WIDTH))
+                if charm_value > 0:
+                    has_charms = True
+                    powers.append(format_stat(charm, charm_value, width=self.POWERS_WIDTH))
+        if not has_charms:
+            powers.append(" None".ljust(38))
 
         return powers
 
@@ -1163,23 +1211,24 @@ class CmdSheet(MuxCommand):
         if perm is None:
             perm = 0
         if temp is None:
-            # For Banality, only show temp=0 for Changelings and Kinain
-            if pool_name == 'Banality':
-                splat = character.get_stat('other', 'splat', 'Splat', temp=False)
-                char_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
-                if splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
-                    temp = 0
-                else:
-                    temp = perm
-            else:
-                temp = perm
+            temp = perm
 
-        # Special handling for Banality and Renown - allow temp to exceed perm
-        if pool_name == 'Banality' or pool_name in ['Glory', 'Honor', 'Wisdom']:
+        # Special handling for Banality
+        if pool_name == 'Banality':
+            splat = character.get_stat('other', 'splat', 'Splat', temp=False)
+            char_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+            # Only show temp/perm format for Changelings and Kinain
+            if splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
+                return f"{temp}/{perm}"
+            else:
+                return str(perm)  # Just show permanent value for other splats
+        
+        # Special handling for Renown - allow temp to exceed perm
+        if pool_name in ['Glory', 'Honor', 'Wisdom']:
             return f"{temp}/{perm}"
         
         # For all other pools, only show perm if temp equals perm
-        return f"{temp}/{perm}" if temp != perm else str(perm)            
+        return f"{temp}/{perm}" if temp != perm else str(perm)
 
     def get_stat_value(self, character, stat_name):
         """Get the value of a stat from a character."""
@@ -1217,18 +1266,37 @@ class CmdSheet(MuxCommand):
 
     def process_pools(self, character):
         """Process and format character pools."""
-        # Get character's splat and affiliation
+        # Get character's splat and type
         splat = character.get_stat('other', 'splat', 'Splat', temp=False)
-        affiliation = character.get_stat('identity', 'lineage', 'Affiliation', temp=False)
-        
+        char_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+
         # Always add Willpower
         willpower = self.format_pool_value(character, 'Willpower')
-        self.pools_list.append(format_stat('Willpower', willpower, width=25))
-        
+        self.pools_list.append(format_stat('Willpower', willpower, width=38 if splat == 'Companion' else 25))
+
         # Handle splat-specific pools
-        if splat == 'Mage':
+        if splat == 'Companion':
+            # Add Essence Energy for Familiars first
+            if char_type == 'Familiar':
+                essence = self.format_pool_value(character, 'Essence Energy')
+                self.pools_list.append(format_stat('Essence Energy', essence, width=38))
+
+            # Add Rage if character has Ferocity
+            special_advantages = character.db.stats.get('powers', {}).get('special_advantage', {})
+            ferocity = next((values.get('perm', 0) for name, values in special_advantages.items() 
+                           if name.lower() == 'ferocity'), 0)
+            if ferocity > 0:
+                rage = self.format_pool_value(character, 'Rage')
+                self.pools_list.append(format_stat('Rage', rage, width=38))
+
+            # Add Banality with proper formatting
+            banality = self.format_pool_value(character, 'Banality')
+            self.pools_list.append(format_stat('Banality', banality, width=38))
+            return  # Return early to avoid adding Banality again
+
+        elif splat == 'Mage':
             # Add Arete/Enlightenment based on affiliation
-            if affiliation == 'Technocracy':
+            if character.get_stat('identity', 'lineage', 'Affiliation', temp=False) == 'Technocracy':
                 enlightenment = character.get_stat('pools', 'advantage', 'Enlightenment', temp=False)
                 temp_enlightenment = character.get_stat('pools', 'advantage', 'Enlightenment', temp=True)
                 self.pools_list.append(format_stat('Enlightenment', enlightenment, width=25, tempvalue=temp_enlightenment))
@@ -1273,21 +1341,21 @@ class CmdSheet(MuxCommand):
         elif splat == 'Possessed':
             # Get possessed type
             possessed_type = character.get_stat('identity', 'lineage', 'Possessed Type', temp=False)
-            if possessed_type == 'Fomori':
-                # Add Rage and Gnosis
+            
+            # Check for Rage sources (Fomori type or Berserker blessing)
+            has_berserker = any(values.get('perm', 0) > 0 
+                              for name, values in character.db.stats.get('powers', {}).get('blessing', {}).items() 
+                              if name.lower() == 'berserker')
+            
+            if possessed_type == 'Fomori' or has_berserker:
+                # Add Rage
                 rage = self.format_pool_value(character, 'Rage')
-                gnosis = self.format_pool_value(character, 'Gnosis')
                 self.pools_list.append(format_stat('Rage', rage, width=25))
-                self.pools_list.append(format_stat('Gnosis', gnosis, width=25))
-            elif possessed_type == 'Kami':
-                # Add Gnosis
+            
+            # Add Gnosis for Fomori and Kami
+            if possessed_type in ['Fomori', 'Kami']:
                 gnosis = self.format_pool_value(character, 'Gnosis')
                 self.pools_list.append(format_stat('Gnosis', gnosis, width=25))
-                
-        elif splat == 'Companion' and character.get_stat('identity', 'lineage', 'Companion Type', temp=False) == 'Familiar':
-            # Add Essence Energy
-            essence = self.format_pool_value(character, 'Essence Energy')
-            self.pools_list.append(format_stat('Essence Energy', essence, width=25))
                 
         elif splat == 'Mortal+':
             # Get mortal+ type

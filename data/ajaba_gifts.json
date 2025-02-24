@@ -1,29 +1,5 @@
 [
     {
-        "name": "Sweet Hunter's Smile",
-        "description": "As the homid Gift: Persuasion. This Gift allows a homid to become more persuasive when dealing with others, in such a way that his statements and arguments are imbued with added meaning or credibility. An ancestor-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Eye of the Hunter",
-        "description": "As the Red Talon Gift. Wolves can sense which animal from a herd is sick or weak and therefore the easiest prey. This Gift allows the Ajaba to pick out the weakest member of a group at a glance. A wolf-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
         "name": "Feral Grin",
         "description": "With a snarl or glare, the Ajaba forces her opponent to back down, unnerved. A hyena-spirit teaches this Gift.",
         "game_line": "Werewolf: The Apocalypse",
@@ -36,140 +12,8 @@
         "splat": "Shifter"
     },
     {
-        "name": "Gift of Terror",
-        "description": "As the Red Talon Gift: Wolf at the Door. The Ajaba can induce a terrible dread and respect for the wilderness in their victims, making them afraid to venture out. Any predator spirit can teach this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Infectious Laughter",
-        "description": "As the Ragabash Gift. When the Ajaba laughs, those around her are compelled to follow along, forgetting their grievances. A coyote- or hyena-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Primal Anger",
-        "description": "As the metis Gift. The Ajaba learns to focus the anger within her heart and use it to increase her Rage. The spirits of ancient metis teach this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Sense Prey",
-        "description": "As the lupus Gift. The Gift lets Ajaba locate enough prey to feed a pack. In the urban environment, this Gift guides them to prey within the city. A wolf-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Beat of the Heart-Drum",
-        "description": "As the Wendigo Gift. The Ajaba becomes an inescapable hunter, drawn ever onward by the beat of their prey's heart until that heart grows still. A spirit servant of Great Wendigo teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
         "name": "Finishing Blow",
         "description": "A merely wounded enemy is an enemy that can still fight; dead, they can do no more harm. This Gift, taught by a lion-spirit, helps the Ajaba finish their kills.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Lightning Reflexes",
-        "description": "As the Get of Fenris Gift. The Ajaba can effortlessly switch from offense to defense as the needs of battle demand. A mongoose-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Pack Tactics",
-        "description": "As the Ahroun Gift. By taking the lead and coordinating pack actions, the Ajaba gifts all packmates with great competence in battle. A wolf-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Razor Claws",
-        "description": "As the Ahroun Gift. By raking their claws over stone, steel, or another hard surface, the Ajaba hones them to razor sharpness. Either a cat- or bear-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Resist Pain",
-        "description": "As the Philodox Gift. Through force of will, the Ajaba is able to ignore the pain of their wounds and continue acting normally. A bear-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Sense Wyrm",
-        "description": "As the metis Gift. The Ajaba can sense manifestations of the Wyrm in the nearby area. Any spirit of Gaia may teach this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Beast Speech",
-        "description": "As the Galliard Gift. The Ajaba with this Gift may communicate with any animals from fish to mammals. Any spirit of nature can teach this Gift.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -391,18 +235,6 @@
         "stat_type": "gift",
         "values": [
             2
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Clan Loyalty",
-        "description": "As the Bone Gnawer Gift: Friend in Need. The Ajaba may risk all, even their own life, to aid a packmate or tribemate. A dog-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            3
         ],
         "shifter_type": "ajaba",
         "splat": "Shifter"

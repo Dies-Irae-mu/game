@@ -52,8 +52,8 @@ AUSPICE_CHOICES_DICT: Dict[str, List[str]] = {
 
 ASPECT_CHOICES_DICT: Dict[str, List[str]] = {
     'Ajaba': ['Dawn', 'Midnight', 'Dusk'],
-    'Ananasi': ['Night', 'Daylight', 'Twilight'],
-    'Ratkin.1': ['Night', 'Daylight', 'Twilight'],
+    'Ananasi': ['Tenere', 'Hatar', 'Kumoti'],
+    'Ratkin': ['Knife Skulkers', 'Shadow Seers', 'Tunnel Runners', 'Warriors'],
     'Mokole': ['Rising Sun', 'Noonday Sun', 'Shrouded Sun', 'Midnight Sun', 
                'Decorated Sun', 'Solar Eclipse']
 }
@@ -194,6 +194,26 @@ SHIFTER_RENOWN: Dict[str, Union[List[str], Dict[str, List[str]]]] = {
 
 def initialize_shifter_type(character, shifter_type):
     """Initialize specific stats for a given shifter type."""
+    # Initialize or clear gift_aliases
+    if not hasattr(character.db, 'gift_aliases'):
+        character.db.gift_aliases = {}
+    else:
+        # Clear existing aliases by setting to empty dict
+        character.db.gift_aliases = {}
+        
+    # Clear powers
+    if 'powers' in character.db.stats:
+        if 'gift' in character.db.stats['powers']:
+            character.db.stats['powers']['gift'] = {}
+        if 'rite' in character.db.stats['powers']:
+            character.db.stats['powers']['rite'] = {}
+            
+    # Also clear any stats that might be in None.None
+    if None in character.db.stats:
+        if None in character.db.stats[None]:
+            del character.db.stats[None][None]
+        del character.db.stats[None]
+        
     # Initialize basic stats structure
     if 'identity' not in character.db.stats:
         character.db.stats['identity'] = {}
@@ -1113,7 +1133,9 @@ def validate_shifter_gift(character, gift_name: str, value: str) -> tuple[bool, 
     
     # Get character's type and other relevant attributes
     shifter_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
-    
+    if not shifter_type:
+        return False, "Character must have a shifter type set", None
+        
     # Validate value first
     try:
         gift_value = int(value)
@@ -1134,10 +1156,17 @@ def validate_shifter_gift(character, gift_name: str, value: str) -> tuple[bool, 
         
     # If the gift exists but has a specific shifter_type requirement,
     # validate that the character can use it
-    if gift.shifter_type and gift.shifter_type != shifter_type:
-        return False, f"'{gift_name}' is not available to {shifter_type}", None
+    if gift.shifter_type:
+        allowed_types = []
+        if isinstance(gift.shifter_type, list):
+            allowed_types = [t.lower() for t in gift.shifter_type]
+        else:
+            allowed_types = [gift.shifter_type.lower()]
+            
+        if shifter_type.lower() not in allowed_types:
+            return False, f"The gift '{gift.name}' is not available to {shifter_type}. Available to: {', '.join(t.title() for t in allowed_types)}", None
         
-    return True, "", value
+    return True, "", str(gift_value)
 
 def validate_shifter_backgrounds(character, background_name: str, value: str) -> tuple[bool, str, str]:
     """Validate shifter backgrounds."""

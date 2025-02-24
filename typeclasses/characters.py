@@ -9,6 +9,7 @@ here you can define how all characters will look and behave by default.
 from evennia.objects.objects import DefaultCharacter
 from evennia.utils.utils import lazy_property
 from evennia.utils.ansi import ANSIString
+from world.wod20th.utils.stat_mappings import FLAW_CATEGORIES, FLAW_SPLAT_RESTRICTIONS, FLAW_VALUES, MERIT_CATEGORIES, MERIT_SPLAT_RESTRICTIONS, MERIT_VALUES, SPECIAL_ADVANTAGES
 from world.wod20th.models import Stat
 from world.wod20th.utils.ansi_utils import wrap_ansi
 import re
@@ -38,6 +39,7 @@ class Character(DefaultCharacter):
         # Initialize basic attributes
         self.db.desc = ""
         self.db.stats = {}
+        self.db.gift_aliases = {}  # Initialize gift_aliases storage
         
         # Initialize languages with English as default
         self.db.languages = ["English"]
@@ -721,42 +723,35 @@ class Character(DefaultCharacter):
 
     def set_stat(self, stat_type, category, stat_name, value, temp=False):
         """Set a stat value."""
-        # Ensure stats structure exists
-        if not hasattr(self.db, 'stats'):
-            self.db.stats = {}
+        try:
+            # Initialize the stats structure if needed
+            if not hasattr(self, 'db') or not hasattr(self.db, 'stats'):
+                self.db.stats = {}
+            if stat_type not in self.db.stats:
+                self.db.stats[stat_type] = {}
+            if category not in self.db.stats[stat_type]:
+                self.db.stats[stat_type][category] = {}
+            if stat_name not in self.db.stats[stat_type][category]:
+                self.db.stats[stat_type][category][stat_name] = {'perm': 0, 'temp': 0}
 
+            # Set the stat value
+            self.db.stats[stat_type][category][stat_name]['temp' if temp else 'perm'] = value
+        except Exception as e:
+            self.msg(f"|rError processing stat value: {str(e)}|n")
+            return
+        
         # Handle identity stats
         if stat_type in ['personal', 'lineage']:
             if 'identity' not in self.db.stats:
                 self.db.stats['identity'] = {'personal': {}, 'lineage': {}}
             self.db.stats['identity'][stat_type][stat_name] = {'perm': value, 'temp': value}
+            
+            # Check if this is a shifter and update pools if needed
+            splat = self.get_stat('other', 'splat', 'Splat', temp=False)
+            if splat == 'Shifter':
+                from world.wod20th.utils.shifter_utils import update_shifter_pools_on_stat_change
+                update_shifter_pools_on_stat_change(self, stat_name, value)
             return
-
-        # Handle archetype stats
-        if stat_type == 'archetype':
-            if 'archetype' not in self.db.stats:
-                self.db.stats['archetype'] = {'personal': {}}
-            self.db.stats['archetype']['personal'][stat_name] = {'perm': value, 'temp': value}
-            return
-
-        # Handle attributes
-        if category == 'attributes':
-            if 'attributes' not in self.db.stats:
-                self.db.stats['attributes'] = {'physical': {}, 'social': {}, 'mental': {}}
-            if stat_type in ['physical', 'social', 'mental']:
-                if stat_name not in self.db.stats['attributes'][stat_type]:
-                    self.db.stats['attributes'][stat_type][stat_name] = {'perm': 0, 'temp': 0}
-                self.db.stats['attributes'][stat_type][stat_name]['temp' if temp else 'perm'] = value
-                return
-
-        # Handle all other stats
-        if stat_type not in self.db.stats:
-            self.db.stats[stat_type] = {}
-        if category not in self.db.stats[stat_type]:
-            self.db.stats[stat_type][category] = {}
-        if stat_name not in self.db.stats[stat_type][category]:
-            self.db.stats[stat_type][category][stat_name] = {'perm': 0, 'temp': 0}
-        self.db.stats[stat_type][category][stat_name]['temp' if temp else 'perm'] = value
 
     def check_stat_value(self, category, stat_type, stat_name, value, temp=False):
         """
@@ -1901,6 +1896,134 @@ class Character(DefaultCharacter):
                 del self.db.stats[stat_type][category][stat_name]
             return True
         return False
+
+    def set_gift_alias(self, canonical_name: str, alias: str, value: int) -> None:
+        """
+        Store a gift alias mapping.
+        
+        Args:
+            canonical_name (str): The canonical (original) name of the gift
+            alias (str): The alias used for the gift
+            value (int): The value/level of the gift
+        """
+        if not hasattr(self.db, 'gift_aliases'):
+            self.db.gift_aliases = {}
+        
+        # Capitalize each word in the alias
+        capitalized_alias = ' '.join(word.capitalize() for word in alias.split())
+        
+        # Store the alias mapping with its value
+        self.db.gift_aliases[canonical_name] = {
+            'alias': capitalized_alias,
+            'value': value
+        }
+
+    def get_gift_alias(self, canonical_name: str) -> tuple[str, int]:
+        """
+        Get the alias and value for a gift.
+        
+        Args:
+            canonical_name (str): The canonical (original) name of the gift
+            
+        Returns:
+            tuple[str, int]: The (alias, value) pair, or (None, None) if not found
+        """
+        # Initialize gift_aliases if it doesn't exist
+        if not hasattr(self.db, 'gift_aliases') or self.db.gift_aliases is None:
+            self.db.gift_aliases = {}
+            
+        gift_data = self.db.gift_aliases.get(canonical_name)
+        if gift_data:
+            return gift_data['alias'], gift_data['value']
+        return None, None
+
+    def remove_gift_alias(self, canonical_name: str) -> bool:
+        """
+        Remove a gift alias mapping.
+        
+        Args:
+            canonical_name (str): The canonical (original) name of the gift
+            
+        Returns:
+            bool: True if removed, False if not found
+        """
+        if not hasattr(self.db, 'gift_aliases'):
+            return False
+            
+        if canonical_name in self.db.gift_aliases:
+            del self.db.gift_aliases[canonical_name]
+            return True
+        return False
+
+    def get_all_gift_aliases(self) -> dict:
+        """
+        Get all gift aliases.
+        
+        Returns:
+            dict: Dictionary of all gift aliases and their values
+        """
+        if not hasattr(self.db, 'gift_aliases'):
+            self.db.gift_aliases = {}
+        return self.db.gift_aliases
+
+    def format_gift_aliases_string(self) -> str:
+        """
+        Format gift aliases as a comma-delimited string.
+        
+        Returns:
+            str: Formatted string of gift aliases (e.g., "Sweet Hunter's Smile:persuasion:1, Lightning Attack:spirit of the fray:2")
+        """
+        if not hasattr(self.db, 'gift_aliases'):
+            return ""
+            
+        alias_parts = []
+        for canonical_name, data in self.db.gift_aliases.items():
+            alias_parts.append(f"{data['alias']}:{canonical_name}:{data['value']}")
+        return ", ".join(alias_parts)
+
+    def parse_gift_aliases_string(self, aliases_string: str) -> None:
+        """
+        Parse a comma-delimited string of gift aliases and store them.
+        
+        Args:
+            aliases_string (str): String in format "alias1:canonical1:value1, alias2:canonical2:value2"
+        """
+        if not aliases_string:
+            return
+            
+        self.db.gift_aliases = {}
+        
+        for alias_part in aliases_string.split(','):
+            try:
+                alias_part = alias_part.strip()
+                if not alias_part:
+                    continue
+                    
+                alias, canonical, value = alias_part.split(':')
+                self.set_gift_alias(canonical.strip(), alias.strip(), int(value))
+            except (ValueError, IndexError):
+                continue
+
+    def get_display_name_for_gift(self, canonical_name: str) -> str:
+        """
+        Get the display name for a gift (alias if exists, otherwise canonical name).
+        
+        Args:
+            canonical_name (str): The canonical (original) name of the gift
+            
+        Returns:
+            str: The display name to use for the gift
+        """
+        if not canonical_name:
+            return ""
+            
+        # Initialize gift_aliases if it doesn't exist
+        if not hasattr(self.db, 'gift_aliases') or self.db.gift_aliases is None:
+            self.db.gift_aliases = {}
+            
+        # Get the alias and value
+        alias, _ = self.get_gift_alias(canonical_name)
+        return alias if alias else canonical_name
 
 class Note:
     def __init__(self, name, text, category="General", is_public=False, is_approved=False, 

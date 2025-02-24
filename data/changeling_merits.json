@@ -6,7 +6,8 @@
     "category": "merits",
     "stat_type": "social",
     "values": [1],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 p. 182"
 },
 {
     "name": "Calming Presence",
@@ -15,7 +16,8 @@
     "category": "merits",
     "stat_type": "social",
     "values": [1],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 p. 183"
 },
 {
     "name": "Faerie Eternity",
@@ -24,7 +26,8 @@
     "category": "merits",
     "stat_type": "supernatural",
     "values": [1],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 p. 185"
 },
 {
     "name": "Good Listener",
@@ -32,7 +35,8 @@
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "social",
-    "values": [1]
+    "values": [1],
+    "source": "C20 p. 183"
 },
 {
     "name": "Protege",
@@ -40,7 +44,17 @@
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "social",
-    "values": [1]
+    "values": [1],
+    "source": "C20 p. 183"
+},
+{
+    "name": "True Love",
+    "description": "You have discovered, and possibly lost, true love, providing you true, if painful joy. Whenever you are suffering, in danger, or dejected, the thought of your true love is enough to give you the strength to persevere. In game terms, this love allows you to succeed automatically on any Willpower roll, but only when you are actively striving to protect or come closer to your true love. In addition, the power of your love may be powerful enough to protect you from other supernatural forces (Storyteller's discretion). However, your true love may also be a hindrance and require aid from time to time.",
+    "game_line": "Changeling: The Dreaming",
+    "category": "merits",
+    "stat_type": "supernatural",
+    "values": [1],
+    "source": "C20 p. 185"
 },
 {
     "name": "Dextrous Toes",
@@ -49,7 +63,8 @@
     "category": "merits",
     "stat_type": "physical",
     "values": [2],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 p. 177"
 },
 {
     "name": "Granite Skin",
@@ -58,7 +73,8 @@
     "category": "merits",
     "stat_type": "physical",
     "values": [2],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 p. 177"
 },
 {
     "name": "Loyal Heart",
@@ -67,7 +83,8 @@
     "category": "merits",
     "stat_type": "mental",
     "values": [2],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 p. 180"
 },
 {
     "name": "Poetic Heart",
@@ -76,7 +93,8 @@
     "category": "merits",
     "stat_type": "supernatural",
     "values": [2],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 p. 186"
 },
 {
     "name": "Reputation",
@@ -84,7 +102,8 @@
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "social",
-    "values": [2]
+    "values": [2],
+    "source": "C20 p. 184"
 },
 {
     "name": "Sage",
@@ -93,7 +112,8 @@
     "category": "merits",
     "stat_type": "social",
     "values": [2],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 p. 184"
 },
 {
     "name": "Scholar of Others",
@@ -102,7 +122,8 @@
     "category": "merits",
     "stat_type": "mental",
     "values": [2],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 p. 184"
 },
 {
     "name": "Surreal Beauty",
@@ -111,7 +132,8 @@
     "category": "merits",
     "stat_type": "social",
     "values": [2],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 p. 177"
 },
 {
     "name": "Thallain Blessing",
@@ -120,7 +142,8 @@
     "category": "merits",
     "stat_type": "supernatural",
     "values": [2],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 Player's Guide p. 55"
 },
 {
     "name": "Heir to the Throne",
@@ -129,15 +152,8 @@
     "category": "merits",
     "stat_type": "social",
     "values": [3],
-    "splat": "Changeling"
-},
-{
-    "name": "Rising Star",
-    "description": "You are one of the up-and-comers in the freehold. Everyone wants to know you and be your friend, even as those in power groom you for positions of greater responsibility. You are at a -3 difficulty on all social rolls against any changelings who aren't actively opposing your ascent.",
-    "game_line": "Changeling: The Dreaming",
-    "category": "merits",
-    "stat_type": "social",
-    "values": [3]
+    "splat": "Changeling",
+    "source": "C20 p. 184"
 },
 {
     "name": "Blood of the Wolf",
@@ -146,7 +162,8 @@
     "category": "merits",
     "stat_type": "supernatural",
     "values": [4],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 p. 184"
 },
 {
     "name": "Eidetic Taste",
@@ -155,7 +172,8 @@
     "category": "merits",
     "stat_type": "supernatural",
     "values": [4],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 p. 179"
 },
 {
     "name": "Iron Resistance",
@@ -164,7 +182,8 @@
     "category": "merits",
     "stat_type": "supernatural",
     "values": [4],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 p. 186"
 },
 {
     "name": "Art Affinity",
@@ -173,7 +192,8 @@
     "category": "merits",
     "stat_type": "supernatural",
     "values": [5],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 p. 186"
 },
 {
     "name": "Blessing of Atlas",
@@ -182,7 +202,8 @@
     "category": "merits",
     "stat_type": "physical",
     "values": [5],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 p. 179"
 },
 {
     "name": "Living Legend",
@@ -191,7 +212,8 @@
     "category": "merits",
     "stat_type": "supernatural",
     "values": [5],
-    "splat": "Changeling"
+    "splat": "Changeling",
+    "source": "C20 p. 186"
 },
 {
     "name": "Animalistic Favor",
@@ -201,7 +223,7 @@
     "stat_type": "physical",
     "values": [3, 4, 5],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.186"
+    "source": "C20 p.186"
 },
 {
     "name": "Higher Purpose",
@@ -211,17 +233,7 @@
     "stat_type": "mental",
     "values": [1],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.180"
-},
-{
-    "name": "Introspection",
-    "description": "You routinely meditate on your own ulterior motives, applying them to others like you. Through this nightly exercise, your incredible insight reduces the difficulty by two when you use a Perception-based action against someone in your Court.",
-    "game_line": "Changeling: The Dreaming",
-    "category": "merits",
-    "stat_type": "mental",
-    "values": [1],
-    "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.180"
+    "source": "C20 p.180"
 },
 {
     "name": "Murderous Mien",
@@ -231,7 +243,7 @@
     "stat_type": "physical",
     "values": [2],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.177"
+    "source": "C20 p.177"
 },
 {
     "name": "Nature's Child",
@@ -241,7 +253,7 @@
     "stat_type": "social",
     "values": [2],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.184"
+    "source": "C20 p.184"
 },
 {
     "name": "Nightsight",
@@ -251,7 +263,7 @@
     "stat_type": "physical",
     "values": [2],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.177"
+    "source": "C20 p.177"
 },
 {
     "name": "Prehensile Tongue",
@@ -261,7 +273,7 @@
     "stat_type": "physical",
     "values": [2],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.178"
+    "source": "C20 p.178"
 },
 {
     "name": "Voice of a Songbird",
@@ -271,7 +283,7 @@
     "stat_type": "social",
     "values": [2],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.184"
+    "source": "C20 p.184"
 },
 {
     "name": "Increased Pain Threshold",
@@ -281,7 +293,7 @@
     "stat_type": "physical",
     "values": [3],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.178"
+    "source": "C20 p.178"
 },
 {
     "name": "Iron Will",
@@ -291,7 +303,7 @@
     "stat_type": "mental",
     "values": [3],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.180"
+    "source": "C20 p.180"
 },
 {
     "name": "Lucky",
@@ -301,7 +313,7 @@
     "stat_type": "supernatural",
     "values": [3],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.186"
+    "source": "C20 p.186"
 },
 {
     "name": "Prehensile Tail",
@@ -311,7 +323,7 @@
     "stat_type": "physical",
     "values": [4],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.178"
+    "source": "C20 p.178"
 },
 {
     "name": "Soul of the Muse",
@@ -321,7 +333,7 @@
     "stat_type": "social",
     "values": [4],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.184"
+    "source": "C20 p.184"
 },
 {
     "name": "Trusty Companion",
@@ -331,7 +343,7 @@
     "stat_type": "social",
     "values": [4],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.184"
+    "source": "C20 p.184"
 },
 {
     "name": "Winged",
@@ -341,7 +353,7 @@
     "stat_type": "physical",
     "values": [2, 4],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.188"
+    "source": "C20 p.188"
 },
 {
     "name": "Clever Guise",
@@ -351,7 +363,7 @@
     "stat_type": "supernatural",
     "values": [5],
     "splat": "Changeling",
-    "source": "Changeling Player's Guide p.161"
+    "source": "C20 p.161"
 },
 {
     "name": "Seasonal Magic",
@@ -361,7 +373,7 @@
     "stat_type": "supernatural",
     "values": [5],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.444"
+    "source": "C20 p.444"
 },
 {
     "name": "Because I Think I Can",
@@ -371,16 +383,125 @@
     "stat_type": "mental",
     "values": [6],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.181"
+    "source": "C20 p.181"
 },
 {
     "name": "Boon",
-    "description": "Someone is in your debt. It could be a lowly fledge or the count of a freehold; it all depends on how many points the Merit costs. You only have that single favor owed you (unless you take the Merit multiple times,) so using it properly is of paramount importance. Depending on status and other factors, the being who owes you a favor may well go out of his way to \"settle\" it early - even going so far as to create situations from which he must \"rescue\" you and thus clean the slate.",
+    "description": "Someone is in your debt. It could be a lowly fledge or the count of a freehold; it all depends on how many points the Merit costs. You only have that single favor owed you (unless you take the Merit multiple times,) so using it properly is of paramount importance. Depending on status and other factors, the being who owes you a favor may well go out of his way to 'settle' it early - even going so far as to create situations from which he must 'rescue' you and thus clean the slate.",
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "social",
     "values": [1, 2, 3, 4, 5, 6],
     "splat": "Changeling",
-    "source": "Changeling: the Dreaming p.183"
+    "source": "C20 p. 183"
+},
+{
+    "name": "Friendly Face",
+    "description": "You have a face strangers are inclined to trust. The effect doesn't fade even if you attempt self-deprecation, leaving you at –2 difficulty on all appropriate Social rolls (yes for first impressions, no for Intimidation, for example) when a stranger is involved. This Merit only functions on a first meeting.",
+    "game_line": "Changeling: The Dreaming",
+    "category": "merits",
+    "stat_type": "physical",
+    "values": [1],
+    "source": "C20 p. 177"
+},
+{
+    "name": "I Know You",
+    "description": "You have one of those faces, or a way of acting, that makes others just assume you are someone they already know. Perhaps you resemble someone from their childhood, or their favorite television show. When introducing yourself at social gatherings, you always succeed in grabbing someone's attention. You cannot be immediately dismissed without at least a few curious questions first.",
+    "game_line": "Changeling: The Dreaming",
+    "category": "merits",
+    "stat_type": "social",
+    "values": [1],
+    "source": "C20 p. 183"
+},
+{
+    "name": "Specific Interests",
+    "description": "You are specialized in an obscure or arcane field or niche interest and on this subject specifically you are an encyclopedia. Choose one rare area of knowledge. In this field, reduce the difficulty for all mental rolls by two. Example fields include the study of a dead language, a culturally-specific hobby, expertise in mythical demon names, and in-depth biographical knowledge of one celebrity.",
+    "game_line": "Changeling: The Dreaming",
+    "category": "merits",
+    "stat_type": "mental",
+    "values": [1],
+    "source": "C20 p. 180"
+},
+{
+    "name": "Strong Lungs",
+    "description": "Either through training or the grace of good genes you have a startling lung capacity. You calculate the length of time you can hold your breath as though your Stamina were one point higher. You may not take this merit if you have the flaw Asthma.",
+    "game_line": "Changeling: The Dreaming",
+    "category": "merits",
+    "stat_type": "physical",
+    "values": [1],
+    "source": "Blood Dimmed Tides p. 126"
+},
+{
+    "name": "Your Best Advocate",
+    "description": "You are especially convincing when telling tall tales about your exploits. You receive a –2 to your difficulty on Social rolls related to recounting your deeds, whether true or not.",
+    "game_line": "Changeling: The Dreaming",
+    "category": "merits",
+    "stat_type": "social",
+    "values": [1],
+    "source": "C20 p. 183"
+},
+{
+    "name": "Crack Shot",
+    "description": "Whether pointing a gun, arrow, or dart, you hit your target with great accuracy. You receive no increased difficulty when targeting any specific location and reduce the difficulty of rolls not involving specific targeting by one.",
+    "game_line": "Changeling: The Dreaming",
+    "category": "merits",
+    "stat_type": "physical",
+    "values": [2],
+    "source": "C20 p. 177"
+},
+{
+    "name": "Natural Swimmer",
+    "description": "You take to water as if born to it. Your swimming speed is calculated as though your Athletics was 1 point higher and all rolls for manoeuvring underwater are made at -2 difficulty. This merit costs 1 point for naturally aquatic Changelings, Companions or Fera.",
+    "game_line": "Changeling: The Dreaming",
+    "category": "merits",
+    "stat_type": "physical",
+    "values": [1, 2],
+    "source": "Blood Dimmed Tides p. 126 with edit"
+},
+{
+    "name": "Master Craftsman",
+    "description": "When designing, building, or repairing something, the difficulty of your rolls is reduced by two. Additionally, you require three fewer successes on any extended rolls required when working on large or complex projects.",
+    "game_line": "Changeling: The Dreaming",
+    "category": "merits",
+    "stat_type": "mental",
+    "values": [3],
+    "source": "C20 p. 181"
+},
+{
+    "name": "Perfect Balance",
+    "description": "Whether through constant training or inherited skill, your sense of balance is akin to that of a circus performer or bird on a wire. It's very unlikely you'll ever fall during your life. You may trip, but you'll always catch yourself before you fully lose your footing or handhold. This Merit functions for such actions as tightrope walking, crossing ice, and climbing mountains. All difficulties involving such feats are reduced by three.",
+    "game_line": "Changeling: The Dreaming",
+    "category": "merits",
+    "stat_type": "physical",
+    "values": [3],
+    "source": "C20 p. 178"
+},
+{
+    "name": "Sex Appeal",
+    "description": "You put it down to your looks and charm, but the dark truth is you have a dangerous, and perhaps unconscious, level of control over your pheromones. Your sexiness and sensuality attracts lovers to you like moths to a flame. You are the center of attention at any gathering. All rolls where sexual attraction matters have the difficulty reduced by three. This merit cannot be used to seduce someone lacking a baseline of sexual attraction to the character and while a person may be attracted to you they are still capable of controlling themselves.",
+    "game_line": "Changeling: The Dreaming",
+    "category": "merits",
+    "stat_type": "physical",
+    "values": [3],
+    "source": "C20 p. 178"
+},
+{
+    "name": "Gut Instincts",
+    "description": "You've got a direct line into the more primal of your instincts, and benefit from the ability to act without thinking first. You may not always know why you do what you do, but once the dust clears, you realize the correct move was made. This Merit nullifies the effects of surprise and permits you to act normally, though you may only defend. In cases where you're not surprised, you may preempt your opponent's action.",
+    "game_line": "Changeling: The Dreaming",
+    "category": "merits",
+    "stat_type": "mental",
+    "values": [4],
+    "source": "C20 p. 181"
+},
+{
+    "name": "Regeneration",
+    "description": "Your faerie nature is hardy, and as a result, you heal much faster than other Kithain. For every turn spent resting, you recover one Health Level of chimerical damage. Physical damage regenerates at a rate of one Health Level per hour. While in a freehold, your wounds heal at twice this speed. This Merit does not heal wounds inflicted by cold iron.",
+    "game_line": "Changeling: The Dreaming",
+    "category": "merits",
+    "stat_type": "physical",
+    "values": [7],
+    "source": "C20 p. 186"
 }
+
 ]

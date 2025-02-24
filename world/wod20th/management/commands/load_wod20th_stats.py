@@ -18,6 +18,15 @@ from world.wod20th.models import Stat, CATEGORIES, STAT_TYPES
 class Command(BaseCommand):
     help = 'Load WoD20th stats from JSON files in a directory'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Track failed files and stats
+        self.failed_files = []
+        self.failed_stats = []
+        self.processed_files = 0
+        self.processed_stats = 0
+        self.failed_count = 0
+
     def add_arguments(self, parser):
         parser.add_argument('--dir', type=str, default='data', help='Directory containing JSON files')
         parser.add_argument('--file', type=str, help='Specific JSON file to load (optional)')
@@ -42,8 +51,35 @@ class Command(BaseCommand):
                     file_path = os.path.join(data_dir, filename)
                     self.process_file(file_path)
 
+        # Display summary at the end
+        self.display_summary()
+
+    def display_summary(self):
+        """Display a summary of the processing results"""
+        self.stdout.write("\n=== Processing Summary ===")
+        self.stdout.write(f"Total files processed: {self.processed_files}")
+        self.stdout.write(f"Total stats processed: {self.processed_stats}")
+        self.stdout.write(f"Total failures: {self.failed_count}")
+
+        if self.failed_files:
+            self.stdout.write("\nFailed Files:")
+            for file_info in self.failed_files:
+                self.stdout.write(self.style.ERROR(f"- {file_info['file']}: {file_info['error']}"))
+
+        if self.failed_stats:
+            self.stdout.write("\nFailed Stats:")
+            for stat_info in self.failed_stats:
+                self.stdout.write(self.style.ERROR(
+                    f"- {stat_info['name']} (in {stat_info['file']}): {stat_info['error']}"
+                ))
+
     def process_file(self, file_path):
         if not os.path.exists(file_path):
+            self.failed_files.append({
+                'file': file_path,
+                'error': 'File not found'
+            })
+            self.failed_count += 1
             self.stdout.write(self.style.ERROR(f'File not found: {file_path}'))
             return
 
@@ -56,7 +92,7 @@ class Command(BaseCommand):
             if isinstance(data, list):
                 # Handle flat array of stats
                 for stat_data in data:
-                    self.process_stat(stat_data)
+                    self.process_stat(stat_data, file_path)
             elif isinstance(data, dict):
                 # Check if this is a splat-specific abilities file
                 if any(isinstance(v, dict) and any(k in ['talents', 'skills', 'knowledges'] for k in v.keys()) for v in data.values()):
@@ -67,40 +103,73 @@ class Command(BaseCommand):
                                 # Ensure the ability data has the splat information
                                 ability_data['splat'] = splat
                                 ability_data['name'] = ability_name
-                                self.process_stat(ability_data)
+                                self.process_stat(ability_data, file_path)
                 else:
                     # Handle regular dictionary of stats
                     for stat_name, stat_data in data.items():
                         if isinstance(stat_data, dict):
                             stat_data['name'] = stat_name
-                            self.process_stat(stat_data)
+                            self.process_stat(stat_data, file_path)
                         else:
                             self.process_stat({
                                 'name': stat_name,
                                 'value': stat_data,
                                 'category': 'other',
                                 'stat_type': 'other'
-                            })
+                            }, file_path)
 
+            self.processed_files += 1
             self.stdout.write(self.style.SUCCESS(f'Successfully loaded stats from {file_path}'))
         except json.JSONDecodeError:
+            self.failed_files.append({
+                'file': file_path,
+                'error': 'Invalid JSON format'
+            })
+            self.failed_count += 1
             self.stdout.write(self.style.ERROR(f'Invalid JSON in file: {file_path}'))
         except Exception as e:
+            self.failed_files.append({
+                'file': file_path,
+                'error': str(e)
+            })
+            self.failed_count += 1
             self.stdout.write(self.style.ERROR(f'Error processing {file_path}: {str(e)}'))
 
-    def process_stat(self, stat_data):
+    def process_stat(self, stat_data, file_path):
         if not isinstance(stat_data, dict):
+            self.failed_stats.append({
+                'name': 'Unknown',
+                'file': file_path,
+                'error': f'Invalid stat data format: {stat_data}'
+            })
+            self.failed_count += 1
             self.stdout.write(self.style.ERROR(f'Invalid stat data format: {stat_data}'))
             return
 
         name = stat_data.get('name')
         if not name:
+            self.failed_stats.append({
+                'name': 'Unknown',
+                'file': file_path,
+                'error': 'Stat missing name'
+            })
+            self.failed_count += 1
             self.stdout.write(self.style.ERROR('Stat missing name'))
             return
 
+        # Handle shifter_type for gifts and merits
+        stat_type = stat_data.get('stat_type', 'other')
+        if stat_type == 'gift' or (stat_type in ['physical', 'social', 'mental', 'supernatural'] and stat_data.get('category') == 'merits'):
+            shifter_type = stat_data.get('shifter_type', [])
+            if isinstance(shifter_type, str):
+                shifter_type = [shifter_type]
+            elif not isinstance(shifter_type, list):
+                shifter_type = []
+        else:
+            shifter_type = None
+
         # Create or update the stat using both name and stat_type as unique identifiers
         try:
-            stat_type = stat_data.get('stat_type', 'other')
             stat, created = Stat.objects.update_or_create(
                 name=name,
                 stat_type=stat_type,  # Add stat_type to unique identifier
@@ -117,14 +186,27 @@ class Command(BaseCommand):
                     'instanced': stat_data.get('instanced', False),
                     'default': stat_data.get('default'),
                     'xp_cost': stat_data.get('xp_cost', 0),
-                    'prerequisites': stat_data.get('prerequisites', [])
+                    'prerequisites': stat_data.get('prerequisites', []),
+                    'shifter_type': shifter_type,
+                    'gift_alias': stat_data.get('gift_alias', []),
+                    'tribe': stat_data.get('tribe', []),
+                    'breed': stat_data.get('breed', ''),
+                    'auspice': stat_data.get('auspice', ''),
+                    'camp': stat_data.get('camp', ''),
                 }
             )
 
+            self.processed_stats += 1
             action = 'Created' if created else 'Updated'
-            self.stdout.write(self.style.SUCCESS(f'{action} stat: {name} ({stat_type})'))
+            self.stdout.write(self.style.SUCCESS(f'{action} stat: {name}'))
         except Exception as e:
-            self.stdout.write(self.style.ERROR(f'Error creating/updating stat {name}: {str(e)}'))
+            self.failed_stats.append({
+                'name': name,
+                'file': file_path,
+                'error': str(e)
+            })
+            self.failed_count += 1
+            self.stdout.write(self.style.ERROR(f'Error saving stat {name}: {str(e)}'))
 
     def handle_ability(self, ability_data):
         """Handle loading an ability stat"""
@@ -155,6 +237,13 @@ class Command(BaseCommand):
 
     def handle_gift(self, gift_data):
         """Handle loading a gift stat"""
+        # Get shifter_type from the data, ensuring it's a list
+        shifter_type = gift_data.get('shifter_type', [])
+        if isinstance(shifter_type, str):
+            shifter_type = [shifter_type]
+        elif not isinstance(shifter_type, list):
+            shifter_type = []
+
         stat, created = Stat.objects.get_or_create(
             name=gift_data['name'],
             defaults={
@@ -165,11 +254,12 @@ class Command(BaseCommand):
                 'values': gift_data.get('values', {}),
                 'splat_specific': gift_data.get('splat_specific', False),
                 'allowed_splats': gift_data.get('allowed_splats', {}),
-                'shifter_type': gift_data.get('shifter_type', ''),
+                'shifter_type': shifter_type,
                 'splat': gift_data.get('splat', ''),
                 'tribe': gift_data.get('tribe', ''),
                 'camp': gift_data.get('camp', ''),
-                'system': gift_data.get('system','')
+                'system': gift_data.get('system', ''),
+                'gift_alias': gift_data.get('gift_alias', [])
             }
         )
         
@@ -182,9 +272,10 @@ class Command(BaseCommand):
             stat.values = gift_data.get('values', {})
             stat.splat_specific = gift_data.get('splat_specific', False)
             stat.allowed_splats = gift_data.get('allowed_splats', {})
-            stat.shifter_type = gift_data.get('shifter_type', '')
+            stat.shifter_type = shifter_type
             stat.splat = gift_data.get('splat', '')
             stat.tribe = gift_data.get('tribe', '')
             stat.camp = gift_data.get('camp', '')
             stat.system = gift_data.get('system', '')
+            stat.gift_alias = gift_data.get('gift_alias', [])
             stat.save()

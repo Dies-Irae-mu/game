@@ -6,10 +6,9 @@ from world.wod20th.models import Stat
 from world.wod20th.utils.stat_mappings import ARTS, REALMS
 from typing import Dict, List, Set, Tuple
 
-# Valid seemings
-SEEMING = {'Childling', 'Wilder', 'Grump'}
+SEEMING = {'Childling', 'Wilder', 'Grump', 'Youngling', 'Brave', 'Elder'}
 
-FAE_COURTS = {'Seelie Court', 'Unseelie Court', 'Shadow Court'}
+FAE_COURTS = {'Seelie Court', 'Unseelie Court'}
 
 HOUSES = {
     "Beaumayn", "Dougal", "Eiluned", "Fiona", "Gwydion", "Liam", 
@@ -17,25 +16,24 @@ HOUSES = {
     "Leanhaun", "Varich"
 }
 
-# Valid kiths
 KITH = {
     'Boggan', 'Clurichaun', 'Eshu', 'Nocker', 'Piskie', 'Pooka', 'Redcap', 'Satyr', 
-    'Selkie', 'Arcadian Sidhe', 'Autumn Sidhe', 'Sluagh', 'Troll', 'Nunnehi', 'Inanimae'
+    'Selkie', 'Arcadian Sidhe', 'Autumn Sidhe', 'Sluagh', 'Troll', 'Nunnehi', 'Inanimae',
+    'Korred', 'River Hag', 'Swan Maiden', 'Encantado', 'Sachamama', 'Morganed', 'Alicanto',
+    'Boraro', 'Llorona', 'Merfolk', 'Wichtel', 'Wolpertinger'
 }
 
-# Seelie legacies
 SEELIE_LEGACIES = {
     'Bumpkin', 'Courtier', 'Crafter', 'Dandy', 'Hermit', 'Orchid', 'Paladin', 'Panderer', 
     'Regent', 'Sage', 'Saint', 'Squire', 'Troubadour', 'Wayfarer'
 }
 
-# Unseelie legacies
 UNSEELIE_LEGACIES = {
     'Beast', 'Fatalist', 'Fool', 'Grotesque', 'Knave', 'Outlaw', 'Pandora', 'Peacock', 'Rake', 'Riddler', 
     'Ringleader', 'Rogue', 'Savage', 'Wretch'
 }
 
-# Kinain legacies
+#Kinain use all legacies for their legacy 1 and legacy 2 stats regardless of court.
 KINAIN_LEGACIES = {
     'Bumpkin', 'Courtier', 'Crafter', 'Dandy', 'Hermit', 'Orchid', 'Paladin', 'Panderer', 
     'Regent', 'Sage', 'Saint', 'Squire', 'Troubadour', 'Wayfarer', 'Beast', 'Fatalist', 
@@ -45,12 +43,7 @@ KINAIN_LEGACIES = {
 
 # Phyla (for Inanimae)
 PHYLA = {
-    'Kuberas': 'Earth',
-    'Ondines': 'Water',
-    'Parosemes': 'Air',
-    'Glomes': 'Stone',
-    'Solimonds': 'Fire',
-    'Mannikins': 'Artificial'
+    'Kuberas', 'Ondines', 'Parosemes', 'Glomes', 'Solimonds', 'Mannikins'
 }
 
 # Powers available to each Inanimae phyla
@@ -84,22 +77,20 @@ NUNNEHI_FAMILY = {
     'Inuas',
     'Kachinas',
     'May-may-gwya-shi',
-    'Nanehi',
     "Numuzo'ho",
-    "Pu'gwis",
     'Rock giants',
     'Surems',
-    'Thought-crafters',
-    'Tunghat',
     'Water Babies',
     "Yunwi Amai'yine'hi",
     'Yunwi Tsundsi'
 }
 
 SUMMER_LEGACIES = {
-    'Chief', 'Grower', 'Healer', 'Hunter', 'Mker', 'Scout', 'Spiritguide', 'Storyteller', 'Warrior', 'Wise One'
+    'Chief', 'Grower', 'Healer', 'Hunter', 'Maker', 'Scout', 'Spiritguide', 'Storyteller', 'Warrior', 'Wise One'
     }
-
+MIDSEASON_LEGACIES = {
+    'Trickster', 'Watcher'
+}
 WINTER_LEGACIES = {
     'Cannibal', 'Fool', 'Forked-Tongue', 'Hoarder', 'Outcast', 'Raider', 'Scalp-Taker', 'Spoiler', 'Troublemaker', 'Witch'
 }
@@ -580,3 +571,34 @@ def validate_changeling_backgrounds(character, background_name: str, value: str)
         return True, ""
     except ValueError:
         return False, "Background values must be numbers"
+
+def update_changeling_pools_on_stat_change(character, stat_name: str, new_value: str) -> None:
+    """
+    Update changeling pools when relevant stats change.
+    Called by CmdSelfStat after setting stats.
+    """
+    stat_name = stat_name.lower()
+    
+    # Handle Seeming changes
+    if stat_name == 'seeming':
+        old_seeming = character.get_stat('identity', 'lineage', 'Seeming', temp=False)
+        adjust_pools_for_seeming(character, old_seeming, new_value)
+    
+    # Handle Kith changes
+    elif stat_name == 'kith':
+        # Get default Banality based on kith
+        banality = get_default_banality('Changeling', subtype=new_value)
+        if banality:
+            character.set_stat('pools', 'dual', 'Banality', banality, temp=False)
+            character.set_stat('pools', 'dual', 'Banality', banality, temp=True)
+            character.msg(f"|gBanality set to {banality} for {new_value}.|n")
+    
+    # Handle House changes for Kinain
+    elif stat_name == 'house':
+        splat = character.get_stat('other', 'splat', 'Splat', temp=False)
+        char_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+        if splat == 'Mortal+' and char_type == 'Kinain':
+            # Kinain get Glamour 2 by default
+            character.set_stat('pools', 'dual', 'Glamour', 2, temp=False)
+            character.set_stat('pools', 'dual', 'Glamour', 2, temp=True)
+            character.msg("|gGlamour set to 2 for Kinain.|n")

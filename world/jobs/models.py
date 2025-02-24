@@ -127,6 +127,7 @@ Comments:
         """Mark the job as viewed by an account."""
         if not self.last_viewed:
             self.last_viewed = {}
+        # Store as timezone-aware ISO format string
         self.last_viewed[str(account.id)] = timezone.now().isoformat()
         self.save()
 
@@ -136,22 +137,28 @@ Comments:
             return True
             
         last_viewed = timezone.datetime.fromisoformat(self.last_viewed[str(account.id)])
+        # Ensure last_viewed is timezone-aware
+        if timezone.is_naive(last_viewed):
+            last_viewed = timezone.make_aware(last_viewed)
         
         # Check if any comments were added after last view
         if self.comments:
             latest_comment = max(
-                timezone.datetime.fromisoformat(comment['created_at']) 
+                timezone.make_aware(timezone.datetime.fromisoformat(comment['created_at']))
+                if timezone.is_naive(timezone.datetime.fromisoformat(comment['created_at']))
+                else timezone.datetime.fromisoformat(comment['created_at'])
                 for comment in self.comments
             )
             if latest_comment > last_viewed:
                 return True
                 
         # Check if status changed after last view
-        if self.closed_at and self.closed_at > last_viewed:
-            return True
-            
-        # Check if assignee changed after last view
-        # Note: This would require adding a modified_at field to track such changes
+        if self.closed_at:
+            closed_at = self.closed_at
+            if timezone.is_naive(closed_at):
+                closed_at = timezone.make_aware(closed_at)
+            if closed_at > last_viewed:
+                return True
         
         return False
 

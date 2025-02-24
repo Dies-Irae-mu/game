@@ -6,7 +6,7 @@
         "category": "merits",
         "stat_type": "physical",
         "values": [1],
-        "shifter_type": "Garou",
+        "splat": "Shifter",
         "source": "W20 p. 472"
     },
     {
@@ -17,7 +17,6 @@
         "stat_type": "physical",
         "values": [1, 5],
         "splat": "Shifter",
-        "shifter_type": "Garou",
         "source": "W20 p. 472"
     },
     {
@@ -28,7 +27,7 @@
         "stat_type": "physical",
         "values": [1],
         "splat": "Shifter",
-        "shifter_type": "Garou",
+        "shifter_type": ["Garou", "Nuwisha"],
         "source": "W20 p. 472"
     },
     {
@@ -39,7 +38,6 @@
         "stat_type": "physical",
         "values": [2],
         "splat": "Shifter",
-        "shifter_type": "Garou",
         "source": "W20 p. 472"
     },
     {
@@ -50,7 +48,7 @@
         "stat_type": "physical",
         "values": [2],
         "splat": "Shifter",
-        "shifter_type": "Garou",
+        "shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Nuwisha", "Rokea"],
         "source": "W20 p. 472"
     },
     {
@@ -60,17 +58,7 @@
         "category": "merits",
         "stat_type": "physical",
         "values": [2],
-        "shifter_type": "Garou",
-        "source": "W20 p. 472"
-    },
-    {
-        "name": "Physically Impressive",
-        "description": "You appear dangerous both in outward demeanor and in physical bearing, and exude a confidence that impresses opponents. Add one die to all Social rolls that involve intimidation.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "merits",
-        "stat_type": "physical",
-        "values": [2],
-        "shifter_type": "Garou",
+        "splat": "Shifter",
         "source": "W20 p. 472"
     },
     {
@@ -80,7 +68,7 @@
         "category": "merits",
         "stat_type": "physical",
         "values": [3],
-        "shifter_type": "Garou",
+        "splat": "Shifter",
         "source": "W20 p. 472-3"
     },
     {
@@ -91,16 +79,6 @@
         "stat_type": "physical",
         "values": [3, 4],
         "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 473"
-    },
-    {
-        "name": "Huge Size",
-        "description": "You stand close to 7' tall and may weigh as much as 400 pounds in your Homid form; your other forms are also proportionately huge. This Merit gives you an extra health level, which acts as an additional Bruised health level for purposes of calculating damage and wound penalties. Of course, with your immense size comes other problems (blending into a crowd, finding clothes that fit, fitting into an airplane seat, etc.).",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "merits",
-        "stat_type": "physical",
-        "values": [4],
         "source": "W20 p. 473"
     },
     {
@@ -111,7 +89,6 @@
         "stat_type": "physical",
         "values": [7],
         "splat": "Shifter",
-        "shifter_type": "Garou",
         "source": "W20 p. 473"
     },
     {
@@ -121,17 +98,7 @@
         "category": "merits",
         "stat_type": "mental",
         "values": [2],
-        "shifter_type": "Garou",
-        "source": "W20 p. 476"
-    },
-    {
-        "name": "Code of Honor",
-        "description": "You have a rigid personal code of ethics to which you adhere. The specifics of this code must be worked out with the Storyteller prior to play, and the character must follow it strictly. Characters with this Merit gain two additional dice to all Willpower rolls when acting in accordance with their code (e.g., defending the helpless) or when attempting to avoid violating their code. You may choose something already established (the Litany is a common Code of Honor amongst Garou) or create your own list of moral and ethical dos and don'ts with your Storyteller's approval.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "merits",
-        "stat_type": "mental",
-        "values": [2],
-        "shifter_type": "Garou",
+        "splat": "Shifter",
         "source": "W20 p. 476"
     },
     {
@@ -141,7 +108,7 @@
         "category": "merits",
         "stat_type": "mental",
         "values": [2],
-        "shifter_type": "Garou",
+        "splat": "Shifter",
         "source": "W20 p. 476"
     },
     {
@@ -152,7 +119,6 @@
         "stat_type": "mental",
         "values": [5],
         "splat": "Shifter",
-        "shifter_type": "Garou",
         "source": "W20 p. 476"
     },
     {
@@ -163,19 +129,8 @@
         "stat_type": "social",
         "values": [1],
         "splat": "Shifter",
-        "shifter_type": "Garou",
+        "shifter_type": ["Garou", "Corax", "Nuwisha"], 
         "source": "W20 p. 479-80"
-    },
-    {
-        "name": "Animal Magnetism",
-        "description": "Others of your breed (humans if you're homid, wolves if you're lupus; metis should pick either humans or wolves, not Garou) find you especially attractive. Your rolls to attract, persuade, charm, or seduce those individuals is at –2 difficulty. This effect does not apply to threatening or intimidating actions.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "merits",
-        "stat_type": "social",
-        "values": [2],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 480"
     },
     {
         "name": "Notable Heritage",
@@ -185,7 +140,6 @@
         "stat_type": "social",
         "values": [2],
         "splat": "Shifter",
-        "shifter_type": "Garou",
         "source": "W20 p. 480"
     },
     {
@@ -196,7 +150,7 @@
         "stat_type": "social",
         "values": [2],
         "splat": "Shifter",
-        "shifter_type": "Garou",
+	"shifter_type": ["Garou", "Nuwisha"],
         "source": "W20 p. 480"
     },
     {
@@ -207,7 +161,6 @@
         "stat_type": "supernatural",
         "values": [1],
         "splat": "Shifter",
-        "shifter_type": "Garou",
         "source": "W20 p. 482"
     },
     {
@@ -218,7 +171,7 @@
         "stat_type": "supernatural",
         "values": [1],
         "splat": "Shifter",
-        "shifter_type": "Garou",
+        "shifter_type": ["Garou", "Gurahl", "Nuwisha", "Rokea"],
         "source": "W20 p. 482"
     },
     {
@@ -229,7 +182,6 @@
         "stat_type": "supernatural",
         "values": [1],
         "splat": "Shifter",
-        "shifter_type": "Garou",
         "source": "W20 p. 482"
     },
     {
@@ -240,7 +192,6 @@
         "stat_type": "supernatural",
         "values": [6],
         "splat": "Shifter",
-        "shifter_type": "Garou",
         "source": "W20 p. 483"
     },
     {
@@ -251,7 +202,6 @@
         "stat_type": "supernatural",
         "values": [7],
         "splat": "Shifter",
-        "shifter_type": "Garou",
         "source": "W20 p. 483"
     }
 ] 
