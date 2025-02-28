@@ -74,7 +74,7 @@ REQUIRED_INSTANCES = ['Library', 'Status', 'Influence', 'Wonder', 'Secret Weapon
                       'Sphere Natural', 'Phobia', 'Addiction', 'Allies', 'Contacts', 'Caretaker',
                       'Alternate Identity', 'Equipment', 'Professional Certification', 'Allergic',
                       'Impediment', 'Enemy', 'Mentor', 'Old Flame', 'Additional Discipline', 
-                      'Totem']
+                      'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish']
 
 class CmdStats(MuxCommand):
     """
@@ -811,7 +811,7 @@ class CmdStats(MuxCommand):
                         original_name = self.stat_name
                         # Update to canonical name
                         self.stat_name = g.name
-                        self.alias_used = original_name
+                        self.alias_used = original_name  # This is correctly storing the original alias
                         # Notify about the alias
                         original_caller.msg(f"|y'{original_name}' is an alias for the gift '{g.name}'.|n")
                         break
@@ -1462,6 +1462,9 @@ class CmdStats(MuxCommand):
         """
         # Store original caller for notifications
         original_caller = self.caller
+        
+        # Define full_stat_name based on instance (we'll update this if needed)
+        full_stat_name = f"{stat_name}({self.instance})" if hasattr(self, 'instance') and self.instance else stat_name
 
         try:
             # Get character's splat and type
@@ -1474,9 +1477,11 @@ class CmdStats(MuxCommand):
                 return
             
             # If this is a stat with an instance, combine them for storage
-            if self.instance and self._should_support_instance(stat_name, category):
-                stat_name = f"{stat_name}({self.instance})"
-                
+            if hasattr(self, 'instance') and self.instance and self._should_support_instance(stat_name, category):
+                full_stat_name = f"{stat_name}({self.instance})"
+            else:
+                full_stat_name = stat_name
+            
             # Handle increment/decrement
             if isinstance(value, str) and (value.startswith('+') or value.startswith('-')):
                 # Get current value
@@ -1548,6 +1553,8 @@ class CmdStats(MuxCommand):
 
                     # Notify both staff and target
                     self.caller.msg(f"|gSet {stat_name} to {virtue_value} for {self.target.name}.|n")
+                    # Add standard update message
+                    original_caller.msg(f"|gUpdated {self.target.name}'s {stat_name} to {virtue_value}.|n")
                     if self.target != self.caller:
                         self.target.msg(f"|g{self.caller.name} set your {stat_name} to {virtue_value}.|n")
                     return
@@ -1602,40 +1609,8 @@ class CmdStats(MuxCommand):
                                 del self.target.db.stats['backgrounds']['background'][stat_name.title()]
                         return
             
-            # Special handling for gifts to store aliases
-            if category == 'powers' and stat_type == 'gift':
-                # Check if we're using an alias
-                is_alias, canonical_name = self._check_gift_alias(stat_name)
-                if is_alias:
-                    # Use the canonical name for storage
-                    alias_used = getattr(self, 'alias_used', stat_name)
-                    
-                    # Initialize powers.gift if needed
-                    if 'powers' not in self.target.db.stats:
-                        self.target.db.stats['powers'] = {}
-                    if 'gift' not in self.target.db.stats['powers']:
-                        self.target.db.stats['powers']['gift'] = {}
-                    
-                    # Store the gift with its value
-                    try:
-                        gift_value = int(value)
-                        self.target.db.stats['powers']['gift'][canonical_name] = {
-                            'perm': gift_value,
-                            'temp': gift_value
-                        }
-                        
-                        # Store the alias using the new method
-                        self.target.set_gift_alias(canonical_name, alias_used, gift_value)
-                        
-                        # Notify both staff and target
-                        self.caller.msg(f"|gSet gift {canonical_name} (alias: {alias_used}) to {gift_value} for {self.target.name}.|n")
-                        if self.target != self.caller:
-                            self.target.msg(f"|g{self.caller.name} set your gift {canonical_name} (alias: {alias_used}) to {gift_value}.|n")
-                    except ValueError:
-                        self.caller.msg("|rGift value must be a number.|n")
-                    return
-                
-                # Regular gift (no alias)
+            # Special handling for gifts to store the alias used
+            if category == 'powers' and stat_type == 'gift' and hasattr(self, 'alias_used'):
                 # Initialize powers.gift if needed
                 if 'powers' not in self.target.db.stats:
                     self.target.db.stats['powers'] = {}
@@ -1650,13 +1625,43 @@ class CmdStats(MuxCommand):
                         'temp': gift_value
                     }
                     
-                    # Store the alias (same as stat_name)
+                    # Store the alias using the new method
+                    self.target.set_gift_alias(stat_name, self.alias_used, gift_value)
+                    
+                    # Send message to staff (original caller)
+                    original_caller.msg(f"|gSet gift {stat_name} to {gift_value} for {self.target.name}.|n")
+                    # Send message to target mentioning the staff member's name
+                    self.target.msg(f"|g{original_caller.name} set your gift {stat_name} to {gift_value}.|n")
+                except ValueError:
+                    self.caller.msg("|rGift value must be a number.|n")
+                    
+                return
+                        
+            # Regular gift (no alias)
+            if category == 'powers' and stat_type == 'gift' and not hasattr(self, 'alias_used'):
+                # Initialize powers.gift if needed
+                if 'powers' not in self.target.db.stats:
+                    self.target.db.stats['powers'] = {}
+                if 'gift' not in self.target.db.stats['powers']:
+                    self.target.db.stats['powers']['gift'] = {}
+                
+                # Store the gift with its value
+                try:
+                    gift_value = int(value)
+                    self.target.db.stats['powers']['gift'][stat_name] = {
+                        'perm': gift_value,
+                        'temp': gift_value
+                    }
+                    
+                    # Store the canonical name as its own alias in the gift_aliases attribute
                     self.target.set_gift_alias(stat_name, stat_name, gift_value)
                     
                     # Notify both staff and target
-                    self.caller.msg(f"|gSet gift {stat_name} to {gift_value} for {self.target.name}.|n")
-                    if self.target != self.caller:
-                        self.target.msg(f"|g{self.caller.name} set your gift {stat_name} to {gift_value}.|n")
+                    original_caller.msg(f"|gSet gift {stat_name} to {gift_value} for {self.target.name}.|n")
+                    # Add standard update message
+                    original_caller.msg(f"|gUpdated {self.target.name}'s gift '{stat_name}' to {gift_value}.|n")
+                    # Message to target
+                    self.target.msg(f"|g{original_caller.name} set your gift {stat_name} to {gift_value}.|n")
                 except ValueError:
                     self.caller.msg("|rGift value must be a number.|n")
                 return
@@ -1664,6 +1669,18 @@ class CmdStats(MuxCommand):
             # Set the main stat values, then handle special cases
             self.target.set_stat(category, stat_type, stat_name, value, temp=False)
             self.target.set_stat(category, stat_type, stat_name, value, temp=True)
+            
+            # If this was a gift alias and we've already handled the database storage, make sure the gift_aliases attribute is set correctly
+            if category == 'powers' and stat_type == 'gift' and hasattr(self, 'alias_used') and self.alias_used:
+                # Initialize gift_aliases attribute if it doesn't exist
+                if not self.target.attributes.has('gift_aliases'):
+                    self.target.db.gift_aliases = {}
+                    
+                # Store the alias mapping
+                self.target.db.gift_aliases[stat_name] = {
+                    'alias': self.alias_used,
+                    'value': value
+                }
             
             # Update pools based on splat type
             if splat == 'Shifter':
@@ -1736,6 +1753,8 @@ class CmdStats(MuxCommand):
                         
                         # Notify both staff and target
                         self.caller.msg(f"|gSet merit {stat_name} to {merit_value} for {self.target.name}.|n")
+                        # Add standard update message
+                        original_caller.msg(f"|gUpdated {self.target.name}'s merit '{stat_name}' to {merit_value}.|n")
                         if self.target != self.caller:
                             self.target.msg(f"|g{self.caller.name} set your merit {stat_name} to {merit_value}.|n")
                         return
@@ -1795,6 +1814,8 @@ class CmdStats(MuxCommand):
                     
                     # Notify both staff and target
                     self.caller.msg(f"|gSet flaw {stat_name} to {flaw_value} for {self.target.name}.|n")
+                    # Add standard update message
+                    original_caller.msg(f"|gUpdated {self.target.name}'s flaw '{stat_name}' to {flaw_value}.|n")
                     if self.target != self.caller:
                         self.target.msg(f"|g{self.caller.name} set your flaw {stat_name} to {flaw_value}.|n")
                     return
@@ -1815,6 +1836,8 @@ class CmdStats(MuxCommand):
                 
                 # Notify both staff and target
                 self.caller.msg(f"|gSet {stat_name} to {value} for {self.target.name}.|n")
+                # Add standard update message
+                original_caller.msg(f"|gUpdated {self.target.name}'s {stat_name} to {value}.|n")
                 if self.target != self.caller:
                     self.target.msg(f"|g{self.caller.name} set your {stat_name} to {value}.|n")
                 return
@@ -1834,6 +1857,8 @@ class CmdStats(MuxCommand):
                     
                     # Notify both staff and target
                     self.caller.msg(f"|gSet {stat_name} pool to {pool_value} for {self.target.name}.|n")
+                    # Add standard update message
+                    original_caller.msg(f"|gUpdated {self.target.name}'s {stat_name} pool to {pool_value}.|n")
                     if self.target != self.caller:
                         self.target.msg(f"|g{self.caller.name} set your {stat_name} pool to {pool_value}.|n")
                     return
@@ -1843,6 +1868,8 @@ class CmdStats(MuxCommand):
             
             # Default message for regular stats
             self.caller.msg(f"|gSet {stat_name} to {value} for {self.target.name}.|n")
+            # Add standard update message
+            original_caller.msg(f"|gUpdated {self.target.name}'s {category}.{stat_type}.{stat_name} to {value}.|n")
             if self.target != self.caller:
                 self.target.msg(f"|g{self.caller.name} set your {stat_name} to {value}.|n")
             
@@ -1853,33 +1880,34 @@ class CmdStats(MuxCommand):
             return
 
         # Set the stat in the character's stats dict
-        self.caller.set_stat(self.category, self.stat_type, self.stat_name, new_value, temp=False)
-        self.caller.set_stat(self.category, self.stat_type, self.stat_name, new_value, temp=True)
+        self.caller.set_stat(self.category, self.stat_type, self.stat_name, value, temp=False)
+        self.caller.set_stat(self.category, self.stat_type, self.stat_name, value, temp=True)
         
         # If this was a gift alias, save it in the character's gift_aliases attribute
         if self.category == 'powers' and self.stat_type == 'gift' and hasattr(self, 'alias_used') and self.alias_used:
-            # Initialize gift_aliases attribute if it doesn't exist
-            if not self.target.attributes.has('gift_aliases'):
-                self.target.db.gift_aliases = {}
-                
-            # Store the alias mapping
-            self.target.db.gift_aliases[self.stat_name] = {
-                'alias': self.alias_used,
-                'value': new_value
-            }
+            # Store the alias using the set_gift_alias method
+            self.target.set_gift_alias(self.stat_name, self.alias_used, value)
             
             # Make sure the message shows both original and canonical names
-            original_caller.msg(f"|gSet gift {self.stat_name} to {new_value}.|n")
+            original_caller.msg(f"|gSet gift {self.stat_name} to {value}.|n")
+            # Add standard update message
+            original_caller.msg(f"|gUpdated {self.target.name}'s gift '{self.stat_name}' to {value}.|n")
+            # Add message to target
+            self.target.msg(f"|g{original_caller.name} set your gift {self.stat_name} to {value}.|n")
             return
         
         # Update any related stats
-        self._update_related_stats(self.stat_name, new_value)
+        self._update_dependent_stats(self.stat_name, value)
         
         # Show success message
         if full_stat_name != self.stat_name:
-            self.caller.msg(f"|gSet {full_stat_name} to {new_value}.|n")
+            self.caller.msg(f"|gSet {full_stat_name} to {value}.|n")
+            # Add standard update message
+            original_caller.msg(f"|gUpdated {self.target.name}'s {full_stat_name} to {value}.|n")
         else:
-            self.caller.msg(f"|gSet {self.category}.{self.stat_type}.{self.stat_name} to {new_value}.|n")
+            self.caller.msg(f"|gSet {self.category}.{self.stat_type}.{self.stat_name} to {value}.|n")
+            # Add standard update message
+            original_caller.msg(f"|gUpdated {self.target.name}'s {self.stat_name} to {value}.|n")
 
     def detect_ability_category(self, stat_name: str) -> tuple[str, str]:
         """
@@ -2434,25 +2462,15 @@ class CmdStats(MuxCommand):
                     else:
                         self.caller.msg(f"|y'{matched_alias}' is the {char_type} name for the Garou gift '{gift.name}'. Setting '{gift.name}' to {self.value_change}.|n")
                         
-                        # Store the alias in the character's gift_aliases attribute
-                        if not self.target.attributes.has('gift_aliases'):
-                            self.target.db.gift_aliases = {}
-                            
-                        self.target.db.gift_aliases[gift.name] = {
-                            'alias': matched_alias,
-                            'value': self.value_change
-                        }
+                        # Use set_gift_alias method for consistent handling
+                        # Important: Use the ORIGINAL gift name that was entered by the user
+                        self.target.set_gift_alias(gift.name, gift_name, self.value_change)
                 else:
                     self.caller.msg(f"|y'{matched_alias}' is also known as '{gift.name}'. Setting '{gift.name}' to {self.value_change}.|n")
                     
-                    # Store the alias in the character's gift_aliases attribute
-                    if not self.target.attributes.has('gift_aliases'):
-                        self.target.db.gift_aliases = {}
-                        
-                    self.target.db.gift_aliases[gift.name] = {
-                        'alias': matched_alias,
-                        'value': self.value_change
-                    }
+                    # Use set_gift_alias method for consistent handling
+                    # Important: Use the ORIGINAL gift name that was entered by the user
+                    self.target.set_gift_alias(gift.name, gift_name, self.value_change)
             return True, gift.name
             
         return False, None

@@ -281,7 +281,8 @@ class CmdCheck(MuxCommand):
 
             # Check secondary abilities category
             secondary_category = f'secondary_{category}'
-            secondary_abilities_dict = character.db.stats.get('secondary_abilities', {}).get(secondary_category, {})
+            # Fix: Get secondary abilities from the correct path - inside the abilities dictionary
+            secondary_abilities_dict = character.db.stats.get('abilities', {}).get('secondary_abilities', {}).get(secondary_category, {})
             for ability, values in secondary_abilities_dict.items():
                 ability_value = values.get('perm', 0)
                 if ability_value > 0:
@@ -817,7 +818,8 @@ class CmdCheck(MuxCommand):
             
             # Secondary abilities (count as half points)
             secondary_category = f'secondary_{category}'
-            secondary_abilities = character.db.stats.get('secondary_abilities', {}).get(secondary_category, {})
+            # Fix: Get secondary abilities from the correct path - inside the abilities dictionary
+            secondary_abilities = character.db.stats.get('abilities', {}).get('secondary_abilities', {}).get(secondary_category, {})
             for ability, values in secondary_abilities.items():
                 ability_value = values.get('perm', 0)
                 total += ability_value * 0.5
@@ -1106,9 +1108,10 @@ class CmdCheck(MuxCommand):
         knowledge_total = sum(values.get('perm', 0) for values in character.db.stats.get('abilities', {}).get('knowledge', {}).values())
 
         # Calculate secondary ability totals
-        sec_talent_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('secondary_abilities', {}).get('secondary_talent', {}).values())
-        sec_skill_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('secondary_abilities', {}).get('secondary_skill', {}).values())
-        sec_knowledge_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('secondary_abilities', {}).get('secondary_knowledge', {}).values())
+        # Fix: Access secondary abilities from the correct path
+        sec_talent_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('abilities', {}).get('secondary_abilities', {}).get('secondary_talent', {}).values())
+        sec_skill_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('abilities', {}).get('secondary_abilities', {}).get('secondary_skill', {}).values())
+        sec_knowledge_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('abilities', {}).get('secondary_abilities', {}).get('secondary_knowledge', {}).values())
 
         # Combined totals
         total_talent = talent_total + sec_talent_total

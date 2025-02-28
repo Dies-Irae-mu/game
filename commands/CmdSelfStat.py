@@ -74,7 +74,7 @@ REQUIRED_INSTANCES = ['Library', 'Status', 'Influence', 'Wonder', 'Secret Weapon
                       'Sphere Natural', 'Phobia', 'Addiction', 'Allies', 'Contacts', 'Caretaker',
                       'Alternate Identity', 'Equipment', 'Professional Certification', 'Allergic',
                       'Impediment', 'Enemy', 'Mentor', 'Old Flame', 'Additional Discipline', 
-                      'Totem'] 
+                      'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish'] 
 class CmdSelfStat(MuxCommand):
     """
     Usage:
@@ -999,6 +999,10 @@ class CmdSelfStat(MuxCommand):
                 if len(instance_parts) > 1 and '/' in instance_parts[1]:
                     category_part = instance_parts[1].split('/', 1)[1].strip()
                     self.map_category_and_type(category_part)
+                    
+                    # If category mapping failed, exit early
+                    if not self.category or not self.stat_type:
+                        return
                 else:
                     # No category specified, detect based on stat name
                     self.detect_category_and_type()
@@ -1009,6 +1013,10 @@ class CmdSelfStat(MuxCommand):
                     self.stat_name = parts[0].strip()
                     category_part = parts[1].strip()
                     self.map_category_and_type(category_part)
+                    
+                    # If category mapping failed, exit early
+                    if not self.category or not self.stat_type:
+                        return
                 else:
                     self.stat_name = first_part.strip()
                     # No category specified, detect based on stat name
@@ -1074,10 +1082,14 @@ class CmdSelfStat(MuxCommand):
         if stat_lower == 'rank':
             splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
             if splat and splat.lower() == 'shifter':
-                return 'identity', 'lineage'
+                self.category = 'identity'
+                self.stat_type = 'lineage'
+                return
             # If not a shifter, treat as Organizational Rank background
             self.stat_name = 'Organizational Rank'
-            return 'backgrounds', 'background'
+            self.category = 'backgrounds'
+            self.stat_type = 'background'
+            return
 
         category_or_type = category_or_type.lower()
         
@@ -1202,6 +1214,11 @@ class CmdSelfStat(MuxCommand):
         # Try exact match first
         if category_or_type in category_map:
             self.category, self.stat_type = category_map[category_or_type]
+            
+            # Validate that the stat belongs in this category
+            if not self._validate_stat_in_category(self.stat_name, self.category, self.stat_type):
+                # Don't set category/type to None here - let _validate_stat_in_category handle redirection
+                return
             return
             
         # Try case-insensitive match
@@ -1209,18 +1226,280 @@ class CmdSelfStat(MuxCommand):
         for key, value in category_map.items():
             if key.lower() == category_or_type_lower:
                 self.category, self.stat_type = value
-                return
                 
-        # If not found in map, try to determine from STAT_TYPE_TO_CATEGORY
-        for category, subcats in STAT_TYPE_TO_CATEGORY.items():
-            if category_or_type_lower in subcats:
-                self.category = category
-                self.stat_type = category_or_type_lower
+                # Validate that the stat belongs in this category
+                if not self._validate_stat_in_category(self.stat_name, self.category, self.stat_type):
+                    # Don't set category/type to None here - let _validate_stat_in_category handle redirection
+                    return
                 return
                 
         # If still not found, set both and let validation handle errors
         self.category = category_or_type
         self.stat_type = category_or_type
+
+    def _validate_stat_in_category(self, stat_name: str, category: str, stat_type: str) -> bool:
+        """
+        Validate that a stat belongs in the specified category and type.
+        
+        Args:
+            stat_name: The name of the stat to check
+            category: The category to check against
+            stat_type: The stat type to check against
+            
+        Returns:
+            bool: True if the stat belongs in the category/type, False otherwise
+        """
+        # Convert to title case for consistent comparison
+        stat_title = stat_name.title()
+        stat_lower = stat_name.lower()
+        
+        # First check the database for an exact match
+        from world.wod20th.models import Stat
+        stat = Stat.objects.filter(name__iexact=stat_name).first()
+        if stat:
+            # If we find the stat in the database, check if it matches the specified category/type
+            if stat.category == category and stat.stat_type == stat_type:
+                return True
+            elif stat.category and stat.stat_type:
+                # If it exists but in a different category, suggest the correct one
+                self.caller.msg(f"|rError: Stat '{stat_name}' belongs in category '{stat.category}' with type '{stat.stat_type}', not '{category}.{stat_type}'.|n")
+                
+                # Auto-correct the category and type if the stat exists in the database
+                self.category = stat.category
+                self.stat_type = stat.stat_type
+                self.caller.msg(f"|yAutomatically redirecting to correct category. Setting '{stat_name}' as a {stat.category}.{stat.stat_type} instead.|n")
+                return True  # Return True to allow the stat to be set in the correct category
+        
+        # Check common problem stats
+        common_problem_stats = {
+            'lucid dreaming': ('abilities', 'talent'),
+            'mother\'s touch': ('abilities', 'talent'),
+            'outsider': ('flaws', 'mental'),
+            'calm heart': ('merits', 'mental'),
+            'herbalism': ('abilities', 'secondary_knowledge'),
+            'mimicry': ('abilities', 'secondary_talent'),
+            'scrounging': ('abilities', 'secondary_talent'),
+            'archery': ('abilities', 'secondary_skill'),
+            'jury-rigging': ('abilities', 'secondary_skill')
+        }
+        
+        if stat_lower in common_problem_stats:
+            correct_cat, correct_type = common_problem_stats[stat_lower]
+            if category == correct_cat and stat_type == correct_type:
+                return True
+            else:
+                self.caller.msg(f"|rError: Stat '{stat_name}' belongs in category '{correct_cat}' with type '{correct_type}', not '{category}.{stat_type}'.|n")
+                
+                # Auto-correct the category and type
+                self.category = correct_cat
+                self.stat_type = correct_type
+                self.caller.msg(f"|yAutomatically redirecting to correct category. Setting '{stat_name}' as a {correct_cat}.{correct_type} instead.|n")
+                return True  # Return True to allow the stat to be set in the correct category
+        
+        # Check specific categories
+        if category == 'attributes':
+            # Check if it's a valid attribute for the specified type
+            for attr_type, attributes in ATTRIBUTE_CATEGORIES.items():
+                if stat_title in attributes:
+                    if attr_type == stat_type:
+                        return True
+                    else:
+                        self.caller.msg(f"|rAttribute '{stat_name}' belongs in type '{attr_type}', not '{stat_type}'.|n")
+                        return False
+            self.caller.msg(f"|r'{stat_name}' is not a valid attribute.|n")
+            return False
+            
+        elif category == 'abilities':
+            # Check standard abilities
+            if stat_type == 'talent' and stat_title in TALENTS:
+                return True
+            elif stat_type == 'skill' and stat_title in SKILLS:
+                return True
+            elif stat_type == 'knowledge' and stat_title in KNOWLEDGES:
+                return True
+            # Check secondary abilities
+            elif stat_type == 'secondary_talent' and stat_title in SECONDARY_TALENTS:
+                return True
+            elif stat_type == 'secondary_skill' and stat_title in SECONDARY_SKILLS:
+                return True
+            elif stat_type == 'secondary_knowledge' and stat_title in SECONDARY_KNOWLEDGES:
+                return True
+            
+            # If not found in any ability list, suggest the correct category
+            for ability_type, abilities in [('talent', TALENTS), ('skill', SKILLS), ('knowledge', KNOWLEDGES),
+                                          ('secondary_talent', SECONDARY_TALENTS), ('secondary_skill', SECONDARY_SKILLS),
+                                          ('secondary_knowledge', SECONDARY_KNOWLEDGES)]:
+                if stat_title in abilities:
+                    self.caller.msg(f"|rAbility '{stat_name}' belongs in type '{ability_type}', not '{stat_type}'.|n")
+                    return False
+                    
+            # Check if it's a merit or flaw that was mistakenly categorized as an ability
+            for merit_type, merits in MERIT_CATEGORIES.items():
+                if stat_title in merits:
+                    self.caller.msg(f"|r'{stat_name}' is a merit in category 'merits' with type '{merit_type}', not an ability.|n")
+                    return False
+                    
+            for flaw_type, flaws in FLAW_CATEGORIES.items():
+                if stat_title in flaws:
+                    self.caller.msg(f"|r'{stat_name}' is a flaw in category 'flaws' with type '{flaw_type}', not an ability.|n")
+                    return False
+                    
+            # Check if it's a discipline or other power
+            if stat_title in ['Animalism', 'Auspex', 'Celerity', 'Chimerstry', 'Dementation', 
+                            'Dominate', 'Fortitude', 'Necromancy', 'Obfuscate', 'Obtenebration', 
+                            'Potence', 'Presence', 'Protean', 'Quietus', 'Serpentis', 'Thaumaturgy', 
+                            'Vicissitude', 'Temporis', 'Daimoinon', 'Sanguinus', 'Melpominee', 
+                            'Mytherceria', 'Obeah', 'Thanatosis', 'Valeren', 'Spiritus']:
+                self.caller.msg(f"|r'{stat_name}' is a discipline in category 'powers' with type 'discipline', not an ability.|n")
+                return False
+                
+            self.caller.msg(f"|r'{stat_name}' is not a valid ability.|n")
+            return False
+            
+        elif category == 'virtues':
+            # Check if it's a valid virtue
+            if stat_type == 'moral' and stat_title in ['Conscience', 'Self-Control', 'Courage', 'Conviction', 'Instinct']:
+                return True
+            elif stat_type == 'synergy' and stat_title in ['Dynamic', 'Static', 'Entropic']:
+                return True
+                
+            # If not a virtue, check if it's a discipline or other power
+            if stat_title in ['Animalism', 'Auspex', 'Celerity', 'Chimerstry', 'Dementation', 
+                            'Dominate', 'Fortitude', 'Necromancy', 'Obfuscate', 'Obtenebration', 
+                            'Potence', 'Presence', 'Protean', 'Quietus', 'Serpentis', 'Thaumaturgy', 
+                            'Vicissitude', 'Temporis', 'Daimoinon', 'Sanguinus', 'Melpominee', 
+                            'Mytherceria', 'Obeah', 'Thanatosis', 'Valeren', 'Spiritus']:
+                self.caller.msg(f"|r'{stat_name}' is a discipline in category 'powers' with type 'discipline', not a virtue.|n")
+                return False
+                
+            self.caller.msg(f"|r'{stat_name}' is not a valid virtue.|n")
+            return False
+            
+        elif category == 'powers':
+            # Check if it's a valid power for the specified type
+            if stat_type == 'discipline' and stat_title in ['Animalism', 'Auspex', 'Celerity', 'Chimerstry', 'Dementation', 
+                                                         'Dominate', 'Fortitude', 'Necromancy', 'Obfuscate', 'Obtenebration', 
+                                                         'Potence', 'Presence', 'Protean', 'Quietus', 'Serpentis', 'Thaumaturgy', 
+                                                         'Vicissitude', 'Temporis', 'Daimoinon', 'Sanguinus', 'Melpominee', 
+                                                         'Mytherceria', 'Obeah', 'Thanatosis', 'Valeren', 'Spiritus']:
+                return True
+            elif stat_type == 'thaumaturgy' and stat_title in ['Path of Blood', 'Lure of Flames', 'Movement of the Mind', 
+                                                            'Path of Conjuring', 'Path of Corruption', 'Path of Mars', 
+                                                            'Hands of Destruction', 'Neptune\'s Might', 'Path of Technomancy', 
+                                                            'Path of the Father\'s Vengeance', 'Green Path', 'Elemental Mastery', 
+                                                            'Weather Control', 'Gift of Morpheus', 'Oneiromancy', 'Path of Mercury', 
+                                                            'Spirit Manipulation', 'Two Centimes Path', 'Path of Transmutation', 
+                                                            'Path of Warding', 'Countermagic', 'Thaumaturgical Countermagic']:
+                return True
+            elif stat_type == 'necromancy' and stat_title in ['Sepulchre Path', 'Bone Path', 'Ash Path', 'Cenotaph Path', 
+                                                          'Vitreous Path', 'Mortis Path', 'Grave\'s Decay']:
+                return True
+            elif stat_type == 'sphere' and stat_title in MAGE_SPHERES:
+                return True
+            elif stat_type == 'art' and stat_title in ARTS:
+                return True
+            elif stat_type == 'realm' and stat_title in REALMS:
+                return True
+            elif stat_type == 'gift':
+                # Check if it's a valid gift in the database
+                from world.wod20th.models import Stat
+                gift = Stat.objects.filter(
+                    name__iexact=stat_name,
+                    category='powers',
+                    stat_type='gift'
+                ).first()
+                if gift:
+                    return True
+                    
+                # Check if it's a gift alias
+                all_gifts = Stat.objects.filter(
+                    category='powers',
+                    stat_type='gift'
+                )
+                for g in all_gifts:
+                    if g.gift_alias and any(alias.lower() == stat_lower for alias in g.gift_alias):
+                        return True
+                        
+                self.caller.msg(f"|r'{stat_name}' is not a valid gift.|n")
+                return False
+                
+            # If not found in any power list, suggest the correct category
+            for power_type in ['discipline', 'thaumaturgy', 'necromancy', 'sphere', 'art', 'realm', 'gift']:
+                # Check the database for this power type
+                from world.wod20th.models import Stat
+                power = Stat.objects.filter(
+                    name__iexact=stat_name,
+                    category='powers',
+                    stat_type=power_type
+                ).first()
+                if power:
+                    self.caller.msg(f"|rPower '{stat_name}' belongs in type '{power_type}', not '{stat_type}'.|n")
+                    return False
+                    
+            self.caller.msg(f"|r'{stat_name}' is not a valid power for type '{stat_type}'.|n")
+            return False
+            
+        elif category == 'merits':
+            # Check if it's a valid merit for the specified type
+            for merit_type, merits in MERIT_CATEGORIES.items():
+                if stat_title in merits:
+                    if merit_type == stat_type:
+                        return True
+                    else:
+                        self.caller.msg(f"|rMerit '{stat_name}' belongs in type '{merit_type}', not '{stat_type}'.|n")
+                        return False
+                        
+            self.caller.msg(f"|r'{stat_name}' is not a valid merit.|n")
+            return False
+            
+        elif category == 'flaws':
+            # Check if it's a valid flaw for the specified type
+            for flaw_type, flaws in FLAW_CATEGORIES.items():
+                if stat_title in flaws:
+                    if flaw_type == stat_type:
+                        return True
+                    else:
+                        self.caller.msg(f"|rFlaw '{stat_name}' belongs in type '{flaw_type}', not '{stat_type}'.|n")
+                        return False
+                        
+            self.caller.msg(f"|r'{stat_name}' is not a valid flaw.|n")
+            return False
+            
+        elif category == 'backgrounds':
+            # Check if it's a valid background
+            if stat_type == 'background' and stat_title in (
+                UNIVERSAL_BACKGROUNDS +
+                VAMPIRE_BACKGROUNDS +
+                CHANGELING_BACKGROUNDS +
+                MAGE_BACKGROUNDS +
+                TECHNOCRACY_BACKGROUNDS +
+                TRADITIONS_BACKGROUNDS + 
+                NEPHANDI_BACKGROUNDS +
+                SHIFTER_BACKGROUNDS +
+                SORCERER_BACKGROUNDS +
+                KINAIN_BACKGROUNDS
+            ):
+                return True
+                
+            self.caller.msg(f"|r'{stat_name}' is not a valid background.|n")
+            return False
+            
+        elif category == 'pools':
+            # Check if it's a valid pool
+            if stat_type == 'dual' and stat_title in POOL_TYPES['dual'].keys():
+                return True
+            elif stat_type == 'moral' and stat_title in POOL_TYPES['moral'].keys():
+                return True
+            elif stat_type == 'advantage' and stat_title in POOL_TYPES['advantage'].keys():
+                return True
+            elif stat_type == 'resonance' and stat_title == 'Resonance':
+                return True
+                
+            self.caller.msg(f"|r'{stat_name}' is not a valid pool for type '{stat_type}'.|n")
+            return False
+            
+        # For other categories, allow it for now (identity, advantages, etc.)
+        return True
 
     def get_proper_special_advantage_name(self, stat_name: str) -> str:
         """Get the proper case name for a special advantage."""
@@ -1621,6 +1900,26 @@ class CmdSelfStat(MuxCommand):
         splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
         char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
 
+        # If no category/type specified, try to determine it from the stat name
+        if not self.category or not self.stat_type:
+            # Check secondary abilities first - these are high priority matches
+            if self.stat_name in SECONDARY_TALENTS:
+                self.category = 'abilities'
+                self.stat_type = 'secondary_talent'
+            elif self.stat_name in SECONDARY_SKILLS:
+                self.category = 'abilities'
+                self.stat_type = 'secondary_skill'
+            elif self.stat_name in SECONDARY_KNOWLEDGES:
+                self.category = 'abilities'
+                self.stat_type = 'secondary_knowledge'
+            else:
+                # try identity stats
+                self.category, self.stat_type = self._detect_identity_category(self.stat_name)
+                
+                # If not an identity stat, try abilities and other categories
+                if not self.category or not self.stat_type:
+                    self.category, self.stat_type = self.detect_ability_category(self.stat_name)
+
         # Special handling for Generation
         if self.stat_name.lower() == 'generation':
             try:
@@ -1656,15 +1955,6 @@ class CmdSelfStat(MuxCommand):
             except ValueError:
                 self.caller.msg("|rGeneration background must be a number.|n")
                 return
-
-        # If no category/type specified, try to determine it from the stat name
-        if not self.category or not self.stat_type:
-            # try identity stats
-            self.category, self.stat_type = self._detect_identity_category(self.stat_name)
-            
-            # If not an identity stat, try abilities and other categories
-            if not self.category or not self.stat_type:
-                self.category, self.stat_type = self.detect_ability_category(self.stat_name)
 
         # Special handling for Path of Enlightenment changes
         if self.stat_name.lower() == 'path of enlightenment':
@@ -2649,6 +2939,46 @@ class CmdSelfStat(MuxCommand):
         splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
         char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
 
+        # If category or stat_type is None, try to detect them
+        if not category or not stat_type:
+            detected = self.detect_ability_category(stat_name)
+            if detected and detected[0] and detected[1]:
+                category, stat_type = detected
+                self.caller.msg(f"|yAutodetected category '{category}' and type '{stat_type}' for {stat_name}.|n")
+            else:
+                self.caller.msg(f"|rError: Could not determine where to store stat '{stat_name}'.|n")
+                return
+
+        # Validate that the stat belongs in the specified category
+        # Note: _validate_stat_in_category may update self.category and self.stat_type
+        if not self._validate_stat_in_category(stat_name, category, stat_type):
+            return
+        
+        # Use the potentially updated category and stat_type
+        category = self.category
+        stat_type = self.stat_type
+
+        # Check for stats with the same name in other categories (cleanup)
+        categories_to_check = ['attributes', 'abilities', 'identity', 'powers', 'merits', 
+                             'flaws', 'virtues', 'backgrounds', 'advantages', 'pools']
+        
+        found_duplicates = []
+        
+        for cat in categories_to_check:
+            if cat == category:  # Skip the category we're setting
+                continue
+                
+            if cat in self.caller.db.stats:
+                for type_key, type_dict in self.caller.db.stats[cat].items():
+                    if stat_name in type_dict:
+                        found_duplicates.append((cat, type_key))
+        
+        # If we found duplicates, warn the user and remove them
+        if found_duplicates:
+            for cat, type_key in found_duplicates:
+                self.caller.msg(f"|rFound duplicate stat '{stat_name}' in {cat}.{type_key} - removing.|n")
+                del self.caller.db.stats[cat][type_key][stat_name]
+
         # If this is a stat with an instance, combine them for storage
         if self.instance and self._should_support_instance(stat_name, category):
             stat_name = f"{stat_name}({self.instance})"
@@ -2699,13 +3029,14 @@ class CmdSelfStat(MuxCommand):
                         }
                         self.caller.msg(f"|gWillpower set to match Courage: {virtue_value}|n")
 
-                self.caller.msg(f"|gSet {stat_name} to {virtue_value}.|n")
+                # Provide feedback with category information
+                self.caller.msg(f"|gSet {stat_name} to {virtue_value} as a virtues.moral.|n")
                 return
             except ValueError:
                 self.caller.msg("|rVirtue value must be a number.|n")
                 return
 
-        # Set the stat
+        # Set the stat using the caller's set_stat method
         self.caller.set_stat(category, stat_type, stat_name, value, temp=False)
         self.caller.set_stat(category, stat_type, stat_name, value, temp=True)
         
@@ -2748,8 +3079,7 @@ class CmdSelfStat(MuxCommand):
                         if restriction['splat_type'] and restriction['splat_type'] != char_type:
                             self.caller.msg(f"|rThe merit '{stat_name}' is only available to {restriction['splat_type']} characters.|n")
                             return
-
-                    # Find the merit type and store the merit
+                        # Find the merit type and store the merit
                     for merit_type, merits in MERIT_CATEGORIES.items():
                         if stat_name.title() in merits:
                             if 'merits' not in self.caller.db.stats:
@@ -2760,8 +3090,6 @@ class CmdSelfStat(MuxCommand):
                                 'perm': merit_value,
                                 'temp': merit_value
                             }
-                            self.caller.msg(f"|gSet merit {stat_name} to {merit_value}.|n")
-                            return
                 except ValueError:
                     self.caller.msg(f"|rMerit value must be a number.|n")
                     return
@@ -2786,7 +3114,7 @@ class CmdSelfStat(MuxCommand):
                     if restriction['splat_type'] and restriction['splat_type'] != char_type:
                         self.caller.msg(f"|rThe flaw '{stat_name}' is only available to {restriction['splat_type']} characters.|n")
                         return
-
+                    
                 # Find the flaw type and store the flaw
                 for flaw_type, flaws in FLAW_CATEGORIES.items():
                     if stat_name.title() in flaws:
@@ -2798,12 +3126,9 @@ class CmdSelfStat(MuxCommand):
                             'perm': flaw_value,
                             'temp': flaw_value
                         }
-                        self.caller.msg(f"|gSet flaw {stat_name} to {flaw_value}.|n")
-                        return
             except ValueError:
                 self.caller.msg(f"|rFlaw value must be a number.|n")
                 return
-
         # Special handling for identity stats
         if category == 'identity':
             if 'identity' not in self.caller.db.stats:
@@ -2814,8 +3139,7 @@ class CmdSelfStat(MuxCommand):
                 'perm': value,
                 'temp': value
             }
-            self.caller.msg(f"|gSet {stat_name} to {value}.|n")
-            return
+            # Remove the return statement to allow execution to continue
 
         # Special handling for pools
         if category == 'pools':
@@ -2829,8 +3153,7 @@ class CmdSelfStat(MuxCommand):
                     'perm': pool_value,
                     'temp': pool_value
                 }
-                self.caller.msg(f"|gSet {stat_name} pool to {pool_value}.|n")
-                return
+                # Remove the return statement to allow execution to continue
             except ValueError:
                 self.caller.msg(f"|r{stat_name} pool value must be a number.|n")
                 return
@@ -2854,51 +3177,61 @@ class CmdSelfStat(MuxCommand):
                 # Store the alias using the new method
                 self.caller.set_gift_alias(stat_name, self.alias_used, gift_value)
                 
-                self.caller.msg(f"|gSet gift {stat_name} to {gift_value}.|n")
             except ValueError:
                 self.caller.msg("|rGift value must be a number.|n")
-            return
+                return
+            # Remove the return statement to allow execution to continue
 
         # Handle all other stats normally
-        try:
-            # Ensure category and stat_type are strings before proceeding
-            if not isinstance(category, str) or not isinstance(stat_type, str):
-                self.caller.msg(f"|rError: Invalid category or stat_type. Category: {category}, Type: {stat_type}|n")
-                return
-                
-            # Initialize the stat structure if needed
-            self._initialize_stat_structure(category, stat_type)
-
-            # For secondary abilities, ensure proper nesting
-            if category == 'abilities' and stat_type.startswith('secondary_'):
-                if 'secondary_abilities' not in self.caller.db.stats['abilities']:
-                    self.caller.db.stats['abilities']['secondary_abilities'] = {}
-                if stat_type not in self.caller.db.stats['abilities']['secondary_abilities']:
-                    self.caller.db.stats['abilities']['secondary_abilities'][stat_type] = {}
-                self.caller.db.stats['abilities']['secondary_abilities'][stat_type][stat_name] = {
-                    'perm': value,
-                    'temp': value
-                }
-            else:
-                # Regular stat storage
-                self.caller.db.stats[category][stat_type][stat_name] = {
-                    'perm': value,
-                    'temp': value
-                }
-            
-            # Store gift alias if this is a gift
-            if category == 'powers' and stat_type == 'gift':
-                # Get the canonical name (in this case, stat_name is the canonical name)
-                canonical_name = stat_name
-                # Get the alias (the original input from the user, without the value part)
-                alias = self.args.split('=')[0].split('/')[0].strip()
-                # Store the alias mapping
-                self.caller.set_gift_alias(canonical_name, alias, value)
-                
-            self.caller.msg(f"|gSet {stat_name} to {value}.|n")
-        except Exception as e:
-            self.caller.msg(f"|rError processing stat value: {str(e)}|n")
+        # Remove the try without except
+        # Ensure category and stat_type are strings before proceeding
+        if not isinstance(category, str) or not isinstance(stat_type, str):
+            self.caller.msg(f"|rError: Invalid category or stat_type. Category: {category}, Type: {stat_type}|n")
             return
+            
+        # Initialize the stat structure if needed
+        self._initialize_stat_structure(category, stat_type)
+
+        # For secondary abilities, ensure proper nesting
+        if category == 'abilities' and stat_type in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+            if 'secondary_abilities' not in self.caller.db.stats['abilities']:
+                self.caller.db.stats['abilities']['secondary_abilities'] = {}
+            if stat_type not in self.caller.db.stats['abilities']['secondary_abilities']:
+                self.caller.db.stats['abilities']['secondary_abilities'][stat_type] = {}
+            
+            # Store the secondary ability directly in the character stat
+            self.caller.db.stats['abilities']['secondary_abilities'][stat_type][stat_name] = {
+                'perm': value,
+                'temp': value
+            }
+        else:
+            # Regular stat storage
+            self.caller.db.stats[category][stat_type][stat_name] = {
+                'perm': value,
+                'temp': value
+            }
+        
+        # Store gift alias if this is a gift
+        if category == 'powers' and stat_type == 'gift':
+            # Get the canonical name (in this case, stat_name is the canonical name)
+            canonical_name = stat_name
+            # Get the alias (the original input from the user, without the value part)
+            alias = self.args.split('=')[0].split('/')[0].strip()
+            # Store the alias mapping
+            self.caller.set_gift_alias(canonical_name, alias, value)
+
+        # Determine the display name for the success message
+        display_name = stat_name
+        
+        # Special handling for gifts to store the alias used
+        if category == 'powers' and stat_type == 'gift' and hasattr(self, 'alias_used'):
+            # Store the alias using the new method
+            self.caller.set_gift_alias(stat_name, self.alias_used, value)
+            # Use the alias in the success message
+            display_name = self.alias_used
+
+        # Provide feedback with category information
+        self.caller.msg(f"|gSet {display_name} to {value} as a {category}.{stat_type}.|n")
 
     def detect_category_and_type(self):
         """Detect the category and type based on the stat name."""
@@ -2921,6 +3254,17 @@ class CmdSelfStat(MuxCommand):
             if not self.stat_type:
                 self.stat_type = 'physical'
                 
+        # Check if it's a secondary ability
+        elif self.stat_name.lower() in [talent.lower() for talent in SECONDARY_TALENTS]:
+            self.category = 'abilities'
+            self.stat_type = 'secondary_talent'
+        elif self.stat_name.lower() in [skill.lower() for skill in SECONDARY_SKILLS]:
+            self.category = 'abilities'
+            self.stat_type = 'secondary_skill'
+        elif self.stat_name.lower() in [knowledge.lower() for knowledge in SECONDARY_KNOWLEDGES]:
+            self.category = 'abilities'
+            self.stat_type = 'secondary_knowledge'
+                
         # Check if it's a flaw
         elif self.stat_name.lower() in [f.lower() for f in FLAW_VALUES.keys()]:
             self.category = 'flaws'
@@ -2932,7 +3276,7 @@ class CmdSelfStat(MuxCommand):
             # If type not found, default to physical
             if not self.stat_type:
                 self.stat_type = 'physical'
-                
+
         # Check if it's a background
         elif self.stat_name.lower() in [bg.lower() for bg in (UNIVERSAL_BACKGROUNDS + 
                                                            VAMPIRE_BACKGROUNDS + 

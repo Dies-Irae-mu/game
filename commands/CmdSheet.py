@@ -514,9 +514,10 @@ class CmdSheet(MuxCommand):
         base_secondary_knowledges.sort()
 
         # Get secondary abilities from character stats
-        secondary_talents = character.db.stats.get('secondary_abilities', {}).get('secondary_talent', {})
-        secondary_skills = character.db.stats.get('secondary_abilities', {}).get('secondary_skill', {})
-        secondary_knowledges = character.db.stats.get('secondary_abilities', {}).get('secondary_knowledge', {})
+        secondary_abilities = character.db.stats.get('abilities', {}).get('secondary_abilities', {})
+        secondary_talents = secondary_abilities.get('secondary_talent', {})
+        secondary_skills = secondary_abilities.get('secondary_skill', {})
+        secondary_knowledges = secondary_abilities.get('secondary_knowledge', {})
 
         # Format abilities with values from character stats
         formatted_secondary_talents = []
