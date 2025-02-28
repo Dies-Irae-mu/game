@@ -275,13 +275,13 @@ class CmdSheet(MuxCommand):
             if stat == 'Rank':  # Special case for  Rank
                 value_str = '0'
             elif stat in ['Full Name', 'Date of Birth', 'Date of Awakening', 'Date of Chrysalis', 'First Change Date',
-                        'Date of Embrace', 'Concept', 'Nature', 'Demeanor', 'Nunnehi Seeming', 'Nunnehi Camp', 'Nunnehi Family',
-                        'Nunnehi Totem', 'Clan', 'Generation', 'Sire', 'Path of Enlightenment', 'Kith', 'Seeming', 'House', 
+                         'Date of Embrace', 'Concept', 'Nature', 'Demeanor', 'Nunnehi Seeming', 'Nunnehi Camp', 'Nunnehi Family',
+                         'Nunnehi Totem', 'Clan', 'Generation', 'Sire', 'Path of Enlightenment', 'Kith', 'Seeming', 'House', 
                          'Seelie Legacy', 'Unseelie Legacy', 'Type', 'Tribe', 'Breed', 'Auspice', 'Jamak Spirit',
                          'Tradition', 'Convention', 'Affiliation', 'Phyla', 'Traditions Subfaction', 'Methodology',
                          'Spirit Type', 'Spirit Name', 'Domitor', 'Society', 'Order', 'Coven', 'Cabal', 'Plague', 'Crown', 
                          'Stream', 'Kitsune Path', 'Varna', 'Deed Name', 'Motivation', 'Possessed Type', 'Date of Possession',
-                         'Companion Type', 'Patron Totem', 'Pack', 'Affinity Realm', 'Fae Court', 'Fae Name', 'Camp', 'Lodge'
+                         'Companion Type', 'Patron Totem', 'Pack', 'Affinity Realm', 'Fae Court', 'Fae Name', 'Camp', 'Lodge',
                          'Fang House', 'Nephandi Faction', 'Fuel', 'Elemental Affinity']:
                 value_str = 'None'
             else:
@@ -514,7 +514,7 @@ class CmdSheet(MuxCommand):
         base_secondary_knowledges.sort()
 
         # Get secondary abilities from character stats
-        secondary_abilities = character.db.stats.get('abilities', {}).get('secondary_abilities', {})
+        secondary_abilities = character.db.stats.get('secondary_abilities', {})
         secondary_talents = secondary_abilities.get('secondary_talent', {})
         secondary_skills = secondary_abilities.get('secondary_skill', {})
         secondary_knowledges = secondary_abilities.get('secondary_knowledge', {})

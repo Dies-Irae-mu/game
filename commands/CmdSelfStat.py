@@ -1261,26 +1261,77 @@ class CmdSelfStat(MuxCommand):
             if stat.category == category and stat.stat_type == stat_type:
                 return True
             elif stat.category and stat.stat_type:
-                # If it exists but in a different category, suggest the correct one
-                self.caller.msg(f"|rError: Stat '{stat_name}' belongs in category '{stat.category}' with type '{stat.stat_type}', not '{category}.{stat_type}'.|n")
+                # Special handling for Nature - should only be a realm power for Changelings and Kinain
+                if stat_name.lower() == 'nature':
+                    splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+                    char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+                    
+                    # For Changelings and Kinain, Nature is a realm power
+                    if (splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain')):
+                        if category == 'powers' and stat_type == 'realm':
+                            return True
+                        elif category == 'identity' and stat_type == 'personal':
+                            self.caller.msg(f"|rFor {splat} characters, Nature is a realm power, not an identity stat.|n")
+                            self.category = 'powers'
+                            self.stat_type = 'realm'
+                            self.caller.msg(f"|yAutomatically redirecting to correct category. Setting 'Nature' as a powers.realm instead.|n")
+                            return True
+                    # For all other character types, Nature is an identity stat
+                    else:
+                        if category == 'identity' and stat_type == 'personal':
+                            return True
+                        elif category == 'powers' and stat_type == 'realm':
+                            self.caller.msg(f"|rFor {splat} characters, Nature is an identity stat, not a realm power.|n")
+                            self.category = 'identity'
+                            self.stat_type = 'personal'
+                            self.caller.msg(f"|yAutomatically redirecting to correct category. Setting 'Nature' as a identity.personal instead.|n")
+                            return True
                 
-                # Auto-correct the category and type if the stat exists in the database
-                self.category = stat.category
-                self.stat_type = stat.stat_type
-                self.caller.msg(f"|yAutomatically redirecting to correct category. Setting '{stat_name}' as a {stat.category}.{stat.stat_type} instead.|n")
-                return True  # Return True to allow the stat to be set in the correct category
+                # Special handling for secondary abilities
+                if stat.category == 'secondary_abilities' and category == 'abilities' and stat.stat_type.startswith('secondary_'):
+                    # Redirect from 'abilities' to 'secondary_abilities'
+                    self.caller.msg(f"|rError: Stat '{stat_name}' belongs in category 'secondary_abilities' with type '{stat.stat_type}', not '{category}.{stat_type}'.|n")
+                    self.category = 'secondary_abilities'
+                    self.stat_type = stat.stat_type
+                    self.caller.msg(f"|yAutomatically redirecting to correct category. Setting '{stat_name}' as a secondary_abilities.{stat.stat_type} instead.|n")
+                    return True
+                elif stat.category == 'abilities' and category == 'secondary_abilities' and stat.stat_type.startswith('secondary_'):
+                    # Database has old format, but we're using new format - allow it
+                    return True
+                else:
+                    # If it exists but in a different category, suggest the correct one
+                    self.caller.msg(f"|rError: Stat '{stat_name}' belongs in category '{stat.category}' with type '{stat.stat_type}', not '{category}.{stat_type}'.|n")
+                    
+                    # Auto-correct the category and type if the stat exists in the database
+                    self.category = stat.category
+                    self.stat_type = stat.stat_type
+                    self.caller.msg(f"|yAutomatically redirecting to correct category. Setting '{stat_name}' as a {stat.category}.{stat.stat_type} instead.|n")
+                    return True  # Return True to allow the stat to be set in the correct category
         
         # Check common problem stats
         common_problem_stats = {
-            'lucid dreaming': ('abilities', 'talent'),
-            'mother\'s touch': ('abilities', 'talent'),
+            'lucid dreaming': ('secondary_abilities', 'secondary_talent'),
+            'mother\'s touch': ('powers', 'gift'),
             'outsider': ('flaws', 'mental'),
             'calm heart': ('merits', 'mental'),
-            'herbalism': ('abilities', 'secondary_knowledge'),
-            'mimicry': ('abilities', 'secondary_talent'),
-            'scrounging': ('abilities', 'secondary_talent'),
-            'archery': ('abilities', 'secondary_skill'),
-            'jury-rigging': ('abilities', 'secondary_skill')
+            'herbalism': ('secondary_abilities', 'secondary_knowledge'),
+            'mimicry': ('secondary_abilities', 'secondary_talent'),
+            'scrounging': ('secondary_abilities', 'secondary_talent'),
+            'archery': ('secondary_abilities', 'secondary_skill'),
+            'jury-rigging': ('secondary_abilities', 'secondary_skill'),
+            'intrigue': ('secondary_abilities', 'secondary_talent'),
+            'seduction': ('secondary_abilities', 'secondary_talent'),
+            'style': ('secondary_abilities', 'secondary_talent'),
+            'fortune-telling': ('secondary_abilities', 'secondary_skill'),
+            'fencing': ('secondary_abilities', 'secondary_skill'),
+            'gambling': ('secondary_abilities', 'secondary_skill'),
+            'martial arts': ('secondary_abilities', 'secondary_skill'),
+            'pilot': ('secondary_abilities', 'secondary_skill'),
+            'torture': ('secondary_abilities', 'secondary_skill'),
+            'area knowledge': ('secondary_abilities', 'secondary_knowledge'),
+            'cultural savvy': ('secondary_abilities', 'secondary_knowledge'),
+            'demolitions': ('secondary_abilities', 'secondary_knowledge')
+            # Add any other problematic stats here as needed
         }
         
         if stat_lower in common_problem_stats:
@@ -1317,18 +1368,27 @@ class CmdSelfStat(MuxCommand):
                 return True
             elif stat_type == 'knowledge' and stat_title in KNOWLEDGES:
                 return True
-            # Check secondary abilities
-            elif stat_type == 'secondary_talent' and stat_title in SECONDARY_TALENTS:
-                return True
-            elif stat_type == 'secondary_skill' and stat_title in SECONDARY_SKILLS:
-                return True
-            elif stat_type == 'secondary_knowledge' and stat_title in SECONDARY_KNOWLEDGES:
-                return True
-            
+            # Check secondary abilities - these should be in secondary_abilities category
+            elif stat_type in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+                # Redirect to secondary_abilities category
+                if stat_type == 'secondary_talent' and stat_title in SECONDARY_TALENTS:
+                    self.caller.msg(f"|rSecondary ability '{stat_name}' belongs in category 'secondary_abilities', not 'abilities'.|n")
+                    self.category = 'secondary_abilities'
+                    self.caller.msg(f"|yAutomatically redirecting to correct category. Setting '{stat_name}' as a secondary_abilities.{stat_type} instead.|n")
+                    return True
+                elif stat_type == 'secondary_skill' and stat_title in SECONDARY_SKILLS:
+                    self.caller.msg(f"|rSecondary ability '{stat_name}' belongs in category 'secondary_abilities', not 'abilities'.|n")
+                    self.category = 'secondary_abilities'
+                    self.caller.msg(f"|yAutomatically redirecting to correct category. Setting '{stat_name}' as a secondary_abilities.{stat_type} instead.|n")
+                    return True
+                elif stat_type == 'secondary_knowledge' and stat_title in SECONDARY_KNOWLEDGES:
+                    self.caller.msg(f"|rSecondary ability '{stat_name}' belongs in category 'secondary_abilities', not 'abilities'.|n")
+                    self.category = 'secondary_abilities'
+                    self.caller.msg(f"|yAutomatically redirecting to correct category. Setting '{stat_name}' as a secondary_abilities.{stat_type} instead.|n")
+                    return True
+                
             # If not found in any ability list, suggest the correct category
-            for ability_type, abilities in [('talent', TALENTS), ('skill', SKILLS), ('knowledge', KNOWLEDGES),
-                                          ('secondary_talent', SECONDARY_TALENTS), ('secondary_skill', SECONDARY_SKILLS),
-                                          ('secondary_knowledge', SECONDARY_KNOWLEDGES)]:
+            for ability_type, abilities in [('talent', TALENTS), ('skill', SKILLS), ('knowledge', KNOWLEDGES)]:
                 if stat_title in abilities:
                     self.caller.msg(f"|rAbility '{stat_name}' belongs in type '{ability_type}', not '{stat_type}'.|n")
                     return False
@@ -1498,6 +1558,32 @@ class CmdSelfStat(MuxCommand):
             self.caller.msg(f"|r'{stat_name}' is not a valid pool for type '{stat_type}'.|n")
             return False
             
+        elif category == 'secondary_abilities':
+            # Check secondary abilities
+            if stat_type == 'secondary_talent' and stat_title in SECONDARY_TALENTS:
+                return True
+            elif stat_type == 'secondary_skill' and stat_title in SECONDARY_SKILLS:
+                return True
+            elif stat_type == 'secondary_knowledge' and stat_title in SECONDARY_KNOWLEDGES:
+                return True
+            
+            # If not found in any secondary ability list, suggest the correct category
+            for ability_type, abilities in [('secondary_talent', SECONDARY_TALENTS), 
+                                          ('secondary_skill', SECONDARY_SKILLS), 
+                                          ('secondary_knowledge', SECONDARY_KNOWLEDGES)]:
+                if stat_title in abilities:
+                    self.caller.msg(f"|rSecondary ability '{stat_name}' belongs in type '{ability_type}', not '{stat_type}'.|n")
+                    return False
+                    
+            # Check if it's a standard ability that was mistakenly categorized as a secondary ability
+            for ability_type, abilities in [('talent', TALENTS), ('skill', SKILLS), ('knowledge', KNOWLEDGES)]:
+                if stat_title in abilities:
+                    self.caller.msg(f"|r'{stat_name}' is a standard ability in category 'abilities' with type '{ability_type}', not a secondary ability.|n")
+                    return False
+                    
+            self.caller.msg(f"|r'{stat_name}' is not a valid secondary ability.|n")
+            return False
+            
         # For other categories, allow it for now (identity, advantages, etc.)
         return True
 
@@ -1527,6 +1613,10 @@ class CmdSelfStat(MuxCommand):
             splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
             if splat and splat.lower() in ['shifter', 'possessed']:
                 return 'pools', 'dual'
+                
+        # Special case for Mother's Touch - it's a gift, not a secondary ability
+        if stat_lower == 'mother\'s touch':
+            return 'powers', 'gift'
 
         # Check if it's a special advantage for Companions
         splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
@@ -2512,10 +2602,10 @@ class CmdSelfStat(MuxCommand):
             # Regular stat removal handling
             if stat.category in self.caller.db.stats:
                 # Special handling for secondary abilities
-                if stat.category == 'abilities' and stat.stat_type.startswith('secondary_'):
-                    if 'secondary_abilities' in self.caller.db.stats['abilities']:
-                        if full_stat_name in self.caller.db.stats['abilities']['secondary_abilities']:
-                            del self.caller.db.stats['abilities']['secondary_abilities'][full_stat_name]
+                if stat.category == 'secondary_abilities':
+                    if stat.stat_type in self.caller.db.stats['secondary_abilities']:
+                        if full_stat_name in self.caller.db.stats['secondary_abilities'][stat.stat_type]:
+                            del self.caller.db.stats['secondary_abilities'][stat.stat_type][full_stat_name]
                             self.caller.msg(f"|gRemoved stat '{full_stat_name}'.|n")
                             # Update any dependent stats after removal
                             self._update_dependent_stats(full_stat_name, None)
@@ -2740,12 +2830,14 @@ class CmdSelfStat(MuxCommand):
         base_stats['abilities'] = {
             'skill': {},
             'knowledge': {},
-            'talent': {},
-            'secondary_abilities': {
-                'secondary_knowledge': {},
-                'secondary_talent': {},
-                'secondary_skill': {}
-            }
+            'talent': {}
+        }
+        
+        # Initialize secondary abilities as a separate top-level category
+        base_stats['secondary_abilities'] = {
+            'secondary_knowledge': {},
+            'secondary_talent': {},
+            'secondary_skill': {}
         }
         
         # Initialize identity categories
@@ -2852,11 +2944,11 @@ class CmdSelfStat(MuxCommand):
             self.caller.db.stats[category] = {}
             
         # Special handling for secondary abilities
-        if category == 'abilities' and stat_type.startswith('secondary_'):
-            if 'secondary_abilities' not in self.caller.db.stats['abilities']:
-                self.caller.db.stats['abilities']['secondary_abilities'] = {}
-            if stat_type not in self.caller.db.stats['abilities']['secondary_abilities']:
-                self.caller.db.stats['abilities']['secondary_abilities'][stat_type] = {}
+        if category == 'secondary_abilities':
+            if 'secondary_abilities' not in self.caller.db.stats:
+                self.caller.db.stats['secondary_abilities'] = {}
+            if stat_type not in self.caller.db.stats['secondary_abilities']:
+                self.caller.db.stats['secondary_abilities'][stat_type] = {}
         else:
             # Regular stat initialization
             if stat_type and stat_type not in self.caller.db.stats[category]:
@@ -3029,8 +3121,7 @@ class CmdSelfStat(MuxCommand):
                         }
                         self.caller.msg(f"|gWillpower set to match Courage: {virtue_value}|n")
 
-                # Provide feedback with category information
-                self.caller.msg(f"|gSet {stat_name} to {virtue_value} as a virtues.moral.|n")
+                self.caller.msg(f"|gSet {stat_name} to {virtue_value}.|n")
                 return
             except ValueError:
                 self.caller.msg("|rVirtue value must be a number.|n")
@@ -3079,7 +3170,8 @@ class CmdSelfStat(MuxCommand):
                         if restriction['splat_type'] and restriction['splat_type'] != char_type:
                             self.caller.msg(f"|rThe merit '{stat_name}' is only available to {restriction['splat_type']} characters.|n")
                             return
-                        # Find the merit type and store the merit
+
+                    # Find the merit type and store the merit
                     for merit_type, merits in MERIT_CATEGORIES.items():
                         if stat_name.title() in merits:
                             if 'merits' not in self.caller.db.stats:
@@ -3090,6 +3182,8 @@ class CmdSelfStat(MuxCommand):
                                 'perm': merit_value,
                                 'temp': merit_value
                             }
+                            self.caller.msg(f"|gSet merit {stat_name} to {merit_value}.|n")
+                            return
                 except ValueError:
                     self.caller.msg(f"|rMerit value must be a number.|n")
                     return
@@ -3114,7 +3208,7 @@ class CmdSelfStat(MuxCommand):
                     if restriction['splat_type'] and restriction['splat_type'] != char_type:
                         self.caller.msg(f"|rThe flaw '{stat_name}' is only available to {restriction['splat_type']} characters.|n")
                         return
-                    
+
                 # Find the flaw type and store the flaw
                 for flaw_type, flaws in FLAW_CATEGORIES.items():
                     if stat_name.title() in flaws:
@@ -3126,9 +3220,12 @@ class CmdSelfStat(MuxCommand):
                             'perm': flaw_value,
                             'temp': flaw_value
                         }
+                        self.caller.msg(f"|gSet flaw {stat_name} to {flaw_value}.|n")
+                        return
             except ValueError:
                 self.caller.msg(f"|rFlaw value must be a number.|n")
                 return
+
         # Special handling for identity stats
         if category == 'identity':
             if 'identity' not in self.caller.db.stats:
@@ -3139,7 +3236,8 @@ class CmdSelfStat(MuxCommand):
                 'perm': value,
                 'temp': value
             }
-            # Remove the return statement to allow execution to continue
+            self.caller.msg(f"|gSet {stat_name} to {value}.|n")
+            return
 
         # Special handling for pools
         if category == 'pools':
@@ -3153,7 +3251,8 @@ class CmdSelfStat(MuxCommand):
                     'perm': pool_value,
                     'temp': pool_value
                 }
-                # Remove the return statement to allow execution to continue
+                self.caller.msg(f"|gSet {stat_name} pool to {pool_value}.|n")
+                return
             except ValueError:
                 self.caller.msg(f"|r{stat_name} pool value must be a number.|n")
                 return
@@ -3177,61 +3276,80 @@ class CmdSelfStat(MuxCommand):
                 # Store the alias using the new method
                 self.caller.set_gift_alias(stat_name, self.alias_used, gift_value)
                 
+                self.caller.msg(f"|gSet gift {stat_name} to {gift_value}.|n")
             except ValueError:
                 self.caller.msg("|rGift value must be a number.|n")
-                return
-            # Remove the return statement to allow execution to continue
+            return
 
         # Handle all other stats normally
-        # Remove the try without except
-        # Ensure category and stat_type are strings before proceeding
-        if not isinstance(category, str) or not isinstance(stat_type, str):
-            self.caller.msg(f"|rError: Invalid category or stat_type. Category: {category}, Type: {stat_type}|n")
+        try:
+            # Ensure category and stat_type are strings before proceeding
+            if not isinstance(category, str) or not isinstance(stat_type, str):
+                self.caller.msg(f"|rError: Invalid category or stat_type. Category: {category}, Type: {stat_type}|n")
+                return
+                
+            # Initialize the stat structure if needed
+            self._initialize_stat_structure(category, stat_type)
+
+            # For secondary abilities, ensure proper structure
+            if category == 'secondary_abilities' and stat_type in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+                # Initialize secondary_abilities if needed
+                if 'secondary_abilities' not in self.caller.db.stats:
+                    self.caller.db.stats['secondary_abilities'] = {}
+                # Initialize the specific secondary ability type if needed
+                if stat_type not in self.caller.db.stats['secondary_abilities']:
+                    self.caller.db.stats['secondary_abilities'][stat_type] = {}
+                
+                # Store the secondary ability
+                self.caller.db.stats['secondary_abilities'][stat_type][stat_name] = {
+                    'perm': value,
+                    'temp': value
+                }
+                # Update category for feedback message
+                category = 'secondary_abilities'
+            elif category == 'abilities' and stat_type in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+                # Handle case where category is incorrectly set to 'abilities' but stat_type indicates a secondary ability
+                # Redirect to secondary_abilities category
+                if 'secondary_abilities' not in self.caller.db.stats:
+                    self.caller.db.stats['secondary_abilities'] = {}
+                if stat_type not in self.caller.db.stats['secondary_abilities']:
+                    self.caller.db.stats['secondary_abilities'][stat_type] = {}
+                
+                # Store the secondary ability in the correct location
+                self.caller.db.stats['secondary_abilities'][stat_type][stat_name] = {
+                    'perm': value,
+                    'temp': value
+                }
+                # Update category for feedback message
+                category = 'secondary_abilities'
+            else:
+                # Regular stat storage
+                self.caller.db.stats[category][stat_type][stat_name] = {
+                    'perm': value,
+                    'temp': value
+                }
+            
+            # Store gift alias if this is a gift
+            if category == 'powers' and stat_type == 'gift':
+                # Get the canonical name (in this case, stat_name is the canonical name)
+                canonical_name = stat_name
+                # Get the alias (the original input from the user, without the value part)
+                alias = self.args.split('=')[0].split('/')[0].strip()
+                # Store the alias mapping
+                self.caller.set_gift_alias(canonical_name, alias, value)
+                # Success message for gifts
+                self.caller.msg(f"|gSet {alias} to {value}.|n")
+        except Exception as e:
+            self.caller.msg(f"|rError processing stat value: {str(e)}|n")
             return
-            
-        # Initialize the stat structure if needed
-        self._initialize_stat_structure(category, stat_type)
 
-        # For secondary abilities, ensure proper nesting
-        if category == 'abilities' and stat_type in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
-            if 'secondary_abilities' not in self.caller.db.stats['abilities']:
-                self.caller.db.stats['abilities']['secondary_abilities'] = {}
-            if stat_type not in self.caller.db.stats['abilities']['secondary_abilities']:
-                self.caller.db.stats['abilities']['secondary_abilities'][stat_type] = {}
-            
-            # Store the secondary ability directly in the character stat
-            self.caller.db.stats['abilities']['secondary_abilities'][stat_type][stat_name] = {
-                'perm': value,
-                'temp': value
-            }
-        else:
-            # Regular stat storage
-            self.caller.db.stats[category][stat_type][stat_name] = {
-                'perm': value,
-                'temp': value
-            }
-        
-        # Store gift alias if this is a gift
-        if category == 'powers' and stat_type == 'gift':
-            # Get the canonical name (in this case, stat_name is the canonical name)
-            canonical_name = stat_name
-            # Get the alias (the original input from the user, without the value part)
-            alias = self.args.split('=')[0].split('/')[0].strip()
-            # Store the alias mapping
-            self.caller.set_gift_alias(canonical_name, alias, value)
-
-        # Determine the display name for the success message
-        display_name = stat_name
-        
         # Special handling for gifts to store the alias used
         if category == 'powers' and stat_type == 'gift' and hasattr(self, 'alias_used'):
             # Store the alias using the new method
             self.caller.set_gift_alias(stat_name, self.alias_used, value)
-            # Use the alias in the success message
-            display_name = self.alias_used
 
         # Provide feedback with category information
-        self.caller.msg(f"|gSet {display_name} to {value} as a {category}.{stat_type}.|n")
+        self.caller.msg(f"|gSet {stat_name} to {value} as a {category}.{stat_type}.|n")
 
     def detect_category_and_type(self):
         """Detect the category and type based on the stat name."""
@@ -3241,6 +3359,51 @@ class CmdSelfStat(MuxCommand):
             self.category = 'identity'
             self.stat_type = 'lineage'
             return
+            
+        # Special handling for Mother's Touch - it's a gift, not a secondary ability
+        if self.stat_name.lower() == 'mother\'s touch':
+            self.category = 'powers'
+            self.stat_type = 'gift'
+            return
+            
+        # Special handling for Nature - should only be a realm power for Changelings and Kinain
+        if self.stat_name.lower() == 'nature':
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+            
+            # For Changelings and Kinain, Nature is a realm power
+            if (splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain')):
+                self.category = 'powers'
+                self.stat_type = 'realm'
+            # For all other character types, Nature is an identity stat
+            else:
+                self.category = 'identity'
+                self.stat_type = 'personal'
+            return
+            
+        # Check for secondary abilities with case-insensitive comparison
+        stat_lower = self.stat_name.lower()
+        for talent in SECONDARY_TALENTS:
+            if talent.lower() == stat_lower:
+                self.category = 'secondary_abilities'
+                self.stat_type = 'secondary_talent'
+                # Update stat_name to use proper case from constant
+                self.stat_name = talent
+                return
+        for skill in SECONDARY_SKILLS:
+            if skill.lower() == stat_lower:
+                self.category = 'secondary_abilities'
+                self.stat_type = 'secondary_skill'
+                # Update stat_name to use proper case from constant
+                self.stat_name = skill
+                return
+        for knowledge in SECONDARY_KNOWLEDGES:
+            if knowledge.lower() == stat_lower:
+                self.category = 'secondary_abilities'
+                self.stat_type = 'secondary_knowledge'
+                # Update stat_name to use proper case from constant
+                self.stat_name = knowledge
+                return
 
         # Check if it's a merit
         if self.stat_name.lower() in [m.lower() for m in MERIT_VALUES.keys()]:
@@ -3256,13 +3419,13 @@ class CmdSelfStat(MuxCommand):
                 
         # Check if it's a secondary ability
         elif self.stat_name.lower() in [talent.lower() for talent in SECONDARY_TALENTS]:
-            self.category = 'abilities'
+            self.category = 'secondary_abilities'
             self.stat_type = 'secondary_talent'
         elif self.stat_name.lower() in [skill.lower() for skill in SECONDARY_SKILLS]:
-            self.category = 'abilities'
+            self.category = 'secondary_abilities'
             self.stat_type = 'secondary_skill'
         elif self.stat_name.lower() in [knowledge.lower() for knowledge in SECONDARY_KNOWLEDGES]:
-            self.category = 'abilities'
+            self.category = 'secondary_abilities'
             self.stat_type = 'secondary_knowledge'
                 
         # Check if it's a flaw
@@ -3295,6 +3458,12 @@ class CmdSelfStat(MuxCommand):
             category_type_tuple = self.detect_ability_category(self.stat_name)
             if category_type_tuple:
                 self.category, self.stat_type = category_type_tuple
+
+        # Special handling for Mother's Touch - it's a gift, not a secondary ability
+        if self.stat_name.lower() == 'mother\'s touch':
+            self.category = 'powers'
+            self.stat_type = 'gift'
+            return
 
     def _requires_instance(self, stat_name: str, category: str = None) -> bool:
         """

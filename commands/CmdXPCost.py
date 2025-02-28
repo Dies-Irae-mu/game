@@ -4,6 +4,11 @@ from decimal import Decimal
 from commands.CmdCheck import CmdCheck
 from world.wod20th.models import Stat
 from django.db.models import Q
+from world.wod20th.utils.stat_mappings import (
+    UNIVERSAL_BACKGROUNDS, VAMPIRE_BACKGROUNDS, CHANGELING_BACKGROUNDS,
+    MAGE_BACKGROUNDS, TECHNOCRACY_BACKGROUNDS, TRADITIONS_BACKGROUNDS,
+    NEPHANDI_BACKGROUNDS, SHIFTER_BACKGROUNDS, SORCERER_BACKGROUNDS
+)
 
 class CmdXPCost(default_cmds.MuxCommand):
     """
@@ -13,6 +18,7 @@ class CmdXPCost(default_cmds.MuxCommand):
       +costs              - Show all available purchases
       +costs/attributes   - Show attribute costs
       +costs/abilities    - Show ability costs
+      +costs/secondary_abilities - Show secondary ability costs
       +costs/backgrounds  - Show background costs
       +costs/powers      - Show power/gift costs
       +costs/pools       - Show pool costs
@@ -32,7 +38,7 @@ class CmdXPCost(default_cmds.MuxCommand):
             return
             
         switch = self.switches[0].lower()
-        if switch in ["attributes", "abilities", "backgrounds", "powers", "pools", "disciplines"]:
+        if switch in ["attributes", "abilities", "secondary_abilities", "backgrounds", "powers", "pools", "disciplines"]:
             self._display_category_costs(self.caller, switch)
         else:
             self.caller.msg("Invalid switch. Use +help costs for usage information.")
@@ -321,11 +327,38 @@ class CmdXPCost(default_cmds.MuxCommand):
                             continue
 
         elif category == "backgrounds":
-            backgrounds = ['Resources', 'Contacts', 'Allies', 'Backup', 'Herd', 'Library',
-                          'Kinfolk', 'Spirit Heritage', 'Ancestors']
+            # Get character's splat to determine available backgrounds
+            splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+            
+            # Start with universal backgrounds available to all splats
+            available_backgrounds = list(UNIVERSAL_BACKGROUNDS)
+            
+            # Add splat-specific backgrounds
+            if splat.lower() == 'vampire':
+                available_backgrounds.extend(VAMPIRE_BACKGROUNDS)
+            elif splat.lower() == 'changeling':
+                available_backgrounds.extend(CHANGELING_BACKGROUNDS)
+            elif splat.lower() == 'mage':
+                available_backgrounds.extend(MAGE_BACKGROUNDS)
+                
+                # Check mage affiliation for additional backgrounds
+                affiliation = character.db.stats.get('identity', {}).get('lineage', {}).get('Affiliation', {}).get('perm', '')
+                if affiliation == 'Technocracy':
+                    available_backgrounds.extend(TECHNOCRACY_BACKGROUNDS)
+                elif affiliation == 'Traditions':
+                    available_backgrounds.extend(TRADITIONS_BACKGROUNDS)
+                elif affiliation == 'Nephandi':
+                    available_backgrounds.extend(NEPHANDI_BACKGROUNDS)
+            elif splat.lower() == 'shifter':
+                available_backgrounds.extend(SHIFTER_BACKGROUNDS)
+            elif splat.lower() == 'mortal+':
+                available_backgrounds.extend(SORCERER_BACKGROUNDS)
+            
+            # Sort and remove duplicates
+            available_backgrounds = sorted(set(available_backgrounds))
             
             table.add_row("|yBackgrounds:|n", "", "", "", "")
-            for stat in backgrounds:
+            for stat in available_backgrounds:
                 current = int(character.get_stat('backgrounds', 'background', stat) or 0)
                 if current < 5:
                     next_rating = current + 1
@@ -349,6 +382,7 @@ class CmdXPCost(default_cmds.MuxCommand):
                         continue
 
         elif category == "powers":
+            # Get character's splat to determine available powers
             splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '').lower()
             
             if splat == 'vampire':
@@ -377,6 +411,82 @@ class CmdXPCost(default_cmds.MuxCommand):
                         except Exception as e:
                             character.msg(f"Error calculating cost for {discipline}: {str(e)}")
                             continue
+                
+                # Show thaumaturgy rituals if character has thaumaturgy
+                if any(d.lower() == 'thaumaturgy' for d in disciplines.keys()):
+                    table.add_row("", "", "", "", "")
+                    table.add_row("|yThaumaturgy Rituals:|n", "", "", "", "")
+                    
+                    # Query available rituals from database
+                    ritual_query = Q(stat_type='thaum_ritual')
+                    available_rituals = []
+                    
+                    for ritual in Stat.objects.filter(ritual_query).order_by('name'):
+                        # Check if character meets level requirement
+                        thaum_level = disciplines.get('Thaumaturgy', {}).get('perm', 0)
+                        if ritual.level and ritual.level <= thaum_level:
+                            available_rituals.append(ritual)
+                    
+                    if available_rituals:
+                        for ritual in available_rituals:
+                            try:
+                                cost, requires_approval = character.calculate_xp_cost(
+                                    ritual.name,
+                                    1,  # Rituals are either known (1) or not (0)
+                                    category='powers',
+                                    subcategory='thaum_ritual',
+                                    current_rating=0
+                                )
+                                table.add_row(
+                                    f"  {ritual.name} (Level {ritual.level})",
+                                    "0",
+                                    "1",
+                                    str(cost),
+                                    get_affordable_status(cost, current_xp, requires_approval)
+                                )
+                            except Exception as e:
+                                character.msg(f"Error calculating cost for {ritual.name}: {str(e)}")
+                                continue
+                    else:
+                        table.add_row("  No rituals available for your level of Thaumaturgy.", "", "", "", "")
+                
+                # Show necromancy rituals if character has necromancy
+                if any(d.lower() == 'necromancy' for d in disciplines.keys()):
+                    table.add_row("", "", "", "", "")
+                    table.add_row("|yNecromancy Rituals:|n", "", "", "", "")
+                    
+                    # Query available rituals from database
+                    ritual_query = Q(stat_type='necromancy_ritual')
+                    available_rituals = []
+                    
+                    for ritual in Stat.objects.filter(ritual_query).order_by('name'):
+                        # Check if character meets level requirement
+                        necro_level = disciplines.get('Necromancy', {}).get('perm', 0)
+                        if ritual.level and ritual.level <= necro_level:
+                            available_rituals.append(ritual)
+                    
+                    if available_rituals:
+                        for ritual in available_rituals:
+                            try:
+                                cost, requires_approval = character.calculate_xp_cost(
+                                    ritual.name,
+                                    1,  # Rituals are either known (1) or not (0)
+                                    category='powers',
+                                    subcategory='necromancy_ritual',
+                                    current_rating=0
+                                )
+                                table.add_row(
+                                    f"  {ritual.name} (Level {ritual.level})",
+                                    "0",
+                                    "1",
+                                    str(cost),
+                                    get_affordable_status(cost, current_xp, requires_approval)
+                                )
+                            except Exception as e:
+                                character.msg(f"Error calculating cost for {ritual.name}: {str(e)}")
+                                continue
+                    else:
+                        table.add_row("  No rituals available for your level of Necromancy.", "", "", "", "")
             
             elif splat == 'shifter':
                 # Get character's shifter attributes
@@ -386,86 +496,175 @@ class CmdXPCost(default_cmds.MuxCommand):
                 tribe = character.db.stats.get('other', {}).get('shifter_type', {}).get('Tribe', {}).get('perm', '')
                 aspect = character.db.stats.get('other', {}).get('shifter_type', {}).get('Aspect', {}).get('perm', '')
 
-                # Get all rank 1 gifts from the database
+                # Show current gifts
+                table.add_row("|yCurrent Gifts:|n", "", "", "", "")
+                gifts = character.db.stats.get('powers', {}).get('gift', {})
+                for gift, values in gifts.items():
+                    current = values.get('perm', 0)
+                    if current < 5:  # Max rating of 5
+                        next_rating = current + 1
+                        try:
+                            cost, requires_approval = character.calculate_xp_cost(
+                                gift, 
+                                next_rating, 
+                                category='powers',
+                                subcategory='gift',
+                                current_rating=current
+                            )
+                            table.add_row(
+                                f"  {gift}",
+                                str(current),
+                                str(next_rating),
+                                str(cost),
+                                get_affordable_status(cost, current_xp, requires_approval)
+                            )
+                        except Exception as e:
+                            character.msg(f"Error calculating cost for {gift}: {str(e)}")
+                            continue
+                
+                # Get available rank 1 gifts from the database
+                table.add_row("", "", "", "", "")
+                table.add_row("|yAvailable Rank 1 Gifts:|n", "", "", "", "")
+                
+                # Query gifts from database
+                gift_query = Q(stat_type='gift') & Q(values__contains=[1])
                 available_gifts = []
-                for gift_name, gift_data in Stat.objects.filter(stat_type='gift', values__contains=[1]).items():
-                    # Check if gift matches any of character's attributes
+                
+                for gift in Stat.objects.filter(gift_query).order_by('name'):
+                    # Skip gifts the character already has
+                    if gift.name in gifts:
+                        continue
+                        
+                    # Check if gift matches character's attributes
                     matches = False
                     
                     # Check shifter type
-                    if 'shifter_type' in gift_data:
-                        if isinstance(gift_data['shifter_type'], list):
-                            if shifter_type in gift_data['shifter_type']:
+                    if gift.shifter_type:
+                        if isinstance(gift.shifter_type, list):
+                            if shifter_type in gift.shifter_type:
                                 matches = True
-                        elif gift_data['shifter_type'] == shifter_type:
+                        elif gift.shifter_type == shifter_type:
                             matches = True
                     
                     # Check breed if not already matched
-                    if not matches and 'breed' in gift_data:
-                        if isinstance(gift_data['breed'], list):
-                            if breed in gift_data['breed']:
+                    if not matches and gift.breed:
+                        if isinstance(gift.breed, list):
+                            if breed in gift.breed:
                                 matches = True
-                        elif gift_data['breed'] == breed:
+                        elif gift.breed == breed:
                             matches = True
                     
                     # Check auspice if not already matched
-                    if not matches and 'auspice' in gift_data:
-                        if isinstance(gift_data['auspice'], list):
-                            if auspice in gift_data['auspice']:
+                    if not matches and gift.auspice:
+                        if isinstance(gift.auspice, list):
+                            if auspice in gift.auspice:
                                 matches = True
-                        elif gift_data['auspice'] == auspice:
+                        elif gift.auspice == auspice:
                             matches = True
                     
                     # Check tribe if not already matched
-                    if not matches and 'tribe' in gift_data:
-                        if isinstance(gift_data['tribe'], list):
-                            if tribe in gift_data['tribe']:
+                    if not matches and gift.tribe:
+                        if isinstance(gift.tribe, list):
+                            if tribe in gift.tribe:
                                 matches = True
-                        elif gift_data['tribe'] == tribe:
+                        elif gift.tribe == tribe:
                             matches = True
                     
                     # Check aspect if not already matched
-                    if not matches and 'aspect' in gift_data:
-                        if isinstance(gift_data['aspect'], list):
-                            if aspect in gift_data['aspect']:
+                    if not matches and gift.aspect:
+                        if isinstance(gift.aspect, list):
+                            if aspect in gift.aspect:
                                 matches = True
-                        elif gift_data['aspect'] == aspect:
+                        elif gift.aspect == aspect:
                             matches = True
                     
                     if matches:
-                        available_gifts.append((gift_name, gift_data))
-
-                # Sort gifts alphabetically
-                available_gifts.sort(key=lambda x: x[0])
-
-                # Display available gifts
-                table.add_row("|yAvailable Rank 1 Gifts:|n", "", "", "", "")
+                        available_gifts.append(gift)
+                
                 if available_gifts:
-                    for gift_name, gift_data in available_gifts:
-                        current = int(character.get_stat('powers', 'gift', gift_name) or 0)
-                        if current < 1:  # Only show if not already learned
-                            try:
-                                cost, requires_approval = character.calculate_xp_cost(
-                                    gift_name,
-                                    1,
-                                    category='powers',
-                                    subcategory='gift',
-                                    current_rating=0
-                                )
-                                # Add source info if available
-                                source = f" ({gift_data.get('source', '')})" if 'source' in gift_data else ""
-                                table.add_row(
-                                    f"  {gift_name}{source}",
-                                    "0",
-                                    "1",
-                                    str(cost),
-                                    get_affordable_status(cost, current_xp, requires_approval)
-                                )
-                            except Exception as e:
-                                character.msg(f"Error calculating cost for {gift_name}: {str(e)}")
-                                continue
+                    for gift in available_gifts:
+                        try:
+                            cost, requires_approval = character.calculate_xp_cost(
+                                gift.name,
+                                1,
+                                category='powers',
+                                subcategory='gift',
+                                current_rating=0
+                            )
+                            # Add source info if available
+                            source = f" ({gift.source})" if gift.source else ""
+                            table.add_row(
+                                f"  {gift.name}{source}",
+                                "0",
+                                "1",
+                                str(cost),
+                                get_affordable_status(cost, current_xp, requires_approval)
+                            )
+                        except Exception as e:
+                            character.msg(f"Error calculating cost for {gift.name}: {str(e)}")
+                            continue
                 else:
                     table.add_row("  No rank 1 gifts available for your character.", "", "", "", "")
+                
+                # Show rites
+                table.add_row("", "", "", "", "")
+                table.add_row("|yRites:|n", "", "", "", "")
+                
+                # Query rites from database
+                rite_query = Q(stat_type='rite')
+                available_rites = []
+                
+                for rite in Stat.objects.filter(rite_query).order_by('name'):
+                    # Skip rites the character already has
+                    if rite.name in character.db.stats.get('powers', {}).get('rite', {}):
+                        continue
+                        
+                    # Check if rite matches character's attributes
+                    matches = False
+                    
+                    # Check shifter type
+                    if rite.shifter_type:
+                        if isinstance(rite.shifter_type, list):
+                            if shifter_type in rite.shifter_type:
+                                matches = True
+                        elif rite.shifter_type == shifter_type:
+                            matches = True
+                    
+                    # Check tribe if not already matched
+                    if not matches and rite.tribe:
+                        if isinstance(rite.tribe, list):
+                            if tribe in rite.tribe:
+                                matches = True
+                        elif rite.tribe == tribe:
+                            matches = True
+                    
+                    if matches:
+                        available_rites.append(rite)
+                
+                if available_rites:
+                    for rite in available_rites:
+                        try:
+                            cost, requires_approval = character.calculate_xp_cost(
+                                rite.name,
+                                1,
+                                category='powers',
+                                subcategory='rite',
+                                current_rating=0
+                            )
+                            # Add level info if available
+                            level = f" (Level {rite.level})" if hasattr(rite, 'level') and rite.level else ""
+                            table.add_row(
+                                f"  {rite.name}{level}",
+                                "0",
+                                "1",
+                                str(cost),
+                                get_affordable_status(cost, current_xp, requires_approval)
+                            )
+                        except Exception as e:
+                            character.msg(f"Error calculating cost for {rite.name}: {str(e)}")
+                            continue
+                else:
+                    table.add_row("  No rites available for your character.", "", "", "", "")
             
             elif splat == 'mage':
                 # Show mage spheres
@@ -520,23 +719,367 @@ class CmdXPCost(default_cmds.MuxCommand):
                         except Exception as e:
                             character.msg(f"Error calculating cost for {art}: {str(e)}")
                             continue
+                
+                # Show changeling realms
+                table.add_row("", "", "", "", "")
+                table.add_row("|yRealms:|n", "", "", "", "")
+                realms = character.db.stats.get('powers', {}).get('realm', {})
+                for realm, values in realms.items():
+                    current = values.get('perm', 0)
+                    if current < 5:
+                        next_rating = current + 1
+                        try:
+                            cost, requires_approval = character.calculate_xp_cost(
+                                realm, 
+                                next_rating, 
+                                category='powers',
+                                subcategory='realm',
+                                current_rating=current
+                            )
+                            table.add_row(
+                                f"  {realm}",
+                                str(current),
+                                str(next_rating),
+                                str(cost),
+                                get_affordable_status(cost, current_xp, requires_approval)
+                            )
+                        except Exception as e:
+                            character.msg(f"Error calculating cost for {realm}: {str(e)}")
+                            continue
+            
+            elif splat == 'possessed':
+                # Show possessed blessings
+                table.add_row("|yBlessings:|n", "", "", "", "")
+                blessings = character.db.stats.get('powers', {}).get('blessing', {})
+                for blessing, values in blessings.items():
+                    current = values.get('perm', 0)
+                    if current < 5:
+                        next_rating = current + 1
+                        try:
+                            cost, requires_approval = character.calculate_xp_cost(
+                                blessing, 
+                                next_rating, 
+                                category='powers',
+                                subcategory='blessing',
+                                current_rating=current
+                            )
+                            table.add_row(
+                                f"  {blessing}",
+                                str(current),
+                                str(next_rating),
+                                str(cost),
+                                get_affordable_status(cost, current_xp, requires_approval)
+                            )
+                        except Exception as e:
+                            character.msg(f"Error calculating cost for {blessing}: {str(e)}")
+                            continue
+                
+                # Show possessed charms
+                table.add_row("", "", "", "", "")
+                table.add_row("|yCharms:|n", "", "", "", "")
+                charms = character.db.stats.get('powers', {}).get('charm', {})
+                for charm, values in charms.items():
+                    current = values.get('perm', 0)
+                    if current < 5:
+                        next_rating = current + 1
+                        try:
+                            cost, requires_approval = character.calculate_xp_cost(
+                                charm, 
+                                next_rating, 
+                                category='powers',
+                                subcategory='charm',
+                                current_rating=current
+                            )
+                            table.add_row(
+                                f"  {charm}",
+                                str(current),
+                                str(next_rating),
+                                str(cost),
+                                get_affordable_status(cost, current_xp, requires_approval)
+                            )
+                        except Exception as e:
+                            character.msg(f"Error calculating cost for {charm}: {str(e)}")
+                            continue
+            
+            elif splat == 'mortal+':
+                # Get character's mortal+ type
+                mortalplus_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+                
+                if mortalplus_type == 'Sorcerer':
+                    # Show sorcery paths
+                    table.add_row("|ySorcery Paths:|n", "", "", "", "")
+                    sorcery = character.db.stats.get('powers', {}).get('sorcery', {})
+                    for path, values in sorcery.items():
+                        current = values.get('perm', 0)
+                        if current < 5:
+                            next_rating = current + 1
+                            try:
+                                cost, requires_approval = character.calculate_xp_cost(
+                                    path, 
+                                    next_rating, 
+                                    category='powers',
+                                    subcategory='sorcery',
+                                    current_rating=current
+                                )
+                                table.add_row(
+                                    f"  {path}",
+                                    str(current),
+                                    str(next_rating),
+                                    str(cost),
+                                    get_affordable_status(cost, current_xp, requires_approval)
+                                )
+                            except Exception as e:
+                                character.msg(f"Error calculating cost for {path}: {str(e)}")
+                                continue
+                    
+                    # Show sorcery rituals
+                    table.add_row("", "", "", "", "")
+                    table.add_row("|ySorcery Rituals:|n", "", "", "", "")
+                    
+                    # Query available rituals from database
+                    ritual_query = Q(stat_type='hedge_ritual')
+                    available_rituals = []
+                    
+                    for ritual in Stat.objects.filter(ritual_query).order_by('name'):
+                        # Skip rituals the character already has
+                        if ritual.name in character.db.stats.get('powers', {}).get('hedge_ritual', {}):
+                            continue
+                        
+                        available_rituals.append(ritual)
+                    
+                    if available_rituals:
+                        for ritual in available_rituals:
+                            try:
+                                cost, requires_approval = character.calculate_xp_cost(
+                                    ritual.name,
+                                    1,
+                                    category='powers',
+                                    subcategory='hedge_ritual',
+                                    current_rating=0
+                                )
+                                # Add level info if available
+                                level = f" (Level {ritual.level})" if hasattr(ritual, 'level') and ritual.level else ""
+                                table.add_row(
+                                    f"  {ritual.name}{level}",
+                                    "0",
+                                    "1",
+                                    str(cost),
+                                    get_affordable_status(cost, current_xp, requires_approval)
+                                )
+                            except Exception as e:
+                                character.msg(f"Error calculating cost for {ritual.name}: {str(e)}")
+                                continue
+                    else:
+                        table.add_row("  No rituals available for your character.", "", "", "", "")
+                
+                elif mortalplus_type == 'Psychic':
+                    # Show numina
+                    table.add_row("|yNumina:|n", "", "", "", "")
+                    numina = character.db.stats.get('powers', {}).get('numina', {})
+                    for power, values in numina.items():
+                        current = values.get('perm', 0)
+                        if current < 5:
+                            next_rating = current + 1
+                            try:
+                                cost, requires_approval = character.calculate_xp_cost(
+                                    power, 
+                                    next_rating, 
+                                    category='powers',
+                                    subcategory='numina',
+                                    current_rating=current
+                                )
+                                table.add_row(
+                                    f"  {power}",
+                                    str(current),
+                                    str(next_rating),
+                                    str(cost),
+                                    get_affordable_status(cost, current_xp, requires_approval)
+                                )
+                            except Exception as e:
+                                character.msg(f"Error calculating cost for {power}: {str(e)}")
+                                continue
+                
+                elif mortalplus_type == 'Kinain':
+                    # Show arts and realms like changelings
+                    table.add_row("|yArts:|n", "", "", "", "")
+                    arts = character.db.stats.get('powers', {}).get('art', {})
+                    for art, values in arts.items():
+                        current = values.get('perm', 0)
+                        if current < 3:  # Kinain are limited to 3 dots
+                            next_rating = current + 1
+                            try:
+                                cost, requires_approval = character.calculate_xp_cost(
+                                    art, 
+                                    next_rating, 
+                                    category='powers',
+                                    subcategory='art',
+                                    current_rating=current
+                                )
+                                table.add_row(
+                                    f"  {art}",
+                                    str(current),
+                                    str(next_rating),
+                                    str(cost),
+                                    get_affordable_status(cost, current_xp, requires_approval)
+                                )
+                            except Exception as e:
+                                character.msg(f"Error calculating cost for {art}: {str(e)}")
+                                continue
+                    
+                    # Show realms
+                    table.add_row("", "", "", "", "")
+                    table.add_row("|yRealms:|n", "", "", "", "")
+                    realms = character.db.stats.get('powers', {}).get('realm', {})
+                    for realm, values in realms.items():
+                        current = values.get('perm', 0)
+                        if current < 3:  # Kinain are limited to 3 dots
+                            next_rating = current + 1
+                            try:
+                                cost, requires_approval = character.calculate_xp_cost(
+                                    realm, 
+                                    next_rating, 
+                                    category='powers',
+                                    subcategory='realm',
+                                    current_rating=current
+                                )
+                                table.add_row(
+                                    f"  {realm}",
+                                    str(current),
+                                    str(next_rating),
+                                    str(cost),
+                                    get_affordable_status(cost, current_xp, requires_approval)
+                                )
+                            except Exception as e:
+                                character.msg(f"Error calculating cost for {realm}: {str(e)}")
+                                continue
+                
+                elif mortalplus_type == 'Ghoul':
+                    # Show disciplines like vampires but with lower max
+                    table.add_row("|yDisciplines:|n", "", "", "", "")
+                    disciplines = character.db.stats.get('powers', {}).get('discipline', {})
+                    for discipline, values in disciplines.items():
+                        current = values.get('perm', 0)
+                        if current < 3:  # Ghouls are limited to 3 dots
+                            next_rating = current + 1
+                            try:
+                                cost, requires_approval = character.calculate_xp_cost(
+                                    discipline, 
+                                    next_rating, 
+                                    category='powers',
+                                    subcategory='discipline',
+                                    current_rating=current
+                                )
+                                table.add_row(
+                                    f"  {discipline}",
+                                    str(current),
+                                    str(next_rating),
+                                    str(cost),
+                                    get_affordable_status(cost, current_xp, requires_approval)
+                                )
+                            except Exception as e:
+                                character.msg(f"Error calculating cost for {discipline}: {str(e)}")
+                                continue
             else:
                 table.add_row("No powers available for your character type.", "", "", "", "")
 
         elif category == "pools":
-            pools = ['Willpower', 'Rage', 'Gnosis']
+            # Get character's splat to determine available pools
+            splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '').lower()
+            
+            # Common pool for all splats
+            pools = ['Willpower']
+            
+            # Add splat-specific pools
+            if splat == 'vampire':
+                pools.extend(['Blood', 'Path'])
+            elif splat == 'shifter':
+                pools.extend(['Rage', 'Gnosis'])
+                
+                # Add renown based on shifter type
+                shifter_type = character.db.stats.get('other', {}).get('shifter_type', {}).get('Shifter Type', {}).get('perm', '')
+                if shifter_type == 'Garou':
+                    pools.extend(['Glory', 'Honor', 'Wisdom'])
+                elif shifter_type == 'Bastet':
+                    pools.extend(['Honor', 'Glory', 'Wisdom', 'Ferocity', 'Cunning'])
+                elif shifter_type == 'Gurahl':
+                    pools.extend(['Honor', 'Wisdom', 'Succor'])
+                elif shifter_type == 'Corax':
+                    pools.extend(['Glory', 'Honor', 'Wisdom', 'Cunning'])
+                elif shifter_type == 'Rokea':
+                    pools.extend(['Valor', 'Harmony', 'Innovation'])
+                elif shifter_type == 'Ananasi':
+                    pools.extend(['Obedience', 'Wisdom', 'Cunning'])
+                elif shifter_type == 'Nuwisha':
+                    pools.extend(['Glory', 'Honor', 'Humor', 'Cunning'])
+                elif shifter_type == 'Kitsune':
+                    pools.extend(['Glory', 'Honor', 'Cunning'])
+                elif shifter_type in ['Ajaba', 'Ratkin']:
+                    pools.extend(['Obligation', 'Cunning', 'Infamy'])
+                
+            elif splat == 'mage':
+                pools.extend(['Quintessence', 'Paradox', 'Arete'])
+                
+                # Add affiliation-specific pools
+                affiliation = character.db.stats.get('identity', {}).get('lineage', {}).get('Affiliation', {}).get('perm', '')
+                if affiliation == 'Technocracy':
+                    pools.append('Enlightenment')
+                
+                # Add resonance
+                pools.append('Resonance')
+                
+            elif splat == 'changeling':
+                pools.extend(['Glamour', 'Banality', 'Nightmare'])
+            
+            # Sort and remove duplicates
+            pools = sorted(set(pools))
             
             table.add_row("|yPools:|n", "", "", "", "")
             for stat in pools:
-                current = int(character.get_stat('pools', 'dual', stat) or 0)
-                if current < 10:  # Pools usually go to 10
+                # Determine the correct category and subcategory for the pool
+                if stat in ['Willpower', 'Blood', 'Rage', 'Gnosis', 'Glamour', 'Banality', 'Quintessence', 'Paradox']:
+                    category_name = 'pools'
+                    subcategory = 'dual'
+                elif stat in ['Path', 'Humanity']:
+                    category_name = 'pools'
+                    subcategory = 'moral'
+                elif stat in ['Arete', 'Enlightenment']:
+                    category_name = 'pools'
+                    subcategory = 'advantage'
+                elif stat == 'Resonance':
+                    category_name = 'pools'
+                    subcategory = 'resonance'
+                elif stat in ['Glory', 'Honor', 'Wisdom', 'Cunning', 'Ferocity', 'Succor', 'Valor', 
+                             'Harmony', 'Innovation', 'Obedience', 'Humor', 'Obligation', 'Infamy']:
+                    category_name = 'advantages'
+                    subcategory = 'renown'
+                else:
+                    category_name = 'pools'
+                    subcategory = 'other'
+                
+                # Get current value
+                current = int(character.get_stat(category_name, subcategory, stat) or 0)
+                
+                # Determine max rating based on pool type
+                if stat in ['Willpower', 'Rage', 'Gnosis', 'Glamour', 'Banality']:
+                    max_rating = 10
+                elif stat in ['Glory', 'Honor', 'Wisdom', 'Cunning', 'Ferocity', 'Succor', 'Valor', 
+                             'Harmony', 'Innovation', 'Obedience', 'Humor', 'Obligation', 'Infamy']:
+                    max_rating = 10
+                elif stat in ['Arete', 'Enlightenment']:
+                    max_rating = 10
+                elif stat == 'Path' or stat == 'Humanity':
+                    max_rating = 10
+                else:
+                    max_rating = 10  # Default max rating
+                
+                if current < max_rating:
                     next_rating = current + 1
                     try:
                         cost, requires_approval = character.calculate_xp_cost(
                             stat, 
                             next_rating, 
-                            category='pools',
-                            subcategory='dual',
+                            category=category_name,
+                            subcategory=subcategory,
                             current_rating=current
                         )
                         table.add_row(

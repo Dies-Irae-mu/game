@@ -58,7 +58,7 @@ class CmdCheck(MuxCommand):
         'ability': 2,
         'secondary_ability': 1,
         'background': 1,
-        'willpower': 1,
+        'willpower': 2,
         'virtue': 2,
         'merit': 1,
         'flaw': -1,  # Flaws add points
@@ -135,17 +135,17 @@ class CmdCheck(MuxCommand):
 
     # Define secondary abilities that cost half the normal amount
     SECONDARY_ABILITIES = {
-        'talent': {
+        'secondary_talent': {
             'Artistry', 'Carousing', 'Diplomacy', 'Intrigue', 'Mimicry', 'Scrounging', 'Seduction', 'Style',
             # Mage-specific secondaries will be added dynamically
             'High Ritual', 'Blatancy', 'Lucid Dreaming', 'Flying'
         },
-        'skill': {
+        'secondary_skill': {
             'Archery', 'Fortune-Telling', 'Fencing', 'Gambling', 'Jury-Rigging', 'Pilot', 'Torture',
             # Mage-specific secondaries will be added dynamically
             'Do', 'Microgravity Ops', 'Energy Weapons', 'Helmsman', 'Biotech'
         },
-        'knowledge': {
+        'secondary_knowledge': {
             'Area Knowledge', 'Cultural Savvy', 'Demolitions', 'Herbalism', 'Media', 'Power-Brokering', 'Vice',
             # Mage-specific secondaries will be added dynamically
             'Hypertech', 'Cybernetics', 'Paraphysics', 'Xenobiology'
@@ -180,9 +180,12 @@ class CmdCheck(MuxCommand):
             'total_freebies': 15,
             'errors': [],
             'secondary_abilities': {
-                'talents': {},
-                'skills': {},
-                'knowledges': {}
+                'secondary_talent': {},
+                'secondary_skill': {},
+                'secondary_knowledge': {},
+                'primary': {'category': '', 'points': 0},
+                'secondary': {'category': '', 'points': 0},
+                'tertiary': {'category': '', 'points': 0}
             },
             'willpower': 0,  # Initialize willpower
             'arete': 0,      # Initialize other power stats
@@ -256,9 +259,9 @@ class CmdCheck(MuxCommand):
 
         # Initialize secondary_abilities in results with proper structure
         results['secondary_abilities'] = {
-            'talents': {},
-            'skills': {},
-            'knowledges': {},
+            'secondary_talent': {},
+            'secondary_skill': {},
+            'secondary_knowledge': {},
             'primary': {'category': '', 'points': 0},
             'secondary': {'category': '', 'points': 0},
             'tertiary': {'category': '', 'points': 0}
@@ -281,15 +284,15 @@ class CmdCheck(MuxCommand):
 
             # Check secondary abilities category
             secondary_category = f'secondary_{category}'
-            # Fix: Get secondary abilities from the correct path - inside the abilities dictionary
-            secondary_abilities_dict = character.db.stats.get('abilities', {}).get('secondary_abilities', {}).get(secondary_category, {})
+            # Fix: Get secondary abilities from the correct path
+            secondary_abilities_dict = character.db.stats.get('secondary_abilities', {}).get(secondary_category, {})
             for ability, values in secondary_abilities_dict.items():
                 ability_value = values.get('perm', 0)
                 if ability_value > 0:
                     category_totals[category]['secondary'] += ability_value * 0.5  # Secondary abilities cost half points
                     # Store in results
-                    plural_category = category + 's'  # Convert to plural for results dict
-                    results['secondary_abilities'][plural_category][ability] = ability_value
+                    secondary_category = f'secondary_{category}'  # Use consistent naming with 'secondary_' prefix
+                    results['secondary_abilities'][secondary_category][ability] = ability_value
 
         # Calculate total points for each category
         for category, totals in category_totals.items():
@@ -818,8 +821,8 @@ class CmdCheck(MuxCommand):
             
             # Secondary abilities (count as half points)
             secondary_category = f'secondary_{category}'
-            # Fix: Get secondary abilities from the correct path - inside the abilities dictionary
-            secondary_abilities = character.db.stats.get('abilities', {}).get('secondary_abilities', {}).get(secondary_category, {})
+            # Fix: Get secondary abilities from the correct path
+            secondary_abilities = character.db.stats.get('secondary_abilities', {}).get(secondary_category, {})
             for ability, values in secondary_abilities.items():
                 ability_value = values.get('perm', 0)
                 total += ability_value * 0.5
@@ -1109,9 +1112,9 @@ class CmdCheck(MuxCommand):
 
         # Calculate secondary ability totals
         # Fix: Access secondary abilities from the correct path
-        sec_talent_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('abilities', {}).get('secondary_abilities', {}).get('secondary_talent', {}).values())
-        sec_skill_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('abilities', {}).get('secondary_abilities', {}).get('secondary_skill', {}).values())
-        sec_knowledge_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('abilities', {}).get('secondary_abilities', {}).get('secondary_knowledge', {}).values())
+        sec_talent_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('secondary_abilities', {}).get('secondary_talent', {}).values())
+        sec_skill_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('secondary_abilities', {}).get('secondary_skill', {}).values())
+        sec_knowledge_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('secondary_abilities', {}).get('secondary_knowledge', {}).values())
 
         # Combined totals
         total_talent = talent_total + sec_talent_total
@@ -1149,21 +1152,21 @@ class CmdCheck(MuxCommand):
         string += "|ySecondary Abilities:|n\n"
         
         # Talents
-        if results['secondary_abilities']['talents']:
+        if results['secondary_abilities']['secondary_talent']:
             string += f"\n|cTalents (Total: {sec_talent_total:.1f} points):|n\n"
-            for talent, value in sorted(results['secondary_abilities']['talents'].items()):
+            for talent, value in sorted(results['secondary_abilities']['secondary_talent'].items()):
                 string += f"{talent}: {value} ({value * 0.5:.1f} points)\n"
         
         # Skills
-        if results['secondary_abilities']['skills']:
+        if results['secondary_abilities']['secondary_skill']:
             string += f"\n|cSkills (Total: {sec_skill_total:.1f} points):|n\n"
-            for skill, value in sorted(results['secondary_abilities']['skills'].items()):
+            for skill, value in sorted(results['secondary_abilities']['secondary_skill'].items()):
                 string += f"{skill}: {value} ({value * 0.5:.1f} points)\n"
         
         # Knowledges
-        if results['secondary_abilities']['knowledges']:
+        if results['secondary_abilities']['secondary_knowledge']:
             string += f"\n|cKnowledges (Total: {sec_knowledge_total:.1f} points):|n\n"
-            for knowledge, value in sorted(results['secondary_abilities']['knowledges'].items()):
+            for knowledge, value in sorted(results['secondary_abilities']['secondary_knowledge'].items()):
                 string += f"{knowledge}: {value} ({value * 0.5:.1f} points)\n"
         
         string += "\n"
