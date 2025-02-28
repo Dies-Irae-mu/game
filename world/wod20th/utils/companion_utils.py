@@ -23,6 +23,64 @@ COMPANION_TYPE_CHOICES: List[Tuple[str, str]] = [
 # Keep the set for easy lookups
 COMPANION_TYPES: Set[str] = {t[1] for t in COMPANION_TYPE_CHOICES if t[1] != 'None'}
 
+# Renamed for consistency with stat_mappings.py
+ELEMENTAL_AFFINITY: Dict[str, List[str]] = {
+            "Air": [
+                "Blustery Curmudgeon",
+                "Bitter Warrior",
+                "Cold Cynic",
+                "Fleeting Dilettante",
+                "Flighty Scatterbrain",
+                "Gentle Friend",
+                "Stormy Fanatic"
+            ],
+            "Earth": [
+                "Crystalline Idealist",
+                "Fertile Procreator",
+                "Flowery Bon Vivant",
+                "Resolute Architect",
+                "Sheltering Caregiver",
+                "Solid Guardian",
+                "Stony Curmudgeon"
+            ],
+            "Fire": [
+                "Burning Quester",
+                "Fiery Rebel",
+                "Glittering Dancer",
+                "Illuminated Scholar",
+                "Passionate Lover",
+                "Lusty Reveler",
+                "Warm Romantic"
+            ],
+            "Water": [
+                "Babbling Jester",
+                "Erosive Revolutionary",
+                "Graceful Sensualist",
+                "Quiet Thinker",
+                "Stagnant Traditionalist",
+                "Patient Conniver",
+                "Wise Elder"
+            ],
+            "Metal": [
+                "Bright Thinker",
+                "Greedy Collector",
+                "Harsh Scrapper",
+                "Hot-Headed Braggart",
+                "Temperamental Warrior",
+                "Sharp-Witted Trickster",
+                "Visionary Architect"
+            ],
+            "Wood": [
+                "Bearer of Burdens",
+                "Flexible Mediator",
+                "Nurturing Parent",
+                "Rooted Traditionalist",
+                "Scattered Visionary",
+                "Steadfast Protector",
+                "Stout Defender"
+            ]
+}
+
 COMPANION_POWERS = {
     'special_advantage': [],
     'charm': [
@@ -159,6 +217,46 @@ def validate_companion_advantage(character, advantage_name: str, value: int) -> 
     
     return True, ""
 
+def validate_elemental_affinity(value_or_element: str, personality: str = None) -> tuple[bool, str, str]:
+    """
+    Validate an elemental affinity value for companions.
+    
+    Args:
+        value_or_element: Either the full value string (with optional colon separator) 
+                          or just the element type
+        personality: If provided separately, the personality value
+        
+    Returns:
+        Tuple of (is_valid, error_message, proper_value)
+    """
+    # Parse input
+    if ':' in value_or_element:
+        element, personality = value_or_element.split(':', 1)
+    else:
+        element = value_or_element
+    element = element.strip()
+    if personality:
+        personality = personality.strip()
+    
+    # Validate element
+    if element.title() not in ELEMENTAL_AFFINITY:
+        valid_elements = ', '.join(ELEMENTAL_AFFINITY.keys())
+        return False, f"Invalid element type. Valid elements are: {valid_elements}", None
+    
+    # Handle no personality case
+    if not personality:
+        personalities = ELEMENTAL_AFFINITY[element.title()]
+        personalities_str = ', '.join(personalities)
+        return True, f"Valid element. To complete your affinity, use: {element.title()}: <personality>. Valid personalities are: {personalities_str}", element.title()
+    
+    # Validate personality
+    valid_personalities = ELEMENTAL_AFFINITY[element.title()]
+    if personality not in valid_personalities:
+        personalities_str = ', '.join(valid_personalities)
+        return False, f"Invalid personality for {element.title()}. Valid personalities are: {personalities_str}", None
+    
+    return True, "", f"{element.title()}: {personality}"
+
 def update_rage_from_ferocity(character):
     """Update Rage pool based on current Ferocity value."""
     
@@ -183,14 +281,22 @@ def validate_companion_stats(character, stat_name: str, value: str, category: st
     """
     stat_name = stat_name.lower()
     
-    # Get companion type and splat
-    companion_type = character.get_stat('identity', 'lineage', 'Companion Type', temp=False)
+    # Get splat
     splat = character.get_stat('other', 'splat', 'Splat', temp=False)
     
     # Validate type
     if stat_name == 'companion type':
         is_valid, error_msg = validate_companion_type(value)
         return is_valid, error_msg, None
+    
+    # Handle both 'element' and 'elemental affinity' as aliases - check this before any other validation
+    if stat_name in ['element', 'elemental affinity']:
+        # Let validate_elemental_affinity handle the parsing
+        is_valid, error_msg, proper_value = validate_elemental_affinity(value)
+        if is_valid:
+            # For elemental affinity, return the proper_value to be stored
+            return True, error_msg, proper_value
+        return False, error_msg, None
         
     # Special handling for Ferocity based on splat
     if stat_name == 'ferocity':
@@ -313,6 +419,28 @@ def update_companion_pools_on_stat_change(character, stat_name: str, new_value: 
             character.set_stat('pools', 'dual', 'Essence Energy', 10, temp=False)
             character.set_stat('pools', 'dual', 'Essence Energy', 10, temp=True)
             character.msg("|gEssence Energy pool set to 10 for Familiar.|n")
+    
+    # Handle Elemental Affinity changes
+    elif stat_name == 'elemental affinity':
+        # The basic "Set X to Y" message is already displayed by CmdSelfStat
+        # Only provide additional information about elemental effects
+        
+        # If the elemental affinity contains element and personality
+        if ':' in new_value:
+            element = new_value.split(':', 1)[0].strip()
+            
+            # Add any special effects based on the element type
+            if element.lower() == 'fire':
+                character.msg("|yFire affinity companions may have access to fire-based charms.|n")
+            elif element.lower() == 'water':
+                character.msg("|bWater affinity companions may have special advantages in aquatic environments.|n")
+        else:
+            # Just element provided
+            element = new_value.strip()
+            if element.lower() == 'fire':
+                character.msg("|yFire affinity companions may have access to fire-based charms.|n")
+            elif element.lower() == 'water':
+                character.msg("|bWater affinity companions may have special advantages in aquatic environments.|n")
     
     # Handle Ferocity special advantage
     elif stat_name == 'ferocity':

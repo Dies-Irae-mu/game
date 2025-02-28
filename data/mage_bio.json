@@ -197,5 +197,69 @@
         "category": "identity",
         "stat_type": "lineage",
         "values": []
+    },
+    {
+        "name": "Elemental Affinity",
+        "description": "Beasts, especially magical ones, are more than just fur and claws. Their natures reflect the forces at work on reality - the four (or five, to eastern characters) elements. Elemental Affinities exist for all beasts, whether natural or supernatural, and they influence creature characters in the ways that Archetypes influence human ones. Think of your Affinity as a Nature - it reflects what you are at heart.",
+        "game_line": "Mage: The Ascension",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": {
+            "Air": [
+                "Blustery Curmudgeon",
+                "Bitter Warrior",
+                "Cold Cynic",
+                "Fleeting Dilettante",
+                "Flighty Scatterbrain",
+                "Gentle Friend",
+                "Stormy Fanatic"
+            ],
+            "Earth": [
+                "Crystalline Idealist",
+                "Fertile Procreator",
+                "Flowery Bon Vivant",
+                "Resolute Architect",
+                "Sheltering Caregiver",
+                "Solid Guardian",
+                "Stony Curmudgeon"
+            ],
+            "Fire": [
+                "Burning Quester",
+                "Fiery Rebel",
+                "Glittering Dancer",
+                "Illuminated Scholar",
+                "Passionate Lover",
+                "Lusty Reveler",
+                "Warm Romantic"
+            ],
+            "Water": [
+                "Babbling Jester",
+                "Erosive Revolutionary",
+                "Graceful Sensualist",
+                "Quiet Thinker",
+                "Stagnant Traditionalist",
+                "Patient Conniver",
+                "Wise Elder"
+            ],
+            "Metal": [
+                "Bright Thinker",
+                "Greedy Collector",
+                "Harsh Scrapper",
+                "Hot-Headed Braggart",
+                "Temperamental Warrior",
+                "Sharp-Witted Trickster",
+                "Visionary Architect"
+            ],
+            "Wood": [
+                "Bearer of Burdens",
+                "Flexible Mediator",
+                "Nurturing Parent",
+                "Rooted Traditionalist",
+                "Scattered Visionary",
+                "Steadfast Protector",
+                "Stout Defender"
+            ]
+        },
+        "splat": "companion"
     }
 ]

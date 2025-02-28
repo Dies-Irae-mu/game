@@ -7,10 +7,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Fianna"
+        "tribe": "Fianna",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Warp Spasm",
@@ -20,10 +20,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Fianna"
+        "tribe": "Fianna",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Song of the Dire",
@@ -33,10 +33,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Fianna"
+        "tribe": "Fianna",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Balor's Gaze",
@@ -46,10 +46,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Fianna"
+        "tribe": "Fianna",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Raptor's Gaze"]
     },
     {
         "name": "Phantasm",
@@ -59,10 +60,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": ["Garou", "Bastet"],
+        "values": [3, 4], 
         "splat": "Shifter",
-        "tribe": "Fianna"
+        "tribe": "Fianna",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Veil of Maya", "Whispered Dreams"]
     },
     {
         "name": "Calm Before the Storm",
@@ -72,10 +74,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Black Fury"
+        "tribe": "Black Fury",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Blizzard of Arrows",
@@ -85,11 +87,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
         "tribe": "Black Fury",
-        "camp": "Amazons of Diana"
+        "camp": "Amazons of Diana",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Bolster the True Name",
@@ -99,10 +101,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Black Fury"
+        "tribe": "Black Fury",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Wasp Talons",
@@ -112,10 +114,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Black Fury"
+        "tribe": "Black Fury",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Body Wrack",
@@ -125,10 +127,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Black Fury"
+        "tribe": "Black Fury",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Blink",
@@ -138,23 +140,23 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Bone Gnawer"
+        "tribe": "Bone Gnawer",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
-        "name": "Cliché Curse",
+        "name": "Cliche Curse",
         "description": "From Roger Ebert's Little Bigger Movie Glossary, 'Clichéphobia. Condition affecting people raised on movies. Symptoms occur when real life situations echo movie clichés, and the sufferers must take action to avoid what would be the inevitable denouement in a movie.' What is a humorous anecdote in the hands of humans becomes a deadly weapon in the claws of a Bone Gnawer. Most often employed with an appropriately dramatic curse (although this isn't necessary), the target of this Gift becomes certain to suffer an unfavorable fate in a cliché-related way. Anyone reaching for something high in a cupboard will inevitably have the entire contents fall on top of him. Riding a bicycle on a sunny day invites being hit by a truck. While it is possible to avoid the effects of this curse, doing so requires virtually shutting yourself from the world, and not in a dark room, either. It is taught by a dog spirit or by a spirit from a television realm.",
         "system": "The player spends one point of Gnosis and names the victim, who must be within hearing distance and line of sight. For twenty-four hours, the victim risks disaster. Once that disaster occurs, however, the curse is ended.",
         "source": "Players' Guide to Garou (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Bone Gnawer"
+        "tribe": "Bone Gnawer",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Trust Me",
@@ -164,10 +166,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Bone Gnawer"
+        "tribe": "Bone Gnawer",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Face in the Crowd",
@@ -177,10 +179,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Bone Gnawer"
+        "tribe": "Bone Gnawer",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Shadow of the Rat",
@@ -190,10 +192,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Bone Gnawer"
+        "tribe": "Bone Gnawer",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Infest",
@@ -203,10 +205,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Bone Gnawer"
+        "tribe": "Bone Gnawer",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Uncaught Since the Primal Morn",
@@ -216,10 +218,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Children of Gaia"
+        "tribe": "Children of Gaia",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Serenity",
@@ -229,10 +231,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Children of Gaia"
+        "tribe": "Children of Gaia",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Serpent-Driving",
@@ -243,9 +245,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
-        "shifter_type": "Garou",
         "splat": "Shifter",
-        "tribe": "Children of Gaia"
+        "tribe": "Children of Gaia",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Unicorn's Grace",
@@ -256,9 +258,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
-        "shifter_type": "Garou",
         "splat": "Shifter",
-        "tribe": "Children of Gaia"
+        "tribe": "Children of Gaia",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Strike the Air",
@@ -269,9 +271,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
-        "shifter_type": "Garou",
         "splat": "Shifter",
-        "tribe": ["Children of Gaia", "Stargazer"]
+        "tribe": ["Children of Gaia", "Stargazer"],
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Heart of the Mountain",
@@ -296,9 +298,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
-        "shifter_type": "Garou",
         "splat": "Shifter",
-        "tribe": ["Get of Fenris", "Homid", "Ahroun"]
+        "tribe": ["Get of Fenris", "Homid", "Ahroun"], 
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Glory-Scars",
@@ -309,9 +311,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
-        "shifter_type": "Garou",
         "splat": "Shifter",
-        "tribe": "Get of Fenris"
+        "tribe": "Get of Fenris",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Scream of Gaia",
@@ -321,10 +323,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": ["Get of Fenris", "Wendigo", "Lupus"]
+        "tribe": ["Get of Fenris", "Wendigo", "Lupus"],
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Hero's Stand",
@@ -334,10 +336,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": ["Get of Fenris", "Wendigo"]
+        "tribe": ["Get of Fenris", "Wendigo"],
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Strength of the Earth"]
     },
     {
         "name": "Umbral Motorcade",
@@ -347,11 +350,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
         "tribe": "Glass Walker",
-        "camp": "Wise Guys"
+        "camp": "Wise Guys",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Corner Shot",
@@ -361,25 +364,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
         "tribe": "Glass Walker",
-        "camp": "Wise Guys"
-    },
-    {
-        "name": "Cooling System",
-        "description": "As per the Wendigo Level Four Gift: Chill of Early Frost. This Gift was originally copied from the Wendigo by the Iron Riders, who employed it to preserve food by freezing it, and was rediscovered by the Random Interrupts, who use it both in combat and to keep server rooms cool. The Random Interrupts often favor spending a point of Willpower in addition to the point of Gnosis to control the temperate and keep it just above freezing. Since Great Wendigo would usually rather murder a Glass Walker than teach them, a Penguin spirit or a Pattern Spider teaches this Gift.",
-        "system": "Chill of Early Frost system: The player spends one Gnosis point and rolls Intelligence + Occult (difficulty varies: 4 if it is already winter, 6 for spring, 9 for summer). Success drops the temperature to a bit below freezing in a five-mile radius, or even further below zero if it was already winter. All creatures without a natural coat of fur lose two dice from all pools. This Gift wreaks pure havoc in urban environments, as pipes burst and roads freeze. This Gift lasts for one hour per success.",
-        "source": "Glass Walker Tribebook (revised)",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
-        "splat": "Shifter",
-        "tribe": "Glass Walker",
-        "camp": "Random Interrupts"
+        "camp": "Wise Guys",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Signal Rider",
@@ -389,10 +378,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Glass Walker"
+        "tribe": "Glass Walker",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Call the City's Wolves",
@@ -402,10 +391,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Glass Walker"
+        "tribe": "Glass Walker",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Tractor Beam",
@@ -415,10 +404,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Glass Walker"
+        "tribe": "Glass Walker",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Virtual Umbra",
@@ -428,10 +417,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Glass Walker"
+        "tribe": "Glass Walker",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Tech Speak",
@@ -441,10 +430,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Glass Walker"
+        "tribe": "Glass Walker",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Doppelganger",
@@ -454,10 +443,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [3, 4], 
         "splat": "Shifter",
-        "tribe": "Glass Walker"
+        "tribe": "Glass Walker",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Monkey's Uncle", "Moon-Fan-Face-Shadow"]
     },
     {
         "name": "Assassin's Strike",
@@ -467,11 +457,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
         "tribe": "Shadow Lord",
-        "camp": "Judges of Doom"
+        "camp": "Judges of Doom",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Durance",
@@ -481,10 +471,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": ["Shadow Lord", "Uktena"]
+        "tribe": ["Shadow Lord", "Uktena"],
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Ubiquitous Presence",
@@ -494,10 +484,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Shadow Lord"
+        "tribe": "Shadow Lord",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Seeds of Doubt",
@@ -507,10 +497,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Shadow Lord"
+        "tribe": "Shadow Lord",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Call the Storm",
@@ -520,10 +510,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": ["Shadow Lord", "Wendigo", "Bunyip"]
+        "tribe": ["Shadow Lord", "Wendigo", "Bunyip"],
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Invoke the Spirits of the Storm", "Anger of the Wani"]
     },
     {
         "name": "Strength of the Dominator",
@@ -533,10 +524,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Shadow Lord"
+        "tribe": "Shadow Lord",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Open Wounds",
@@ -546,10 +537,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4, 5], 
         "splat": "Shifter",
-        "tribe": "Shadow Lord"
+        "tribe": "Shadow Lord",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Speed Beyond Thought",
@@ -559,10 +550,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Silent Strider"
+        "tribe": "Silent Strider",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Dam the Heartflood",
@@ -572,10 +563,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Silent Strider"
+        "tribe": "Silent Strider",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Ignore Death Blow",
@@ -585,10 +576,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Silent Strider"
+        "tribe": "Silent Strider",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Summon Net-Spider",
@@ -598,10 +589,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Silent Strider"
+        "tribe": "Silent Strider",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Mark of the Death-Wolf",
@@ -611,10 +602,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Silent Strider"
+        "tribe": "Silent Strider",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Shadowlands Passage",
@@ -624,10 +615,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Silent Strider"
+        "tribe": "Silent Strider",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Luna's Avenger",
@@ -637,10 +628,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Silver Fang"
+        "tribe": "Silver Fang",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Sword of Kings",
@@ -650,10 +641,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Silver Fang"
+        "tribe": "Silver Fang",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Mindblock",
@@ -663,10 +654,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Silver Fang"
+        "tribe": "Silver Fang",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Mastery",
@@ -676,10 +667,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Silver Fang"
+        "tribe": "Silver Fang",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Voice of Command",
@@ -689,10 +680,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Silver Fang"
+        "tribe": "Silver Fang",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Empowering the Bloodline",
@@ -702,10 +693,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Silver Fang"
+        "tribe": "Silver Fang",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Circular Attack",
@@ -715,10 +706,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Stargazer"
+        "tribe": "Stargazer",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Iron Resolve",
@@ -728,10 +719,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Stargazer"
+        "tribe": "Stargazer",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Preternatural Awareness",
@@ -741,10 +732,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Stargazer"
+        "tribe": "Stargazer",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Persecution Complex"]
     },
     {
         "name": "Wisdom of the Seer",
@@ -754,10 +746,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Stargazer"
+        "tribe": "Stargazer",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Harmonious Unity of the Emerald Mother",
@@ -767,10 +759,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Stargazer"
+        "tribe": "Stargazer",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Spirit Drain",
@@ -780,10 +772,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Uktena"
+        "tribe": "Uktena",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Rending the Craft",
@@ -793,10 +785,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Uktena"
+        "tribe": "Uktena",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Curse of Corruption",
@@ -806,10 +798,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Uktena"
+        "tribe": "Uktena",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Fetish Fetch",
@@ -819,10 +811,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Uktena"
+        "tribe": "Uktena",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Chains of Mist",
@@ -832,10 +824,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Uktena"
+        "tribe": "Uktena",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Heart of Ice",
@@ -845,10 +837,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Wendigo"
+        "tribe": "Wendigo",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Chill of Early Frost",
@@ -858,10 +850,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Wendigo"
+        "tribe": "Wendigo",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Cooling System", "Song of Winter"]
     },
     {
         "name": "Blood of the North",
@@ -871,10 +864,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Wendigo"
+        "tribe": "Wendigo",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Bloody Feast",
@@ -884,10 +877,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Wendigo"
+        "tribe": "Wendigo",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Wendigo's Howl",
@@ -897,10 +890,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Wendigo"
+        "tribe": "Wendigo",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Gorge",
@@ -910,10 +903,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Red Talon"
+        "tribe": "Red Talon",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Territory",
@@ -923,10 +916,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Red Talon"
+        "tribe": "Red Talon",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Howl of Death",
@@ -936,10 +929,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Red Talon"
+        "tribe": "Red Talon",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Gaia's Vengeance",
@@ -949,10 +942,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Red Talon"
+        "tribe": "Red Talon",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Curse of Lycaon",
@@ -962,10 +955,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "tribe": "Red Talon"
+        "tribe": "Red Talon",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Clenched Jaw",
@@ -975,10 +968,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [3, 4], 
         "splat": "Shifter",
-        "auspice": "Ahroun"
+        "auspice": "Ahroun",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Black Mamba Strike",
@@ -988,10 +981,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Ahroun"
+        "auspice": "Ahroun",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Full Moon's Light",
@@ -1001,10 +994,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Ahroun"
+        "auspice": "Ahroun",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Touch of Rage",
@@ -1014,10 +1007,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Ahroun"
+        "auspice": "Ahroun",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Stoking Fury's Furnace",
@@ -1027,10 +1020,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Ahroun"
+        "auspice": "Ahroun",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Blood Running Hot"]
     },
     {
         "name": "Rebirth",
@@ -1040,10 +1034,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Philodox"
+        "auspice": "Philodox",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Reality's Path",
@@ -1053,10 +1047,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Philodox"
+        "auspice": "Philodox",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Take the True Form",
@@ -1066,10 +1060,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Philodox"
+        "auspice": "Philodox",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Scent of Beyond",
@@ -1079,10 +1073,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Philodox"
+        "auspice": "Philodox",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Roll Over",
@@ -1092,10 +1086,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Philodox"
+        "auspice": "Philodox",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Misdirection",
@@ -1105,10 +1099,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Ragabash"
+        "auspice": "Ragabash",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Umbral Dodge",
@@ -1118,10 +1112,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Ragabash"
+        "auspice": "Ragabash",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Madness Season",
@@ -1131,10 +1125,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Ragabash"
+        "auspice": "Ragabash",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Whelp Body",
@@ -1144,10 +1138,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Ragabash"
+        "auspice": "Ragabash",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Luna's Blessing",
@@ -1157,10 +1151,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Ragabash"
+        "auspice": "Ragabash",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Favor of Ursa Minor"]
     },
     {
         "name": "Song of the Siren",
@@ -1170,10 +1165,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Galliard"
+        "auspice": "Galliard",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Words Like Wind",
@@ -1183,10 +1178,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Galliard"
+        "auspice": "Galliard",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Book of Years",
@@ -1196,10 +1191,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Galliard"
+        "auspice": "Galliard",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Shadows by the Firelight",
@@ -1209,10 +1204,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Galliard"
+        "auspice": "Galliard",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Bridge Walker",
@@ -1222,10 +1217,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Galliard"
+        "auspice": "Galliard",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Gift of Dreams",
@@ -1235,10 +1230,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "auspice": "Galliard"
+        "auspice": "Galliard",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Body Shift",
@@ -1248,10 +1243,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "breed": "Homid"
+        "breed": "Homid",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Web of Knowledge",
@@ -1261,10 +1256,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "breed": "Homid"
+        "breed": "Homid",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Bury the Wolf",
@@ -1274,10 +1269,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "breed": "Homid"
+        "breed": "Homid",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Hide the Bear"]
     },
     {
         "name": "Spirit Ward",
@@ -1287,10 +1283,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [2, 4], 
         "splat": "Shifter",
-        "breed": "Homid"
+        "breed": "Homid",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Spirit Barrier", "Spirit Shield"]
     },
     {
         "name": "Cocoon",
@@ -1300,10 +1297,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [3, 4], 
         "splat": "Shifter",
-        "breed": "Homid"
+        "breed": "Homid",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Ursa's Coat"]
     },
     {
         "name": "Tenacious Fury",
@@ -1313,10 +1311,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "breed": "Metis"
+        "breed": "Metis",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Rattler's Bite",
@@ -1326,10 +1324,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "breed": "Metis"
+        "breed": "Metis",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Badger's Heart",
@@ -1339,10 +1337,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "breed": "Metis"
+        "breed": "Metis",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Wither Limb",
@@ -1352,10 +1350,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "breed": "Metis"
+        "breed": "Metis",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Gift of the Porcupine",
@@ -1365,10 +1363,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "breed": "Metis"
+        "breed": "Metis",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Spines"]
     },
     {
         "name": "Beast Life",
@@ -1378,10 +1377,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": ["Garou", "Mokole"],
+        "values": [4], 
         "splat": "Shifter",
-        "breed": "Lupus"
+        "breed": "Lupus",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Rat Emperor's Wisdom", "Forest Lord"]
     },
     {
         "name": "Hibernation",
@@ -1391,10 +1391,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": ["Garou", "Mokole"],
+        "values": [4], 
         "splat": "Shifter",
-        "breed": "Lupus"
+        "breed": "Lupus",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Terror of the Dire Wolf",
@@ -1404,10 +1404,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "breed": "Lupus"
+        "breed": "Lupus",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Venom",
@@ -1417,10 +1417,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "breed": "Lupus"
+        "breed": "Lupus",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Gnaw",
@@ -1430,9 +1430,102 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Garou",
+        "values": [4], 
         "splat": "Shifter",
-        "breed": "Lupus"
-    }
+        "breed": "Lupus",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+    },
+    {
+        "name": "Attunement",
+        "description": "The Garou may commune with the spirits of a city or town and gain information about the area from them, including rough population, enclaves of Garou or other being and secret tunnels. This Gift does not function in the wilderness, since the Bone Gnawers have lost the knack for conversing with such spirits easily. A rat-spirit teaches this Gift.",
+        "system": "The player spends one Gnosis and rolls Perception + Streetwise. The amount and accuracy of the information depends on the number of successes rolled. On a botch, playful spirits lie (which can be fatal, depending on the nature of misinformation).",
+        "source": "Core book revised / Tribebook: Uktena (revised)",   
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [4], 
+        "splat": "Shifter",
+        "breed": "Lupus",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Lay of the Land"]
+    },
+    {
+        "name": "Avalanche",
+        "description": "The Garou must be in a mountainous or otherwise tectonically unstable area. The Garou causes an avalanche, mudslide, etc. to engulf his foes. The Gift is taught by an earth elemental.",
+        "system": "The Garou spends one Gnosis point and then rolls Manipulation + Survival (difficulty determined by the Storyteller based on the instability of the terrain). The more successes, the more powerful the effect. On a botch, the Garou is caught in the avalanche.",
+        "source": "Corebook 2nd edition/Breed Book: Rokea",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [4], 
+        "splat": "Shifter",
+        "breed": "Lupus",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Inundate"]
+    },  
+    {
+        "name": "Blurring the Mirror",
+        "description": "This Gift allows the Theurge to cloud the minds of other beings, making it impossible for them to find the Umbra or step sideways into it. Once used as a form of punishment for arrogant pups, this Gift is more often deployed as a weapon against Black Spiral Dancers in the days of the coming Apocalypse. A Weaver-spirit teaches this Gift.",
+        "system": "The player spends one Gnosis point for every individual she wishes to affect. The Gauntlet increases by five for those targets for the rest of the scene. Up to five individuals can be affected at once. While normally used against other Garou, this Gift is effective against any being capable of entering the Umbra sideways, including other Fera and some mages.",
+        "source": "20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [4],
+        "splat": "Shifter",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Locked Door"]
+    },
+    {
+        "name": "Call Elemental",
+        "description": "The Garou is able to call one of the four classic elementals to his aid (earth, air, fire or water). An elemental teaches this Gift.",
+        "system": "The player spends one Gnosis point and rolls Gnosis (difficulty of the area's Gauntlet). She must then roll Manipulation + Occult (difficulty 7) to make the elemental look favorably upon the Garou. The elemental vanishes at the end of the scene.",
+        "source": "Core book revised / 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [3, 4], 
+        "splat": "Shifter",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Command Water Spirit"]
+    },
+    {
+        "name": "Grasp the Beyond",
+        "description": "The Garou may take things to and from the Umbra without having to dedicate them to herself (see the Rite of Talisman Dedication). This Gift affects humans and animals, both willing and unwilling. Garou often use this power to take loyal Kinfolk with them on Umbral quests or to heal injured Kinfolk — both body and soul — in mystic Glens.",
+        "system": "The Garou must grasp the object or person he wishes to take to the spirit world. He must then spend a number of Willpower points: one for small items (a pocket-watch or knife), two for larger items (a backpack or bow) and three for huge items (including people). The player makes the usual Gnosis roll to pierce the Gauntlet and step sideways; if successful, both he and the desired object or person pass into the Umbra. An unwilling target may resist with a Willpower roll; each success subtracts one from the Garou's successes. A Garou attempting to abduct an unwilling victim must achieve at least three successes on his Gnosis roll.",
+        "source": "Core book revised.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [4], 
+        "splat": "Shifter",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+    },
+    {
+        "name": "Quicksand",
+        "description": "The Garou turns the ground into a sticky morass that catches foes and prevents them from escaping or even walking. An earth elemental teaches this Gift.",
+        "system": "The player spends a Gnosis point and rolls Manipulation + Primal-Urge (difficulty 7). Each success changes the ground into a quicksand-like bog for a 10-foot radius. Anyone trying to move through it (except the Garou) moves at half walking speed, and he may not execute combat maneuvers that require overland movement. Additionally, all other combat maneuvers take a +1 difficulty penalty.",
+        "source": "Core book revised",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [3, 4], 
+        "splat": "Shifter",
+        "tribe": "Red Talon",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Bayou's Embrace"]
+    },
+    {
+        "name": "Shadowplay",
+        "description": "The Theurge breathes life into her shadow, which can then perform tasks for her. The shadow moves about independently with the same abilities as its creator. The Theurge's emissary can cause lifesaving distractions, pick up remote objects and even fight battles.",
+        "system": "To activate the shadow, the player must roll Dexterity + Enigmas (difficulty 8) and spend one Gnosis point. The Theurge must act out the doings of her shadow by making “shadow puppets” with her hands. No light need be present for the shadow to be active. In all respects besides appearance, the shadow maintains the same Traits and Abilities as the Garou. The werewolf cannot create multiple shadows. The shadow can operate out of sight of the Garou; its range is ten yards per success.",
+        "source": "Player's Guide Second Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [4],
+        "splat": "Shifter",
+        "auspice": "Theurge",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+    } 
 ] 

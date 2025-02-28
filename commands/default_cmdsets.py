@@ -40,11 +40,11 @@ from commands.CmdRoomLog import CmdRoomLog
 
 from commands.CmdUmbraInteraction import CmdUmbraInteraction
 from commands.communication import CmdMeet, CmdPlusIc, CmdPlusOoc, CmdOOC, CmdSummon, CmdJoin
-from commands.admin import CmdApprove, CmdUnapprove, CmdAdminLook, CmdTestLock, CmdPuppetFreeze, CmdMassUnapprove
+from commands.admin import CmdApprove, CmdUnapprove, CmdAdminLook, CmdTestLock, CmdPuppetFreeze, CmdMassUnapprove, CmdReturn
 from commands.CmdPump import CmdPump
 from commands.CmdSpendGain import CmdSpendGain
 from commands.where import CmdWhere
-from commands.chargen import CmdSubmit, CmdRename
+from commands.chargen import CmdSubmit
 from commands.CmdSelfStat import CmdSelfStat
 from commands.CmdShift import CmdShift
 from commands.CmdStaff import CmdStaff, CmdPST
@@ -117,7 +117,6 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdAdminLook())
         self.add(CmdInfo())
         self.add(CmdSubmit())
-        self.add(CmdRename())
         self.add(CmdAlias())
         self.add(CmdLFRP())
         self.add(CmdStaff())
@@ -156,7 +155,7 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdInit())
         self.add(CmdHangout())
         self.add(CmdSetHangout())
-
+        self.add(CmdReturn())
 class AccountCmdSet(cmdset_account.AccountCmdSet):
     """
     This is the cmdset available to the Account at all times. It is

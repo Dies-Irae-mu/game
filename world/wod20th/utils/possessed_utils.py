@@ -303,6 +303,43 @@ def validate_possessed_stats(character, stat_name: str, value: str, category: st
             except ValueError:
                 return False, "Blessing value must be a number", None
     
+    # Special handling for Spirit Ties
+    if stat_name == 'spirit ties':
+        # For Possessed, Spirit Ties affects Gnosis
+        if splat == 'Possessed':
+            if not possessed_type:
+                return False, "Character must have a possessed type set", None
+                
+            # Spirit Ties can be purchased up to 5 dots for all Possessed types
+            max_value = 5
+                
+            try:
+                blessing_value = int(value)
+                if blessing_value < 0:
+                    return False, "Spirit Ties value must be positive", None
+                elif blessing_value > max_value:
+                    return False, f"Spirit Ties maximum is {max_value} dots", None
+                
+                return True, "", str(blessing_value)
+            except ValueError:
+                return False, "Spirit Ties value must be a number", None
+    
+    # Handle other blessings if this is a blessing stat
+    if category == 'powers' and stat_type == 'blessing' and stat_name not in ['berserker', 'spirit ties']:
+        # Call blessing validation
+        is_valid, error_msg = validate_possessed_blessing(character, stat_name, value)
+        return is_valid, error_msg, value if is_valid else None
+    
+    # Handle charm validation
+    if category == 'powers' and stat_type == 'charm':
+        is_valid, error_msg = validate_possessed_charm(character, stat_name, value)
+        return is_valid, error_msg, value if is_valid else None
+    
+    # Handle gift validation
+    if category == 'powers' and stat_type == 'gift':
+        is_valid, error_msg = validate_possessed_gift(character, stat_name, value)
+        return is_valid, error_msg, value if is_valid else None
+    
     return True, "", value
 
 def validate_possessed_type(value: str) -> tuple[bool, str]:
@@ -333,7 +370,22 @@ def validate_possessed_blessing(character, blessing_name: str, value: str) -> tu
     if blessing_name not in available_blessings:
         return False, f"Invalid blessing for {possessed_type}. Valid blessings are: {', '.join(sorted(available_blessings))}"
     
-    # Validate value
+    # Special validation for Spirit Ties
+    if blessing_name.lower() == 'spirit ties':
+        try:
+            blessing_value = int(value)
+            # Spirit Ties can be purchased up to 5 dots for all Possessed types
+            max_value = 5
+                
+            if blessing_value < 0:
+                return False, "Blessing values must be positive"
+            elif blessing_value > max_value:
+                return False, f"Spirit Ties maximum is {max_value} dots"
+            return True, ""
+        except ValueError:
+            return False, "Blessing values must be numbers"
+    
+    # Validate value for other blessings
     try:
         blessing_value = int(value)
         if blessing_value < 0 or blessing_value > 5:
@@ -427,4 +479,47 @@ def update_possessed_pools_on_stat_change(character, stat_name: str, new_value: 
                 character.msg("|gRage set to 5 due to Berserker blessing.|n")
         except (ValueError, TypeError):
             character.msg("|rError updating Rage pool - invalid Berserker value.|n")
+            return
+            
+    # Handle Spirit Ties blessing - updates Gnosis
+    elif stat_name == 'spirit ties':
+        try:
+            # Get character's possessed type to determine base Gnosis
+            possessed_type = character.get_stat('identity', 'lineage', 'Possessed Type', temp=False)
+            if not possessed_type:
+                character.msg("|rError: Cannot set Spirit Ties without a Possessed Type.|n")
+                return
+                
+            # Get the base Gnosis value from possessed type
+            base_gnosis = 0  # Default for Fomori
+            max_gnosis = 5   # Maximum total Gnosis
+            
+            if possessed_type.lower() == 'kami':
+                base_gnosis = 1  # Kami start with Gnosis 1
+                max_gnosis = 6   # Kami can have a maximum of 6 Gnosis
+                
+            # Get the Spirit Ties blessing value
+            blessing_value = int(new_value)
+            
+            # If the blessing is taken, update Gnosis accordingly
+            if blessing_value > 0:
+                # Calculate new Gnosis as base + Spirit Ties value (capped at maximum)
+                new_gnosis = min(base_gnosis + blessing_value, max_gnosis)
+                
+                # Set Gnosis pool
+                character.set_stat('pools', 'dual', 'Gnosis', new_gnosis, temp=False)
+                character.set_stat('pools', 'dual', 'Gnosis', new_gnosis, temp=True)
+                
+                # Explain the calculation to the user
+                if possessed_type.lower() == 'kami':
+                    character.msg(f"|gGnosis set to {new_gnosis} (1 base + {blessing_value} from Spirit Ties, maximum 6 total) for {possessed_type}.|n")
+                else:
+                    character.msg(f"|gGnosis set to {new_gnosis} ({blessing_value} from Spirit Ties, maximum 5 total) for {possessed_type}.|n")
+            # If the blessing is removed, reset to base Gnosis
+            else:
+                character.set_stat('pools', 'dual', 'Gnosis', base_gnosis, temp=False)
+                character.set_stat('pools', 'dual', 'Gnosis', base_gnosis, temp=True)
+                character.msg(f"|gGnosis reset to base value of {base_gnosis} for {possessed_type}.|n")
+        except (ValueError, TypeError):
+            character.msg("|rError updating Gnosis pool - invalid Spirit Ties value.|n")
             return

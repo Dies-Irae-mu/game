@@ -76,26 +76,26 @@ CONVENTION = {
 
 # Valid methodologies for each convention
 METHODOLOGIES = {
-    'ITERATION_X': [
+    'Iteration X': [
         'BioMechanics', 'Macrotechnicians', 'Statisticians', 'Time-Motion Managers'
     ],
-    'NEW_WORLD_ORDER': [
+    'New World Order': [
         'Ivory Tower', 'Operatives', 'Watchers', 'The Feed', 'Q Division', 'Agronomists'
     ],
-    'PROGENITORS': [
+    'Progenitor': [
         'Applied Sciences', 'Deviancy Scene investigators', 'Médecins Sans Superstition',
         'Biosphere Explorers', 'Damage Control', 'Ethical Compliance', 'FACADE Engineers',
         'Genegineers', 'Pharmacopoeists', 'Preservationists', 'Psychopharmacopoeists', 
         'Shalihotran Society'
     ],
-    'SYNDICATE': [
+    'Syndicate': [
         'Disbursements', 'Assessment Division', 'Reorganization Division', 'Procurements Division',
         'Extraction Division', 'Enforcers (Hollow Men)', 'Legal Division', 'Extralegal Division',
         'Extranational Division', 'Information Specialists', 'Special Information Security Division',
         'Financiers', 'Acquisitions Division', 'Entrepreneurship Division', 'Liquidation Division',
         'Media Control', 'Effects Division', 'Spin Division', 'Marketing Division', 'Special Projects Division'
     ],
-    'VOID_ENGINEER': [
+    'Void Engineer': [
         'Border Corps Division', 'Earth Frontier Division', 'Aquatic Exploration Teams',
         'Cryoregional Specialists', 'Hydrothermal Botanical Mosaic Analysts', 'Inaccessible High Elevation Exploration Teams',
         'Subterranean Exploration Corps', 'Neutralization Specialist Corps', 'Neutralization Specialists', 
@@ -419,19 +419,83 @@ def validate_mage_methodology(character, value: str) -> tuple[bool, str]:
     if not convention:
         return False, "Character must have a convention set to have a methodology"
     
-    # Convert convention name to match METHODOLOGIES keys
-    convention_key = convention.upper().replace(' ', '_')
+    # Import both METHODOLOGIES dictionaries
+    from world.wod20th.utils.stat_mappings import METHODOLOGIES as STAT_METHODOLOGIES
     
-    valid_methodologies = METHODOLOGIES.get(convention_key, [])
-    if not valid_methodologies:
-        return False, f"No methodologies found for {convention}"
+    # Create mapping dictionaries for both METHODOLOGIES sources
+    local_convention_map = {
+        'iteration x': 'ITERATION_X',
+        'new world order': 'NEW_WORLD_ORDER',
+        'progenitor': 'PROGENITORS',
+        'progenitors': 'PROGENITORS',
+        'syndicate': 'SYNDICATE',
+        'void engineer': 'VOID_ENGINEER',
+        'void engineers': 'VOID_ENGINEER'
+    }
     
-    # Case-insensitive comparison
+    imported_convention_map = {
+        'iteration x': 'Iteration X',
+        'new world order': 'New World Order',
+        'progenitor': 'Progenitors',
+        'progenitors': 'Progenitors',
+        'syndicate': 'Syndicate',
+        'void engineer': 'Void Engineers',
+        'void engineers': 'Void Engineers'
+    }
+    
+    # Get methodologies from both dictionaries and combine them
+    all_methodologies = []
+    
+    # Local lookup
+    local_key = local_convention_map.get(convention.lower(), convention.upper().replace(' ', '_'))
+    local_methodologies = METHODOLOGIES.get(local_key, [])
+    all_methodologies.extend(local_methodologies)
+    
+    # Imported lookup
+    imported_key = imported_convention_map.get(convention.lower(), convention)
+    imported_methodologies = STAT_METHODOLOGIES.get(imported_key, [])
+    all_methodologies.extend(imported_methodologies)
+    
+    # If no methodologies found yet, try fuzzy matching
+    if not all_methodologies:
+        # Try local fuzzy match
+        for key in METHODOLOGIES.keys():
+            if key.lower().replace('_', ' ') == convention.lower().replace('s', '') or \
+               key.lower().replace('_', ' ') + 's' == convention.lower():
+                all_methodologies.extend(METHODOLOGIES[key])
+                break
+        
+        # Try imported fuzzy match
+        for key in STAT_METHODOLOGIES.keys():
+            if key.lower() == convention.lower() or key.lower() == convention.lower() + 's' or \
+               convention.lower() == key.lower() + 's':
+                all_methodologies.extend(STAT_METHODOLOGIES[key])
+                break
+    
+    # Remove duplicates while preserving order
+    unique_methodologies = []
+    for m in all_methodologies:
+        if m not in unique_methodologies:
+            unique_methodologies.append(m)
+    
+    if not unique_methodologies:
+        return False, f"No methodologies found for {convention}. Please check spelling and try again."
+    
+    # Case-insensitive comparison for methodology value
     value_lower = value.lower()
-    valid_methodologies_lower = [m.lower() for m in valid_methodologies]
+    valid_methodologies_lower = [m.lower() for m in unique_methodologies]
+    
     if value_lower not in valid_methodologies_lower:
-        return False, f"Invalid methodology for {convention}. Valid methodologies are: {', '.join(sorted(valid_methodologies))}"
-    return True, ""
+        return False, f"Invalid methodology for {convention}. Valid methodologies are: {', '.join(sorted(unique_methodologies))}"
+    
+    # Find the correctly cased version of the methodology
+    for methodology in unique_methodologies:
+        if methodology.lower() == value_lower:
+            # Return the properly cased version
+            value = methodology
+            break
+            
+    return True, value
 
 def validate_mage_subfaction(character, value: str) -> tuple[bool, str]:
     """Validate a mage's tradition subfaction."""

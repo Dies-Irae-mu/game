@@ -26,8 +26,9 @@ class CmdNotes(MuxCommand):
       +note <target>/*            - see all visible notes on someone else
       +note <target>/<note>       - see a note on someone else
       +note <target>/<category> - see all notes on someone else in a category
-      +note/create <name>=<text>  - make a note called <name>
-      +note/create <category>/<name>=<text> - make a note in a specific category
+      +note/create <n>=<text>  - make a note called <n>
+      +note/create <category>/<n>=<text> - make a note in a specific category
+      +note/set <target>/<n>=<text> - make a note on another character (staff only)
       +note/edit <note>=<new text> - change the text on a note, removes approval
       +note/move <note>=<category> - move a note to a new category, keeps approval
       +note/status <note>=PRIVATE|PUBLIC - make a note in-/visible to others
@@ -52,6 +53,11 @@ class CmdNotes(MuxCommand):
         # First, try to find by exact name match
         results = search_object(search_string, typeclass="typeclasses.characters.Character")
         if results:
+            # Return the first match that has a key matching the search string
+            for result in results:
+                if result.key.lower() == search_string.lower():
+                    return result
+            # If no exact key match, return the first result
             return results[0]
         
         # If not found, try to find by dbref
@@ -72,6 +78,8 @@ class CmdNotes(MuxCommand):
             switch = self.switches[0].lower()
             if switch == "create":
                 self.create_note()
+            elif switch == "set":
+                self.set_note()
             elif switch == "edit":
                 self.edit_note()
             elif switch == "status":
@@ -231,6 +239,26 @@ class CmdNotes(MuxCommand):
         except Exception as e:
             self.caller.msg(f"Error listing notes: {e}")
             logger.log_err(f"Error in list_notes: {e}")
+
+    def generate_note_id(self, notes_dict):
+        """Generate a sequential note ID."""
+        if not notes_dict:
+            return "1"
+            
+        # Convert existing IDs to integers, ignoring any non-numeric IDs
+        existing_ids = []
+        for note_id in notes_dict.keys():
+            try:
+                existing_ids.append(int(note_id))
+            except ValueError:
+                continue
+                
+        if not existing_ids:
+            return "1"
+            
+        # Get the highest existing ID and add 1
+        next_id = max(existing_ids) + 1
+        return str(next_id)
 
     def create_note(self):
         """Create a new note."""
@@ -718,4 +746,3 @@ class CmdNotes(MuxCommand):
         self.caller.msg(f"Note #{note_id} has been deleted.")
         if target != self.caller:
             target.msg(f"Your note #{note_id} has been deleted by {self.caller.name}.")
-

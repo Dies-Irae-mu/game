@@ -1027,6 +1027,16 @@ def validate_shifter_stats(character, stat_name: str, value: str, category: str 
     if stat_name == 'aspect':
         return validate_shifter_aspect(shifter_type, value)
         
+    # Validate gnosis
+    if stat_name == 'gnosis':
+        try:
+            gnosis_value = int(value)
+            if gnosis_value < 0 or gnosis_value > 10:
+                return False, "Gnosis pool must be between 0 and 10", None
+            return True, "", str(gnosis_value)
+        except ValueError:
+            return False, "Gnosis value must be a number", None
+        
     # Validate gifts
     if category == 'powers' and stat_type == 'gift':
         return validate_shifter_gift(character, stat_name, value)

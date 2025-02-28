@@ -718,11 +718,11 @@ class CmdSetLock(MuxCommand):
         
     Lock Types:
         splat:<type>      - Restrict to specific splat (Vampire, Werewolf, etc)
+        type:<type>       - Restrict to specific type (Garou, Kinfolk, Familiar, Fomori, etc)
         talent:<name>     - Require specific talent
         skill:<name>      - Require specific skill
         knowledge:<name>  - Require specific knowledge
         merit:<name>      - Require specific merit
-        shifter_type:<type> - Restrict to specific shifter type
         clan:<name>       - Restrict to specific vampire clan
         tribe:<name>      - Restrict to specific werewolf tribe
         auspice:<name>    - Restrict to specific werewolf auspice
@@ -732,6 +732,12 @@ class CmdSetLock(MuxCommand):
         nephandi_faction:<name> - Restrict to specific Nephandi faction
         court:<name>      - Restrict to specific changeling court
         kith:<name>       - Restrict to specific changeling kith
+
+    Examples:
+        +setlock door=type:Garou                    - Only Garou can pass
+        +setlock door=type:Garou,type:Kinfolk      - Both Garou AND Kinfolk must pass
+        +setlock door=type:Garou;type:Kinfolk      - Either Garou OR Kinfolk can pass
+        +setlock/view door=type:Garou;type:Kinfolk - Either Garou OR Kinfolk can view
     """
     
     key = "+setlock"
@@ -817,44 +823,55 @@ class CmdSetLock(MuxCommand):
         if not target:
             return
             
-        # Split multiple lock definitions
-        lock_defs = []
-        for lock_part in self.rhs.split(','):
-            try:
-                locktype, value = lock_part.strip().split(':', 1)
-                locktype = locktype.strip().lower()
-                
-                # Create the appropriate lock string based on type
-                if locktype == "splat":
-                    lock_str = f'has_splat({value.strip()})'
-                elif locktype == "type":
-                    lock_str = f'has_type({value.strip()})'
-                elif locktype in ["talent", "skill", "knowledge", "secondary_talent", "secondary_skill", "secondary_knowledge"]:
-                    if ">" in value:
-                        ability, level = value.split(">")
-                        lock_str = f"has_{locktype}({ability.strip()}, {level.strip()})"
-                    else:
-                        lock_str = f"has_{locktype}({value.strip()})"
-                elif locktype == "merit":
-                    if ">" in value:
-                        merit, level = value.split(">")
-                        lock_str = f'has_merit({merit.strip()}, {level.strip()})'
-                    else:
-                        lock_str = f'has_merit({value.strip()})'
-                elif locktype in ["clan", "tribe", "auspice", "tradition", "affiliation", "kith", "court"]:
-                    lock_str = f'has_{locktype}({value.strip()})'
-                else:
-                    self.caller.msg(f"Invalid lock type.")
-                    return
+        # Split OR conditions first (separated by ;)
+        or_parts = self.rhs.split(';')
+        or_lock_defs = []
+        
+        for or_part in or_parts:
+            # Split AND conditions (separated by ,)
+            and_parts = or_part.split(',')
+            and_lock_defs = []
+            
+            for lock_part in and_parts:
+                try:
+                    locktype, value = lock_part.strip().split(':', 1)
+                    locktype = locktype.strip().lower()
                     
-                lock_defs.append(lock_str)
-                
-            except ValueError:
-                self.caller.msg(f"Invalid lock format: {lock_part}")
-                return
-                
-        # Combine all lock definitions with AND
-        final_lock_def = " and ".join(lock_defs)
+                    # Create the appropriate lock string based on type
+                    if locktype == "splat":
+                        lock_str = f'has_splat({value.strip()})'
+                    elif locktype == "type":
+                        lock_str = f'has_type({value.strip()})'
+                    elif locktype in ["talent", "skill", "knowledge", "secondary_talent", "secondary_skill", "secondary_knowledge"]:
+                        if ">" in value:
+                            ability, level = value.split(">")
+                            lock_str = f"has_{locktype}({ability.strip()}, {level.strip()})"
+                        else:
+                            lock_str = f"has_{locktype}({value.strip()})"
+                    elif locktype == "merit":
+                        if ">" in value:
+                            merit, level = value.split(">")
+                            lock_str = f'has_merit({merit.strip()}, {level.strip()})'
+                        else:
+                            lock_str = f'has_merit({value.strip()})'
+                    elif locktype in ["clan", "tribe", "auspice", "tradition", "affiliation", "kith", "court"]:
+                        lock_str = f'has_{locktype}({value.strip()})'
+                    else:
+                        self.caller.msg(f"Invalid lock type.")
+                        return
+                        
+                    and_lock_defs.append(lock_str)
+                    
+                except ValueError:
+                    self.caller.msg(f"Invalid lock format: {lock_part}")
+                    return
+            
+            # Combine AND conditions
+            if and_lock_defs:
+                or_lock_defs.append(" and ".join(and_lock_defs))
+        
+        # Combine OR conditions
+        final_lock_def = " or ".join(or_lock_defs)
         
         try:
             if target.is_typeclass("typeclasses.exits.Exit") or target.is_typeclass("typeclasses.exits.ApartmentExit"):

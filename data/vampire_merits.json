@@ -68,10 +68,10 @@
         "stat_type": "mental",
         "category": "merits",
         "values": [3],
-        "description": "You are naturally calm and do not easily fly off the handle. You receive two extra dice when attempting to resist a frenzy.",
-        "source": "V20 p. 485",
+        "description": "Vampire: You are naturally calm and do not easily fly off the handle. You receive two extra dice when attempting to resist a frenzy. Werewolf: You remain calm and collected even in the most trying of circumstances. Rage rolls are at +2 difficulty, reducing the chances of frenzy.",
+        "source": "V20 p. 485, W20 p. 476",
         "notes": "Brujah may not take this Merit.",
-        "splat": "Vampire",
+        "splat": ["Vampire", "Shifter"],
         "game_line": "Vampire: The Masquerade"
     },
     {

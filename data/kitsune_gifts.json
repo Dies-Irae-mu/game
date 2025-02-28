@@ -10,26 +10,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Ishin Deshin",
-        "description": "As the Galliard Gift: Mindspeak. By invoking the power of waking dreams, the Garou can place any chosen characters into silent communion.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Scent of Running Water",
-        "description": "As the Ragabash Gift. The Garou can mask her scent completely, making herself virtually impossible to track.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
         "name": "Seduction Gift",
         "description": "A Fox with this Gift can cause humans to fall in love with her.",
         "game_line": "Werewolf: The Apocalypse",
@@ -60,88 +40,8 @@
         "splat": "Shifter"
     },
     {
-        "name": "Scent of the True Form",
-        "description": "The Philodox is able to scent the truth of those she meets, literally sniffing out an individual's true form.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Sense Wyrm",
-        "description": "The werewolf can sense manifestations of the Wyrm in the nearby area. This Gift involves a mystical sense, not a visual or olfactory image, although werewolves using the Gift sometimes say things like, 'This place stinks of the Wyrm'.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
         "name": "Blessing the Blade",
         "description": "The sorcerer calls on a local spirit to inhabit a blade for a finite time to enhance it with supernatural power. If prepared in advance, special wrappings restrain the spirit until the bearer speaks an enemy's name.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Breath of Yu-Chiang",
-        "description": "As the Black Fury Gift: Curse of Aeolus. The Fury calls up a thick, eerie fog that obscures vision and unnerves her opponents. The Fury can see through the fog, but all others have trouble navigating by sight.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Shroud",
-        "description": "As the Uktena Gift. The Garou can create a field of inky blackness through which only she can see.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Spirit Snare",
-        "description": "As the Theurge Gift. The Theurge casts out an invisible, mystic net which entangles hostile spirits, confounding them with a mixture of magical force and long-broken but still potent Gaian law.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Falling Touch",
-        "description": "As the Ahroun Gift. This Gift allows the Garou to send her foe sprawling with but a touch.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Razor Claws",
-        "description": "As the Ahroun Gift. By raking his claws over stone, steel, or another hard surface, the Ahroun hones them to razor sharpness.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Resist Pain",
-        "description": "As the Philodox Gift. Through force of will, the Philodox is able to ignore the pain of his wounds and continue acting normally.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -160,68 +60,8 @@
         "splat": "Shifter"
     },
     {
-        "name": "Clear the Mind",
-        "description": "As the Children of Gaia Gift: Calm. This Gift imparts the secret of quelling the anger in others.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Mother's Touch",
-        "description": "As the Theurge Gift. The Garou is able to heal the wounds of any living creature, aggravated or otherwise, simply by laying hands over the afflicted area. The Garou may not heal herself, spirits or the undead with this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Open Seal",
-        "description": "With this Gift, the Garou can open nearly any sort of closed or locked physical device.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Beast Speech",
-        "description": "As the Galliard Gift. The werewolf with this Gift may communicate with any animals from fish to mammals. This Gift does not change their basic reactions; most animals are still afraid of predators such as werewolves.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
         "name": "Fable",
         "description": "The Kataribe uses her expression and will to sway onlookers. By telling a tale or singing a song, she can plant a suggestion in the minds and hearts of listeners.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Perfect Recall",
-        "description": "As the Galliard Gift. As mentioned earlier in this chapter, Galliards often share one trait even before the Change takes them. That trait is memory. Moon-Dancers often have good heads for detail; this Gift, however, accentuates that capacity.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Truth of Gaia",
-        "description": "As the Philodox Gift. As judges of the Litany, Philodox have the ability to sense whether others have spoken truth or falsehood.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -270,88 +110,8 @@
         "splat": "Shifter"
     },
     {
-        "name": "Sense Magic",
-        "description": "As the Uktena Gift. The Uktena can discern magical energies, whether they emanate from Garou Gifts, vampiric wizardry or even human magic.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Spirit Speech",
-        "description": "As the Theurge Gift. This Gift allows the Garou to communicate with encountered spirits. The Garou is thus able to address them whether they wish to be addressed or not.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Jam Technology",
-        "description": "The werewolf can cause technological devices to cease functioning, albeit temporarily. Even the simplest of shaped objects will refuse to perform its function.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Silver Tongue",
-        "description": "As the Fianna Gift: Glib Tongue. This Gift makes listeners hear whatever they wish to hear. The Fianna can say anything, even total gibberish, but anyone listening will agree heartily.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Staredown",
-        "description": "By staring into the eyes of a human or animal, a werewolf can cause the target to flee in terror. This Gift can be used against other werewolves, but the target will freeze in place rather than flee.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Name the Spirit",
-        "description": "A werewolf with this Gift becomes familiar with the ways of the Umbra. He can sense the type and approximate Trait levels (Rage, Gnosis, Willpower) of spirits.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Scent of Sight",
-        "description": "As the lupus Gift. The werewolf can compensate for her vision completely by using her sense of smell. She can attack invisible creatures normally or navigate roughly in absolute darkness.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
         "name": "Sense Imbalance",
         "description": "The Kitsune can sense if any one of the Triat has upset the balance in the area. She knows if the Weaver is too strong, or if the Wyld is lacking.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Call to Duty",
-        "description": "The White Howler Version is called Spectral Authority. Any spirit the Philodox knows by name is a potential servitor. With this Gift, the werewolf can summon and command any spirit she knows by name.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -390,36 +150,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Command Spirit",
-        "description": "As the Theurge Gift. The Theurge can give simple commands to encountered spirits and expect a measure of compliance. This Gift does not grant the ability to summon spirits.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Shadows at Dawn",
-        "description": "As the Uktena Gift. Sometimes, one must give information to get information. However, Uktena are notoriously tightfisted with secrets. With this Gift, the werewolf can share a bit of knowledge that later vanishes from the subject's memory.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Sight from Beyond",
-        "description": "As the Theurge Gift. When danger stalks the Garou or momentous events are in the offing, visions begin striking the Garou without warning. The nature of the danger is veiled in metaphor.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
         "name": "Bolt",
         "description": "The Kitsune calls a bolt of raw elemental force to strike his foe - fire, lightning, and freezing wind are all possibilities.",
         "game_line": "Werewolf: The Apocalypse",
@@ -450,78 +180,8 @@
         "splat": "Shifter"
     },
     {
-        "name": "Spirit Ward",
-        "description": "As the homid Gift. A werewolf with this Gift may protect himself from spirits by performing a quick warding rite. To use this Gift, the werewolf draws an invisible pictogram in the air that scares and unnerves any nearby spirits (except pack totems or caern spirits).",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
         "name": "Carrion Clothes",
         "description": "Wild foxes catch birds by pretending to be dead; werefoxes aspire to bigger game. This Gift causes the Kitsune to appear to all natural and supernatural examination to be dead.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Forest Lord",
-        "description": "As the lupus Gift: Beast Life. The werewolf with this Gift can communicate with other wild animals and attract (or even command) them. Domesticated animals will speak with the werewolf, but they have given themselves to the ways of humans and must be persuaded to obey the Garou.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Roll Over",
-        "description": "As the Philodox Gift. The Philodox can call on her power to radiate a commanding presence that compels others to submit to her.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Scent of Beyond",
-        "description": "As the Philodox Gift. The werewolf can bring all his senses to bear on one spot with which he is familiar (even an Umbral site), no matter how far away that spot is.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Grasp the Beyond",
-        "description": "As the Theurge Gift. The Garou may take things to and from the Umbra without having to dedicate them to herself. This Gift affects humans and animals, both willing and unwilling.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Spirit Drain",
-        "description": "As the Theurge Gift. The Garou may drain power from a spirit to feed his own resolve.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Fooling the Tiger",
-        "description": "As the Stargazer/Theurge Gift: Ultimate Argument of Logic. Those who speak with the Garou leave convinced of some fact might otherwise have disbelieved.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -550,48 +210,8 @@
         "splat": "Shifter"
     },
     {
-        "name": "Moon-Fan-Face-Shadow",
-        "description": "As the Glass Walker Gift: Doppelganger. The Garou may take the exact likeness of any other human, wolf or Garou.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Whelp Body",
-        "description": "As the Ragabash Gift. With this Gift a Garou may deliver a devastating curse upon a foe's body, causing it to weaken or palsy. Many consider the use of this power on a foe to be a declaration of unending war.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
         "name": "Kuei Dance",
         "description": "This Gift calls on the dead to bear witness. There is no compulsion, but the dead are eager to be remembered, so rarely refuse. The spell may take any form, from story to song to dance, with the ghost acting out her part as appropriate.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Shadows by the Firelight",
-        "description": "As the Galliard Gift. By invoking the power of shadows and dreams, the Galliard may create interactive stories in which others take part - willingly or not.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Beast Shape",
-        "description": "As the Ragabash Gift: Thousand Forms. The Kitsune may take the form of the animal depicted by this kami.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -620,48 +240,8 @@
         "splat": "Shifter"
     },
     {
-        "name": "Assimilation",
-        "description": "As the homid Gift. A werewolf with this Gift blends smoothly into any culture, no matter how strange or unfamiliar he might normally find it.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
         "name": "Call to Allies",
         "description": "This Gift is the Kitsune's ultimate distress call. Her Batsu, clan, and sentai will hear it, along with all other friendly neutrals and unknown allies in the area, as well as local spirits and spiritually sensitive mortals.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Elemental Gift",
-        "description": "As the lupus Gift. The werewolf calls upon the primal force of Gaia Herself, thereby commanding the spirits of the elements to rise up, undulate forward and even engulf foes.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Song of the Great Beast",
-        "description": "As the lupus Gift. To use this Gift, the werewolf must travel to the deep wilderness. When she reaches her destination, she howls the Song of the Great Beast into the sky, summoning one of the Great Beasts to her aid.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Imperial Obligation",
-        "description": "As the Philodox Gift: Geas. This Gift places its target under a geas, a sacred oath to obey the Philodox's bidding.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -680,26 +260,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Feral Lobotomy",
-        "description": "As the Theurge Gift. With but a thought, the Garou can devolve an opponent's mind to that of an animal, effectively destroying his intelligence.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Malleable Spirit",
-        "description": "As the Theurge Gift. The Garou can change a spirit's form or purpose.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
         "name": "Seal of Inari",
         "description": "The sorcerer can secretly 'brand' anyone he encounters with sigils only Kitsune can see. These may be warnings, death marks, requests for help, etc.",
         "game_line": "Werewolf: The Apocalypse",
@@ -708,56 +268,5 @@
         "values": [5],
         "shifter_type": "Kitsune",
         "splat": "Shifter"
-    },
-    {
-        "name": "Dragon Ally",
-        "description": "As the lupus Gift: Song of the Great Beast, save that it summons forth a dragon made of one of the elements.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Fire Immunity",
-        "description": "As the Ahroun Gift: Kiss of Helios. The Ahroun can invoke the sun's power to become completely immune to the damaging effects of fire.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Madness",
-        "description": "As the metis Gift. The metis struggles his whole life to find a place, a purpose and a sense of stability in his horrifying existence. With this Gift, he can force others to face their inner demons, including insanity and madness.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Mist on the Water",
-        "description": "As the Fianna Gift: Fog on the Moor. This Gift transforms the Fianna into a ghostly outline of himself, allowing him to pass through anything except silver as though he were incorporeal.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Violation",
-        "description": "As the Ragabash Gift. Those few Garou privy to the secret of Violation know well the hate and revulsion of others.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
     }
-
 ]

@@ -470,7 +470,7 @@
     {
         "name": "Hibernation",
         "description": "Toads may sleep in mud for centuries and awaken as though only a morning had passed. Bears take to their caves for the winter, and consume no food therein. Like these somnolent beasts, you can go to sleep, needing no food or water until you awaken. Like the fox, you may even seem dead to others - it takes magic of some kind to notice signs of life. You need only buy this Advantage if your hibernation is completely voluntary. Automatic or mandatory hibernation falls under the Flaw: Compulsion.",
-        "game_line": "The Bygone Bestiary",
+        "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
         "splat": "Companion",
@@ -479,19 +479,91 @@
     {
         "name": "Immunity",
         "description": "As the cock withstands the searing poison of the basilisk, you can ignore the effect of some dangerous (or at least unpleasant) thing. Some Immunities are part and parcel of a beast's nature; others, like Mithradites' immunity to poison, accrue over a long period of conditioning. Immunities vary in price, depending on their lethality and their frequency, much as Vulnerabilities do. You must buy each Immunity separately, although the Storyteller may allow a number of similar Immunities (basilisks, snakes, toadstools, iocaine powder) to be packaged as one more common Immunity (poisons).",
-        "game_line": "The Bygone Bestiary",
+        "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
         "splat": "Companion",
         "values": [2, 5, 10, 15]
     },
     {
-        "name": "Shared Knowledge",
-        "description": "Magi and their familiars often share an intense empathic link; you feel what she feels and even know, in a way, what she knows. Through the same channel, she feels your emotions and shares your knowledge. This is a tremendous feeling when relations are good, although suspicion, secrecy and mistrust can poison this bond even more thoroughly than usual. Although it's related to Bond-Sharing, this Advantage is a bit different: While Bond-Sharing exchanges sensations, Shared Knowledge passes understanding - you actually see through each other's eyes and access each other's thoughts. While not telepathy in the strictest sense, this mystic bond allows you both to share hunches, gut feelings and instincts.",
-        "game_line": "The Bygone Bestiary",
+        "name": "Information Fount",
+        "description": "Augurs have always known that hidden information is revealed by animals. Magical creatures may have access to even more esoteric lore. For the human mystic, such communions serve as conduits between the world of humanity and the hidden hearts of nature. To the beast, it might simply serve as a new way to earn food and shelter, or perhaps as a bond between friends or allies. Magical beasts, especially familiars, come up with seemingly bizarre yet often helpful information at unpredictable intervals. These fragments of lore, forgotten songs or helpful rumors seem fairly cryptic to humans, and the human concepts necessary to explain them are often completely foreign to you, the beast. You feel that this wisdom should be instantly comprehensible, and you find humans, used to different ways of thought and feeling, frustratingly slow on the uptake. This complex trade of insights, concepts and misunderstandings makes for enjoyably off-the-wall roleplaying. As a player, feel free to make cryptic remarks and weird allusions; the humans around you can figure out what you mean if they're so damned smart! If and when a system is called for, the Storyteller can allow you to attempt a Perception + Ability roll (difficulty 7) to come suitably obscure revelation. The specific Ability may be matched to the situation (Fairy Lore in a situation involving the Good Folk), analogous (Hunting while observing the Borgia Papal court), or seemingly irrelevant (Intimidation while trying to decipher a mysterious inscription). The better your roll, the more accurate your observation. To understand you, the puzzled human's player should roll her Intelligence + Enigmas Dice Pool — her difficulty could range from 6 to 10, depending on how weird the observation was. Both players may roll only once per situation.",
+        "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
         "splat": "Companion",
-        "values": [5, 7]
+        "values": [5]
+    },
+    {
+        "name": "Intangibility",
+        "description": "You can disappear from plain sight (eight points) or become totally incorporeal as well (10 points). Going intangible (in either variety) does not require a roll, but it does cost one point of Willpower whenever you shift from one state to the other. Running out of Willpower traps you in your current state until you can recover. An incorporeal beast cannot be physically touched or harmed; True Faith, magick and other mystical attacks and forces can transcend this protection, however. Before he can orient himself to address (or attack) aphysical being, the incorporeal beast must 'fade in' for a turn or so, achieving a sort of shadowy half-physical state which can be touched normally, but which proves difficult to see (Perception + Awareness or Alertness, difficulty 8). Normal human observers will have no way to find an intangible target, although vampiric Auspex, Lifesight and sensing Gifts and magicks will detect you on a normal Perception + Alertness roll (difficulty 7). If you remain corporeal, you still affect your surroundings and perhaps make noise, and a sharp observer can locate you from these disturbances with a Perception + Alertnessroll (difficulty9). More importantly, this Advantage does not mask your smell, thus dogs, for instance, will barely notice the difference between visible and invisible prey. A lack of scent is worth three points, and can be bought on its own or in addition to Intangibility.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "splat": "Companion",
+        "values": [8, 10]
+    },
+    {
+        "name": "Healing Lick",
+        "description": "As penance cleanses the wounds of the soul, the tongue of certain hounds heals wounds to the body. You have the gift of healing, whether by tongue (as the hound), breath (as the panther) or some other means. For three points, you may restore one Health Level per turn to either yourself or to another creature. For six points, you may heal one Health Level of an aggravated wound per turn. This Advantage heals only wounds and burns, not poison, broken bones, damaged organs or other traumas.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "splat": "Companion",
+        "values": [3, 6]
+    },
+    {
+        "name": "Human Speech",
+        "description": "In Russian legend, all animals can speak in human tongues (or at least in Russian) on Christmas Eve. You may wish to speak to humans more often than that, however. If so, this Advantage grants both the ability to speak in a recognizably human voice, and facility in one human language of your choice. Additional languages should be bought as the Languages merit, of course.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "splat": "Companion",
+        "values": [1]
+    },
+    {
+        "name": "Flexible",
+        "description": "The serpent twists and coils like a rhetorician's argument. You, too, can bend your body double, loop around limbs and squeeze your opponents until their breath leaves. You receive a -2 to Athletics rolls to dodge and -2 to Brawl rolls when starting grapple.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "splat": "Companion",
+        "values": [1]
+    },
+    {
+        "name": "Telepathy",
+        "description": "You might not be able to speak with your mouth, but you can speak with your mind. This Advantage allows, for example, a sword, a horse, or a quivering pool of sentient goo to hold conversations with anyone who understands what that character is trying to say. The recipient of the telepathy must be able to comprehend your conversation, of course, though certain phrases or empathic bursts may transcend a language barrier. (Roll Intelligence + Empathy, Etiquette, Intimidation or other appropriate Traits as needed.) That party may also, with a successful resisted Willpower roll, block out what you're trying to say. You can talk, but they aren't compelled to listen. Assuming both parties want to talk, and can understand what the other one is saying, you're able to silently converse with one other character within an unobstructed range of sight (2 pts.); with one other character for each point of Willpower you possess (4 pts.); and perhaps transcend obstacles and talk to characters you already know and have bonded with, even when you cannot see each other, across distances of roughly a mile or so (6 pts.). For organic and spirit-beings, this Advantage reflects a psychic or spiritual communion; tech-oriented characters may be using communication devices instead. However the telepathy is defined, outside parties cannot hear it unless they employ a suitable method (psychic power, the Mind Sphere, radio transmissions, etc.) to tap into it and spend a point of Willpower in order to do so. You might be using transmission technology, but if so, it's not the sort of tech the average listener can access or employ.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "splat": "Companion",
+        "values": [2, 4, 6]
+    },
+    {
+        "name": "Telekinesis",
+        "description": "With the power of your mind, antigravity hypertech, mystic energy, or what-have-you, you can lift and — to a slight degree — manipulate objects from a distance, without physically touching them. Doing so requires a successful Willpower roll, and the difficulty of that roll depends upon the weight and accessibility of your target, combined with the effect you're trying to have on it. Difficulty Target 6 Moving up to 10 lbs. 7 Up to 20 lbs. 8 Up to 50 lbs. 9 Up to 100 lbs.* +1 Basic manipulation (flipping lever, opening container) +2 Fine manipulation (pushing buttons, starting car) +3 Precise manipulation (typing accurately, driving car**) *Attempting to lift objects over 100 lbs. requires one Willpower point spent for each additional 25 lbs. **Steering a vehicle is not the same as trying to lift it; assuming you can get in and start the machine, your base difficulty would be 9. You must be able to see your target in order to influence it with this Advantage, and the cost of the Trait determines the maximum amount of weight you can lift: • (3 points) Maximum 10 lbs. • (5 points) Maximum 50 lbs. • (8 points) Maximum 100 lbs. • (12 points) No maximum.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "splat": "Companion",
+        "values": [3, 5, 8, 12]
+    },
+    {
+        "name": "Tides of Fortune",
+        "description": "Invoking the fickle currents of fortune, you can employ a combination of the spirit powers Bad Luck Charm and Good Luck Charm. Instead of spending a point of Essence, you must spend a point of Willpower to confer ill or happy fortune upon the target of your whims. For details about those Charms, see below",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "splat": "Companion",
+        "values": [5]
+    },
+    {
+        "name": "Speed",
+        "description": "You're a lot faster than you look. For every two points spent on this Advantage (up to a maximum of 10 points), you add + 2 yards (or meters) to your Base Move on the ground. That Base Move can be found on the Movement Rates chart in Mage 20, p. 401. Thus, six points spent on Speed gives you a Base Walk of 13 yards, a Base Jog of 18 yards, and a Base run of 26 yards. If you can fly as well, this Advantage also adds + 5 yards to your Base Fly movement for every two points spent. Therefore, that same six points also allows a winged character a Base Fly of 25 to 35 yards per turn. You do not have to purchase a separate Speed Advantage for flying, though you must have some innate ability (wings, levitation, etc.) in order to use that additional speed in the air. This Advantage does not add to temporary flight powers, such as flying carpets, levitation spells, and so on; the ability to fly must be a natural part of your character first. Due to the heavy resistance involved, this Advantage does not confer extra swimming speed, though an exception might be made (Storyteller's option) if the character is native to the water.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "splat": "Companion",
+        "values": [2, 4, 6, 8, 10]
     }
 ]

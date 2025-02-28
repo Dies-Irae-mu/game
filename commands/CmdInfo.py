@@ -89,10 +89,22 @@ class CmdInfo(MuxCommand):
     
     ignore_categories = {'other', 'specialty'}  # Categories to ignore in searches
 
+    def __init__(self):
+        super().__init__()
+        self.page_size = 20  # Show 20 items per page
+        self.current_page = 1
+        self.current_query = None
+        self.current_stat_type = None
+        self.total_count = 0
+
     def func(self):
         if not self.args and not self.switches:
             # Display all possible categories
             return self.list_categories()
+            
+        # Handle pagination commands first
+        if self.args.strip().lower() in ['next', 'n', 'quit', 'q']:
+            return self.show_type(self.args.strip())
             
         if 'search' in self.switches:
             if not self.args:
@@ -115,6 +127,9 @@ class CmdInfo(MuxCommand):
             only_splat = next(value for value in self.switches if value.lower() in valid_splats)
 
         if (category := self.match_category(self.args.strip())):
+            # For categories that map to a single type, use show_type for pagination
+            if category[0] == ['gift']:
+                return self.show_type('gift')
             self.show_category(category, only_splat)
         elif (subject := self.match_subject(self.args.strip(), only_splat)):
             self.show_subject(subject)
@@ -193,6 +208,37 @@ class CmdInfo(MuxCommand):
     def match_subject(self, input_str, only_splat=''):
         """Match a specific subject by name."""
         input_str_lower = input_str.lower()
+        
+        # Handle special cases that don't exist in database
+        if input_str_lower in ['methodology', 'methodologies']:
+            # Create a dummy subject for methodologies
+            class DummySubject:
+                name = 'Methodology'
+                splat = 'Mage'
+                game_line = 'Mage: The Ascension'
+                stat_type = 'identity'
+                values = None
+            return DummySubject()
+            
+        if input_str_lower in ['traditions subfaction', 'tradition subfaction']:
+            # Create a dummy subject for tradition subfactions
+            class DummySubject:
+                name = 'Traditions Subfaction'
+                splat = 'Mage'
+                game_line = 'Mage: The Ascension'
+                stat_type = 'identity'
+                values = None
+            return DummySubject()
+            
+        if input_str_lower in ['elemental affinity', 'element']:
+            # Create a dummy subject for elemental affinity
+            class DummySubject:
+                name = 'Elemental Affinity'
+                splat = 'Companion'
+                game_line = 'Mage: The Ascension'
+                stat_type = 'identity'
+                values = None
+            return DummySubject()
         
         # Handle special cases for combo disciplines
         if input_str_lower in ['combo', 'combo discipline', 'combodiscipline']:
@@ -385,6 +431,63 @@ class CmdInfo(MuxCommand):
         width = 78
         string = self.format_header(f"+Info {subject.name}", width=width)
         
+        # Special handling for Elemental Affinity
+        if subject.name.lower() == 'elemental affinity':
+            from world.wod20th.utils.companion_utils import ELEMENTAL_AFFINITY
+            string += f"  |wName:|n {subject.name}\r\n"
+            if subject.splat:
+                string += f"  |wSplat:|n {subject.splat}\r\n"
+            if subject.game_line:
+                string += f"  |wGame Line:|n {subject.game_line}\r\n"
+            
+            string += "\n|wElements and their Personalities:|n\n"
+            for element, personalities in ELEMENTAL_AFFINITY.items():
+                string += f"\n|c{element}|n\n"
+                string += "  " + ", ".join(personalities) + "\n"
+            
+            string += self.format_footer(width=78)
+            self.caller.msg(string)
+            return
+        
+        # Special handling for Tradition Subfactions
+        if subject.name.lower() == 'traditions subfaction':
+            from world.wod20th.utils.stat_mappings import TRADITION_SUBFACTION
+            string += f"  |wName:|n {subject.name}\r\n"
+            if subject.splat:
+                string += f"  |wSplat:|n {subject.splat}\r\n"
+            if subject.game_line:
+                string += f"  |wGame Line:|n {subject.game_line}\r\n"
+            
+            string += "\n|wTraditions and their Subfactions:|n\n"
+            for tradition, subfactions in TRADITION_SUBFACTION.items():
+                string += f"\n|c{tradition}|n\n"
+                string += "  " + ", ".join(subfactions) + "\n"
+            
+            string += self.format_footer(width=78)
+            self.caller.msg(string)
+            return
+
+        # Special handling for Methodologies
+        if subject.name.lower() == 'methodology':
+            from world.wod20th.utils.stat_mappings import METHODOLOGIES
+            string += f"  |wName:|n {subject.name}\r\n"
+            if subject.splat:
+                string += f"  |wSplat:|n {subject.splat}\r\n"
+            if subject.game_line:
+                string += f"  |wGame Line:|n {subject.game_line}\r\n"
+            
+            string += "\n|wConventions and their Methodologies:|n\n"
+            for convention, methodologies in METHODOLOGIES.items():
+                string += f"\n|c{convention}|n\n"
+                # Format methodologies in a more readable way, 3 per line
+                for i in range(0, len(methodologies), 3):
+                    chunk = methodologies[i:i+3]
+                    string += "  " + ", ".join(chunk) + "\n"
+            
+            string += self.format_footer(width=78)
+            self.caller.msg(string)
+            return
+        
         # Basic info section
         string += f"  |wName:|n {subject.name}\r\n"
         if subject.splat:
@@ -422,6 +525,12 @@ class CmdInfo(MuxCommand):
                 string += f"  |wCamp:|n {subject.camp}\r\n"
             if subject.source:
                 string += f"  |wSource:|n {subject.source}\r\n"
+            if hasattr(subject, 'gift_alias') and subject.gift_alias:
+                if isinstance(subject.gift_alias, list):
+                    aliases = ", ".join(alias for alias in subject.gift_alias)
+                else:
+                    aliases = subject.gift_alias
+                string += f"  |wAlso Known As:|n {aliases}\r\n"
         elif subject.stat_type in ['discipline', 'combodiscipline']:
             if hasattr(subject, 'xp_cost') and subject.xp_cost is not None:
                 string += f"  |wXP Cost:|n {subject.xp_cost}\r\n"
@@ -488,7 +597,7 @@ class CmdInfo(MuxCommand):
         table.reformat_column(3, width=23, align="l")
         
         for result in matches[:10]:
-            desc = result.description[:20] + "..." if result.description and len(result.description) > 20 else ""
+            desc = result.description[:30] + "..." if result.description and len(result.description) > 20 else ""
             table.add_row(
                 result.name,
                 result.splat or "Any",
@@ -505,7 +614,7 @@ class CmdInfo(MuxCommand):
         self.caller.msg(string)
                     
     def show_type(self, stat_type):
-        """Show all entries of a specific type."""
+        """Show all entries of a specific type with pagination."""
         # Handle special cases for combo disciplines
         if stat_type.lower() in ['combo', 'combo discipline', 'combodiscipline']:
             stat_type = 'combodiscipline'
@@ -521,15 +630,83 @@ class CmdInfo(MuxCommand):
                 return
             query = Q(stat_type=stat_type)
             
+        # Get all results
         results = Stat.objects.filter(query).order_by('name')
         if not results.exists():
             self.caller.msg(f"No entries found of type '{stat_type}'.")
             return
             
+        # Build the display string
         string = self.format_header(f"+Info Type: {stat_type.title()}")
-        string += self.format_stat_list(results)
+        
+        # Adjust table format based on stat type
+        if stat_type == 'gift':
+            table = EvTable("|wName|n", "|wRank|n", "|wDetails|n", "|wAliases|n", border="none")
+            table.reformat_column(0, width=20, align="l")  # Name
+            table.reformat_column(1, width=6, align="l")   # Rank
+            table.reformat_column(2, width=25, align="l")  # Details
+            table.reformat_column(3, width=27, align="l")  # Aliases
+            
+            for result in results:
+                rank = str(result.values[0]) if result.values else "N/A"
+                
+                details = []
+                if hasattr(result, 'auspice') and result.auspice and result.auspice != 'none':
+                    details.append(result.auspice)
+                if hasattr(result, 'breed') and result.breed and result.breed != 'none':
+                    details.append(result.breed)
+                if hasattr(result, 'tribe') and result.tribe:
+                    if isinstance(result.tribe, list):
+                        details.extend(result.tribe)
+                    else:
+                        details.append(result.tribe)
+                
+                # Truncate details if too long
+                details_str = ", ".join(str(d) for d in details) if details else ""
+                if len(details_str) > 22:
+                    details_str = details_str[:19] + "..."
+                
+                # Get aliases if they exist
+                aliases = ""
+                if hasattr(result, 'gift_alias') and result.gift_alias:
+                    if isinstance(result.gift_alias, list):
+                        aliases = ", ".join(result.gift_alias[:2])
+                        if len(result.gift_alias) > 2:
+                            aliases += "..."
+                    else:
+                        aliases = str(result.gift_alias)
+                if len(aliases) > 24:
+                    aliases = aliases[:21] + "..."
+                
+                table.add_row(result.name, rank, details_str, aliases)
+        else:
+            # Default table format for other types
+            table = EvTable("|wName|n", "|wSplat|n", "|wDetails|n", border="none")
+            table.reformat_column(0, width=30, align="l")
+            table.reformat_column(1, width=20, align="l")
+            table.reformat_column(2, width=28, align="l")
+            
+            for result in results:
+                details = ""
+                if hasattr(result, 'values') and result.values:
+                    if len(result.values) == 1:
+                        details = f"Level {result.values[0]}"
+                    else:
+                        details = f"Levels {', '.join(map(str, result.values))}"
+                
+                splat = result.splat or result.game_line or "Any"
+                if len(splat) > 17:
+                    splat = splat[:14] + "..."
+                
+                table.add_row(result.name, splat, details)
+        
+        string += str(table)
+        string += f"\r\n    Found |w{len(results)}|n entries.\r\n"
         string += self.format_footer()
-        self.caller.msg(string)
+        
+        # Use EvMore for pagination
+        from evennia.utils.evmore import EvMore
+        EvMore(self.caller, string, exit_on_lastpage=True)
                     
     def show_shifter_gifts(self, shifter_type):
         """Show all gifts for a specific shifter type."""
@@ -566,11 +743,11 @@ class CmdInfo(MuxCommand):
         
         # Use table format for better organization
         # Adjust column widths to total 78 characters including borders
-        table = EvTable("|wName|n", "|wRank|n", "|wDetails|n", "|wDescription|n", border="none")
+        table = EvTable("|wName|n", "|wRank|n", "|wDetails|n", "|wAliases|n", border="none")
         table.reformat_column(0, width=20, align="l")  # Name
         table.reformat_column(1, width=6, align="l")   # Rank
-        table.reformat_column(2, width=15, align="l")  # Details
-        table.reformat_column(3, width=37, align="l")  # Description (remaining space)
+        table.reformat_column(2, width=25, align="l")  # Details
+        table.reformat_column(3, width=27, align="l")  # Aliases
         
         for result in results:
             rank = str(result.values[0]) if result.values else "N/A"
@@ -590,16 +767,22 @@ class CmdInfo(MuxCommand):
             
             # Truncate details if too long
             details_str = ", ".join(str(d) for d in details) if details else ""
-            if len(details_str) > 15:
-                details_str = details_str[:12] + "..."
+            if len(details_str) > 22:  # Adjusted for new width
+                details_str = details_str[:19] + "..."
             
-            # Truncate description to fit in column
-            desc = result.description if result.description else ""
-            if len(desc) > 34:  # 37 - 3 for "..."
-                # Try to break at a word boundary
-                desc = desc[:34].rsplit(' ', 1)[0] + "..."
+            # Get aliases if they exist
+            aliases = ""
+            if hasattr(result, 'gift_alias') and result.gift_alias:
+                if isinstance(result.gift_alias, list):
+                    aliases = ", ".join(result.gift_alias[:2])  # Show first 2 aliases
+                    if len(result.gift_alias) > 2:
+                        aliases += "..."
+                else:
+                    aliases = str(result.gift_alias)
+            if len(aliases) > 24:  # Adjusted for new width
+                aliases = aliases[:21] + "..."
             
-            table.add_row(result.name, rank, details_str, desc)
+            table.add_row(result.name, rank, details_str, aliases)
             
         string += ANSIString(table)
         string += f"\r\n    Found |w{len(results)}|n gifts for {shifter_type.title()}.\r\n"

@@ -118,7 +118,7 @@ IDENTITY_STATS = {
         'Full Name', 'Concept', 'Date of Birth', 'Date of Embrace', 
         'Nature', 'Demeanor', 'Motivation', 'Form', 'Occupation',
         'Date of Chrysalis', 'Date of Awakening', 'First Change Date',
-        'Date of Possession', 'Enlightenment', 'Rite Name'
+        'Date of Possession', 'Enlightenment', 'Tribal Name'
     ],
     'lineage': [
         'Sire', 'Clan', 'Generation', 'Enlightenment', 'Type', 'Tribe', 
@@ -131,7 +131,8 @@ IDENTITY_STATS = {
         'Possessed Type', 'Mortal+ Type', 'Varna', 'Ananasi Faction', 'Ananasi Cabal',
         'Patron Totem', 'Pack', 'Society', 'Fellowship', 'Domitor', 'Companion Type', 
         'Motivation', 'Form', 'Phyla', 'Seeming', 'House', 'Fae Court', 'Nunnehi Camp',
-        'Nunnehi Seeming', 'Nunnehi Family', 'Nunnehi Totem', 'Affinity Realm'
+        'Nunnehi Seeming', 'Nunnehi Family', 'Nunnehi Totem', 'Affinity Realm', 'Elemental Affinity',
+        'Fuel'
     ]
 }
 
@@ -153,8 +154,66 @@ IDENTITY_LINEAGE = [
         'Possessed Type', 'Mortal+ Type', 'Varna', 'Ananasi Faction', 'Ananasi Cabal',
         'Patron Totem', 'Pack', 'Society', 'Fellowship', 'Domitor', 'Companion Type', 
         'Motivation', 'Form', 'Phyla', 'Seeming', 'House', 'Fae Court', 'Nunnehi Camp',
-        'Nunnehi Seeming', 'Nunnehi Family', 'Nunnehi Totem', 'Affinity Realm'
+        'Nunnehi Seeming', 'Nunnehi Family', 'Nunnehi Totem', 'Affinity Realm', 'Elemental Affinity',
+        'Fuel'
 ]
+
+ELEMENTAL_AFFINITY = {
+            "Air": [
+                "Blustery Curmudgeon",
+                "Bitter Warrior",
+                "Cold Cynic",
+                "Fleeting Dilettante",
+                "Flighty Scatterbrain",
+                "Gentle Friend",
+                "Stormy Fanatic"
+            ],
+            "Earth": [
+                "Crystalline Idealist",
+                "Fertile Procreator",
+                "Flowery Bon Vivant",
+                "Resolute Architect",
+                "Sheltering Caregiver",
+                "Solid Guardian",
+                "Stony Curmudgeon"
+            ],
+            "Fire": [
+                "Burning Quester",
+                "Fiery Rebel",
+                "Glittering Dancer",
+                "Illuminated Scholar",
+                "Passionate Lover",
+                "Lusty Reveler",
+                "Warm Romantic"
+            ],
+            "Water": [
+                "Babbling Jester",
+                "Erosive Revolutionary",
+                "Graceful Sensualist",
+                "Quiet Thinker",
+                "Stagnant Traditionalist",
+                "Patient Conniver",
+                "Wise Elder"
+            ],
+            "Metal": [
+                "Bright Thinker",
+                "Greedy Collector",
+                "Harsh Scrapper",
+                "Hot-Headed Braggart",
+                "Temperamental Warrior",
+                "Sharp-Witted Trickster",
+                "Visionary Architect"
+            ],
+            "Wood": [
+                "Bearer of Burdens",
+                "Flexible Mediator",
+                "Nurturing Parent",
+                "Rooted Traditionalist",
+                "Scattered Visionary",
+                "Steadfast Protector",
+                "Stout Defender"
+            ]
+}
 
 # Special stat type overrides based on splat
 SPLAT_STAT_OVERRIDES = {
@@ -258,8 +317,39 @@ IDENTITY_LINEAGE = {
     'ananasi cabal': ('identity', 'lineage'),
     'kitsune path': ('identity', 'lineage'),
     'kitsune faction': ('identity', 'lineage'),
-    'ajaba faction': ('identity', 'lineage')
+    'ajaba faction': ('identity', 'lineage'),
+    'fuel': ('identity', 'lineage'),
+    'elemental affinity': ('identity', 'lineage'),
+    'motivation': ('identity', 'lineage'),
+    'form': ('identity', 'lineage'),
+    'phyla': ('identity', 'lineage'),
+    'seeming': ('identity', 'lineage'),
+    'house': ('identity', 'lineage'),
+    'tradition subfaction': ('identity', 'lineage'),
+    'methodology': ('identity', 'lineage'),
+    'spirit type': ('identity', 'lineage'),
+    'spirit name': ('identity', 'lineage'),
+    'domitor': ('identity', 'lineage'),
+    'society': ('identity', 'lineage'),
+    'order': ('identity', 'lineage'),
+    'coven': ('identity', 'lineage'),
+    'cabal': ('identity', 'lineage'),
+    'plague': ('identity', 'lineage'),
+    'stream': ('identity', 'lineage'),
+    'kitsune path': ('identity', 'lineage'),
+    'seelie legacy': ('identity', 'lineage'),
+    'unseelie legacy': ('identity', 'lineage'),
+    'first legacy': ('identity', 'lineage'),
+    'second legacy': ('identity', 'lineage'),
+    'methodology': ('identity', 'lineage'),
+    'occupation': ('identity', 'lineage'),
+    'signature': ('identity', 'lineage'),
+    'essence': ('identity', 'lineage'),
+    'affinity sphere': ('identity', 'lineage'),
+    'nephandi faction': ('identity', 'lineage'),
+    'deed name': ('identity', 'lineage'),
 }
+
 # Secondary abilities
 SECONDARY_TALENTS = {
     'artistry': ('abilities', 'secondary_talent'),
@@ -332,6 +422,7 @@ UNIVERSAL_BACKGROUNDS = [
     'Destiny',
     'Organizational Rank',
     'Spies',
+    'Secrets',
     'Totem',
     'Artifact',
     'Mob',
@@ -423,7 +514,6 @@ SHIFTER_BACKGROUNDS = [
     'Mnesis',
     'Wallow',
     'Ananta',
-    'Secrets',
     'Umbral Maps',
     'Batsu',
     'Kitsune Clan',
@@ -563,33 +653,75 @@ MAGE_SPHERES = {
 }
 
 TRADITION_SUBFACTION = {
-    'Akashic Brotherhood': ['Vajrapani', 'Li Hai', 'Wu Lung', 'Wu-Keng'],
-    'Celestial Chorus': ['Cabal of Pure Thought', 'Gabrielites', 'Templars'],
-    'Cult of Ecstasy': ['Aghoris', 'Children of Rashomon', 'Sahajiya'],
-    'Dreamspeakers': ['Kopa Loei', 'Ngoma', 'Bata\'a', 'Taftani'],
-    'Euthanatos': ['Chakravanti', 'Natatapas', 'Lhaksmists', 'Madzimbabwe'],
-    'Order of Hermes': ['House Bjornaer', 'House Bonisagus', 'House Criamon', 'House Ex Miscellanea',
-                       'House Flambeau', 'House Fortunae', 'House Hong Lei', 'House Janissary',
-                       'House Jerbiton', 'House Mercere', 'House Merinita', 'House Quaesitor',
-                       'House Shaea', 'House Skopos', 'House Solificati', 'House Tharsis',
-                       'House Thig', 'House Tremere', 'House Tytalus', 'House Validas',
-                       'House Verditius', 'House Xaos'],
-    'Sons of Ether': ['Cybermancers', 'Ethernauts', 'Adventurers', 'Difference Engineers'],
-    'Verbena': ['Teuthonic', 'Green Path', 'Witch', 'Voudoun'],
-    'Virtual Adepts': ['Cybernauts', 'Cyberpunks', 'Reality Hackers']
+    'Akashic_Brotherhood': [
+    'Chabnagpa', 'Lin Shen', 'Wu Shan', 'Yamabushi', 'Jina', 'Karmachakra', 'Shaolin', 'Blue Skins',
+    'Mo-Tzu Fa', "Roda d'Oro", 'Gam Lung', 'Han Fei Tzu Academy', 'Kaizankai', 'Banner of the Ebon Dragon', 
+    'Sulsa', 'Tenshi Arashi Ryu', 'Wu Lung'
+    ],
+    'Celestial Chorus': [
+    'Brothers of St. Christopher', 'Chevra Kedisha', 'Knights of St. George', 'Order of St. Michael', 
+    'Poor Knights of the Temple of Solomon', 'Sisters of Gabrielle', 'Alexandrian Society', 'Anchorite',
+    'Children of Albi', 'Latitudinarian', 'Monist', 'Nashimite', 'Septarian', 'Hare Krishna', 'Hindu',
+    'Jain', 'Son of Mithras', 'Rastafarian', 'Sikh', 'Sufi', 'Bat Binah', 'Song of the Ancients'
+    ],
+    'Cultists of Ecstasy': [
+    'Erzuli Jingo', 'Kiss of Astarte', 'Maenad', "K'an Lu", 'Vratyas', 'Aghoris', 'Acharne', 'Freyji',
+    'Sons of Wotan', 'Sutr', 'Joybringers', 'Dissonance Society', 'Klubwerks', "Children's Crusade",
+    'Cult of Acceptance', 'Silver Bridges', 'Los Sabios Locos', "Ka'a", 'Khlysty Flagellants', 
+    "Bongo's Rangers", 'Dervish', 'Confrerie Chango', 'Roda do Jogo', 'Los Sangradores', 'Studiosi',
+    'Umilyenye'
+    ],
+    'Euthanatos': [
+    'Aided', 'Devasu', 'Lhakmist', 'Natatapa', 'Knight of Radamanthys', 'Pomegranate Deme', "N'anga",
+    'Ta Kiti', 'Albireo', 'Chakramuni', 'Golden Chalice', 'Pallottino', 'Scholars of the Wheel', "Yggdrasil's Keepers",
+    'Yum Cimil'
+    ],
+    'Dreamspeakers': [
+    'Balomb', 'Baruti', 'Contrary', 'Four Winds', 'Ghost Wheel Society', 'Keeper of the Sacred Fire', 
+    'Kopa Loei', 'Red Spear Society', 'Sheikha', 'Solitaries', 'Spirit Smith', 'Uzoma'
+    ],
+    'Order of Hermes': [
+    'House Bonisagus', 'House Flambeau', 'House Fortunae', 'House Quaesitori', 'House Shaea', 'House Tytalus',
+    'House Verditius', 'House Criamon', 'House Jerbiton', 'House Merinita', 'House Skopos', 'House Xaos'
+    ],
+    'Verbena': [
+    'Gardeners of the Tree', 'Lifeweavers', 'Moon-Seekers', 'Twisters of Fate', 'Techno-Pagans', 'Fairy Folk', 'New Age'
+    ],
+    'Sons of Ether': [
+    'Ethernauts', 'Cybernauts', 'Utopians', 'Adventurers', 'Mad Scientists', 'Progressivists', 'Aquanauts'
+    ],
+    'Virtual Adepts': [
+    'Chaoticians', 'Cyberpunk', 'Cypherpunks', 'Nexplorers', 'Reality Coders'
+    ]
 }
 
 METHODOLOGIES = {
-    'Iteration X': ['Statisticians', 'Macrotechnicians', 'Cybernetic Research',
-                   'Biotechnology', 'Pharmacopeists', 'Robotics'],
-    'New World Order': ['Ivory Tower', 'Operatives', 'Enforcers', 'Media Control',
-                       'Social Engineering', 'Political Science'],
-    'Progenitors': ['Pharmacopoeists', 'Genegineers', 'FACADE Engineers',
-                    'Damage Control', 'Psychiatry'],
-    'Syndicate': ['Auditors', 'Media', 'Financiers', 'Healthcare',
-                  'Human Resources', 'Psychological Warfare'],
-    'Void Engineers': ['Dimensional Science', 'R&D', 'DSEE', 'HITMark',
-                      'Neutralization', 'Reality Corps']
+    'Iteration X': [
+        'BioMechanics', 'Macrotechnicians', 'Statisticians', 'Time-Motion Managers'
+    ],
+    'New World Order': [
+        'Ivory Tower', 'Operatives', 'Watchers', 'The Feed', 'Q Division', 'Agronomists'
+    ],
+    'Progenitor': [
+        'Applied Sciences', 'Deviancy Scene investigators', 'Médecins Sans Superstition',
+        'Biosphere Explorers', 'Damage Control', 'Ethical Compliance', 'FACADE Engineers',
+        'Genegineers', 'Pharmacopoeists', 'Preservationists', 'Psychopharmacopoeists', 
+        'Shalihotran Society'
+    ],
+    'Syndicate': [
+        'Disbursements', 'Assessment Division', 'Reorganization Division', 'Procurements Division',
+        'Extraction Division', 'Enforcers (Hollow Men)', 'Legal Division', 'Extralegal Division',
+        'Extranational Division', 'Information Specialists', 'Special Information Security Division',
+        'Financiers', 'Acquisitions Division', 'Entrepreneurship Division', 'Liquidation Division',
+        'Media Control', 'Effects Division', 'Spin Division', 'Marketing Division', 'Special Projects Division'
+    ],
+    'Void Engineer': [
+        'Border Corps Division', 'Earth Frontier Division', 'Aquatic Exploration Teams',
+        'Cryoregional Specialists', 'Hydrothermal Botanical Mosaic Analysts', 'Inaccessible High Elevation Exploration Teams',
+        'Subterranean Exploration Corps', 'Neutralization Specialist Corps', 'Neutralization Specialists', 
+        'Enforcement Training and Conditioning Agency', 'Department of Psychological Evaluation and Maintenance', 'Pan-Dimensional Corps', 
+        'Deep Exploration Teams', 'Solar Exploration Teams', 'Cybernauts', 'Chrononauts', 'Research & Execution'
+    ]
 }
 
 # Add Possessed-specific constants
@@ -657,7 +789,7 @@ SPECIAL_ADVANTAGES = {
         'bond-sharing': {'valid_values': [4, 5, 6], 'desc': "Creates mystical bond to share abilities"},
         'cause insanity': {'valid_values': [2, 4, 6, 8, 10], 'desc': "Can provoke temporary fits of madness"},
         'chameleon coloration': {'valid_values': [4, 6, 8], 'desc': "Ability to change coloration for camouflage"},
-        'claws, fangs, or horns': {'valid_values': [3, 5, 7], 'desc': "Natural weaponry that inflicts lethal damage"},
+        'claws fangs or horns': {'valid_values': [3, 5, 7], 'desc': "Natural weaponry that inflicts lethal damage"},
         'deadly demise': {'valid_values': [2, 4, 6], 'desc': "Upon death, inflicts damage to nearby enemies"},
         'dominance': {'valid_values': [1], 'desc': "Naturally commanding demeanor within specific groups"},
         'earthbond': {'valid_values': [2], 'desc': "Mystical connection to perceive threats"},
@@ -668,10 +800,15 @@ SPECIAL_ADVANTAGES = {
         'extra limbs': {'valid_values': [2, 4, 6, 8], 'desc': "Additional prehensile limbs"},
         'feast of nettles': {'valid_values': [2, 3, 4, 5, 6], 'desc': "Ability to absorb and nullify Paradox"},
         'ferocity': {'valid_values': [2, 4, 6, 8, 10], 'desc': "Grants Rage points equal to half rating"},
+        'flexible': {'valid_values': [1], 'desc': "Extremely flexible, -2 to athletics rolls to dodge or starting grapple"},
         'ghost form': {'valid_values': [8, 10], 'desc': "Become invisible or incorporeal"},
+        'healing lick': {'valid_values': [3, 6], 'desc': "Ability to heal wounds (3pts), 6pts for aggravated damage"},
         'hibernation': {'valid_values': [2], 'desc': "Can enter voluntary hibernation state"},
         'human guise': {'valid_values': [1, 2, 3], 'desc': "Ability to appear human"},
+        'human speech': {'valid_values': [1], 'desc': "Ability to speak human languages"},
+        'information fount': {'valid_values': [5], 'desc': "Ability to provide bizarre, yet helpful information"},
         'immunity': {'valid_values': [2, 5, 10, 15], 'desc': "Immunity to specific harmful effects"},
+        'intangibility': {'valid_values': [8, 10], 'desc': "Ability to disappear or become incorporeal"},
         'mesmerism': {'valid_values': [3, 6], 'desc': "Hypnotic gaze abilities"},
         'musical influence': {'valid_values': [6], 'desc': "Affect emotions through music"},
         'musk': {'valid_values': [3], 'desc': "Emit powerful stench affecting rolls"},
@@ -691,8 +828,12 @@ SPECIAL_ADVANTAGES = {
         'soak lethal damage': {'valid_values': [3], 'desc': "Natural ability to soak lethal damage"},
         'soak aggravated damage': {'valid_values': [5], 'desc': "Can soak aggravated damage"},
         'soul-sense': {'valid_values': [2, 3], 'desc': "Ability to sense spirits and impending death"},
+        'speed': {'valid_values': [2, 4, 6, 8, 10], 'desc': "Increased movement speed"},
         'spirit travel': {'valid_values': [8, 10, 15], 'desc': "Ability to cross into Umbral realms"},
         'spirit vision': {'valid_values': [3], 'desc': "Ability to perceive the Penumbra"},
+        'telepathy': {'valid_values': [2, 4, 6], 'desc': "Ability to communicate with others telepathically"},
+        'telekinesis': {'valid_values': [3, 5, 8, 12], 'desc': "Ability to move objects with the mind"},
+        'tides of fortune': {'valid_values': [5], 'desc': "Ability to alter the flow of fate"},
         'tunneling': {'valid_values': [3], 'desc': "Can create tunnels through earth"},
         'unaging': {'valid_values': [5], 'desc': "Immunity to natural aging process"},
         'universal translator': {'valid_values': [5], 'desc': "Ability to understand languages"},
@@ -1015,19 +1156,20 @@ def get_identity_stats(splat: str, subtype: str = None, affiliation: str = None)
             'First Change Date',
             'Type',
             'Breed',
-            'Rank'
+            'Rank',
+            'Deed Name'
         ]
         
         if subtype:
             subtype = subtype.lower()
             if subtype == 'garou':
-                stats.extend(['Auspice', 'Tribe', 'Camp', 'Pack', 'Patron Totem', 'Deed Name'])
+                stats.extend(['Auspice', 'Tribe', 'Camp', 'Pack', 'Patron Totem'])
                 # Add Fang House and Lodge for Silver Fang tribe
                 if affiliation and affiliation.lower() == 'silver fang':
                     stats.extend(['Fang House', 'Lodge'])
-                # Add Rite Name for Black Spiral Dancers
+                # Add Tribal Name for Black Spiral Dancers
                 elif affiliation and affiliation.lower() == 'black spiral dancers':
-                    stats.append('Rite Name')
+                    stats.append('Tribal Name')
             elif subtype == 'bastet':
                 stats.extend(['Tribe', 'Jamak Spirit', 'Pryio'])
             elif subtype == 'ajaba':
@@ -1128,7 +1270,8 @@ def get_identity_stats(splat: str, subtype: str = None, affiliation: str = None)
             'Companion Type',
             'Fuel',
             'Affiliation', 
-            'Motivation'
+            'Motivation',
+            'Elemental Affinity'
         ]
         
     else:  # Mortal or other

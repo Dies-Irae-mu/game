@@ -528,6 +528,199 @@ class CmdSTTeleport(MuxCommand):
         else:
             caller.msg("Teleport failed.")
 
+class CmdSummon(MuxCommand):
+    """
+    Summon a player or object to your location.
+
+    Usage:
+      +summon <character>
+      +summon/quiet <character>
+      +summon/debug <character> - Show additional diagnostic information
+
+    Switches:
+      quiet - Don't announce the summoning to the character
+      debug - Display debug information about location storage
+    """
+
+    key = "+summon"
+    locks = "cmd:perm(storyteller)"
+    help_category = "Storyteller"
+    switch_options = ("quiet", "debug")
+
+    def func(self):
+        """Implement the command"""
+        caller = self.caller
+        args = self.args.strip()
+        debug_mode = "debug" in self.switches
+
+        if not args:
+            caller.msg("Usage: +summon <character>")
+            return
+
+        # Find the character to summon
+        target = caller.search(args, global_search=True)
+        if not target:
+            return
+
+        # Store their current location for +return
+        if inherits_from(target, "evennia.objects.objects.DefaultCharacter"):
+            original_location = target.location
+            
+            # Make sure the location is valid
+            if original_location and hasattr(original_location, "id"):
+                # Store location for return
+                target.db.pre_summon_location = original_location
+                
+                if debug_mode:
+                    caller.msg(f"DEBUG: Stored {original_location.name} (#{original_location.id}) as pre_summon_location for {target.name}")
+            else:
+                caller.msg(f"Warning: Could not store a valid original location for {target.name}")
+                if debug_mode:
+                    caller.msg(f"DEBUG: Current location is {original_location}")
+            
+        # Do the teleport
+        if target.move_to(
+            caller.location,
+            quiet="quiet" in self.switches,
+            emit_to_obj=caller,
+            move_type="teleport",
+        ):
+            caller.msg(f"You have summoned {target.name} to your location.")
+            if "quiet" not in self.switches:
+                target.msg(f"{caller.name} has summoned you.")
+            
+            # Double-check storage worked
+            if debug_mode and hasattr(target, "db"):
+                if target.db.pre_summon_location:
+                    stored_loc = target.db.pre_summon_location
+                    caller.msg(f"DEBUG: Confirmed {target.name} has pre_summon_location: {stored_loc.name} (#{stored_loc.id})")
+                else:
+                    caller.msg(f"DEBUG: Failed to store pre_summon_location for {target.name}")
+        else:
+            caller.msg(f"Failed to summon {target.name}.")
+
+class CmdReturn(MuxCommand):
+    """
+    Return a previously summoned character back to their original location.
+
+    Usage:
+      +return <character>
+      +return/quiet <character>
+      +return/all - Return all summoned characters in current location
+      +return/force <character> - Use alternative location attributes if available
+      +return/set <character> = <location> - Manually set return location
+
+    Switches:
+      quiet - Don't announce the return to the character
+      all - Return all summoned characters in current location
+      force - Try alternative location attributes (prelogout_location) if available
+      set - Manually set a return location for a character
+    """
+
+    key = "+return"
+    locks = "cmd:perm(storyteller)"
+    help_category = "Storyteller"
+    switch_options = ("quiet", "all", "force", "set")
+    rhs_split = ("=",)
+
+    def return_character(self, character, quiet=False, force=False):
+        """Return a character to their pre-summon location"""
+        # First try the primary location attribute
+        if hasattr(character, "db") and character.db.pre_summon_location:
+            prev_location = character.db.pre_summon_location
+            location_type = "pre-summon"
+        # If force is True, try alternative location attributes
+        elif force and hasattr(character, "db"):
+            # Try prelogout_location as fallback
+            if character.db.prelogout_location:
+                prev_location = character.db.prelogout_location
+                location_type = "prelogout"
+            else:
+                self.caller.msg(f"{character.name} has no stored locations to return to.")
+                return False
+        else:
+            self.caller.msg(f"{character.name} has no stored previous location to return to.")
+            self.caller.msg("Use +return/force to try alternative location attributes, or +return/set to set one manually.")
+            return False
+
+        # Verify the location still exists
+        if not prev_location or not prev_location.id:
+            self.caller.msg(f"The previous {location_type} location for {character.name} no longer exists.")
+            if location_type == "pre-summon":
+                character.attributes.remove("pre_summon_location")
+            return False
+            
+        # Move the character back
+        if character.move_to(
+            prev_location,
+            quiet=quiet,
+            emit_to_obj=self.caller,
+            move_type="teleport",
+        ):
+            self.caller.msg(f"Returned {character.name} to their {location_type} location: {prev_location.name}.")
+            if not quiet:
+                character.msg(f"{self.caller.name} has returned you to your previous location.")
+                
+            # Clear the stored location if it was pre_summon_location
+            if location_type == "pre-summon":
+                character.attributes.remove("pre_summon_location")
+            return True
+        else:
+            self.caller.msg(f"Failed to return {character.name}.")
+            return False
+
+    def func(self):
+        """Implement the command"""
+        caller = self.caller
+        args = self.args.strip()
+        quiet = "quiet" in self.switches
+        force = "force" in self.switches
+
+        # Handle setting a return location manually
+        if "set" in self.switches:
+            if not self.rhs:
+                caller.msg("Usage: +return/set <character> = <location>")
+                return
+                
+            target = caller.search(self.lhs, global_search=True)
+            if not target:
+                return
+                
+            destination = caller.search(self.rhs, global_search=True)
+            if not destination:
+                return
+                
+            # Set the pre_summon_location attribute
+            target.db.pre_summon_location = destination
+            caller.msg(f"Set return location for {target.name} to {destination.name}.")
+            return
+
+        if "all" in self.switches:
+            # Return all summoned characters in the current location
+            returned_count = 0
+            for character in caller.location.contents:
+                if inherits_from(character, "evennia.objects.objects.DefaultCharacter"):
+                    if self.return_character(character, quiet, force):
+                        returned_count += 1
+                        
+            if returned_count:
+                caller.msg(f"Returned {returned_count} character(s) to their previous locations.")
+            else:
+                caller.msg("No characters with stored previous locations found here.")
+            return
+
+        if not args:
+            caller.msg("Usage: +return <character>")
+            return
+
+        # Find the character to return
+        target = caller.search(args, global_search=True)
+        if not target:
+            return
+            
+        # Return the character
+        self.return_character(target, quiet, force)
+
 class CmdSTExamine(MuxCommand):
     """
     Get detailed information about an object

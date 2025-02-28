@@ -508,26 +508,26 @@ CONVENTION = {
 }
 
 METHODOLOGIES = {
-    'Iteration_X': [
+    'Iteration X': [
     'BioMechanics', 'Macrotechnicians', 'Statisticians', 'Time-Motion Managers'
     ],
-    'NEW_WORLD_ORDER': [
+    'New World Order': [
     'Ivory Tower', 'Operatives', 'Watchers', 'The Feed', 'Q Division', 'Agronomists'
     ],
-    'PROGENITORS': [
+    'Progenitors': [
     'Applied Sciences', 'Deviancy Scene investigators', 'Médecins Sans Superstition',
     'Biosphere Explorers', 'Damage Control', 'Ethical Compliance', 'FACADE Engineers',
     'Genegineers', 'Pharmacopoeists', 'Preservationists', 'Psychopharmacopoeists', 
     'Shalihotran Society'
     ],
-    'SYNDICATE': [
+    'Syndicate': [
     'Disbursements', 'Assessment Division', 'Reorganization Division', 'Procurements Division',
     'Extraction Division', 'Enforcers (Hollow Men)', 'Legal Division', 'Extralegal Division',
     'Extranational Division', 'Information Specialists', 'Special Information Security Division',
     'Financiers', 'Acquisitions Division', 'Entrepreneurship Division', 'Liquidation Division',
     'Media Control', 'Effects Division', 'Spin Division', 'Marketing Division', 'Special Projects Division'
     ],
-    'VOID_ENGINEER': [
+    'Void Engineer': [
     'Border Corps Division', 'Earth Frontier Division', 'Aquatic Exploration Teams',
     'Cryoregional Specialists', 'Hydrothermal Botanical Mosaic Analysts', 'Inaccessible High Elevation Exploration Teams',
     'Subterranean Exploration Corps', 'Neutralization Specialist Corps', 'Neutralization Specialists', 

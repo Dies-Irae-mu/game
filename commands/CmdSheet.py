@@ -253,7 +253,8 @@ class CmdSheet(MuxCommand):
             display_stat = 'Subfaction' if stat == 'Traditions Subfaction' else display_stat
             display_stat = 'Type' if stat == 'possessed_type' else display_stat
             display_stat = 'Type' if stat == 'companion_type' else display_stat
-        display_stat = 'Enlightenment' if stat == 'Path of Enlightenment' else display_stat
+            display_stat = 'Enlightenment' if stat == 'Path of Enlightenment' else display_stat
+            display_stat = 'Element' if stat == 'Elemental Affinity' else display_stat
 
         stat_str = f" {display_stat}"
 
@@ -281,7 +282,7 @@ class CmdSheet(MuxCommand):
                          'Spirit Type', 'Spirit Name', 'Domitor', 'Society', 'Order', 'Coven', 'Cabal', 'Plague', 'Crown', 
                          'Stream', 'Kitsune Path', 'Varna', 'Deed Name', 'Motivation', 'Possessed Type', 'Date of Possession',
                          'Companion Type', 'Patron Totem', 'Pack', 'Affinity Realm', 'Fae Court', 'Fae Name', 'Camp', 'Lodge'
-                         'Fang House', 'Nephandi Faction', 'Fuel']:
+                         'Fang House', 'Nephandi Faction', 'Fuel', 'Elemental Affinity']:
                 value_str = 'None'
             else:
                 value_str = ''

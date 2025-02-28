@@ -8,7 +8,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type": "Garou",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
         "splat": "Shifter",
         "auspice": "Ragabash"
     },
@@ -21,7 +21,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type": "Garou",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
         "splat": "Shifter",
         "auspice": "Theurge"
     },
@@ -34,7 +34,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type": "Garou",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
         "splat": "Shifter",
         "auspice": "Theurge"
     },
@@ -47,7 +47,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type": "Garou",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
         "splat": "Shifter",
         "auspice": "Theurge"
     },
@@ -60,7 +60,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type": "Garou",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
         "splat": "Shifter",
         "auspice": "Galliard"
     },
@@ -73,7 +73,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type": "Garou",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
         "splat": "Shifter",
         "auspice": "Galliard"
     },
@@ -86,7 +86,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type": "Garou",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
         "splat": "Shifter",
         "auspice": "Ragabash"
     },
@@ -98,7 +98,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type": "Garou",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
         "splat": "Shifter",
         "auspice": ["Philodox", "Galliard"]
     },
@@ -110,7 +110,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type": "Garou",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
         "splat": "Shifter",
         "auspice": "Ahroun"
     },
@@ -121,10 +121,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [6],
-        "shifter_type": "Garou",
+        "values": [5, 6],
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
         "splat": "Shifter",
-        "tribe": "Red Talon"
+        "tribe": "Red Talon",
+        "gift_alias": ["C'et's Shell"]
     },
     {
         "name": "Home in All Lands",
@@ -133,7 +134,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type": "Garou",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
         "splat": "Shifter",
         "tribe": "Red Talon"
     },
@@ -144,7 +145,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type": "Garou",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
         "splat": "Shifter",
         "tribe": "Uktena"
     }

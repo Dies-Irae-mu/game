@@ -73,7 +73,7 @@ class CmdLanguage(MuxCommand):
                     break
             
             if not found:
-                self.caller.msg(f"'{language}' is not a valid language. Use +languages/list to see available languages.")
+                self.caller.msg(f"'{language}' is not a valid language. Use +languages/all to see available languages.")
                 return
             
             # Set the native language
@@ -235,7 +235,7 @@ class CmdLanguage(MuxCommand):
 
         language = self.args.strip().title()
         if language not in AVAILABLE_LANGUAGES.values():
-            self.caller.msg(f"'{language}' is not a valid language. Use +languages/list to see available languages.")
+            self.caller.msg(f"'{language}' is not a valid language. Use +languages/all to see available languages.")
             return
 
         languages = self.caller.get_languages()

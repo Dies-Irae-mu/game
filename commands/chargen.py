@@ -170,20 +170,20 @@ def setup_mortalplus_character(character, mortalplus_type):
         # Initialize Glamour pool
         character.set_stat('pools', 'dual', 'Glamour', 2, temp=False)
         character.set_stat('pools', 'dual', 'Glamour', 2, temp=True)
-
+"""
 class CmdRename(MuxCommand):
-    """
-    Change your character's name during character generation.
+   # 
+    #Change your character's name during character generation.
 
-    Usage:
-      +rename <new name>
+    #Usage:
+    #  +rename <new name>
 
-    This command allows you to change your character's name before approval.
-    Once your character is approved, you will need staff assistance to change your name.
+    #This command allows you to change your character's name before approval.
+    #Once your character is approved, you will need staff assistance to change your name.
 
-    The new name must be appropriate for the game's setting and follow naming conventions.
-    Names should be properly capitalized and not contain special characters.
-    """
+    #The new name must be appropriate for the game's setting and follow naming conventions.
+    #Names should be properly capitalized and not contain special characters.
+    
 
     key = "+rename"
     aliases = ["rename"]
@@ -191,7 +191,7 @@ class CmdRename(MuxCommand):
     help_category = "Chargen & Character Info"
 
     def func(self):
-        """Execute the command."""
+        
         caller = self.caller
 
         # Check if character is approved
@@ -232,4 +232,4 @@ class CmdRename(MuxCommand):
         caller.aliases.add(new_name)
 
         caller.msg(f"|gYour name has been changed from {old_name} to {new_name}.|n")
-
+"""
