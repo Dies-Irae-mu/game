@@ -36,56 +36,8 @@
         "splat": "Shifter"
     },
     {
-        "name": "Mindspeak",
-        "description": "As the Galliard Gift. By invoking the power of waking dreams, the Ajaba can place any chosen characters into silent communion. A Chimerling teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Mother's Touch",
-        "description": "As the Theurge Gift. The Ajaba is able to heal the wounds of any living creature, aggravated or otherwise, simply by laying hands over the afflicted area. A bear- or unicorn-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Perfect Recall",
-        "description": "As the Galliard Gift. This Gift accentuates the Ajaba's memory capacity, allowing them to remember any detail from their entire life. Any Weaver-spirit can teach this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
         "name": "Tears of the Heavens",
         "description": "Raising their arms and reciting a spontaneous poem, the Ajaba calls down the rain. A sky-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Fatal Flaw",
-        "description": "As the Shadow Lord Gift. The Ajaba can discern a target's weakness, granting an advantage in combat. A Stormcrow teaches this Gift.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -108,18 +60,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Open Seal",
-        "description": "As the Ragabash Gift. With this Gift, the Ajaba can open nearly any sort of closed or locked physical device. A raccoon-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
         "name": "Crushing Jaws",
         "description": "Only death can loose the Ajaba's jaws. By using this Gift together as a group, several Ajaba can pull apart even the mightiest opponent. A hyena-spirit teaches this Gift.",
         "game_line": "Werewolf: The Apocalypse",
@@ -132,80 +72,8 @@
         "splat": "Shifter"
     },
     {
-        "name": "Curse of Hatred",
-        "description": "As the metis Gift. The Ajaba may verbalize the hatred in her heart, disheartening opponents with the intensity of her emotion. A spirit of hate teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            2
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Gender Shift",
-        "description": "As the Black Fury Gift: Man's Skin. The Ajaba can effectively change gender in the eyes of onlookers. An ancestor-spirit or a seahorse-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            2
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Odious Aroma",
-        "description": "As the Bone Gnawer Gift. The Ajaba can amplify their body odor to the point that it debilitates any who can smell it. A stinkbug-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            2
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Pulse of the Prey",
-        "description": "As the Ragabash Gift. If they know anything about their prey, the Ajaba can track it down as rapidly as they can travel. This unerring sense of direction operates anywhere. A wolf- or dog-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            2
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
         "name": "Bless the Rains",
         "description": "The Ajaba composes words of thanks to the rain falling around them, complimenting it for sharing its bounty with the dry Earth. The rains respond with generosity. An ancestor-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            2
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Distractions",
-        "description": "As the Galliard Gift. The Ajaba can make annoying yips, yelps and howls to divert the attention of their target. A coyote-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            2
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Dreamspeak",
-        "description": "As the Galliard Gift. The Ajaba can enter another's dream and thereby affect the course of that dream. A Chimerling teaches this Gift.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -240,92 +108,8 @@
         "splat": "Shifter"
     },
     {
-        "name": "Clenched Jaw",
-        "description": "As the Ahroun Gift. The Ajaba can bite down with such power that their grip won't loosen until they choose to do so; even in death, their jaws bite down. A wolf- or hyena-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            3
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Gift of the Skunk",
-        "description": "As the Bone Gnawer Gift. With this Gift, the Ajaba can swell their musk glands, allowing them to spray musk like a skunk. It is taught by a skunk-spirit.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            3
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Laugh of the Hyena",
-        "description": "As the Bone Gnawer Gift. The Ajaba can resist any attempt to command, cajole, force, or demand them to do something they don't want to do through mocking laughter. A Hyena-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            3
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
         "name": "Laughter of the Soul",
         "description": "The Ajaba's barking chuckle worms into enemies' minds, becoming a harbinger of terror and madness. Fear-spirits teach this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            3
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Calling the Eshu",
-        "description": "As the Fianna Gift: Faerie Kin. Ajaba use this Gift to summon taletelling spirits to enlighten their packs. A dream-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            3
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Exorcism",
-        "description": "As the Theurge Gift. This is the Gift of ejecting spirits from places or objects, whether they are there voluntarily or are bound there. Any Incarna avatar can teach this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            3
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Song of Heroes",
-        "description": "As the Galliard Gift. Reciting a tale of ancient heroism, the Ajaba conjures up the spirit of fallen heroes and infuses those listening with some portion of their power. An ancestor-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            3
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Wisdom of the Ancient Ways",
-        "description": "As the Philodox Gift. All Ajaba have an innate connection to their ancestors, a form of racial unconscious accessible through intense meditation. An ancestor-spirit teaches this Gift.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -348,56 +132,8 @@
         "splat": "Shifter"
     },
     {
-        "name": "Gnaw",
-        "description": "As the lupus Gift. The Ajaba's jaws strengthen to the point that they can chew through just about anything, given enough time. A wolf-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            4
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Gorge",
-        "description": "As the Red Talon Gift. The Ajaba can store extra Rage, Gnosis or Willpower against times of need. A wolf-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            4
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
         "name": "Bitter Tears",
         "description": "Standing in the pouring rain, the Ajaba composes a spontaneous poem expressing their sorrow at Gaia's fallen state; the intensity of the rain redoubles, and it carries some measure of their sadness. An ancestor-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            4
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Gift of Dreams",
-        "description": "As the Galliard Gift. The Ajaba crafts a dream, then breathes it into a sleeping individual. A Lune teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            4
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Phantasm",
-        "description": "As the Fianna Gift. The Ajaba creates an unmoving illusion that contains visual, auditory, olfactory and even tactile elements. A grain-spirit  the so-called 'spirit of spirits'  teaches this gift.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -432,92 +168,8 @@
         "splat": "Shifter"
     },
     {
-        "name": "Open Wounds",
-        "description": "As the Shadow Lord Gift. The Ajaba may cause the next wound they inflict to bleed profusely, weakening the target further. A pain-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            4
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Strength of Kilimanjaro",
-        "description": "As the Get of Fenris Gift: Endurance of Heimdall. This powerful Gift grants the Ajaba great endurance and hardiness for a time. This Gift is taught by a Boar-spirit.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            5
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Survivor",
-        "description": "As the Bone Gnawer Gift. This Gift confers temporary immunity to many environmental factors. The Ajaba has no need of food, water or sleep, and is immune to natural diseases and poisons.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            5
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Withering Stare",
-        "description": "As the general Bastet Gift. This Gift lets an Ajaba kill with a glance, causing victims to die in agonized convulsions.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            5
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Fabric of the Mind",
-        "description": "As the Galliard Gift. The highest-ranked Ajaba can bring the products of their imagination to very solid life, crafting creatures from the spiritual essence of dreams. Chimerlings teach this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            5
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
         "name": "Rain of Doom",
         "description": "Standing in the rain, the Ajaba points to a man-made object or building and spits insults and curses at it, expressing their rage and disdain. The rain acts as acid when it strikes the structure. A pain-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            5
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Reach the Umbra",
-        "description": "As the Silent Strider Gift. The Ajaba may step into and out of the Umbra at will, without need of a reflective surface or even any effort at all. An owl-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            5
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Shadow Pack",
-        "description": "As the Shadow Lord Gift. The Ajaba summons up shadowy duplicates of themselves to stand by them in battle. A night-spirit teaches this Gift.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",

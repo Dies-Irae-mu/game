@@ -104,7 +104,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
-        "shifter_type": "Bastet",
+        "shifter_type": ["Bastet", "Ajaba"],
         "splat": "Shifter"
     },
     {

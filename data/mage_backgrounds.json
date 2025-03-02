@@ -95,13 +95,13 @@
         "values": [1, 2, 3, 4, 5]
     },
     {
-        "name": "Certification",
+        "name": "Professional Certification",
         "description": "Special permits for special things.",
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
         
-        "values": [1, 2, 3, 4, 5]
+        "values": [1]
     },
     {
         "name": "Chantry",

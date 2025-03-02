@@ -1244,12 +1244,13 @@
         "values": [2], 
         "splat": "Shifter",
         "tribe": "Uktena",
-        "shifter_type": ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "shifter_type": ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "gift_alias": ["Otter's Breath"]
     },
     {
         "name": "Strength of Purpose",
         "description": "Some Garou feel so strongly about their place in the pack, the tribe and the world that they can draw on this resolve in times of need. The Philodox can pull new resolve from his deepest reserves. A wolf-spirit teaches this Gift.",
-        "system": "Once per scene, the player may roll Stamina + Rituals (difficulty 7). For every two successes, the Philodox recovers one point of Willpower up to her maximum.",
+        "system": "Once per scene, the player may roll Stamina + Rituals (difficulty 7). For every two successes, the Philodox recovers one point of Willpower up to his maximum.",
         "source": "Core book revised / 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -1287,10 +1288,18 @@
         "tribe": ["Ahroun", "Shadow Lord", "Wendigo"],
         "shifter_type": ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
         "gift_alias": ["Terrors", "Dragon Fear", "Grisly Aspect"]
+    },
+    {
+        "name": "Techgnosis",
+        "description": "For many lupus-born, mankind’s technology proves difficult to grasp. This Gift allows a wolf in a bind to make use of human devices via the connection to the world afforded by Gnosis. Use of the Gift does not grant actual understanding of the device or system accesses; from an outsider’s perspective the technology simply cooperates with the Garou.",
+        "system": "The Garou rolls Wits + Primal-Urge (Difficulty 7) and spends a point of Gnosis. For the remainder of the scene, the Garou can substitute her Primal-Urge for rolls calling for Crafts, Drive, Etiquette, Firearms, and Larceny. With the expenditure of a point of Willpower, they can use Primal-Urge in place of Academics, Computer, Law, Science, and Technology rolls.",
+        "source": "Howls of Apocalypse W20",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [2], 
+        "splat": "Shifter",
+        "breed": ["lupus"],
+        "shifter_type": ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     }
-
-
-
-
-
 ]

@@ -47,6 +47,12 @@
       "system": "Regain Willpower when you provide help that someone else desperately needs.",
       "description": "It's a cruel world, but you make things easier. Generous sometimes to a fault, you supply whatever you can provide: money, advice, protection, maybe just a shoulder when someone really needs to cry. You can't just turn blind eyes to suffering and need. It's your moral duty to do whatever you can do to make things right. When things get tough, you call upon your inner White Knight and charge in, bringing gifts, guidance, and occasional force when nothing else will do. Altruism is all too rare, especially in the World of Darkness. Helping people is your pleasure. Magick, as far as you're concerned, is a tool for helping folks less fortunate than yourself. To do less is an abuse of the powers you possess. On the flipside, though, you often feel Obligation even when you're not actually needed. This, in turn, can become resentment – both on your part and on the parts of people who now feel, rightly or wrongly, that they owe you. Sometimes, you just need to back off, chill out, and let people do things for themselves. Martyrdom isn't always the best Path toward Ascension."
     },
+	    {
+      "name": "Beta",
+      
+      "system": "Act as a supporter for your group’s superior.",
+      "description": "Regain Willpower whenever your counsel proves beneficial for the group. Lose Willpower when the leader is proven inefficient."
+    },
     {
       "name": "Big Bad Wolf",
       

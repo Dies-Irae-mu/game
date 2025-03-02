@@ -101,7 +101,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "backgrounds",
         "stat_type": "background",
-        "values": [1, 2, 3, 4, 5]
+        "values": {
+            "perm": [1, 2, 3, 4, 5],
+            "temp": [0, 1, 2, 3, 4, 5]
+        }
     },
     {
         "name": "Umbral Maps",

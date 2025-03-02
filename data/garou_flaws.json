@@ -1,216 +1,234 @@
 [
-    {
-        "name": "Animal Musk",
-        "description": "You have the odor of an animal, even in Homid form. Whenever you are indoors or in a crowd of people, you make all Social rolls at a +2 difficulty. Outdoors or in situations where you can distance yourself from humans, your odor is not noticeable. Wolves (and lupus-born Garou) take little notice of this Flaw.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "physical",
-        "values": [1],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 473"
-    },
-    {
-        "name": "Anosmia",
-        "description": "Whether from birth or due to some illness or accident, you've lost all sense of taste and smell. You automatically fail any roll involving these two senses, including Primal Urge rolls for tracking or hunting. In Lupus form, it's even more crippling, since smell is a wolf's most acute sense; this Flaw cancels out the –2 difficulty to Perception rolls a Garou gets in that form. There's a slight benefit, however: At the Storyteller's discretion, you may be immune to the debilitating effects of environmental conditions, Gifts, and supernatural abilities that rely on odors.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "physical",
-        "values": [1],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 473"
-    },
-    {
-        "name": "Hard of Hearing",
-        "description": "You have problems hearing certain sounds or ranges of sounds, or have some other problem that affects your auditory senses. You have a +2 difficulty to all rolls involving hearing sounds. You do not receive the normal bonus for Perception in Lupus form for auditory checks.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "physical",
-        "values": [1],
-        "shifter_type": "Garou",
-        "source": "W20 p. 473"
-    },
-    {
-        "name": "No Partial Transformation",
-        "description": "You have no ability to mix forms; you cannot shift your larynx in Lupus to be capable of human speech, or grow a wolf's muzzle in Glabro. You can only change into the complete form.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "physical",
-        "values": [1],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 473"
-    },
-    {
-        "name": "Strict Carnivore",
-        "description": "\"Vegetarian\" is just another way of saying \"lazy hunter.\" Vegetables and grains give you no nutritional benefit; you can only subsist on meat - the closer to raw, the better. You have real problems in areas where meat is scarce.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "physical",
-        "values": [1],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 473"
-    },
-    {
-        "name": "Double Jeopardy",
-        "description": "Gaia has marked you strongly. You were born not with one, but two significant metis deformities. These may be related, but must be two clearly separate disfigurements. A pair of antlers, or two rows of shark teeth would only be one deformity, but antlers and hooves, or a row of shark's teeth and a set of gills would be acceptably different. The Storyteller has the final judgment on whether the two deformities are significant enough to qualify for this Flaw. This flaw can be taken only by metis Garou.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "physical",
-        "values": [3],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 474"
-    },
-    {
-        "name": "Monstrous",
-        "description": "Your physical appearance is truly hideous to your fellow Garou. All your forms bear some grotesque qualities; your Homid form barely looks human, while your other forms have something significant that disfigures them. You should decide what you look like. Your Appearance rating is zero, and cannot be raised higher with experience points barring some remarkable circumstances. Metis characters may take this Flaw (for no freebie points) as their inborn deformity.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "physical",
-        "values": [3],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 474"
-    },
-    {
-        "name": "Pack Mentality",
-        "description": "You are lost without your pack. Their presence not only supports you, it helps define you. When you are with at least one member of your pack, you have –1 difficulty on all rolls involving group activities or strategies; when you are not, your difficulty increases by 2 on any task. You sometimes have trouble making decisions without your pack to help you, even if you are the pack leader. In stressful situations, you may need to make a Willpower roll to act on your own.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "mental",
-        "values": [2],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 477"
-    },
-    {
-        "name": "Territorial",
-        "description": "You have the wolf's territorial nature. You dislike leaving your home turf or having people you don't know infringe upon your claimed space. Before play starts, work with your Storyteller to define your territory. You must roll to avoid frenzying whenever strangers enter your territory without your permission, and are reluctant to leave there except under desperate circumstances.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "mental",
-        "values": [2],
-        "shifter_type": "Garou",
-        "source": "W20 p. 478"
-    },
-    {
-        "name": "Conniver",
-        "description": "There is no honor among thieves, nor trust among liars. You are known as someone whose word cannot be trusted. Whether earned or not, you have a reputation for deceit and treachery, and you lose one die from all Social rolls involving any extension of trust, truth, or believing your words.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "mental",
-        "values": [1],
-        "shifter_type": "Garou",
-        "source": "W20 p. 480"
-    },
-    {
-        "name": "Twisted Upbringing",
-        "description": "The Garou who found you after your First Change, and who oversaw your Rite of Passage and early entry into Garou society, taught you everything they knew - and it was all wrong. Whether they did this out of ignorance or perversity is up to you and your Storyteller to decide. Your wrong assumptions and skewed beliefs cause you a great deal of grief until someone straightens you out. Eventually you may overcome the problems caused by this Flaw (and be able to pay the experience point cost to buy it off), but in the meantime, it should present you with a number of good roleplaying opportunities.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "social",
-        "values": [1],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 481"
-    },
-    {
-        "name": "Camp Enmity",
-        "description": "You have earned the attention and disfavor of a particular Garou tribal camp. Perhaps you're a former member of the camp, or have refused to join them and they feel slighted. Perhaps they feel you've done them wrong, or the camp you are a part of is ideologically opposed to what they stand for. Regardless, all Social rolls when interacting with that camp are made at +1 difficulty. You may not already be a member of this camp when you first take this Merit, although you can become recruited (or re-recruited) into the camp during play at the Storyteller's discretion. You may take this Merit multiple times for different camps. Storytellers are encouraged to incorporate Storyteller characters of the appropriate camp into their storylines, so as to make this a meaningful Flaw.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "social",
-        "values": [1],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 481"
-    },
-    {
-        "name": "Persistent Parents",
-        "description": "Most werewolves, unless they have Kinfolk parents, sacrifice their family ties after their First Change, in order to protect the Veil. Your parents, however, have not given up on you. They may hire detectives to find you, plaster posters with your picture on it around town, pester radio and television stations to run public service ads, or dedicate websites and utilize social media to recruit the aid of the internet in order to try to find you. They may be ignorant of your new life, suspecting instead that you have run away, joined a cult, or been kidnapped. They may instead have ties to Pentex or other organizations with ulterior motives in locating you. Only homids may take this Flaw.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "social",
-        "values": [2],
-        "shifter_type": "Garou",
-        "source": "W20 p. 481"
-    },
-    {
-        "name": "Notoriety",
-        "description": "You have acquired a bad name among the Garou in your sept, either through your own actions or because of something involving your pack. You suffer a penalty of two dice on any Social rolls involving Garou of your sept other than your own pack. Renown (or lack thereof) has nothing to do with your reputation. Your own sept members (other than your pack) dislike you regardless of how much Renown you have. You may not take the Merit: Reputation.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "social",
-        "values": [3],
-        "shifter_type": "Garou",
-        "source": "W20 p. 481"
-    },
-    {
-        "name": "Mark of the Predator",
-        "description": "You give off emanations of a predatory nature. Herbivores shy away from you, while carnivores see you as a potential threat and may offer challenge. You may not possess the Skill: Animal Ken.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "supernatural",
-        "values": [2],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 484"
-    },
-    {
-        "name": "Sign of the Wolf",
-        "description": "The folklore of werewolves holds true as far as you're concerned. Like the shapechangers of myth and legend, you possess eyebrows that meet in the middle of your forehead, hair grows on the palms of your hands, and the second and third fingers of your hands are the same length. You may even manifest a pentagram on your palm before and during your auspice's phase of the moon. While most people may simply wonder at these bizarre physical manifestations, werewolf hunters who notice these signs suspect your true nature.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "supernatural",
-        "values": [2],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 484"
-    },
-    {
-        "name": "Pierced Veil",
-        "description": "Unlike most Garou, your Crinos form does not trigger the Delirium in mortals. This makes you particularly vulnerable to werewolf hunters, who may find it less difficult to pursue you back to your caern, putting the members of your sept in considerable danger.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "supernatural",
-        "values": [3],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 484"
-    },
-    {
-        "name": "Harano Prone",
-        "description": "Characters suffering from this Flaw are prone to bouts of deep depression, indolence, and mood swings. You must make a Willpower roll every scene in which you suffer some form of setback. If the roll fails, you fall into a bout of temporary Harano. You may become morose and inactive, or suddenly spring into self-destructive activity. Your perceptions go awry, causing you to lose a die from every dice pool. If you botch the Willpower roll, you also acquire a temporary derangement. You may delay the Harano attack for a single scene by spending a Willpower point.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "supernatural",
-        "values": [4],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 484-5"
-    },
-    {
-        "name": "Dark Fate",
-        "description": "You labor under some future doom, marked by Fate for a horrible end. All you strive for will amount to nothing. From time to time, you receive flashes of visions regarding your destined fate, causing you to suffer prematurely. You can overcome your morbid moods by spending Willpower, but this only works temporarily. Sooner or later, you will meet your fate (when is left up to your Storyteller, but it will happen during the course of the chronicle -otherwise, this Flaw would be worth no points). In the meantime, however, you can still attempt to achieve something worthwhile. You may do so with a sense of freedom and abandon, since you know that unless a situation leads directly to your ultimate doom, you stand a good chance of surviving and succeeding. This Flaw works well in conjunction with the Fate Background (p. 137), which allows you to survive lesser potential bad ends so that you can meet the true doom laid on you.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "supernatural",
-        "values": [5],
-        "shifter_type": "Garou",
-        "source": "W20 p. 485"
-    },
-    {
-        "name": "Taint of Corruption",
-        "description": "Somehow, the Wyrm has touched you and left its taint upon your spirit. When other Garou invoke the Gift: Sense Wyrm, you register as strongly Wyrm-tainted. The taint is innate, and cannot be removed by a Rite of Cleansing (which serves only to make you ill and sore). Minions of the Wyrm trouble your sleep, attempting to lure you fully into the service of the Destroyer. You are at +2 difficulty on any rolls made to resist the powers of \"fellow\" Wyrmspawn - fomori powers, Black Spiral Dancer Gifts, Bane Charms, vampiric Disciplines, or the like. Only your pack can keep you from succumbing to the Wyrm, provided they give you their support and assistance. Ridding yourself of this Flaw requires a major quest and can provide the heart of a character-driven chronicle.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "flaws",
-        "stat_type": "supernatural",
-        "values": [7],
-        "splat": "Shifter",
-        "shifter_type": "Garou",
-        "source": "W20 p. 485"
-    }
+  {
+      "name": "Animal Musk",
+      "description": "You have the odor of an animal, even in Homid form. Whenever you are indoors or in a crowd of people, you make all Social rolls at a +2 difficulty. Outdoors or in situations where you can distance yourself from humans, your odor is not noticeable. Wolves (and lupus-born Garou) take little notice of this Flaw.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "physical",
+      "values": [1],
+      "splat": "Shifter",
+      "source": "W20 p. 473"
+  },
+  {
+      "name": "Anosmia",
+      "description": "SHIFTER (1 point): Whether from birth or due to some illness or accident, you've lost all sense of taste and smell. You automatically fail any roll involving these two senses, including Primal Urge rolls for tracking or hunting. In Lupus form, it's even more crippling, since smell is a wolf's most acute sense; this Flaw cancels out the -2 difficulty to Perception rolls a Garou gets in that form. There's a slight benefit, however: At the Storyteller's discretion, you may be immune to the debilitating effects of environmental conditions, Gifts, and supernatural abilities that rely on odors. NOSFERATU (2 points): Your life in the sewer has removed your sense of smell and taste. This means you are unperturbed by even the worst stench or most disgusting flavor. However, it also means you cannot ever succeed at any Perception rolls that rely on taste or smell. It also does not make you immune in any way to gas attacks or poisons; you just won't be able to tell they are there.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "physical",
+      "values": [1, 2],
+      "source": "W20 p. 473, Lore of the Clans p. 161"
+  },
+  {
+      "name": "Hard of Hearing",
+      "description": "You have problems hearing certain sounds or ranges of sounds, or have some other problem that affects your auditory senses. You have a +2 difficulty to all rolls involving hearing sounds. You do not receive the normal bonus for Perception in Lupus form for auditory checks.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "physical",
+      "values": [1],
+      "splat": "Shifter",
+      "source": "W20 p. 473"
+  },
+  {
+      "name": "No Partial Transformation",
+      "description": "You have no ability to mix forms; you cannot shift your larynx in Lupus to be capable of human speech, or grow a wolf's muzzle in Glabro. You can only change into the complete form.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "physical",
+      "values": [1],
+      "splat": "Shifter",
+      "source": "W20 p. 473"
+  },
+  {
+      "name": "Strict Carnivore",
+      "description": "\"Vegetarian\" is just another way of saying \"lazy hunter.\" Vegetables and grains give you no nutritional benefit; you can only subsist on meat - the closer to raw, the better. You have real problems in areas where meat is scarce.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "physical",
+      "values": [1],
+      "splat": "Shifter",
+      "source": "W20 p. 473"
+  },
+  {
+      "name": "Double Jeopardy",
+      "description": "Gaia has marked you strongly. You were born not with one, but two significant metis deformities. These may be related, but must be two clearly separate disfigurements. A pair of antlers, or two rows of shark teeth would only be one deformity, but antlers and hooves, or a row of shark's teeth and a set of gills would be acceptably different. The Storyteller has the final judgment on whether the two deformities are significant enough to qualify for this Flaw. This flaw can be taken only by metis Garou.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "physical",
+      "values": [3],
+      "splat": "Shifter",
+      "shifter_type": ["Garou", "Ajaba", "Bastet", "Ratkin"],
+      "source": "W20 p. 474"
+  },
+  {
+      "name": "Pack Mentality",
+      "description": "You are lost without your pack. Their presence not only supports you, it helps define you. When you are with at least one member of your pack, you have -1 difficulty on all rolls involving group activities or strategies; when you are not, your difficulty increases by 2 on any task. You sometimes have trouble making decisions without your pack to help you, even if you are the pack leader. In stressful situations, you may need to make a Willpower roll to act on your own.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "mental",
+      "values": [2],
+      "splat": "Shifter",
+      "shifter_type": "Garou",
+      "source": "W20 p. 477"
+  },
+  {
+      "name": "Territorial",
+      "description": "VAMPIRE: You are extremely territorial, staking out a particular area as your hunting ground and reacting aggressively to trespassers. If another vampire enters your territory uninvited, you must make a frenzy roll. If you fail, you immediately attack the interloper and continue attacking until the intruder is dead or has left your hunting grounds. You are reluctant to leave your territory except in desperate circumstances. SHIFTER: You have the wolf's territorial nature. You dislike leaving your home turf or having people you don't know infringe upon your claimed space. Before play starts, work with your Storyteller to define your territory. You must roll to avoid frenzying whenever strangers enter your territory without your permission, and are reluctant to leave there except under desperate circumstances.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "mental",
+      "values": [1, 2],
+      "source": "V20 p. 486, W20 p. 478"
+  },
+  {
+      "name": "Twisted Upbringing",
+      "description": "The Garou who found you after your First Change, and who oversaw your Rite of Passage and early entry into Garou society, taught you everything they knew - and it was all wrong. Whether they did this out of ignorance or perversity is up to you and your Storyteller to decide. Your wrong assumptions and skewed beliefs cause you a great deal of grief until someone straightens you out. Eventually you may overcome the problems caused by this Flaw (and be able to pay the experience point cost to buy it off), but in the meantime, it should present you with a number of good roleplaying opportunities.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "social",
+      "values": [1],
+      "splat": "Shifter",
+      "source": "W20 p. 481"
+  },
+  {
+      "name": "Camp Enmity",
+      "description": "You have earned the attention and disfavor of a particular Garou tribal camp. Perhaps you're a former member of the camp, or have refused to join them and they feel slighted. Perhaps they feel you've done them wrong, or the camp you are a part of is ideologically opposed to what they stand for. Regardless, all Social rolls when interacting with that camp are made at +1 difficulty. You may not already be a member of this camp when you first take this Merit, although you can become recruited (or re-recruited) into the camp during play at the Storyteller's discretion. You may take this Merit multiple times for different camps. Storytellers are encouraged to incorporate Storyteller characters of the appropriate camp into their storylines, so as to make this a meaningful Flaw.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "social",
+      "values": [1],
+      "splat": "Shifter",
+      "shifter_type": ["Garou", "Nuwisha"],
+      "source": "W20 p. 481"
+  },
+  {
+      "name": "Persistent Parents",
+      "description": "Most werewolves, unless they have Kinfolk parents, sacrifice their family ties after their First Change, in order to protect the Veil. Your parents, however, have not given up on you. They may hire detectives to find you, plaster posters with your picture on it around town, pester radio and television stations to run public service ads, or dedicate websites and utilize social media to recruit the aid of the internet in order to try to find you. They may be ignorant of your new life, suspecting instead that you have run away, joined a cult, or been kidnapped. They may instead have ties to Pentex or other organizations with ulterior motives in locating you. Only homids may take this Flaw.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "social",
+      "values": [2],
+      "source": "W20 p. 481"
+  },
+  {
+      "name": "Mark of the Predator",
+      "description": "You give off emanations of a predatory nature. Herbivores shy away from you, while carnivores see you as a potential threat and may offer challenge. You may not possess the Skill: Animal Ken.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "supernatural",
+      "values": [2],
+      "splat": "Shifter",
+      "source": "W20 p. 484"
+  },
+  {
+      "name": "Sign of the Wolf",
+      "description": "The folklore of werewolves holds true as far as you're concerned. Like the shapechangers of myth and legend, you possess eyebrows that meet in the middle of your forehead, hair grows on the palms of your hands, and the second and third fingers of your hands are the same length. You may even manifest a pentagram on your palm before and during your auspice's phase of the moon. While most people may simply wonder at these bizarre physical manifestations, werewolf hunters who notice these signs suspect your true nature.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "supernatural",
+      "values": [2],
+      "splat": "Shifter",
+      "shifter_type": "Garou",
+      "source": "W20 p. 484"
+  },
+  {
+      "name": "Pierced Veil",
+      "description": "Unlike most Garou, your Crinos form does not trigger the Delirium in mortals. This makes you particularly vulnerable to werewolf hunters, who may find it less difficult to pursue you back to your caern, putting the members of your sept in considerable danger.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "supernatural",
+      "values": [3],
+      "splat": "Shifter",
+      "source": "W20 p. 484"
+  },
+  {
+      "name": "Harano Prone",
+      "description": "Characters suffering from this Flaw are prone to bouts of deep depression, indolence, and mood swings. You must make a Willpower roll every scene in which you suffer some form of setback. If the roll fails, you fall into a bout of temporary Harano. You may become morose and inactive, or suddenly spring into self-destructive activity. Your perceptions go awry, causing you to lose a die from every dice pool. If you botch the Willpower roll, you also acquire a temporary derangement. You may delay the Harano attack for a single scene by spending a Willpower point.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "supernatural",
+      "values": [4],
+      "splat": "Shifter",
+      "shifter_type": "Garou",
+      "source": "W20 p. 484-5"
+  },
+  {
+      "name": "Metis Child",
+      "description": "You begin play as the parent of a metis cub from an illicit relationship with another Garou. You need to decide the circumstances surrounding the birth of the child --who the other parent is, when this happened, if you are currently attempting to raise the child in your own sept, or if the cub was fostered out to another sept to avoid further embarrassment. The effects of this Flaw include a two dice penalty to any Social rolls made regarding Garou who know of your child, as well as the additional burden of being required to take responsibility for your cub's welfare (you miserable charach). As a Litany-breaker, you will probably be unable to hold any important sept offices or be trusted with important tasks, no matter how much you strive to prove yourself. Metis characters cannot take this Flaw. If a character sires or bears a metis cub during the events of the chronicle, the penalties of this Flaw may apply, but no bonus points are granted for it.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "social",
+      "values": [4],
+      "shifter_type": "Garou",
+      "source": "W20 p. 482"
+  },
+  {
+      "name": "Airhead",
+      "description": "Your personal concerns are so important that you tend to be clueless about the real world or what is going on around you. This may be your means of avoiding problems or retreating from your fears; nevertheless, you don't often use your brain to its best advantage -- or any advantage, it seems. Those who know you describe you as 'spacey,' and their patience often wears thin around you. You fade in and out of conversations, insert non sequiturs, or just plain fail to get it. The Garou and even your own Kin make fun of you behind your back.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "mental",
+      "values": [1],
+      "source": "W20 Kinfolk p. 64"
+  },
+  {
+      "name": "Banned Transformation",
+      "description": "Some circumstance, event, or situation inhibits your ability to change forms, except to return to your breed form. To overcome the restricting factor requires the expenditure of a Willpower point and a successful Willpower roll (difficulty 8). Some examples of triggers and their relative point costs include: o Relaxing music (1 point) o In the vicinity of wolfsbane (2 points) o Unless you spend a Rage point (3 points) o When around silver (4 points) o During the day or during the night (5 points) o When the moon is not visible (6 points)",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "supernatural",
+      "values": [1, 2, 3, 4, 5, 6],
+      "splat": "Shifter",
+      "source": "W20 p. 483"
+  },
+  {
+      "name": "Foe from the Past",
+      "description": "You have inherited an enemy, not because of anything you've done, but because one of your ancestors incurred his wrath. The strength of the enemy determines the point value of the Flaw. o (1 point) A werewolf hunter whose parents were killed by your forebear. o (2 points) A mage whose mentor suffered at the hands of one of your ancestors. o (3 points) A powerful vampire or spirit creature who has sworn a vendetta against your family line. You should work with the Storyteller to come up with a logical backstory surrounding your ancestor's enemy, since encounters with your foe may provide an ongoing story arc for your chronicle. You must possess the Ancestors Background to take this Flaw.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "supernatural",
+      "values": [1, 2, 3],
+      "splat": "Shifter",
+      "source": "W20 p. 484"
+  },
+  {
+      "name": "Forced Transformation",
+      "description": "Certain circumstances force you to undergo an uncontrollable shift in form. You may resist the change by spending a Willpower point, but once you have made the forced change, you may not change back until the triggering situation has passed. You may use the following examples or design your own circumstances and point costs (with Storyteller approval). o The full moon forces you to assume your Crinos form. (2 points) o You automatically change to Crinos when your auspice wanes (2 points) o Sexual arousal stimulates a forced change (1 point to Glabro; 2 points to Crinos; 2 points to Homid if you are a lupus).",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "supernatural",
+      "values": [1, 2],
+      "splat": "Shifter",
+      "source": "W20 p. 484"
+  },
+  {
+      "name": "Insane Ancestor",
+      "description": "An insane ancestor of yours occasionally takes over when you seek help from the spirits of your forebears. Usually, this ancestor appears only under certain common circumstances, such as when Black Spiral Dancers threaten you or whenever a certain common rite is performed in your presence. When the Storyteller deems this circumstance has come about, roll your Ancestors Background, difficulty 6. Any successes indicate that your ancestor takes control of you for the scene, or until someone recognizes what is happening and manages to convince him to relinquish control once more. You should create your ancestor, name him, and describe his madness. You may spend a Willpower point to stifle the ancestor-spirit for the scene. You must purchase the Background: Ancestors to take this Flaw.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "supernatural",
+      "values": [1],
+      "splat": "Shifter",
+      "source": "W20 p. 484"
+  },
+  {
+      "name": "Slip Sideways",
+      "description": "You find it difficult to control travel between the physical world and the Umbra, sometimes entering the spirit world when you don't intend to. When stressed and near a reflective surface, you must roll Wits + Occult (difficulty 7) to avoid shifting into the Umbra unintentionally. In order to overcome the Gauntlet, you must still roll your Gnosis, but the difficulty is 1 less than usual. If you deliberately try to step sideways, you do so at the normal difficulty.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "supernatural",
+      "values": [1],
+      "splat": "Shifter",
+      "shifter_type": ["Garou", "Kitsune", "Corax", "Ajaba", "Nuwisha"],
+      "source": "W20 p. 484"
+  },
+  {
+      "name": "Docile",
+      "description": "Your distance from 'the beast' dampens the fires of Rage within you, hampering your ability to access them in Gaia's service. For every point of Docile you take, your maximum Rage is lowered by 2, and can never be bought above that level. Others may see you as 'domesticated' or 'more dog than wolf' and react with derision.",
+      "game_line": "Werewolf: The Apocalypse",
+      "category": "flaws",
+      "stat_type": "supernatural",
+      "values": [1, 2, 3],
+      "splat": "Shifter",
+      "source": "W20 p. 484"
+  }
 ] 

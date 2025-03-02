@@ -493,19 +493,6 @@
         "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
-        "name": "Grasp the Beyond",
-        "description": "The Stargazer can reach into the Umbra from the physical world, or vice versa. This Gift is taught by an enigmatic spirit called the Truth-Seeker.",
-        "system": "The player spends one Gnosis point. For the rest of the scene, the character can reach across the Gauntlet as though it didn't exist, manipulating objects and even attacking creatures on the other side. The character can only affect things they can see, either through their normal senses or through Gifts.",
-        "source": "Stargazers Tribebook",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "Stargazers",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
         "name": "Circular Attack",
         "description": "The Stargazer's martial arts training reaches its pinnacle, allowing them to strike all enemies around them simultaneously. This Gift is taught by a spirit of the wind.",
         "system": "The player spends one Rage point. The character can make one attack against every opponent within melee range, using the same dice pool for each attack. These attacks are all considered to occur simultaneously.",
@@ -1192,7 +1179,20 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "breed": "Bone Gnawer",
+        "tribe": "Bone Gnawer",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+    },
+    {
+        "name": "Assimilation",
+        "description": "A werewolf with this Gift blends smoothly into any culture, no matter how strange or unfamiliar he might normally find it. He could slip among Bedouin nomads as if he were one of them, or he could shop in a Chinese market without anyone noticing that he does not belong. The Gift doesn’t hide racial differences, but it does allow the user to mimic the behaviors and mannerisms of a native. It also grants the ability to speak and understand the culture’s language, although this knowledge vanishes as the Gift ends. Ancestor-spirits teach this gift.",
+        "system": "The player rolls Manipulation + Empathy. If successful, the character interacts with members of another culture as if he were one of them. This difficulty depends on how alien the culture is. The difficulty would be 5 for another Garou sept, but it could be as high as 9 when trying to assimilate into a Black Spiral Hive in a foreign country. The character will not suffer Social-roll penalties when interacting with members of the culture, although he will not receive any special benefits. The Gift lasts for one scene plus one day per Willpower point spent when activating it.",
+        "source": "Core book revised",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5], 
+        "splat": "Shifter",
+        "breed": "Homid",
         "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     }
 ] 

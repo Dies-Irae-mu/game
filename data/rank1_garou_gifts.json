@@ -28,6 +28,21 @@
         "breed": "Metis",
         "gift_alias": ["Sense Unmaker's Hand", "Sense Pattern Breaker", "Sense Dissolver"]
     },
+	    {
+        "name": "Laugh of the Hyena",
+        "description": "The werewolf can sense manifestations of the Wyrm in the nearby area. This Gift involves a mystical sense, not a visual or olfactory image, although werewolves using the Gift sometimes say things like, \"This place stinks of the Wyrm\" (with a few more colorful adjectives). Garou should remember that the Wyrm's taint can cling to relatively blameless souls. Werewolves may sense an innocent person who happens to work in a Wyrm-controlled factory or who has eated tainted food. This power requires active concentration. Any spirit of Gaia may teach this Gift.",
+        "system": "The player rolls Perception + Occult. The difficulty depends on the concentration and strength of the Wyrm's influence. Sensing a single fomor in the next room would be difficulty 6, while detecting the stench of a Bane that was in the room an hour ago would be difficulty 8. Vampires register as Wyrm-tainted, save those with Humanity Traits of 7 or higher.",
+        "source": "Core book revised / 20th Anniversary",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [1],
+        "shifter_type": ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "splat": "Shifter",
+        "tribe": ["Bone Gnawer", "Black Furies", "Silent Strider", "Silver Fang", "Stargazer", "Uktena"],
+        "auspice": "Theurge",
+        "gift_alias": ["Sense Unmaker's Hand", "Sense Pattern Breaker", "Sense Dissolver"]
+    },
     {
         "name": "Sense Magic",
         "description": "The Uktena can discern magical energies, whether they emanate from Garou Gifts, vampiric wizardry or even human magic. A spirit servant of Uktena teaches this Gift.",
@@ -1413,7 +1428,7 @@
         "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
         "splat": "Shifter",
         "auspice": "Theurge",
-        "gift_alias": ["Healing Lick", "Healing Tongue", "Dragon's Milk", "Ganga's Caress", "Rat Mother's Touch"]
+        "gift_alias": ["Lick Wounds", "Healing Tongue", "Dragon's Milk", "Ganga's Caress", "Rat Mother's Touch"]
     },
     {
         "name": "Falling Touch",

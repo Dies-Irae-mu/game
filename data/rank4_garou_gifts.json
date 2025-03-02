@@ -284,10 +284,24 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
-        "shifter_type": "Garou",
         "splat": "Shifter",
         "tribe": ["Get of Fenris", "Glass Walker"],
-        "camp": "Boli Zouhisze"
+        "camp": "Boli Zouhisze",
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+    },
+	    {
+        "name": "Ultimate Argument of Logic",
+        "description": "Those who speak with the Garou leave convinced of some fact might otherwise have disbelieved. If successful, the Garou can cause the target to believe implicitly in one aspect of existence (true or false) - from the fact that the sun revolves around the Earth to the truism that the wolf's inherent nature is that of the pawn. This Gift is taught by a Coyote-spirit.",
+        "system": "The Garou needs three successes on a Manipulation + Performance roll (difficulty of the target's Wits + Enigmas).",
+        "source": "Werewolf Core 2nd Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [4, 5],
+        "splat": "Shifter",
+        "tribe": ["Stargazer"],
+        "auspice": "Theurge",
+	    "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     },
     {
         "name": "Body Shift",
@@ -1527,5 +1541,18 @@
         "splat": "Shifter",
         "auspice": "Theurge",
         "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    } 
+    },
+    {
+        "name": "Grasp the Beyond",
+        "description": "The Stargazer can reach into the Umbra from the physical world, or vice versa. This Gift is taught by an enigmatic spirit called the Truth-Seeker.",
+        "system": "The player spends one Gnosis point. For the rest of the scene, the character can reach across the Gauntlet as though it didn't exist, manipulating objects and even attacking creatures on the other side. The character can only affect things they can see, either through their normal senses or through Gifts.",
+        "source": "Stargazers Tribebook",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [4], 
+        "splat": "Shifter",
+        "tribe": "Stargazers",
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+    }
 ] 

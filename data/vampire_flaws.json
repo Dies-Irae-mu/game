@@ -1,623 +1,1698 @@
 [
-    {
-        "name": "Smell of the Grave",
-        "stat_type": "physical",
-        "category": "flaws",
-        "values": [1],
-        "description": "You exude an odor of dampness and newly turned earth, which no amount of scents or perfumes will cover. Mortals in your immediate presence become uncomfortable, so the difficulties of all Social rolls to affect mortals increase by one.",
-        "source": "V20 Pg 481",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Fourteenth Generation",
-        "stat_type": "physical",
-        "category": "flaws",
-        "values": [2],
-        "description": "You were created five or fewer years ago by a member of the Thirteenth Generation. Though you have 10 blood points in your body, only eight of them may be used to heal wounds, power Disciplines, raise Attributes, etc. You can still use the final two blood points for other purposes, though. The blood point costs of nightly rising, creating and sustaining ghouls, and creating blood bonds remains the same as for other vampires. You cannot raise any Discipline above four dots. Taking this Flaw precludes you from taking the Generation Background, and you may not start with Status, either. You are likely a Clanless Caitiff, for your blood is probably too thin to pass down the distinguishing characteristics of a Clan. Most Fourteenth-Generation vampires should also take the Thin Blood Flaw (p. 483)",
-        "source": "V20 Pg 481",
-        "notes": "Restricted.",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Fifteenth Generation",
-        "stat_type": "physical",
-        "values": [4],
-        "category": "flaws",
-        "description": "Your vitae is so weak that only six of your 10 blood points can be used for Disciplines, healing or raising Attributes. For these functions, you must expend two blood points to obtain the effect a normal vampire would achieve with one. (The cost for nightly rising remains a single blood point.) What's more, you cannot create or sustain ghouls, create a blood bond, or sire a vampiric childe. You can use the remaining four blood points to survive through the day and wake up each night, nothing more. You cannot raise any Discipline above three dots. The weakening of the Curse of Caine has compensations, though (which distinguish this Flaw from the Thin Blood Flaw itself). Sunlight does lethal damage to you, instead of aggravated damage as it does to other vampires. You can hold down mortal food and drink for an hour or so; other vampires vomit immediately if they try (unless they have the Eat Food Merit). Strangest of all, once in a while you might actually have a child the normal, human way... though it will hardly be a normal, human child..",
-        "source": "V20 Pg 481",
-        "notes": "Restricted.",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Dulled Bite",
-        "stat_type": "physical",
-        "values": [2],
-        "category": "flaws",
-        "description": "Your fangs never developed fully or may not manifest at all. Feeding requires alternate methods, or double successes to penetrate skin properly.",
-        "source": "V20 Pg 481",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Infectious Bite",
-        "stat_type": "physical",
-        "values": [2],
-        "category": "flaws",
-        "description": "You may not automatically lick the wounds of your feeding closed. In fact, your bites have a one in five chance of becoming infected and causing mortal victims to become seriously ill. The precise nature of the infection is determined by the Storyteller.",
-        "source": "V20 Pg 481",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Vulnerability to Silver",
-        "stat_type": "physical",
-        "values": [2],
-        "category": "flaws",
-        "description": "Silver is as deadly to you as sunlight, causing aggravated wounds. The mere touch of silver causes discomfort.",
-        "source": "V20 Pg 482",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Open Wound",
-        "stat_type": "physical",
-        "values": ["2 or 4"],
-        "category": "flaws",
-        "description": "A wound refuses to heal and constantly drips blood. Costs extra blood point per night and adds +1 difficulty to Social rolls. At 4 points, includes effects of Permanent Wound Flaw.",
-        "source": "V20 Pg 482",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Glowing Eyes",
-        "stat_type": "physical",
-        "values": [3],
-        "category": "flaws",
-        "description": "You have the stereotypical glowing eyes of vampire legend, which gives you a -1 difficulty on Intimidation rolls when you're dealing with mortals. However, the tradeoffs are many; you must constantly disguise your condition (no, contacts don't cut it); the glow impairs your vision and puts you at +1 difficulty on all sight-based rolls (including the use of ranged weapons); and the radiance emanating from your eye sockets makes it difficult to hide (+2 difficulty to Stealth rolls) in the dark.",
-        "source": "V20 Pg 482",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Expiration Date",
-        "stat_type": "social",
-        "values": [2],
-        "category": "flaws",
-        "description": "Your personal motto is simple: I do what I want. This has, as might be expected, caused you trouble more than once. You are wanted in several domains for various minor crimes, such as exsanguinating the Seneschal's favorite ghoul. You haven't been bloodhunted just yet, but the writing is on the wall. You've just about run out of time and no one wants you to take them with you when everything turns sideways. One more mistake and you sign your Final Death warrant. All social-based rolls to acquire help are at +2 difficulty, except those involving Intimidation.",
-        "source": "Anarchs Unbound Pg 102",
-        "notes": "Restricted",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Botched Presentation",
-        "stat_type": "social",
-        "values": [1],
-        "category": "flaws",
-        "description": "When your sire presented you to the Prince of the city, you flubbed it. Now you're convinced His Majesty hates you (whether he does or not). You need to succeed on a Willpower roll (difficulty 7) just to stand in front of the Prince or one of his duly authorized representatives without running, blubbering, or otherwise making a fool of yourself.",
-        "source": "V20 Pg 489",
-        "notes": "Camarilla Only",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Incomplete Understanding",
-        "stat_type": "social",
-        "values": [1],
-        "category": "flaws",
-        "description": "The whole matter has been explained to you, but you're still not quite sure how things in your Sect work. Your imperfect understanding of the rules and regulations of your new existence means that sooner or later, you're going to make a mistake. It's only a matter of time....",
-        "source": "V20 Pg 490",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Infamous Sire",
-        "stat_type": "social",
-        "values": [1],
-        "category": "flaws",
-        "description": "Your sire was, and perhaps still is, distrusted and disliked by many of the city's Kindred. As a result, you are distrusted and disliked as well.",
-        "source": "V20 Pg 490",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Recruitment Target",
-        "stat_type": "social",
-        "values": [1],
-        "category": "flaws",
-        "description": "Someone in one of your Sect's enemy organizations wants you, and they want you bad. Every effort is being made to recruit you, willing or no, and the press gangs usually show up at the worst possible time.",
-        "source": "V20 Pg 490",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Sire's Resentment",
-        "stat_type": "social",
-        "values": [1],
-        "category": "flaws",
-        "description": "Your sire dislikes you and wishes you ill. Given the smallest opportunity, she will actively seek to do you harm. Your sire's allies also work against you, and many elders may resent you.",
-        "source": "V20 Pg 490",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Special Responsibility",
-        "stat_type": "social",
-        "values": [1],
-        "category": "flaws",
-        "description": "Shortly after your Embrace, you volunteered for some task in order to gain respect and approval from the vampires around you. Now, you wish you had never opened your damn mouth! While you are not given any special credit for performing this duty, you would lose a lot of respect if you were to stop. The nature and the details of your duty should be worked out with the Storyteller in advance. Ideas can range from lending money to other Kindred to acting as a messenger or possibly gathering victims for ritae (such as Blood Feasts).",
-        "source": "V20 Pg 490",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Bound",
-        "stat_type": "social",
-        "values": [2],
-        "category": "flaws",
-        "description": "You are blood bound to another vampire. Your regnant may not necessarily treat you badly, but the fact remains that your will is not entirely your own. The knowledge gnaws at you, even as you find yourself lost in devotion to your vampiric master. Sabbat vampires cannot take this Flaw.",
-        "source": "V20 Pg 490",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Escaped Target",
-        "stat_type": "social",
-        "values": [2],
-        "category": "flaws",
-        "description": "You had targeted a mortal for the Embrace, but someone else got there first. You cannot stand the humiliation of being cheated of your prize, and fly into a rage (+2 difficulty to avoid frenzy) whenever you see the one who got away.",
-        "source": "V20 Pg 491",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Failure",
-        "stat_type": "social",
-        "values": [2],
-        "category": "flaws",
-        "description": "You once held a title in the city, but failed catastrophically in your duties. Now you are branded incompetent, excluded from circles of power and responsibility, and generally ostracized by those on their way up. Your exclusion may make you a target for recruitment by the Sect's enemies (or so the whispers run, making you even more distrusted).",
-        "source": "V20 Pg 491",
-        "notes": "",
-        "splat": "Vampire",
-        "game_line": "Vampire: The Masquerade"
-    },
-    {
-        "name": "Masquerade Breaker",
-        "stat_type": "social",
-        "values": [2],
-        "category": "flaws",
-        "description": "In your first nights as a vampire, you accidentally broke the Masquerade - and were spotted doing so. Someone else covered for your mistake, but holds the favor over you. Now you exist in fear that your error will be revealed. In the meantime, your 'savior' takes pitiless advantage of you. This Flaw can only be taken by vampires in Sects or Clans that respect the Masquerade.",
-        "source": "V20 Pg 491",
-        "notes": "Camarilla Only"
-    },
-    {
-        "name": "Rival Sires",
-        "stat_type": "social",
-        "values": [2],
-        "category": "flaws",
-        "description": "The flip side of Escaped Target, two vampires wanted to gift you with the Embrace. One succeeded, one failed - and she's not happy about that failure. You, your actual sire, or both of you have become the target of the failed suitor's ire. Regardless, your persecutor is at +2 difficulty to refrain from frenzy in your presence. In addition, she may well be working actively to discredit or destroy you.",
-        "source": "V20 Pg 491-2",
-        "notes": ""
-    },
-    {
-        "name": "Uppity",
-        "stat_type": "social",
-        "values": [2],
-        "category": "flaws",
-        "description": "You are proud of your new status in the Sect - so proud that you've shot your mouth off to other Kindred and made some enemies. Wiser vampires laugh at you and chalk your rudeness up to youth, but others find you arrogant and insulting. These enemies will take action to embarrass or harm you. Furthermore, you are at +2 difficulty on all Social rolls against any vampires you have alienated through your yammering - and you may not know who they are. At Storyteller discretion, you may also be required to make a Willpower roll (difficulty 6) to keep your mouth shut any time the opportunity presents itself for you to brag about your pack, your Clan, or your status.",
-        "source": "V20 Pg 492",
-        "notes": ""
-    },
-    {
-        "name": "Disgrace to the Blood",
-        "stat_type": "social",
-        "values": [3],
-        "category": "flaws",
-        "description": "Your sire regards the fact that he Embraced you to be a titanic mistake, and has let everyone know it. You are mocked at gatherings, taunted by your peers, and actively despised by the one who should be giving you guidance. Any request or petition you make is likely to be looked down upon by friends of your sire, and your achievements are likely to be discounted.",
-        "source": "V20 Pg 492",
-        "notes": ""
-    },
-    {
-        "name": "Blood Hunted",
-        "stat_type": "social",
-        "values": [4, 6],
-        "category": "flaws",
-        "description": "You have been made the target of a blood hunt, and for you to return to your home city is death. For four points, this Flaw means that only your home city is offlimits to you. For six, it means that the entire Camarilla is howling for your vitae. This Flaw can only be taken by Camarilla vampires.",
-        "source": "V20 Pg 493",
-        "notes": "Restricted"
-    },
-    {
-        "name": "Black Sheep",
-        "stat_type": "social",
-        "values": [5],
-        "category": "flaws",
-        "description": "You belong to a prestigious lineage that is considered to be paragon of another sect, or at least it did before you joined the Anarch Movement. You have embarrassed your sire, grandsire, and perhaps even farther back up the line; now the time has come to pay. Your erstwhile broodmates want to bring you back into the fold, if only to clean the stain from your reputation, and are unwilling to recognize your independence. Your sire and grandsire spare no effort to make things uncomfortable for you and any Anarchs who shelter you. This flaw combines the effects of Sire's Resentment and Hunted Like a Dog, so those flaws may not be taken in conjunction with Black Sheep. In addition, many members of the Anarch Movement actively distrust you solely based on your lineage, believing that you are a double-agent. All social rolls involving your fellow Anarchs incur a +2 difficulty.",
-        "source": "Anarchs Unbound Pg 102",
-        "notes": "Anarch Only"
-    },
-    {
-        "name": "Laughingstock",
-        "stat_type": "social",
-        "values": [5],
-        "category": "flaws",
-        "description": "Somehow you've drawn the scorn of the local Harpies, who make you their favorite target. You are at a +2 difficulty on all Social rolls in Elysium and a +1 anywhere else in the city. In addition, you are at +2 difficulty to use Intimidation or any Dominate powers on anyone who has heard the stories mocking you.",
-        "source": "V20 Pg 493",
-        "notes": "Camarilla Only"
-    },
-    {
-        "name": "Red List",
-        "stat_type": "social",
-        "values": [7],
-        "category": "flaws",
-        "description": "You are either being considered for or are already on the dreaded Red List, the registry of those vampires the Camarilla most wants extinguished. Any Camarilla vampire will either attack you on sight or, more likely, call in for a great deal of help.",
-        "source": "V20 Pg 493",
-        "notes": "Camarilla Only"
-    },
-    {
-        "name": "Lunacy",
-        "stat_type": "mental",
-        "values": [2],
-        "category": "flaws",
-        "description": "You are affected by the phases of the moon, increasing your chances to frenzy. Under the crescent moon, difficulties to avoid frenzy increase by one. Under the half or gibbous moon, difficulties rise by two. When the moon is full, difficulties increase by three.",
-        "source": "V20 Pg 486",
-        "notes": ""
-    },
-    {
-        "name": "Short Fuse",
-        "stat_type": "mental",
-        "values": [2],
-        "category": "flaws",
-        "description": "You are easily angered. Difficulties to avoid frenzy are two greater. Brujah vampires cannot take this Flaw, as they already suffer from a similar weakness.",
-        "source": "V20 Pg 486",
-        "notes": ""
-    },
-    {
-        "name": "Stereotype",
-        "stat_type": "mental",
-        "values": [2],
-        "category": "flaws",
-        "description": "You buy heavily into all of the vampire stories you've read and heard. You wear a cape or body glitter, speak with an accent, and otherwise act in a cartoonish fashion. Such behavior is embarrassing in the extreme to other Kindred, who are likely to ostracize or mock you (+2 difficulty to Social rolls with other vampires who don't share your habits). You also stand out to hunters.",
-        "source": "V20 Pg 486",
-        "notes": ""
-    },
-    {
-        "name": "Soft-Hearted",
-        "stat_type": "mental",
-        "values": [1],
-        "category": "flaws",
-        "description": "You cannot stand to watch others suffer. You avoid any situation that involves causing someone physical or emotional pain, unless you succeed on a Conscience roll (difficulty 8).",
-        "source": "V20 Pg 485",
-        "notes": ""
-    },
-    {
-        "name": "Prey Exclusion",
-        "stat_type": "mental",
-        "values": [1],
-        "category": "flaws",
-        "description": "You refuse to hunt a certain class of prey. You may refuse to feed on children, police officers, clergy, or any other specific group. You must spend Willpower to bring yourself to feed on this type of individual, and even then you are at +2 difficulty to feed.",
-        "source": "V20 Pg 485",
-        "notes": ""
-    },
-    {
-        "name": "Guilt-Wracked",
-        "stat_type": "mental",
-        "values": [4],
-        "category": "flaws",
-        "description": "You simply cannot come to terms with what you have become. You suffer horrible guilt over being a vampire and having to drink blood to survive. Feeding requires a Conscience roll (difficulty 6). A failure indicates you cannot feed that night. A botch indicates you do something to reveal yourself as a vampire to your prey.",
-        "source": "V20 Pg 486",
-        "notes": ""
-    },
-    {
-        "name": "Flashbacks",
-        "stat_type": "mental",
-        "values": [6],
-        "category": "flaws",
-        "description": "You are haunted by something in your past, and certain situations can cause you to relive these events. When confronted with a trigger stimulus, you must make a Self-Control roll (difficulty 7) or become caught up in the flashback for the remainder of the scene. During a flashback, you react as you did in the past, and may even hallucinate that you are reliving the event.",
-        "source": "V20 Pg 486",
-        "notes": ""
-    },
-    {
-        "name": "Phobia",
-        "stat_type": "mental",
-        "values": [2, 4],
-        "category": "flaws",
-        "description": "You have an overpowering fear of something. Spiders, snakes, crowds, and heights are examples of common phobias. You must make a Courage roll every time you encounter the object of your fear. The difficulty of the roll is determined by the Storyteller. If you fail the roll, you must retreat from the object.",
-        "source": "V20 Pg 486",
-        "notes": ""
-    },
-    {
-        "name": "Amnesia",
-        "stat_type": "mental",
-        "values": [2],
-        "category": "flaws",
-        "description": "You have no memory of your mortal life, or even of some part of your existence as a vampire. You know your name, and you know that you're a vampire, but the details of your Embrace and much of what followed it are lost to you.",
-        "source": "V20 Pg 486",
-        "notes": ""
-    },
-    {
-        "name": "Conspicuous Consumption",
-        "stat_type": "mental",
-        "values": [4],
-        "category": "flaws",
-        "description": "You believe that as a vampire, you must dress and act the part. You must spend three times the normal amount on your clothes, vehicles, and other possessions to maintain your image. You also have trouble associating with those who do not maintain similar standards.",
-        "source": "V20 Pg 486",
-        "notes": ""
-    },
-    {
-        "name": "Weak-Willed",
-        "stat_type": "mental",
-        "values": [3],
-        "category": "flaws",
-        "description": "You are highly susceptible to Dominate and other mental manipulations. You are at +2 difficulty to resist any attempt to control or influence your mind, including Presence.",
-        "source": "V20 Pg 486",
-        "notes": ""
-    },
-    {
-        "name": "Nightmares",
-        "stat_type": "mental",
-        "values": [1],
-        "category": "flaws",
-        "description": "You experience horrendous nightmares every time you sleep, and memories of them haunt you during your waking hours. Upon awakening, you must make a Courage roll (difficulty 7) or lose one die on all actions for that night due to the distraction of the dreams.",
-        "source": "V20 Pg 486",
-        "notes": ""
-    },
-    {
-        "name": "Vengeful",
-        "stat_type": "mental",
-        "values": [2],
-        "category": "flaws",
-        "description": "You have a score to settle, and you let nothing stand in the way of your revenge. You must make a Willpower roll (difficulty 5) to avoid taking hostile action toward the object of your revenge when presented with an opportunity to do so.",
-        "source": "V20 Pg 486",
-        "notes": ""
-    },
-    {
-        "name": "Territorial",
-        "stat_type": "mental",
-        "values": [2],
-        "category": "flaws",
-        "description": "You are extremely territorial and must make a Willpower roll (difficulty 7) to keep from acting aggressively toward those who encroach upon your domain. If the intruder is another vampire, the difficulty is increased to 9.",
-        "source": "V20 Pg 486",
-        "notes": ""
-    },
-    {
-        "name": "Thirst for Innocence",
-        "stat_type": "mental",
-        "values": [2],
-        "category": "flaws",
-        "description": "You can only feed from the innocent (children, virgins, or other pure souls). If you feed from anyone else, you automatically frenzy and must make a Conscience roll (difficulty 8) or lose a point of Humanity.",
-        "source": "V20 Pg 486",
-        "notes": ""
-    },
-    {
-        "name": "Addiction",
-        "stat_type": "mental",
-        "values": [3],
-        "category": "flaws",
-        "description": "You are addicted to a substance (alcohol, drugs, or a specific type of blood) that has little or no effect on vampires. You must spend Willpower to avoid indulging in your addiction when the opportunity presents itself. You may also suffer penalties when deprived of your addiction, at the Storyteller's discretion.",
-        "source": "V20 Pg 486",
-        "notes": ""
-    },
-    {
-        "name": "Driving Goal",
-        "stat_type": "mental",
-        "values": [3],
-        "category": "flaws",
-        "description": "You have a goal that you pursue with such single-minded determination that it interferes with your ability to function normally. You must make a Willpower roll (difficulty 8) to pursue any course of action that does not directly relate to achieving your goal.",
-        "source": "V20 Pg 486",
-        "notes": ""
-    },
-    {
-        "name": "Beacon of the Unholy",
-        "stat_type": "physical",
-        "values": [2],
-        "category": "flaws",
-        "description": "Animals react poorly to your presence, and holy symbols within 10 feet of you tend to fall, break, or tarnish. This makes it difficult to move through heavily religious areas or maintain a haven near a church. This Flaw is common among Baali and other infernalists.",
-        "source": "Lore of the Clans Pg 45",
-        "notes": ""
-    },
-    {
-        "name": "Blood Rot",
-        "stat_type": "physical",
-        "values": [4],
-        "category": "flaws",
-        "description": "Your blood is tainted and does not function properly for creating ghouls or blood bonds. Any attempt to create a ghoul or blood bond requires three times the normal amount of blood, and the effects only last for half the normal duration.",
-        "source": "Lore of the Clans Pg 45",
-        "notes": ""
-    },
-    {
-        "name": "Eerie Presence",
-        "stat_type": "social",
-        "values": [2],
-        "category": "flaws",
-        "description": "There is something unsettling about you that makes mortals uncomfortable. You receive a +2 difficulty to all Social rolls when dealing with mortals. This effect does not apply to Intimidation rolls.",
-        "source": "Lore of the Clans Pg 45",
-        "notes": ""
-    },
-    {
-        "name": "Lord of the Flies",
-        "stat_type": "physical",
-        "values": [1],
-        "category": "flaws",
-        "description": "Insects are drawn to you and often appear in your presence. While this doesn't cause any direct harm, it can make social situations awkward and may draw unwanted attention.",
-        "source": "Lore of the Clans Pg 46",
-        "notes": ""
-    },
-    {
-        "name": "Touch of Frost",
-        "stat_type": "physical",
-        "values": [1],
-        "category": "flaws",
-        "description": "Your touch leaves a light coating of frost on anything you handle, and your presence causes the temperature to drop slightly. While not severe enough to cause damage, this effect can be noticeable and may compromise your ability to blend in with mortals.",
-        "source": "Lore of the Clans Pg 46",
-        "notes": ""
-    },
-    {
-        "name": "Blood Sweats",
-        "stat_type": "physical",
-        "values": [3],
-        "category": "flaws",
-        "description": "When under stress, you literally sweat blood. This costs you one blood point per scene and makes maintaining the Masquerade extremely difficult. You must make a Self-Control roll (difficulty 7) in any stressful situation to avoid this effect.",
-        "source": "Lore of the Clans Pg 46",
-        "notes": ""
-    },
-    {
-        "name": "Repulsed by Garlic",
-        "stat_type": "physical",
-        "values": [1],
-        "category": "flaws",
-        "description": "You have an aversion to garlic that goes beyond the normal vampiric dislike of the herb. The mere presence of garlic causes you to recoil, and you must make a Willpower roll (difficulty 6) to remain in its presence. Physical contact with garlic causes you to lose a blood point as your body rejects it.",
-        "source": "Lore of the Clans Pg 47",
-        "notes": ""
-    },
-    {
-        "name": "Deathsight",
-        "stat_type": "mental",
-        "values": [2],
-        "category": "flaws",
-        "description": "You see the world through death-tinted glasses. Everything appears to be in a state of decay, and you perceive omens of death everywhere. This makes social interaction difficult (+1 difficulty) and can be particularly disturbing when feeding.",
-        "source": "Lore of the Clans Pg 47",
-        "notes": "Giovanni Only"
-    },
-    {
-        "name": "Blood Bound to Clan",
-        "stat_type": "social",
-        "values": [4],
-        "category": "flaws",
-        "description": "You are blood bound to your clan's leadership through ancient rituals. While this gives you a sense of belonging, it also means you must obey the orders of your clan elders as if you were fully blood bound to them.",
-        "source": "Lore of the Clans Pg 47",
-        "notes": "Restricted"
-    },
-    {
-        "name": "Flesh Eater",
-        "stat_type": "mental",
-        "values": [3],
-        "category": "flaws",
-        "description": "You must consume the flesh of your victims in addition to their blood. While this doesn't provide any nourishment, failing to do so causes you to suffer a +2 difficulty on all rolls until you next feed properly.",
-        "source": "Lore of the Clans Pg 48",
-        "notes": ""
-    },
-    {
-        "name": "Grip of the Damned",
-        "stat_type": "physical",
-        "values": [4],
-        "category": "flaws",
-        "description": "Your touch carries the chill of the grave to such an extent that it causes living beings pain. Mortals touched by your bare skin take one level of lethal damage. This makes feeding and social interaction extremely difficult.",
-        "source": "Lore of the Clans Pg 48",
-        "notes": ""
-    },
-    {
-        "name": "Haunted",
-        "stat_type": "supernatural",
-        "values": [3],
-        "category": "flaws",
-        "description": "A ghost follows you around, causing minor inconveniences and occasionally major problems. The ghost might be someone you killed, someone who died because of your actions, or even a complete stranger who has latched onto you for their own reasons.",
-        "source": "Lore of the Clans Pg 48",
-        "notes": ""
-    },
-    {
-        "name": "Mark of the Beast",
-        "stat_type": "physical",
-        "values": [2],
-        "category": "flaws",
-        "description": "Animals can instantly recognize you as a predator. Domesticated animals flee from your presence, while wild animals may attack if cornered. You receive a +2 difficulty on all rolls involving animals.",
-        "source": "Lore of the Clans Pg 48",
-        "notes": ""
-    },
-    {
-        "name": "Occult Enmity",
-        "stat_type": "social",
-        "values": [2],
-        "category": "flaws",
-        "description": "A powerful occult organization (witch coven, secret society, etc.) has marked you as an enemy. They work to thwart your plans and may actively hunt you if the opportunity presents itself.",
-        "source": "Lore of the Clans Pg 49",
-        "notes": ""
-    },
-    {
-        "name": "Victim of the Masquerade",
-        "stat_type": "social",
-        "values": [2],
-        "category": "flaws",
-        "description": "Your true nature has been successfully covered up by the Camarilla, but at the cost of your reputation. The official story makes you look like a fool, criminal, or worse, and this story follows you wherever you go in Kindred society.",
-        "source": "Lore of the Clans Pg 49",
-        "notes": "Camarilla Only"
-    },
-    {
-        "name": "Obvious Predator",
-        "stat_type": "physical",
-        "values": [2],
-        "category": "flaws",
-        "description": "There is something obviously predatory about your appearance that mortals instinctively notice. You receive a +2 difficulty on all rolls involving trying to appear harmless or friendly to mortals who aren't already used to your presence.",
-        "source": "Ghouls & Revenants Pg 78",
-        "notes": ""
-    },
-    {
-        "name": "Blood Madness",
-        "stat_type": "mental",
-        "values": [4],
-        "category": "flaws",
-        "description": "The mere sight or smell of blood can send you into a frenzy. You must make a frenzy check whenever you encounter blood, even if you're not hungry. The difficulty is 7, or 9 if you are hungry.",
-        "source": "Ghouls & Revenants Pg 78",
-        "notes": ""
-    },
-    {
-        "name": "Dark Fate",
-        "stat_type": "supernatural",
-        "values": [5],
-        "category": "flaws",
-        "description": "You are destined to meet a terrible end. You occasionally receive visions of your doom, and you know that your death will be particularly gruesome or horrible. The Storyteller should occasionally remind you of your fate through dreams or omens.",
-        "source": "Ghouls & Revenants Pg 79",
-        "notes": ""
-    },
-    {
-        "name": "Blood Fetish",
-        "stat_type": "mental",
-        "values": [3],
-        "category": "flaws",
-        "description": "You can only gain sustenance from blood under specific circumstances (only from virgin blood, only during sex, only after causing fear, etc.). If you feed under other circumstances, you gain no sustenance from the blood consumed.",
-        "source": "Ghouls & Revenants Pg 79",
-        "notes": ""
-    },
-    {
-        "name": "Infertile Vitae",
-        "stat_type": "physical",
-        "values": [2],
-        "category": "flaws",
-        "description": "Your blood cannot create or sustain ghouls. Any attempt to create a ghoul fails, and existing ghouls who drink your blood do not renew their powers. This Flaw does not affect blood bonds or other uses of vitae.",
-        "source": "Ghouls & Revenants Pg 79",
-        "notes": ""
-    },
-    {
-        "name": "Tainted Vitae",
-        "stat_type": "physical",
-        "values": [3],
-        "category": "flaws",
-        "description": "Your blood is corrupt in some way that makes it repulsive to other vampires. Any vampire who drinks your blood must make a Stamina roll (difficulty 8) or vomit it back up, gaining no benefit from it. This does not affect your ability to create blood bonds or ghouls.",
-        "source": "Ghouls & Revenants Pg 79",
-        "notes": ""
-    },
-    {
-        "name": "Sabbat Survivor",
-        "stat_type": "social",
-        "values": [2],
-        "category": "flaws",
-        "description": "You escaped from the Sabbat, but the experience has left its mark on you. You have difficulty trusting others and occasionally display behaviors that make other Kindred suspicious of your true loyalties. You suffer a +1 difficulty on all Social rolls with Camarilla vampires who know your history.",
-        "source": "Ghouls & Revenants Pg 80",
-        "notes": "Camarilla Only"
-    }
+   {
+       "name": "Smell of the Grave",
+       "stat_type": "physical",
+       "category": "flaws",
+       "values": [1],
+       "description": "You exude an odor of dampness and newly turned earth, which no amount of scents or perfumes will cover. Mortals in your immediate presence become uncomfortable, so the difficulties of all Social rolls to affect mortals increase by one.",
+       "source": "V20 p. 481",
+       "notes": "",
+       "splat": "Vampire",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Fourteenth Generation",
+       "stat_type": "physical",
+       "category": "flaws",
+       "values": [2],
+       "description": "You were created five or fewer years ago by a member of the Thirteenth Generation. Though you have 10 blood points in your body, only eight of them may be used to heal wounds, power Disciplines, raise Attributes, etc. You can still use the final two blood points for other purposes, though. The blood point costs of nightly rising, creating and sustaining ghouls, and creating blood bonds remains the same as for other vampires. You cannot raise any Discipline above four dots. Taking this Flaw precludes you from taking the Generation Background, and you may not start with Status, either. You are likely a Clanless Caitiff, for your blood is probably too thin to pass down the distinguishing characteristics of a Clan. Most Fourteenth-Generation vampires should also take the Thin Blood Flaw (p. 483)",
+       "source": "V20 p. 481",
+       "notes": "Restricted.",
+       "splat": "Vampire",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Fifteenth Generation",
+       "stat_type": "physical",
+       "values": [4],
+       "category": "flaws",
+       "description": "Your vitae is so weak that only six of your 10 blood points can be used for Disciplines, healing or raising Attributes. For these functions, you must expend two blood points to obtain the effect a normal vampire would achieve with one. (The cost for nightly rising remains a single blood point.) What's more, you cannot create or sustain ghouls, create a blood bond, or sire a vampiric childe. You can use the remaining four blood points to survive through the day and wake up each night, nothing more. You cannot raise any Discipline above three dots. The weakening of the Curse of Caine has compensations, though (which distinguish this Flaw from the Thin Blood Flaw itself). Sunlight does lethal damage to you, instead of aggravated damage as it does to other vampires. You can hold down mortal food and drink for an hour or so; other vampires vomit immediately if they try (unless they have the Eat Food Merit). Strangest of all, once in a while you might actually have a child the normal, human way... though it will hardly be a normal, human child..",
+       "source": "V20 p. 481",
+       "notes": "Restricted.",
+       "splat": "Vampire",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Dulled Bite",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "Your fangs never developed fully or may not manifest at all. Feeding requires alternate methods, or double successes to penetrate skin properly.",
+       "source": "V20 p. 481",
+       "notes": "",
+       "splat": "Vampire",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Infectious Bite",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "You may not automatically lick the wounds of your feeding closed. In fact, your bites have a one in five chance of becoming infected and causing mortal victims to become seriously ill. The precise nature of the infection is determined by the Storyteller.",
+       "source": "V20 p. 481",
+       "notes": "",
+       "splat": "Vampire",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Vulnerability to Silver",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "Silver is as deadly to you as sunlight, causing aggravated wounds. The mere touch of silver causes discomfort.",
+       "source": "V20 p. 482",
+       "notes": "",
+       "splat": "Vampire",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Open Wound",
+       "stat_type": "physical",
+       "values": [2, 4],
+       "category": "flaws",
+       "description": "A wound refuses to heal and constantly drips blood. Costs extra blood point per night and adds +1 difficulty to Social rolls. At 4 points, includes effects of Permanent Wound Flaw.",
+       "source": "V20 p. 482",
+       "notes": "",
+       "splat": "Vampire",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Glowing Eyes",
+       "stat_type": "physical",
+       "values": [3],
+       "category": "flaws",
+       "description": "You have the stereotypical glowing eyes of vampire legend, which gives you a -1 difficulty on Intimidation rolls when you're dealing with mortals. However, the tradeoffs are many; you must constantly disguise your condition (no, contacts don't cut it); the glow impairs your vision and puts you at +1 difficulty on all sight-based rolls (including the use of ranged weapons); and the radiance emanating from your eye sockets makes it difficult to hide (+2 difficulty to Stealth rolls) in the dark.",
+       "source": "V20 p. 482",
+       "notes": "",
+       "splat": "Vampire",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Expiration Date",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "Your personal motto is simple: I do what I want. This has, as might be expected, caused you trouble more than once. You are wanted in several domains for various minor crimes, such as exsanguinating the Seneschal's favorite ghoul. You haven't been bloodhunted just yet, but the writing is on the wall. You've just about run out of time and no one wants you to take them with you when everything turns sideways. One more mistake and you sign your Final Death warrant. All social-based rolls to acquire help are at +2 difficulty, except those involving Intimidation.",
+       "source": "Anarchs Unbound p. 102",
+       "notes": "Restricted",
+       "splat": "Vampire",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Botched Presentation",
+       "stat_type": "social",
+       "values": [1],
+       "category": "flaws",
+       "description": "When your sire presented you to the Prince of the city, you flubbed it. Now you're convinced His Majesty hates you (whether he does or not). You need to succeed on a Willpower roll (difficulty 7) just to stand in front of the Prince or one of his duly authorized representatives without running, blubbering, or otherwise making a fool of yourself.",
+       "source": "V20 p. 489",
+       "notes": "Camarilla Only",
+       "splat": "Vampire",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Incomplete Understanding",
+       "stat_type": "social",
+       "values": [1],
+       "category": "flaws",
+       "description": "The whole matter has been explained to you, but you're still not quite sure how things in your Sect work. Your imperfect understanding of the rules and regulations of your new existence means that sooner or later, you're going to make a mistake. It's only a matter of time....",
+       "source": "V20 p. 490",
+       "notes": "",
+       "splat": "Vampire",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Infamous Sire",
+       "stat_type": "social",
+       "values": [1],
+       "category": "flaws",
+       "description": "Your sire was, and perhaps still is, distrusted and disliked by many of the city's Kindred. As a result, you are distrusted and disliked as well.",
+       "source": "V20 p. 490",
+       "notes": "",
+       "splat": "Vampire",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Sire's Resentment",
+       "stat_type": "social",
+       "values": [1],
+       "category": "flaws",
+       "description": "Your sire dislikes you and wishes you ill. Given the smallest opportunity, she will actively seek to do you harm. Your sire's allies also work against you, and many elders may resent you.",
+       "source": "V20 p. 490",
+       "notes": "",
+       "splat": "Vampire",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Escaped Target",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "You had targeted a mortal for the Embrace, but someone else got there first. You cannot stand the humiliation of being cheated of your prize, and fly into a rage (+2 difficulty to avoid frenzy) whenever you see the one who got away.",
+       "source": "V20 p. 491",
+       "notes": "",
+       "splat": "Vampire",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Failure",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "You once held a title in the city, but failed catastrophically in your duties. Now you are branded incompetent, excluded from circles of power and responsibility, and generally ostracized by those on their way up. Your exclusion may make you a target for recruitment by the Sect's enemies (or so the whispers run, making you even more distrusted).",
+       "source": "V20 p. 491",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Masquerade Breaker",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "In your first nights as a vampire, you accidentally broke the Masquerade - and were spotted doing so. Someone else covered for your mistake, but holds the favor over you. Now you exist in fear that your error will be revealed. In the meantime, your 'savior' takes pitiless advantage of you. This Flaw can only be taken by vampires in Sects or Clans that respect the Masquerade.",
+       "source": "V20 p. 491",
+       "notes": "Camarilla Only",
+       "splat": "Vampire",        
+       "game_line": "Vampire: The Masquerade"
+
+   },
+   {
+       "name": "Rival Sires",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "The flip side of Escaped Target, two vampires wanted to gift you with the Embrace. One succeeded, one failed - and she's not happy about that failure. You, your actual sire, or both of you have become the target of the failed suitor's ire. Regardless, your persecutor is at +2 difficulty to refrain from frenzy in your presence. In addition, she may well be working actively to discredit or destroy you.",
+       "source": "V20 p. 491-2",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Uppity",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "You are proud of your new status in the Sect - so proud that you've shot your mouth off to other Kindred and made some enemies. Wiser vampires laugh at you and chalk your rudeness up to youth, but others find you arrogant and insulting. These enemies will take action to embarrass or harm you. Furthermore, you are at +2 difficulty on all Social rolls against any vampires you have alienated through your yammering - and you may not know who they are. At Storyteller discretion, you may also be required to make a Willpower roll (difficulty 6) to keep your mouth shut any time the opportunity presents itself for you to brag about your pack, your Clan, or your status.",
+       "source": "V20 p. 492",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Disgrace to the Blood",
+       "stat_type": "social",
+       "values": [3],
+       "category": "flaws",
+       "description": "Your sire regards the fact that he Embraced you to be a titanic mistake, and has let everyone know it. You are mocked at gatherings, taunted by your peers, and actively despised by the one who should be giving you guidance. Any request or petition you make is likely to be looked down upon by friends of your sire, and your achievements are likely to be discounted.",
+       "source": "V20 p. 492",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Blood Hunted",
+       "stat_type": "social",
+       "values": [4, 6],
+       "category": "flaws",
+       "description": "You have been made the target of a blood hunt, and for you to return to your home city is death. For four points, this Flaw means that only your home city is offlimits to you. For six, it means that the entire Camarilla is howling for your vitae. This Flaw can only be taken by Camarilla vampires.",
+       "source": "V20 p. 493",
+       "notes": "Restricted",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Hunted like a Dog",
+       "stat_type": "social",
+       "values": [4, 6],
+       "category": "flaws",
+       "description": "Another Sect or group of vampires has decided that you're a target for extermination, and pursues you relentlessly. On the bright side, the enemies of your enemy may well wish to help you out, potentially garnering you allies.",
+       "source": "V20 p. 492",
+       "notes": "Restricted",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Clan Enmity",
+       "stat_type": "social",
+       "values": [4],
+       "category": "flaws",
+       "description": "One Clan in particular wants you dead. You have offended the entire Clan, from elders to neonates, and as a result every member of that bloodline wants your head on a plate. The effects of the Flaw may manifest as anything from very public snubs and insults to actual attempts on your unlife. You are also at +2 difficulty on all Social rolls relating to members of the Clan in question.",
+       "source": "V20 p. 492",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Loathsome Regnant",
+       "stat_type": "social",
+       "values": [4],
+       "category": "flaws",
+       "description": "Not only are you blood bound, but you are also in thrall to a vampire who mistreats you hideously. Perhaps you are publicly abused or humiliated; perhaps your master forces you to commit unspeakable acts for him. In any case, existence under the bond is a neverending nightmare, with your regnant serving to conduct the symphony of malice. Sabbat vampires cannot take this Flaw.",
+       "source": "V20 p. 492",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Probationary Sect Member",
+       "stat_type": "social",
+       "values": [4],
+       "category": "flaws",
+       "description": "NOTE: This is not a purchased skill. It's gained through RP. You are a defector. You turned traitor to the Camarilla, Sabbat, or other Sect, and you still have much to prove before you are accepted by the Kindred you have defected to. Other vampires treat you with distrust and even hostility, and your reputation might even sully those whom you regularly associate with.",
+       "source": "V20 p. 492",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Black Sheep",
+       "stat_type": "social",
+       "values": [5],
+       "category": "flaws",
+       "description": "You belong to a prestigious lineage that is considered to be paragon of another sect, or at least it did before you joined the Anarch Movement. You have embarrassed your sire, grandsire, and perhaps even farther back up the line; now the time has come to pay. Your erstwhile broodmates want to bring you back into the fold, if only to clean the stain from your reputation, and are unwilling to recognize your independence. Your sire and grandsire spare no effort to make things uncomfortable for you and any Anarchs who shelter you. This flaw combines the effects of Sire's Resentment and Hunted Like a Dog, so those flaws may not be taken in conjunction with Black Sheep. In addition, many members of the Anarch Movement actively distrust you solely based on your lineage, believing that you are a double-agent. All social rolls involving your fellow Anarchs incur a +2 difficulty.",
+       "source": "Anarchs Unbound p. 102",
+       "notes": "Anarch Only",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Laughingstock",
+       "stat_type": "social",
+       "values": [5],
+       "category": "flaws",
+       "description": "Somehow you've drawn the scorn of the local Harpies, who make you their favorite target. You are at a +2 difficulty on all Social rolls in Elysium and a +1 anywhere else in the city. In addition, you are at +2 difficulty to use Intimidation or any Dominate powers on anyone who has heard the stories mocking you.",
+       "source": "V20 p. 493",
+       "notes": "Camarilla Only",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Red List",
+       "stat_type": "social",
+       "values": [7],
+       "category": "flaws",
+       "description": "You are either being considered for or are already on the dreaded Red List, the registry of those vampires the Camarilla most wants extinguished. Any Camarilla vampire will either attack you on sight or, more likely, call in for a great deal of help.",
+       "source": "V20 p. 493",
+       "notes": "Camarilla Only",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Lunacy",
+       "stat_type": "mental",
+       "values": [2],
+       "category": "flaws",
+       "description": "You are affected by the phases of the moon, increasing your chances to frenzy. Under the crescent moon, difficulties to avoid frenzy increase by one. Under the half or gibbous moon, difficulties rise by two. When the moon is full, difficulties increase by three.",
+       "source": "V20 p. 486",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Stereotype",
+       "stat_type": "mental",
+       "values": [2],
+       "category": "flaws",
+       "description": "You buy heavily into all of the vampire stories you've read and heard. You wear a cape or body glitter, speak with an accent, and otherwise act in a cartoonish fashion. Such behavior is embarrassing in the extreme to other Kindred, who are likely to ostracize or mock you (+2 difficulty to Social rolls with other vampires who don't share your habits). You also stand out to hunters.",
+       "source": "V20 p. 486",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Prey Exclusion",
+       "stat_type": "mental",
+       "values": [1],
+       "category": "flaws",
+       "description": "You refuse to hunt a certain class of prey. You may refuse to feed on children, police officers, clergy, or any other specific group. You must spend Willpower to bring yourself to feed on this type of individual, and even then you are at +2 difficulty to feed.",
+       "source": "V20 p. 485",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Conspicuous Consumption",
+       "stat_type": "mental",
+       "values": [4],
+       "category": "flaws",
+       "description": "You believe that as a vampire, you must dress and act the part. You must spend three times the normal amount on your clothes, vehicles, and other possessions to maintain your image. You also have trouble associating with those who do not maintain similar standards.",
+       "source": "V20 p. 486",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Thirst for Innocence",
+       "stat_type": "mental",
+       "values": [2],
+       "category": "flaws",
+       "description": "You can only feed from the innocent (children, virgins, or other pure souls). If you feed from anyone else, you automatically frenzy and must make a Conscience roll (difficulty 8) or lose a point of Humanity.",
+       "source": "V20 p. 486",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Beacon of the Unholy",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "Animals react poorly to your presence, and holy symbols within 10 feet of you tend to fall, break, or tarnish. This makes it difficult to move through heavily religious areas or maintain a haven near a church. This Flaw is common among Baali and other infernalists.",
+       "source": "Lore of the Clans p. 45",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Blood Rot",
+       "stat_type": "physical",
+       "values": [4],
+       "category": "flaws",
+       "description": "Your blood is tainted and does not function properly for creating ghouls or blood bonds. Any attempt to create a ghoul or blood bond requires three times the normal amount of blood, and the effects only last for half the normal duration.",
+       "source": "Lore of the Clans p. 45",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Eerie Presence",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "There is something unsettling about you that makes mortals uncomfortable. You receive a +2 difficulty to all Social rolls when dealing with mortals. This effect does not apply to Intimidation rolls.",
+       "source": "Lore of the Clans p. 45",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Lord of the Flies",
+       "stat_type": "physical",
+       "values": [1],
+       "category": "flaws",
+       "description": "Insects are drawn to you and often appear in your presence. While this doesn't cause any direct harm, it can make social situations awkward and may draw unwanted attention.",
+       "source": "Lore of the Clans p. 46",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Touch of Frost",
+       "stat_type": "physical",
+       "values": [1],
+       "category": "flaws",
+       "description": "Your touch leaves a light coating of frost on anything you handle, and your presence causes the temperature to drop slightly. While not severe enough to cause damage, this effect can be noticeable and may compromise your ability to blend in with mortals.",
+       "source": "Lore of the Clans p. 46",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Blood Sweats",
+       "stat_type": "physical",
+       "values": [3],
+       "category": "flaws",
+       "description": "When under stress, you literally sweat blood. This costs you one blood point per scene and makes maintaining the Masquerade extremely difficult. You must make a Self-Control roll (difficulty 7) in any stressful situation to avoid this effect.",
+       "source": "Lore of the Clans p. 46",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Repulsed by Garlic",
+       "stat_type": "physical",
+       "values": [1],
+       "category": "flaws",
+       "description": "You have an aversion to garlic that goes beyond the normal vampiric dislike of the herb. The mere presence of garlic causes you to recoil, and you must make a Willpower roll (difficulty 6) to remain in its presence. Physical contact with garlic causes you to lose a blood point as your body rejects it.",
+       "source": "Lore of the Clans p. 47",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Deathsight",
+       "stat_type": "mental",
+       "values": [2],
+       "category": "flaws",
+       "description": "You see the world through death-tinted glasses. Everything appears to be in a state of decay, and you perceive omens of death everywhere. This makes social interaction difficult (+1 difficulty) and can be particularly disturbing when feeding.",
+       "source": "Lore of the Clans p. 47",
+       "notes": "Giovanni Only",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Blood Bound to Clan",
+       "stat_type": "social",
+       "values": [4],
+       "category": "flaws",
+       "description": "You are blood bound to your clan's leadership through ancient rituals. While this gives you a sense of belonging, it also means you must obey the orders of your clan elders as if you were fully blood bound to them.",
+       "source": "Lore of the Clans p. 47",
+       "notes": "Restricted",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Flesh Eater",
+       "stat_type": "mental",
+       "values": [3],
+       "category": "flaws",
+       "description": "You must consume the flesh of your victims in addition to their blood. While this doesn't provide any nourishment, failing to do so causes you to suffer a +2 difficulty on all rolls until you next feed properly.",
+       "source": "Lore of the Clans p. 48",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Grip of the Damned",
+       "stat_type": "physical",
+       "values": [4],
+       "category": "flaws",
+       "description": "Your touch carries the chill of the grave to such an extent that it causes living beings pain. Mortals touched by your bare skin take one level of lethal damage. This makes feeding and social interaction extremely difficult.",
+       "source": "Lore of the Clans p. 48",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Mark of the Beast",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "Animals can instantly recognize you as a predator. Domesticated animals flee from your presence, while wild animals may attack if cornered. You receive a +2 difficulty on all rolls involving animals.",
+       "source": "Lore of the Clans p. 48",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Occult Enmity",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "A powerful occult organization (witch coven, secret society, etc.) has marked you as an enemy. They work to thwart your plans and may actively hunt you if the opportunity presents itself.",
+       "source": "Lore of the Clans p. 49",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Victim of the Masquerade",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "Your true nature has been successfully covered up by the Camarilla, but at the cost of your reputation. The official story makes you look like a fool, criminal, or worse, and this story follows you wherever you go in Kindred society.",
+       "source": "Lore of the Clans p. 49",
+       "notes": "Camarilla Only",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Obvious Predator",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "There is something obviously predatory about your appearance that mortals instinctively notice. You receive a +2 difficulty on all rolls involving trying to appear harmless or friendly to mortals who aren't already used to your presence.",
+       "source": "Lore of the Clans p. 48",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Infertile Vitae",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "Your blood cannot create or sustain ghouls. Any attempt to create a ghoul fails, and existing ghouls who drink your blood do not renew their powers. This Flaw does not affect blood bonds or other uses of vitae.",
+       "source": "Ghouls & Revenants p. 79",
+       "notes": "",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Sabbat Survivor",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "You escaped from the Sabbat, but the experience has left its mark on you. You have difficulty trusting others and occasionally display behaviors that make other Kindred suspicious of your true loyalties. You suffer a +1 difficulty on all Social rolls with Camarilla vampires who know your history.",
+       "source": "Ghouls & Revenants p. 80",
+       "notes": "Camarilla Only",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Apostate Flaw",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "There is no sin in changing Roads. However, the manner in which you changed Roads was spectacular and offensive. You decried your former Road in public and spoke out against the faults within their tenets. Predictably, this has earned you the ire of those on your former Road, but it has also made the members of your new Road suspicious. You must work twice as hard to earn the respect of your peers. Be wary, also, for those who might seek revenge.",
+       "source": "V20 Dark Ages p. 425",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Disfigured",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "A hideous disfigurement makes your appearance disturbing and memorable. The difficulties of all die rolls relating to social interaction are increased by two. You may not have an Appearance rating greater than 2.",
+       "source": "V20 p. 481",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "One Eye",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "You have only one eye -- which eye is missing is up to you. The difficulties of all Perception rolls involving eyesight are increased by two, and the difficulties of all die rolls requiring depth perception are increased by one (this includes ranged combat).",
+       "source": "V20 p. 481",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Deformity",
+       "stat_type": "physical",
+       "values": [3],
+       "category": "flaws",
+       "description": "You have some kind of deformity -- a misshapen limb, hunchback, or clubfoot, for example -- which affects your physical abilities and interactions with others. A hunchback, for instance, would lower a character's Dexterity by two dots and increase the difficulty of die rolls relating to social skills by one.",
+       "source": "V20 p. 482",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Lazy",
+       "stat_type": "physical",
+       "values": [3],
+       "category": "flaws",
+       "description": "You are simply lazy, avoiding anything that requires effort on your part. Preferring to let others do the hard work, you lounge around. For any action that requires preparation, there's a good chance you didn't properly prepare. Difficulty rolls for spontaneous Physical actions (including combat, unless it's part of a planned offensive) increase by one.",
+       "source": "V20 p. 482",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Mute",
+       "stat_type": "physical",
+       "values": [3],
+       "category": "flaws",
+       "description": "You are simply lazy, avoiding anything that requires effort on your part. Preferring to let others do the hard work, you lounge around. For any action that requires preparation, there's a good chance you didn't properly prepare. Difficulty rolls for spontaneous Physical actions (including combat, unless it's part of a planned offensive) increase by one.",
+       "source": "V20 p. 483",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Blind",
+       "stat_type": "physical",
+       "values": [3],
+       "category": "flaws",
+       "description": "You cannot see. Characters can compensate for the loss of vision by becoming more attuned to other sensory input, but visual cues and images are lost to them. Difficulties of all Dexterity-based rolls are increased by two. Oddly, vampires with Aura Perception (Auspex 2) are still able to use this ability, thought the information is interpreted via the other senses. On the other hand, vampires who need make eye contact to enact powers like Dominate against you are only at a penalty to do so.",
+       "source": "V20 p. 484",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Mistaken Identity",
+       "stat_type": "social",
+       "values": [1],
+       "category": "flaws",
+       "description": "You look similar to descriptions of another individual, which cause cases of mistaken identity. This can prompt numerous awkward or even dangerous situations, especially if your 'twin' has a terrible reputation or is wanted for some crime.",
+       "source": "V20 p. 490",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Old Flame",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "Someone you once cared deeply for is now with the enemy. He still attempts to play on your sympathies 'for old times' sake' while working against you. Unless you succeed on a contested Manipulation + Expression roll against your former friend, you cannot act against him unless the situation becomes life-threatening.",
+       "source": "V20 p. 491",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Handler",
+       "stat_type": "social",
+       "values": [1, 2, 3, 4, 5],
+       "category": "flaws",
+       "description": "You have a 'handler,' a person who tells you where to go, why you're going, and who will follow you around or 'surprise' you on investigations to make sure you are doing the job. This person may withhold knowledge from you, fail to drop that check in your bank account, lose evidence, or do any number of other annoying and possibly dangerous things to you and your team.",
+       "source": "Ghost Hunters p. 103",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Scaredy Cat",
+       "stat_type": "social",
+       "values": [1],
+       "category": "flaws",
+       "description": "You startle easily. Like, really easily. It's almost impossible for you to sneak around, as the slightest creaking of a board or squeaking of a mouse will elicit an involuntary yelp, shriek or groan of terror. All stealth rolls have a +1 difficulty and your Courage cannot be greater than 2 until this Flaw is bought off.",
+       "source": "Ghost Hunters p. 103",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Paranoid",
+       "stat_type": "social",
+       "values": [1],
+       "category": "flaws",
+       "description": "You've spent years embedded in the conspiracist community exploring different theories and unexplained activity. You are suspicious of everything and everyone. You pick up on innocuous details, each one providing more evidence for the conspiracy against you. Add one to the difficulty of all Social interaction rolls.",
+       "source": "Ghost Hunters p. 103",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Tech Zealot",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "You are so deeply invested in the evidence-collection abilities of your ghost-hunting gadgets that you will discount the proof of your own senses should your tech fail to pick up related readings. Conversely, if your tech is giving you false positives, you will believe its readings over any perception of your own or your team.",
+       "source": "Ghost Hunters p. 103",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Early Access",
+       "stat_type": "supernatural",
+       "values": [3],
+       "category": "flaws",
+       "description": "A near-death experience has left you more susceptible to damage from spirits. You have a greater understanding of spiritual energy but this knowledge comes at the cost of your own physical shell. Whenever you are injured for the first time by any spirit or wraith, the damage doubles.",
+       "source": "Ghost Hunters p. 103",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Protested",
+       "stat_type": "social",
+       "values": [3],
+       "category": "flaws",
+       "description": "In the high-stakes world of academia, you work on the bleeding edge of science. You may have had to crack some eggs and make some hard choices along the way as well to get where you are. But either because of these choices or because of some perceived flaw in your scientific reasoning, there are those that quite simply hate you and your work.",
+       "source": "Ghost Hunters p. 103",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Tag-Along",
+       "stat_type": "social",
+       "values": [3],
+       "category": "flaws",
+       "description": "You have someone who simply must go with you on your paranormal investigations -- someone who just isn't that good at it. Be it a kid brother, a producer for your show, or a groundskeeper, this person loves to ask questions at the wrong times, pick up (and possibly break) sensitive equipment, talk loudly and bump into things, and generally be a pain to you and your team.",
+       "source": "Ghost Hunters p. 103",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Sacrosanct Belief",
+       "stat_type": "social",
+       "values": [4],
+       "category": "flaws",
+       "description": "You have a set of dogmas that you follow to the letter. Be this some esoteric philosophy, the bright line of reason, or the hard line of the church, these paths are your everything, and when you are confronted by something that blasphemes against them you become irate.",
+       "source": "Ghost Hunters p. 103",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Torn Caul",
+       "stat_type": "supernatural",
+       "values": [4],
+       "category": "flaws",
+       "description": "You've done something terrible in the past and that has made you more vulnerable to possession. A dark door within your very being has been opened, and certain spirits can walk through it.",
+       "source": "Ghost Hunters p. 103",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Catalyst",
+       "stat_type": "supernatural",
+       "values": [5],
+       "category": "flaws",
+       "description": "Something about your presence tends to rile the spirits around you. Perhaps you have a latent psychic gift or your emotional intensity is just the fuel that hauntings need.",
+       "source": "Ghost Hunters p. 103",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Cooler",
+       "stat_type": "supernatural",
+       "values": [5],
+       "category": "flaws",
+       "description": "Although you are intensely curious about the paranormal, something about your very being suppresses activity in your immediate area. Your very presence is like static to the spiritual world.",
+       "source": "Ghost Hunters p. 103",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Frozen",
+       "stat_type": "social",
+       "values": [5],
+       "category": "flaws",
+       "description": "When confronted with a terror-inducing situation, you become paralyzed. You are always the last to act, as your brain temporarily shuts down as fear grips you completely.",
+       "source": "Ghost Hunters p. 103",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "On the Lam",
+       "stat_type": "social",
+       "values": [6],
+       "category": "flaws",
+       "description": "You have a rather 'colorful' past when it comes to hunting the paranormal. You're not one for 'permits' -- or 'laws' for that matter -- and your rap sheet reflects that.",
+       "source": "Ghost Hunters p. 103",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Death Cult",
+       "stat_type": "social",
+       "values": [7],
+       "category": "flaws",
+       "description": "You are a part of a death cult and have made a pact with them to, at some point, be the ritual focus for one of their sacrifices in exchange for the knowledge they have.",
+       "source": "Ghost Hunters p. 103",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Rat in a Cage",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "Anytime you are penned in or physically restrained (such as by a cage, or with handcuffs), you suffer acute anxiety. The difficulties of any rolls made under such circumstances are increased by two.",
+       "source": "Lore of the Clans p. 87",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Outsider",
+       "stat_type": "social",
+       "values": [1],
+       "category": "flaws",
+       "description": "This is not your native land. Everything is strange and different, from the customs to the food. The difficulty to applicable Social rolls increases by one.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Unlucky",
+       "stat_type": "supernatural",
+       "values": [1, 2, 3, 4, 5],
+       "category": "flaws",
+       "description": "You are spectacularly unfortunate. Disaster follows in your wake. You are magnetically attracted to misfortune. At 1 point, it rains whenever you forget your coat. At 3 points, it's rare for you to recover from any failure gracefully. At 5 points, nearly everything you attempt ends catastrophically. A number of times per day equal to the points you have in this Flaw, the Storyteller may force you to reroll a successful roll and take the second result. Lucky and Unlucky are not mutually exclusive, but for simplicity's sake, the same roll cannot be modified by both at once. That is, if a Lucky reroll is used, the Storyteller cannot force you to reroll the reroll.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Cast No Reflection",
+       "stat_type": "supernatural",
+       "values": [1],
+       "category": "flaws",
+       "description": "You actually cast no reflection, just like the vampires of legend. This can have a detrimental effect when trying to pass as a human. Vampires of Clan Lasombra automatically have this Flaw (and you may be mistaken for one of them if you possess this).",
+       "source": "V20 p. 494",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Cold Breeze",
+       "stat_type": "supernatural",
+       "values": [1],
+       "category": "flaws",
+       "description": "A chill wind follows you everywhere you go. While it may make for dramatic entrances, this effect also discomfits mortals (+1 difficulty on all appropriate Social rolls) and marks you as obviously supernatural.",
+       "source": "V20 p. 494",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Can't Cross Running Water",
+       "stat_type": "supernatural",
+       "values": [3],
+       "category": "flaws",
+       "description": "You believe in the old folklore and cannot cross running water unless you are at least 50 feet above it. Running water is considered to be any body of water at least two feet wide in any direction and not completely stagnant.",
+       "source": "V20 p. 495",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Repelled by Crosses",
+       "stat_type": "supernatural",
+       "values": [3],
+       "category": "flaws",
+       "description": "You are repelled by the sight of ordinary crosses, believing them to be symbols of holy might. When confronted by a cross, you must make a Willpower roll (difficulty 9) or flee from the symbol for the duration of the scene.",
+       "source": "V20 p. 495",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Light-Sensitive",
+       "stat_type": "supernatural",
+       "values": [5],
+       "category": "flaws",
+       "description": "You are even more sensitive to sunlight than other vampires are. Sunlight causes double normal damage, and the light of the moon can cause lethal damage in a manner similar to the sun, though it must shine directly upon you. Even bright lights hurt your eyes, requiring the use of sunglasses. Followers of Set and related bloodlines cannot take this Flaw, as they already have a worse version of it.",
+       "source": "V20 p. 495",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Outcast",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "Your have rejected the ethos of the caste into which you were Embraced. Perhaps you are one of the few viziers or sorcerers to support the Web of Knives or pursue the Path of Blood. Perhaps you are a warrior who has little stomach for combat, preferring instead to be a diplomat or a student of the occult. Perhaps you made some kind of public spectacle that revealed your disdain for your fellow caste members. Your sire now rejects you, as do the other members of your caste. The difficulty of all Social rolls against members of your caste is at +2.",
+       "source": "Lore of the Clans p. 26",
+       "notes": "Assamite only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Broken Antitribu",
+       "stat_type": "social",
+       "values": [3],
+       "category": "flaws",
+       "description": "You are one of those most pitiful things -- an Assamite antitribu who still labors under the Tremere Curse. You have pledged yourself to the Sabbat, but you cannot perform diablerie and can only partake of Kindred vitae already transubstantiated through the Vaulderie. As a result, the difficulty of all Social rolls against other Sabbat members is at +2.",
+       "source": "Lore of the Clans p. 26",
+       "notes": "Assamite only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Multiple Curses",
+       "stat_type": "supernatural",
+       "values": [2],
+       "category": "flaws",
+       "description": "In addition to the normal curse imposed upon you by your caste or sect, you suffer one additional one associated with the Assamite Clan. Most likely, you are a rare vizier or sorcerer within the Sabbat who suffers the Baali Curse in addition to your normal caste-imposed curse, but at the Storyteller's discretion, other combinations may be possible.",
+       "source": "Lore of the Clans p. 26",
+       "notes": "Assamite only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Scales",
+       "stat_type": "physical",
+       "values": [1, 2, 3],
+       "category": "flaws",
+       "description": "Set blessed you upon your Embrace, and you bear his mark. A portion of your skin is covered in scales. As a one-point Flaw, a small, easily hidden area of skin is covered. As a two-point Flaw, a whole limb is covered, while having a scaled, lipless face is a three-point Flaw. Kine are frightened and disturbed by the obviously unnatural scales, and Kindred have their own prejudices against the Setites. All Social rolls receive a +2 difficulty when the scales are visible. This penalty does not apply to social interactions with other Setites.",
+       "source": "Lore of the Clans p. 67",
+       "notes": "Setites only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Venomous Bite",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "You have developed venom glands in the roof of your mouth. The venom is a virulent neurotoxin, fatal to mortals, although Kindred and other supernatural creatures are unaffected by it. You, of course, are immune. The problem is you have no control over your poison glands. When you bite, you always inject this venom, usually killing your human victims. You must learn to feed in other ways, perhaps drawing the blood you need with a syringe or razor, if you do not wish to kill every time you feed.",
+       "source": "Lore of the Clans p. 67",
+       "notes": "Setites only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Forked Tongue",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "Your tongue is forked, flickering, and inhumanly reptilian. Upholding the Masquerade becomes difficult for you. Note that this tongue does not inflict aggravated damage, nor draw blood.",
+       "source": "Lore of the Clans p. 67",
+       "notes": "Setites only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Heartless",
+       "stat_type": "physical",
+       "values": [4],
+       "category": "flaws",
+       "description": "You have lost your heart. Either you removed it via The Heart of Darkness (see V20, p. 210), or an elder did it to you, but either way you no longer have easy access to it. The heart might be in the possession of a foe, or simply missing. If it turns out that a Cainite possesses the heart (say a Setite elder, or your sire) you must obey their every command. If it's merely missing, the anxiety and obsession to find it interferes with your nightly existence, and may increase the difficulty of Willpower rolls by +1 at Storyteller discretion.",
+       "source": "Lore of the Clans p. 67",
+       "notes": "Setites only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Aura of Typhon",
+       "stat_type": "supernatural",
+       "values": [5],
+       "category": "flaws",
+       "description": "Something slithers beneath your skin, coiled in your very essence -- something that causes the Lupines to stalk you for some dread purpose you do not understand. Their howls follow in your wake. You catch glimpses of blurred motion and the gleam of eyes and teeth in the dark. They get closer every night. What do they want from you?",
+       "source": "Lore of the Clans p. 67",
+       "notes": "Setites only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Member of the Pack",
+       "stat_type": "supernatural",
+       "values": [2],
+       "category": "flaws",
+       "description": "You can only summon, speak to, and command a specific type of animal -- ravens, rats, and so forth -- with Animalism. Your Storyteller is the best adjudicator of what types of animal are appropriate for this Flaw, but the choice should be fairly limiting. Other animals do not respond to your uses of Animalism at all.",
+       "source": "Lore of the Clans p. 87",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Inbred",
+       "stat_type": "supernatural",
+       "values": [1, 2, 3, 4, 5],
+       "category": "flaws",
+       "description": "Inbreeding, a common occurrence among the incestuous Giovanni Clan, can take many forms. The Inbred Flaw covers all manner of physical, mental, and emotional defects. A one-point Inbreeding is something simple and unobtrusive, such as eyes too close together or an underbite (+1 difficulty on Appearance rolls). A three-point Inbreeding is more severe: a congenital health condition (for mortals) or a crippling physical deformity (+2 difficulty on appropriate Strength, Dexterity, or Stamina rolls). Five-point Inbreedings are grossly disabling or emotionally crippling -- everything from uselessly atrophied legs to a permanent Derangement -- decided on mutually by the player and Storyteller. Inbred conditions may or may not be immediately discernible, though their point cost should be relative to their magnitude, as decided by the Storyteller.",
+       "source": "Lore of the Clans p. 107",
+       "notes": "Giovanni only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Shadow Walker",
+       "stat_type": "supernatural",
+       "values": [6],
+       "category": "flaws",
+       "description": "The Giovanni Clan is by its nature inexorably tied to the realm beyond the sudario. Giovanni suffering from this Flaw are so tied to the Shadowlands that even in the lands of the living they must interact with the world of the dead on a nightly basis. To shadow walkers, objects in the Underworld are as real as anything found in the physical world. Such vampires find that the ghosts of walls may impeded their flight, ghostly objects may strike them, and wraiths' powers work as if the Kindred were on the far side of the Shroud. This Flaw is similar to the Ash Path power Dead Hand (V20, p. 163), except that Shadow Walker is always on and it in no way allows the character possessing it to perceive beyond the Shroud. The Storyteller may determine that certain Shadowlands topography interferes with you. Unless you have some ability to do so, you can't see into the Shadowlands, so you have to be careful in feeling your way about -- essentially, a blind man subject to the Underworld landscape.",
+       "source": "Lore of the Clans p. 107",
+       "notes": "Giovanni only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Uncontrollable Night Sight",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "Your night vision is good, but you can't turn it off. While you can see easily into the deepest shadows, any light is almost blinding to you. You suffer penalties the brighter the area you are in is lit, inversely proportional to the standard penalties for darkness. Even just standing in a well-lit room is uncomfortable to you.",
+       "source": "Lore of the Clans p. 123",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Unproven",
+       "stat_type": "social",
+       "values": [3],
+       "category": "flaws",
+       "description": "Somehow, you have failed to prove yourself worthy of the name Lasombra. Maybe your sire did not test you well enough, or an opportunity to prove yourself has not come up. Whatever the reason, you are not truly considered part of the Clan. All social dealings with other Lasombra suffer a -3 dice penalty. You may also not be chosen to sit in judgment in the Courts of Blood.",
+       "source": "Lore of the Clans p. 123",
+       "notes": "Lasombra only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Paper Trail",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "You've spent some time in state institutions like prisons or asylums, likely before your Embrace. Most people have some sort of information that relays date of birth and other bits of fact. This information is hard to eliminate, and may endanger the Masquerade. Enemies with the right influence may be able to track down the information and use it against you. It may lead to vulnerable targets or clue hunters to where your haven is located.",
+       "source": "Lore of the Clans p. 142",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Stigmata",
+       "stat_type": "physical",
+       "values": [2, 4],
+       "category": "flaws",
+       "description": "Oracles are often marked as messengers of the gods. Your markings come in the forms of phantom wounds that seep blood. The bleeding is slight but incessant, costing you an extra blood point every day just before you wake at dusk. The 2-point version of this Flaw means wounds that can be easily hidden from prying eyes, such as on the hands or the side. You gain a +1 difficulty to all Social rolls when dealing with someone aware of your condition. The 4-point version can't be easily hidden, like bleeding eyes. The Social penalty increases to +2, and one of your Attributes also gains a +1 difficulty to all rolls because of the constant seeping blood.",
+       "source": "Lore of the Clans p. 142",
+       "notes": "Malkavian only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Infectious",
+       "stat_type": "physical",
+       "values": [3],
+       "category": "flaws",
+       "description": "Madness flows within your blood, but your bite carries a taint as well. Mortals take a temporary derangement for every three points of blood you take from them. The derangements stay until the mortal restores the lost blood.",
+       "source": "Lore of the Clans p. 142",
+       "notes": "Malkavian only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Overstimulated",
+       "stat_type": "physical",
+       "values": [3],
+       "category": "flaws",
+       "description": "Malkavians notice things that many others do not. That means keeping their eyes and ears open far longer than anyone else does. That makes you easily distracted when trying to focus. Take a +2 penalty to all rolls involving Perception.",
+       "source": "Lore of the Clans p. 142",
+       "notes": "Malkavian only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Dead Inside",
+       "stat_type": "mental",
+       "values": [4],
+       "category": "flaws",
+       "description": "You feel nothing but pain and numbness. While others find ways to make their lives worth living, you sometimes don't get that thrill. Once per session, the Storyteller may cancel any gain of Willpower you made by playing to your Nature or Demeanor.",
+       "source": "Lore of the Clans p. 142",
+       "notes": "Restricted",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Stench",
+       "stat_type": "physical",
+       "values": [1],
+       "category": "flaws",
+       "description": "Most Nosferatu pick up a certain odor, but you stink so bad even your Clan-mates find you hard to be close to. Your presence is preceded by your stench, removing two die from all Stealth rolls.",
+       "source": "Lore of the Clans p. 161",
+       "notes": "Nosferatu only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Dangerous Secret",
+       "stat_type": "social",
+       "values": [1, 2, 3, 4, 5],
+       "category": "flaws",
+       "description": "You have come to know something you really wish you hadn't discovered. Worse yet, the people you have the dirt on know that you know. It might be that you have discovered the Prince's haven, or that there are infernalists hiding in the diocese. Whatever it is, you are not sure whom you can tell, and if you do, you will only make the subjects of the secret more enthusiastic about getting rid of you. You may even be implicated in the secret and risk going down with them. The more potent the Flaw, the more powerful the people in question are, and the more they want it silenced.",
+       "source": "Lore of the Clans p. 161",
+       "notes": "Restricted",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Parasitic Infestation",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "Living in the dark has made you a home to all manner of creepy crawlies and bloodsuckers. Your skin is crawling with ticks, lice, and leeches of all descriptions. They constantly bite and burrow, and having fed on your vitae, they have become very hard to kill. Not only can you not command them, you have tried everything to get rid of them and still they persist. Whatever the reason, they find you so succulent they reduce your blood pool by the result of one die divided by 3 (round down) each time you rise. The constant itch also keeps you on edge, increasing the difficulty of any Self-Control or Instinct rolls by 1.",
+       "source": "Lore of the Clans p. 161",
+       "notes": "Nosferatu only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Bestial",
+       "stat_type": "physical",
+       "values": [3],
+       "category": "flaws",
+       "description": "You are closer to animals than humans, and it shows. In addition to the Nosferatu Clan weakness, you have an additional weakness: whenever you frenzy, you gain an animal feature, similar to the Gangrel Clan weakness (V20, p. 55). With Storyteller permission, permanently acquired animal features may be justification to acquire certain Merits after character creation, such as Lizard Limbs (p. 160) or Monstrous Maw (pp. 160-161). If so, the Storyteller can simply award them, or require an experience point expenditure (such as two times the Merit point value). Similar Flaws can also be taken, but cannot grant additional freebie or experience points.",
+       "source": "Lore of the Clans p. 161",
+       "notes": "Nosferatu only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Bestial",
+       "stat_type": "social",
+       "values": [3],
+       "category": "flaws",
+       "description": "You have made an enemy of another group of Nosferatu. Unlike your usual enemies, they know the places you like to go and aren't too squeamish about following you there. They keep you on the move, hunting you from sanctuary to sanctuary. The sewers themselves might not even be safe for you anymore. If you move to a new city, they use their contacts to pass on the word to their allies to keep hounding you. Sooner or later, you are going to have to take them down to rid yourself of them.",
+       "source": "Lore of the Clans p. 161",
+       "notes": "Nosferatu only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Putrescent",
+       "stat_type": "physical",
+       "values": [3],
+       "category": "flaws",
+       "description": "The supernatural process that usually keeps a vampire's form from rotting after death has failed to work on you. Your body has become putrescent and fragile as it gradually decays. All soak rolls you make have their dice pool reduced by 1. You may even lose body parts if you suffer a solid enough blow. Should this happen, make a Stamina roll (difficulty 6) and lose a part of your body (Storyteller's choice) if you fail. Should you botch, you also receive a level of aggravated damage. These missing parts may regrow, but your body continues to rot.",
+       "source": "Lore of the Clans p. 161",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Contagious",
+       "stat_type": "supernatural",
+       "values": [5],
+       "category": "flaws",
+       "description": "Your body has died on the inside, filling you with noxious bacteria, spores, and even fungi. Mortals that touch you or on whom you feed must make a Stamina roll (difficulty 9) not to fall ill. The illness puts them in bed with fever and sickness, and each week they may attempt the Stamina roll again. The Storyteller might reduce the difficulty if the target is receiving proper medical attention. On a success they recover, but if they fail, they remain feverish. At the end of each month the victim remains ill, they lose a point of Stamina; if they are reduced to zero Stamina they die. If the Nosferatu knows of their contagion and infects someone maliciously, the Storyteller might call for a Humanity (or appropriate Path of Morality) degeneration roll if they die. Supernatural creatures generally have the ability to heal or cure such sickness in themselves, and vampires are immune to these germs of the dead.",
+       "source": "Lore of the Clans p. 163",
+       "notes": "Restricted, Nosferatu only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Incoherent",
+       "stat_type": "social",
+       "values": [5],
+       "category": "flaws",
+       "description": "Human speech is impossible for you. It might be that your mouth is too misshapen after the Embrace, or that years of living in the sewers have made you forget how to communicate. While you can understand what is being said to you, you cannot respond. Telepathy works on you as normal, and you have no problem communicating with animals, but human speech is barred to you.",
+       "source": "Lore of the Clans p. 163",
+       "notes": "Nosferatu only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Chandala",
+       "stat_type": "social",
+       "values": [1],
+       "category": "flaws",
+       "description": "Being a member of the lowest jati, the Chandala, is a mixed bag. You are responsible for the disposal of corpses, as well as many other foul tasks, but at the same time, you are often ignored. Your Social rolls against other Ravnos are made at a +2 difficulty. You do not have to take this Flaw to be a member of the Chandala jati, but only members of the Chandala jati may have this Flaw.",
+       "source": "Lore of the Clans p. 182",
+       "notes": "Ravnos only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Flawed Reality",
+       "stat_type": "supernatural",
+       "values": [2],
+       "category": "flaws",
+       "description": "Your illusions always contain a notable flaw, and as such, are easier to disbelieve. The difficulties of all rolls to disbelieve your illusions are reduced by two.",
+       "source": "Lore of the Clans p. 182",
+       "notes": "Ravnos only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Lost Svadharma",
+       "stat_type": "mental",
+       "values": [3],
+       "category": "flaws",
+       "description": "You once knew your svadharma, but when the time came to fulfill it, you failed. Now that destiny has passed you by, and there may never be another chance to make it right. Other Ravnos know the tale, and hold your failure against you. You are scorned, and your confidence has been thrown into doubt. Your total Willpower score is permanently reduced by one and you may not spend Willpower when performing actions where other Ravnos are directly involved.",
+       "source": "Lore of the Clans p. 182",
+       "notes": "Ravnos only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Tortured Artist",
+       "stat_type": "mental",
+       "values": [1],
+       "category": "flaws",
+       "description": "Nothing is ever good enough for your work. No matter how much praise is lavished upon you, you can only see the flaws and mistakes. This leads to long periods of ennui, which makes your artistic work irregular at best. Further, you throw yourself into business arrangements and social situations with intensity, which often leads to heartbreak, which leads to the pain and passion that fuels your next work. You are at +1 difficulty on Social rolls in which you are being praised, complimented, or treated with respect.",
+       "source": "Lore of the Clans p. 200",
+       "notes": "Toreador only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Private Life",
+       "stat_type": "social",
+       "values": [3],
+       "category": "flaws",
+       "description": "You have a completely separate life that no other Kindred know about. It may be your mortal family that you have turned into ghouls, or a YouTube channel that you use to talk in metaphor about your frustrations with Kindred society. If discovered, this could risk other vampires accusing you of breaching the Masquerade (if Camarilla), consorting with humanity instead of being a superior vampire (if Sabbat), or just overall paranoia and suspicion on why you're keeping such deep secrets.",
+       "source": "Lore of the Clans p. 200",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Arcane Curse",
+       "stat_type": "supernatural",
+       "values": [1, 2, 3, 4, 5],
+       "category": "flaws",
+       "description": "Because of either your studies or someone else's, you suffer from a magical curse. It might be an aversion or allergy, or even a strange magical effect. The level of the flaw depends on how debilitating the curse is. Curing the affliction may be impossible, or require some sort of quest or advanced research. Flaw Value Example Curse: 1 point A minor oddity, such as an animal feature or strange eye color; 2 point A noticeable problem, such as your magic having a strange taint or pattern that makes it instantly recognizable, or that plants wither in your presence.; 3 point Something problematic, such as people sickening in your presence or animals attacking you.; 4 point Concerning handicap, such as developing another Clan's weakness.; 5 point Potentially deadly, such as moonlight being as dangerous to you as sunlight.",
+       "source": "Lore of the Clans p. 219",
+       "notes": "Tremere only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Cloistered",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "You have spent almost all of your undead existence in the halls of the chantry, making Kindred society rather new and confusing for you. You suffer a -2 dice penalty to any social interactions with those outside the Tremere.",
+       "source": "Lore of the Clans p. 219",
+       "notes": "Tremere or Gargoyle only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Betrayer's Mark",
+       "stat_type": "social",
+       "values": [3],
+       "category": "flaws",
+       "description": "Even though you are loyal to House and Clan Tremere, for some reason you are branded with the mark of the antitribu. It might be that you have returned to the Clan after leaving the Sabbat or that you unwittingly or as part of an undercover operation took part in the Vaulderie. Whatever the reason, the mark makes other Tremere wary of you. You will have to go that extra mile to prove yourself, and few among the Clan will trust you with positions of power and responsibility.",
+       "source": "Lore of the Clans p. 219",
+       "notes": "Tremere only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Bound to the Clan",
+       "stat_type": "social",
+       "values": [3],
+       "category": "flaws",
+       "description": "You have done more than just drink from the blood of the elders. Whether as punishment or by choice, you have become fully blood bound to Clan Tremere. You cannot act against the Clan, and find everything you do works in the service of the Tremere. You might not like it, but you can't help yourself doing it. Of course, now you are bound to the Clan, you cannot be bound to another individual. Many older Tremere have this Flaw, as it has been common in the past to completely blood bind new Tremere.",
+       "source": "Lore of the Clans p. 219",
+       "notes": "Tremere only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Mage Blood",
+       "stat_type": "supernatural",
+       "values": [5],
+       "category": "flaws",
+       "description": "Your blood is so tied to magic that you find you are unable to use any Discipline apart from Thaumaturgy (and for Kindred who are not Tremere, it is still paid for at out-of-Clan rates). While no path or ritual is barred to you, you may not gain any dots in any other Discipline.",
+       "source": "Lore of the Clans p. 219",
+       "notes": "Tremere only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Thaumaturgically Inept",
+       "stat_type": "supernatural",
+       "values": [5],
+       "category": "flaws",
+       "description": "Something about you refuses to respond to Thaumaturgy. Magic just doesn't work for you. You cannot take any ability in the Thaumaturgy Discipline or any of its paths or rituals. For a Tremere this is doubly difficult, as skill in Thaumaturgy is often the key to position within the Clan.",
+       "source": "Lore of the Clans p. 219",
+       "notes": "Tremere only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Unblinking",
+       "stat_type": "physical",
+       "values": [1],
+       "category": "flaws",
+       "description": "Your eyes do not close. Ever. Perhaps you have left your humanity too far behind to upkeep such habits, or perhaps you fleshcrafted some form of transparent eye-scale or nictitating membrane. Your quirk probably makes astute observers uncomfortable, adding +1 to the difficulty of friendly social interactions with humans, Kindred on Humanity, and others with mortal sensibilities.",
+       "source": "Lore of the Clans p. 239",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Ancestral Soil Dependence",
+       "stat_type": "supernatural",
+       "values": [2],
+       "category": "flaws",
+       "description": "Your flesh yearns for a homeland you have never seen. The voice of Kupala punishes your day sleep if this yearning is not met. The soil from a place important to you as a mortal will not suffice; in addition, you require two handfuls of the tainted Eastern European soil of the ancestral Tzimisce homeland. Characters Embraced in Eastern Europe can't take this Flaw (they're already dependent on the local soil).",
+       "source": "Lore of the Clans p. 239",
+       "notes": "Tzimisce only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Faceless",
+       "stat_type": "supernatural",
+       "values": [3],
+       "category": "flaws",
+       "description": "You have escaped the tyranny of physical self-identity. Call no face your own. Every sunset, you awaken to a new visage, an amalgam pieced together from memory and dream. Your features, ethnicity, even gender become fluid things while you sleep. While this Flaw exemplifies the extreme ideals of Azi Dahaka (and should impress most Metamorphosists), it can cause complications for vampire concerned with maintaining recognition, reputation, or a mortal alias. Every sundown, the player rolls one die and is subject to the results on the following table: Roll Result: 1 No change; 2-3 Minor changes, somewhat recognizable; 4-8 Unrecognizable by even those closest to the character (such as her packmates or sire). Ethnicity and gender may change; 9-10 Total metamorphosis. Tentacles, bone spikes, or other inhuman features may appear. This Flaw affects some Backgrounds (V20, p. 110). Without a stable face, Alternate Identity and Fame cannot be maintained. Backgrounds like Allies, Contacts, Influence, and Status might be complicated by the lack of a solid identity as well. The vampire can use Malleable Visage and a mirror to reconstruct her true face from memory, but this requires at least three successes at difficulty 8 to make her recognizable, and five successes for a flawless copy. The Mistaken Identity Flaw (V20, p. 450) cannot be taken. Other Merits/Flaws may be affected, at the Storyteller's discretion. Characters must have at least one dot of Vicissitude to take this Flaw.",
+       "source": "Lore of the Clans p. 239",
+       "notes": "Tzimisce only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Privacy Obsession",
+       "stat_type": "social",
+       "values": [3],
+       "category": "flaws",
+       "description": "Perhaps it is a trait carried in the blood. Perhaps your strict sire carved this lesson into your mind and flesh. Either way, you carry the want for privacy to extremes. You must make a Willpower roll (difficulty 6) to enter another being's dwelling without being invited, though you can go to fiendishly clever lengths to garner an unwitting invitation. When disturbed in your haven by an uninvited guest, you must make a Self-Control or Instincts roll (difficulty 7) to avoid frenzy.",
+       "source": "Lore of the Clans p. 239",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Revenant Weakness",
+       "stat_type": "supernatural",
+       "values": [3],
+       "category": "flaws",
+       "description": "You were once part of a revenant family. Following the Embrace, you suffered both your Clan's weakness and your revenant family's limitation. The Storyteller might let you manifest a weakness from a lost or destroyed revenant line. This could add mystery to your background and allow for a bit of genealogical detective work, certainly making you a curiosity to the Romanian Legacy Foundation.",
+       "source": "Lore of the Clans p. 239",
+       "notes": "Tzimisce only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Consumption",
+       "stat_type": "supernatural",
+       "values": [5],
+       "category": "flaws",
+       "description": "There is something hungry inside of you. Portions of the Antediluvian? Your Vicissitude gone horribly wrong? Whatever it is, it is active, acting like a cancer, devouring you from the inside out. Your very blood is wrought with corrosive, flesh-eating bacteria. At the beginning of each evening, you suffer one health level of lethal damage that cannot be soaked nor healed with blood.",
+       "source": "Lore of the Clans p. 239",
+       "notes": "Tzimisce only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Uncommon Vitae Preference",
+       "stat_type": "supernatural",
+       "values": [2],
+       "category": "flaws",
+       "description": "Your preferred source for vitae is rarified even by the standards of your Clan, such as 'only Korean War vets,' 'only Federal Court Judges,' or 'only virgins over the age of 40.' The difficulty of all hunting rolls for your character is increased by +2, to a maximum of 9.",
+       "source": "Lore of the Clans p. 261",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Clan Weakness",
+       "stat_type": "supernatural",
+       "values": [2],
+       "category": "flaws",
+       "description": "Despite your failure to adopt your original Clan's other abilities, you did inherit their weakness. While this can be deadly to the unprepared vampire, a canny Caitiff might turn this to their advantage to better blend among the parent Clan. Some Nosferatu, for example, would likely never notice, and might even stand up for the Caitiff even amidst accusations from outsiders.",
+       "source": "Lore of the Clans p. 269",
+       "notes": "Caitiff only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Fangless",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "Considered the mark of a true mongrel, you never developed your fangs, or you lacked teeth before the Embrace. Either way, you have to use a knife or otherwise drink from bleeding wounds. You have no natural way beyond Disciplines to inflict aggravated damage.",
+       "source": "Lore of the Clans p. 269",
+       "notes": "Caitiff only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Ignorance",
+       "stat_type": "mental",
+       "values": [2],
+       "category": "flaws",
+       "description": "Many sires abandon their Caitiff progeny without a word of instruction or warning about their new nature. The character starts with no knowledge of the abilities, customs, or politics of the undead, and must learn from their mistakes or find a mentor.",
+       "source": "Lore of the Clans p. 269",
+       "notes": "Caitiff only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Bulimia",
+       "stat_type": "mental",
+       "values": [4],
+       "category": "flaws",
+       "description": "You hunger for blood, and like all vampires, you will eventually feed, but the thought of it still makes you sick. Whenever you feed, make a Stamina roll with a difficulty of 8. If you fail, you vomit out the fresh blood before it can be absorbed into your body, spraying it everywhere.",
+       "source": "Lore of the Clans p. 269",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Methuselah's Thirst",
+       "stat_type": "physical",
+       "values": [7],
+       "category": "flaws",
+       "description": "You can no longer sustain yourself on mortal blood and must feed on the blood of Kindred or other supernatural creatures with potent reserves, such as lupines or faeries.",
+       "source": "Black Hand p. 177",
+       "notes": "Restricted",
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Vulgar",
+       "stat_type": "social",
+       "values": [1],
+       "category": "flaws",
+       "description": "Tact is a foreign concept to you, and you're famous for being abrasive and generally unpleasant. Rolls involving social graces or delicate situations suffer +1 difficulty.",
+       "source": "Black Hand p. 177",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Vulgar",
+       "stat_type": "social",
+       "values": [1],
+       "category": "flaws",
+       "description": "Tact is a foreign concept to you, and you're famous for being abrasive and generally unpleasant. Rolls involving social graces or delicate situations suffer +1 difficulty.",
+       "source": "Black Hand p. 177",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Kiss of Death",
+       "stat_type": "supernatural",
+       "values": [2],
+       "category": "flaws",
+       "description": "Should you drain a mortal vessel of all blood minutes after their heart stops beating, the corpse rises as a zombie. These zombies are free-willed, hostile toward you, and cannot be directed without sorcerous or necromantic means to command them.",
+       "source": "Black Hand p. 177",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Lord of the Night",
+       "stat_type": "supernatural",
+       "values": [3],
+       "category": "flaws",
+       "description": "In your presence lights dim, tiny flames extinguish, and shadows cling to you or languidly move about with a surreal unlife, making it impossible to pass as anything other than inhuman. The particular shadow you cast is a malicious entity with a will of its own. It lashes out at friends and enemies alike, tearing at the scenery, and snarling at passers-by. These effects can be suppressed for a scene by spending a point of Willpower.",
+       "source": "Black Hand p. 177",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Vassal of the Clan",
+       "stat_type": "supernatural",
+       "values": [6],
+       "category": "flaws",
+       "description": "Through natural predisposition or a curse, you bear a permanent one-point blood bond to those one Generation lower, a two-point blood bond with those two Generations lower, and a three-point bond to those three or more Generations lower than you within your own Clan.",
+       "source": "Black Hand p. 177",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Ragged Bite",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "Unlike your Cainite peers, you lack the ability to neatly seal up the wound caused by feeding. Instead, you leave torn, bleeding marks which have a chance of becoming infected. Your target must make a Stamina roll (difficulty the number of damage caused + 5) to resist infection. The impact of such a notable wound in conjunction with a diseased target is left to the discretion of the Storyteller. At the very least, this poses complications in hiding your identity as anything other than a monster.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Unclean",
+       "stat_type": "physical",
+       "values": [2, 3],
+       "category": "flaws",
+       "description": "Whether a lingering trait from your mortal life or an unfortunate side effect of your Embrace, your skin is marred in such a way that most casual observers assume you are a leper (or at least carrying some kind of plague). You may be barred entry to major cities, thrown out of most establishments, or subject to misguided attempts at healing or mercy. At 3 points, you carry leprosy (or some other contagious and visible disease). Nosferatu who take this Flaw receive only 1 point for it and must take its full effects (3 points).",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Slow Healing",
+       "stat_type": "physical",
+       "values": [3],
+       "category": "flaws",
+       "description": "While other Cainites recover swiftly from their injuries, you are not so fortunate. Your unliving flesh is slow to mend and reluctant to heal, costing two blood points to heal a normal level of damage and five days (in addition to the normal expenditures) to heal a level of aggravated damage.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Flesh of the Corpse",
+       "stat_type": "physical",
+       "values": [5],
+       "category": "flaws",
+       "description": "Although you recover from your wounds (mechanically healing any health levels lost), your flesh and bone retain the memory of the injury. Skin stays torn, bruises remain dark, and broken bones still bend at odd angles. You are incapable of passing as anything but inhuman, and the Storyteller may assign increased difficulty to Social rolls as appropriate. Some Cainites with this Flaw continue to age and decay, eventually becoming nothing more than skeletons with rough, organ-like chunks hanging off their bones.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Deep Sleeper",
+       "stat_type": "physical",
+       "values": [1],
+       "category": "flaws",
+       "description": "Slumber takes you wholly, plunging you completely into the depthless realm of dreams. Increase the difficulty of rolls to wake during the day by two.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Prey Exclusion",
+       "stat_type": "mental",
+       "values": [1],
+       "category": "flaws",
+       "description": "For whatever reason you choose, you refuse to feed upon a certain type of person. If, by some unfortunate circumstance, you prey upon such a person, you frenzy immediately and must make a Degeneration check. Ventrue may only take this Flaw for a subset of their particular feeding stock. For example, a Ventrue might feed from 'virgin men,' but will not feed from Jewish virgin men.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Flesh Eater",
+       "stat_type": "mental",
+       "values": [2],
+       "category": "flaws",
+       "description": "You cling to the misguided belief that you must also consume the blood-rich flesh of your victim (such as the heart or liver). This has obvious impact on the size of your herd as well as the mortal population eventually linking mysterious, gruesome deaths to you. To keep down blood consumed without a murderous amount of flesh, you must succeed in a Willpower roll (difficulty 8) or vomit up the blood.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Ethical Prohibition",
+       "stat_type": "mental",
+       "values": [2, 4],
+       "category": "flaws",
+       "description": "The necessity of feeding is at odds with your moral compass. At 2 points, you refuse to feed on humans. At 4 points, you refuse to feed except when utterly necessary.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Initiate of the Road",
+       "stat_type": "supernatural",
+       "values": [1],
+       "category": "flaws",
+       "description": "Your life on the road to enlightenment has just begun. Though you fully grasp the tenets and precepts of your chosen Road, you have not yet put them to the test. This may be because you were recently Embraced or because you previously abandoned a former Road (in which case you may also consider taking the Apostate Flaw on page 425). With this comes a +1 difficulty in resisting frenzy and Rotschreck, and you lack an aura tied to your Road. However, you have an easier time changing Roads, if you wish to do so.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Demon-Hounded",
+       "stat_type": "supernatural",
+       "values": [1, 2, 3, 4, 5],
+       "category": "flaws",
+       "description": "A demon has taken a shine to you. It comes at odd and inconvenient hours and offers you bribes of wealth and power. Some days, it asks for favors; on others, it offers them. What black schemes does hell have in mind for you that one of its servants would bother you so? What fell powers have you toyed with that you should not? At 1 point, the demon is little more than an imp, asking for minor favors or stealing small objects. At 3 points, the demon is your physical or magical equal, or is a smaller threat that is willing to also drag your close friends into this affair. At 5 points, the demon is significantly powerful, able to threaten your coterie, or a lesser demon willing to torment your friends, family, and acquaintances.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Animate Shadow",
+       "stat_type": "supernatural",
+       "values": [3],
+       "category": "flaws",
+       "description": "Your shadow is not merely an absence of light; it is a living, malicious entity with a will of its own, lashing out at others. You lose two dice from all Social rolls with Lasombra who know of your issue.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Cloaked in Shadow",
+       "stat_type": "supernatural",
+       "values": [3],
+       "category": "flaws",
+       "description": "Shadows cling to you constantly, making it impossible to pass as anything other than supernatural. The difficulty for Social rolls with other vampires (especially the Lasombra) increases by one.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Harbinger of the Abyss",
+       "stat_type": "supernatural",
+       "values": [5],
+       "category": "flaws",
+       "description": "You have become the void: the endless black of night, an empty pool of darkness. Where you pass, shadows leap to join you and flames gutter and perish. When you are in the presence of mundane fire, you must make a reflexive Obtenebration roll against the soak difficulty of any nearby flame. A success extinguishes the fire instantly, casting the area into darkness. This Flaw also includes the effects of Touch of Frost (page 426) and Eerie Presence (page 427) and is therefore mutually exclusive with them. However, the clinging darkness around you provides one benefit (besides being an unusual way to extinguish unwanted fires): reduce the difficulty of all Intimidation rolls by two, to a minimum of 4. You must have at least one dot of Obtenebration to purchase this Flaw.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Weak Aura",
+       "stat_type": "supernatural",
+       "values": [2],
+       "category": "flaws",
+       "description": "The aura of your Road clings weakly to you, manifesting only when you perform acts of faith or when your fervor is at its most intense. This is a Merit if your Road rating is 4 or less, and a Flaw if it's 5 or more. Follow the chart below for the mechanical effects on the application of your aura. Road Rating Aura Modifier: 10-9 +1 difficulty; 8-3 no modifier; 2-1 -1 difficulty.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Potent Aura",
+       "stat_type": "supernatural",
+       "values": [3],
+       "category": "flaws",
+       "description": "Your aura is mighty, giving people a powerful impression of you. Your presence ripples through a room, giving you away instantly. This is a mixed blessing, as you must grow into your burgeoning power, finding it difficult to control at first. This is a Merit if your Road is 5+ and Flaw if it's 4 or less. Follow the chart below for the mechanical effects on the application of your aura. Road Rating Aura Modifier: 10 -3 difficulty; 9-8 -2 difficulty; 7-6 -1 difficulty; 5 no modifier; 4-3 +1 difficulty; 2 +2 difficulty; 1 +3 difficulty.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Hunted by the Hierophants",
+       "stat_type": "social",
+       "values": [4],
+       "category": "flaws",
+       "description": "Setites claim their religion is one of freedom from indoctrination and conditioning. The Hierophants openly agree, and then crush those who seek to subvert Sutekh's faith. Whether as a result of being a Witch of Echidna, one of their postulants, or simply a Setite who throws off the yoke of Sutekh -- the Hierophants are displeased by your decision and seek you out, actively sending Setite warriors to bring you to heel. Depending on the depth of your sins, they will either aim to capture you and bring you back to the Courts of Egypt, or destroy you on the spot. The Hierophants brook no profanation, and will not remove you from their lists until they're convinced of repentance or Final Death. Storytellers are encouraged to make this vampire's existence one of paranoia and near-constant threat.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "Setite only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Unholy Stain",
+       "stat_type": "supernatural",
+       "values": [3],
+       "category": "flaws",
+       "description": "Your soul is stained with sacrilege. Some are born or Embraced this way; more earn the stain through wicked oaths and foul deeds. When interacting with any mortal, your Social difficulties increase by one, as people feel unnaturally ill at ease in your presence. Additionally, people of faith feel compelled to hostility when in your proximity. Their initial stance toward you is always aggressive, and it takes little to provoke them to violence. Mortals with True Faith will recognize you on sight, and often attack.",
+       "source": "V20 Dark Ages p. 421",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Carrion Presence",
+       "stat_type": "supernatural",
+       "values": [2],
+       "category": "flaws",
+       "description": "This affliction represents the Baali's true connection to the decrepitude their bloodline commands. Pestilence is attracted to the Baali; flies leave their delicious carcasses to circle around the vampire, rats crawl along their limbs and squeak their praises, and vultures can be seen circling them at almost all times. The degree to which they are afflicted differs from character to character, but there is no getting rid of their swarm. Swatting their flies simply calls others to take their place. While quite disgusting to most, these vampires wear such a thing with pride. It does, however, make dealing in non-Baali circles quite difficult.",
+       "source": "Lore of the Bloodlines p. 16",
+       "notes": "Baali only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Dark Aura",
+       "stat_type": "supernatural",
+       "values": [3],
+       "category": "flaws",
+       "description": "Even without the use of Auspex, the Baali seems somehow wrong to anyone they interact with, emitting a terrifying aura of sickness and power. The character is always at a slight disadvantage when dealing with other vampires or those touched by the divine, as they sense the depravity of the Baali's soul. Baali with this Flaw suffer a +2 difficulty to all Social rolls, unless they are using Intimidation. To those who use Auspex to view the Baali's aura, it appears as a thin, red mist surrounding the character with the occasional watchful eyes appearing within.",
+       "source": "Lore of the Bloodlines p. 16",
+       "notes": "Baali only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Plague of Demons",
+       "stat_type": "supernatural",
+       "values": [4],
+       "category": "flaws",
+       "description": "No matter what, demons are constantly drawn to the Baali. Once in a while, this can be a benefit (Baali with this Flaw are at -1 difficult to summon a particular demon), but most of the time these nefarious spirits are distractions. They scream in the Baali's ear, tug at her clothes, or screw with her possessions... and always at the worst possible moment. The character is at +1 difficulty for any rolls involving Perception. Further, once per session, the Storyteller can convert one of the Baali's dice rolls into a botch.",
+       "source": "Lore of the Bloodlines p. 16",
+       "notes": "Baali only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Banshee-in-Waiting",
+       "stat_type": "supernatural",
+       "values": [5],
+       "category": "flaws",
+       "description": "The Fugue is gradually driving you towards madness. If your temporary Willpower ever reaches 0, you automatically gain a derangement which can never be removed. You may remove other derangements you gain in other ways as usual. You may gain a maximum of three of these permanent derangements from losing your Willpower before being consumed by it. Should it happen a fourth time, you immediately lose yourself to the Fugue and become a character under the control of the Storyteller, walking in whatever direction the music takes you and killing anything you come across.",
+       "source": "Lore of the Bloodlines p. 26",
+       "notes": "Daughters of Cacophony only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Stone Tongue",
+       "stat_type": "physical",
+       "values": [3],
+       "category": "flaws",
+       "description": "The transformation of the Embrace didn't just affect your appearance. It made it physically difficult for you to speak properly and clearly. It may be because of a clumsy tongue, some nasty looking tusks, or a raptor-type beak. No matter the cause, you suffer a +2 difficulty to any Social rolls requiring you to speak.",
+       "source": "Lore of the Bloodlines p. 37",
+       "notes": "Gargoyles only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Blood Weakness",
+       "stat_type": "physical",
+       "values": [4, 7],
+       "category": "flaws",
+       "description": "The bloodline began as an experiment in manufacturing a Kindred from diverse bloodlines. They perfected the alchemical process, but somewhere along the way, a weakness in an ancestor caught hold. It manifested in your Embrace. In addition to the weaknesses you possess, you also possess either the Gangrel (V20, p. 55) or the Tzimisce weakness (V20, p. 71). For four points, choose one of the two weaknesses. For seven points, you possess both. Warrior Gargoyles with the Gangrel weakness version of Blood Weakness may gain both animal features and stone features from one frenzy. Additionally, choose one of the four Disciplines available to the Gargoyles. For you, this Discipline is considered out of Clan and costs the higher amount of experience points to advance.",
+       "source": "Lore of the Bloodlines p. 37",
+       "notes": "Gargoyles only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Unsanctioned Embrace",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "Lazarus decreed no Harbingers should Embrace, but your sire failed to listen. You're hopelessly green and unworthy of the vitae in your veins. Until you perform acts befitting the nobility of your blood, your existence is shunned as a bad omen. Increase difficulties of all Social actions involving your bloodline by two.",
+       "source": "Lore of the Bloodlines p. 48",
+       "notes": "Harbingers of Skulls only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Shadow Scarred",
+       "stat_type": "supernatural",
+       "values": [3],
+       "category": "flaws",
+       "description": "Since escaping the Shadowlands, you've struggled to reacclimatize to the world of the living. You see ravenous Spectres in every shadow. You must roll your Courage (difficulty 7) or spend a point of Willpower whenever using Necromancy, as you fear the repercussions of touching the Underworld.",
+       "source": "Lore of the Bloodlines p. 48",
+       "notes": "Harbingers of Skulls only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Lightweight",
+       "stat_type": "supernatural",
+       "values": [1],
+       "category": "flaws",
+       "description": "Shamefully, you cannot imbibe the blood of any creatures other than mortals, ghouls, and vampires. Whenever you attempt to drink from another entity, you're forced to purge the contents immediately after and gain no sustenance from it.",
+       "source": "Lore of the Bloodlines p. 60",
+       "notes": "Kiasyd only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Illiterate",
+       "stat_type": "social",
+       "values": [1, 2],
+       "category": "flaws",
+       "description": "Perhaps you communicate best through illustration, dance, or impassioned speech; but you can't read or write. This is either a temporary Flaw (1pt.) that can be rectified with a patient teacher, or permanent (2pt.) due to a disability inhibiting your understanding. This Flaw is enough to get you ostracized by others of your bloodline if you do not conceal it.",
+       "source": "Lore of the Bloodlines p. 60",
+       "notes": "Kiasyd only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Dreadful Mara",
+       "stat_type": "supernatural",
+       "values": [4],
+       "category": "flaws",
+       "description": "You drank something that still lives within you and hates you, exerting alarming control over your thoughts and actions. Each night, the Storyteller may convert a single rolled success into a 1, potentially leading to a botch. At the Storyteller's discretion, the entity may also whisper advice or insults, which can lead to increased difficulty during attempts to concentrate.",
+       "source": "Lore of the Bloodlines p. 60",
+       "notes": "Kiasyd only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "The Largest Maw",
+       "stat_type": "physical",
+       "values": [2],
+       "category": "flaws",
+       "description": "Due to the size of the Nagaraja's shark-like rows of teeth, they find it hard to communicate verbally. Instead, she speaks through pools of spit and sometimes bites her own teeth in the process. This makes them quieter than other Nagaraja, but can also affect situations where clear speech is mandatory, such as when giving speeches or reciting delicate rituals. All difficulties for rolls where speech is a factor are raised by +2.",
+       "source": "Lore of the Bloodlines p. 70",
+       "notes": "Nagaraja only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Body Trail",
+       "stat_type": "social",
+       "values": [4],
+       "category": "flaws",
+       "description": "Whether the Nagaraja is just too sloppy and prone to overlooking details during her kills or she is especially fond of leaving a signature for every kill to send a message to others, others can use this to track her down. Each time there are items at a scene of a crime that could link directly back the Nagaraja, causing her to always look over her shoulder. The police are always one step away from busting her, or the Camarilla's assassins have her in their sights. In any case, leaving a trail is a terrible thing. For every person they kill during a single story, the difficulty to Survival checks for tracking are reduced by 1. This penalty resets at the beginning of a new story... if they survive to the next story, that is.",
+       "source": "Lore of the Bloodlines p. 70",
+       "notes": "Nagaraja only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Brittle Body",
+       "stat_type": "physical",
+       "values": [2, 4],
+       "category": "flaws",
+       "description": "Your already disfigured corpse doesn't handle the physical demands of being a Kindred as well as it should. Your bones break at inopportune times, your skin tears if you move too quickly, and you have to be careful on a nightly basis. The 2-point version of this flaw gives you a +2 difficulty to all Physical rolls because of the delicate nature of your body. The 4-point version means that you also hang onto physical damage longer than other Kindred. You may still heal health levels as normal, but any dice penalties remain until the next evening when you awaken. This is in addition to the penalty to Physical rolls.",
+       "source": "Lore of the Bloodlines p. 91",
+       "notes": "Samedi only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Mortal Flashbacks",
+       "stat_type": "mental",
+       "values": [5],
+       "category": "flaws",
+       "description": "Your already disfigured corpse doesn't handle the physical demands of being a Kindred as well as it should. Your bones break at inopportune times, your skin tears if you move too quickly, and you have to be careful on a nightly basis. The 2-point version of this flaw gives you a +2 difficulty to all Physical rolls because of the delicate nature of your body. The 4-point version means that you also hang onto physical damage longer than other Kindred. You may still heal health levels as normal, but any dice penalties remain until the next evening when you awaken. This is in addition to the penalty to Physical rolls.",
+       "source": "Lore of the Bloodlines p. 91",
+       "notes": "Samedi only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Out of Phase",
+       "stat_type": "mental",
+       "values": [2],
+       "category": "flaws",
+       "description": "The character is a little too aware of time and the possibilities surrounding them. People often seem to be in slightly different places, and speech frequently echoes in their ears. They see layers of alternate timelines in too much detail. Any perception rolls they make are at +2 difficulty, as they try to see past the unreal.",
+       "source": "Lore of the Bloodlines p. 99",
+       "notes": "True Brujah only",        
+       "game_line": "Vampire: The Masquerade"
+   },
+   {
+       "name": "Offensive to Animals",
+       "stat_type": "social",
+       "values": [2],
+       "category": "flaws",
+       "description": "Animals react hostilely toward the ghoul, barking, howling, or attacking when in close proximity. This flaw complicates interactions with animal-friendly characters.",
+       "source": "Ghouls and Revenants p. 138",
+       "notes": "",        
+       "game_line": "Vampire: The Masquerade"
+   }
 ] 

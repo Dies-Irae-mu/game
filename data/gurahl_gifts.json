@@ -108,18 +108,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Mother's Touch",
-        "description": "The Gurahl can heal diseases and restore lost limbs through their healing powers. A unicorn-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            2
-        ],
-        "shifter_type": "Gurahl",
-        "splat": "Shifter"
-    },
-    {
         "name": "Slumber",
         "description": "The Gurahl can cause others to fall into a deep sleep. A bear-spirit teaches this Gift.",
         "game_line": "Werewolf: The Apocalypse",
