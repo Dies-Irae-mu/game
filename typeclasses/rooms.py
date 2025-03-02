@@ -157,20 +157,22 @@ class RoomParent(DefaultRoom):
         for obj in self.contents:
             if not obj.has_account and not obj.destination:
                 # Check if object is visible in current reality layer
+                # If object has no reality layer tags, assume it's in material plane
+                is_in_material = not (obj.tags.get("in_umbra", category="state") or 
+                                    obj.tags.get("in_dreaming", category="state"))
+                
                 if ((looker.tags.get("in_umbra", category="state") and obj.tags.get("in_umbra", category="state")) or
-                    (looker.tags.get("in_material", category="state") and obj.tags.get("in_material", category="state")) or
+                    (looker.tags.get("in_material", category="state") and (obj.tags.get("in_material", category="state") or is_in_material)) or
                     (looker.tags.get("in_dreaming", category="state") and obj.tags.get("in_dreaming", category="state"))):
                     objects.append(obj)
 
         if objects:
             string += divider("Objects", width=78, fillchar=ANSIString(f"{border_color}-|n")) + "\n"
-            
             for obj in objects:
                 if obj.db.shortdesc:
                     shortdesc = obj.db.shortdesc
                 else:
                     shortdesc = ""
-
                 string += " " + ANSIString(f"{obj.get_display_name(looker)}").ljust(25) + ANSIString(f"{shortdesc}").ljust(53, ' ') + "\n"
 
         # List all exits that are accessible in the current reality layer
@@ -178,8 +180,6 @@ class RoomParent(DefaultRoom):
         for ex in self.contents:
             if ex.destination and ex.access(looker, "view"):
                 # Add logging to help diagnose visibility
-                from evennia.utils import logger
-                logger.log_info(f"Exit {ex.key} is visible to {looker}")
                 exits.append(ex)
 
         if exits:
@@ -205,7 +205,7 @@ class RoomParent(DefaultRoom):
             # Display Exits
             if exit_strings:
                 string += divider("Exits", width=78, fillchar=ANSIString(f"{border_color}-|n")) + "\n"
-                string += self.format_exit_columns(exit_strings) + "\n"
+                string += self.format_exit_columns(exit_strings)
 
         # Get room type and resources
         room_type = self.db.roomtype or "Unknown"

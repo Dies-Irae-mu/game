@@ -194,7 +194,8 @@ class CmdXPCost(default_cmds.MuxCommand):
                 # Add subcategory header with divider
                 table.add_row(f"|y{subcat.title()} Attributes:|n", "", "", "", "")
                 for stat in stats:
-                    current = int(character.get_stat('attributes', subcat, stat) or 0)
+                    # Get the current value from the nested structure
+                    current = character.db.stats.get('attributes', {}).get(subcat, {}).get(stat, {}).get('perm', 0)
                     if current < 5:  # Max rating of 5
                         next_rating = current + 1
                         try:
@@ -527,7 +528,11 @@ class CmdXPCost(default_cmds.MuxCommand):
                 table.add_row("|yAvailable Rank 1 Gifts:|n", "", "", "", "")
                 
                 # Query gifts from database
-                gift_query = Q(stat_type='gift') & Q(values__contains=[1])
+                gift_query = Q(stat_type='gift')
+                if shifter_type:
+                    # Use exact string matching for shifter_type
+                    gift_query &= Q(shifter_type__isnull=False) & Q(shifter_type__contains=shifter_type)
+                
                 available_gifts = []
                 
                 for gift in Stat.objects.filter(gift_query).order_by('name'):
@@ -540,43 +545,59 @@ class CmdXPCost(default_cmds.MuxCommand):
                     
                     # Check shifter type
                     if gift.shifter_type:
-                        if isinstance(gift.shifter_type, list):
-                            if shifter_type in gift.shifter_type:
+                        try:
+                            # Handle both string and list formats
+                            if isinstance(gift.shifter_type, str):
+                                gift_types = [gift.shifter_type]
+                            else:
+                                gift_types = gift.shifter_type
+                                
+                            if shifter_type in gift_types:
                                 matches = True
-                        elif gift.shifter_type == shifter_type:
-                            matches = True
+                        except (ValueError, TypeError):
+                            continue
                     
                     # Check breed if not already matched
                     if not matches and gift.breed:
-                        if isinstance(gift.breed, list):
-                            if breed in gift.breed:
+                        try:
+                            # Handle both string and list formats
+                            if isinstance(gift.breed, str):
+                                gift_breeds = [gift.breed]
+                            else:
+                                gift_breeds = gift.breed
+                                
+                            if breed in gift_breeds:
                                 matches = True
-                        elif gift.breed == breed:
-                            matches = True
+                        except (ValueError, TypeError):
+                            continue
                     
                     # Check auspice if not already matched
                     if not matches and gift.auspice:
-                        if isinstance(gift.auspice, list):
-                            if auspice in gift.auspice:
+                        try:
+                            # Handle both string and list formats
+                            if isinstance(gift.auspice, str):
+                                gift_auspices = [gift.auspice]
+                            else:
+                                gift_auspices = gift.auspice
+                                
+                            if auspice in gift_auspices:
                                 matches = True
-                        elif gift.auspice == auspice:
-                            matches = True
+                        except (ValueError, TypeError):
+                            continue
                     
                     # Check tribe if not already matched
                     if not matches and gift.tribe:
-                        if isinstance(gift.tribe, list):
-                            if tribe in gift.tribe:
+                        try:
+                            # Handle both string and list formats
+                            if isinstance(gift.tribe, str):
+                                gift_tribes = [gift.tribe]
+                            else:
+                                gift_tribes = gift.tribe
+                                
+                            if tribe in gift_tribes:
                                 matches = True
-                        elif gift.tribe == tribe:
-                            matches = True
-                    
-                    # Check aspect if not already matched
-                    if not matches and gift.aspect:
-                        if isinstance(gift.aspect, list):
-                            if aspect in gift.aspect:
-                                matches = True
-                        elif gift.aspect == aspect:
-                            matches = True
+                        except (ValueError, TypeError):
+                            continue
                     
                     if matches:
                         available_gifts.append(gift)

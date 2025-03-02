@@ -213,7 +213,8 @@ def get_mortalplus_identity_stats(mortalplus_type: str) -> List[str]:
         'Nature',
         'Demeanor',
         'Concept',
-        'Date of Birth'
+        'Date of Birth',
+        'Type'  # Always include Type in base stats
     ]
     
     if mortalplus_type == 'Ghoul':
@@ -351,12 +352,19 @@ def validate_mortalplus_powers(character, power_type, value):
     # Validate Kinfolk powers
     elif mortalplus_type == 'Kinfolk':
         if power_type == 'Gifts':
-            # Check for Gift Merit
-            merits = character.db.stats.get('merits', {}).get('merit', {})
-            has_gift_merit = any(merit.lower() == 'gifted kinfolk' 
-                               for merit in merits.keys())
-            if not has_gift_merit:
-                return False, "Kinfolk must have the 'Gifted Kinfolk' Merit to learn Gifts"
+            # Get kinfolk's tribe
+            tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
+            if not tribe:
+                return False, "Must set tribe before learning gifts"
+            
+            # Validate gift level
+            try:
+                gift_value = int(value)
+                if gift_value < 0 or gift_value > 2:
+                    return False, "Kinfolk can only learn level 1-2 gifts"
+                return True, ""
+            except ValueError:
+                return False, "Gift value must be a number"
 
         if power_type == 'Gnosis':
             # Check for Gnosis Merit level
@@ -485,11 +493,6 @@ def validate_ghoul_disciplines(character, discipline_name: str, value: str) -> t
 
 def validate_kinfolk_gifts(character, gift_name: str, value: str) -> tuple[bool, str]:
     """Validate a kinfolk's gifts."""
-    # Check for Gift Merit
-    merit_value = character.get_stat('merits', 'merit', 'Gifted Kinfolk', temp=False)
-    if not merit_value or not isinstance(merit_value, dict):
-        return False, "Kinfolk must have the 'Gifted Kinfolk' Merit to learn Gifts"
-    
     # Check if the gift exists in the database
     gift = get_stat_model().objects.filter(
         name__iexact=gift_name,
@@ -500,11 +503,18 @@ def validate_kinfolk_gifts(character, gift_name: str, value: str) -> tuple[bool,
     if not gift:
         return False, f"'{gift_name}' is not a valid gift"
     
-    # Validate value
+    # Validate value and level restriction
     try:
         gift_value = int(value)
-        if gift_value < 0 or gift_value > 5:
-            return False, "Gift values must be between 0 and 5"
+        if gift_value < 0 or gift_value > 2:  # Kinfolk can only learn level 1-2 gifts
+            return False, "Kinfolk can only learn level 1-2 gifts"
+            
+        # Check if it's a homid gift or tribe gift
+        if gift.tribe:
+            allowed_types = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+            if not any(t.lower() in ['homid', character.get_stat('identity', 'lineage', 'Type', temp=False).lower()] for t in allowed_types):
+                return False, "Kinfolk can only learn Homid gifts or gifts from their tribe"
+                
         return True, ""
     except ValueError:
         return False, "Gift values must be numbers"

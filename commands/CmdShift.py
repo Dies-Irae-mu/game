@@ -370,14 +370,104 @@ class CmdShift(default_cmds.MuxCommand):
                         }
                         print(f"DEBUG: Reset {category}.{stat} to perm={perm_value}, temp={perm_value}")
             return
-        
+
         # For non-Homid forms
         character.attributes.add('current_form', form.name)
         character.db.current_form = form.name
         character.db.display_name = form.name
-        
+
+        # Get all permanent values first
+        permanent_values = {}
+        for category in ['physical', 'social', 'mental']:
+            if category in character.db.stats.get('attributes', {}):
+                permanent_values[category] = {}
+                for stat, values in character.db.stats['attributes'][category].items():
+                    permanent_values[category][stat] = values.get('perm', 0)
+
         # Apply form modifiers
-        self._apply_form_modifiers(character, form)
+        for stat, mod in form.stat_modifiers.items():
+            stat_obj = Stat.objects.get(name__iexact=stat, category='attributes')
+            if stat_obj.category and stat_obj.stat_type:
+                # Get permanent value from our saved values
+                perm_value = permanent_values.get(stat_obj.stat_type, {}).get(stat_obj.name, 0)
+                # Calculate new temporary value
+                temp_value = max(0, perm_value + mod)  # Ensure non-negative
+                
+                # Ensure the category and subcategory exist
+                if stat_obj.category not in character.db.stats:
+                    character.db.stats[stat_obj.category] = {}
+                if stat_obj.stat_type not in character.db.stats[stat_obj.category]:
+                    character.db.stats[stat_obj.category][stat_obj.stat_type] = {}
+                
+                # Set both permanent and temporary values
+                character.db.stats[stat_obj.category][stat_obj.stat_type][stat_obj.name] = {
+                    'perm': perm_value,
+                    'temp': temp_value
+                }
+
+        # Handle special cases for Appearance and Manipulation
+        zero_appearance_forms = ['crinos', 'anthros', 'arthren', 'sokto', 'chatro']
+        if form.name.lower() in zero_appearance_forms:
+            # Get the permanent Appearance value
+            appearance_perm = permanent_values.get('social', {}).get('Appearance', 0)
+            
+            # Ensure the social subcategory exists
+            if 'social' not in character.db.stats['attributes']:
+                character.db.stats['attributes']['social'] = {}
+            
+            # Set Appearance with permanent value preserved but temp value at 0
+            character.db.stats['attributes']['social']['Appearance'] = {
+                'perm': appearance_perm,
+                'temp': 0
+            }
+            
+            # Also handle Manipulation in Crinos form
+            if form.name.lower() == 'crinos':
+                manip_perm = permanent_values.get('social', {}).get('Manipulation', 0)
+                character.db.stats['attributes']['social']['Manipulation'] = {
+                    'perm': manip_perm,
+                    'temp': max(0, manip_perm - 2)  # -2 penalty in Crinos
+                }
+
+        # Handle Mokolé Archid traits if applicable
+        if form.name.lower() == 'archid' and character.get_stat('identity', 'lineage', 'Type', temp=False).lower() == 'mokole':
+            try:
+                from world.wod20th.models import CharacterArchidTrait
+                
+                # Get all approved Archid traits for the character
+                archid_traits = CharacterArchidTrait.objects.filter(
+                    character=character,
+                    approved=True
+                )
+                
+                # Apply trait modifiers
+                for char_trait in archid_traits:
+                    trait = char_trait.trait
+                    # Apply stat modifiers, multiplied by count for stackable traits
+                    for stat, mod in trait.stat_modifiers.items():
+                        total_mod = mod * char_trait.count
+                        
+                        # Find the category and type for this stat
+                        try:
+                            stat_obj = Stat.objects.get(name__iexact=stat)
+                            if stat_obj.category and stat_obj.stat_type:
+                                current_value = character.db.stats.get(stat_obj.category, {}).get(stat_obj.stat_type, {}).get(stat_obj.name, {})
+                                if isinstance(current_value, dict) and 'temp' in current_value:
+                                    new_temp = max(0, current_value['temp'] + total_mod)
+                                    character.db.stats[stat_obj.category][stat_obj.stat_type][stat_obj.name]['temp'] = new_temp
+                        except Stat.DoesNotExist:
+                            continue
+                    
+                    # Store special rules in character's attributes for reference
+                    if trait.special_rules:
+                        if not hasattr(character.db, 'archid_special_rules'):
+                            character.db.archid_special_rules = []
+                        character.db.archid_special_rules.append(
+                            f"{trait.name}: {trait.special_rules}"
+                        )
+                
+            except ImportError:
+                pass  # If the models aren't available, skip Archid trait application
 
     def _display_shift_message(self, character, form):
         """Display the appropriate shift message."""

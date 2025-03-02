@@ -56,6 +56,7 @@ SECONDARY_TALENTS = {
     "Flying": 0,
     "Intrigue": 0,
     "High Ritual": 0,
+    "Lucid Dreaming": 0,
     "Mimicry": 0,
     "Scrounging": 0,
     "Seduction": 0,

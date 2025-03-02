@@ -18,7 +18,6 @@ from evennia import default_cmds
 from commands.CmdGradient import CmdGradientName
 from commands.CmdShortDesc import CmdShortDesc
 from commands.CmdPose import CmdPose
-from commands.CmdSetStats import CmdStats
 from commands.CmdSheet import CmdSheet
 from commands.CmdInfo import CmdInfo
 from commands.CmdHurt import CmdHurt
@@ -48,6 +47,7 @@ from commands.chargen import CmdSubmit
 from commands.CmdSelfStat import CmdSelfStat
 from commands.CmdShift import CmdShift
 from commands.CmdStaff import CmdStaff, CmdPST
+from commands.staff_commands import CmdStaffStat
 from commands.unfindable import CmdUnfindable
 from commands.CmdChangelingInteraction import CmdChangelingInteraction
 from commands.CmdBanality import CmdBanality
@@ -75,6 +75,7 @@ from commands.CmdCheck import CmdCheck
 from commands.CmdPlots import CmdPlots
 from commands.CmdHangouts import CmdHangout, CmdSetHangout
 from commands.CmdNPC import CmdNPC
+from commands.CmdArchid import CmdArchid
 
 
 class CharacterCmdSet(cmdset_character.CharacterCmdSet):
@@ -101,7 +102,6 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdBBS())
         self.add(OssCmdSet)
         self.add(CmdFaeDesc())
-        self.add(CmdStats())
         self.add(CmdPST())
         self.add(CmdSheet())
         self.add(CmdInfo())
@@ -156,6 +156,8 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdHangout())
         self.add(CmdSetHangout())
         self.add(CmdReturn())
+        self.add(CmdArchid())
+
 class AccountCmdSet(cmdset_account.AccountCmdSet):
     """
     This is the cmdset available to the Account at all times. It is
@@ -196,7 +198,8 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdResetBBS())
         self.add(CmdNPC())
         self.add(CmdRoomLog())
-        self.add(CmdDesc()) 
+        self.add(CmdDesc())
+        self.add(CmdStaffStat())
 
 class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):
     """

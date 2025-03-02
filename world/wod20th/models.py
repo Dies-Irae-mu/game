@@ -368,4 +368,256 @@ class CharacterImage(SharedMemoryModel):
     def delete(self, *args, **kwargs):
         """Clean up the image file when deleting the model."""
         self.image.delete(save=False)
-        super().delete(*args, **kwargs) 
+        super().delete(*args, **kwargs)
+
+class MokoleArchidTrait(models.Model):
+    """Model for storing Mokolé Archid form traits."""
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField()
+    can_stack = models.BooleanField(default=False)  # For traits that can be taken multiple times
+    stat_modifiers = models.JSONField(default=dict)  # For storing stat modifications
+    special_rules = models.TextField(blank=True, null=True)  # For any special rules or mechanics
+    
+    class Meta:
+        app_label = 'wod20th'
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def initialize_default_traits(cls):
+        """Initialize the default Archid traits."""
+        default_traits = {
+            'Armored Scales': {
+                'description': '+2 Soak.',
+                'can_stack': True,
+                'stat_modifiers': {'soak': 2},
+            },
+            'Behemoth': {
+                'description': 'Body mass doubles, height remains same. Stamina +1, +2 damage to Body Slam or Tackle attempts.',
+                'can_stack': True,
+                'stat_modifiers': {'stamina': 1},
+                'special_rules': '+2 damage to Body Slam or Tackle attempts'
+            },
+            'Binocular Vision': {
+                'description': '+2 on all visual-based Perception rolls. -2 to opponents attempts to surprise.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': '+2 visual Perception, -2 to surprise'
+            },
+            'Bladed Tail': {
+                'description': 'Gains a tail lash maneuver (Str +2 aggravated damage, difficulty 7).',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': 'Tail lash: Str +2 aggravated, diff 7'
+            },
+            'Color Change': {
+                'description': '+1 difficulty to spot the Mokolé while hiding.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': '+1 difficulty to spot while hiding'
+            },
+            'Constricting Coils': {
+                'description': '+3 dice to attempts to immobilize target.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': '+3 dice to immobilize'
+            },
+            'Deep Lung': {
+                'description': 'Can swim underwater for up to an hour or hold breath up to 5 minutes in combat.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': 'Extended underwater breathing'
+            },
+            'Fiery Pearl': {
+                'description': '+3 to Intimidate versus vampires and wyrm creatures.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': '+3 Intimidate vs vampires/wyrm'
+            },
+            'Fins': {
+                'description': 'Double swimming speed.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': 'Double swim speed'
+            },
+            'Fire Breath': {
+                'description': 'Can breathe fire (or corrosive aerosol) once per day. Fire has soak difficulty 7, damage 2 per turn, extends (Rage) yards.',
+                'can_stack': True,
+                'stat_modifiers': {},
+                'special_rules': 'Fire breath: diff 7 soak, 2 damage/turn'
+            },
+            'Gills': {
+                'description': 'Fully amphibious.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': 'Can breathe underwater'
+            },
+            'Grasping Hands': {
+                'description': 'Normal manual dexterity in Archid form.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': 'Full manual dexterity'
+            },
+            'Hinged Jaw': {
+                'description': 'May extend jaw to swallow (non-resisting) objects up to Archid form\'s Size.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': 'Can swallow large objects'
+            },
+            'Hollow Bones': {
+                'description': 'Bones are hollow but strong. +3 to Dexterity for movement, may soar effortlessly for hours with Wings.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': '+3 Dexterity for movement'
+            },
+            'Horn': {
+                'description': 'Gains a gore maneuver (Str +2 aggravated damage, difficulty 7).',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': 'Gore: Str +2 aggravated, diff 7'
+            },
+            'Long Neck': {
+                'description': 'Can attack targets up to 10 feet away with Bite attack.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': 'Extended bite range'
+            },
+            'Long Teeth': {
+                'description': 'Bite damage is increased to Strength +3.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': 'Bite damage Str +3'
+            },
+            'Long Tongue': {
+                'description': 'Tongue is as long as Archid body, has Strength 1 and Dexterity equal to Mokolé\'s Dexterity.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': 'Prehensile tongue'
+            },
+            'Poison Sacs': {
+                'description': 'May inject poison once per day. On successful bite, victim must soak four additional dice of poison damage.',
+                'can_stack': True,
+                'stat_modifiers': {},
+                'special_rules': 'Poison: +4 damage dice on bite'
+            },
+            'Predator\'s Roar': {
+                'description': 'Gains roar attack usable once per scene. All characters within close combat range must roll Willpower (difficulty equal to Mokolé\'s Rage) or flee.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': 'Fear-inducing roar'
+            },
+            'Prehensile Tail': {
+                'description': 'May use as if it was a hand, including wielding a weapon. Normal attack limits apply.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': 'Tail can be used as hand'
+            },
+            'Resplendent Crest': {
+                'description': '+3 to Appearance and +1 to Charisma.',
+                'can_stack': False,
+                'stat_modifiers': {'appearance': 3, 'charisma': 1},
+            },
+            'Royal Crest': {
+                'description': '+2 to Social rolls involving Nagah or any Mokolé stream.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': '+2 Social with Nagah/Mokole'
+            },
+            'Sickening Slime': {
+                'description': 'Any opponent that bites you loses their next full turn retching. -2 to non-Mokolé Social interactions.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': 'Bite causes retching, -2 Social'
+            },
+            'Tail': {
+                'description': 'Body mass and height doubles, +1 Stamina. Can reach/see over obstacles more easily. +2 to Perception when appropriate.',
+                'can_stack': True,
+                'stat_modifiers': {'stamina': 1},
+                'special_rules': '+2 Perception for height'
+            },
+            'Terrible Claws': {
+                'description': 'Claw damage increases to Strength +3.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': 'Claw damage Str +3'
+            },
+            'Tongue Flick': {
+                'description': '+2 to tracking rolls involving scent.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': '+2 scent tracking'
+            },
+            'Upright Walking': {
+                'description': 'Frees up forelimbs when walking.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': 'Bipedal movement'
+            },
+            'Webbed Feet': {
+                'description': 'May swim at 150% speed and walk without trouble on soft surfaces.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': '150% swim speed'
+            },
+            'Wings': {
+                'description': 'Can fly at 20mph for 1 hour per point of Stamina, then must rest for 8 hours.',
+                'can_stack': False,
+                'stat_modifiers': {},
+                'special_rules': 'Flight capability'
+            }
+        }
+        
+        for name, data in default_traits.items():
+            cls.objects.get_or_create(
+                name=name,
+                defaults={
+                    'description': data['description'],
+                    'can_stack': data['can_stack'],
+                    'stat_modifiers': data.get('stat_modifiers', {}),
+                    'special_rules': data.get('special_rules', '')
+                }
+            )
+
+class CharacterArchidTrait(models.Model):
+    """Model for tracking which Archid traits a character has."""
+    character = models.ForeignKey('objects.ObjectDB', on_delete=models.CASCADE, related_name='archid_traits')
+    trait = models.ForeignKey(MokoleArchidTrait, on_delete=models.CASCADE)
+    count = models.PositiveIntegerField(default=1)  # For stacking traits
+    approved = models.BooleanField(default=False)  # For tracking approval status
+    approved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='approved_archid_traits'
+    )
+    approved_date = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        app_label = 'wod20th'
+        unique_together = ('character', 'trait')
+        ordering = ['trait__name']
+
+    def __str__(self):
+        return f"{self.character.name}'s {self.trait.name} ({self.count})"
+
+    def save(self, *args, **kwargs):
+        # Get total traits count (both approved and unapproved)
+        total_traits = sum(
+            ct.count for ct in CharacterArchidTrait.objects.filter(
+                character=self.character
+            ).exclude(id=self.id)
+        ) + self.count
+            
+        # Get character's permanent Gnosis
+        try:
+            gnosis = self.character.db.stats['pools']['dual']['Gnosis']['perm']
+        except (AttributeError, KeyError):
+            gnosis = 0
+                
+        if total_traits > gnosis:
+            raise ValidationError(f"Cannot exceed Gnosis limit ({gnosis}) for Archid traits. Current total would be {total_traits}.")
+        
+        super().save(*args, **kwargs) 

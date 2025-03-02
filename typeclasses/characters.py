@@ -16,12 +16,14 @@ import re
 import random
 from datetime import datetime, timedelta
 from world.wod20th.utils.language_data import AVAILABLE_LANGUAGES
+from evennia import logger
 
 from django.contrib.auth.models import User
 from django.db import models
 from decimal import Decimal, ROUND_DOWN, InvalidOperation
 import json
 from world.wod20th.utils.formatting import header, footer, divider
+from django.db import transaction
 
 class Character(DefaultCharacter):
     """
@@ -140,8 +142,7 @@ class Character(DefaultCharacter):
         if self.account:
             # Get mail messages that are tagged as 'new'
             unread_mail = Msg.objects.get_by_tag(category="mail").filter(
-                db_receivers_accounts=self.account,
-                db_tags__db_key="new"
+                db_receivers_accounts=self.account
             ).count()
             
             if unread_mail > 0:
@@ -1041,19 +1042,21 @@ class Character(DefaultCharacter):
             # Log the award
             timestamp = datetime.now()
             award = {
-                'type': 'award',
+                'type': 'receive',  # Changed from 'award' to 'receive'
                 'amount': float(xp_amount),
                 'reason': reason,
                 'approved_by': approved_by.key if approved_by else 'System',
                 'timestamp': timestamp.isoformat()
             }
             
+            if 'spends' not in self.db.xp:
+                self.db.xp['spends'] = []
             self.db.xp['spends'].insert(0, award)
-            self.db.xp['spends'] = self.db.xp['spends'][:10]
+            self.db.xp['spends'] = self.db.xp['spends'][:10]  # Keep only last 10 entries
             
             return True
         except Exception as e:
-            self.msg(f"Error adding XP: {str(e)}")
+            logger.error(f"Error adding XP to {self.name}: {str(e)}")
             return False
 
     def spend_xp(self, amount, reason, approved_by=None):
@@ -1297,19 +1300,19 @@ class Character(DefaultCharacter):
 
         # Calculate base cost based on stat type
         if category == 'attributes':
-            # First dot is free, then current rating × 4
-            if current_rating == 0:
-                cost = sum(i * 4 for i in range(1, new_rating))
-            else:
-                cost = sum(i * 4 for i in range(current_rating, new_rating))
+            # Each dot costs current rating × 4
+            cost = sum(i * 4 for i in range(current_rating + 1, new_rating))
             requires_approval = new_rating > 3
 
-        elif category == 'abilities':
+        elif category in ['abilities', 'secondary_abilities']:
             if subcategory in ['talent', 'skill', 'knowledge', 'secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+                # Each dot costs current rating × 2, first dot costs 3
                 if current_rating == 0:
-                    cost = 3 + sum(i * 2 for i in range(1, new_rating))
+                    cost = 3  # First dot always costs 3
+                    if new_rating > 1:
+                        cost += sum(i * 2 for i in range(1, new_rating))
                 else:
-                    cost = sum(i * 2 for i in range(current_rating + 1, new_rating + 1))
+                    cost = sum(i * 2 for i in range(current_rating + 1, new_rating))
                 requires_approval = new_rating > 3
 
         elif category == 'powers' and splat == 'Shifter':
@@ -1325,34 +1328,37 @@ class Character(DefaultCharacter):
                 is_auspice_gift = f"Auspice: {auspice}" in stat_name
                 
                 if is_breed_gift or is_tribe_gift or is_auspice_gift:
-                    cost = new_rating * 3  # Gift Level * 3
+                    cost = sum(i * 3 for i in range(current_rating + 1, new_rating))  # Gift Level * 3
                 else:
-                    cost = new_rating * 5  # Gift Level * 5 for outside gifts
+                    cost = sum(i * 5 for i in range(current_rating + 1, new_rating))  # Gift Level * 5 for outside gifts
                 
                 requires_approval = new_rating > 1  # Only level 1 gifts without approval
                 
             elif shifter_type in ['Bastet', 'Corax', 'Gurahl', 'Kitsune', 'Mokole', 'Nagah', 'Nuwisha', 'Ratkin', 'Rokea', 'Ajaba', 'Ananasi', 'Camazotz']:
                 # Other shifter types might have different costs or approval requirements
                 # For now, using same base structure as Garou
-                cost = new_rating * 4  # Different base cost for other shifter types
+                cost = sum(i * 4 for i in range(current_rating + 1, new_rating))  # Different base cost for other shifter types
                 requires_approval = new_rating > 1
 
         elif category == 'pools' and stat_name in ['Willpower', 'Rage', 'Gnosis']:
             if stat_name == 'Willpower':
-                cost = sum(range(current_rating + 1, new_rating + 1))
+                cost = sum(i * 2 for i in range(current_rating + 1, new_rating))
                 requires_approval = new_rating > 5
             elif stat_name in ['Rage', 'Gnosis'] and splat == 'Shifter':
                 if stat_name == 'Rage':
-                    cost = sum(range(current_rating + 1, new_rating + 1))
+                    cost = sum(range(current_rating + 1, new_rating))
                 else:  # Gnosis
-                    cost = sum(i * 2 for i in range(current_rating + 1, new_rating + 1))
+                    cost = sum(i * 2 for i in range(current_rating + 1, new_rating))
                 requires_approval = new_rating > 5
 
         elif category == 'backgrounds':
             cost = (new_rating - current_rating) * 5
             auto_approve_backgrounds = [
                 'Resources', 'Contacts', 'Allies', 'Backup', 
-                'Herd', 'Library', 'Kinfolk', 'Spirit Heritage'
+                'Herd', 'Library', 'Kinfolk', 'Spirit Heritage',
+                'Paranormal Tools', 'Servants', 'Armory', 'Retinue',
+                'Spies', 'Professional Certification', 'Past Lives',
+                'Dreamers', 
             ]
             requires_approval = (
                 stat_name not in auto_approve_backgrounds or 
@@ -1381,11 +1387,11 @@ class Character(DefaultCharacter):
                 else:
                     # Just adding dots beyond the first
                     if is_in_clan:
-                        cost = sum(i * 5 for i in range(current_rating, new_rating))
+                        cost = sum(i * 5 for i in range(current_rating + 1, new_rating))
                     elif is_caitiff:
-                        cost = sum(i * 6 for i in range(current_rating, new_rating))
+                        cost = sum(i * 6 for i in range(current_rating + 1, new_rating))
                     else:  # Out of clan
-                        cost = sum(i * 7 for i in range(current_rating, new_rating))
+                        cost = sum(i * 7 for i in range(current_rating + 1, new_rating))
                 
                 requires_approval = new_rating > 2
 
@@ -1404,9 +1410,9 @@ class Character(DefaultCharacter):
                 else:
                     # Just adding dots beyond the first
                     if is_affinity:
-                        cost = sum(i * 7 for i in range(current_rating, new_rating))
+                        cost = sum(i * 7 for i in range(current_rating + 1, new_rating))
                     else:
-                        cost = sum(i * 8 for i in range(current_rating, new_rating))
+                        cost = sum(i * 8 for i in range(current_rating + 1, new_rating))
                 
                 requires_approval = new_rating > 2
 
@@ -1420,7 +1426,7 @@ class Character(DefaultCharacter):
                         if new_rating > 1:
                             cost += sum(i * 4 for i in range(1, new_rating))
                     else:
-                        cost = sum(i * 4 for i in range(current_rating, new_rating))
+                        cost = sum(i * 4 for i in range(current_rating + 1, new_rating))
                 
                 elif is_realm:
                     if current_rating == 0:
@@ -1428,7 +1434,7 @@ class Character(DefaultCharacter):
                         if new_rating > 1:
                             cost += sum(i * 3 for i in range(1, new_rating))
                     else:
-                        cost = sum(i * 3 for i in range(current_rating, new_rating))
+                        cost = sum(i * 3 for i in range(current_rating + 1, new_rating))
                 
                 requires_approval = new_rating > 2
 
@@ -1594,14 +1600,28 @@ class Character(DefaultCharacter):
             # Ensure proper structure exists
             self.ensure_stat_structure(category, subcategory)
             
+            # Special handling for powers - check if it exists in another subcategory
+            if category == 'powers':
+                # Get all power subcategories
+                power_subcategories = [
+                    'sphere', 'art', 'realm', 'discipline', 'gift',
+                    'numina', 'charm', 'blessing'
+                ]
+                
+                # Check each subcategory for the stat
+                for subcat in power_subcategories:
+                    if subcat != subcategory:  # Skip the target subcategory
+                        if stat_name in self.db.stats['powers'].get(subcat, {}):
+                            # Found the stat in another subcategory - get its value
+                            old_values = self.db.stats['powers'][subcat][stat_name]
+                            # Remove it from the old location
+                            del self.db.stats['powers'][subcat][stat_name]
+                            # Add it to the correct location
+                            if stat_name not in self.db.stats['powers'][subcategory]:
+                                self.db.stats['powers'][subcategory][stat_name] = old_values
+            
             # Get current permanent rating (not temporary/shifted rating)
-            if category and subcategory:
-                current_rating = (self.db.stats.get(category, {})
-                                .get(subcategory, {})
-                                .get(stat_name, {})
-                                .get('perm', 0))
-            else:
-                current_rating = 0
+            current_rating = self.get_stat(category, subcategory, stat_name, temp=False) or 0
             
             # Calculate cost
             cost, requires_approval = self.calculate_xp_cost(
@@ -1682,8 +1702,10 @@ class Character(DefaultCharacter):
             spend = {
                 'type': 'spend',
                 'amount': float(cost),
-                'reason': f"{stat_name} ({current_rating} -> {new_rating})",
-                'approved_by': 'System',
+                'stat_name': stat_name,
+                'previous_rating': current_rating,
+                'new_rating': new_rating,
+                'reason': reason,
                 'timestamp': timestamp.isoformat()
             }
             
@@ -1697,122 +1719,97 @@ class Character(DefaultCharacter):
         except Exception as e:
             return False, f"Error buying stat: {str(e)}"
 
-    def _display_xp(self, character):
-        """Displays XP information for a character."""
-        xp = character.db.xp
-        if not xp:
-            # Initialize XP if it doesn't exist
-            xp = {
-                'total': Decimal('0.00'),
-                'current': Decimal('0.00'),
-                'spent': Decimal('0.00'),
-                'ic_xp': Decimal('0.00'),
-                'monthly_spent': Decimal('0.00'),
-                'last_reset': datetime.now(),
-                'spends': [],
-                'last_scene': None,
-                'scenes_this_week': 0
-            }
-            character.db.xp = xp
+    def _display_xp(self, target):
+        """Display XP information for a character."""
+        try:
+            # Get the XP data, initialize only if it doesn't exist
+            xp_data = target.attributes.get('xp')
+            if not xp_data:
+                xp_data = {
+                    'total': Decimal('0.00'),
+                    'current': Decimal('0.00'),
+                    'spent': Decimal('0.00'),
+                    'ic_earned': Decimal('0.00'),
+                    'monthly_spent': Decimal('0.00'),
+                    'last_reset': datetime.now(),
+                    'spends': [],
+                    'last_scene': None,
+                    'scenes_this_week': 0
+                }
+                target.attributes.add('xp', xp_data)
+
+            # Format XP values
+            total = Decimal(str(xp_data['total'])).quantize(Decimal('0.01'))
+            current = Decimal(str(xp_data['current'])).quantize(Decimal('0.01'))
+            spent = Decimal(str(xp_data['spent'])).quantize(Decimal('0.01'))
             
-        total_width = 78
+            # Calculate IC XP and Award XP from spends history
+            ic_xp = Decimal('0.00')
+            award_xp = Decimal('0.00')
+            if xp_data.get('spends'):
+                for entry in xp_data['spends']:
+                    if entry['type'] == 'receive':
+                        amount = Decimal(str(entry['amount'])).quantize(Decimal('0.01'))
+                        if entry['reason'] == 'Weekly Activity':
+                            ic_xp += amount
+                        else:
+                            award_xp += amount
+
+            # Build the display string
+            total_width = 78
             
-        # Header
-        title = f" {character.name}'s XP "
-        title_len = len(title)
-        dash_count = (total_width - title_len) // 2
-        header = f"{'|b-|n' * dash_count}{title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
-        
-        # XP section
-        exp_title = "|y Experience Points |n"
-        title_len = len(exp_title)
-        dash_count = (total_width - title_len) // 2
-        exp_header = f"{'|b-|n' * dash_count}{exp_title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
-        
-        # XP value formatting
-        left_col_width = 20  
-        right_col_width = 12 
-        spacing = " " * 14  # column spacing
-        
-        # Format columns
-        ic_xp = f"{'|wIC XP:|n':<{left_col_width}}{xp['total'] - xp['current']:>{right_col_width}.2f}"
-        total_xp = f"{'|wTotal XP:|n':<{left_col_width}}{xp['total']:>{right_col_width}.2f}"
-        current_xp = f"{'|wCurrent XP:|n':<{left_col_width}}{xp['current']:>{right_col_width}.2f}"
-        award_xp = f"{'|wAward XP:|n':<{left_col_width}}{xp['current']:>{right_col_width}.2f}"
-        spent_xp = f"{'|wSpent XP:|n':<{left_col_width}}{xp['spent']:>{right_col_width}.2f}"
-        
-        # Combine XP section
-        exp_section = f"{ic_xp}{spacing}{award_xp}\n"
-        exp_section += f"{total_xp}{spacing}{spent_xp}\n"
-        exp_section += f"{current_xp}\n"
-        
-        # Recent activity section
-        activity_title = "|y Recent Activity |n"
-        activity_title_len = len(activity_title)
-        activity_dash_count = (total_width - activity_title_len) // 2
-        activity_header = f"{'|b-|n' * activity_dash_count}{activity_title}{'|b-|n' * (total_width - activity_dash_count - activity_title_len)}\n"
-        
-        # Format recent activity
-        activity_section = ""
-        if xp.get('spends'):
-            for entry in xp['spends']:
-                timestamp = datetime.fromisoformat(entry['timestamp'])
-                if entry['type'] == 'spend':
-                    activity_section += (
-                        f"{timestamp.strftime('%Y-%m-%d %H:%M')} - "
-                        f"Spent {entry['amount']:.2f} XP on {entry['reason']}\n"
-                    )
-                else:
-                    activity_section += (
-                        f"{timestamp.strftime('%Y-%m-%d %H:%M')} - "
-                        f"Received {entry['amount']:.2f} XP ({entry['reason']})\n"
-                    )
-        else:
-            activity_section = "No XP history yet.\n"
-        
-        footer = f"{'|b-|n' * total_width}"
-        
-        # Add scene tracking status if available
-        scene_data = character.db.scene_data
-        if scene_data:
-            scene_title = "|y Scene Status |n"
-            scene_title_len = len(scene_title)
-            scene_dash_count = (total_width - scene_title_len) // 2
-            scene_header = f"{'|b-|n' * scene_dash_count}{scene_title}{'|b-|n' * (total_width - scene_dash_count - scene_title_len)}\n"
+            # Header
+            title = f" {target.name}'s XP "
+            title_len = len(title)
+            dash_count = (total_width - title_len) // 2
+            msg = f"{'|b-|n' * dash_count}{title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
             
-            scene_section = ""
-            if scene_data['current_scene']:
-                duration = (datetime.now() - scene_data['current_scene']).total_seconds() / 60
-                scene_section += f"Current scene duration: {int(duration)} minutes\n"
-                if scene_data['last_activity']:
-                    last_activity = (datetime.now() - scene_data['last_activity']).total_seconds() / 60
-                    scene_section += f"Last activity: {int(last_activity)} minutes ago\n"
+            # XP Section
+            exp_title = "|y Experience Points |n"
+            title_len = len(exp_title)
+            dash_count = (total_width - title_len) // 2
+            msg += f"{'|b-|n' * dash_count}{exp_title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
+            
+            # Format XP display
+            left_col_width = 20
+            right_col_width = 12
+            spacing = " " * 14
+            
+            ic_xp_display = f"{'|wIC XP:|n':<{left_col_width}}{ic_xp:>{right_col_width}.2f}"
+            total_xp_display = f"{'|wTotal XP:|n':<{left_col_width}}{total:>{right_col_width}.2f}"
+            current_xp_display = f"{'|wCurrent XP:|n':<{left_col_width}}{current:>{right_col_width}.2f}"
+            award_xp_display = f"{'|wAward XP:|n':<{left_col_width}}{award_xp:>{right_col_width}.2f}"
+            spent_xp_display = f"{'|wSpent XP:|n':<{left_col_width}}{spent:>{right_col_width}.2f}"
+            
+            msg += f"{ic_xp_display}{spacing}{award_xp_display}\n"
+            msg += f"{total_xp_display}{spacing}{spent_xp_display}\n"
+            msg += f"{current_xp_display}\n"
+            
+            # Recent Activity Section
+            activity_title = "|y Recent Activity |n"
+            title_len = len(activity_title)
+            dash_count = (total_width - title_len) // 2
+            msg += f"{'|b-|n' * dash_count}{activity_title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
+            
+            if xp_data.get('spends'):
+                for entry in xp_data['spends'][:5]:  # Show last 5 entries
+                    timestamp = datetime.fromisoformat(entry['timestamp'])
+                    formatted_time = timestamp.strftime("%Y-%m-%d %H:%M")
+                    if entry['type'] == 'receive':
+                        msg += f"{formatted_time} - Received {entry['amount']} XP ({entry['reason']})\n"
+                    else:
+                        msg += f"{formatted_time} - Spent {entry['amount']} XP on {entry['reason']}\n"
             else:
-                scene_section += "No active scene\n"
+                msg += "No XP history yet.\n"
             
-            scene_section += f"Completed scenes this week: {scene_data['completed_scenes']}\n"
+            # Footer
+            msg += f"{'|b-|n' * total_width}"
             
-            display = (
-                header +
-                exp_header +
-                exp_section +
-                activity_header +
-                activity_section +
-                scene_header +
-                scene_section +
-                footer
-            )
-        else:
-            display = (
-                header +
-                exp_header +
-                exp_section +
-                activity_header +
-                activity_section +
-                footer
-            )
-        
-        return display
+            self.caller.msg(msg)
+
+        except Exception as e:
+            logger.error(f"Error displaying XP for {target.name}: {str(e)}")
+            self.caller.msg("Error displaying XP information.")
 
     def award_ic_xp(self, amount=4):
         """Award IC XP for completing weekly scenes."""

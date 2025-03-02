@@ -854,7 +854,7 @@ class CmdSetLock(MuxCommand):
                             lock_str = f'has_merit({merit.strip()}, {level.strip()})'
                         else:
                             lock_str = f'has_merit({value.strip()})'
-                    elif locktype in ["clan", "tribe", "auspice", "tradition", "affiliation", "kith", "court"]:
+                    elif locktype in ["clan", "tribe", "auspice", "tradition", "convention","affiliation", "kith", "court"]:
                         lock_str = f'has_{locktype}({value.strip()})'
                     else:
                         self.caller.msg(f"Invalid lock type.")

@@ -53,15 +53,15 @@ class CmdJobs(MuxCommand):
       PLOT   - Plot-related requests
       BUILD  - Building/room requests
       MISC   - Miscellaneous requests
-
-    Examples:
-      +jobs
-      +myjobs
-      +jobs 5
-      +jobs/create REQ/New Character=Please review my character sheet
-      +jobs/comment 5=Added background story
-      +jobs/approve 5
-      +jobs/reopen 5
+      XP     - XP requests
+      PRP    - PRP requests
+      VAMP   - Vampire requests
+      SHIFT  - Shifter requests
+      MORT   - Mortal requests
+      POSS   - Possessed requests
+      COMP   - Companion requests
+      LING   - Changeling requests
+      MAGE   - Mage requests
     """
 
     key = "+jobs"
@@ -150,21 +150,27 @@ class CmdJobs(MuxCommand):
 
         output = header("Dies Irae Jobs", width=78, fillchar="|r-|n") + "\n"
         
-        # Create the header row
-        header_row = "|cJob #  Queue      Job Title                 Started  Assignee          Status|n"
+        # Create the header row with adjusted widths
+        header_row = "|cJob #  Queue      Job Title                 Originator    Assignee      Status|n"
         output += header_row + "\n"
         output += ANSIString("|r" + "-" * 78 + "|n") + "\n"
 
-        # Add each job as a row
+        # Add each job as a row with adjusted widths
         for job in jobs:
             assignee = job.assignee.username if job.assignee else "-----"
+            originator = job.requester.username if job.requester else "-----"
+            
+            # Check if job has been viewed by this user using is_updated_since_last_view
+            unread = job.is_updated_since_last_view(self.caller.account)
+            title_marker = "|r*|n " if unread else "  "
+            
             row = (
                 f"{job.id:<6}"
                 f"{crop(job.queue.name, width=10):<11}"
-                f"{crop(job.title, width=25):<25}"
-                f"{job.created_at.strftime('%m/%d/%y'):<9}"
-                f"{crop(assignee, width=17):<18}"
-                f"{job.status}"
+                f"{title_marker}{crop(job.title, width=23):<23}"
+                f"{crop(originator, width=13):<14}"
+                f"{crop(assignee, width=13):<14}"
+                f"{crop(job.status, width=10):<10}"
             )
             output += row + "\n"
 
@@ -180,7 +186,7 @@ class CmdJobs(MuxCommand):
                 self.caller.msg("You don't have permission to view this job.")
                 return
 
-            # Mark the job as viewed by this account
+            # Mark the job as viewed by this account using mark_viewed
             job.mark_viewed(self.caller.account)
 
             output = header(f"Job {job.id}", width=78, fillchar="|r-|n") + "\n"
@@ -214,7 +220,7 @@ class CmdJobs(MuxCommand):
                 output += divider("Comments", width=78, fillchar="-", color="|r", text_color="|c") + "\n"
                 for comment in job.comments:
                     output += f"|c{comment['author']} [{comment['created_at']}]:|n\n"
-                    output += wrap_ansi(comment['text'], width=76, left_padding=2) + "\n\n"
+                    output += wrap_ansi(comment['text'], width=78) + "\n\n"
             
             output += divider("", width=78, fillchar="-", color="|r") + "\n"
             self.caller.msg(output)
@@ -1072,21 +1078,27 @@ class CmdJobs(MuxCommand):
 
         output = header("My Dies Irae Jobs", width=78, fillchar="|r-|n") + "\n"
         
-        # Create the header row
-        header_row = "|cJob #  Queue      Job Title                 Started  Assignee          Status|n"
+        # Create the header row with adjusted widths
+        header_row = "|cJob #  Queue      Job Title           Originator    Assignee      Status|n"
         output += header_row + "\n"
         output += ANSIString("|r" + "-" * 78 + "|n") + "\n"
 
-        # Add each job as a row
+        # Add each job as a row with adjusted widths
         for job in jobs:
             assignee = job.assignee.username if job.assignee else "-----"
+            originator = job.requester.username if job.requester else "-----"
+            
+            # Check if job has been viewed by this user using is_updated_since_last_view
+            unread = job.is_updated_since_last_view(self.caller.account)
+            title_marker = "|r*|n " if unread else "  "
+            
             row = (
                 f"{job.id:<6}"
                 f"{crop(job.queue.name, width=10):<11}"
-                f"{crop(job.title, width=25):<25}"
-                f"{job.created_at.strftime('%m/%d/%y'):<9}"
-                f"{crop(assignee, width=17):<18}"
-                f"{job.status}"
+                f"{title_marker}{crop(job.title, width=23):<23}"
+                f"{crop(originator, width=13):<14}"
+                f"{crop(assignee, width=13):<14}"
+                f"{crop(job.status, width=10):<10}"
             )
             output += row + "\n"
 
@@ -1238,38 +1250,19 @@ class CmdJobs(MuxCommand):
             self.caller.msg(f"|rError creating job: {str(e)}|n")
             return
 
-def create_jobs_help_entry():
-    """Create or update the jobs help entry."""
-    try:
-        help_entry, created = HelpEntry.objects.get_or_create(
-            db_key="jobs_system",
-            defaults={
-                "db_help_category": "General",
-                "db_entrytext": CmdJobs.__doc__,
-                "db_lock_storage": "view:all()"
-            }
-        )
-        
-        if not created:
-            help_entry.db_entrytext = CmdJobs.__doc__
-            help_entry.db_lock_storage = "view:all()"
-        
-        # Handle tags separately after creation/update
-        help_entry.db_tags.clear()
-        # Add tags one by one with their category
-        help_entry.tags.add("jobs", category="help")
-        help_entry.tags.add("system", category="help")
-        help_entry.tags.add("help", category="help")
-            
-        help_entry.save()
-        return help_entry
-    except Exception as e:
-        logger.error(f"Error creating jobs help entry: {e}")
-        return None
-
-# Call this when the module is loaded
-create_jobs_help_entry()
-
 class JobSystemCmdSet(CmdSet):
+    """
+    This cmdset contains the jobs commands
+    """
+    key = "JobSystem"
+    
     def at_cmdset_creation(self):
+        """
+        Called when cmdset is first created.
+        """
         self.add(CmdJobs())
+        # Create/update help entry when cmdset is created
+        from evennia.utils import create
+        create.create_help_entry("jobs_system", CmdJobs.__doc__, category="General", 
+                               locks="view:all()", aliases=["jobs"], 
+                               tags=[("jobs", "help"), ("system", "help"), ("help", "help")])

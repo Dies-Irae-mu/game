@@ -945,6 +945,13 @@ class CmdSheet(MuxCommand):
                 for gift, values in sorted(gifts.items()):
                     gift_value = values.get('perm', 0)
                     powers.append(format_stat(gift, gift_value, default=0, width=self.POWERS_WIDTH))
+            # process rites
+            rites = character.db.stats.get('powers', {}).get('rite', {})
+            if rites:
+                powers.append(divider("Rites", width=38, color="|b"))
+                for rite, values in sorted(rites.items()):
+                    rite_value = values.get('perm', 0)
+                    powers.append(format_stat(rite, rite_value, default=0, width=self.POWERS_WIDTH))
 
         elif mortalplus_type.lower() == 'kinain':
             # Process arts

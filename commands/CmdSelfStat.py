@@ -74,7 +74,8 @@ REQUIRED_INSTANCES = ['Library', 'Status', 'Influence', 'Wonder', 'Secret Weapon
                       'Sphere Natural', 'Phobia', 'Addiction', 'Allies', 'Contacts', 'Caretaker',
                       'Alternate Identity', 'Equipment', 'Professional Certification', 'Allergic',
                       'Impediment', 'Enemy', 'Mentor', 'Old Flame', 'Additional Discipline', 
-                      'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish'] 
+                      'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish', 'Chimerical Item', 'Chimerical Companion',
+                      'Dreamers', 'Digital Dreamers'] 
 class CmdSelfStat(MuxCommand):
     """
     Usage:
@@ -87,6 +88,21 @@ class CmdSelfStat(MuxCommand):
       +selfstat Status(Ventrue)/Social=
       +selfstat Nature/Personal=Architect
       +selfstat Demeanor/Personal=Bon Vivant
+
+    Staff command:
+      +staffstat <character>=<stat>[(<instance>)]/<category>=[+-]<value>
+      +staffstat <character>=<stat>[(<instance>)]/<category>=
+      +staffstat <character>=<stat>=<value>
+
+    Examples:
+      +staffstat Bob=Strength/Physical=3
+      +staffstat Bob=Strength=3        (same as above)
+      +staffstat Jane=Status(Camarilla)/Background=2
+      +staffstat Mike=Path of Enlightenment/Personal=Road of Heaven
+      +staffstat Sarah=Nature/Personal=Architect
+
+    This version of the selfstat command allows staff to set stats on other characters, 
+    bypassing normal restrictions like character approval status and validation limits.
     """
 
     key = "+selfstat"
@@ -304,6 +320,51 @@ class CmdSelfStat(MuxCommand):
             
         return False, "", ""
 
+    def _validate_kinfolk_gift(self, gift, value=None) -> tuple[bool, str, str]:
+        """
+        Validate if a Kinfolk can learn a specific gift.
+        
+        Args:
+            gift: The gift object to validate
+            value: Optional value to validate for the gift level
+            
+        Returns:
+            Tuple of (is_valid, error_message, corrected_value)
+        """
+        # Get kinfolk's tribe
+        kinfolk_tribe = self.caller.get_stat('identity', 'lineage', 'Tribe', temp=False)
+        if not kinfolk_tribe:
+            return False, "Must set tribe before learning gifts", None
+        
+        # If value provided, validate gift level (Kinfolk can only learn level 1-2)
+        if value is not None:
+            try:
+                gift_value = int(value)
+                if gift_value > 2:
+                    return False, "Kinfolk can only learn level 1-2 gifts", None
+            except ValueError:
+                return False, "Gift value must be a number", None
+        
+        # Check if it's a homid gift
+        if gift.shifter_type:
+            allowed_types = gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type]
+            if 'homid' in [t.lower() for t in allowed_types]:
+                return True, "", gift.name
+        
+        # Check if it's a tribal gift
+        if gift.tribe:
+            # Handle both string and list cases for tribe
+            if isinstance(gift.tribe, str):
+                if gift.tribe.lower() == kinfolk_tribe.lower():
+                    return True, "", gift.name
+            else:
+                # Handle list case
+                allowed_tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+                if kinfolk_tribe.lower() in [t.lower() for t in allowed_tribes]:
+                    return True, "", gift.name
+        
+        return False, f"Kinfolk can only learn Homid gifts or gifts from their tribe ({kinfolk_tribe})", None
+
     def _check_gift_alias(self, gift_name: str) -> tuple[bool, str]:
         """
         Check if a gift name is an alias and return the canonical name.
@@ -356,12 +417,13 @@ class CmdSelfStat(MuxCommand):
                     # Return false but include the gift name for validation
                     return False, gift.name
             elif splat == 'Mortal+' and char_type == 'Kinfolk':
-                # For Kinfolk, check if they have the Gifted Kinfolk merit
-                merit_value = self.caller.get_stat('merits', 'supernatural', 'Gifted Kinfolk', temp=False)
-                if not merit_value:
-                    self.caller.msg("|rMust have the 'Gifted Kinfolk' Merit to use gifts.|n")
-                    return None, None
-            return False, gift.name  # Found exact match, no need to check aliases
+                # Validate Kinfolk gift access
+                is_valid, error_msg, canonical_name = self._validate_kinfolk_gift(gift)
+                if not is_valid:
+                    self.caller.msg(f"|r{error_msg}|n")
+                    return False, None
+                return True, canonical_name
+            return True, gift.name  # Found exact match
          
         # Get all gifts and check their aliases
         all_gifts = Stat.objects.filter(
@@ -391,12 +453,6 @@ class CmdSelfStat(MuxCommand):
                     if char_type.lower() not in allowed_types:
                         # Return false but include the gift name for validation
                         return False, gift.name
-            elif splat == 'Mortal+' and char_type == 'Kinfolk':
-                # For Kinfolk, check if they have the Gifted Kinfolk merit
-                merit_value = self.caller.get_stat('merits', 'supernatural', 'Gifted Kinfolk', temp=False)
-                if not merit_value:
-                    self.caller.msg("|rMust have the 'Gifted Kinfolk' Merit to use gifts.|n")
-                    return None, None
             
             # Find which alias matched
             matched_alias = None
@@ -602,13 +658,13 @@ class CmdSelfStat(MuxCommand):
                     # Only display the error message once here, not in _check_gift_alias
                     return False, f"The gift '{gift.name}' is not available to {char_type}. Available to: {', '.join(t.title() for t in allowed_types)}", None
                 
-            # For Kinfolk, check if they have the Gifted Kinfolk merit
             elif splat == 'Mortal+' and char_type == 'Kinfolk':
-                merit_value = self.caller.get_stat('merits', 'supernatural', 'Gifted Kinfolk', temp=False)
-                if not merit_value:
-                    self.caller.msg("|rMust have the 'Gifted Kinfolk' Merit to use gifts.|n")
-                    return None, None
-                
+                # Validate Kinfolk gift access and level
+                is_valid, error_msg, canonical_name = self._validate_kinfolk_gift(gift, value)
+                if not is_valid:
+                    return False, error_msg, None
+                return True, "", value
+            
             # Validate the gift value
             try:
                 gift_value = int(value)
@@ -1688,13 +1744,7 @@ class CmdSelfStat(MuxCommand):
                     if char_type.lower() not in allowed_types:
                         # Instead of showing the message here, just return the category so validation can handle it
                         return 'powers', 'gift'
-                # For Kinfolk, check if they have the Gifted Kinfolk merit
-                elif splat == 'Mortal+' and char_type == 'Kinfolk':
-                    merit_value = self.caller.get_stat('merits', 'supernatural', 'Gifted Kinfolk', temp=False)
-                    if not merit_value:
-                        self.caller.msg("|rMust have the 'Gifted Kinfolk' Merit to use gifts.|n")
-                        return None, None
-                
+               
                 # If we found it through an alias, update the stat name and show message
                 if gift.name.lower() != stat_name.lower():
                     self.stat_name = gift.name
@@ -3468,16 +3518,9 @@ class CmdSelfStat(MuxCommand):
     def _requires_instance(self, stat_name: str, category: str = None) -> bool:
         """
         Check if a stat MUST have an instance.
-        
-        Args:
-            stat_name (str): The name of the stat to check
-            category (str, optional): The category of the stat
-            
-        Returns:
-            bool: True if the stat requires an instance, False otherwise
         """
-        # Stats in REQUIRED_INSTANCES must have instances
-        if stat_name in REQUIRED_INSTANCES:
+        # Stats in REQUIRED_INSTANCES must have instances (case-insensitive)
+        if any(stat_name.lower() == required.lower() for required in REQUIRED_INSTANCES):
             return True
             
         # Check database for required instance flag
