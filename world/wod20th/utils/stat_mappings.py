@@ -12,7 +12,16 @@ VALID_MORTALPLUS_TYPES = ['ghoul', 'kinfolk', 'kinain', 'sorcerer', 'faithful', 
 VALID_POSSESSED_TYPES = ['fomori', 'kami']
 VALID_SHIFTER_TYPES = ['garou', 'bastet', 'corax', 'gurahl', 'mokole', 'nagah', 'nuwisha', 'ratkin', 'rokea', 'ananasi', 'ajaba']
 VALID_SPLATS = ['changeling', 'vampire', 'shifter', 'companion', 'mage', 'mortal', 'mortal+', 'possessed'] 
-
+REQUIRED_INSTANCES = ['Library', 'Status', 'Influence', 'Wonder', 'Secret Weapon', 'Companion', 
+                      'Familiar', 'Enhancement', 'Laboratory', 'Favor', 'Acute Senses', 
+                      'Enchanting Feature', 'Secret Code Language', 'Hideaway', 'Safehouse', 
+                      'Sphere Natural', 'Phobia', 'Addiction', 'Allies', 'Contacts', 'Caretaker',
+                      'Alternate Identity', 'Equipment', 'Professional Certification', 'Allergic',
+                      'Impediment', 'Enemy', 'Mentor', 'Old Flame', 'Additional Discipline', 
+                      'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish', 'Chimerical Item', 'Chimerical Companion',
+                      'Dreamers', 'Digital Dreamers', 'Addiction', 'Phobia', 'Derangement',
+                      'Obsession', 'Compulsion', 'Bigot', 'Ability Deficit', 'Sect Enmity', 'Camp Enmity'
+                     ] 
 from typing import List, Tuple
 
 # Main categories for organization
@@ -143,20 +152,70 @@ IDENTITY_PERSONAL = [
     'Date of Possession', 'Enlightenment'
 ]
 
-IDENTITY_LINEAGE = [
-        'Sire', 'Clan', 'Generation', 'Enlightenment', 'Type', 'Tribe', 
-        'Breed', 'Auspice', 'Tradition', 'Convention', 'Affiliation',
-        'Aspect', 'Kitsune Path', 'Kitsune Faction', 'Ajaba Faction',
-        'Crown', 'Camp', 'Lodge', 'Fang House', 'Ananta Faction', 'Ananta Cabal',
-        'Kitsune Clan', 'Go-En', 'Sempai', 'Jamak Spirit', 'Seelie Legacy', 'Unseelie Legacy',
-        'First Legacy', 'Second Legacy', 'Tradition Subfaction', 'Methodology',
-        'Occupation', 'Signature', 'Essence', 'Affinity Sphere', 'Nephandi Faction',
-        'Possessed Type', 'Mortal+ Type', 'Varna', 'Ananasi Faction', 'Ananasi Cabal',
-        'Patron Totem', 'Pack', 'Society', 'Fellowship', 'Domitor', 'Companion Type', 
-        'Motivation', 'Form', 'Phyla', 'Seeming', 'House', 'Fae Court', 'Nunnehi Camp',
-        'Nunnehi Seeming', 'Nunnehi Family', 'Nunnehi Totem', 'Affinity Realm', 'Elemental Affinity',
-        'Fuel'
-]
+IDENTITY_LINEAGE = {
+    'clan': ('identity', 'lineage'),
+    'generation': ('identity', 'lineage'),
+    'sire': ('identity', 'lineage'),
+    'tribe': ('identity', 'lineage'),
+    'breed': ('identity', 'lineage'),
+    'auspice': ('identity', 'lineage'),
+    'aspect': ('identity', 'lineage'),
+    'kith': ('identity', 'lineage'),
+    'seeming': ('identity', 'lineage'),
+    'house': ('identity', 'lineage'),
+    'tradition': ('identity', 'lineage'),
+    'convention': ('identity', 'lineage'),
+    'affiliation': ('identity', 'lineage'),
+    'essence': ('identity', 'lineage'),
+    'signature': ('identity', 'lineage'),
+    'affinity sphere': ('identity', 'lineage'),
+    'affinity realm': ('identity', 'lineage'),
+    'possesed type': ('identity', 'lineage'),
+    'mortalplus type': ('identity', 'lineage'),
+    'companion type': ('identity', 'lineage'),
+    'varna': ('identity', 'lineage'),
+    'crown': ('identity', 'lineage'),
+    'court': ('identity', 'lineage'),
+    'camp': ('identity', 'lineage'),
+    'lodge': ('identity', 'lineage'),
+    'fang house': ('identity', 'lineage'),
+    'ananasi faction': ('identity', 'lineage'),
+    'ananasi cabal': ('identity', 'lineage'),
+    'kitsune path': ('identity', 'lineage'),
+    'kitsune faction': ('identity', 'lineage'),
+    'ajaba faction': ('identity', 'lineage'),
+    'fuel': ('identity', 'lineage'),
+    'elemental affinity': ('identity', 'lineage'),
+    'motivation': ('identity', 'lineage'),
+    'form': ('identity', 'lineage'),
+    'phyla': ('identity', 'lineage'),
+    'seeming': ('identity', 'lineage'),
+    'house': ('identity', 'lineage'),
+    'tradition subfaction': ('identity', 'lineage'),
+    'methodology': ('identity', 'lineage'),
+    'spirit type': ('identity', 'lineage'),
+    'spirit name': ('identity', 'lineage'),
+    'domitor': ('identity', 'lineage'),
+    'society': ('identity', 'lineage'),
+    'order': ('identity', 'lineage'),
+    'coven': ('identity', 'lineage'),
+    'cabal': ('identity', 'lineage'),
+    'plague': ('identity', 'lineage'),
+    'stream': ('identity', 'lineage'),
+    'kitsune path': ('identity', 'lineage'),
+    'seelie legacy': ('identity', 'lineage'),
+    'unseelie legacy': ('identity', 'lineage'),
+    'first legacy': ('identity', 'lineage'),
+    'second legacy': ('identity', 'lineage'),
+    'methodology': ('identity', 'lineage'),
+    'occupation': ('identity', 'lineage'),
+    'signature': ('identity', 'lineage'),
+    'essence': ('identity', 'lineage'),
+    'affinity sphere': ('identity', 'lineage'),
+    'nephandi faction': ('identity', 'lineage'),
+    'deed name': ('identity', 'lineage'),
+    'phyla': ('identity', 'lineage')
+}
 
 ELEMENTAL_AFFINITY = {
             "Air": [
@@ -348,52 +407,53 @@ IDENTITY_LINEAGE = {
     'affinity sphere': ('identity', 'lineage'),
     'nephandi faction': ('identity', 'lineage'),
     'deed name': ('identity', 'lineage'),
+    'phyla': ('identity', 'lineage')
 }
 
 # Secondary abilities
 SECONDARY_TALENTS = {
-    'artistry': ('abilities', 'secondary_talent'),
-    'carousing': ('abilities', 'secondary_talent'),
-    'diplomacy': ('abilities', 'secondary_talent'),
-    'intrigue': ('abilities', 'secondary_talent'),
-    'mimicry': ('abilities', 'secondary_talent'),
-    'scrounging': ('abilities', 'secondary_talent'),
-    'seduction': ('abilities', 'secondary_talent'),
-    'style': ('abilities', 'secondary_talent'),
-    'blatancy': ('abilities', 'secondary_talent'),
-    'flying': ('abilities', 'secondary_talent'),
-    'high ritual': ('abilities', 'secondary_talent'),
-    'lucid dreaming': ('abilities', 'secondary_talent')
+    'artistry': ('secondary_abilities', 'secondary_talent'),
+    'carousing': ('secondary_abilities', 'secondary_talent'),
+    'diplomacy': ('secondary_abilities', 'secondary_talent'),
+    'do': ('secondary_abilities', 'secondary_talent'),
+    'intrigue': ('secondary_abilities', 'secondary_talent'),
+    'mimicry': ('secondary_abilities', 'secondary_talent'),
+    'scrounging': ('secondary_abilities', 'secondary_talent'),
+    'seduction': ('secondary_abilities', 'secondary_talent'),
+    'style': ('secondary_abilities', 'secondary_talent'),
+    'blatancy': ('secondary_abilities', 'secondary_talent'),
+    'flying': ('secondary_abilities', 'secondary_talent'),
+    'high ritual': ('secondary_abilities', 'secondary_talent'),
+    'lucid dreaming': ('secondary_abilities', 'secondary_talent')
 }
 
 SECONDARY_SKILLS = {
-    'archery': ('abilities', 'secondary_skill'),
-    'fencing': ('abilities', 'secondary_skill'),
-    'fortune-telling': ('abilities', 'secondary_skill'),
-    'gambling': ('abilities', 'secondary_skill'),
-    'jury-rigging': ('abilities', 'secondary_skill'),
-    'martial arts': ('abilities', 'secondary_skill'),
-    'pilot': ('abilities', 'secondary_skill'),
-    'torture': ('abilities', 'secondary_skill'),
-    'biotech': ('abilities', 'secondary_skill'),
-    'do': ('abilities', 'secondary_skill'),
-    'energy weapons': ('abilities', 'secondary_skill'),
-    'helmsman': ('abilities', 'secondary_skill'),
-    'microgravity ops': ('abilities', 'secondary_skill')
+    'archery': ('secondary_abilities', 'secondary_skill'),
+    'fencing': ('secondary_abilities', 'secondary_skill'),
+    'fortune-telling': ('secondary_abilities', 'secondary_skill'),
+    'gambling': ('secondary_abilities', 'secondary_skill'),
+    'jury-rigging': ('secondary_abilities', 'secondary_skill'),
+    'martial arts': ('secondary_abilities', 'secondary_skill'),
+    'pilot': ('secondary_abilities', 'secondary_skill'),
+    'torture': ('secondary_abilities', 'secondary_skill'),
+    'biotech': ('secondary_abilities', 'secondary_skill'),
+    'energy weapons': ('secondary_abilities', 'secondary_skill'),
+    'helmsman': ('secondary_abilities', 'secondary_skill'),
+    'microgravity ops': ('secondary_abilities', 'secondary_skill')
 }
 
 SECONDARY_KNOWLEDGES = {
-    'area knowledge': ('abilities', 'secondary_knowledge'),
-    'cultural savvy': ('abilities', 'secondary_knowledge'),
-    'demolitions': ('abilities', 'secondary_knowledge'),
-    'herbalism': ('abilities', 'secondary_knowledge'),
-    'media': ('abilities', 'secondary_knowledge'),
-    'power-brokering': ('abilities', 'secondary_knowledge'),
-    'vice': ('abilities', 'secondary_knowledge'),
-    'cybernetics': ('abilities', 'secondary_knowledge'),
-    'hypertech': ('abilities', 'secondary_knowledge'),
-    'paraphysics': ('abilities', 'secondary_knowledge'),
-    'xenobiology': ('abilities', 'secondary_knowledge')
+    'area knowledge': ('secondary_abilities', 'secondary_knowledge'),
+    'cultural savvy': ('secondary_abilities', 'secondary_knowledge'),
+    'demolitions': ('secondary_abilities', 'secondary_knowledge'),
+    'herbalism': ('secondary_abilities', 'secondary_knowledge'),
+    'media': ('secondary_abilities', 'secondary_knowledge'),
+    'power-brokering': ('secondary_abilities', 'secondary_knowledge'),
+    'vice': ('secondary_abilities', 'secondary_knowledge'),
+    'cybernetics': ('secondary_abilities', 'secondary_knowledge'),
+    'hypertech': ('secondary_abilities', 'secondary_knowledge'),
+    'paraphysics': ('secondary_abilities', 'secondary_knowledge'),
+    'xenobiology': ('secondary_abilities', 'secondary_knowledge')
 }
 
 # Special stats that need custom handling
@@ -789,7 +849,7 @@ SPECIAL_ADVANTAGES = {
         'bond-sharing': {'valid_values': [4, 5, 6], 'desc': "Creates mystical bond to share abilities"},
         'cause insanity': {'valid_values': [2, 4, 6, 8, 10], 'desc': "Can provoke temporary fits of madness"},
         'chameleon coloration': {'valid_values': [4, 6, 8], 'desc': "Ability to change coloration for camouflage"},
-        'claws fangs or horns': {'valid_values': [3, 5, 7], 'desc': "Natural weaponry that inflicts lethal damage"},
+        'companion natural weaponry': {'valid_values': [3, 5, 7], 'desc': "Natural weaponry that inflicts lethal damage"},
         'deadly demise': {'valid_values': [2, 4, 6], 'desc': "Upon death, inflicts damage to nearby enemies"},
         'dominance': {'valid_values': [1], 'desc': "Naturally commanding demeanor within specific groups"},
         'earthbond': {'valid_values': [2], 'desc': "Mystical connection to perceive threats"},
@@ -804,7 +864,7 @@ SPECIAL_ADVANTAGES = {
         'ghost form': {'valid_values': [8, 10], 'desc': "Become invisible or incorporeal"},
         'healing lick': {'valid_values': [3, 6], 'desc': "Ability to heal wounds (3pts), 6pts for aggravated damage"},
         'hibernation': {'valid_values': [2], 'desc': "Can enter voluntary hibernation state"},
-        'human guise': {'valid_values': [1, 2, 3], 'desc': "Ability to appear human"},
+        'human guise': {'valid_values': [2, 4], 'desc': "Ability to appear human"},
         'human speech': {'valid_values': [1], 'desc': "Ability to speak human languages"},
         'information fount': {'valid_values': [5], 'desc': "Ability to provide bizarre, yet helpful information"},
         'immunity': {'valid_values': [2, 5, 10, 15], 'desc': "Immunity to specific harmful effects"},

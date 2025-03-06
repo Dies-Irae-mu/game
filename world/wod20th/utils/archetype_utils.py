@@ -39,6 +39,11 @@ ARCHETYPES = {
         'system': 'Regain a point of Willpower whenever you gain a significant commodity at a good price.',
         'description': 'The art of the deal is the art of life. The Barterer Archetype exults in getting something potent for a low price, and takes personal pride in being savvy enough to avoid bad deals and capitalize on good ones. For werewolves, this Archetype is most common among Theurges and others who broker deals with the spirit world, where the dance of chiminage and patronage is so significant.'
     },
+    'beta': {
+        'name': 'Beta',
+        'system': 'Act as a supporter for your group\'s superior.',
+        'description': 'Regain Willpower whenever your counsel proves beneficial for the group. Lose Willpower when the leader is proven inefficient.'
+    },
     'benefactor': {
         'name': 'Benefactor',
         'system': 'Regain Willpower when you provide help that someone else desperately needs.',
@@ -258,6 +263,11 @@ ARCHETYPES = {
         'name': 'Mediator',
         'system': 'The Mediator regains Willpower every time she convinces others to compromise on a high-stakes disagreement.',
         'description': 'The Mediator knows how important compromise can be, and seeks to avoid conflict. She pursues give and take no matter who the parties are, knowing that unless both sides benefit, clashes can escalate to cataclysmic levels. While there\'s always the fear her involvement might makes things worse, she knows someone has to be the impassioned voice of reason when the stakes are so high.'
+    },
+    'mentor': {
+        'name': 'Mentor',
+        'system': "You've got knowledge and experience that can benefit other people, so you share it as freely as you can. This might involve having a single pupil, apprentice or protege, or it could involve several people learning what you have to teach. More than simply a teacher, though, you make a personal investment in your student's progress. An instructor can leave the classroom at the end of the day, but a Mentor's role might last for life. Dedication is your source of strength. It's important to you that other people share in what you have to offer. Because you care about the results, and probably about the students too, you'll put yourself out there in surprising ways. (See the Background: Mentor for certain effects of a mentor /student bond.) On the other hand, you can be Pedantic. Lecturing becomes  habit, with every circumstance providing an opportunity for more lessons. Occasionally, even the most accomplished teacher must step out from behind the podium. Your potential for Ascension depends in part upon humanity, and that's a hard thing to hang on to when you're always in the Professor role. (There's also a great potential to develop problematic and possibly unethical bonds with your protege, but that's an entirely different sort of lesson to learn.) ",
+        'description': 'Regain Willpower when your guidance helps your pupil(s) accomplish something that had been beyond their reach before.'
     },
     'monster': {
         'name': 'Monster',
@@ -493,6 +503,31 @@ ARCHETYPES = {
         'name': 'Prophet',
         'system': 'Insight is your greatest strength. Prophets tend to see things that are hidden to most people: secrets, omens, visions of the future, and so forth. Even if you lack the blessing/ curse of prophecy, few mysteries escape your sight. Ruthlessness is the traditional flaw of prophets. Driven by their vision of Truth, such people tend to be impatient, fanatical, and defiant of mortal power. You\'ll probably score lots of points for guts, but you might find those guts roasting on a spit in some ruler\'s torture garden. True prophets often meet unhappy ends... and they tend to take their followers down with them when they go.',
         'description': 'Regain Willpower when you speak Truth to power and inspire a successful change.'
+    },
+    'entertainer': {
+        'name': "Entertainer",
+        'system': "Life sucks. Good thing you're here to brighten things up! Maybe you're a satirist, kicking holes in the delusions surrounding you; or an actor, speaking for the folks who've forgotten what they needed to say. You could express the yearning that other people feel but cannot articulate, or simply bring a smile when joy is hard to find. Whatever it is that you do, though, it transcends mere silliness. Although you're not as driven as, say, the Artist described above, you are an artist too, revealing truth through entertainment. You're Fun and Entertaining to be around - important gifts when folks are fighting for their lives. Beyond that, you inspire people to look past despair and find beauty and humor even in ugly situations. Ego, however, is your biggest hurdle. Doing what you do, it's pretty easy to get lost in your own illusions of importance. Now, you need a strong ego in order to put yourself out there day after day; unless you learn to balance it with authentic self-reflection and restraint, however, you're just setting yourself up to be a punch line somewhere down the road. Ascension demands more than artistic sensibilities. To transcend your limitations, you need to swallow your ego and accept that you can't always be the star. ",
+        'description': "Regain Willpower when your work makes some significant change in the lives of people around you."
+    },
+    'guardian': {
+        'name': "Guardian",
+        'system': "Shepherding the weak through the Valley of Darkness, you are truly your brother's keeper and the finder of lost children. You save your great vengeance and furious anger for those who would poison and betray your brothers, sisters, and so forth. Pop-culture quotations aside, you take your duty seriously_ someone, after all, needs to protect folks who cannot, or sometimes will not, protect themselves. In essence, this ideal  guides all Awakened factions; even the Fallen, in their twisted way, often justify themselves by claiming to be guardians of a rejected world. Courage is your calling card. It takes guts to do what you do, and by all the Gods, you've got fortitude to spare. Admirable though it may be, your dedication to Self-Sacrifice could be your Achilles' heel. Lots of would-be Guardians wind up ground into mulch by constant conflict. A knight needs battle, true enough; but until she learns when to stop fighting - to step aside, perhaps, and let people defend themselves or else make their own decisions - a Guardian can become a martyr, a bully, or just one more monster in a world already full of them.",
+        'description': "Regain Willpower when your actions directly save a weaker group or character from assured destruction."
+    },
+    'heretic': {
+        'name': "Heretic",
+        'system': "Grab your chainsaw and line up the sacred cows! Whatever your companions regard as 'orthodox' and proper is, to you, anathema. Perhaps you follow a confrontational approach to your culture's institutions; or you undermine authorities that you consider to be corrupt. You could introduce a decidedly unconventional change to an established tradition (or Tradition), or revere a path or godhead that most folks consider to be 'evil.' Linguistically, heretic combines implications of choice, belief, and the act of taking something valuable. Whether your heresy is religious, philosophical, political, or some mixture of them all, you refuse to accept the popular (and perhaps demanded) creed. Integrity drives you. After all, if you did not possess immense (often dangerous) degrees of integrity, you would simply go with the flow, not resist it the way you do. And yet, that Iconoclasm could get you_ and other people_ killed. That is, after all, what often happens to heretics. Folks don't like to have their cherished beliefs overturned, and so as you run through life's market flipping over tables in the name of your belief, remember that one of those tables could very well land on top of you.",
+        'description': "Regain Willpower whenever you challenge a commonly held conviction and manage to change people's minds about that belief."
+    },
+    'romantic': {
+        'name': "Romantic",
+        'system': "In a world filled with ugliness, you seek and find beauty. Said beauty could be tragic (as detailed under the entries for Romance and Tragedy in this book's Chapter Five section Storytelling, Genre, and Mage, pp. 285-286), but that sense of melancholy makes it pure. High drama is your heartbeat. Passion is your joy. In the words of Patti Smith, you 'seek pleasure_ seek the nerves under your skin.' This quest is often painful, but that pain tells you you're alive. That Passion provides your deepest strength. When other folks hesitate, you plunge in, reveling in the raw excitement of life's dance. Enchanted by that dance, you can be pretty Careless about its effects. Like the original Romantics, your excesses hurt a lot of people. Eventually, you'll need to develop a greater sense of responsibility and moderation if you ever wish to Ascend.",
+        'description': "Regain Willpower when you throw yourself into a gloriously ruinous affair or reveal life's howling beauty to a previously hesitant soul."
+    },
+    'zealot': {
+        'name': "Zealot",
+        'system': "A flipside to the Heretic, you pursue your beliefs with extreme enthusiasm. Moderation, to you, is weakness - a true believer will do pretty much anything for the cause! Whatever your cause may be - a political philosophy, a theological creed, a social movement, whatever matters most to you - it's something that inspires and guides your behavior, associations, activities and, most importantly, your focus: the beliefs, practices, and instruments through which you shape your magickal feats. Obviously, the player for a zealot mage must determine, in detail, what his character believes in, why he believes in it, how it shapes his personality, and what it takes to challenge and perhaps alter or destroy that belief. Zealots hold deeper convictions than even the average mage would hold, and so it's vital to know what those convictions might be.Conviction is your armor, shield, and sword. That steadfast confidence in your beliefs will stand with you when no one and nothing else will do.Such Extremity, however, can inspire abhorrent acts in the name of your beliefs. A zealot, after all, is by definition someone who will sacrifice anything and anyone for the cause. A zealot mage, in particular, can be a terrifying force. The Fallen, Mad, and Technocracy have plenty of uses for such people, and even the supposedly moderate Traditions and Disparates have embers who'd sooner kill a busload of kids than step back on their convictions.",
+        'description': "Regain Willpower whenever your deeply held beliefs are proved right through your behavior."
     }
 }
 

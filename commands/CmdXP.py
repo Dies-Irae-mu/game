@@ -7,6 +7,7 @@ from typeclasses.characters import Character
 from django.db import transaction
 from evennia.utils import logger
 from django.db.models import Q
+from world.wod20th.utils.stat_mappings import MERIT_VALUES, RITE_VALUES, FLAW_VALUES, MERIT_CATEGORIES, REQUIRED_INSTANCES
 
 class CmdXP(default_cmds.MuxCommand):
     """
@@ -16,17 +17,21 @@ class CmdXP(default_cmds.MuxCommand):
       +xp                     - View your XP
       +xp <name>             - View another character's XP (Staff only)
       +xp/desc <name>        - View detailed XP history (Staff only)
-      +xp/sub <name>/<stat> <level>=<amount>/<reason> - Remove XP from character (Staff only)
+      +xp/sub <name>/<amount>=<reason> - Remove XP from character (Staff only)
       +xp/init               - Initialize scene tracking
       +xp/endscene          - Manually end current scene (only if scene doesn't end automatically, remove in future)
       +xp/add <name>=<amt>   - Add XP to a character (Staff only)
       +xp/spend <name> <rating>=<reason> - Spend XP (Must be in OOC area)
       +xp/forceweekly       - Force weekly XP distribution (Staff only)
+      +xp/staffspend <name>/<stat> <rating>=<reason> - Spend XP on behalf of a character (Staff only)
       
     Examples:
       +xp/spend Strength 3=Getting stronger
       +xp/spend Potence 2=Learning from mentor
       +xp/spend Resources 2=Business success
+      +xp/staffspend Bob/Strength 3=Staff correction
+      +xp/sub Bob/5=Correcting XP error
+      +xp/staffspend ryan/<FLAW NAME>=Flaw Buyoff
     """
     
     key = "+xp"
@@ -101,38 +106,19 @@ class CmdXP(default_cmds.MuxCommand):
                     return
                     
                 try:
-                    # Split into target/stat and amount/reason parts
+                    # Parse input
                     if "=" not in self.args:
-                        self.caller.msg("Usage: +xp/sub <name>/<stat> <level>=<amount>/<reason>")
+                        self.caller.msg("Usage: +xp/sub <name>/<amount>=<reason>")
                         return
                         
-                    target_info, amount_info = self.args.split("=", 1)
+                    target_info, reason = self.args.split("=", 1)
+                    reason = reason.strip()
                     
                     # Parse target info
                     if "/" not in target_info:
-                        self.caller.msg("Must specify both character name and stat.")
+                        self.caller.msg("Must specify both character name and amount.")
                         return
-                    target_name, stat_info = target_info.split("/", 1)
-                    
-                    # Parse amount info
-                    if "/" not in amount_info:
-                        self.caller.msg("Must specify both amount and reason.")
-                        return
-                    amount, reason = amount_info.split("/", 1)
-                    
-                    # Get stat level if provided
-                    stat_parts = stat_info.strip().split()
-                    if len(stat_parts) > 1:
-                        stat_name = " ".join(stat_parts[:-1])
-                        stat_level = stat_parts[-1]
-                        try:
-                            stat_level = int(stat_level)
-                        except ValueError:
-                            stat_name = stat_info
-                            stat_level = None
-                    else:
-                        stat_name = stat_info
-                        stat_level = None
+                    target_name, amount = target_info.split("/", 1)
                     
                     # Find target character
                     target = search_object(target_name.strip(), 
@@ -159,20 +145,11 @@ class CmdXP(default_cmds.MuxCommand):
                     target.db.xp['total'] -= xp_amount
                     target.db.xp['current'] -= xp_amount
                     
-                    # Format the reason with stat details
-                    formatted_reason = f"{stat_name}"
-                    if stat_level is not None:
-                        formatted_reason += f" (Level {stat_level})"
-                    if reason:
-                        formatted_reason += f" - {reason}"
-                    
                     # Log the removal
                     removal = {
-                        'type': 'removal',
+                        'type': 'spend',
                         'amount': float(xp_amount),
-                        'stat_name': stat_name,
-                        'stat_level': stat_level,
-                        'reason': formatted_reason,
+                        'reason': reason,
                         'staff_name': self.caller.name,
                         'timestamp': datetime.now().isoformat()
                     }
@@ -182,13 +159,13 @@ class CmdXP(default_cmds.MuxCommand):
                     target.db.xp['spends'].insert(0, removal)
                     
                     # Notify staff and target
-                    self.caller.msg(f"Removed {xp_amount} XP from {target.name} for {formatted_reason}")
-                    target.msg(f"{xp_amount} XP was removed by {self.caller.name} for {formatted_reason}")
+                    self.caller.msg(f"Removed {xp_amount} XP from {target.name} for {reason}")
+                    target.msg(f"{xp_amount} XP was removed by {self.caller.name} for {reason}")
                     self._display_xp(target)
                     
                 except ValueError as e:
-                    self.caller.msg("Usage: +xp/sub <name>/<stat> <level>=<amount>/<reason>")
-                    self.caller.msg("Example: +xp/sub Bob/Strength 3=5.00/Correcting error")
+                    self.caller.msg("Usage: +xp/sub <name>/<amount>=<reason>")
+                    self.caller.msg("Example: +xp/sub Bob/5.00=Correcting error")
                 return
 
             if "init" in self.switches:
@@ -279,18 +256,34 @@ class CmdXP(default_cmds.MuxCommand):
                         self.caller.msg(f"Invalid stat name: {stat_name}")
                         return
 
-                    # Check if stat already exists and get current value
-                    current_value = (self.caller.db.stats.get(category, {})
-                                   .get(subcategory, {})
-                                   .get(proper_stat_name, {})
-                                   .get('perm', 0))
+                    # Get current rating from the character's stats
+                    current_rating = 0
+                    if category == 'attributes':
+                        current_rating = self.caller.db.stats.get('attributes', {}).get(subcategory, {}).get(proper_stat_name, {}).get('perm', 0)
+                        # self.caller.msg(f"DEBUG: Looking up attribute {proper_stat_name} in attributes.{subcategory}: {current_rating}")
+                    elif category == 'powers' and subcategory == 'discipline':
+                        # Debug the full powers structure
+                        # self.caller.msg(f"DEBUG: Full powers structure: {self.caller.db.stats.get('powers', {})}")
+                        # Debug the discipline subcategory
+                        # self.caller.msg(f"DEBUG: Discipline subcategory: {self.caller.db.stats.get('powers', {}).get('discipline', {})}")
+                        # Get and debug the current rating
+                        current_rating = self.caller.db.stats.get('powers', {}).get('discipline', {}).get(proper_stat_name, {}).get('perm', 0)
+                        # self.caller.msg(f"DEBUG: Looking up discipline {proper_stat_name} in powers.discipline: {current_rating}")
+                    else:
+                        current_rating = self.caller.get_stat(category, subcategory, proper_stat_name)
+                        # self.caller.msg(f"DEBUG: Looking up {proper_stat_name} using get_stat({category}, {subcategory}): {current_rating}")
+
+                    # Debug the final current_rating being passed
+                    # self.caller.msg(f"DEBUG: Final current_rating being passed to buy_stat: {current_rating}")
 
                     # Attempt to spend XP
                     success, message = self.caller.buy_stat(
-                        proper_stat_name, new_rating,
+                        proper_stat_name, 
+                        new_rating,
                         category=category,
                         subcategory=subcategory,
-                        reason=reason
+                        reason=reason,
+                        current_rating=current_rating
                     )
                     
                     self.caller.msg(message)
@@ -359,6 +352,237 @@ class CmdXP(default_cmds.MuxCommand):
                 except Exception as e:
                     self.caller.msg(f"Error during XP distribution: {str(e)}")
                     return
+
+            if "staffspend" in self.switches:
+                # Only staff can force spend XP
+                if not self.caller.check_permstring("builders"):
+                    self.caller.msg("You don't have permission to force spend XP.")
+                    return
+                    
+                try:
+                    # Parse input
+                    if "=" not in self.args:
+                        self.caller.msg("Usage: +xp/staffspend <name>/<stat> <rating>=<reason>")
+                        return
+                        
+                    target_info, reason = self.args.split("=", 1)
+                    reason = reason.strip()
+                    
+                    # Parse target info
+                    if "/" not in target_info:
+                        self.caller.msg("Must specify both character name and stat.")
+                        return
+                    target_name, stat_info = target_info.split("/", 1)
+                    
+                    # Parse stat info
+                    stat_parts = stat_info.strip().split()
+                    if len(stat_parts) < 2:
+                        self.caller.msg("Must specify both stat name and rating.")
+                        return
+                        
+                    try:
+                        new_rating = int(stat_parts[-1])
+                        if new_rating < 0:
+                            self.caller.msg("Rating must be a positive number.")
+                            return
+                    except ValueError:
+                        self.caller.msg("Rating must be a number.")
+                        return
+                        
+                    stat_name = " ".join(stat_parts[:-1])
+                    
+                    # Find target character
+                    target = search_object(target_name.strip(), 
+                                        typeclass='typeclasses.characters.Character')
+                    if not target:
+                        self.caller.msg(f"Character '{target_name}' not found.")
+                        return
+                    target = target[0]
+                    
+                    # Fix any power issues before proceeding
+                    self.fix_powers(target)
+                    
+                    # Determine category and subcategory
+                    category, subcategory = self._determine_stat_category(stat_name)
+                    if not category or not subcategory:
+                        self.caller.msg(f"Invalid stat name: {stat_name}")
+                        return
+                        
+                    # Get proper case for the stat name
+                    proper_stat_name = self._get_proper_stat_name(stat_name, category, subcategory)
+                    if not proper_stat_name:
+                        self.caller.msg(f"Invalid stat name: {stat_name}")
+                        return
+                        
+                    # Get current rating
+                    current_rating = 0
+                    if category == 'attributes':
+                        current_rating = target.db.stats.get('attributes', {}).get(subcategory, {}).get(proper_stat_name, {}).get('perm', 0)
+                    elif category == 'powers' and subcategory == 'discipline':
+                        current_rating = target.db.stats.get('powers', {}).get('discipline', {}).get(proper_stat_name, {}).get('perm', 0)
+                    else:
+                        current_rating = target.get_stat(category, subcategory, proper_stat_name)
+                        
+                    # Calculate cost
+                    if category == 'powers' and subcategory == 'gift':
+                        # Gifts cost 3 XP per level
+                        cost = 3 * (new_rating - current_rating)
+                    elif category == 'abilities' or category == 'secondary_abilities':
+                        # First dot costs 3, subsequent dots cost (new rating * 2)
+                        cost = 0
+                        for rating in range(current_rating + 1, new_rating + 1):
+                            if rating == 1:
+                                cost += 3
+                            else:
+                                cost += (rating * 2)
+                    elif category == 'merits':
+                        # Merits cost 5 XP per point
+                        if proper_stat_name in MERIT_VALUES:
+                            merit_value = MERIT_VALUES[proper_stat_name][0]  # Get first value if list
+                            cost = 5 * merit_value
+                        else:
+                            self.caller.msg(f"Merit '{proper_stat_name}' not found in merit database.")
+                            return
+                    elif category == 'powers' and subcategory == 'rite':
+                        # Rites cost 3 XP per level
+                        if proper_stat_name in RITE_VALUES:
+                            rite_value = RITE_VALUES[proper_stat_name][0]  # Get first value if list
+                            cost = 3 * rite_value
+                        else:
+                            self.caller.msg(f"Rite '{proper_stat_name}' not found in rite database.")
+                            return
+                    elif category == 'flaws' and reason.lower() == 'flaw buyoff':
+                        # Flaw buyoff costs 5 XP per point
+                        # Get current flaw value from character's stats
+                        cost = 0  # Initialize cost
+                        for flaw_category in ['physical', 'social', 'mental', 'supernatural']:
+                            # For instanced flaws, we need to check all flaws in the category
+                            # and match both base name and instance
+                            base_name = proper_stat_name
+                            instance = None
+                            if '(' in proper_stat_name and ')' in proper_stat_name:
+                                base_name = proper_stat_name[:proper_stat_name.find('(')].strip()
+                                instance = proper_stat_name[proper_stat_name.find('(')+1:proper_stat_name.find(')')].strip()
+
+                            # Check each flaw in the category
+                            for flaw_name, flaw_data in target.db.stats['flaws'].get(flaw_category, {}).items():
+                                # If this is an instanced flaw, extract its base name and instance
+                                flaw_base = flaw_name
+                                flaw_instance = None
+                                if '(' in flaw_name and ')' in flaw_name:
+                                    flaw_base = flaw_name[:flaw_name.find('(')].strip()
+                                    flaw_instance = flaw_name[flaw_name.find('(')+1:flaw_name.find(')')].strip()
+
+                                # Match if:
+                                # 1. Base names match (case-insensitive)
+                                # 2. Either both have no instance, or both instances match (case-insensitive)
+                                if (flaw_base.lower() == base_name.lower() and
+                                    ((not instance and not flaw_instance) or
+                                     (instance and flaw_instance and instance.lower() == flaw_instance.lower()))):
+                                    flaw_value = flaw_data['perm']
+                                    cost = 5 * flaw_value
+                                    proper_stat_name = flaw_name  # Use the exact name from character sheet
+                                    break
+                            if cost > 0:  # If we found and calculated a cost, break outer loop
+                                break
+                        if cost == 0:
+                            self.caller.msg(f"Flaw '{proper_stat_name}' not found on character sheet.")
+                            return
+                    else:
+                        # Use standard cost calculation for other stats
+                        cost, _ = target.calculate_xp_cost(
+                            stat_name=proper_stat_name,
+                            new_rating=new_rating,
+                            current_rating=current_rating,
+                            category=category,
+                            subcategory=subcategory
+                        )
+                    
+                    if cost == 0:
+                        self.caller.msg("Invalid stat or no increase needed")
+                        return
+                        
+                    # Check if target has enough XP
+                    if target.db.xp['current'] < cost:
+                        self.caller.msg(f"Character only has {target.db.xp['current']} XP available. Cost would be {cost} XP.")
+                        return
+                        
+                    # Staff bypass validation - directly update the stat
+                    if category == 'flaws' and reason.lower() == 'flaw buyoff':
+                        # Remove the flaw from all possible categories
+                        for flaw_category in ['physical', 'social', 'mental', 'supernatural']:
+                            if proper_stat_name in target.db.stats['flaws'].get(flaw_category, {}):
+                                del target.db.stats['flaws'][flaw_category][proper_stat_name]
+                                break
+                    elif category == 'merits':
+                        # Add the merit with its proper value
+                        merit_value = MERIT_VALUES[proper_stat_name][0]
+                        # Determine merit category from MERIT_CATEGORIES
+                        for merit_cat, merits in MERIT_CATEGORIES.items():
+                            if proper_stat_name in merits:
+                                if merit_cat not in target.db.stats['merits']:
+                                    target.db.stats['merits'][merit_cat] = {}
+                                target.db.stats['merits'][merit_cat][proper_stat_name] = {
+                                    'perm': merit_value,
+                                    'temp': merit_value
+                                }
+                                break
+                    elif category == 'powers' and subcategory == 'rite':
+                        # Add the rite with its proper value
+                        rite_value = RITE_VALUES[proper_stat_name][0]
+                        if 'rite' not in target.db.stats['powers']:
+                            target.db.stats['powers']['rite'] = {}
+                        target.db.stats['powers']['rite'][proper_stat_name] = {
+                            'perm': rite_value,
+                            'temp': rite_value
+                        }
+                    elif category == 'powers' and subcategory == 'gift':
+                        # For gifts, store without any prefix
+                        target.db.stats['powers']['gift'][proper_stat_name] = {
+                            'perm': new_rating,
+                            'temp': new_rating
+                        }
+                        # Store the alias
+                        original_name = " ".join(stat_parts[:-1])  # Get the original input name without the rating
+                        target.set_gift_alias(proper_stat_name, original_name, new_rating)
+                    else:
+                        target.set_stat(category, subcategory, proper_stat_name, new_rating, temp=False)
+                        target.set_stat(category, subcategory, proper_stat_name, new_rating, temp=True)
+
+                    # Deduct XP
+                    target.db.xp['current'] -= Decimal(str(cost))
+                    target.db.xp['spent'] += Decimal(str(cost))
+
+                    # Log the spend with staff attribution
+                    spend_entry = {
+                        'type': 'spend',
+                        'amount': float(cost),
+                        'stat_name': proper_stat_name,
+                        'previous_rating': current_rating,
+                        'new_rating': new_rating if not (category == 'flaws' and reason.lower() == 'flaw buyoff') else 0,
+                        'reason': f"Staff Spend: {reason}",
+                        'staff_name': self.caller.name,
+                        'timestamp': datetime.now().isoformat(),
+                        'flaw_buyoff': True if category == 'flaws' and reason.lower() == 'flaw buyoff' else False
+                    }
+
+                    if 'spends' not in target.db.xp:
+                        target.db.xp['spends'] = []
+                    target.db.xp['spends'].insert(0, spend_entry)
+
+                    # Notify staff and target
+                    if category == 'flaws' and reason.lower() == 'flaw buyoff':
+                        self.caller.msg(f"Successfully bought off {proper_stat_name} flaw (Cost: {cost} XP)")
+                        target.msg(f"{self.caller.name} has spent {cost} XP to buy off your {proper_stat_name} flaw.")
+                    else:
+                        self.caller.msg(f"Successfully increased {proper_stat_name} from {current_rating} to {new_rating} (Cost: {cost} XP)")
+                        target.msg(f"{self.caller.name} has spent {cost} XP to set your {proper_stat_name} to {new_rating}.")
+                    self._display_xp(target)
+                    
+                except Exception as e:
+                    self.caller.msg(f"Error: {str(e)}")
+                    self.caller.msg("Usage: +xp/staffspend <name>/<stat> <rating>=<reason>")
+                return
 
         # Staff viewing another character's XP
         if self.args and not self.switches:
@@ -431,15 +655,15 @@ class CmdXP(default_cmds.MuxCommand):
             title = f" {target.name}'s XP "
             title_len = len(title)
             dash_count = (total_width - title_len) // 2
-            header = f"{'|b-|n' * dash_count}{title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
+            msg = f"{'|b-|n' * dash_count}{title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
             
-            # XP section
+            # XP Section
             exp_title = "|y Experience Points |n"
             title_len = len(exp_title)
             dash_count = (total_width - title_len) // 2
-            exp_header = f"{'|b-|n' * dash_count}{exp_title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
+            msg += f"{'|b-|n' * dash_count}{exp_title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
             
-            # Format XP values
+            # Format XP display
             left_col_width = 20
             right_col_width = 12
             spacing = " " * 14
@@ -450,42 +674,41 @@ class CmdXP(default_cmds.MuxCommand):
             award_xp_display = f"{'|wAward XP:|n':<{left_col_width}}{award_xp:>{right_col_width}.2f}"
             spent_xp_display = f"{'|wSpent XP:|n':<{left_col_width}}{spent:>{right_col_width}.2f}"
             
-            exp_section = f"{ic_xp_display}{spacing}{award_xp_display}\n"
-            exp_section += f"{total_xp_display}{spacing}{spent_xp_display}\n"
-            exp_section += f"{current_xp_display}\n"
+            msg += f"{ic_xp_display}{spacing}{award_xp_display}\n"
+            msg += f"{total_xp_display}{spacing}{spent_xp_display}\n"
+            msg += f"{current_xp_display}\n"
             
-            # Recent activity section
+            # Recent Activity Section
             activity_title = "|y Recent Activity |n"
             title_len = len(activity_title)
             dash_count = (total_width - title_len) // 2
-            activity_header = f"{'|b-|n' * dash_count}{activity_title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
+            msg += f"{'|b-|n' * dash_count}{activity_title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
             
-            activity_section = ""
             if xp_data.get('spends'):
                 for entry in xp_data['spends'][:5]:  # Show last 5 entries
                     timestamp = datetime.fromisoformat(entry['timestamp'])
                     formatted_time = timestamp.strftime("%Y-%m-%d %H:%M")
                     if entry['type'] == 'receive':
-                        activity_section += f"{formatted_time} - Received {entry['amount']} XP ({entry['reason']})\n"
-                    else:
-                        activity_section += f"{formatted_time} - Spent {entry['amount']} XP on {entry['reason']}\n"
+                        msg += f"{formatted_time} - Received {entry['amount']} XP ({entry['reason']})\n"
+                    elif entry['type'] == 'spend':
+                        if entry.get('flaw_buyoff'):
+                            msg += f"{formatted_time} - Spent {entry['amount']} XP to buy off {entry['stat_name']} flaw\n"
+                        elif 'previous_rating' in entry:
+                            # This is a normal XP spend
+                            msg += f"{formatted_time} - Spent {entry['amount']} XP on {entry['stat_name']} (increased from {entry['previous_rating']} to {entry['new_rating']})\n"
+                        elif 'staff_name' in entry:
+                            # This is an XP removal by staff
+                            msg += f"{formatted_time} - XP Removed by {entry['staff_name']}: {entry['amount']} XP ({entry['reason']})\n"
+                        else:
+                            # Generic spend entry
+                            msg += f"{formatted_time} - Spent {entry['amount']} XP on {entry['reason']}\n"
             else:
-                activity_section = "No XP history yet.\n"
+                msg += "No XP history yet.\n"
             
             # Footer
-            footer = f"{'|b-|n' * total_width}"
+            msg += f"{'|b-|n' * total_width}"
             
-            # Combine all sections
-            display = (
-                header +
-                exp_header +
-                exp_section +
-                activity_header +
-                activity_section +
-                footer
-            )
-            
-            self.caller.msg(display)
+            self.caller.msg(msg)
 
         except Exception as e:
             logger.error(f"Error displaying XP for {target.name}: {str(e)}")
@@ -501,27 +724,51 @@ class CmdXP(default_cmds.MuxCommand):
             STAT_TYPE_TO_CATEGORY, STAT_VALIDATION,
             TALENTS, SKILLS, KNOWLEDGES,
             SECONDARY_TALENTS, SECONDARY_SKILLS, SECONDARY_KNOWLEDGES,
-            UNIVERSAL_BACKGROUNDS
+            UNIVERSAL_BACKGROUNDS,
+            MERIT_VALUES, RITE_VALUES, FLAW_VALUES,
         )
         from world.wod20th.utils.sheet_constants import (
             ABILITIES, SECONDARY_ABILITIES, BACKGROUNDS,
             POWERS, POOLS
         )
 
-        # Convert stat name to title case for comparison
-        stat_name = stat_name.title()
+        # Handle instanced stats - extract base name
+        base_name = stat_name
+        instance = None
+        if '(' in stat_name and ')' in stat_name:
+            base_name = stat_name[:stat_name.find('(')].strip()
+            instance = stat_name[stat_name.find('(')+1:stat_name.find(')')].strip()
 
-        # Special handling for gifts - if it's a gift name, return powers/gift
-        if any(stat_name.lower().startswith(prefix.lower()) for prefix in ['Breed:', 'Auspice:', 'Tribe:', 'Gift:']):
-            return ('powers', 'gift')
+        # Convert base name to title case for comparison
+        base_name = base_name.title()
+        
+        # Normalize the name by replacing underscores with spaces
+        normalized_name = base_name.replace('_', ' ')
+
+        # Check if it's a background (case-insensitive)
+        # Try both with spaces and with underscores
+        if any(k.lower() == normalized_name.lower() or k.lower().replace(' ', '_') == normalized_name.lower() for k in UNIVERSAL_BACKGROUNDS):
+            return ('backgrounds', 'background')
+
+        # Check if it's a merit (case-insensitive)
+        if any(k.lower() == base_name.lower() for k in MERIT_VALUES.keys()):
+            return ('merits', 'merit')
+
+        # Check if it's a rite (case-insensitive)
+        if any(k.lower() == base_name.lower() for k in RITE_VALUES.keys()):
+            return ('powers', 'rite')
+
+        # Check if it's a flaw (case-insensitive)
+        if any(k.lower() == base_name.lower() for k in FLAW_VALUES.keys()):
+            return ('flaws', 'flaw')
 
         # Check if it's a gift without a prefix
         from world.wod20th.models import Stat
         gift_query = Q(stat_type='gift')
         for gift in Stat.objects.filter(gift_query):
             # Check both the name and any aliases
-            if (gift.name.lower() == stat_name.lower() or
-                (gift.gift_alias and any(alias.lower() == stat_name.lower() for alias in gift.gift_alias))):
+            if (gift.name.lower() == base_name.lower() or
+                (gift.gift_alias and any(alias.lower() == base_name.lower() for alias in gift.gift_alias))):
                 return ('powers', 'gift')
 
         # Check attributes based on the actual structure
@@ -529,11 +776,11 @@ class CmdXP(default_cmds.MuxCommand):
         social_attrs = ['Charisma', 'Manipulation', 'Appearance']
         mental_attrs = ['Perception', 'Intelligence', 'Wits']
 
-        if stat_name in physical_attrs:
+        if base_name in physical_attrs:
             return ('attributes', 'physical')
-        elif stat_name in social_attrs:
+        elif base_name in social_attrs:
             return ('attributes', 'social')
-        elif stat_name in mental_attrs:
+        elif base_name in mental_attrs:
             return ('attributes', 'mental')
 
         # Helper function for case-insensitive comparison
@@ -542,33 +789,33 @@ class CmdXP(default_cmds.MuxCommand):
             return any(item.lower() == name_lower for item in collection)
 
         # Check primary abilities
-        if case_insensitive_in(stat_name, TALENTS):
+        if case_insensitive_in(base_name, TALENTS):
             return ('abilities', 'talent')
-        elif case_insensitive_in(stat_name, SKILLS):
+        elif case_insensitive_in(base_name, SKILLS):
             return ('abilities', 'skill')
-        elif case_insensitive_in(stat_name, KNOWLEDGES):
+        elif case_insensitive_in(base_name, KNOWLEDGES):
             return ('abilities', 'knowledge')
 
         # Check secondary abilities
-        if case_insensitive_in(stat_name, SECONDARY_TALENTS):
+        if case_insensitive_in(base_name, SECONDARY_TALENTS):
             return ('secondary_abilities', 'secondary_talent')
-        elif case_insensitive_in(stat_name, SECONDARY_SKILLS):
+        elif case_insensitive_in(base_name, SECONDARY_SKILLS):
             return ('secondary_abilities', 'secondary_skill')
-        elif case_insensitive_in(stat_name, SECONDARY_KNOWLEDGES):
+        elif case_insensitive_in(base_name, SECONDARY_KNOWLEDGES):
             return ('secondary_abilities', 'secondary_knowledge')
 
         # Check backgrounds
-        if case_insensitive_in(stat_name, UNIVERSAL_BACKGROUNDS):
+        if case_insensitive_in(base_name, UNIVERSAL_BACKGROUNDS):
             return ('backgrounds', 'background')
 
         # Check powers
         for power_type in POWERS:
-            if case_insensitive_in(stat_name, POWERS[power_type]):
+            if case_insensitive_in(base_name, POWERS[power_type]):
                 return ('powers', power_type.lower())
 
         # Check pools
         for pool_type in POOLS:
-            if case_insensitive_in(stat_name, POOLS[pool_type]):
+            if case_insensitive_in(base_name, POOLS[pool_type]):
                 return ('pools', 'dual')
 
         # If no match found
@@ -577,12 +824,12 @@ class CmdXP(default_cmds.MuxCommand):
     def _get_ability_list(self):
         """Get list of valid abilities."""
         return [
-            'Alertness', 'Athletics', 'Awareness', 'Brawl', 'Empathy',
-            'Expression', 'Intimidation', 'Leadership', 'Streetwise', 'Subterfuge',
+            'Alertness', 'Athletics', 'Awareness', 'Brawl', 'Empathy', 'Primal Urge',
+            'Expression', 'Intimidation', 'Kenning', 'Leadership', 'Streetwise', 'Subterfuge',
             'Animal Ken', 'Crafts', 'Drive', 'Etiquette', 'Firearms',
             'Larceny', 'Melee', 'Performance', 'Stealth', 'Survival',
-            'Academics', 'Computer', 'Finance', 'Enigmas', 'Investigation', 'Law',
-            'Medicine', 'Occult', 'Politics', 'Science', 'Technology'
+            'Academics', 'Computer', 'Finance', 'Gremayre', 'Enigmas', 'Investigation', 'Law',
+            'Medicine', 'Occult', 'Politics', 'Rituals', 'Science', 'Technology'
         ] 
 
     def _display_detailed_history(self, character):
@@ -806,7 +1053,7 @@ class CmdXP(default_cmds.MuxCommand):
             self.db.xp['current'] -= cost
             self.db.xp['spent'] += cost
 
-            # Log the spend
+            # Log the spend with stat information
             spend_entry = {
                 'type': 'spend',
                 'amount': float(cost),
@@ -821,7 +1068,7 @@ class CmdXP(default_cmds.MuxCommand):
                 self.db.xp['spends'] = []
             self.db.xp['spends'].insert(0, spend_entry)
 
-            return True, f"Successfully increased {stat_name} to {new_rating} (Cost: {cost} XP)"
+            return True, f"Successfully increased {stat_name} from {current_rating} to {new_rating} (Cost: {cost} XP)"
 
         except Exception as e:
             return False, f"Error processing purchase: {str(e)}"
@@ -832,11 +1079,40 @@ class CmdXP(default_cmds.MuxCommand):
         from world.wod20th.utils.stat_mappings import (
             TALENTS, SKILLS, KNOWLEDGES,
             SECONDARY_TALENTS, SECONDARY_SKILLS, SECONDARY_KNOWLEDGES,
-            UNIVERSAL_BACKGROUNDS
+            UNIVERSAL_BACKGROUNDS,
+            MERIT_VALUES, RITE_VALUES, FLAW_VALUES
         )
         from world.wod20th.utils.sheet_constants import (
             POWERS
         )
+
+        # Helper function for case-insensitive key lookup with space/underscore normalization
+        def find_proper_key(name, dictionary):
+            name_lower = name.lower().replace('_', ' ')
+            for key in dictionary:
+                if key.lower().replace('_', ' ') == name_lower:
+                    return key
+            return None
+
+        # Check backgrounds first
+        if category == 'backgrounds':
+            proper_name = find_proper_key(stat_name, UNIVERSAL_BACKGROUNDS)
+            if proper_name:
+                return proper_name
+
+        # Check merits, rites, and flaws
+        if category == 'merits':
+            proper_name = find_proper_key(stat_name, MERIT_VALUES)
+            if proper_name:
+                return proper_name
+        elif category == 'powers' and subcategory == 'rite':
+            proper_name = find_proper_key(stat_name, RITE_VALUES)
+            if proper_name:
+                return proper_name
+        elif category == 'flaws':
+            proper_name = find_proper_key(stat_name, FLAW_VALUES)
+            if proper_name:
+                return proper_name
 
         # Convert to title case for comparison
         stat_name = stat_name.title()
@@ -885,20 +1161,33 @@ class CmdXP(default_cmds.MuxCommand):
                 proper_name = find_proper_name(stat_name, SECONDARY_KNOWLEDGES)
             if proper_name:
                 return proper_name
+            # If not found in predefined lists, use title case for each word
+            return ' '.join(word.title() for word in stat_name.split())
 
         # Check powers
         if category == 'powers':
-            if subcategory == 'sphere':
-                sphere_names = [
+            # For gifts, just use the name as provided (in Title case)
+            if subcategory == 'gift':
+                return stat_name
+
+            # Define power type mappings
+            power_mappings = {
+                'sphere': [
                     'Correspondence', 'Entropy', 'Forces', 'Life', 'Matter',
                     'Mind', 'Prime', 'Spirit', 'Time', 'Dimensional Science',
                     'Primal Utility', 'Data'
-                ]
-                proper_name = find_proper_name(stat_name, sphere_names)
-                if proper_name:
-                    return proper_name
-            elif subcategory in POWERS:
-                proper_name = find_proper_name(stat_name, POWERS[subcategory])
+                ],
+                'art': POWERS.get('art', []),
+                'realm': POWERS.get('realm', []),
+                'discipline': POWERS.get('discipline', []),
+                'numina': POWERS.get('numina', []),
+                'charm': POWERS.get('charm', []),
+                'blessing': POWERS.get('blessing', [])
+            }
+
+            # Check other power types
+            if subcategory in power_mappings:
+                proper_name = find_proper_name(stat_name, power_mappings[subcategory])
                 if proper_name:
                     return proper_name
 
@@ -909,7 +1198,7 @@ class CmdXP(default_cmds.MuxCommand):
                 return proper_name
 
         # If no match found in predefined lists, return the title-cased version
-        return stat_name 
+        return stat_name
 
     def fix_powers(self, character):
         """Fix duplicate powers and ensure proper categorization in character stats."""
@@ -972,7 +1261,7 @@ class CmdXP(default_cmds.MuxCommand):
                         fixed_gifts[gift_name] = values
                     else:
                         # Add generic 'Gift:' prefix if we can't determine the type
-                        fixed_gifts[f'Gift: {gift_name}'] = values
+                        fixed_gifts[f'{gift_name}'] = values
                 else:
                     fixed_gifts[gift_name] = values
             if fixed_gifts != powers['gift']:

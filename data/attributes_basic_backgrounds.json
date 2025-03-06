@@ -233,7 +233,7 @@
     },
     {
         "name": "Armory",
-        "description": "The character possess a functional Armory and has the means and ability to maintain the weapons within it. The entity and availability of the weapons depends on the local laws of California. Higher scores in this Background can include also a number of illegal weapons.",
+        "description": "Weapons and armor are a necessity in dangerous times, and your character has the means to acquire them on demand. Rather than representing a fixed stockpile, Armory reflects your ability to source, requisition, or prepare mundane weapons and protective gear at the start of a scene—assuming there’s enough time to gear up. This could involve pulling from personal caches, tapping into black-market connections, or simply knowing where to find what you need in a pinch.",
         "game_line": "Various",
         "category": "backgrounds",
         "stat_type": "background",
@@ -246,7 +246,15 @@
         "category": "backgrounds",
         "stat_type": "background",
         "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-       },
+    },
+    {
+        "name": "Secrets",
+        "description": "For each dot of Secrets, a character has the option to utilize a mechanic in plot that allows them to have forward information. This is used as a pool, wherein during each month the player can spend part of their pool to inform the storyteller they have some secret knowledge about their current predicament that might help them out.",
+        "game_line": "Various",
+        "category": "backgrounds",
+        "stat_type": "background",
+        "values": [1, 2, 3, 4, 5]
+    },
     {
         "name": "Servants",
         "description": "Servants are loyal individuals that take care of the character's domain or estate. They usually take care of routine tasks, and some of them can also travel with the character.",

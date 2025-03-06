@@ -1099,7 +1099,7 @@
         "game_line": "Vampire: The Masquerade"
     },
 	{
-        "name": "Arcane",
+        "name": "Arcane-Merit",
         "stat_type": "social",
         "category": "merits",
         "values": [1, 2, 3, 4, 5],

@@ -886,3 +886,77 @@ class CustomCmdChannel(MuxCommand):
                 caller.msg(f"  |r{banned.key}|n")
         
         caller.msg("-" * 78)
+
+class CmdNotifications(MuxCommand):
+    """
+    Manage your login notification preferences.
+    
+    Usage:
+        @notifications          - Show current notification settings
+        @notifications/on      - Enable all notifications
+        @notifications/off     - Disable all notifications
+        @notifications <type> on|off  - Toggle specific notification type
+        
+    Available notification types: mail, jobs, bbs
+    
+    Examples:
+        @notifications         - View current settings
+        @notifications/off     - Disable all notifications
+        @notifications mail off - Disable only mail notifications
+        @notifications jobs on  - Enable job notifications
+    """
+    
+    key = "@notifications"
+    aliases = ["@notify"]
+    locks = "cmd:all()"
+    help_category = "Settings"
+    
+    def func(self):
+        """Handle the command."""
+        if not self.args and not self.switches:
+            # Display current settings
+            settings = self.caller.notification_settings
+            status = []
+            for ntype in ["mail", "jobs", "bbs"]:
+                enabled = "✓" if settings[ntype] else "✗"
+                status.append(f"{ntype.capitalize()}: {enabled}")
+            
+            if settings["all"]:
+                self.caller.msg("|wAll notifications are currently disabled.|n")
+            else:
+                self.caller.msg("|wNotification Settings:|n\n" + "\n".join(status))
+            return
+            
+        if "on" in self.switches:
+            # Enable all notifications by setting "all" to False
+            self.caller.set_notification_pref("all", False)
+            # Then explicitly enable each notification type
+            for ntype in ["mail", "jobs", "bbs"]:
+                self.caller.set_notification_pref(ntype, True)
+            self.caller.msg("|gAll notifications enabled.|n")
+            return
+            
+        if "off" in self.switches:
+            self.caller.set_notification_pref("all", True)
+            self.caller.msg("|rAll notifications disabled.|n")
+            return
+            
+        if self.args:
+            args = self.args.strip().lower().split()
+            if len(args) != 2:
+                self.caller.msg("Usage: @notifications <type> on|off")
+                return
+                
+            ntype, setting = args
+            if ntype not in ["mail", "jobs", "bbs"]:
+                self.caller.msg("Invalid notification type. Choose from: mail, jobs, bbs")
+                return
+                
+            if setting not in ["on", "off"]:
+                self.caller.msg("Setting must be either 'on' or 'off'")
+                return
+                
+            enabled = (setting == "on")
+            self.caller.set_notification_pref(ntype, enabled)
+            status = "enabled" if enabled else "disabled"
+            self.caller.msg(f"|w{ntype.capitalize()} notifications {status}.|n") 

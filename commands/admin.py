@@ -11,6 +11,8 @@ from evennia.locks import lockfuncs
 from world.wod20th.scripts.puppet_freeze import start_puppet_freeze_script, PuppetFreezeScript
 from evennia.utils.utils import inherits_from
 from datetime import datetime
+from world.wod20th.models import Roster, RosterMember
+from django.utils import timezone
 
 
 class CmdApprove(AdminCommand):
@@ -22,6 +24,8 @@ class CmdApprove(AdminCommand):
 
     This command approves a player's character, removing the 'unapproved' tag
     and adding the 'approved' tag. This allows the player to start playing.
+    The character will also be automatically added to the appropriate roster
+    based on their sphere/type.
     """
     key = "approve"
     aliases = ["+approve"]
@@ -49,6 +53,35 @@ class CmdApprove(AdminCommand):
         target.tags.remove("unapproved", category="approval")
         target.tags.add("approved", category="approval")
         
+        # Determine character's sphere based on their splat
+        sphere = 'Other'  # Default sphere with consistent capitalization
+        if hasattr(target, 'db') and hasattr(target.db, 'stats'):
+            stats = target.db.stats
+            if stats and 'other' in stats and 'splat' in stats['other']:
+                splat = stats['other']['splat'].get('Splat', {}).get('perm', '')
+                if splat:
+                    # Capitalize first letter for consistency
+                    sphere = splat.capitalize()
+
+        # Try to find a roster matching the sphere (case-insensitive)
+        try:
+            roster = Roster.objects.filter(sphere__iexact=sphere).first()
+            if roster:
+                # Add character to roster
+                if not RosterMember.objects.filter(roster=roster, character=target).exists():
+                    RosterMember.objects.create(
+                        roster=roster,
+                        character=target,
+                        approved=True,
+                        approved_by=self.caller.account,
+                        approved_date=timezone.now()
+                    )
+                    self.caller.msg(f"Added {target.name} to the {roster.name} roster.")
+            else:
+                self.caller.msg(f"No roster found for sphere: {sphere}")
+        except Exception as e:
+            self.caller.msg(f"Error adding to roster: {str(e)}")
+        
         logger.log_info(f"{target.name} has been approved by {self.caller.name}")
 
         self.caller.msg(f"You have approved {target.name}.")
@@ -63,7 +96,7 @@ class CmdUnapprove(AdminCommand):
 
     This command removes the 'approved' tag from a character and adds the 'unapproved' tag.
     This effectively reverts the character to an unapproved state, allowing them to use
-    chargen commands again.
+    chargen commands again. The character will also be removed from any rosters they belong to.
     """
     key = "unapprove"
     aliases = ["+unapprove"]
@@ -90,6 +123,13 @@ class CmdUnapprove(AdminCommand):
         target.db.approved = False
         target.tags.remove("approved", category="approval")
         target.tags.add("unapproved", category="approval")
+        
+        # Remove from any rosters
+        memberships = RosterMember.objects.filter(character=target)
+        if memberships.exists():
+            roster_names = [m.roster.name for m in memberships]
+            memberships.delete()
+            self.caller.msg(f"Removed {target.name} from the following rosters: {', '.join(roster_names)}")
         
         logger.log_info(f"{target.name} has been unapproved by {self.caller.name}")
 

@@ -282,7 +282,7 @@ class CmdSheet(MuxCommand):
                          'Spirit Type', 'Spirit Name', 'Domitor', 'Society', 'Order', 'Coven', 'Cabal', 'Plague', 'Crown', 
                          'Stream', 'Kitsune Path', 'Varna', 'Deed Name', 'Motivation', 'Possessed Type', 'Date of Possession',
                          'Companion Type', 'Patron Totem', 'Pack', 'Affinity Realm', 'Fae Court', 'Fae Name', 'Camp', 'Lodge',
-                         'Fang House', 'Nephandi Faction', 'Fuel', 'Elemental Affinity']:
+                         'Fang House', 'Nephandi Faction', 'Fuel', 'Elemental Affinity', 'Anchor']:
                 value_str = 'None'
             else:
                 value_str = ''
@@ -354,6 +354,11 @@ class CmdSheet(MuxCommand):
         if splat == 'Mage':
             affiliation = character.get_stat('identity', 'lineage', 'Affiliation', temp=False)
             return get_identity_stats(splat, char_type, affiliation)
+            
+        # Special handling for Changeling characters
+        if splat == 'Changeling':
+            kith = character.get_stat('identity', 'lineage', 'Kith', temp=False)
+            return get_identity_stats(splat, kith)
         
         # Get identity stats based on splat, type, and tribe
         return get_identity_stats(splat, char_type, tribe)
@@ -504,8 +509,8 @@ class CmdSheet(MuxCommand):
         # Get character's splat and add splat-specific abilities
         splat = character.get_stat('other', 'splat', 'Splat', temp=False)
         if splat and splat.lower() == 'mage':
-            base_secondary_talents.extend(['Blatancy', 'Flying', 'High Ritual'])
-            base_secondary_skills.extend(['Biotech', 'Do', 'Energy Weapons', 'Helmsman', 'Microgravity Ops'])
+            base_secondary_talents.extend(['Blatancy', 'Do', 'Flying', 'High Ritual'])
+            base_secondary_skills.extend(['Biotech', 'Energy Weapons', 'Helmsman', 'Microgravity Ops'])
             base_secondary_knowledges.extend(['Cybernetics', 'Hypertech', 'Paraphysics', 'Xenobiology'])
 
         # Sort all lists
@@ -661,7 +666,10 @@ class CmdSheet(MuxCommand):
         has_flaws = False
         for flaw_dict in flaws.values():
             for flaw, values in sorted(flaw_dict.items()):
-                flaw_value = values.get('perm', 0)
+                try:
+                    flaw_value = int(values.get('perm', 0))
+                except (ValueError, TypeError):
+                    flaw_value = 0
                 if flaw_value > 0:
                     has_flaws = True
                     left_column.append(format_stat(flaw, flaw_value, width=38))
@@ -807,8 +815,12 @@ class CmdSheet(MuxCommand):
             else:
                 powers.append(" None".ljust(38))
             
-            # Add Arts section ONLY for Mannikins
-            if phyla == 'Mannikins' and not skip_arts:
+            # Add Arts and Realms sections for Mannikins
+            if phyla and phyla.lower() == 'mannikin':
+                # Add spacing
+                powers.append(" " * 38)
+                
+                # Add Arts section
                 powers.append(divider("Arts", width=38, color="|b"))
                 arts = character.db.stats.get('powers', {}).get('art', {})
                 if arts:
@@ -819,6 +831,24 @@ class CmdSheet(MuxCommand):
                             has_arts = True
                             powers.append(format_stat(art, art_value, default=0, width=self.POWERS_WIDTH))
                     if not has_arts:
+                        powers.append(" None".ljust(38))
+                else:
+                    powers.append(" None".ljust(38))
+                
+                # Add spacing
+                powers.append(" " * 38)
+                
+                # Add Realms section
+                powers.append(divider("Realms", width=38, color="|b"))
+                realms = character.db.stats.get('powers', {}).get('realm', {})
+                if realms:
+                    has_realms = False
+                    for realm, values in sorted(realms.items()):
+                        realm_value = values.get('perm', 0)
+                        if realm_value > 0:
+                            has_realms = True
+                            powers.append(format_stat(realm, realm_value, default=0, width=self.POWERS_WIDTH))
+                    if not has_realms:
                         powers.append(" None".ljust(38))
                 else:
                     powers.append(" None".ljust(38))
@@ -836,6 +866,10 @@ class CmdSheet(MuxCommand):
                 if not has_arts:
                     powers.append(" None".ljust(38))
             
+            # Add spacing
+            powers.append(" " * 38)
+            
+            # Add Realms section
             powers.append(divider("Realms", width=38, color="|b"))
             realms = character.db.stats.get('powers', {}).get('realm', {})
             has_realms = False
@@ -1243,7 +1277,7 @@ class CmdSheet(MuxCommand):
         """Get the value of a stat from a character."""
         # Handle Nunnehi and Inanimae specific stats first
         if stat_name in ['Nunnehi Seeming', 'Nunnehi Camp', 'Nunnehi Family', 'Nunnehi Totem', 
-                        'Summer Legacy', 'Winter Legacy', 'Phyla']:
+                        'Summer Legacy', 'Winter Legacy', 'Phyla', 'Anchor']:
             value = character.get_stat('identity', 'lineage', stat_name, temp=False)
             if value:
                 return value

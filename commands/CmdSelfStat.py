@@ -39,7 +39,7 @@ from world.wod20th.utils.shifter_utils import (
     validate_shifter_stats
 )
 from world.wod20th.utils.changeling_utils import (
-    FAE_COURTS, HOUSES, initialize_changeling_stats, KITH, SEEMING, ARTS, REALMS,
+    FAE_COURTS, HOUSES, PHYLA, initialize_changeling_stats, KITH, SEEMING, ARTS, REALMS,
     SEELIE_LEGACIES, UNSEELIE_LEGACIES, KINAIN_LEGACIES,
     validate_changeling_stats
 )
@@ -75,31 +75,33 @@ REQUIRED_INSTANCES = ['Library', 'Status', 'Influence', 'Wonder', 'Secret Weapon
                       'Alternate Identity', 'Equipment', 'Professional Certification', 'Allergic',
                       'Impediment', 'Enemy', 'Mentor', 'Old Flame', 'Additional Discipline', 
                       'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish', 'Chimerical Item', 'Chimerical Companion',
-                      'Dreamers', 'Digital Dreamers'] 
+                      'Dreamers', 'Digital Dreamers', 'Addiction', 'Phobia', 'Derangement',
+                      'Obsession', 'Compulsion', 'Bigot', 'Ability Deficit', 'Sect Enmity', 'Camp Enmity'
+                     ] 
 class CmdSelfStat(MuxCommand):
     """
     Usage:
-      +selfstat <stat>[(<instance>)]/<category>=[+-]<value>
-      +selfstat <stat>[(<instance>)]/<category>=
+      +selfstat <stat>[(<instance>)]/<type>=[+-]<value>
+      +selfstat <stat>[(<instance>)]/<type>=
 
     Examples:
       +selfstat Strength/Physical=+1
       +selfstat Firearms/Skill=-1
-      +selfstat Status(Ventrue)/Social=
+      +selfstat Status(Ventrue)/Social= (removes the stat)
       +selfstat Nature/Personal=Architect
       +selfstat Demeanor/Personal=Bon Vivant
 
     Staff command:
-      +staffstat <character>=<stat>[(<instance>)]/<category>=[+-]<value>
-      +staffstat <character>=<stat>[(<instance>)]/<category>=
+      +staffstat <character>=<stat>[(<instance>)]/<type>=[+-]<value>
+      +staffstat <character>=<stat>[(<instance>)]/<type>=
       +staffstat <character>=<stat>=<value>
 
     Examples:
-      +staffstat Bob=Strength/Physical=3
-      +staffstat Bob=Strength=3        (same as above)
-      +staffstat Jane=Status(Camarilla)/Background=2
-      +staffstat Mike=Path of Enlightenment/Personal=Road of Heaven
-      +staffstat Sarah=Nature/Personal=Architect
+      +staffstat Bob=Strength/Physical:3
+      +staffstat Bob=Strength:3        (same as above)
+      +staffstat Jane=Status(Camarilla):2
+      +staffstat Mike=Path of Enlightenment:Night
+      +staffstat Sarah=Nature/Personal:Architect
 
     This version of the selfstat command allows staff to set stats on other characters, 
     bypassing normal restrictions like character approval status and validation limits.
@@ -481,20 +483,43 @@ class CmdSelfStat(MuxCommand):
         Validate a stat value based on its type and category.
         Returns (is_valid, error_message, corrected_value)
         """
-        # Get character's splat and type
-        splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+        # Get character's splat and type - try direct access first
+        splat = None
+        if (hasattr(self.caller, 'db') and 
+            hasattr(self.caller.db, 'stats') and 
+            'other' in self.caller.db.stats and 
+            'splat' in self.caller.db.stats['other'] and 
+            'Splat' in self.caller.db.stats['other']['splat']):
+            splat = self.caller.db.stats['other']['splat']['Splat'].get('perm')
+        
+        # If direct access failed, try get_stat
+        if not splat:
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            
         char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+
+        # Special handling for Arcane
+        if stat_name.lower() == 'arcane':
+            try:
+                value_int = int(value)
+                if value_int < 0 or value_int > 5:
+                    return False, f"Arcane must be between 0 and 5", None
+                
+                # For Vampires, validate as a merit
+                if splat == 'Vampire':
+                    if category != 'merits' or stat_type != 'social':
+                        return False, "For Vampires, Arcane must be set as a social merit", None
+                # For non-Vampires, validate as a background
+                else:
+                    if category != 'backgrounds' or stat_type != 'background':
+                        return False, "For non-Vampires, Arcane must be set as a background", None
+                return True, "", str(value_int)
+            except ValueError:
+                return False, "Arcane value must be a number", None
 
         # Get the stat definition from the database
         from world.wod20th.models import Stat
         stat = Stat.objects.filter(name__iexact=stat_name).first()
-        
-        # Debug information
-        print(f"Debug - Validating stat: {stat_name}")
-        print(f"Debug - Category: {category}")
-        print(f"Debug - Requires instance: {self._requires_instance(stat_name, category)}")
-        print(f"Debug - Can have instance: {self._should_support_instance(stat_name, category)}")
-        print(f"Debug - Has instance: {bool(self.instance)}")
         
         # Check if this stat requires an instance
         if self._requires_instance(stat_name, category) and not self.instance:
@@ -505,8 +530,8 @@ class CmdSelfStat(MuxCommand):
             # For backgrounds, validate the value is numeric and in range
             try:
                 bg_value = int(value)
-                if bg_value < 0 or bg_value > 5:
-                    return False, f"{stat_name} must be between 0 and 5", None
+                if bg_value < 0 or bg_value > 10:
+                    return False, f"{stat_name} must be between 0 and 10", None
                 return True, "", str(bg_value)
             except ValueError:
                 return False, f"{stat_name} value must be a number", None
@@ -681,6 +706,16 @@ class CmdSelfStat(MuxCommand):
         # Special handling for Ferocity based on splat
         if stat_name.lower() == 'ferocity':
             if splat == 'Shifter':
+                # Get shifter type
+                shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+                if not shifter_type:
+                    return False, "Must set shifter type before setting Ferocity.", None
+                
+                # Check if this shifter type has access to Ferocity renown
+                valid_renown = SHIFTER_RENOWN.get(shifter_type, [])
+                if 'Ferocity' not in valid_renown:
+                    return False, f"{shifter_type} characters do not have access to Ferocity renown.", None
+                
                 # For Shifters, Ferocity is a Renown type
                 try:
                     ferocity_value = int(value)
@@ -731,8 +766,8 @@ class CmdSelfStat(MuxCommand):
                 if affiliation == 'Technocracy':
                     try:
                         val = int(value)
-                        if val < 1 or val > 5:
-                            return False, "Enlightenment must be between 1 and 5 for Technocracy mages", None
+                        if val < 1 or val > 10:
+                            return False, "Enlightenment must be between 1 and 10 for Technocracy mages", None
                         # Set in pools/advantage
                         self.category = 'pools'
                         self.stat_type = 'advantage'
@@ -1259,6 +1294,7 @@ class CmdSelfStat(MuxCommand):
             'possessed size': ('powers', 'blessing'),
             'companion size': ('powers', 'special_advantage'),
             'spirit type': ('identity', 'lineage'),
+            'anchor': ('identity', 'lineage'),
             'essence energy': ('pools', 'dual'),
             'organizational rank': ('backgrounds', 'background'),
             'jamak spirit': ('identity', 'lineage'),
@@ -1308,7 +1344,85 @@ class CmdSelfStat(MuxCommand):
         # Convert to title case for consistent comparison
         stat_title = stat_name.title()
         stat_lower = stat_name.lower()
-        
+
+        # Special handling for Ferocity stat
+        if stat_lower == 'ferocity':
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            if splat == 'Shifter':
+                # Get shifter type
+                shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+                if shifter_type:
+                    # Check if this shifter type has access to Ferocity renown
+                    valid_renown = SHIFTER_RENOWN.get(shifter_type, [])
+                    if 'Ferocity' in valid_renown:
+                        if category == 'advantages' and stat_type == 'renown':
+                            return True
+                        self.caller.msg(f"|rFor {shifter_type} characters, Ferocity is a renown stat and cannot be set as a {category}.{stat_type}.|n")
+                        self.category = 'advantages'
+                        self.stat_type = 'renown'
+                        self.caller.msg(f"|yAutomatically redirecting to correct category. Setting 'Ferocity' as a advantages.renown instead.|n")
+                        return True
+            elif splat == 'Companion':
+                if category == 'powers' and stat_type == 'special_advantage':
+                    return True
+                self.caller.msg("|rFor Companions, Ferocity is a special advantage and cannot be set as a {category}.{stat_type}.|n")
+                self.category = 'powers'
+                self.stat_type = 'special_advantage'
+                self.caller.msg("|yAutomatically redirecting to correct category. Setting 'Ferocity' as a powers.special_advantage instead.|n")
+                return True
+            return False
+
+        # Special handling for Arcane stat
+        if stat_lower == 'arcane':
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            
+            if splat == 'Vampire':
+                if category == 'merits' and stat_type == 'social':
+                    return True
+                self.caller.msg(f"|rFor Vampires, Arcane is a social merit and cannot be set as a {category}.{stat_type}.|n")
+                self.category = 'merits'
+                self.stat_type = 'social'
+                self.caller.msg(f"|yAutomatically redirecting to correct category. Setting '{stat_name}' as a merits.social instead.|n")
+                return True
+            else:
+                if category == 'backgrounds' and stat_type == 'background':
+                    return True
+                self.caller.msg(f"|rFor non-Vampires, Arcane is a background and cannot be set as a {category}.{stat_type}.|n")
+                self.category = 'backgrounds'
+                self.stat_type = 'background'
+                self.caller.msg(f"|yAutomatically redirecting to correct category. Setting '{stat_name}' as a backgrounds.background instead.|n")
+                return True
+
+        # Special handling for Time stat
+        if stat_lower == 'time':
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+            
+            if splat == 'Mage':
+                if category == 'powers' and stat_type == 'sphere':
+                    return True
+                self.caller.msg(f"|rFor Mages, Time is a Sphere and cannot be set as a {category}.{stat_type}.|n")
+                self.category = 'powers'
+                self.stat_type = 'sphere'
+                self.caller.msg(f"|yAutomatically redirecting to correct category. Setting '{stat_name}' as a powers.sphere instead.|n")
+                return True
+            elif splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
+                if category == 'powers' and stat_type == 'realm':
+                    return True
+                self.caller.msg(f"|rFor Changelings and Kinain, Time is a Realm and cannot be set as a {category}.{stat_type}.|n")
+                self.category = 'powers'
+                self.stat_type = 'realm'
+                self.caller.msg(f"|yAutomatically redirecting to correct category. Setting '{stat_name}' as a powers.realm instead.|n")
+                return True
+            else:
+                if category == 'attributes' and stat_type == 'physical':
+                    return True
+                self.caller.msg(f"|rFor other characters, Time is a physical attribute.|n")
+                self.category = 'attributes'
+                self.stat_type = 'physical'
+                self.caller.msg(f"|yAutomatically redirecting to correct category. Setting '{stat_name}' as a attributes.physical instead.|n")
+                return True
+
         # First check the database for an exact match
         from world.wod20th.models import Stat
         stat = Stat.objects.filter(name__iexact=stat_name).first()
@@ -1674,6 +1788,12 @@ class CmdSelfStat(MuxCommand):
         if stat_lower == 'mother\'s touch':
             return 'powers', 'gift'
 
+        # Check if it's a sliver for Inanimae
+        if stat_title in {'Verdage', 'Aquis', 'Stratus', 'Petros', 'Pyros', 'Sliver'}:
+            kith = self.caller.get_stat('identity', 'lineage', 'Kith', temp=False)
+            if kith and kith.lower() == 'inanimae':
+                return 'powers', 'sliver'
+
         # Check if it's a special advantage for Companions
         splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
         if splat == 'Companion':
@@ -2032,6 +2152,31 @@ class CmdSelfStat(MuxCommand):
         # Fix any incorrectly stored Necromancy paths
         self._fix_necromancy_paths()
 
+        # Fix incorrectly stored Ferocity for Shifters
+        splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+        shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+        if splat == 'Shifter' and shifter_type:
+            valid_renown = SHIFTER_RENOWN.get(shifter_type, [])
+            if 'Ferocity' in valid_renown:
+                # Check if Ferocity is incorrectly stored in powers.special_advantage
+                if ('powers' in self.caller.db.stats and 
+                    'special_advantage' in self.caller.db.stats['powers'] and 
+                    'Ferocity' in self.caller.db.stats['powers']['special_advantage']):
+                    # Get the value
+                    ferocity_value = self.caller.db.stats['powers']['special_advantage']['Ferocity']['perm']
+                    # Move it to advantages.renown
+                    if 'advantages' not in self.caller.db.stats:
+                        self.caller.db.stats['advantages'] = {}
+                    if 'renown' not in self.caller.db.stats['advantages']:
+                        self.caller.db.stats['advantages']['renown'] = {}
+                    self.caller.db.stats['advantages']['renown']['Ferocity'] = {
+                        'perm': ferocity_value,
+                        'temp': ferocity_value
+                    }
+                    # Remove from powers.special_advantage
+                    del self.caller.db.stats['powers']['special_advantage']['Ferocity']
+                    self.caller.msg("|yFixed: Moved Ferocity from powers.special_advantage to advantages.renown.|n")
+
         if not self.stat_name:
             self.caller.msg("|rUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
             return
@@ -2335,7 +2480,7 @@ class CmdSelfStat(MuxCommand):
                 return
 
         # When setting Changeling-specific stats
-        elif self.stat_name.lower() in ['kith', 'seeming', 'seelie legacy', 'unseelie legacy', 'fae name']:
+        elif self.stat_name.lower() in ['kith', 'seeming', 'seelie legacy', 'unseelie legacy', 'fae name', 'phyla']:
             splat = self.caller.get_stat('identity', 'personal', 'Splat', temp=False)
             if splat and splat.lower() == 'changeling':
                 if self.stat_name.lower() == 'kith':
@@ -2355,6 +2500,19 @@ class CmdSelfStat(MuxCommand):
                         return
                     self.value_change = matched_value
                     return ('identity', 'lineage')
+
+                elif self.stat_name.lower() == 'phyla':
+                    kith = self.caller.get_stat('identity', 'lineage', 'Kith', temp=False)
+                    if kith and kith.lower() == 'inanimae':
+                        is_valid, matched_value = self.case_insensitive_in(self.value_change, PHYLA)
+                        if not is_valid:
+                            self.caller.msg(f"|rInvalid phyla. Valid phyla are: {', '.join(sorted(PHYLA))}|n")
+                            return
+                        self.value_change = matched_value
+                        return ('identity', 'lineage')
+                    else:
+                        self.caller.msg("|rOnly Inanimae can set their Phyla.|n")
+                        return
 
                 elif self.stat_name.lower() == 'seelie legacy':
                     is_valid, matched_value = self.case_insensitive_in(self.value_change, SEELIE_LEGACIES)
@@ -3402,7 +3560,31 @@ class CmdSelfStat(MuxCommand):
         self.caller.msg(f"|gSet {stat_name} to {value} as a {category}.{stat_type}.|n")
 
     def detect_category_and_type(self):
-        """Detect the category and type based on the stat name."""
+        """Detect the category and type of a stat based on its name."""
+        # First check if it's a background
+        if self.stat_name.lower() in [bg.lower() for bg in (UNIVERSAL_BACKGROUNDS + 
+                                                           VAMPIRE_BACKGROUNDS + 
+                                                           CHANGELING_BACKGROUNDS + 
+                                                           MAGE_BACKGROUNDS + 
+                                                           TECHNOCRACY_BACKGROUNDS + 
+                                                           TRADITIONS_BACKGROUNDS + 
+                                                           NEPHANDI_BACKGROUNDS + 
+                                                           SHIFTER_BACKGROUNDS + 
+                                                           SORCERER_BACKGROUNDS)]:
+            self.category = 'backgrounds'
+            self.stat_type = 'background'
+            return
+
+        # Check if it's an identity stat
+        if self.stat_name.lower() in [stat.lower() for stat in IDENTITY_PERSONAL]:
+            self.category = 'identity'
+            self.stat_type = 'personal'
+            return
+        elif self.stat_name.lower() in [stat.lower() for stat in IDENTITY_LINEAGE]:
+            self.category = 'identity'
+            self.stat_type = 'lineage'
+            return
+
         # Handle 'element' alias for elemental affinity
         if self.stat_name.lower() == 'element':
             self.stat_name = 'Elemental Affinity'

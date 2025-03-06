@@ -14,15 +14,13 @@ def calculate_total_health_levels(character):
         bonus_health += 1  # Huge Size grants 1 additional Bruised level
     
     # Check for Troll kith
-    if character.get_stat('identity', 'lineage', 'Kith') == 'Troll':
+    kith = character.get_stat('identity', 'lineage', 'Kith')
+    if kith and kith.lower() == 'troll':
         bonus_health += 1
         
-    # Check for Glome phyla - check both possible locations
-    glome_phyla = character.get_stat('identity', 'lineage', 'Phyla') == 'Glome'
-    if not glome_phyla:  # Check alternate location
-        glome_phyla = character.get_stat('identity', 'phyla', 'Phyla') == 'Glome'
-    
-    if glome_phyla:
+    # Check for Glome phyla
+    phyla = character.get_stat('identity', 'lineage', 'Phyla')
+    if phyla and phyla.lower() == 'glome':
         bonus_health += 2
 
     # Store bonus health for use in other functions

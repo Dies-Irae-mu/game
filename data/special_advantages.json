@@ -522,6 +522,15 @@
         "values": [1]
     },
     {
+        "name": "Human Guise",
+        "description": "You have a human form you can wear when required. For the two-point version of this Advantage you present a few tells. These could be semi-visible gills, cat eyes, or hints of your reptile scales poking out from under that neat human skin you’ve thrown on. The two-point version of this Advantage comes with one dot in Appearance. Your tells can be covered up with makeup and or the right type of clothing, but it’s fairly clear that you are not quite what you appear to be. The four-point version of this Advantage gives you a completely normal human guise with no obvious tells. Powers and abilities that can uncover a being’s true form are the only way to discern that you are something other than a mild-mannered reporter (or whatever).",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "splat": "Companion",
+        "values": [2, 4]
+    },
+    {
         "name": "Flexible",
         "description": "The serpent twists and coils like a rhetorician's argument. You, too, can bend your body double, loop around limbs and squeeze your opponents until their breath leaves. You receive a -2 to Athletics rolls to dodge and -2 to Brawl rolls when starting grapple.",
         "game_line": "Mage: The Ascension",

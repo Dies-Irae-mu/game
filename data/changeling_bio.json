@@ -88,7 +88,7 @@
         "game_line": "Changeling: The Dreaming",
         "category": "identity",
         "stat_type": "lineage",
-        "values": ["Seelie Court", "Unseelie Court", "Shadow Court"],
+        "values": ["Seelie Court", "Unseelie Court", "Shadow Court", "Krofted", "Gladeling"],
         "splat": "Changeling"
     },
     {
@@ -96,8 +96,8 @@
         "description": "The Phyla of an Inanimae, similar to a Changeling's kith.",
         "game_line": "Changeling: The Dreaming",
         "category": "identity",
-        "stat_type": "phyla",
-        "values": ["Kubera", "Glome", "Ondine", "Paroseme", "Solimond", "Mannikin"],
+        "stat_type": "lineage",
+        "values": ["Kuberas", "Glome", "Ondine", "Paroseme", "Solimond", "Mannikin"],
         "splat": "Changeling"
     },
     {
@@ -148,6 +148,15 @@
     {
         "name": "Nunnehi Totem",
         "description": "The totem of a Nunnehi.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": [],
+        "splat": "Changeling"
+    },
+    {
+        "name": "Anchor",
+        "description": "A physical object, or fragment of nature, tying the faerie soul to the Autumn world. It's an individual freehold with a constant Near Dreaming presence. The type of Anchor determines which of two courts the inanimae belongs to.",
         "game_line": "Changeling: The Dreaming",
         "category": "identity",
         "stat_type": "lineage",

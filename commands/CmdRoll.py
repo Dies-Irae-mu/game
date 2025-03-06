@@ -333,7 +333,8 @@ class CmdRoll(default_cmds.MuxCommand):
 
         # After processing the roll, log it
         try:
-            log_description = f"{private_description} vs {difficulty}"
+            # Format the log description to include total dice count
+            log_description = f"Rolling {dice_pool} dice vs {difficulty}"
             # Initialize roll_log if it doesn't exist
             if not hasattr(self.caller.location.db, 'roll_log') or self.caller.location.db.roll_log is None:
                 self.caller.location.db.roll_log = []

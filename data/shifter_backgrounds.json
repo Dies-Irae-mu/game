@@ -96,17 +96,6 @@
         "values": [1, 2, 3, 4, 5]
     },
     {
-        "name": "Secrets",
-        "description": "Information that would be considered desireable - or damaging - to someone else.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "backgrounds",
-        "stat_type": "background",
-        "values": {
-            "perm": [1, 2, 3, 4, 5],
-            "temp": [0, 1, 2, 3, 4, 5]
-        }
-    },
-    {
         "name": "Umbral Maps",
         "description": "A wealth of experience and received information about Umbral navigation, dangers, and travel.",
         "game_line": "Werewolf: The Apocalypse",

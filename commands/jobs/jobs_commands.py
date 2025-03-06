@@ -20,10 +20,11 @@ from evennia.help.models import HelpEntry
 class CmdJobs(MuxCommand):
     """
     View and manage jobs
-
+    The following aliases are available: +requests, +request, +myjob, +job, +myjobs
     Usage:
       +jobs                      - List all jobs
       +myjobs                    - List jobs you created or are assigned to
+      +jobs/mine                 - List jobs assigned to you (staff only)
       +jobs <#>                  - View details of a specific job
       +jobs/create <category>/<title>=<text> [= <template>] <args>
       +jobs/comment <#>=<text>   - Add a comment to a job
@@ -121,6 +122,8 @@ class CmdJobs(MuxCommand):
             self.remove_object()
         elif "list" in self.switches:
             self.list_jobs()
+        elif "mine" in self.switches:
+            self.list_assigned_jobs()
         elif "reassign" in self.switches:
             self.reassign_job()
         elif "queue/view" in self.switches:
@@ -229,6 +232,114 @@ class CmdJobs(MuxCommand):
         except Job.DoesNotExist:
             self.caller.msg(f"Job #{job_id} not found or is archived. Use +jobs/archive {job_id} to view archived jobs.")
 
+    def determine_category(self, specified_category=None):
+        """
+        Determine the job category based on character splat or specified category.
+        
+        Args:
+            specified_category (str, optional): Category explicitly specified by the user
+            
+        Returns:
+            str: The determined category code
+        """
+        # If a category was explicitly specified, use it
+        if specified_category:
+            return specified_category  # Return as-is, case conversion happens later
+
+        # For non-staff, determine category based on splat
+        if not self.caller.check_permstring("Admin"):
+            stats = self.caller.db.stats
+            if stats and 'other' in stats and 'splat' in stats['other']:
+                splat = stats['other']['splat'].get('Splat', {}).get('perm', '')
+                
+                # Map splat to category
+                splat_category_map = {
+                    'Mage': 'MAGE',
+                    'Vampire': 'VAMP',
+                    'Changeling': 'LING',
+                    'Companion': 'COMP',
+                    'Mortal': 'MORT',
+                    'Possessed': 'POSS',
+                    'Shifter': 'SHIFT',
+                }
+                
+                # Handle Mortal+ subtypes
+                if splat == 'Mortal+':
+                    if 'identity' in stats and 'lineage' in stats['identity']:
+                        mortal_type = stats['identity']['lineage'].get('Type', {}).get('perm', '')
+                        mortal_plus_map = {
+                            'Kinain': 'LING',
+                            'Ghoul': 'VAMP',
+                            'Kinfolk': 'SHIFT',
+                            'Sorcerer': 'MAGE',
+                        }
+                        return mortal_plus_map.get(mortal_type, 'MORT')
+                else:
+                    category = splat_category_map.get(splat)
+                    if category:
+                        return category
+
+        # Default category if nothing else matched
+        return "REQ"
+
+    def create_job_from_simple_syntax(self):
+        """Handle simplified job creation with automatic category detection."""
+        if not self.args or "=" not in self.args:
+            self.caller.msg("Usage: +jobs <title>=<description>")
+            return
+
+        title, description = self.args.split("=", 1)
+        title = title.strip()
+        description = description.strip()
+
+        if not title or not description:
+            self.caller.msg("Both title and description are required.")
+            return
+
+        # Get the appropriate category and convert to uppercase
+        category = self.determine_category().upper()
+
+        try:
+            # Get or create the queue for this category
+            queue, created = Queue.objects.get_or_create(
+                name=category,
+                defaults={'automatic_assignee': None}
+            )
+
+            # Create the job
+            job = Job.objects.create(
+                title=title,
+                description=description,
+                requester=self.caller.account,
+                queue=queue,
+                status='open'
+            )
+
+            # Notify the creator
+            self.caller.msg(f"|gJob '{title}' created with ID {job.id} in category {category}.|n")
+            
+            # Post to the jobs channel for staff notification
+            self.post_to_jobs_channel(self.caller.name, job.id, f"created in {category}")
+
+            # Handle automatic assignment if configured
+            if queue.automatic_assignee:
+                job.assignee = queue.automatic_assignee
+                job.status = 'claimed'
+                job.save()
+                self.caller.msg(f"|yJob automatically assigned to {queue.automatic_assignee}.|n")
+                
+                # Notify the assignee
+                if queue.automatic_assignee != self.caller.account:
+                    self.caller.execute_cmd(
+                        f"@mail {queue.automatic_assignee.username}"
+                        f"=Job #{job.id} Auto-assigned"
+                        f"/You have been automatically assigned to Job #{job.id}: {title}"
+                    )
+
+        except Exception as e:
+            self.caller.msg(f"|rError creating job: {str(e)}|n")
+            return
+
     def create_job(self):
         """Handle job creation with proper category handling."""
         if not self.args:
@@ -250,18 +361,22 @@ class CmdJobs(MuxCommand):
             description = description.replace("\n\n\n", "\n\n")
 
         # Handle category/title format
+        specified_category = None
         if "/" in title_desc:
             category, title = title_desc.split("/", 1)
-            category = category.strip().upper()
+            specified_category = category.strip()
             title = title.strip()
         else:
-            category = "REQ"  # Default category
             title = title_desc.strip()
 
-        # Validate category
+        # Get the appropriate category and convert to uppercase
+        category = self.determine_category(specified_category).upper()
+
+        # Validate category - make case-insensitive comparison
         valid_categories = ["REQ", "BUG", "PLOT", "BUILD", "MISC", "XP", 
-                            "PRP", "VAMP", "SHIFT", "MORT", "POSS", "COMP", 
-                            "LING", "MAGE"]
+                          "PRP", "VAMP", "SHIFT", "MORT", "POSS", "COMP", 
+                          "LING", "MAGE"]
+        
         if category not in valid_categories:
             self.caller.msg(f"Invalid category. Valid categories are: {', '.join(valid_categories)}")
             return
@@ -1168,87 +1283,47 @@ class CmdJobs(MuxCommand):
         except ArchivedJob.DoesNotExist:
             self.caller.msg(f"Archived job #{job_id} not found.")
 
-    def create_job_from_simple_syntax(self):
-        """Handle simplified job creation with automatic category detection."""
-        if not self.args or "=" not in self.args:
-            self.caller.msg("Usage: +jobs <title>=<description>")
-            return
-
-        title, description = self.args.split("=", 1)
-        title = title.strip()
-        description = description.strip()
-
-        if not title or not description:
-            self.caller.msg("Both title and description are required.")
-            return
-
-        # Default category
-        category = "REQ"
-
-        # For non-staff, determine category based on splat
+    def list_assigned_jobs(self):
+        """List jobs that are assigned to the staff member."""
         if not self.caller.check_permstring("Admin"):
-            try:
-                # Get the character's stats
-                stats = self.caller.db.stats
-                if stats and 'other' in stats and 'splat' in stats['other'] and 'Splat' in stats['other']['splat']:
-                    splat = stats['other']['splat']['Splat']['perm']
-                    
-                    # Map splat to category
-                    splat_category_map = {
-                        'Mage': 'MAGE',
-                        'Vampire': 'VAMP',
-                        'Changeling': 'LING',
-                        'Companion': 'COMP',
-                        'Mortal': 'MORT',
-                        'Mortal+': 'MORT',
-                        'Possessed': 'POSS'
-                    }
-                    
-                    category = splat_category_map.get(splat, 'REQ')
-            except Exception as e:
-                self.caller.msg("Warning: Could not determine character type. Using default category REQ.")
-                category = "REQ"
-
-        try:
-            # Get or create the queue for this category
-            queue, created = Queue.objects.get_or_create(
-                name=category,
-                defaults={'automatic_assignee': None}
-            )
-
-            # Create the job
-            job = Job.objects.create(
-                title=title,
-                description=description,
-                requester=self.caller.account,
-                queue=queue,
-                status='open'
-            )
-
-            # Notify the creator
-            self.caller.msg(f"|gJob '{title}' created with ID {job.id} in category {category}.|n")
-            
-            # Post to the jobs channel for staff notification
-            self.post_to_jobs_channel(self.caller.name, job.id, f"created in {category}")
-
-            # Handle automatic assignment if configured
-            if queue.automatic_assignee:
-                job.assignee = queue.automatic_assignee
-                job.status = 'claimed'
-                job.save()
-                self.caller.msg(f"|yJob automatically assigned to {queue.automatic_assignee}.|n")
-                
-                # Notify the assignee
-                if queue.automatic_assignee != self.caller.account:
-                    self.caller.execute_cmd(
-                        f"@mail {queue.automatic_assignee.username}"
-                        f"=Job #{job.id} Auto-assigned"
-                        f"/You have been automatically assigned to Job #{job.id}: {title}"
-                    )
-
-        except Exception as e:
-            self.caller.msg(f"|rError creating job: {str(e)}|n")
+            self.caller.msg("You don't have permission to use this command.")
             return
+
+        jobs = Job.objects.filter(
+            assignee=self.caller.account,
+            status__in=['open', 'claimed']
+        ).order_by('-created_at')
+
+        if not jobs:
+            self.caller.msg("You have no jobs assigned to you.")
+            return
+
+        output = header("My Assigned Jobs", width=78, fillchar="|r-|n") + "\n"
+        
+        # Create the header row with adjusted widths
+        header_row = "|cJob #  Queue      Job Title                 Originator    Status|n"
+        output += header_row + "\n"
+        output += ANSIString("|r" + "-" * 78 + "|n") + "\n"
+
+        # Add each job as a row with adjusted widths
+        for job in jobs:
+            originator = job.requester.username if job.requester else "-----"
+            
+            # Check if job has been viewed by this user using is_updated_since_last_view
+            unread = job.is_updated_since_last_view(self.caller.account)
+            title_marker = "|r*|n " if unread else "  "
+            
+            row = (
+                f"{job.id:<6}"
+                f"{crop(job.queue.name, width=10):<11}"
+                f"{title_marker}{crop(job.title, width=23):<23}"
+                f"{crop(originator, width=13):<14}"
+                f"{crop(job.status, width=10):<10}"
+            )
+            output += row + "\n"
+
+        output += footer(width=78, fillchar="|r-|n")
+        self.caller.msg(output)
 
 class JobSystemCmdSet(CmdSet):
     """

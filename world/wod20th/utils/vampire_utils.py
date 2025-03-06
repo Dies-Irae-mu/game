@@ -115,7 +115,7 @@ def get_clan_disciplines(clan):
         'True Brujah': ['Potence', 'Presence', 'Temporis'],
         'Tzimisce': ['Animalism', 'Auspex', 'Vicissitude'],
         'Ventrue': ['Dominate', 'Fortitude', 'Presence'],
-        'Ventrue Antitribu': ['Auspex', 'Dominate', 'Fortitude'],
+        'Ventrue Antitribu': ['Auspex', 'Dominate', 'Fortitude']
     }
     return CLAN_DISCIPLINES.get(clan, [])
 

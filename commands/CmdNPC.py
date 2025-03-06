@@ -132,7 +132,7 @@ class CmdNPC(default_cmds.MuxCommand):
         # Log the roll if the location supports it
         try:
             if hasattr(self.caller.location, 'log_roll'):
-                log_description = f"{name} rolls {dice} dice vs {difficulty}"
+                log_description = f"Rolling {dice} dice vs {difficulty}"
                 self.caller.location.log_roll(name, log_description, result)
         except Exception as e:
             self.caller.msg("|rWarning: Could not log roll.|n")

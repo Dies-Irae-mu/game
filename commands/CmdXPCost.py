@@ -87,6 +87,7 @@ class CmdXPCost(default_cmds.MuxCommand):
         if category == "disciplines" and character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '').lower() == 'vampire':
             # Regular Disciplines
             table.add_row("|yRegular Disciplines:|n", "", "", "", "")
+            table.add_row("|rNote: Only Potence, Celerity, Fortitude, Obfuscate, and Auspex can be purchased.|n", "", "", "", "")
             disciplines = character.db.stats.get('powers', {}).get('discipline', {})
             for discipline, values in disciplines.items():
                 current = values.get('perm', 0)
@@ -389,6 +390,7 @@ class CmdXPCost(default_cmds.MuxCommand):
             if splat == 'vampire':
                 # Show vampire disciplines
                 table.add_row("|yDisciplines:|n", "", "", "", "")
+                table.add_row("|rNote: Only Potence, Celerity, Fortitude, Obfuscate, and Auspex can be purchased through +xp/spend.|n", "", "", "", "")
                 disciplines = character.db.stats.get('powers', {}).get('discipline', {})
                 for discipline, values in disciplines.items():
                     current = values.get('perm', 0)
@@ -1007,88 +1009,39 @@ class CmdXPCost(default_cmds.MuxCommand):
             # Get character's splat to determine available pools
             splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '').lower()
             
-            # Common pool for all splats
-            pools = ['Willpower']
+            # Only show pools that can be purchased with XP
+            purchasable_pools = ['Willpower']  # Willpower is universal
             
-            # Add splat-specific pools
-            if splat == 'vampire':
-                pools.extend(['Blood', 'Path'])
-            elif splat == 'shifter':
-                pools.extend(['Rage', 'Gnosis'])
-                
-                # Add renown based on shifter type
-                shifter_type = character.db.stats.get('other', {}).get('shifter_type', {}).get('Shifter Type', {}).get('perm', '')
-                if shifter_type == 'Garou':
-                    pools.extend(['Glory', 'Honor', 'Wisdom'])
-                elif shifter_type == 'Bastet':
-                    pools.extend(['Honor', 'Glory', 'Wisdom', 'Ferocity', 'Cunning'])
-                elif shifter_type == 'Gurahl':
-                    pools.extend(['Honor', 'Wisdom', 'Succor'])
-                elif shifter_type == 'Corax':
-                    pools.extend(['Glory', 'Honor', 'Wisdom', 'Cunning'])
-                elif shifter_type == 'Rokea':
-                    pools.extend(['Valor', 'Harmony', 'Innovation'])
-                elif shifter_type == 'Ananasi':
-                    pools.extend(['Obedience', 'Wisdom', 'Cunning'])
-                elif shifter_type == 'Nuwisha':
-                    pools.extend(['Glory', 'Honor', 'Humor', 'Cunning'])
-                elif shifter_type == 'Kitsune':
-                    pools.extend(['Glory', 'Honor', 'Cunning'])
-                elif shifter_type in ['Ajaba', 'Ratkin']:
-                    pools.extend(['Obligation', 'Cunning', 'Infamy'])
-                
+            # Add splat-specific purchasable pools
+            if splat == 'shifter':
+                purchasable_pools.extend(['Rage', 'Gnosis'])
             elif splat == 'mage':
-                pools.extend(['Quintessence', 'Paradox', 'Arete'])
-                
-                # Add affiliation-specific pools
-                affiliation = character.db.stats.get('identity', {}).get('lineage', {}).get('Affiliation', {}).get('perm', '')
-                if affiliation == 'Technocracy':
-                    pools.append('Enlightenment')
-                
-                # Add resonance
-                pools.append('Resonance')
-                
+                purchasable_pools.append('Arete')
             elif splat == 'changeling':
-                pools.extend(['Glamour', 'Banality', 'Nightmare'])
+                purchasable_pools.append('Glamour')
             
-            # Sort and remove duplicates
-            pools = sorted(set(pools))
+            # Sort pools
+            purchasable_pools = sorted(set(purchasable_pools))
             
             table.add_row("|yPools:|n", "", "", "", "")
-            for stat in pools:
+            for stat in purchasable_pools:
                 # Determine the correct category and subcategory for the pool
-                if stat in ['Willpower', 'Blood', 'Rage', 'Gnosis', 'Glamour', 'Banality', 'Quintessence', 'Paradox']:
+                if stat in ['Willpower', 'Rage', 'Gnosis', 'Glamour']:
                     category_name = 'pools'
                     subcategory = 'dual'
-                elif stat in ['Path', 'Humanity']:
-                    category_name = 'pools'
-                    subcategory = 'moral'
-                elif stat in ['Arete', 'Enlightenment']:
+                elif stat == 'Arete':
                     category_name = 'pools'
                     subcategory = 'advantage'
-                elif stat == 'Resonance':
-                    category_name = 'pools'
-                    subcategory = 'resonance'
-                elif stat in ['Glory', 'Honor', 'Wisdom', 'Cunning', 'Ferocity', 'Succor', 'Valor', 
-                             'Harmony', 'Innovation', 'Obedience', 'Humor', 'Obligation', 'Infamy']:
-                    category_name = 'advantages'
-                    subcategory = 'renown'
                 else:
-                    category_name = 'pools'
-                    subcategory = 'other'
+                    continue  # Skip any non-purchasable pools
                 
                 # Get current value
                 current = int(character.get_stat(category_name, subcategory, stat) or 0)
                 
                 # Determine max rating based on pool type
-                if stat in ['Willpower', 'Rage', 'Gnosis', 'Glamour', 'Banality']:
+                if stat in ['Willpower', 'Rage', 'Gnosis', 'Glamour']:
                     max_rating = 10
-                elif stat in ['Glory', 'Honor', 'Wisdom', 'Cunning', 'Ferocity', 'Succor', 'Valor', 
-                             'Harmony', 'Innovation', 'Obedience', 'Humor', 'Obligation', 'Infamy']:
-                    max_rating = 10
-                elif stat in ['Arete', 'Enlightenment']:
-                    max_rating = 10
-                elif stat == 'Path' or stat == 'Humanity':
+                elif stat == 'Arete':
                     max_rating = 10
                 else:
                     max_rating = 10  # Default max rating
@@ -1113,6 +1066,11 @@ class CmdXPCost(default_cmds.MuxCommand):
                     except Exception as e:
                         character.msg(f"Error calculating cost for {stat}: {str(e)}")
                         continue
+
+            # Add note about non-purchasable pools
+            table.add_row("", "", "", "", "")
+            table.add_row("|rNote: Other pools like Blood, Path/Humanity, Banality, Quintessence,|n", "", "", "", "")
+            table.add_row("|rParadox, Resonance, and Renown cannot be purchased with XP.|n", "", "", "", "")
 
         # Send the formatted output with header and footer
         footer = f"|b{'-' * total_width}|n"

@@ -353,7 +353,7 @@ class CmdCheck(MuxCommand):
         results['backgrounds'] = total_backgrounds
 
     def check_free_dots(self, character, results):
-        """Check if character has their free dots based on splat."""
+        """Check that free dots are properly allocated."""
         splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '').lower()
         
         # Check merits and flaws
@@ -406,6 +406,185 @@ class CmdCheck(MuxCommand):
             elif total_dots > 3:
                 results['errors'].append(f"Vampire should only have 3 discipline dots at creation (has {total_dots}).")
 
+            # Check combo disciplines
+            combos = character.db.stats.get('powers', {}).get('combodiscipline', {})
+            for combo_name, values in combos.items():
+                combo_value = values.get('perm', 0)
+                if combo_value > 0:
+                    # Check if combo exists in our loaded data
+                    if combo_name not in self.COMBO_DISCIPLINES:
+                        results['errors'].append(f"Invalid combo discipline: {combo_name}")
+                        continue
+                    
+                    # Check prerequisites
+                    has_prereqs = True
+                    missing_prereqs = []
+                    for prereq in self.COMBO_DISCIPLINES[combo_name]['prerequisites']:
+                        # Split on the last space to get the level
+                        parts = prereq.rsplit(' ', 1)
+                        if len(parts) != 2:
+                            has_prereqs = False
+                            missing_prereqs.append(prereq)
+                            continue
+                        
+                        discipline, level_str = parts
+                        try:
+                            level = int(level_str)
+                        except ValueError:
+                            has_prereqs = False
+                            missing_prereqs.append(prereq)
+                            continue
+                        
+                        # Handle special case for Thaumaturgy paths
+                        if 'Thaumaturgy' in discipline:
+                            thaum_paths = character.db.stats.get('powers', {}).get('thaumaturgy', {})
+                            highest_path = max([v.get('perm', 0) for v in thaum_paths.values()], default=0)
+                            if highest_path < level:
+                                has_prereqs = False
+                                missing_prereqs.append(prereq)
+                        elif 'Necromancy' in discipline:
+                            necro_paths = character.db.stats.get('powers', {}).get('necromancy', {})
+                            highest_path = max([v.get('perm', 0) for v in necro_paths.values()], default=0)
+                            if highest_path < level:
+                                has_prereqs = False
+                                missing_prereqs.append(prereq)
+                        else:
+                            # Remove any parenthetical text from discipline name
+                            discipline = discipline.split('(')[0].strip()
+                            disc_value = character.db.stats.get('powers', {}).get('discipline', {}).get(discipline, {}).get('perm', 0)
+                            if disc_value < level:
+                                has_prereqs = False
+                                missing_prereqs.append(prereq)
+                    
+                    if not has_prereqs:
+                        results['errors'].append(f"Missing prerequisites for {combo_name}: {', '.join(missing_prereqs)}")
+                    
+                    # Check XP
+                    xp_data = character.db.xp if hasattr(character.db, 'xp') else None
+                    if not xp_data or not isinstance(xp_data, dict):
+                        results['errors'].append(f"No XP data found. Cannot learn combo discipline {combo_name}")
+                        continue
+
+                    starting_xp = xp_data.get('total', 0)
+                    if not starting_xp:
+                        results['errors'].append(f"No XP available. Cannot learn combo discipline {combo_name}")
+                        continue
+
+                    combo_cost = self.COMBO_DISCIPLINES[combo_name]['cost']
+                    if float(starting_xp) < combo_cost:
+                        results['errors'].append(f"Insufficient XP for {combo_name} (costs {combo_cost} XP, have {starting_xp} XP)")
+
+            # Get Path of Enlightenment
+            enlightenment = character.db.stats.get('identity', {}).get('personal', {}).get('Path of Enlightenment', {}).get('perm')
+            
+            # Get required virtues for the Enlightenment path
+            required_virtues = self.PATH_VIRTUES.get(enlightenment)
+            if not required_virtues:
+                results['errors'].append(f"Invalid Enlightenment path: {enlightenment}")
+                return
+            
+            # Check virtues and calculate total
+            virtues = character.db.stats.get('virtues', {}).get('moral', {})
+            path_data = character.db.stats.get('identity', {}).get('personal', {}).get('Path of Enlightenment', {})
+            path_name = path_data.get('perm') if isinstance(path_data, dict) else None
+            path_rating = character.db.stats.get('pools', {}).get('moral', {}).get('Path', {}).get('perm', 0)
+            virtue_total = 0
+            missing_virtues = []
+            total_virtue_dots = 0
+            freebies_spent_on_virtues = 0
+
+            # Each character gets 7 dots to distribute among virtues at character creation
+            remaining_free_dots = 7
+            
+            for virtue in required_virtues:
+                value = virtues.get(virtue, {}).get('perm', 0)
+                if value == 0:
+                    missing_virtues.append(virtue)
+                else:
+                    # For non-Humanity paths, Conviction and Instinct start at 0
+                    if enlightenment != 'Humanity' and virtue in ['Conviction', 'Instinct']:
+                        if value > remaining_free_dots:
+                            freebies_spent_on_virtues += (value - remaining_free_dots) * self.FREEBIE_COSTS['virtue']
+                            remaining_free_dots = 0
+                        else:
+                            remaining_free_dots -= value
+                    else:  # Humanity virtues or Courage start at 1
+                        if (value - 1) > remaining_free_dots:
+                            freebies_spent_on_virtues += (value - 1 - remaining_free_dots) * self.FREEBIE_COSTS['virtue']
+                            remaining_free_dots = 0
+                        else:
+                            remaining_free_dots -= (value - 1)
+                virtue_total += value
+
+            if missing_virtues:
+                results['errors'].append(f"Missing required virtues for {enlightenment}: {', '.join(missing_virtues)}")
+
+            # Check path rating against virtue total and cap for non-Humanity paths
+            path = character.db.stats.get('pools', {}).get('moral', {}).get('Path', {}).get('perm', 0)
+            if enlightenment != 'Humanity' and path > 5:
+                results['errors'].append(f"Non-Humanity paths cannot have path rating above 5 at character creation (currently {path})")
+            if path > virtue_total:
+                results['errors'].append(f"path rating cannot exceed sum of virtues ({virtue_total}) but is {path}")
+            
+            # Calculate freebie points spent on path
+            freebies_spent_on_path = (path - virtue_total) * self.FREEBIE_COSTS['path'] if path > virtue_total else 0
+            
+            # Add virtue and path freebie costs to total
+            results['freebies_spent'] = results.get('freebies_spent', 0) + freebies_spent_on_virtues + freebies_spent_on_path
+
+            # Check Willpower against Courage
+            willpower = character.db.stats.get('pools', {}).get('dual', {}).get('Willpower', {}).get('perm', 0)
+            courage = virtues.get('Courage', {}).get('perm', 0)
+            if willpower != courage:
+                results['errors'].append(f"Willpower should equal Courage rating ({courage}) but is {willpower}")
+
+        elif splat == 'mage':
+            # Check required Mage attributes
+            required_mage = ['Affiliation', 'Essence']
+            for attr in required_mage:
+                if not character.db.stats.get('identity', {}).get('lineage', {}).get(attr, {}).get('perm'):
+                    results['errors'].append(f"Missing required lineage attribute for Mage: {attr}")
+
+            # Get Mage Faction
+            affiliation = character.db.stats.get('identity', {}).get('lineage', {}).get('Affiliation', {}).get('perm')
+            if affiliation:
+                if affiliation == 'Traditions' and not character.db.stats.get('identity', {}).get('lineage', {}).get('Tradition', {}).get('perm'):
+                    results['errors'].append("Traditions Mage must have a Tradition set")
+                elif affiliation == 'Technocracy' and not character.db.stats.get('identity', {}).get('lineage', {}).get('Convention', {}).get('perm'):
+                    results['errors'].append("Technocratic Mage must have a Convention set")
+                elif affiliation == 'Nephandi' and not character.db.stats.get('identity', {}).get('lineage', {}).get('Nephandi Faction', {}).get('perm'):
+                    results['errors'].append("Nephandi Mage must have a Nephandi Faction set")
+
+            # Check Sphere requirements
+            spheres = character.db.stats.get('powers', {}).get('sphere', {})
+            if not spheres:
+                results['errors'].append("Mage character has no Spheres")
+            # Check Arete
+            arete = character.db.stats.get('pools', {}).get('advantage', {}).get('Arete', {}).get('perm', 0)
+            if affiliation != 'Technocracy' and arete < 1:
+                results['errors'].append("Mage must have Arete of at least 1")
+            
+            enlightenment = character.db.stats.get('pools', {}).get('advantage', {}).get('Enlightenment', {}).get('perm', 0) or 0
+            if affiliation == 'Technocracy' and enlightenment < 1:
+                results['errors'].append("Mage with the Technocracy Affiliation must have Enlightenment of at least 1")
+
+            # Check Avatar
+            avatar = character.db.stats.get('backgrounds', {}).get('background', {}).get('Avatar', {}).get('perm', 0) or 0
+            genius = character.db.stats.get('backgrounds', {}).get('background', {}).get('Genius', {}).get('perm', 0) or 0
+            if affiliation != 'Technocracy' and avatar < 1:
+                results['errors'].append("It's highly recommended that you have Avatar of at least 1.")
+            elif affiliation == 'Technocracy' and genius < 1:
+                results['errors'].append("Technocratic Mages should have Genius of at least 1.")
+        elif splat == 'changeling':
+            # Check for 5 Realms, 3 Arts
+            realms = character.db.stats.get('powers', {}).get('realm', {})
+            arts = character.db.stats.get('powers', {}).get('art', {})
+            realm_dots = sum(values.get('perm', 0) for values in realms.values())
+            art_dots = sum(values.get('perm', 0) for values in arts.values())
+            if realm_dots < 5:
+                results['errors'].append(f"Changeling should have at least 5 realm dots (has {realm_dots})")
+            if art_dots < 3:
+                results['errors'].append(f"Changeling should have at least 3 art dots (has {art_dots})")
 
             # Check combo disciplines
             combos = character.db.stats.get('powers', {}).get('combodiscipline', {})
@@ -452,7 +631,7 @@ class CmdCheck(MuxCommand):
                         else:
                             # Remove any parenthetical text from discipline name
                             discipline = discipline.split('(')[0].strip()
-                            disc_value = character.get_stat('powers', 'discipline', discipline, temp=False) or 0
+                            disc_value = character.db.stats.get('powers', {}).get('discipline', {}).get(discipline, {}).get('perm', 0)
                             if disc_value < level:
                                 has_prereqs = False
                                 missing_prereqs.append(prereq)
@@ -474,115 +653,6 @@ class CmdCheck(MuxCommand):
                     combo_cost = self.COMBO_DISCIPLINES[combo_name]['cost']
                     if float(starting_xp) < combo_cost:
                         results['errors'].append(f"Insufficient XP for {combo_name} (costs {combo_cost} XP, have {starting_xp} XP)")
-
-            # Get character's Enlightenment path
-            enlightenment = character.db.stats.get('identity', {}).get('lineage', {}).get('Enlightenment', {}).get('perm')
-                    
-            # Get required virtues for the Enlightenment path
-            required_virtues = self.PATH_VIRTUES.get(enlightenment)
-            if not required_virtues:
-                results['errors'].append(f"Invalid Enlightenment path: {enlightenment}")
-                return
-            
-            # Check virtues and calculate total
-            virtues = character.db.stats.get('virtues', {}).get('moral', {})
-            virtue_total = 0
-            missing_virtues = []
-            total_virtue_dots = 0
-            freebies_spent_on_virtues = 0
-            
-            # Each character gets 7 dots to distribute among virtues at character creation
-            remaining_free_dots = 7
-            
-            for virtue in required_virtues:
-                value = virtues.get(virtue, {}).get('perm', 0)
-                if value == 0:
-                    missing_virtues.append(virtue)
-                else:
-                    # For non-Humanity paths, Conviction and Instinct start at 0
-                    if enlightenment != 'Humanity' and virtue in ['Conviction', 'Instinct']:
-                        if value > remaining_free_dots:
-                            freebies_spent_on_virtues += (value - remaining_free_dots) * self.FREEBIE_COSTS['virtue']
-                            remaining_free_dots = 0
-                        else:
-                            remaining_free_dots -= value
-                    else:  # Humanity virtues or Courage start at 1
-                        if (value - 1) > remaining_free_dots:
-                            freebies_spent_on_virtues += (value - 1 - remaining_free_dots) * self.FREEBIE_COSTS['virtue']
-                            remaining_free_dots = 0
-                        else:
-                            remaining_free_dots -= (value - 1)
-                virtue_total += value
-
-            if missing_virtues:
-                results['errors'].append(f"Missing required virtues for {enlightenment}: {', '.join(missing_virtues)}")
-
-            # Check path rating against virtue total and cap for non-Humanity paths
-            path = character.get_stat('pools', 'moral', 'path', temp=False) or 0
-            if enlightenment != 'Humanity' and path > 5:
-                results['errors'].append(f"Non-Humanity paths cannot have path rating above 5 at character creation (currently {path})")
-            if path > virtue_total:
-                results['errors'].append(f"path rating cannot exceed sum of virtues ({virtue_total}) but is {path}")
-            
-            # Calculate freebie points spent on path
-            freebies_spent_on_path = (path - virtue_total) * self.FREEBIE_COSTS['path'] if path > virtue_total else 0
-            
-            # Add virtue and path freebie costs to total
-            results['freebies_spent'] = results.get('freebies_spent', 0) + freebies_spent_on_virtues + freebies_spent_on_path
-
-            # Check Willpower against Courage
-            willpower = character.get_stat('pools', 'dual', 'Willpower', temp=False) or 0
-            courage = virtues.get('Courage', {}).get('perm', 0)
-            if willpower != courage:
-                results['errors'].append(f"Willpower should equal Courage rating ({courage}) but is {willpower}")
-
-        elif splat == 'mage':
-            # Check required Mage attributes
-            required_mage = ['Affiliation', 'Essence']
-            for attr in required_mage:
-                if not character.db.stats.get('identity', {}).get('lineage', {}).get(attr, {}).get('perm'):
-                    results['errors'].append(f"Missing required lineage attribute for Mage: {attr}")
-
-            # Get Mage Faction
-            affiliation = character.db.stats.get('identity', {}).get('lineage', {}).get('Affiliation', {}).get('perm')
-            if affiliation:
-                if affiliation == 'Traditions' and not character.db.stats.get('identity', {}).get('lineage', {}).get('Tradition', {}).get('perm'):
-                    results['errors'].append("Traditions Mage must have a Tradition set")
-                elif affiliation == 'Technocracy' and not character.db.stats.get('identity', {}).get('lineage', {}).get('Convention', {}).get('perm'):
-                    results['errors'].append("Technocratic Mage must have a Convention set")
-                elif affiliation == 'Nephandi' and not character.db.stats.get('identity', {}).get('lineage', {}).get('Nephandi Faction', {}).get('perm'):
-                    results['errors'].append("Nephandi Mage must have a Nephandi Faction set")
-
-            # Check Sphere requirements
-            spheres = character.db.stats.get('powers', {}).get('sphere', {})
-            if not spheres:
-                results['errors'].append("Mage character has no Spheres")
-            # Check Arete
-            arete = character.get_stat('pools', 'advantage', 'Arete', temp=False) or 0
-            if affiliation != 'Technocracy' and arete < 1:
-                results['errors'].append("Mage must have Arete of at least 1")
-            
-            enlightenment = character.get_stat('pools', 'advantage', 'Enlightenment', temp=False) or 0
-            if affiliation == 'Technocracy' and enlightenment < 1:
-                results['errors'].append("Mage with the Technocracy Affiliation must have Enlightenment of at least 1")
-
-            # Check Avatar
-            avatar = character.get_stat('backgrounds', 'background', 'Avatar', temp=False) or 0
-            genius = character.get_stat('backgrounds', 'background', 'Genius', temp=False) or 0
-            if affiliation != 'Technocracy' and avatar < 1:
-                results['errors'].append("It's highly recommended that you have Avatar of at least 1.")
-            elif affiliation == 'Technocracy' and genius < 1:
-                results['errors'].append("Technocratic Mages should have Genius of at least 1.")
-        elif splat == 'changeling':
-            # Check for 5 Realms, 3 Arts
-            realms = character.db.stats.get('powers', {}).get('realm', {})
-            arts = character.db.stats.get('powers', {}).get('art', {})
-            realm_dots = sum(values.get('perm', 0) for values in realms.values())
-            art_dots = sum(values.get('perm', 0) for values in arts.values())
-            if realm_dots < 5:
-                results['errors'].append(f"Changeling should have at least 5 realm dots (has {realm_dots})")
-            if art_dots < 3:
-                results['errors'].append(f"Changeling should have at least 3 art dots (has {art_dots})")
 
         elif splat == 'sorcerer':
             # Check for 6 dots of paths
@@ -880,11 +950,12 @@ class CmdCheck(MuxCommand):
             if total_gifts > free_gifts:
                 spent_freebies += (total_gifts - free_gifts) * self.FREEBIE_COSTS['gift']
             # Calculate Rage and Gnosis costs
-            rage = character.get_stat('pools', 'dual', 'Rage', temp=False) or 0
-            gnosis = character.get_stat('pools', 'dual', 'Gnosis', temp=False)
+            rage = character.db.stats.get('pools', {}).get('dual', {}).get('Rage', {}).get('perm', 0)
+            gnosis = character.db.stats.get('pools', {}).get('dual', {}).get('Gnosis', {}).get('perm', 0)
             
             # Get base Rage based on auspice
-            auspice = character.get_stat('identity', 'lineage', 'Auspice', temp=False)
+            auspice_data = character.db.stats.get('identity', {}).get('lineage', {}).get('Auspice', {})
+            auspice = auspice_data.get('perm') if isinstance(auspice_data, dict) else None
             base_rage = {
                 'Ragabash': 1,
                 'Theurge': 2,
@@ -894,7 +965,8 @@ class CmdCheck(MuxCommand):
             }.get(auspice, 1)  # Default to 1 if auspice not found
             
             # Get base Gnosis based on breed
-            breed = character.get_stat('identity', 'lineage', 'Breed', temp=False)
+            breed_data = character.db.stats.get('identity', {}).get('lineage', {}).get('Breed', {})
+            breed = breed_data.get('perm') if isinstance(breed_data, dict) else None
             base_gnosis = 1 if breed == 'Homid' else 3 if breed == 'Metis' else 5
             
             if rage > base_rage:
@@ -913,17 +985,19 @@ class CmdCheck(MuxCommand):
 
             # Calculate virtue and path costs
             virtues = character.db.stats.get('virtues', {}).get('moral', {})
-            enlightenment = character.db.stats.get('identity', {}).get('lineage', {}).get('Enlightenment', {}).get('perm')
+            path_data = character.db.stats.get('identity', {}).get('personal', {}).get('Path of Enlightenment', {})
+            path_name = path_data.get('perm') if isinstance(path_data, dict) else None
+            path_rating = character.db.stats.get('pools', {}).get('moral', {}).get('Path', {}).get('perm', 0)
             
-            if enlightenment:
-                required_virtues = self.PATH_VIRTUES.get(enlightenment, [])
+            if path_name:
+                required_virtues = self.PATH_VIRTUES.get(path_name, [])
                 remaining_free_dots = 7
                 
                 for virtue in required_virtues:
                     value = virtues.get(virtue, {}).get('perm', 0)
                     if value > 0:
                         # For non-Humanity paths, Conviction and Instinct start at 0
-                        if enlightenment != 'Humanity' and virtue in ['Conviction', 'Instinct']:
+                        if path_name != 'Humanity' and virtue in ['Conviction', 'Instinct']:
                             if value > remaining_free_dots:
                                 spent_freebies += (value - remaining_free_dots) * self.FREEBIE_COSTS['virtue']
                                 remaining_free_dots = 0
@@ -936,7 +1010,7 @@ class CmdCheck(MuxCommand):
                             else:
                                 remaining_free_dots -= (value - 1)
                 # Calculate path costs
-                path = character.get_stat('pools', 'moral', 'path', temp=False) or 0
+                path = character.db.stats.get('pools', {}).get('moral', {}).get('Path', {}).get('perm', 0)
                 virtue_total = sum(values.get('perm', 0) for values in virtues.values())
                 if path > virtue_total:
                     spent_freebies += (path - virtue_total) * self.FREEBIE_COSTS['path']
@@ -955,8 +1029,9 @@ class CmdCheck(MuxCommand):
                 spent_freebies += (realm_dots - 5) * self.FREEBIE_COSTS['realm']
 
             # Calculate Glamour costs
-            glamour = character.get_stat('pools', 'dual', 'Glamour', temp=False) or 0
-            seeming = character.get_stat('identity', 'lineage', 'Seeming', temp=False)
+            glamour = character.db.stats.get('pools', {}).get('dual', {}).get('Glamour', {}).get('perm', 0)
+            seeming_data = character.db.stats.get('identity', {}).get('lineage', {}).get('Seeming', {})
+            seeming = seeming_data.get('perm') if isinstance(seeming_data, dict) else None
             base_glamour = 5 if seeming == 'Childling' else 4
             if glamour > base_glamour:
                 spent_freebies += (glamour - base_glamour) * self.FREEBIE_COSTS['glamour']
@@ -969,20 +1044,21 @@ class CmdCheck(MuxCommand):
                 spent_freebies += (sphere_dots - 6) * self.FREEBIE_COSTS['sphere']
 
             # Calculate Arete costs
-            arete = character.get_stat('pools', 'advantage', 'Arete', temp=False) or 0
+            arete = character.db.stats.get('pools', {}).get('advantage', {}).get('Arete', {}).get('perm', 0)
             if arete > 1:
                 spent_freebies += (arete - 1) * self.FREEBIE_COSTS['arete']
 
             # Calculate Enlightenment costs for Technocracy
-            affiliation = character.get_stat('identity', 'lineage', 'Affiliation', temp=False)
+            affiliation_data = character.db.stats.get('identity', {}).get('lineage', {}).get('Affiliation', {})
+            affiliation = affiliation_data.get('perm') if isinstance(affiliation_data, dict) else None
             if affiliation == 'Technocracy':
-                enlightenment = character.get_stat('pools', 'advantage', 'Enlightenment', temp=False) or 0
+                enlightenment = character.db.stats.get('pools', {}).get('advantage', {}).get('Enlightenment', {}).get('perm', 0)
                 if enlightenment > 1:
                     spent_freebies += (enlightenment - 1) * self.FREEBIE_COSTS['enlightenment']
 
             # Calculate Quintessence costs
-            quintessence = character.get_stat('pools', 'dual', 'Quintessence', temp=False) or 0
-            avatar = character.get_stat('backgrounds', 'background', 'Avatar', temp=False) or 0
+            quintessence = character.db.stats.get('pools', {}).get('dual', {}).get('Quintessence', {}).get('perm', 0)
+            avatar = character.db.stats.get('backgrounds', {}).get('background', {}).get('Avatar', {}).get('perm', 0)
             if quintessence > avatar:
                 # Each point of quintessence over Avatar costs 0.25 freebies
                 # For every 4 points of quintessence over Avatar, that's 1 freebie point
@@ -1032,11 +1108,11 @@ class CmdCheck(MuxCommand):
                 'Demeanor': 'identity/personal'
             }
             
-            for attr, path in required_archetype.items():
+            for attr, path_of_enlightenment in required_archetype.items():
                 if not character.db.stats.get('identity', {}).get('personal', {}).get(attr, {}).get('perm'):
                     results['errors'].append(f"Missing required identity attribute: {attr}")
 
-        for attr, path in required_personal.items():
+        for attr, path_of_enlightenment in required_personal.items():
             if not character.db.stats.get('identity', {}).get('personal', {}).get(attr, {}).get('perm'):
                 results['errors'].append(f"Missing required identity attribute: {attr}")
 
@@ -1074,7 +1150,7 @@ class CmdCheck(MuxCommand):
                 results['errors'].append(f"All Changelings must have Banality >= 3 (currently {banality})")
         elif splat == 'vampire':
             # Check required Vampire attributes
-            required_vampire_lineage = ['Clan', 'Generation', 'Sire', 'Enlightenment']  # Added Enlightenment
+            required_vampire_lineage = ['Clan', 'Generation', 'Sire', 'Path of Enlightenment']  # Added Enlightenment
             required_vampire_identity = ['Date of Embrace']
             
             for attr in required_vampire_lineage:
@@ -1084,6 +1160,12 @@ class CmdCheck(MuxCommand):
             for attr in required_vampire_identity:
                 if not character.db.stats.get('identity', {}).get('personal', {}).get(attr, {}).get('perm'):
                     results['errors'].append(f"Missing required identity attribute for Vampire: {attr}")
+            
+            # Check path rating, if not humanity it should be 5 or less; path is calculated by the virtues
+            path_of_enlightenment = character.get_stat('identity', 'personal', 'Path of Enlightenment', temp=False) or 0
+            if path_of_enlightenment != 'Humanity' and character.get_stat('virtues', 'moral', 'path', temp=False) > 5:
+                results['errors'].append(f"Path of Enlightenment rating must be 5 or less for non-Humanity paths.")
+
         elif splat == 'companion':
             # Check required Companion attributes
             required_companion = ['Companion Type', 'Affiliation', 'Motivation']

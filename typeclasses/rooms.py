@@ -7,6 +7,7 @@ from world.wod20th.utils.formatting import header, footer, divider
 from datetime import datetime
 import random
 from evennia.utils.search import search_channel
+import re
 
 class RoomParent(DefaultRoom):
 
@@ -214,6 +215,17 @@ class RoomParent(DefaultRoom):
 
         # Create the footer with room type and resources
         footer_text = f"{resources_str}, {room_type}".strip(", ")
+        
+        # Add indicators for views and places if available
+        indicators = []
+        if hasattr(self.db, 'views') and self.db.views:
+            indicators.append("+views set")
+        if hasattr(self.db, 'places') and self.db.places:
+            indicators.append("+places set")
+            
+        if indicators:
+            footer_text += f" [{', '.join(indicators)}]"
+            
         footer_length = len(ANSIString(footer_text))
         padding = 78 - footer_length - 2  # -2 for the brackets
 
@@ -876,10 +888,22 @@ class RoomParent(DefaultRoom):
         if not hasattr(self.db, 'roll_log') or self.db.roll_log is None:
             self.db.roll_log = []
         
+        # Extract just the total number of dice from the description
+        # Remove detailed stat information and keep only the total
+        dice_match = re.search(r'Rolling (\d+) dice', description)
+        if dice_match:
+            total_dice = dice_match.group(1)
+            simplified_desc = f"Rolling {total_dice} dice"
+            if "vs" in description:
+                difficulty = description.split("vs")[-1].strip()
+                simplified_desc += f" vs {difficulty}"
+        else:
+            simplified_desc = description  # Fallback to original if pattern not found
+        
         log_entry = {
             'timestamp': datetime.now(),
             'roller': roller,
-            'description': description,
+            'description': simplified_desc,
             'result': result
         }
         

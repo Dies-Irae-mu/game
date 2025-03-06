@@ -16,6 +16,14 @@
         "values": [1, 2, 3, 4, 5]
     },
     {
+        "name": "Contract",
+        "description": "Oaths have always been of paramount importance to the fae. Legends speak of ages past, when reality bowed to the least whims of the lords of Arcadia, and the Dreaming served as the medium for tests of will between fae magicians. In such a wild age, the only constants among the fae were those promises to which they bound themselves, and those agreements they entered into and sealed with Glamour.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
         "name": "Primal",
         "description": "Mastery of the elements and the natural world.",
         "game_line": "Changeling: The Dreaming",

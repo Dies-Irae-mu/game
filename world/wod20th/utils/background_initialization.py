@@ -53,7 +53,7 @@ def initialize_backgrounds():
     for bg in CHANGELING_BACKGROUNDS:
         try:
             # Set instanced=True for backgrounds that require an instance
-            instanced = True if bg in ['Status', 'Influence'] else None
+            instanced = True if bg in ['Status', 'Influence', 'Chimerical Companion', 'Chimerical Item', 'Treasure', 'Retinue', 'Dreamers', 'Holdings', 'Remembrance', 'Rites', 'Traditions', 'Ananasi Faction', 'Ananasi Cabal', 'Kitsune Path', 'Kitsune Faction', 'Ajaba Faction', 'Rokea Faction', 'Stream', 'Varna', 'Deed Name', 'Aspect', 'Jamak Spirit', 'Rank'] else None
             
             Stat.objects.update_or_create(
                 name=bg,

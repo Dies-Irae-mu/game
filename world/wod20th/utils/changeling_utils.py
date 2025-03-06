@@ -43,26 +43,27 @@ KINAIN_LEGACIES = {
 
 # Phyla (for Inanimae)
 PHYLA = {
-    'Kuberas', 'Ondines', 'Parosemes', 'Glomes', 'Solimonds', 'Mannikins'
+    'Kuberas', 'Ondine', 'Parosemes', 'Glome', 'Solimond', 'Mannikin'
 }
 
 # Powers available to each Inanimae phyla
 INANIMAE_POWERS = {
-    'Kuberas': ['Sliver', 'Art'],
-    'Ondines': ['Sliver', 'Art'],
-    'Parosemes': ['Sliver', 'Art'],
-    'Glomes': ['Sliver', 'Art'],
-    'Solimonds': ['Sliver', 'Art'],
-    'Mannikins': ['Sliver', 'Art']
+    'Kuberas': ['Sliver'],
+    'Ondine': ['Sliver'],
+    'Parosemes': ['Sliver'],
+    'Glome': ['Sliver'],
+    'Solimond': ['Sliver'],
+    'Mannikin': ['Art', 'Realm', 'Sliver']  # Mannikins get all three power types but limited to 4 dots
 }
 
 # Slivers
 SLIVERS = {
-    'verdage': ['Verdage'],
-    'aquis': ['Aquis'],
-    'stratus': ['Stratus'],
-    'petros': ['Petros'],
-    'pyros': ['Pyros']
+    'kuberas': ['Verdage'],
+    'ondine': ['Aquis'],
+    'parosemes': ['Stratus'],
+    'glome': ['Petros'],
+    'solimond': ['Pyros'],
+    'mannikin': []
 }
 NUNNEHI_SEEMING = {
     'Youngling', 'Brave', 'Elder'
@@ -130,6 +131,7 @@ def get_changeling_identity_stats(kith: str = None) -> List[str]:
         elif kith.lower() == 'inanimae':
             return base_stats + [
                 'Phyla',
+                'Anchor',
                 'Seelie Legacy',
                 'Unseelie Legacy',
                 'Fae Court'
@@ -213,17 +215,19 @@ def initialize_changeling_stats(character, kith):
     if 'powers' not in character.db.stats:
         character.db.stats['powers'] = {}
     
-    # Add Arts and Realms categories
-    character.db.stats['powers']['art'] = {}
-    character.db.stats['powers']['realm'] = {}
-    
-    # Initialize all Arts to 0
-    for art in ARTS:
-        character.db.stats['powers']['art'][art] = {'perm': 0, 'temp': 0}
-    
-    # Initialize all Realms to 0
-    for realm in REALMS:
-        character.db.stats['powers']['realm'][realm] = {'perm': 0, 'temp': 0}
+    # Only initialize Arts and Realms for non-Inanimae (Inanimae will be handled separately)
+    if kith.lower() != 'inanimae':
+        # Add Arts and Realms categories
+        character.db.stats['powers']['art'] = {}
+        character.db.stats['powers']['realm'] = {}
+        
+        # Initialize all Arts to 0
+        for art in ARTS:
+            character.db.stats['powers']['art'][art] = {'perm': 0, 'temp': 0}
+        
+        # Initialize all Realms to 0
+        for realm in REALMS:
+            character.db.stats['powers']['realm'][realm] = {'perm': 0, 'temp': 0}
     
     # Initialize pools
     if 'pools' not in character.db.stats:
@@ -232,10 +236,6 @@ def initialize_changeling_stats(character, kith):
         character.db.stats['pools']['dual'] = {}
     if 'other' not in character.db.stats['pools']:
         character.db.stats['pools']['other'] = {}
-    
-    # Set base pools
-    character.db.stats['pools']['dual']['Willpower'] = {'perm': 4, 'temp': 4}
-    character.db.stats['pools']['dual']['Glamour'] = {'perm': 4, 'temp': 4}
     
     # Set Nightmare and Willpower Imbalance in pools/other
     character.db.stats['pools']['other']['Nightmare'] = {'perm': 0, 'temp': 0}
@@ -267,8 +267,14 @@ def initialize_changeling_stats(character, kith):
             # Initialize Inanimae-specific stats
             character.set_stat('identity', 'lineage', 'Phyla', '', temp=False)
             character.set_stat('identity', 'lineage', 'Phyla', '', temp=True)
+            character.set_stat('identity', 'lineage', 'Anchor', '', temp=False)
+            character.set_stat('identity', 'lineage', 'Anchor', '', temp=True)
             # Add Slivers category
             character.db.stats['powers']['sliver'] = {}
+            
+            # Initialize Inanimae stats (including pools)
+            initialize_inanimae_stats(character)
+            return  # Return early as pools are handled in initialize_inanimae_stats
             
         # Special handling for Nunnehi
         elif kith.lower() == 'nunnehi':
@@ -333,14 +339,16 @@ def initialize_changeling_stats(character, kith):
     character.set_stat('pools', 'dual', 'Glamour', glamour, temp=False)
     character.set_stat('pools', 'dual', 'Glamour', glamour, temp=True)
     
+    # Set base Willpower
+    character.set_stat('pools', 'dual', 'Willpower', 4, temp=False)
+    character.set_stat('pools', 'dual', 'Willpower', 4, temp=True)
+    
     # Adjust pools based on seeming changes
     new_seeming = character.get_stat('identity', 'lineage', 'Seeming', temp=False)
     if new_seeming:
         adjust_pools_for_seeming(character, old_seeming, new_seeming)
     
-    if kith.lower() == 'inanimae':
-        initialize_inanimae_stats(character)
-    else:
+    if kith.lower() != 'inanimae':
         initialize_standard_changeling_stats(character)
 
 def initialize_standard_changeling_stats(character):
@@ -369,27 +377,70 @@ def initialize_inanimae_stats(character):
     # Get character's phyla
     phyla = character.get_stat('identity', 'lineage', 'Phyla', temp=False)
     
-    if phyla and phyla in INANIMAE_POWERS:
-        # Initialize Slivers based on phyla
-        for power_type in INANIMAE_POWERS[phyla]:
-            if power_type == 'Sliver':
-                # Initialize slivers based on phyla type
-                if phyla.lower() == 'kuberas':
-                    character.db.stats['powers']['sliver']['Verdage'] = {'perm': 0, 'temp': 0}
-                elif phyla.lower() == 'ondines':
-                    character.db.stats['powers']['sliver']['Aquis'] = {'perm': 0, 'temp': 0}
-                elif phyla.lower() == 'parosemes':
-                    character.db.stats['powers']['sliver']['Stratus'] = {'perm': 0, 'temp': 0}
-                elif phyla.lower() == 'glomes':
-                    character.db.stats['powers']['sliver']['Petros'] = {'perm': 0, 'temp': 0}
-                elif phyla.lower() == 'solimonds':
-                    character.db.stats['powers']['sliver']['Pyros'] = {'perm': 0, 'temp': 0}
-            elif power_type == 'Art' and phyla.lower() == 'mannikins':
-                # Mannikins also get Arts
+    if phyla:
+        # Convert phyla to title case for consistent comparison
+        phyla_title = phyla.title()
+        if phyla_title in INANIMAE_POWERS:
+            # Get the powers available to this phyla
+            available_powers = INANIMAE_POWERS[phyla_title]
+            
+            # Initialize Arts if available
+            if 'Art' in available_powers:
+                # Initialize Arts category
                 character.db.stats['powers']['art'] = {}
                 for art in ARTS:
-                    if art not in character.db.stats['powers']['art']:
-                        character.db.stats['powers']['art'][art] = {'perm': 0, 'temp': 0}
+                    character.db.stats['powers']['art'][art] = {'perm': 0, 'temp': 0}
+            
+            # Initialize Realms if available
+            if 'Realm' in available_powers:
+                # Initialize Realms category
+                character.db.stats['powers']['realm'] = {}
+                for realm in REALMS:
+                    character.db.stats['powers']['realm'][realm] = {'perm': 0, 'temp': 0}
+            
+            # Initialize Slivers if available
+            if 'Sliver' in available_powers:
+                # Initialize all slivers to 0
+                for sliver_type in ['Verdage', 'Aquis', 'Stratus', 'Petros', 'Pyros']:
+                    character.db.stats['powers']['sliver'][sliver_type] = {'perm': 0, 'temp': 0}
+                
+                # Set affinity sliver to 1 based on phyla
+                if phyla.lower() == 'kuberas':
+                    character.db.stats['powers']['sliver']['Verdage'] = {'perm': 1, 'temp': 1}
+                elif phyla.lower() == 'ondine':
+                    character.db.stats['powers']['sliver']['Aquis'] = {'perm': 1, 'temp': 1}
+                elif phyla.lower() == 'parosemes':
+                    character.db.stats['powers']['sliver']['Stratus'] = {'perm': 1, 'temp': 1}
+                elif phyla.lower() == 'glome':
+                    character.db.stats['powers']['sliver']['Petros'] = {'perm': 1, 'temp': 1}
+                elif phyla.lower() == 'solimond':
+                    character.db.stats['powers']['sliver']['Pyros'] = {'perm': 1, 'temp': 1}
+                elif phyla.lower() == 'mannikin':
+                    # Mannikins get a generic sliver with no free point
+                    character.db.stats['powers']['sliver']['Sliver'] = {'perm': 0, 'temp': 0}
+
+            # Set starting pool values based on phyla
+            phyla_pools = {
+                'Glome': {'Glamour': 6, 'Willpower': 5, 'Banality': 4},
+                'Kuberas': {'Glamour': 6, 'Willpower': 3, 'Banality': 3},
+                'Ondine': {'Glamour': 6, 'Willpower': 3, 'Banality': 4},
+                'Parosemes': {'Glamour': 5, 'Willpower': 3, 'Banality': 2},
+                'Solimond': {'Glamour': 6, 'Willpower': 3, 'Banality': 4},
+                'Mannikin': {'Glamour': 6, 'Willpower': 4, 'Banality': 6}
+            }
+
+            # Set pools based on phyla
+            if phyla_title in phyla_pools:
+                pools = phyla_pools[phyla_title]
+                for pool, value in pools.items():
+                    character.db.stats['pools']['dual'][pool] = {'perm': value, 'temp': value}
+                character.msg(f"|gInitialized pools for {phyla_title} phyla: Glamour {pools['Glamour']}, Willpower {pools['Willpower']}, Banality {pools['Banality']}|n")
+            
+            # Send appropriate message for Mannikins
+            if phyla.lower() == 'mannikin':
+                character.msg("|gInitialized Arts, Realms, and Slivers for Mannikin phyla (limited to 4 dots).|n")
+            else:
+                character.msg(f"|gInitialized Slivers with free point in {SLIVERS[phyla.lower()][0]} for {phyla} phyla.|n")
 
 def get_kith_arts(kith: str) -> List[str]:
     """Get the available arts for a specific kith."""
@@ -399,6 +450,12 @@ def get_kith_arts(kith: str) -> List[str]:
 def get_phyla_powers(phyla: str) -> List[str]:
     """Get the available powers for a specific Inanimae phyla."""
     return INANIMAE_POWERS.get(phyla, []) 
+
+def validate_changeling_phyla(value: str) -> tuple[bool, str]:
+    """Validate a changeling's phyla."""
+    if value.title() not in PHYLA:
+        return False, f"Invalid phyla. Valid phyla are: {', '.join(sorted(PHYLA))}"
+    return True, ""
 
 def validate_changeling_stats(character, stat_name: str, value: str, category: str = None, stat_type: str = None) -> tuple[bool, str]:
     """
@@ -423,6 +480,12 @@ def validate_changeling_stats(character, stat_name: str, value: str, category: s
             # After validation passes, adjust pools based on seeming change
             adjust_pools_for_seeming(character, old_seeming, value)
         return is_valid, error_msg
+        
+    # Validate phyla (for Inanimae)
+    if stat_name == 'phyla':
+        if kith != 'Inanimae':
+            return False, "Only Inanimae can have a phyla."
+        return validate_changeling_phyla(value)
         
     # Validate house (only for non-Nunnehi)
     if stat_name == 'house' and kith != 'Nunnehi':
@@ -475,6 +538,10 @@ def validate_changeling_stats(character, stat_name: str, value: str, category: s
     if category == 'powers' and stat_type == 'realm':
         return validate_changeling_realm(character, stat_name, value)
         
+    # Validate slivers
+    if category == 'powers' and stat_type == 'sliver':
+        return validate_changeling_sliver(character, stat_name, value)
+        
     # Validate backgrounds
     if category == 'backgrounds' and stat_type == 'background':
         return validate_changeling_backgrounds(character, stat_name, value)
@@ -526,11 +593,30 @@ def validate_changeling_house(value: str) -> tuple[bool, str]:
 
 def validate_changeling_art(character, art_name: str, value: str) -> tuple[bool, str]:
     """Validate a changeling's art."""
+    # Check if character is Inanimae
+    kith = character.get_stat('identity', 'lineage', 'Kith', temp=False)
+    if kith and kith.lower() == 'inanimae':
+        # Check if character is Mannikin phyla
+        phyla = character.get_stat('identity', 'lineage', 'Phyla', temp=False)
+        if not phyla or phyla.lower() != 'mannikin':
+            return False, "Only Mannikin Inanimae can use Arts."
+        
+        # Check 4-dot limit for Mannikins
+        try:
+            art_value = int(value)
+            if art_value < 0:
+                return False, "Art values must be positive numbers"
+            if art_value > 4:
+                return False, "Mannikin Inanimae can only have up to 4 dots in Arts"
+            return True, ""
+        except ValueError:
+            return False, "Art values must be numbers"
+    
     # Check if the art exists
     if art_name.title() not in ARTS:
         return False, f"Invalid art. Valid arts are: {', '.join(sorted(ARTS))}"
     
-    # Validate value
+    # Validate value for non-Mannikins
     try:
         art_value = int(value)
         if art_value < 0 or art_value > 5:
@@ -541,11 +627,30 @@ def validate_changeling_art(character, art_name: str, value: str) -> tuple[bool,
 
 def validate_changeling_realm(character, realm_name: str, value: str) -> tuple[bool, str]:
     """Validate a changeling's realm."""
+    # Check if character is Inanimae
+    kith = character.get_stat('identity', 'lineage', 'Kith', temp=False)
+    if kith and kith.lower() == 'inanimae':
+        # Check if character is Mannikin phyla
+        phyla = character.get_stat('identity', 'lineage', 'Phyla', temp=False)
+        if not phyla or phyla.lower() != 'mannikin':
+            return False, "Only Mannikin Inanimae can use Realms."
+            
+        # Check 4-dot limit for Mannikins
+        try:
+            realm_value = int(value)
+            if realm_value < 0:
+                return False, "Realm values must be positive numbers"
+            if realm_value > 4:
+                return False, "Mannikin Inanimae can only have up to 4 dots in Realms"
+            return True, ""
+        except ValueError:
+            return False, "Realm values must be numbers"
+    
     # Check if the realm exists
     if realm_name.title() not in REALMS:
         return False, f"Invalid realm. Valid realms are: {', '.join(sorted(REALMS))}"
     
-    # Validate value
+    # Validate value for non-Mannikins
     try:
         realm_value = int(value)
         if realm_value < 0 or realm_value > 5:
@@ -572,6 +677,44 @@ def validate_changeling_backgrounds(character, background_name: str, value: str)
     except ValueError:
         return False, "Background values must be numbers"
 
+def validate_changeling_sliver(character, sliver_name: str, value: str) -> tuple[bool, str]:
+    """Validate a changeling's sliver."""
+    # Check if character is Inanimae
+    kith = character.get_stat('identity', 'lineage', 'Kith', temp=False)
+    if not kith or kith.lower() != 'inanimae':
+        return False, "Only Inanimae can have Slivers."
+    
+    # Get phyla
+    phyla = character.get_stat('identity', 'lineage', 'Phyla', temp=False)
+    if not phyla:
+        return False, "Must have a phyla to have Slivers."
+    
+    phyla_lower = phyla.lower()
+    
+    # Special handling for Mannikins
+    if phyla_lower == 'mannikin':
+        if sliver_name.lower() != 'sliver':
+            return False, "Mannikins can only have the generic 'Sliver' power."
+    else:
+        # For non-Mannikins, validate sliver exists
+        valid_slivers = {'Verdage', 'Aquis', 'Stratus', 'Petros', 'Pyros'}
+        if sliver_name.title() not in valid_slivers:
+            return False, f"Invalid Sliver. Valid Slivers are: {', '.join(sorted(valid_slivers))}"
+    
+    # Validate value
+    try:
+        sliver_value = int(value)
+        if sliver_value < 0:
+            return False, "Sliver values must be positive numbers"
+        # Check 4-dot limit for Mannikins
+        if phyla_lower == 'mannikin' and sliver_value > 4:
+            return False, "Mannikin Inanimae can only have up to 4 dots in Slivers"
+        elif sliver_value > 5:
+            return False, "Sliver values must be between 0 and 5"
+        return True, ""
+    except ValueError:
+        return False, "Sliver values must be numbers"
+
 def update_changeling_pools_on_stat_change(character, stat_name: str, new_value: str) -> None:
     """
     Update changeling pools when relevant stats change.
@@ -592,6 +735,28 @@ def update_changeling_pools_on_stat_change(character, stat_name: str, new_value:
             character.set_stat('pools', 'dual', 'Banality', banality, temp=False)
             character.set_stat('pools', 'dual', 'Banality', banality, temp=True)
             character.msg(f"|gBanality set to {banality} for {new_value}.|n")
+    
+    # Handle Phyla changes for Inanimae
+    elif stat_name == 'phyla':
+        kith = character.get_stat('identity', 'lineage', 'Kith', temp=False)
+        if kith and kith.lower() == 'inanimae':
+            # Set pools based on phyla
+            phyla_pools = {
+                'Glome': {'Glamour': 6, 'Willpower': 5, 'Banality': 4},
+                'Kuberas': {'Glamour': 6, 'Willpower': 3, 'Banality': 3},
+                'Ondine': {'Glamour': 6, 'Willpower': 3, 'Banality': 4},
+                'Parosemes': {'Glamour': 5, 'Willpower': 3, 'Banality': 2},
+                'Solimond': {'Glamour': 6, 'Willpower': 3, 'Banality': 4},
+                'Mannikin': {'Glamour': 6, 'Willpower': 4, 'Banality': 6}
+            }
+            
+            phyla_title = new_value.title()
+            if phyla_title in phyla_pools:
+                pools = phyla_pools[phyla_title]
+                for pool, value in pools.items():
+                    character.set_stat('pools', 'dual', pool, value, temp=False)
+                    character.set_stat('pools', 'dual', pool, value, temp=True)
+                character.msg(f"|gSet pools for {phyla_title} phyla: Glamour {pools['Glamour']}, Willpower {pools['Willpower']}, Banality {pools['Banality']}|n")
     
     # Handle House changes for Kinain
     elif stat_name == 'house':

@@ -157,13 +157,13 @@ def initialize_mage_stats(character, affiliation, tradition=None, convention=Non
     # Initialize secondary talents
     if 'secondary_talent' not in character.db.stats['secondary_abilities']:
         character.db.stats['secondary_abilities']['secondary_talent'] = {}
-    for talent in ['Blatancy', 'Flying', 'High Ritual']:
+    for talent in ['Blatancy', 'Do', 'Flying', 'High Ritual']:
         character.db.stats['secondary_abilities']['secondary_talent'][talent] = {'perm': 0, 'temp': 0}
     
     # Initialize secondary skills
     if 'secondary_skill' not in character.db.stats['secondary_abilities']:
         character.db.stats['secondary_abilities']['secondary_skill'] = {}
-    for skill in ['Do', 'Microgravity Ops', 'Energy Weapons', 'Helmsman', 'Biotech']:
+    for skill in ['Microgravity Ops', 'Energy Weapons', 'Helmsman', 'Biotech']:
         character.db.stats['secondary_abilities']['secondary_skill'][skill] = {'perm': 0, 'temp': 0}
     
     # Initialize secondary knowledges
@@ -563,3 +563,66 @@ def validate_mage_backgrounds(character, background_name: str, value: str) -> tu
         return True, ""
     except ValueError:
         return False, "Background values must be numbers"
+
+def fix_misplaced_secondary_abilities(character):
+    """Fix misplaced secondary abilities by moving them to their correct categories.
+    
+    Args:
+        character: The character whose stats need to be fixed
+        
+    Returns:
+        tuple: (bool, str) indicating if changes were made and a message describing what was done
+    """
+    if not hasattr(character, 'db') or not hasattr(character.db, 'stats'):
+        return False, "Character has no stats"
+        
+    if 'secondary_abilities' not in character.db.stats:
+        return False, "Character has no secondary abilities"
+        
+    changes_made = False
+    messages = []
+    
+    # Define the correct categories for specific abilities
+    CORRECT_CATEGORIES = {
+        'Do': 'secondary_talent',
+        'Blatancy': 'secondary_talent',
+        'Flying': 'secondary_talent',
+        'High Ritual': 'secondary_talent',
+        'Microgravity Ops': 'secondary_skill',
+        'Energy Weapons': 'secondary_skill',
+        'Helmsman': 'secondary_skill',
+        'Biotech': 'secondary_skill',
+        'Hypertech': 'secondary_knowledge',
+        'Cybernetics': 'secondary_knowledge',
+        'Paraphysics': 'secondary_knowledge',
+        'Xenobiology': 'secondary_knowledge'
+    }
+    
+    # Check each category for misplaced abilities
+    for current_category in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+        if current_category not in character.db.stats['secondary_abilities']:
+            continue
+            
+        # Check each ability in this category
+        for ability_name, ability_value in list(character.db.stats['secondary_abilities'][current_category].items()):
+            correct_category = CORRECT_CATEGORIES.get(ability_name)
+            
+            if correct_category and correct_category != current_category:
+                # Initialize correct category if it doesn't exist
+                if correct_category not in character.db.stats['secondary_abilities']:
+                    character.db.stats['secondary_abilities'][correct_category] = {}
+                    
+                # Move the ability to its correct category
+                character.db.stats['secondary_abilities'][correct_category][ability_name] = ability_value
+                del character.db.stats['secondary_abilities'][current_category][ability_name]
+                
+                changes_made = True
+                messages.append(f"Moved {ability_name} from {current_category} to {correct_category}")
+                
+                # Clean up empty categories
+                if not character.db.stats['secondary_abilities'][current_category]:
+                    del character.db.stats['secondary_abilities'][current_category]
+    
+    if changes_made:
+        return True, "Fixed the following:\n" + "\n".join(messages)
+    return False, "No misplaced secondary abilities found" 

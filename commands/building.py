@@ -1091,6 +1091,566 @@ class CmdDesc(MuxCommand):
         else:
             caller.msg(f"You don't have permission to edit the description of {obj.key}.")
 
+class CmdView(MuxCommand):
+    """
+    View additional details about objects, rooms, and characters.
+
+    Usage:
+      +view                           - List all views in current location
+      +view <target>                 - List all views on a specific target
+      +view <target>/<viewname>      - Show specific view on target
+      +view/set <viewname>/<target>=<text>  - Set a view
+      +view/del <viewname>/<target>  - Delete a view
+
+    Views are a way to add detail to items or locations without cluttering
+    the main description. Views can be set on any object, character, or room.
+
+    Examples:
+      +view                  - Shows all views in current room
+      +view here            - Same as above
+      +view sword           - Lists all views on the sword
+      +view sword/hilt      - Shows the 'hilt' view of the sword
+      +view/set window/here=Through the window you see a beautiful garden
+      +view/del window/here - Removes the 'window' view from current room
+    """
+
+    key = "+view"
+    aliases = ["view"]
+    locks = "cmd:all()"
+    help_category = "Building and Housing"
+
+    def func(self):
+        caller = self.caller
+        location = caller.location
+
+        if not self.args and not self.switches:
+            # Show all views in current location
+            self._list_views(location)
+            return
+
+        if "set" in self.switches:
+            # Setting a new view
+            if not self.rhs:
+                caller.msg("Usage: +view/set <viewname>/<target>=<description>")
+                return
+
+            try:
+                viewname, target = self.lhs.split("/", 1)
+                viewname = viewname.strip().lower()
+                target = target.strip().lower()
+            except ValueError:
+                caller.msg("Usage: +view/set <viewname>/<target>=<description>")
+                return
+
+            # Find the target object
+            if target == "here":
+                target_obj = location
+            else:
+                target_obj = caller.search(target)
+                if not target_obj:
+                    return
+
+            # Check permissions
+            if not (target_obj.access(caller, "control") or target_obj.access(caller, "edit")):
+                caller.msg(f"You don't have permission to add views to {target_obj.get_display_name(caller)}.")
+                return
+
+            # Initialize views dict if it doesn't exist
+            if not target_obj.db.views:
+                target_obj.db.views = {}
+
+            # Store the view
+            target_obj.db.views[viewname] = self.rhs
+            caller.msg(f"Added view '{viewname}' to {target_obj.get_display_name(caller)}.")
+            return
+
+        if "del" in self.switches:
+            # Deleting a view
+            if not self.args:
+                caller.msg("Usage: +view/del <viewname>/<target>")
+                return
+
+            try:
+                viewname, target = self.args.split("/", 1)
+                viewname = viewname.strip().lower()
+                target = target.strip().lower()
+            except ValueError:
+                caller.msg("Usage: +view/del <viewname>/<target>")
+                return
+
+            # Find the target object
+            if target == "here":
+                target_obj = location
+            else:
+                target_obj = caller.search(target)
+                if not target_obj:
+                    return
+
+            # Check permissions
+            if not (target_obj.access(caller, "control") or target_obj.access(caller, "edit")):
+                caller.msg(f"You don't have permission to remove views from {target_obj.get_display_name(caller)}.")
+                return
+
+            # Remove the view
+            if target_obj.db.views and viewname in target_obj.db.views:
+                del target_obj.db.views[viewname]
+                caller.msg(f"Removed view '{viewname}' from {target_obj.get_display_name(caller)}.")
+            else:
+                caller.msg(f"No view named '{viewname}' found on {target_obj.get_display_name(caller)}.")
+            return
+
+        # Handle viewing
+        if "/" in self.args:
+            # View specific detail
+            try:
+                target, viewname = self.args.split("/", 1)
+                viewname = viewname.strip().lower()
+            except ValueError:
+                caller.msg("Usage: +view <target>/<viewname>")
+                return
+
+            # Find the target object
+            if target.lower() == "here":
+                target_obj = location
+            else:
+                target_obj = caller.search(target)
+                if not target_obj:
+                    return
+
+            # Show the view if it exists
+            if target_obj.db.views and viewname in target_obj.db.views:
+                caller.msg(target_obj.db.views[viewname])
+            else:
+                caller.msg(f"No view named '{viewname}' found on {target_obj.get_display_name(caller)}.")
+        else:
+            # List all views on target
+            if self.args.lower() == "here":
+                target_obj = location
+            else:
+                target_obj = caller.search(self.args)
+                if not target_obj:
+                    return
+
+            self._list_views(target_obj)
+
+    def _list_views(self, target):
+        """Helper method to list all views on a target."""
+        if not target.db.views or not target.db.views.keys():
+            self.caller.msg(f"No views found on {target.get_display_name(self.caller)}.")
+            return
+
+        table = EvTable("|wView Name|n", border="table")
+        for view in sorted(target.db.views.keys()):
+            table.add_row(view)
+        
+        self.caller.msg(f"|wViews available on {target.get_display_name(self.caller)}:|n")
+        self.caller.msg(table)
+
+class CmdPlaces(MuxCommand):
+    """
+    Handle places in a room for player gatherings.
+
+    Usage:
+      +places                    - List all places in current location
+      +places/create <name>     - Create a new place
+      +places/rename <newname>  - Rename your current place
+      +places/join <player>     - Join someone's place
+      +places/leave            - Leave your current place
+      +places/clean           - Remove all empty places
+      tt <message>           - Say/pose/emit at your place
+      ttemit <message>      - Emit at your place
+      ttooc <message>       - OOC message at your place
+
+    Aliases:
+      +place, tt
+      ttcreate     -> +places/create
+      ttrename     -> +places/rename
+      ttjoin       -> +places/join
+      ttleave      -> +places/leave
+      ttclean      -> +places/clean
+
+    Places are dynamic gathering spots that players can create and join.
+    They automatically clean up when everyone leaves. Use : or ; at the
+    start of tt messages for poses, and | for emits.
+    """
+
+    key = "+places"
+    aliases = ["+place", "tt", "ttcreate", "ttrename", "ttjoin", "ttleave", "ttclean", "ttemit", "ttooc"]
+    locks = "cmd:all()"
+    help_category = "Social"
+
+    def _init_place(self, location):
+        """Initialize places storage on a location if needed."""
+        if not location.db.places:
+            location.db.places = {}
+
+    def _get_place_members(self, place_data):
+        """Get list of online and offline members at a place."""
+        online = []
+        offline = []
+        for occupant in place_data.get('occupants', []):
+            if occupant.has_account and occupant.sessions.count():
+                online.append(occupant)
+            else:
+                offline.append(occupant)
+        return online, offline
+
+    def _format_place_name(self, name, members):
+        """Format place name with member count."""
+        count = len(members[0]) + len(members[1])  # online + offline
+        return f"{name} ({count})"
+
+    def _list_places(self):
+        """List all places in the room."""
+        location = self.caller.location
+        if not location.db.places:
+            self.caller.msg("No places exist in this room.")
+            return
+
+        table = EvTable("|wPlace|n", "|wOccupants|n", border="table")
+        for place_name, place_data in location.db.places.items():
+            online, offline = self._get_place_members(place_data)
+            occupants = []
+            for member in online:
+                occupants.append(member.get_display_name(self.caller))
+            for member in offline:
+                occupants.append(f"|w{member.get_display_name(self.caller)}|n")
+            
+            table.add_row(
+                self._format_place_name(place_name, (online, offline)),
+                ", ".join(occupants) if occupants else "Empty"
+            )
+        
+        self.caller.msg("|wPlaces in this room:|n")
+        self.caller.msg(table)
+
+    def _clean_places(self, location):
+        """Remove empty places."""
+        if not location.db.places:
+            return 0
+
+        count = 0
+        for place_name, place_data in list(location.db.places.items()):
+            if not place_data.get('occupants', []):
+                del location.db.places[place_name]
+                count += 1
+        return count
+
+    def _create_place(self, name):
+        """Create a new place."""
+        location = self.caller.location
+        self._init_place(location)
+
+        if name in location.db.places:
+            self.caller.msg(f"A place named '{name}' already exists here.")
+            return
+
+        # Leave current place if in one
+        self._leave_place(quiet=True)
+
+        location.db.places[name] = {
+            'occupants': [self.caller]
+        }
+        location.msg_contents(f"|w{self.caller.name}|n creates a new place: {name}")
+
+    def _join_place(self, target):
+        """Join a place by player or place name."""
+        location = self.caller.location
+        if not location.db.places:
+            self.caller.msg("No places exist in this room.")
+            return
+
+        # First try to find by player
+        for place_name, place_data in location.db.places.items():
+            if target in place_data.get('occupants', []):
+                self._leave_place(quiet=True)
+                place_data['occupants'].append(self.caller)
+                location.msg_contents(
+                    f"|w{self.caller.name}|n joins {place_name} "
+                    f"with |w{target.name}|n"
+                )
+                return
+
+        # Then try by place number or name
+        try:
+            place_num = int(target) - 1
+            place_name = list(location.db.places.keys())[place_num]
+        except (ValueError, IndexError):
+            place_name = target
+
+        if place_name in location.db.places:
+            self._leave_place(quiet=True)
+            location.db.places[place_name]['occupants'].append(self.caller)
+            location.msg_contents(f"|w{self.caller.name}|n joins {place_name}")
+        else:
+            self.caller.msg(f"Could not find place '{target}'.")
+
+    def _leave_place(self, quiet=False):
+        """Leave current place."""
+        location = self.caller.location
+        if not location.db.places:
+            return False
+
+        for place_name, place_data in list(location.db.places.items()):
+            if self.caller in place_data.get('occupants', []):
+                place_data['occupants'].remove(self.caller)
+                if not quiet:
+                    location.msg_contents(f"|w{self.caller.name}|n leaves {place_name}")
+                
+                # Clean up empty place
+                if not place_data['occupants']:
+                    del location.db.places[place_name]
+                return True
+        return False
+
+    def _rename_place(self, new_name):
+        """Rename current place."""
+        location = self.caller.location
+        if not location.db.places:
+            self.caller.msg("No places exist in this room.")
+            return
+
+        # Find caller's current place
+        for old_name, place_data in list(location.db.places.items()):
+            if self.caller in place_data.get('occupants', []):
+                if new_name in location.db.places:
+                    self.caller.msg(f"A place named '{new_name}' already exists.")
+                    return
+                    
+                location.db.places[new_name] = place_data
+                del location.db.places[old_name]
+                location.msg_contents(
+                    f"|w{self.caller.name}|n renames {old_name} to {new_name}"
+                )
+                return
+                
+        self.caller.msg("You are not at any place.")
+
+    def _get_current_place(self):
+        """Get the caller's current place name and data."""
+        location = self.caller.location
+        if not location.db.places:
+            return None, None
+
+        for place_name, place_data in location.db.places.items():
+            if self.caller in place_data.get('occupants', []):
+                return place_name, place_data
+        return None, None
+
+    def _handle_message(self, message, msg_type="say"):
+        """Handle different types of messages at a place."""
+        place_name, place_data = self._get_current_place()
+        if not place_name:
+            self.caller.msg("You are not at any place.")
+            return
+
+        if msg_type == "emit":
+            self.caller.location.msg_contents(
+                f"At {place_name}: {message}"
+            )
+        elif msg_type == "ooc":
+            self.caller.location.msg_contents(
+                f"[OOC] At {place_name}: {self.caller.name} {message}"
+            )
+        else:  # Regular say/pose
+            if message.startswith(":"):
+                message = f"{self.caller.name} {message[1:]}"
+            elif message.startswith(";"):
+                message = f"{self.caller.name}{message[1:]}"
+            elif message.startswith("|"):
+                message = message[1:]
+            else:
+                message = f"{self.caller.name} says, '{message}'"
+            
+            self.caller.location.msg_contents(
+                f"At {place_name}: {message}"
+            )
+
+    def func(self):
+        """Execute command."""
+        if not self.caller.location:
+            self.caller.msg("You have no location to create or join places.")
+            return
+
+        # Handle aliases first
+        cmd = self.cmdstring.lower()
+        if cmd == "tt" and self.args:
+            self._handle_message(self.args)
+            return
+        elif cmd == "ttemit" and self.args:
+            self._handle_message(self.args, "emit")
+            return
+        elif cmd == "ttooc" and self.args:
+            self._handle_message(self.args, "ooc")
+            return
+        elif cmd == "ttcreate" and self.args:
+            self._create_place(self.args)
+            return
+        elif cmd == "ttrename" and self.args:
+            self._rename_place(self.args)
+            return
+        elif cmd == "ttjoin" and self.args:
+            target = self.caller.search(self.args)
+            if target:
+                self._join_place(target)
+            return
+        elif cmd == "ttleave":
+            self._leave_place()
+            return
+        elif cmd == "ttclean":
+            count = self._clean_places(self.caller.location)
+            self.caller.msg(f"Cleaned up {count} empty places.")
+            return
+
+        # Handle main command and switches
+        if "create" in self.switches:
+            if not self.args:
+                self.caller.msg("Usage: +places/create <name>")
+                return
+            self._create_place(self.args)
+        elif "rename" in self.switches:
+            if not self.args:
+                self.caller.msg("Usage: +places/rename <new name>")
+                return
+            self._rename_place(self.args)
+        elif "join" in self.switches:
+            if not self.args:
+                self.caller.msg("Usage: +places/join <player or number>")
+                return
+            target = self.caller.search(self.args)
+            if target:
+                self._join_place(target)
+        elif "leave" in self.switches:
+            self._leave_place()
+        elif "clean" in self.switches:
+            count = self._clean_places(self.caller.location)
+            self.caller.msg(f"Cleaned up {count} empty places.")
+        else:
+            self._list_places()
+
+class CmdRoomUnfindable(MuxCommand):
+    """
+    Set a room as unfindable or findable.
+
+    Usage:
+      +roomunfind [<room>] [on|off]
+
+    When set to 'on', the room won't appear in room listing commands.
+    When set to 'off', the room will appear as normal.
+    Using the command without an on/off argument will toggle the current state.
+    If no room is specified, affects the current room.
+
+    Examples:
+      +roomunfind on           - Makes current room unfindable
+      +roomunfind off          - Makes current room findable
+      +roomunfind tavern on   - Makes the tavern unfindable
+      +roomunfind tavern off  - Makes the tavern findable
+    """
+
+    key = "+roomunfind"
+    aliases = ["roomunfind"]
+    locks = "cmd:perm(Builder)"
+    help_category = "Building and Housing"
+
+    def func(self):
+        caller = self.caller
+        
+        # Parse arguments
+        args = self.args.strip() if self.args else ""
+        room = None
+        setting = None
+        
+        if args:
+            if args.lower() in ["on", "off"]:
+                room = caller.location
+                setting = args.lower()
+            else:
+                # Try to split into room name and setting
+                parts = args.rsplit(" ", 1)
+                if len(parts) == 2 and parts[1].lower() in ["on", "off"]:
+                    room_name = parts[0]
+                    setting = parts[1].lower()
+                    room = caller.search(room_name)
+                    if not room:
+                        return
+                else:
+                    # Just a room name, toggle mode
+                    room = caller.search(args)
+                    if not room:
+                        return
+        else:
+            room = caller.location
+            
+        if not room:
+            caller.msg("You must specify a valid room.")
+            return
+            
+        # Verify the target is actually a room
+        if not room.is_typeclass("typeclasses.rooms.Room") and not room.is_typeclass("typeclasses.rooms.RoomParent"):
+            caller.msg("That is not a room.")
+            return
+            
+        # Toggle or set the unfindable state
+        if setting == "on":
+            room.db.unfindable = True
+        elif setting == "off":
+            room.db.unfindable = False
+        else:
+            # Toggle current state
+            room.db.unfindable = not room.db.unfindable
+            
+        if room.db.unfindable:
+            caller.msg(f"{room.get_display_name(caller)} is now unfindable.")
+        else:
+            caller.msg(f"{room.get_display_name(caller)} is now findable.")
+
+"""
+Command for setting and viewing Fae descriptions of rooms.
+"""
+from evennia.commands.default.muxcommand import MuxCommand
+
+class CmdRoomFaeDesc(MuxCommand):
+    """
+    Set or view a room's Fae description.
+    Restricted to builders and higher.
+
+    Usage:
+      +roomfaedesc                - View room's Fae description
+      +roomfaedesc <description> - Set room's Fae description
+      +roomfaedesc/clear         - Clear room's Fae description
+
+    Examples:
+      +roomfaedesc The walls pulse with ancient faerie magic.
+      +roomfaedesc/clear
+    """
+
+    key = "+roomfaedesc"
+    aliases = ["+rfaedesc"]
+    locks = "cmd:perm(Builder)"
+    help_category = "Building and Housing"
+
+    def func(self):
+        """Execute command."""
+        caller = self.caller
+
+        if "clear" in self.switches:
+            self.caller.location.db.fae_desc = ""
+            caller.msg("Room's Fae description cleared.")
+            return
+
+        if not self.args:
+            # View room's Fae description
+            fae_desc = self.caller.location.db.fae_desc
+            if fae_desc:
+                caller.msg("|mRoom's Fae Description:|n\n%s" % fae_desc)
+            else:
+                caller.msg("This room has no special Fae aspect set.")
+            return
+
+        # Set room's Fae description
+        self.caller.location.db.fae_desc = self.args
+        caller.msg("Room's Fae description set.") 
+
 class BuildingCmdSet(CmdSet):
     def at_cmdset_creation(self):
         self.priority = 1 #fuck them og commands
@@ -1103,3 +1663,7 @@ class BuildingCmdSet(CmdSet):
         self.add(CmdManageBuilding())
         self.add(CmdSetLock())
         self.add(CmdDesc())
+        self.add(CmdView())
+        self.add(CmdPlaces())
+        self.add(CmdRoomUnfindable())
+        self.add(CmdRoomFaeDesc())

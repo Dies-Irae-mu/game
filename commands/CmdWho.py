@@ -53,6 +53,21 @@ class CmdWho(COMMAND_DEFAULT_CLASS):
             return utils.crop(name, width=17)
         return "None".ljust(17)
 
+    def get_location_display(self, puppet, account):
+        """Helper function to format location display, respecting unfindable status"""
+        if not puppet or not puppet.location:
+            return "None"
+            
+        # Staff can always see room names
+        if account.check_permstring("Builder"):
+            return puppet.location.key
+            
+        # Check if room is unfindable
+        if hasattr(puppet.location, 'db') and puppet.location.db.unfindable:
+            return "(Hidden)"
+            
+        return puppet.location.key
+
     def func(self):
         """
         Get all connected accounts by polling session.
@@ -69,7 +84,6 @@ class CmdWho(COMMAND_DEFAULT_CLASS):
                 "Admins"
             )
 
-
         naccounts = evennia.account_count()
         if show_session_data:
             # privileged info
@@ -84,7 +98,7 @@ class CmdWho(COMMAND_DEFAULT_CLASS):
                 delta_conn = time.time() - session.conn_time
                 session_account = session.get_account()
                 puppet = session.get_puppet()
-                location = puppet.location.key if puppet and puppet.location else "None"
+                location = self.get_location_display(puppet, account)
                 
                 string += " %-17s %-8s %-8s %-10s %-15s %-5s %s\n" % (
                     self.format_name(puppet, account),
@@ -107,7 +121,7 @@ class CmdWho(COMMAND_DEFAULT_CLASS):
                 delta_cmd = time.time() - session.cmd_last_visible
                 delta_conn = time.time() - session.conn_time
                 puppet = session.get_puppet()
-                location = puppet.location.key if puppet and puppet.location else "None"
+                location = self.get_location_display(puppet, account)
                 
                 string += " %-17s %-8s %-8s %s\n" % (
                     self.format_name(puppet, account),

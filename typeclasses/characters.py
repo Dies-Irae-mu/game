@@ -1,11 +1,10 @@
 """
-Characters
-
-Characters are (by default) Objects that are puppeted by Players.
-They are what you "see" in game. The Character class in this module
-is setup to be the "default" character type for your game. It is from
-here you can define how all characters will look and behave by default.
+Character typeclasses for the game.
 """
+from datetime import datetime, timedelta
+from decimal import ROUND_DOWN, Decimal, InvalidOperation
+from evennia.utils import logger
+
 from evennia.objects.objects import DefaultCharacter
 from evennia.utils.utils import lazy_property
 from evennia.utils.ansi import ANSIString
@@ -14,15 +13,10 @@ from world.wod20th.models import Stat
 from world.wod20th.utils.ansi_utils import wrap_ansi
 import re
 import random
-from datetime import datetime, timedelta
 from world.wod20th.utils.language_data import AVAILABLE_LANGUAGES
-from evennia import logger
-
 from django.contrib.auth.models import User
 from django.db import models
-from decimal import Decimal, ROUND_DOWN, InvalidOperation
-import json
-from world.wod20th.utils.formatting import header, footer, divider
+from django.db import transaction
 from django.db import transaction
 
 class Character(DefaultCharacter):
@@ -106,6 +100,9 @@ class Character(DefaultCharacter):
         Called just after puppeting has been completed and all
         Account<->Object links have been established.
         """
+        from evennia.utils import logger
+        logger.log_info(f"at_post_puppet called for {self.key}")
+        
         # Send connection message to room
         if self.location:
             def message(obj, from_obj):
@@ -121,48 +118,98 @@ class Character(DefaultCharacter):
             self.msg((self.at_look(self.location)))
 
         # Display login notifications
+        logger.log_info(f"About to call display_login_notifications for {self.key}")
         self.display_login_notifications()
+        logger.log_info(f"Finished display_login_notifications for {self.key}")
+
+    @property
+    def notification_settings(self):
+        """Get character's notification preferences."""
+        if not self.db.notification_settings:
+            # Default settings - everything enabled
+            self.db.notification_settings = {
+                "mail": True,
+                "jobs": True,
+                "bbs": True,
+                "all": False  # Master switch - when True, all notifications are off
+            }
+        return self.db.notification_settings
+
+    def set_notification_pref(self, notification_type, enabled):
+        """Set notification preference for a specific type."""
+        if notification_type not in ["mail", "jobs", "bbs", "all"]:
+            raise ValueError("Invalid notification type")
+        
+        settings = self.notification_settings
+        
+        # Special handling for the "all" switch
+        if notification_type == "all":
+            # When all=True, notifications are off
+            # When all=False, notifications are on
+            settings["all"] = enabled
+            settings["mail"] = not enabled
+            settings["jobs"] = not enabled
+            settings["bbs"] = not enabled
+        else:
+            # For individual switches
+            settings[notification_type] = enabled
+            # If enabling any individual switch, make sure master "all" is off
+            if enabled:
+                settings["all"] = False
+                
+        # Explicitly save the settings back to the database
+        self.db.notification_settings = settings
+
+    def should_show_notification(self, notification_type):
+        """Check if a notification type should be shown."""
+        settings = self.notification_settings
+        # If master switch is on (all notifications off), return False
+        if settings["all"]:
+            return False
+        # Otherwise check individual setting
+        return settings.get(notification_type, True)
 
     def display_login_notifications(self):
-        """Display notifications for unread BBS posts, mail, and jobs."""
-        # Check for unread BBS posts
-        from world.wod20th.utils.bbs_utils import get_or_create_bbs_controller
-        controller = get_or_create_bbs_controller()
-        
-        # Run bbs/scan silently (capture output)
-        from commands.bbs.bbs_all_commands import CmdBBS
-        cmd = CmdBBS()
-        cmd.caller = self
-        cmd.args = ""
-        cmd.switches = ["scan"]
-        cmd.func()
-
-        # Check for unread mail
-        from evennia.comms.models import Msg
+        """Display notifications upon login."""
         if self.account:
-            # Get mail messages that are tagged as 'new'
-            unread_mail = Msg.objects.get_by_tag(category="mail").filter(
-                db_receivers_accounts=self.account
-            ).count()
-            
-            if unread_mail > 0:
-                self.msg(f"|wYou have {unread_mail} new mail message{'s' if unread_mail != 1 else ''}.|n")
+            # Check for unread mail
+            if self.should_show_notification("mail"):
+                from evennia.comms.models import Msg
+                from evennia.utils.utils import inherits_from
+                from django.db.models import Q
 
-        # Check for job updates
-        from world.jobs.models import Job
-        if self.account:
-            # Get jobs where the character is requester or participant
-            jobs = Job.objects.filter(
-                models.Q(requester=self.account) |
-                models.Q(participants=self.account),
-                status__in=['open', 'claimed']
-            )
-            
-            # Count jobs with updates since last view
-            updated_jobs = sum(1 for job in jobs if job.is_updated_since_last_view(self.account))
+                # Check if caller is account (same check as mail command)
+                caller_is_account = bool(
+                    inherits_from(self.account, "evennia.accounts.accounts.DefaultAccount")
+                )
+                
+                # Get messages for this account/character using Q objects for OR condition
+                messages = Msg.objects.filter(
+                    Q(db_receivers_accounts=self.account) | 
+                    Q(db_receivers_objects=self)
+                )
+                
+                unread_count = sum(1 for msg in messages if "new" in [str(tag) for tag in msg.tags.all()])
+                
+                if unread_count > 0:
+                    self.msg("|wYou have %i unread @mail message%s.|n" % (unread_count, "s" if unread_count > 1 else ""))
 
-            if updated_jobs > 0:
-                self.msg(f"|wYou have {updated_jobs} job{'s' if updated_jobs != 1 else ''} with new activity.|n")
+            # Check for job updates
+            if self.should_show_notification("jobs"):
+                from world.jobs.models import Job
+                if self.account:
+                    # Get jobs where the character is requester or participant
+                    jobs = Job.objects.filter(
+                        models.Q(requester=self.account) |
+                        models.Q(participants=self.account),
+                        status__in=['open', 'claimed']
+                    )
+                    
+                    # Count jobs with updates since last view
+                    updated_jobs = sum(1 for job in jobs if job.is_updated_since_last_view(self.account))
+
+                    if updated_jobs > 0:
+                        self.msg(f"|wYou have {updated_jobs} job{'s' if updated_jobs != 1 else ''} with new activity.|n")
 
     @lazy_property
     def notes(self):
@@ -713,6 +760,36 @@ class Character(DefaultCharacter):
             stat_type = category  # Use physical/social/mental as the stat_type
             category = 'attributes'  # Set category to 'attributes'
 
+        # Handle secondary abilities similar to attributes
+        if stat_type == 'secondary_abilities':
+            if category in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+                stat_type = category
+                category = 'secondary_abilities'
+            else:
+                # Try to find the stat in any secondary ability category
+                for subcat in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+                    # Check both original case and lowercase
+                    if subcat in self.db.stats.get('secondary_abilities', {}):
+                        if stat_name in self.db.stats['secondary_abilities'][subcat]:
+                            stat_type = subcat
+                            category = 'secondary_abilities'
+                            break
+                        # Check lowercase version
+                        stat_name_lower = stat_name.lower()
+                        if stat_name_lower in self.db.stats['secondary_abilities'][subcat]:
+                            stat_name = stat_name_lower  # Use the stored version
+                            stat_type = subcat
+                            category = 'secondary_abilities'
+                            break
+
+        # Normalize subcategory for powers
+        if stat_type == 'powers':
+            # Convert plural to singular
+            if category in ['disciplines', 'spheres', 'arts', 'realms', 'gifts', 'charms', 'blessings', 'rituals', 'sorceries', 'advantages']:
+                category = category.rstrip('s')
+                if category == 'advantage':
+                    category = 'special_advantage'
+
         # Handle other stats
         if stat_type not in self.db.stats:
             return 0
@@ -720,7 +797,9 @@ class Character(DefaultCharacter):
             return 0
         if stat_name not in self.db.stats[stat_type][category]:
             return 0
-        return self.db.stats[stat_type][category][stat_name].get('temp' if temp else 'perm', 0)
+
+        value = self.db.stats[stat_type][category][stat_name].get('temp' if temp else 'perm', 0)
+        return value
 
     def set_stat(self, stat_type, category, stat_name, value, temp=False):
         """Set a stat value."""
@@ -728,6 +807,41 @@ class Character(DefaultCharacter):
             # Initialize the stats structure if needed
             if not hasattr(self, 'db') or not hasattr(self.db, 'stats'):
                 self.db.stats = {}
+
+            # Handle attributes by using their category as the stat_type
+            if stat_type == 'attributes':
+                stat_type = category  # Use physical/social/mental as the stat_type
+                category = 'attributes'  # Set category to 'attributes'
+
+            # Handle secondary abilities similar to attributes
+            if stat_type == 'secondary_abilities':
+                if category in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+                    stat_type = category
+                    category = 'secondary_abilities'
+                else:
+                    # Try to find the stat in any secondary ability category
+                    found = False
+                    for subcat in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+                        if (subcat in self.db.stats.get('secondary_abilities', {}) and
+                            stat_name in self.db.stats['secondary_abilities'][subcat]):
+                            stat_type = subcat
+                            category = 'secondary_abilities'
+                            found = True
+                            break
+                        # Check lowercase version
+                        stat_name_lower = stat_name.lower()
+                        if (subcat in self.db.stats.get('secondary_abilities', {}) and
+                            stat_name_lower in self.db.stats['secondary_abilities'][subcat]):
+                            stat_name = stat_name  # Keep original case
+                            stat_type = subcat
+                            category = 'secondary_abilities'
+                            found = True
+                            break
+                    if not found:
+                        # Default to secondary_talent if not found
+                        stat_type = 'secondary_talent'
+                        category = 'secondary_abilities'
+
             if stat_type not in self.db.stats:
                 self.db.stats[stat_type] = {}
             if category not in self.db.stats[stat_type]:
@@ -1261,216 +1375,270 @@ class Character(DefaultCharacter):
         """
         super().at_init()
         
-        # Initialize scene_data if it doesn't exist
-        if not hasattr(self.db, 'scene_data'):
-            self.db.scene_data = {
-                'current_scene': None,  # Will store start time of current scene
-                'scene_location': None, # Location where scene started
-                'last_activity': None,  # Last time character was active in scene
-                'completed_scenes': 0,  # Number of completed scenes this week
-                'last_weekly_reset': datetime.now()  # For weekly scene count reset
-            }
+        try:
+            # Initialize scene_data if it doesn't exist
+            if not hasattr(self.db, 'scene_data'):
+                # Ensure we're in a transaction
+                with transaction.atomic():
+                    self.init_scene_data()
+
+            # Initialize stats if they don't exist
+            if not self.db.stats:
+                self.db.stats = {}
+            
+            # Initialize XP if it doesn't exist
+            if not self.db.xp:
+                self.db.xp = {
+                    'total': Decimal('0.00'),
+                    'current': Decimal('0.00'),
+                    'spent': Decimal('0.00'),
+                    'ic_earned': Decimal('0.00'),
+                    'monthly_spent': Decimal('0.00'),
+                    'last_reset': datetime.now(),
+                    'spends': [],
+                    'last_scene': None,
+                    'scenes_this_week': 0
+                }
+
+            # Fix any incorrectly stored disciplines
+            self.fix_disciplines()
+
+        except Exception as e:
+            logger.log_err(f"Error in at_init for {self}: {e}")
+            if self.has_account:
+                self.msg("|rError during character initialization. Please contact staff.|n")
 
     def init_scene_data(self):
         """Force initialize scene data."""
-        self.db.scene_data = {
+        # Ensure we're working with a fresh instance from the database
+        self.refresh_from_db()
+        
+        # Create the scene data dictionary
+        scene_data = {
             'current_scene': None,
             'scene_location': None,
             'last_activity': None,
             'completed_scenes': 0,
             'last_weekly_reset': datetime.now()
         }
-        self.msg("|wScene data initialized.|n")
+        
+        try:
+            # Use the attribute API directly instead of db shortcut
+            self.attributes.add('scene_data', scene_data)
+            self.msg("|wScene data initialized.|n")
+        except Exception as e:
+            # Log the error and provide feedback
+            logger.log_err(f"Error initializing scene data for {self}: {e}")
+            self.msg("|rError initializing scene data. Please contact staff.|n")
 
-    def calculate_xp_cost(self, stat_name, new_rating, category=None, current_rating=None, subcategory=None):
+    def calculate_xp_cost(self, stat_name, new_rating, category=None, subcategory=None, current_rating=None):
         """Calculate XP cost for increasing a stat."""
-        if current_rating is None:
-            current_rating = self.get_stat(category, subcategory, stat_name) or 0
+        try:
+            # Convert new_rating to integer
+            new_rating = int(new_rating)
+        except (ValueError, TypeError):
+            return (0, False)
         
+        # Get character's splat and type
         splat = self.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
-        shifter_type = self.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+        mortal_type = self.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+
+        # Special handling for Time based on splat
+        if stat_name == 'Time':
+            if splat == 'Mage':
+                category = 'powers'
+                subcategory = 'sphere'
+            elif splat == 'Changeling' or (splat == 'Mortal+' and mortal_type == 'Kinain'):
+                category = 'powers'
+                subcategory = 'realm'
+
+        # Normalize subcategory for disciplines
+        if category == 'powers' and subcategory == 'disciplines':
+            subcategory = 'discipline'
+
+        # Get current rating if not provided
+        if current_rating is None:
+            if category == 'powers' and subcategory == 'discipline':
+                current_rating = self.db.stats.get('powers', {}).get('discipline', {}).get(stat_name, {}).get('perm', 0)
+            elif category == 'powers':
+                current_rating = self.db.stats.get('powers', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
+            else:
+                current_rating = self.get_stat(category, subcategory, stat_name) or 0
+
+        # Define allowed disciplines that can be purchased
+        PURCHASABLE_DISCIPLINES = ['Potence', 'Celerity', 'Fortitude', 'Obfuscate', 'Auspex']
         
-        # Initialize cost and requires_approval
-        cost = 0
-        requires_approval = False
+        # If it's a discipline, check if it's in the allowed list
+        if category == 'powers' and subcategory == 'discipline' and stat_name not in PURCHASABLE_DISCIPLINES:
+            self.msg(f"Discipline {stat_name} is not in the allowed purchase list")
+            return (0, False)
 
         # Can't decrease stats via XP
         if new_rating <= current_rating:
             return (0, False)
 
-        # Calculate base cost based on stat type
-        if category == 'attributes':
-            # Each dot costs current rating × 4
-            cost = sum(i * 4 for i in range(current_rating + 1, new_rating))
-            requires_approval = new_rating > 3
+        # Initialize cost and requires_approval
+        total_cost = 0
+        requires_approval = False
 
-        elif category in ['abilities', 'secondary_abilities']:
-            if subcategory in ['talent', 'skill', 'knowledge', 'secondary_talent', 'secondary_skill', 'secondary_knowledge']:
-                # Each dot costs current rating × 2, first dot costs 3
-                if current_rating == 0:
-                    cost = 3  # First dot always costs 3
-                    if new_rating > 1:
-                        cost += sum(i * 2 for i in range(1, new_rating))
-                else:
-                    cost = sum(i * 2 for i in range(current_rating + 1, new_rating))
-                requires_approval = new_rating > 3
+        # Calculate cost for each dot being purchased
+        for rating in range(current_rating + 1, new_rating + 1):
+            dot_cost = 0
+            
+            # Calculate base cost based on stat type
+            if category == 'attributes':
+                # Each dot costs current rating × 4
+                dot_cost = (rating - 1) * 4
+                requires_approval = rating > 3
 
-        elif category == 'powers' and splat == 'Shifter':
-            # Handle different shifter types
-            if shifter_type == 'Garou':
-                breed = self.db.stats.get('identity', {}).get('lineage', {}).get('Breed', {}).get('perm', '')
-                tribe = self.db.stats.get('identity', {}).get('lineage', {}).get('Tribe', {}).get('perm', '')
-                auspice = self.db.stats.get('identity', {}).get('lineage', {}).get('Auspice', {}).get('perm', '')
-                
-                # Check if it's a breed/auspice/tribe gift
-                is_breed_gift = f"Breed: {breed}" in stat_name
-                is_tribe_gift = f"Tribe: {tribe}" in stat_name
-                is_auspice_gift = f"Auspice: {auspice}" in stat_name
-                
-                if is_breed_gift or is_tribe_gift or is_auspice_gift:
-                    cost = sum(i * 3 for i in range(current_rating + 1, new_rating))  # Gift Level * 3
-                else:
-                    cost = sum(i * 5 for i in range(current_rating + 1, new_rating))  # Gift Level * 5 for outside gifts
-                
-                requires_approval = new_rating > 1  # Only level 1 gifts without approval
-                
-            elif shifter_type in ['Bastet', 'Corax', 'Gurahl', 'Kitsune', 'Mokole', 'Nagah', 'Nuwisha', 'Ratkin', 'Rokea', 'Ajaba', 'Ananasi', 'Camazotz']:
-                # Other shifter types might have different costs or approval requirements
-                # For now, using same base structure as Garou
-                cost = sum(i * 4 for i in range(current_rating + 1, new_rating))  # Different base cost for other shifter types
-                requires_approval = new_rating > 1
+            elif category in ['abilities', 'secondary_abilities']:
+                if subcategory in ['talent', 'skill', 'knowledge', 'secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+                    if rating == 1:
+                        dot_cost = 3  # First dot always costs 3
+                    else:
+                        dot_cost = (rating - 1) * 2  # Each subsequent dot costs previous rating × 2
+                    requires_approval = rating > 3
 
-        elif category == 'pools' and stat_name in ['Willpower', 'Rage', 'Gnosis']:
-            if stat_name == 'Willpower':
-                cost = sum(i * 2 for i in range(current_rating + 1, new_rating))
-                requires_approval = new_rating > 5
-            elif stat_name in ['Rage', 'Gnosis'] and splat == 'Shifter':
-                if stat_name == 'Rage':
-                    cost = sum(range(current_rating + 1, new_rating))
-                else:  # Gnosis
-                    cost = sum(i * 2 for i in range(current_rating + 1, new_rating))
-                requires_approval = new_rating > 5
+            elif category == 'backgrounds':
+                dot_cost = 5  # Each dot costs 5 XP
+                requires_approval = rating > 3
 
-        elif category == 'backgrounds':
-            cost = (new_rating - current_rating) * 5
-            auto_approve_backgrounds = [
-                'Resources', 'Contacts', 'Allies', 'Backup', 
-                'Herd', 'Library', 'Kinfolk', 'Spirit Heritage',
-                'Paranormal Tools', 'Servants', 'Armory', 'Retinue',
-                'Spies', 'Professional Certification', 'Past Lives',
-                'Dreamers', 
-            ]
-            requires_approval = (
-                stat_name not in auto_approve_backgrounds or 
-                new_rating > 2
-            )
+            # Calculate costs for Changeling/Kinain arts and realms
+            elif category == 'powers' and (splat == 'Changeling' or (splat == 'Mortal+' and mortal_type == 'Kinain')):
+                # Handle arts
+                if subcategory == 'art':
+                    if rating == 1:
+                        dot_cost = 3  # First dot costs 3
+                    else:
+                        dot_cost = (rating - 1) * 4  # Each subsequent dot costs previous rating × 4
+                    requires_approval = rating > 2
+                
+                # Handle realms
+                elif subcategory == 'realm':
+                    if rating == 1:
+                        dot_cost = 5  # First dot costs 5
+                    else:
+                        dot_cost = (rating - 1) * 3  # Each subsequent dot costs previous rating × 3
+                    requires_approval = rating > 2
 
-        elif category == 'powers':
-            if splat == 'Vampire':
-                clan = self.db.stats.get('identity', {}).get('lineage', {}).get('Clan', {}).get('perm', '')
-                
-                # Determine if discipline is in-clan
-                is_in_clan = self._is_discipline_in_clan(stat_name, clan)
-                is_caitiff = clan == 'Caitiff'
-                
-                # First dot costs 10 XP for all types
-                if current_rating == 0:
-                    cost = 10
-                    if new_rating > 1:
-                        # Add costs for additional dots
-                        if is_in_clan:
-                            cost += sum(i * 5 for i in range(1, new_rating))
-                        elif is_caitiff:
-                            cost += sum(i * 6 for i in range(1, new_rating))
-                        else:  # Out of clan
-                            cost += sum(i * 7 for i in range(1, new_rating))
-                else:
-                    # Just adding dots beyond the first
-                    if is_in_clan:
-                        cost = sum(i * 5 for i in range(current_rating + 1, new_rating))
-                    elif is_caitiff:
-                        cost = sum(i * 6 for i in range(current_rating + 1, new_rating))
-                    else:  # Out of clan
-                        cost = sum(i * 7 for i in range(current_rating + 1, new_rating))
-                
-                requires_approval = new_rating > 2
-
-            elif splat == 'Mage':
-                # Check if it's an affinity sphere
+            # Calculate costs for Mage spheres
+            elif category == 'powers' and splat == 'Mage' and subcategory == 'sphere':
                 is_affinity = self._is_affinity_sphere(stat_name)
-                
-                if current_rating == 0:
-                    cost = 10  # First dot always costs 10
-                    if new_rating > 1:
-                        # Add costs for additional dots
-                        if is_affinity:
-                            cost += sum(i * 7 for i in range(1, new_rating))
-                        else:
-                            cost += sum(i * 8 for i in range(1, new_rating))
+                if rating == 1:
+                    dot_cost = 10  # First dot always costs 10
                 else:
-                    # Just adding dots beyond the first
                     if is_affinity:
-                        cost = sum(i * 7 for i in range(current_rating + 1, new_rating))
+                        dot_cost = (rating - 1) * 7  # Previous rating × 7
                     else:
-                        cost = sum(i * 8 for i in range(current_rating + 1, new_rating))
-                
-                requires_approval = new_rating > 2
+                        dot_cost = (rating - 1) * 8  # Previous rating × 8
+                requires_approval = rating > 2
 
-            elif splat == 'Changeling':
-                is_art = stat_name.startswith('Art:')
-                is_realm = stat_name.startswith('Realm:')
-                
-                if is_art:
-                    if current_rating == 0:
-                        cost = 3  # First dot costs 3
-                        if new_rating > 1:
-                            cost += sum(i * 4 for i in range(1, new_rating))
-                    else:
-                        cost = sum(i * 4 for i in range(current_rating + 1, new_rating))
-                
-                elif is_realm:
-                    if current_rating == 0:
-                        cost = 5  # First dot costs 5
-                        if new_rating > 1:
-                            cost += sum(i * 3 for i in range(1, new_rating))
-                    else:
-                        cost = sum(i * 3 for i in range(current_rating + 1, new_rating))
-                
-                requires_approval = new_rating > 2
+            elif category == 'powers':
+                # Adjust costs based on splat and power type
+                if splat == 'Vampire':
+                    if subcategory == 'discipline':
+                        # Check if it's an in-clan discipline
+                        clan = self.db.stats.get('identity', {}).get('lineage', {}).get('Clan', {}).get('perm', '')
+                        is_in_clan = self._is_discipline_in_clan(stat_name, clan)
+                        
+                        if rating == 1:
+                            dot_cost = 10  # First dot always costs 10
+                        else:
+                            if is_in_clan:
+                                dot_cost = (rating - 1) * 5  # Previous rating × 5
+                            else:
+                                dot_cost = (rating - 1) * 7  # Previous rating × 7
+                        requires_approval = rating > 2
 
-        return (cost, requires_approval)
+                elif splat == 'Mage':
+                    # Check if it's an affinity sphere
+                    is_affinity = self._is_affinity_sphere(stat_name)
+                    
+                    if rating == 1:
+                        dot_cost = 10  # First dot always costs 10
+                    else:
+                        if is_affinity:
+                            dot_cost = (rating - 1) * 7
+                        else:
+                            dot_cost = (rating - 1) * 8
+                    
+                    requires_approval = rating > 2
+
+            total_cost += dot_cost
+
+        return (total_cost, requires_approval)
 
     def _is_discipline_in_clan(self, discipline, clan):
         """Helper method to check if a discipline is in-clan."""
-        # general disciplines that any vampire can learn as if in-clan, basically the physical ones
-        GENERAL_DISCIPLINES = ['Potence', 'Celerity', 'Fortitude', 'Auspex']
+        # Define allowed disciplines that can be purchased
+        PURCHASABLE_DISCIPLINES = ['Potence', 'Celerity', 'Fortitude', 'Obfuscate', 'Auspex']
         
-        # clan-specific
+        # If it's not in the allowed list, it can't be purchased at all
+        if discipline not in PURCHASABLE_DISCIPLINES:
+            return False
+            
+        # clan-specific disciplines
         clan_disciplines = {
-            'Brujah': ['Celerity', 'Potence', 'Presence'],
-            'Gangrel': ['Animalism', 'Fortitude', 'Protean'],
-            'Malkavian': ['Auspex', 'Obfuscate', 'Dementation'],
-            'Nosferatu': ['Potence', 'Animalism', 'Obfuscate'],
-            'Tremere': ['Thaumaturgy', 'Dominate', 'Auspex'],
-            'Tzimisce': ['Vicissitude', 'Auspex', 'Animalism'],
-            'Ventrue': ['Dominate', 'Fortitude', 'Presence'],
-            'Lasombra': ['Dominate', 'Obtenebration', 'Potence'],
-            'Toreador': ['Auspex', 'Presence', 'Celerity'],
-            'Followers of Set': ['Obfuscate', 'Presence', 'Serpentis'],
-            'Ravnos': ['Animalism', 'Chimerstry', 'Fortitude'],
-            'Giovanni': ['Dominate', 'Necromancy', 'Potence'],
-            'Caitiff': GENERAL_DISCIPLINES,  # caitiff can learn general disciplines as in-clan
-            'City Gangrel': ['Celerity', 'Fortitude', 'Protean']
+        'Ahrimanes': ['Animalism', 'Presence', 'Spiritus'],
+        'Assamite': ['Celerity', 'Obfuscate', 'Quietus'],
+        'Assamite Antitribu': ['Celerity', 'Obfuscate', 'Quietus'],
+        'Baali': ['Daimoinon', 'Obfuscate', 'Presence'],
+        'Blood Brothers': ['Celerity', 'Potence', 'Sanguinus'],
+        'Brujah': ['Celerity', 'Potence', 'Presence'],
+        'Brujah Antitribu': ['Celerity', 'Potence', 'Presence'],
+        'Bushi': ['Celerity', 'Kai', 'Presence'],
+        'Caitiff': [],
+        'Cappadocians': ['Auspex', 'Fortitude', 'Mortis'],
+        'Children of Osiris': ['Bardo'],
+        'Harbingers of Skulls': ['Auspex', 'Fortitude', 'Necromancy'],
+        'Daughters of Cacophony': ['Fortitude', 'Melpominee', 'Presence'],
+        'Followers of Set': ['Obfuscate', 'Presence', 'Serpentis'],
+        'Gangrel': ['Animalism', 'Fortitude', 'Protean'],
+        'City Gangrel': ['Celerity', 'Obfuscate', 'Protean'],
+        'Country Gangrel': ['Animalism', 'Fortitude', 'Protean'],
+        'Gargoyles': ['Fortitude', 'Potence', 'Visceratika'],
+        'Giovanni': ['Dominate', 'Necromancy', 'Potence'],
+        'Kiasyd': ['Mytherceria', 'Dominate', 'Obtenebration'],
+        'Laibon': ['Abombwe', 'Animalism', 'Fortitude'],
+        'Lamia': ['Deimos', 'Necromancy', 'Potence'],
+        'Lasombra': ['Dominate', 'Obtenebration', 'Potence'],
+        'Lasombra Antitribu': ['Dominate', 'Obtenebration', 'Potence'],
+        'Lhiannan': ['Animalism', 'Ogham', 'Presence'],
+        'Malkavian': ['Auspex', 'Dominate', 'Obfuscate'],
+        'Malkavian Antitribu': ['Auspex', 'Dementation', 'Obfuscate'],
+        'Nagaraja': ['Auspex', 'Necromancy', 'Dominate'],
+        'Nosferatu': ['Animalism', 'Obfuscate', 'Potence'],
+        'Nosferatu Antitribu': ['Animalism', 'Obfuscate', 'Potence'],
+        'Old Clan Tzimisce': ['Animalism', 'Auspex', 'Dominate'],
+        'Panders': [],
+        'Ravnos': ['Animalism', 'Chimerstry', 'Fortitude'],
+        'Ravnos Antitribu': ['Animalism', 'Chimerstry', 'Fortitude'],
+        'Salubri': ['Auspex', 'Fortitude', 'Obeah'],
+        'Samedi': ['Necromancy', 'Obfuscate', 'Thanatosis'],
+        'Serpents of the Light': ['Obfuscate', 'Presence', 'Serpentis'],
+        'Toreador': ['Auspex', 'Celerity', 'Presence'],
+        'Toreador Antitribu': ['Auspex', 'Celerity', 'Presence'],
+        'Tremere': ['Auspex', 'Dominate', 'Thaumaturgy'],
+        'Tremere Antitribu': ['Auspex', 'Dominate', 'Thaumaturgy'],
+        'True Brujah': ['Potence', 'Presence', 'Temporis'],
+        'Tzimisce': ['Animalism', 'Auspex', 'Vicissitude'],
+        'Ventrue': ['Dominate', 'Fortitude', 'Presence'],
+        'Ventrue Antitribu': ['Auspex', 'Dominate', 'Fortitude'],
         }
         
-        # Check if it's a general discipline or in-clan discipline
-        return (discipline in GENERAL_DISCIPLINES or 
-                (clan in clan_disciplines and discipline in clan_disciplines[clan]))
+        # Check if discipline is in clan's discipline list
+        return clan in clan_disciplines and discipline in clan_disciplines[clan]
 
     def _is_affinity_sphere(self, sphere):
         """Helper method to check if a sphere is an affinity sphere."""
-        affinity_sphere = self.db.stats.get('other', {}).get('affinity_sphere', {}).get('Affinity_Sphere', {}).get('perm', '')
-        return sphere in affinity_sphere
+        # Check in identity.lineage first (this seems to be where it's actually stored)
+        affinity_sphere = self.db.stats.get('identity', {}).get('lineage', {}).get('Affinity Sphere', {}).get('perm', '')
+        
+        # If not found, check identity.personal as fallback
+        if not affinity_sphere:
+            affinity_sphere = self.db.stats.get('identity', {}).get('personal', {}).get('Affinity Sphere', {}).get('perm', '')
+        
+        return sphere == affinity_sphere
 
     def can_buy_stat(self, stat_name, new_rating, category=None):
         """Check if a stat can be bought without staff approval."""
@@ -1506,7 +1674,17 @@ class Character(DefaultCharacter):
                     'Allies': 2,
                     'Backup': 2,
                     'Herd': 2,
-                    'Library': 2
+                    'Library': 2,
+                    'Kinfolk': 2,
+                    'Spirit Heritage': 2,
+                    'Paranormal Tools': 2,
+                    'Servants': 2,
+                    'Armory': 2,
+                    'Retinue': 2,
+                    'Spies': 2,
+                    'Professional Certification': 1,
+                    'Past Lives': 2,
+                    'Dreamers': 2
                 },
                 'willpower': {     # Willpower limits by splat
                     'Mage': 6,
@@ -1516,25 +1694,25 @@ class Character(DefaultCharacter):
             'Vampire': {
                 'powers': {        # Disciplines up to 2
                     'max': 2,
-                    'types': ['Discipline']
+                    'types': ['discipline']
                 }
             },
             'Mage': {
                 'powers': {        # Spheres up to 2
                     'max': 2,
-                    'types': ['Sphere']
+                    'types': ['sphere']
                 }
             },
             'Changeling': {
                 'powers': {        # Arts and Realms up to 2
                     'max': 2,
-                    'types': ['Art', 'Realm']
+                    'types': ['art', 'realm']
                 }
             },
             'Shifter': {
                 'powers': {        # Level 1 Gifts only
                     'max': 1,
-                    'types': ['Gift']
+                    'types': ['gift']
                 }
             }
         }
@@ -1569,16 +1747,11 @@ class Character(DefaultCharacter):
 
     def _get_power_type(self, stat_name):
         """Helper method to determine power type from name."""
-        if stat_name.startswith('Gift:'):
-            return 'Gift'
-        elif stat_name.startswith('Discipline:'):
-            return 'Discipline'
-        elif stat_name.startswith('Sphere:'):
-            return 'Sphere'
-        elif stat_name.startswith('Art:'):
-            return 'Art'
-        elif stat_name.startswith('Realm:'):
-            return 'Realm'
+        # Get the stat from the database
+        from world.wod20th.models import Stat
+        stat = Stat.objects.filter(name=stat_name).first()
+        if stat:
+            return stat.stat_type
         return None
 
     def ensure_stat_structure(self, category, subcategory):
@@ -1594,58 +1767,40 @@ class Character(DefaultCharacter):
         
         return True
 
-    def buy_stat(self, stat_name, new_rating, category=None, subcategory=None, reason=""):
+    def buy_stat(self, stat_name, new_rating, category=None, subcategory=None, reason="", current_rating=None):
         """Buy or increase a stat with XP."""
         try:
+            # Preserve original case of stat_name
+            original_stat_name = stat_name
+            
+            # Fix any power issues before proceeding
+            if category == 'powers':
+                self.fix_powers()
+                # After fixing, ensure we're using the correct subcategory
+                if subcategory in ['spheres', 'arts', 'realms', 'disciplines', 'gifts', 'charms', 'blessings', 'rituals', 'sorceries', 'advantages']:
+                    # Convert to singular form
+                    subcategory = subcategory.rstrip('s')
+                    if subcategory == 'advantage':
+                        subcategory = 'special_advantage'
+
+            # For secondary abilities, ensure proper case
+            if category == 'secondary_abilities':
+                stat_name = ' '.join(word.title() for word in stat_name.split())
+                original_stat_name = stat_name  # Update original_stat_name to match proper case
+
             # Ensure proper structure exists
             self.ensure_stat_structure(category, subcategory)
             
-            # Special handling for powers - check if it exists in another subcategory
-            if category == 'powers':
-                # Get all power subcategories
-                power_subcategories = [
-                    'sphere', 'art', 'realm', 'discipline', 'gift',
-                    'numina', 'charm', 'blessing'
-                ]
-                
-                # Check each subcategory for the stat
-                for subcat in power_subcategories:
-                    if subcat != subcategory:  # Skip the target subcategory
-                        if stat_name in self.db.stats['powers'].get(subcat, {}):
-                            # Found the stat in another subcategory - get its value
-                            old_values = self.db.stats['powers'][subcat][stat_name]
-                            # Remove it from the old location
-                            del self.db.stats['powers'][subcat][stat_name]
-                            # Add it to the correct location
-                            if stat_name not in self.db.stats['powers'][subcategory]:
-                                self.db.stats['powers'][subcategory][stat_name] = old_values
-            
-            # Get current permanent rating (not temporary/shifted rating)
-            current_rating = self.get_stat(category, subcategory, stat_name, temp=False) or 0
-            
-            # Calculate cost
-            cost, requires_approval = self.calculate_xp_cost(
-                stat_name, 
-                new_rating, 
-                category=category,
-                subcategory=subcategory,
-                current_rating=current_rating
-            )
-            
-            if cost == 0:
-                return False, "Invalid stat or no increase needed"
-            
-            if requires_approval:
-                return False, "This purchase requires staff approval"
-            
-            # Check if we have enough XP
-            if self.db.xp['current'] < cost:
-                return False, f"Not enough XP. Cost: {cost}, Available: {self.db.xp['current']}"
-            
-            # Get the current form and any modifiers
-            current_form = self.db.current_form
+            # Get character's splat
+            splat = self.get_stat('other', 'splat', 'Splat', temp=False)
+            if not splat:
+                return False, "Character splat not set"
+
+            # Get current form for shifters
+            current_form = self.db.current_form if hasattr(self.db, 'current_form') else None
             form_modifier = 0
-            if current_form and current_form.lower() != 'homid':
+            
+            if splat == 'Shifter' and current_form and current_form.lower() != 'homid':
                 try:
                     from world.wod20th.models import ShapeshifterForm
                     # Get character's shifter type
@@ -1676,48 +1831,91 @@ class Character(DefaultCharacter):
                 except (ShapeshifterForm.DoesNotExist, AttributeError) as e:
                     print(f"DEBUG: Form lookup error - {str(e)}")
                     form_modifier = 0
-            
-            # Update the permanent stat value
-            if category and subcategory:
-                if stat_name not in self.db.stats[category][subcategory]:
-                    self.db.stats[category][subcategory][stat_name] = {}
+
+            # If current_rating wasn't provided, get it
+            if current_rating is None:
+                current_rating = self.get_stat(category, subcategory, stat_name, temp=False) or 0
+
+            # Calculate cost
+            cost, requires_approval = self.calculate_xp_cost(
+                stat_name=stat_name,
+                new_rating=new_rating,
+                category=category,
+                subcategory=subcategory,
+                current_rating=current_rating
+            )
+
+            if cost == 0:
+                return False, "Invalid stat or no increase needed"
+
+            if requires_approval:
+                return False, "This purchase requires staff approval"
+
+            # Check if we have enough XP
+            if self.db.xp['current'] < cost:
+                return False, f"Not enough XP. Cost: {cost}, Available: {self.db.xp['current']}"
+
+            # Validate the purchase
+            can_purchase, error_msg = self.validate_xp_purchase(
+                stat_name, new_rating,
+                category=category, subcategory=subcategory
+            )
+
+            if not can_purchase:
+                return False, error_msg
+
+            # All checks passed, make the purchase
+            try:
+                # For secondary abilities, use the original case
+                if category == 'secondary_abilities':
+                    stat_name = original_stat_name
                 
-                # Set the permanent value
-                self.db.stats[category][subcategory][stat_name]['perm'] = new_rating
-                
-                # Calculate temporary value with form modifier
-                if form_modifier == -999:  # Special case for forced 0
-                    temp_value = 0
+                # Update the stat with form handling
+                if category and subcategory:
+                    if stat_name not in self.db.stats[category][subcategory]:
+                        self.db.stats[category][subcategory][stat_name] = {}
+                    
+                    # Set the permanent value
+                    self.db.stats[category][subcategory][stat_name]['perm'] = new_rating
+                    
+                    # Calculate temporary value with form modifier
+                    if form_modifier == -999:  # Special case for forced 0
+                        temp_value = 0
+                    else:
+                        temp_value = max(0, new_rating + form_modifier)  # Ensure non-negative
+                    
+                    self.db.stats[category][subcategory][stat_name]['temp'] = temp_value
                 else:
-                    temp_value = max(0, new_rating + form_modifier)  # Ensure non-negative
-                
-                self.db.stats[category][subcategory][stat_name]['temp'] = temp_value
-            
-            # Deduct XP
-            self.db.xp['current'] -= Decimal(str(cost))
-            self.db.xp['spent'] += Decimal(str(cost))
-            
-            # Log the spend
-            timestamp = datetime.now()
-            spend = {
-                'type': 'spend',
-                'amount': float(cost),
-                'stat_name': stat_name,
-                'previous_rating': current_rating,
-                'new_rating': new_rating,
-                'reason': reason,
-                'timestamp': timestamp.isoformat()
-            }
-            
-            if not self.db.xp.get('spends'):
-                self.db.xp['spends'] = []
-            self.db.xp['spends'].insert(0, spend)
-            self.db.xp['spends'] = self.db.xp['spends'][:10]  # Keep only last 10 entries
-            
-            return True, f"Successfully bought {stat_name} {new_rating} for {cost} XP"
-            
+                    # Use set_stat for non-form-modified stats
+                    self.set_stat(category, subcategory, stat_name, new_rating, temp=False)
+                    self.set_stat(category, subcategory, stat_name, new_rating, temp=True)
+
+                # Deduct XP
+                self.db.xp['current'] -= Decimal(str(cost))
+                self.db.xp['spent'] += Decimal(str(cost))
+
+                # Log the spend
+                spend_entry = {
+                    'type': 'spend',
+                    'amount': float(cost),
+                    'stat_name': stat_name,
+                    'previous_rating': current_rating,
+                    'new_rating': new_rating,
+                    'reason': reason,
+                    'timestamp': datetime.now().isoformat()
+                }
+
+                if 'spends' not in self.db.xp:
+                    self.db.xp['spends'] = []
+                self.db.xp['spends'].insert(0, spend_entry)
+
+                return True, f"Successfully increased {stat_name} from {current_rating} to {new_rating} (Cost: {cost} XP)"
+
+            except Exception as e:
+                return False, f"Error processing purchase: {str(e)}"
+
         except Exception as e:
-            return False, f"Error buying stat: {str(e)}"
+            return False, f"Error: {str(e)}"
 
     def _display_xp(self, target):
         """Display XP information for a character."""
@@ -2022,6 +2220,149 @@ class Character(DefaultCharacter):
         alias, _ = self.get_gift_alias(canonical_name)
         return alias if alias else canonical_name
 
+    def fix_disciplines(self):
+        """Fix disciplines that were incorrectly stored in powers.disciplines."""
+        if not self.db.stats or 'powers' not in self.db.stats:
+            return
+
+        powers = self.db.stats['powers']
+        if 'disciplines' in powers:
+            # Ensure discipline subcategory exists
+            if 'discipline' not in powers:
+                powers['discipline'] = {}
+
+            # Move all disciplines to the correct subcategory
+            for disc_name, disc_data in powers['disciplines'].items():
+                if disc_name not in powers['discipline']:
+                    powers['discipline'][disc_name] = disc_data
+
+            # Remove the incorrect subcategory
+            del powers['disciplines']
+            self.db.stats['powers'] = powers
+
+    def fix_powers(self):
+        """Fix powers that were incorrectly stored in plural form."""
+        if not self.db.stats or 'powers' not in self.db.stats:
+            return
+
+        powers = self.db.stats['powers']
+        if not powers:
+            return
+
+        # Define power type mappings (plural to singular)
+        power_mappings = {
+            'spheres': 'sphere',
+            'arts': 'art',
+            'realms': 'realm',
+            'disciplines': 'discipline',
+            'gifts': 'gift',
+            'numina': 'numina',  # Already singular
+            'charms': 'charm',
+            'blessings': 'blessing',
+            'rituals': 'ritual',
+            'sorceries': 'sorcery',
+            'advantages': 'special_advantage'
+        }
+
+        changes_made = False
+
+        # Fix each power type
+        for plural, singular in power_mappings.items():
+            # Ensure singular category exists
+            if singular not in powers:
+                powers[singular] = {}
+                changes_made = True
+
+            # If plural form exists, merge into singular
+            if plural in powers:
+                for power_name, values in powers[plural].items():
+                    if power_name not in powers[singular]:
+                        powers[singular][power_name] = values
+                    else:
+                        # Take the higher value if power exists in both places
+                        current_perm = powers[singular][power_name].get('perm', 0)
+                        current_temp = powers[singular][power_name].get('temp', 0)
+                        new_perm = values.get('perm', 0)
+                        new_temp = values.get('temp', 0)
+                        powers[singular][power_name]['perm'] = max(current_perm, new_perm)
+                        powers[singular][power_name]['temp'] = max(current_temp, new_temp)
+
+                # Remove the plural category
+                del powers[plural]
+                changes_made = True
+
+        # Special handling for gifts - ensure they're properly formatted
+        if 'gift' in powers:
+            fixed_gifts = {}
+            for gift_name, values in powers['gift'].items():
+                # If the gift name doesn't start with the proper category prefix, try to fix it
+                if not any(gift_name.startswith(prefix) for prefix in ['Breed:', 'Auspice:', 'Tribe:', 'Gift:']):
+                    # Check if it's already properly formatted
+                    if ':' in gift_name:
+                        fixed_gifts[gift_name] = values
+                    else:
+                        # Add generic 'Gift:' prefix if we can't determine the type
+                        fixed_gifts[f'Gift: {gift_name}'] = values
+                else:
+                    fixed_gifts[gift_name] = values
+            if fixed_gifts != powers['gift']:
+                powers['gift'] = fixed_gifts
+                changes_made = True
+
+        if changes_made:
+            self.db.stats['powers'] = powers
+            return True
+        return False
+
+    def validate_xp_purchase(self, stat_name, new_rating, category=None, subcategory=None):
+        """
+        Validate if a character can purchase a stat increase.
+        Returns (can_purchase, error_message)
+        """
+        # Get character's splat
+        splat = self.get_stat('other', 'splat', 'Splat', temp=False)
+        if not splat:
+            return False, "Character splat not set"
+
+        # Get current rating
+        current_rating = self.get_stat(category, subcategory, stat_name, temp=False) or 0
+
+        # Validate rating increase
+        if new_rating <= current_rating:
+            return False, "New rating must be higher than current rating"
+
+        # Check if stat exists and is valid for character's splat
+        if category == 'powers':
+            # Validate power based on splat
+            if splat == 'Vampire':
+                from world.wod20th.utils.vampire_utils import validate_vampire_stats
+                is_valid, error_msg = validate_vampire_stats(self, stat_name, str(new_rating), category, subcategory)
+            elif splat == 'Mage':
+                from world.wod20th.utils.mage_utils import validate_mage_stats
+                is_valid, error_msg = validate_mage_stats(self, stat_name, str(new_rating), category, subcategory)
+            elif splat == 'Changeling':
+                from world.wod20th.utils.changeling_utils import validate_changeling_stats
+                is_valid, error_msg = validate_changeling_stats(self, stat_name, str(new_rating), category, subcategory)
+            elif splat == 'Shifter':
+                from world.wod20th.utils.shifter_utils import validate_shifter_stats
+                is_valid, error_msg = validate_shifter_stats(self, stat_name, str(new_rating), category, subcategory)
+            elif splat == 'Mortal+':
+                from world.wod20th.utils.mortalplus_utils import validate_mortalplus_stats
+                is_valid, error_msg = validate_mortalplus_stats(self, stat_name, str(new_rating), category, subcategory)
+            elif splat == 'Possessed':
+                from world.wod20th.utils.possessed_utils import validate_possessed_stats
+                is_valid, error_msg = validate_possessed_stats(self, stat_name, str(new_rating), category, subcategory)
+            elif splat == 'Companion':
+                from world.wod20th.utils.companion_utils import validate_companion_stats
+                is_valid, error_msg = validate_companion_stats(self, stat_name, str(new_rating), category, subcategory)
+            else:
+                is_valid, error_msg = False, "Invalid splat type"
+
+            if not is_valid:
+                return False, error_msg
+
+        return True, ""
+
 class Note:
     def __init__(self, name, text, category="General", is_public=False, is_approved=False, 
                  approved_by=None, approved_at=None, created_at=None, updated_at=None, note_id=None):
@@ -2072,3 +2413,4 @@ class Note:
                 note_data[field] = None
                 
         return cls(**note_data)
+        

@@ -32,7 +32,7 @@ from commands.CmdRenown import CmdRenown
 from commands.building import (
     CmdSetRoomResources, CmdSetRoomType, CmdSetUmbraDesc, 
     CmdSetGauntlet, CmdUmbraInfo, CmdSetHousing, CmdManageBuilding, 
-    CmdSetLock, CmdDesc
+    CmdSetLock, CmdDesc, CmdView, CmdPlaces, CmdRoomUnfindable, CmdRoomFaeDesc
 )
 from commands.CmdInit import CmdInit
 from commands.CmdRoomLog import CmdRoomLog
@@ -47,7 +47,7 @@ from commands.chargen import CmdSubmit
 from commands.CmdSelfStat import CmdSelfStat
 from commands.CmdShift import CmdShift
 from commands.CmdStaff import CmdStaff, CmdPST
-from commands.staff_commands import CmdStaffStat
+from commands.staff_commands import CmdStaffStat, CmdFixStats
 from commands.unfindable import CmdUnfindable
 from commands.CmdChangelingInteraction import CmdChangelingInteraction
 from commands.CmdBanality import CmdBanality
@@ -70,12 +70,15 @@ from commands.CmdXP import CmdXP
 from commands.CmdXPCost import CmdXPCost
 from commands.CmdWho import CmdWho
 from commands.housing import CmdRent, CmdVacate, CmdSetApartmentDesc, CmdSetApartmentExit, CmdManageHome, CmdUpdateApartments, CmdListApartments, CmdUpdateExits
-from commands.comms import CustomCmdChannel
+from commands.comms import CustomCmdChannel, CmdNotifications
 from commands.CmdCheck import CmdCheck
 from commands.CmdPlots import CmdPlots
-from commands.CmdHangouts import CmdHangout, CmdSetHangout
+from commands.CmdHangouts import CmdHangout
 from commands.CmdNPC import CmdNPC
 from commands.CmdArchid import CmdArchid
+from commands.CmdRoster import CmdRoster
+from commands.CmdSpecialties import CmdSpecialties
+from commands.CmdMultidesc import CmdMultidesc
 
 
 class CharacterCmdSet(cmdset_character.CharacterCmdSet):
@@ -154,10 +157,17 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdPlots())
         self.add(CmdInit())
         self.add(CmdHangout())
-        self.add(CmdSetHangout())
         self.add(CmdReturn())
         self.add(CmdArchid())
-
+        self.add(CmdView())
+        self.add(CmdPlaces())
+        self.add(CmdRoster())
+        self.add(CmdSpecialties())
+        self.add(CmdRoomUnfindable())
+        self.add(CmdRoomFaeDesc())
+        self.add(CmdNotifications())
+        self.add(CmdMultidesc())
+        
 class AccountCmdSet(cmdset_account.AccountCmdSet):
     """
     This is the cmdset available to the Account at all times. It is
@@ -200,6 +210,7 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdRoomLog())
         self.add(CmdDesc())
         self.add(CmdStaffStat())
+        self.add(CmdFixStats())
 
 class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):
     """

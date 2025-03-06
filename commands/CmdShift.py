@@ -254,8 +254,17 @@ class CmdShift(default_cmds.MuxCommand):
 
     def _shift_with_roll(self, character, form):
         """Attempt to shift using a dice roll."""
+        # Check for Metamorph merit first
+        has_metamorph = character.db.stats.get('merits', {}).get('physical', {}).get('Metamorph', {}).get('perm', 0) > 0
+        if has_metamorph:
+            self.caller.msg(f"Your Metamorph merit allows you to shift effortlessly into {form.name} form.")
+            return True
+
+        # Get Primal-Urge value
         primal_urge = character.get_stat('abilities', 'talent', 'Primal-Urge', temp=False) or 0
-        stamina = character.get_stat('attributes', 'physical', 'Stamina', temp=False) or 0
+        
+        # Get Stamina value directly from stats dictionary
+        stamina = character.db.stats.get('attributes', {}).get('physical', {}).get('Stamina', {}).get('perm', 0)
         
         dice_pool = primal_urge + stamina
         difficulty = form.difficulty
@@ -289,7 +298,13 @@ class CmdShift(default_cmds.MuxCommand):
             return False
 
     def _shift_default(self, character, form):
-        """Handle default shifting, with automatic success for natural form."""
+        """Handle default shifting, with automatic success for natural form or Metamorph merit."""
+        # First check for Metamorph merit
+        has_metamorph = character.db.stats.get('merits', {}).get('physical', {}).get('Metamorph', {}).get('perm', 0) > 0
+        if has_metamorph:
+            self.caller.msg(f"Your Metamorph merit allows you to shift effortlessly into {form.name} form.")
+            return True
+
         # Get character's breed and shifter type
         breed = character.get_stat('identity', 'lineage', 'Breed', temp=False)
         shifter_type = character.get_stat('identity', 'lineage', 'Type', temp=False)

@@ -50,24 +50,21 @@ class CmdNotes(MuxCommand):
     help_category = "Chargen & Character Info"
 
     def search_for_character(self, search_string):
-        # First, try to find by exact name match
-        results = search_object(search_string, typeclass="typeclasses.characters.Character")
-        if results:
-            # Return the first match that has a key matching the search string
-            for result in results:
+        """Search for a character globally."""
+        # First try exact match
+        char = self.caller.search(search_string, global_search=True, typeclass="typeclasses.characters.Character")
+        if not char:
+            return None
+            
+        # If we got a list, try to find exact match by name
+        if isinstance(char, list):
+            for result in char:
                 if result.key.lower() == search_string.lower():
                     return result
-            # If no exact key match, return the first result
-            return results[0]
-        
-        # If not found, try to find by dbref
-        if search_string.startswith("#") and search_string[1:].isdigit():
-            results = search_object(search_string, typeclass="typeclasses.characters.Character")
-            if results:
-                return results[0]
-        
-        # If still not found, return None
-        return None
+            # If no exact match found, return the first result
+            return char[0]
+            
+        return char
 
     def func(self):
         if not self.args and not self.switches:
@@ -102,6 +99,20 @@ class CmdNotes(MuxCommand):
                 self.unapprove_note()
             elif switch in ["delete", "del"]:
                 self.delete_note()
+            elif switch == "fix":
+                # Handle fixing notes
+                if "/" in self.args:
+                    target_name = self.args.split("/")[0]
+                    target = self.search_for_character(target_name)
+                    if not target:
+                        self.caller.msg(f"Could not find character '{target_name}'.")
+                        return
+                else:
+                    target = self.caller
+                if self.fix_notes(target):
+                    self.caller.msg(f"Successfully fixed notes for {target.name}.")
+                else:
+                    self.caller.msg(f"Failed to fix notes for {target.name}.")
             else:
                 self.caller.msg(f"Unknown switch: {switch}")
         else:
@@ -119,9 +130,165 @@ class CmdNotes(MuxCommand):
                 return None
         return None
 
+    def fix_notes(self, target):
+        """Fix corrupted notes data format."""
+        try:
+            # Get the raw attribute data
+            raw_notes = target.attributes.get('notes', {})
+            self.caller.msg(f"Debug: Raw notes type is {type(raw_notes)}")
+            
+            # If it's already a dictionary or _SaverDict, no need to fix
+            if isinstance(raw_notes, (dict, utils.dbserialize._SaverDict)):
+                self.caller.msg("Notes are already in correct format.")
+                return True
+                
+            # If it's a string, try to fix it
+            if isinstance(raw_notes, str):
+                # Store the original raw notes in case conversion fails
+                original_notes = raw_notes
+                notes_dict = None
+                
+                # Try to deserialize using Evennia's utilities first
+                try:
+                    from evennia.utils.dbserialize import deserialize
+                    deserialized = deserialize(raw_notes)
+                    if isinstance(deserialized, (dict, utils.dbserialize._SaverDict)):
+                        notes_dict = dict(deserialized)
+                        self.caller.msg("Successfully converted notes using Evennia's deserializer.")
+                except Exception as e:
+                    self.caller.msg(f"Evennia deserialize failed: {e}")
+                    
+                # If Evennia's deserializer failed, try ast.literal_eval
+                if not notes_dict:
+                    try:
+                        import ast
+                        notes_dict = ast.literal_eval(raw_notes)
+                        if isinstance(notes_dict, dict):
+                            self.caller.msg("Successfully converted notes using ast.literal_eval.")
+                        else:
+                            notes_dict = None
+                    except Exception as e:
+                        self.caller.msg(f"ast.literal_eval failed: {e}")
+                
+                # If both conversion attempts failed, try to parse as a formatted string
+                if not notes_dict:
+                    try:
+                        notes_dict = self.parse_note_format(original_notes)
+                        if notes_dict:
+                            self.caller.msg("Successfully parsed notes from formatted string.")
+                    except Exception as e:
+                        self.caller.msg(f"Format parsing failed: {e}")
+                
+                # If all attempts failed, create a recovery note
+                if not notes_dict:
+                    self.caller.msg("All conversion attempts failed. Creating recovery note.")
+                    notes_dict = {
+                        '1': {
+                            'name': 'Recovered Data',
+                            'text': original_notes,
+                            'category': 'System',
+                            'is_public': False,
+                            'is_approved': False,
+                            'created_at': datetime.now(),
+                            'updated_at': datetime.now()
+                        }
+                    }
+                
+                # Store the fixed dictionary
+                target.attributes.add('notes', notes_dict)
+                self.caller.msg("Notes format has been fixed.")
+                return True
+                
+        except Exception as e:
+            self.caller.msg(f"Error fixing notes: {e}")
+            logger.log_err(f"Error in fix_notes: {e}")
+            return False
+
+    def parse_note_format(self, text):
+        """Parse notes in the format: note/set <character>/'name': Attribute='text': Attribute"""
+        try:
+            # If the text looks like a dictionary string (starts with '{'), try ast.literal_eval
+            if text.strip().startswith('{'):
+                import ast
+                return ast.literal_eval(text)
+            
+            notes_dict = {}
+            note_id = 1
+            
+            # Split on note markers (can be customized based on your format)
+            parts = text.split("note/set")
+            
+            for part in parts[1:]:  # Skip the first empty part
+                try:
+                    # Extract name and text
+                    name_part, text_part = part.split("='", 1)
+                    name = name_part.split("'")[-1].strip()
+                    text = text_part.split("'")[0].strip()
+                    
+                    # Create note entry
+                    notes_dict[str(note_id)] = {
+                        'name': name,
+                        'text': text,
+                        'category': 'General',  # Default category
+                        'is_public': False,
+                        'is_approved': False,
+                        'created_at': datetime.now(),
+                        'updated_at': datetime.now()
+                    }
+                    note_id += 1
+                except Exception as e:
+                    logger.log_err(f"Error parsing note part: {e}")
+                    continue
+            
+            return notes_dict if notes_dict else None
+            
+        except Exception as e:
+            logger.log_err(f"Error in parse_note_format: {e}")
+            return None
+
+    def _convert_notes_to_dict(self, notes_data):
+        """Helper method to convert notes data to a proper dictionary."""
+        if isinstance(notes_data, dict):
+            return notes_data
+        elif isinstance(notes_data, utils.dbserialize._SaverDict):
+            return dict(notes_data)
+        elif isinstance(notes_data, str):
+            try:
+                # Try to use Evennia's deserializer first
+                from evennia.utils.dbserialize import deserialize
+                deserialized = deserialize(notes_data)
+                if isinstance(deserialized, (dict, utils.dbserialize._SaverDict)):
+                    return dict(deserialized)
+                # If that fails, try ast.literal_eval as a fallback
+                import ast
+                return ast.literal_eval(notes_data)
+            except Exception as e:
+                self.caller.msg(f"Error converting notes data: {e}")
+                # Try to fix the notes if conversion fails
+                if self.fix_notes(self.caller if notes_data == self.caller.attributes.get('notes', {}) else self.search_for_character(self.args.split('/')[0])):
+                    # Try getting the notes again after fixing
+                    return self._convert_notes_to_dict(self.caller.attributes.get('notes', {}))
+                return {}
+        else:
+            try:
+                return dict(notes_data)
+            except (TypeError, ValueError) as e:
+                self.caller.msg(f"Error converting notes to dictionary: {e}")
+                return {}
+
     def get_note_by_name_or_id(self, target, note_identifier):
         """Helper method to find a note by either name or ID."""
         notes_dict = target.attributes.get('notes', {})
+        
+        # Debug information
+        self.caller.msg(f"Debug: notes_dict type is {type(notes_dict)}")
+        
+        # Convert notes to dictionary
+        notes_dict = self._convert_notes_to_dict(notes_dict)
+        if notes_dict:
+            # Update the stored format to be a proper dictionary
+            target.attributes.add('notes', notes_dict)
+            self.caller.msg("Debug: Notes converted and stored as dictionary")
         
         # Clean up note identifier - strip any status markers and spaces
         clean_identifier = note_identifier.strip().rstrip('*!').strip()
@@ -166,6 +333,17 @@ class CmdNotes(MuxCommand):
     def list_notes(self):
         """List all notes for the character."""
         notes_dict = self.caller.attributes.get('notes', {})
+        
+        # Debug information
+        self.caller.msg(f"Debug: notes_dict type is {type(notes_dict)}")
+        
+        # Convert notes to dictionary
+        notes_dict = self._convert_notes_to_dict(notes_dict)
+        if notes_dict:
+            # Store back as proper dictionary
+            self.caller.attributes.add('notes', notes_dict)
+            self.caller.msg("Debug: Notes converted and stored as dictionary")
+        
         if not notes_dict:
             self.caller.msg("You don't have any notes.")
             return
@@ -360,6 +538,17 @@ class CmdNotes(MuxCommand):
     def list_character_notes(self, target):
         """List all viewable notes for a character."""
         notes_dict = target.attributes.get('notes', {})
+        
+        # Debug information
+        self.caller.msg(f"Debug: notes_dict type is {type(notes_dict)}")
+        
+        # Convert notes to dictionary
+        notes_dict = self._convert_notes_to_dict(notes_dict)
+        if notes_dict:
+            # Store back as proper dictionary
+            target.attributes.add('notes', notes_dict)
+            self.caller.msg("Debug: Notes converted and stored as dictionary")
+        
         if not notes_dict:
             self.caller.msg(f"{target.name} has no notes.")
             return
@@ -575,6 +764,7 @@ class CmdNotes(MuxCommand):
             self.caller.msg(f"Note #{note_id} not found on {target.name}.")
 
     def prove_note(self):
+        """Show a note to specific targets."""
         if not self.args or "=" not in self.args:
             self.caller.msg("Usage: +note/prove <note name>=<target1>,<target2>,...")
             return
@@ -614,6 +804,7 @@ class CmdNotes(MuxCommand):
         target_name, note_id = self.args.split("/", 1)
         target = self.search_for_character(target_name)
         if not target:
+            self.caller.msg(f"Could not find character '{target_name}'.")
             return
 
         note = target.get_note(note_id)
@@ -632,7 +823,8 @@ class CmdNotes(MuxCommand):
 
     def unapprove_note(self):
         """Unapprove a note (staff only)."""
-        if not self.caller.check_permstring("builders"):
+        if not (self.caller.check_permstring("builders") or 
+            self.caller.check_permstring("storyteller")):
             self.caller.msg("You don't have permission to unapprove notes.")
             return
 
@@ -647,6 +839,7 @@ class CmdNotes(MuxCommand):
         target_name, note_id = self.args.split("/", 1)
         target = self.search_for_character(target_name)
         if not target:
+            self.caller.msg(f"Could not find character '{target_name}'.")
             return
 
         note = target.get_note(note_id)
@@ -720,6 +913,7 @@ class CmdNotes(MuxCommand):
             target_name, note_id = self.args.split("=", 1)
             target = self.search_for_character(target_name)
             if not target:
+                self.caller.msg(f"Could not find character '{target_name}'.")
                 return
         else:
             target = self.caller
@@ -746,3 +940,90 @@ class CmdNotes(MuxCommand):
         self.caller.msg(f"Note #{note_id} has been deleted.")
         if target != self.caller:
             target.msg(f"Your note #{note_id} has been deleted by {self.caller.name}.")
+
+    def set_note(self):
+        """Set a note on another character (staff only)."""
+        if not (self.caller.check_permstring("builders") or 
+            self.caller.check_permstring("storyteller")):
+            self.caller.msg("You don't have permission to set notes on other characters.")
+            return
+
+        if not self.args:
+            self.caller.msg("Usage: +note/set <target>/<note name>=<text>")
+            self.caller.msg("       +note/set <target>/'name': Attribute='text': Attribute")
+            return
+
+        # Check if we're using the new format
+        if "': " in self.args and "='" in self.args:
+            try:
+                # Parse the new format
+                target_name = self.args.split("/")[0].strip()
+                name_part, text_part = self.args.split("='", 1)
+                note_name = name_part.split("':")[-1].strip()
+                note_text = text_part.split("'")[0].strip()
+                
+                # Find the target character
+                target = self.search_for_character(target_name)
+                if not target:
+                    self.caller.msg(f"Could not find character '{target_name}'.")
+                    return
+                    
+            except Exception as e:
+                self.caller.msg(f"Error parsing new format: {e}")
+                self.caller.msg("Usage: +note/set <target>/'name': Attribute='text': Attribute")
+                return
+        else:
+            # Handle traditional format
+            if "=" not in self.args:
+                self.caller.msg("Usage: +note/set <target>/<note name>=<text>")
+                return
+
+            if "/" not in self.args.split("=")[0]:
+                self.caller.msg("You must specify both target and note name.")
+                return
+
+            target_spec, note_text = self.args.split("=", 1)
+            target_name, note_name = target_spec.split("/", 1)
+            target = self.search_for_character(target_name)
+            if not target:
+                self.caller.msg(f"Could not find character '{target_name}'.")
+                return
+
+        # Handle category in note name
+        if "/" in note_name:
+            category, note_name = note_name.split("/", 1)
+            category = category.strip().title()
+        else:
+            category = "General"
+
+        # Convert %r markers to newlines
+        note_text = note_text.strip().replace("%r%r", "\n\n").replace("%r", "\n")
+        
+        # Get current notes
+        notes_dict = target.attributes.get('notes', {})
+        
+        # Convert to dictionary if needed
+        notes_dict = self._convert_notes_to_dict(notes_dict)
+        
+        # Generate new note ID
+        note_id = self.generate_note_id(notes_dict)
+        
+        # Create the note
+        note_data = {
+            'name': note_name.strip(),
+            'text': note_text,
+            'category': category,
+            'is_public': False,
+            'is_approved': False,
+            'created_at': datetime.now(),
+            'updated_at': datetime.now()
+        }
+        
+        # Add the note to the dictionary
+        notes_dict[note_id] = note_data
+        
+        # Save the updated notes
+        target.attributes.add('notes', notes_dict)
+        
+        self.caller.msg(f"Created note #{note_id} on {target.name}: {note_name}")
+        target.msg(f"{self.caller.name} has created note #{note_id} on your character: {note_name}")
