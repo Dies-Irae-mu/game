@@ -135,7 +135,6 @@ class CmdNotes(MuxCommand):
         try:
             # Get the raw attribute data
             raw_notes = target.attributes.get('notes', {})
-            self.caller.msg(f"Debug: Raw notes type is {type(raw_notes)}")
             
             # If it's already a dictionary or _SaverDict, no need to fix
             if isinstance(raw_notes, (dict, utils.dbserialize._SaverDict)):
@@ -281,14 +280,12 @@ class CmdNotes(MuxCommand):
         notes_dict = target.attributes.get('notes', {})
         
         # Debug information
-        self.caller.msg(f"Debug: notes_dict type is {type(notes_dict)}")
         
         # Convert notes to dictionary
         notes_dict = self._convert_notes_to_dict(notes_dict)
         if notes_dict:
             # Update the stored format to be a proper dictionary
             target.attributes.add('notes', notes_dict)
-            self.caller.msg("Debug: Notes converted and stored as dictionary")
         
         # Clean up note identifier - strip any status markers and spaces
         clean_identifier = note_identifier.strip().rstrip('*!').strip()
@@ -335,14 +332,13 @@ class CmdNotes(MuxCommand):
         notes_dict = self.caller.attributes.get('notes', {})
         
         # Debug information
-        self.caller.msg(f"Debug: notes_dict type is {type(notes_dict)}")
+        
         
         # Convert notes to dictionary
         notes_dict = self._convert_notes_to_dict(notes_dict)
         if notes_dict:
             # Store back as proper dictionary
             self.caller.attributes.add('notes', notes_dict)
-            self.caller.msg("Debug: Notes converted and stored as dictionary")
         
         if not notes_dict:
             self.caller.msg("You don't have any notes.")
@@ -540,14 +536,13 @@ class CmdNotes(MuxCommand):
         notes_dict = target.attributes.get('notes', {})
         
         # Debug information
-        self.caller.msg(f"Debug: notes_dict type is {type(notes_dict)}")
+        
         
         # Convert notes to dictionary
         notes_dict = self._convert_notes_to_dict(notes_dict)
         if notes_dict:
             # Store back as proper dictionary
             target.attributes.add('notes', notes_dict)
-            self.caller.msg("Debug: Notes converted and stored as dictionary")
         
         if not notes_dict:
             self.caller.msg(f"{target.name} has no notes.")

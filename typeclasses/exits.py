@@ -222,7 +222,6 @@ class Exit(DefaultExit):
         """
         if hasattr(traversing_object, 'msg'):
             traversing_object.msg(f"You cannot traverse {self.key}.")
-            traversing_object.msg("DEBUG: Traverse failed - insufficient permissions.")
         return False
     
     def get_cmd_signatures(self, caller):

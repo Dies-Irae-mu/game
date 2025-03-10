@@ -1031,22 +1031,9 @@ function saveField(field) {
             if (field === 'image_url') {
                 location.reload();
             } else {
-                // Request the rendered markdown from the server
-                fetch(`/characters/render-markdown/${key}/${dbref}/?field=${field}&value=${encodeURIComponent(value)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            content.innerHTML = data.html;
-                            content.classList.toggle('empty-content', !value);
-                            toggleEdit(field);
-                        } else {
-                            alert('Error rendering markdown');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Error rendering markdown');
-                    });
+                content.innerHTML = value.replace(/\n/g, '<br>');
+                content.classList.toggle('empty-content', !value);
+                toggleEdit(field);
             }
         } else {
             alert('Error saving changes');

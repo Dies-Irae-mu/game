@@ -1,5 +1,5 @@
-{
-    "Blessings of the Nest": {
+[
+    {
         "name": "Blessings of the Nest",
         "description": "Hissing a blessing in the Dragon Tongue, the Mokole bestows a gift of fertility. In addition to ensuring conception on most recipients, the Gift also removes impotence from those who suffer from it and grants fertility to the normally barren. A rooster-spirit teaches it.",
         "system": "The player spends one Gnosis point. This Gift's power is insufficient to make metis fertile.",
@@ -11,7 +11,7 @@
         "shifter_type": "Mokole",
         "splat": "Shifter"
     },
-    "Reptoid Form": {
+    {
         "name": "Reptoid Form",
         "description": "Through careful refinement of her shapeshifting capabilities, the Mokole learns to assume a form between Homid and Archid. This 'near-man' form, roughly equivalent to the Garou Glabro form, lacks hair, has tough, lightly scaled skin, and sports small but sharp claws. It can only pass for human at a distance, under heavy clothing, or in poor light, but still avoids the size and subtlety issues associated with Archid. This Gift is taught by memory-spirits.",
         "system": "The character assumes her new form in the same manner as a Garou assuming Glabro. Its traits are: Strength +2, Stamina +2, Appearance –2, and it can make claw attacks for lethal damage.",
@@ -23,7 +23,7 @@
         "shifter_type": "Mokole",
         "splat": "Shifter"
     },
-    "Dragon's Breath": {
+    {
         "name": "Dragon's Breath",
         "description": "The Mokole can spit fire. This Gift is taught by Dragon himself.",
         "system": "The player spends one Rage point and rolls Dexterity + Brawl (difficulty 8) to aim the attack (range 30 feet). It inflicts two automatic levels of aggravated damage, plus two additional levels per extra point of Rage spent after the attack is rolled.",
@@ -35,7 +35,7 @@
         "shifter_type": "Mokole",
         "splat": "Shifter"
     },
-    "Bellow": {
+    {
         "name": "Bellow",
         "description": "The Mokole releases a powerful and terrifying reptilian roar. This Gift is taught by a crocodile-spirit.",
         "system": "The player spends one Rage point and rolls permanent Rage (difficulty of the target's Willpower). If successful, the target reacts as though afflicted by the Delirium. Subtract the Mokole's Glory from the target's Willpower before consulting the Delirium chart. Other shapeshifters can spend one Willpower point to resist the Gift's effects for the rest of the scene.",
@@ -48,7 +48,7 @@
         "splat": "Shifter",
         "auspice": "Rising Sun"
     },
-    "Eye of the Raptor": {
+    {
         "name": "Eye of the Raptor",
         "description": "The Mokole can see clearly for miles. A raptor-spirit teaches this Gift.",
         "system": "The player rolls Perception + Alertness (difficulty 8). The number of successes equals the number of miles the character can see clearly.",
@@ -61,7 +61,7 @@
         "splat": "Shifter",
         "auspice": "Rising Sun"
     },
-    "Paint the Meadows": {
+    {
         "name": "Paint the Meadows",
         "description": "The Mokole may utter pitiable moans and groans to draw prey closer. Margay-spirits teach this Gift.",
         "system": "The player rolls Wits + Expression (difficulty of the target's Willpower). The victim moves closer for one turn per success; if the victim is harmed, the Gift's effects end.",
@@ -74,7 +74,7 @@
         "splat": "Shifter",
         "auspice": "Rising Sun"
     },
-    "Hot Ichor": {
+    {
         "name": "Hot Ichor",
         "description": "The Mokole may use her Rage to heat her blood, enhancing her prowess in battle or on the hunt. A raptor-spirit teaches this Gift.",
         "system": "The player may spend Rage to increase her physical Attributes at a rate of one point of Rage per Attribute dot gained. This enhancement lasts for a number of turns equal to the Mokole's lowest permanent Renown category.",
@@ -87,7 +87,7 @@
         "splat": "Shifter",
         "auspice": "Rising Sun"
     },
-    "Jointsnake's Mojo": {
+    {
         "name": "Jointsnake's Mojo",
         "description": "The Mokole may rejoin severed body parts without even touching them; they simply wriggle back to the stump, reattaching themselves. This Gift is taught by jointsnake-spirits.",
         "system": "The player need only spend one Gnosis to call back and reattach a severed body part, so long as that body part is within (Glory x 2) yards.",
@@ -100,7 +100,7 @@
         "splat": "Shifter",
         "auspice": "Rising Sun"
     },
-    "Tame Sunbeam": {
+    {
         "name": "Tame Sunbeam",
         "description": "The sun has long been the staunchest ally of the Mokole, and sends his light when they need it most. A servant of Helios teaches this Gift.",
         "system": "The player spends a Gnosis point and rolls Intelligence + Occult, difficulty 6. An aura of bright sunlight surrounds the Mokole for the rest of the scene, illuminating everything out to (successes x 2) yards.",
@@ -113,7 +113,7 @@
         "splat": "Shifter",
         "auspice": "Noonday Sun"
     },
-    "Clear Mind": {
+    {
         "name": "Clear Mind",
         "description": "This Gift encourages clarity of thought, no matter the distractions; it is taught by a crow-spirit.",
         "system": "The player spends one or more Willpower points, then chooses a Mental dice pool (such as Intelligence + Enigmas); each Willpower point spent adds one die to that pool until the sun next rises.",
@@ -126,7 +126,7 @@
         "splat": "Shifter",
         "auspice": "Noonday Sun"
     },
-    "Recapitulate": {
+    {
         "name": "Recapitulate",
         "description": "The Mokole can attack enemies with their own evolutionary heritage, forcing them to retreat back down the tree of life toward a clump of cells. The foe is transformed into a lower form of life. A lungfish-spirit teaches this Gift.",
         "system": "The Mokole shouts the enemy's name and certain Words out of time. The player spends two Gnosis points, then rolls Mnesis + Intimidation, difficulty 7. The player splits her successes between the effects of devolution and the duration. For each success spent on effect, the victim devolves through one stage of existence: for humans or Garou, one success makes him a primitive ratlike mammal, two make him a synapsid, and so on. The effect lasts for ten minutes per success spent on duration.",
@@ -139,7 +139,7 @@
         "splat": "Shifter",
         "auspice": "Shrouded Sun"
     },
-    "Deeper Lungs": {
+    {
         "name": "Deeper Lungs",
         "description": "The Mokole may reserve air within herself, allowing her to live for a period of time without breathing. This Gift is taught by a turtle-spirit.",
         "system": "The Mokole may hold her breath for (Stamina) hours. This Gift's effects are permanent.",
@@ -152,7 +152,7 @@
         "splat": "Shifter",
         "auspice": "Shrouded Sun"
     },
-    "Dragon Drill": {
+    {
         "name": "Dragon Drill",
         "description": "The Mokole may organize her allies into a potent workforce, sharing any Ability known to a single member of the group with all members. This Gift can empower Mokole, Kin, and any character with whom the Mokole shares a totem. Ant-spirits teach this gift.",
         "system": "The player spends a Gnosis point and rolls Manipulation + the appropriate Skill or Knowledge (difficulty 7). The number of successes is the number of individuals who gain the targeted Ability at the rating of the highest-rated member of the group. This Gift's effects last for one scene.",
@@ -165,7 +165,7 @@
         "splat": "Shifter",
         "auspice": "Decorated Sun"
     },
-    "Long Running": {
+    {
         "name": "Long Running",
         "description": "The Mokole can make long trips far more quickly than should be possible. An air-spirit teaches this Gift.",
         "system": "The player spends one Gnosis point and rolls Dexterity + (Athletics or Drive) against a difficulty of the local Gauntlet. Each success reduces the overall travel time to reach the Mokole's current destination by 5%.",
@@ -178,7 +178,7 @@
         "splat": "Shifter",
         "auspice": "Decorated Sun"
     },
-    "Awe": {
+    {
         "name": "Awe",
         "description": "The Mokole becomes an unmistakable avatar of primal glory and majesty, crowned by the sun and cloaked in years. An avatar of Helios teaches this Gift.",
         "system": "The character permanently adds one die to all Charisma rolls.",
@@ -191,7 +191,7 @@
         "splat": "Shifter",
         "auspice": "Eclipsed Sun"
     },
-    "Sun Enfleshed": {
+    {
         "name": "Sun Enfleshed",
         "description": "The Mokole becomes a living embodiment of the sun's holy fire. She bursts into silent, solar flames, burning her opponents with a touch. This Gift is taught by an avatar of Helios.",
         "system": "The player spends three Gnosis points to activate this Gift. Any vampires looking upon the Mokole must roll to resist fear frenzy as though they beheld the sun at full noon, and the Mokole's natural weapons inflict two additional dice of aggravated damage, as well as being treated as weapons made of gold.",
@@ -204,7 +204,7 @@
         "splat": "Shifter",
         "auspice": "Eclipsed Sun"
     },
-    "Stop Continental Drift": {
+    {
         "name": "Stop Continental Drift",
         "description": "The Crowned with this powerful Gift can travel the world as though it were still the dawn of time. A journey from the shores of Africa to South America, for example, may take only a matter of days. Crocodile-spirits teach this gift.",
         "system": "Once the character begins her journey, the player rolls Stamina + Rituals, difficulty 7. The Crowning leads any companions traveling with her in a song of the oldest times, of smoking mountains and gods that walk in thunder. The group passes in and out of the world as in a dream, bypassing oceans as though the land were connected as it was in the days of Pangaea.",
@@ -217,7 +217,7 @@
         "splat": "Shifter",
         "auspice": "Eclipsed Sun"
     },
-    "Find Land": {
+    {
         "name": "Find Land",
         "description": "By focusing his attention onto the balance of land and water, the Mokole can locate the nearest fixed land amidst the water of swamp or sea. This Gift is taught by a Turtle spirit.",
         "system": "The player makes a Perception + Survival roll, difficulty 6. One success indicates the direction of the land. Three successes indicate the distance. Five allow the Mokole to tell whether the land is dangerous or contaminated.",
@@ -229,7 +229,7 @@
         "shifter_type": "Mokole",
         "splat": "Shifter"
     },
-    "Find Water": {
+    {
         "name": "Find Water",
         "description": "As the Gift: Find Land, save that the Mokole can find water within twenty miles, and likewise tell if the water is contaminated if he achieves enough successes. This Gift is taught by a Lizard spirit.",
         "system": "The player makes a Perception + Survival roll, difficulty 6. One success indicates the direction of water. Three successes indicate the distance. Five allow the Mokole to tell whether the water is contaminated.",
@@ -241,7 +241,7 @@
         "shifter_type": "Mokole",
         "splat": "Shifter"
     },
-    "Sense Moon": {
+    {
         "name": "Sense Moon",
         "description": "This Gift enables the user to detect a child of the moon - usually a fellow shapechanger (save for Corax, Ananasi, or Nuwisha).",
         "system": "The player rolls Perception + Occult, difficulty 7. With three successes, he can tell what kind of moon creature is involved; five successes allows a rough estimate of rank and abilities. This Gift is taught by a Sun spirit.",
@@ -253,7 +253,7 @@
         "shifter_type": "Mokole",
         "splat": "Shifter"
     },
-    "Tailbiter's Mumble": {
+    {
         "name": "Tailbiter's Mumble",
         "description": "The Mokole may bite her tail in her mouth and roll any distance desired as quickly as her human form runs. This gift is taught by Hoopsnake.",
         "system": "The Mokole must be in Suchid or Archid, and spend a Willpower point; apart from that the movement bonuses are automatic.",
@@ -265,7 +265,7 @@
         "shifter_type": "Mokole",
         "splat": "Shifter"
     },
-    "Talk": {
+    {
         "name": "Talk",
         "description": "This Gift permits the Mokole to speak with any human language he knows while in Suchid or Archid form. This Gift is taught by a Bird spirit.",
         "system": "No roll is necessary; the Mokole becomes automatically capable of speech in all forms. With a successful Mnesis roll, difficulty 8, the Mokole can also speak any other Fera's languages for the duration of a scene.",
@@ -277,7 +277,7 @@
         "shifter_type": "Mokole",
         "splat": "Shifter"
     },
-    "Axis Mundi": {
+    {
         "name": "Axis Mundi",
         "description": "By attuning himself to the land, the Mokole can learn precisely where Sun is in relation to Earth. A Sun spirit teaches this Gift.",
         "system": "The player spends a Gnosis point; the Gift automatically grants knowledge of the exact time, season, the Mokole's placement on the Earth, and the direction that he's facing.",
@@ -289,7 +289,7 @@
         "shifter_type": "Mokole",
         "splat": "Shifter"
     },
-    "Stinking Breath": {
+    {
         "name": "Stinking Breath",
         "description": "The Mokole can breathe out stinking gasses that repel anything that breathes, making them flee. This Gift is taught by a Garbage spirit or a Monitor Lizard spirit.",
         "system": "The Mokole spends a Gnosis point and breathes on her enemies. Air-breathing creatures (obviously the undead are immune) are repelled by the smell and try to flee the encounter, unless they successfully make an opposed Gnosis roll against the Mokole's Gnosis.",
@@ -301,7 +301,7 @@
         "shifter_type": "Mokole",
         "splat": "Shifter"
     },
-    "Tides of Lust": {
+    {
         "name": "Tides of Lust",
         "description": "This Gift is most common among the Gila monsters and Mexican beaded lizards of the American Southwest, the Unktehi who learn it from a Rooster spirit. It gives them power over the tides within someone's body.",
         "system": "The Mokole begins to dance and rolls Rites + Expression, difficulty 7. If the target already loves someone else, the difficulty is 8, or 9 if the target is very old or attracted to the the opposite of your own gender. The number of successes determines the number of hours that the person will be unnaturally lusty. Impotence, if any, disappears, the target becomes fertile if ordinarily sterile (unless the target is Metis, of course), and the target also becomes a little more open-minded about potential partners. Even so, the Mokole must still seduce the person through roleplaying, as the Gift does not plant obvious desire - it merely removes barriers.",
@@ -313,7 +313,7 @@
         "shifter_type": "Mokole",
         "splat": "Shifter"
     },
-    "Waxwork Monster": {
+    {
         "name": "Waxwork Monster",
         "description": "Brought to light recently by the Shining, this Gift lets a Mokole take advantage of the fact that 'dinosaurs are extinct' to hide in plain sight even in Archid form. Essentially, the Mokole takes on the appearance of a model or dummy. A Tatara spirit teaches this Gift.",
         "system": "The Mokole spends a Gnosis point and rolls Stamina + Expression. For each success, he can freeze in place for one hour unnoticed by anyone. In Suchid form, he appears to be a stuffed crocodile; in Homid form, he seems to be a mannequin or waxwork. In Archid form the Mokole appears to be a life-size fiberglass or cement dinosaur model, but cannot cause the Delirium unless he moves or speaks. Some Shining will even carry around a small label, designating the species of dinosaur that they are supposed to be. Of course, the 'statue' will arouse suspicion if there is not supposed to be a statue in the place where the Mokole is hiding. Whole clutches have concealed themselves this way as roadside attractions and the like.",
@@ -325,7 +325,7 @@
         "shifter_type": "Mokole",
         "splat": "Shifter"
     },
-    "Bark of the Mudpuppy": {
+    {
         "name": "Bark of the Mudpuppy",
         "description": "This Gift allows the Mokole to bark loudly at any one person or object, shattering glass, splintering light wood or even opening wounds on a living being. This Gift is taught by a Mudpuppy.",
         "system": "The bark does one health level of aggravated damage, but automatically strikes its target. There is no actual cost.",
@@ -337,7 +337,7 @@
         "shifter_type": "Mokole",
         "splat": "Shifter"
     },
-    "Dragonfear": {
+    {
         "name": "Dragonfear",
         "description": "This Gift invokes an aura of menace so terrible that the Mokole's Archid form is capable of inducing the night-fear in any creatures, supernatural or otherwise. This Gift is taught by Dragon.",
         "system": "The Mokole spends a Rage point to invoke the fear for one scene; all witnesses become subject to the Delirium. Note that the other creatures may roll Wits + Occult to move up the Delirium Chart as usual. However, creatures created to be immune to Delirium, such as fomori, can still experience the effects of Delirium when this Gift is used.",
@@ -349,7 +349,7 @@
         "shifter_type": "Mokole",
         "splat": "Shifter"
     },
-    "Call the Tides": {
+    {
         "name": "Call the Tides",
         "description": "This Gift makes the Mokole able to bend the tides to his will. The Gift is taught by Tidekeeper.",
         "system": "The Mokole must be in sight of a tidal body of water (ocean, sea, river, estuary). The player then makes a Gnosis roll, difficulty of 8. The number of successes determines the result: 1 success - The tides come in or go out twice as fast as usual. 2 successes - Tides can be reversed, and will come in instead of go out, or vice versa. 3 successes - High tide or low tide can be brought in one scene. 4 successes - Unusual tides (spring or neap tide) can be brought in one scene. 5+ successes - Freakish tides (i.e. 30' tides in Florida) can occur in one scene.",
@@ -362,7 +362,7 @@
         "splat": "Shifter",
         "auspice": "Rising Sun"
     },
-    "Dragon's Tongue": {
+    {
         "name": "Dragon's Tongue",
         "description": "This enables the Mokole to call lightning down on the target. This gift is taught by a Lightning Bringer.",
         "system": "The player spends a Willpower point and rolls Strength + Intimidation, difficulty 6. Each success inflicts one die of aggravated damage on the target. The difficulty may be increased at the storyteller's option if there is no storm, no clouds, the Mokole is inside, or other unfavorable conditions are present.",
@@ -375,7 +375,7 @@
         "splat": "Shifter",
         "auspice": "Rising Sun"
     },
-    "Armor of the Tortoise": {
+    {
         "name": "Armor of the Tortoise",
         "description": "This Gift enables the Mokole to form a hard shell around his skin while in Archid or Suchid form, protecting himself even further from harm. The gift is taught by a Turtle or Tortoise spirit.",
         "system": "The player rolls Stamina + Primal Urge, difficulty 6; the Mokole must spend a turn in deep concentration. The number of successes is the number of dice added to the dice pool for soak rolls. These dice are in addition to any armor already possessed, but the Gift can be activated only once per scene.",
@@ -388,7 +388,7 @@
         "splat": "Shifter",
         "auspice": "Setting Sun"
     },
-    "View the Seed": {
+    {
         "name": "View the Seed",
         "description": "This Gift comes from the belief that all things are but a dream of the idea or object that birthed them. It allows the user to see the 'seed' of anything, from the parents of a child to the mastermind of a plot. Note that some things result from a growth of several 'seeds'. A Mokole looking at America, for instance, could see any number of things (John Locke in his study, Native Americans planting maize, Africans bought with Boston rum...). The Gumagan are most likely to learn this Gift, which is taught by Finch.",
         "system": "The Mokole rolls Perception + Mnesis, difficulty 7. If the thing to be seen is outside the Mnesis of the Mokole's line, the difficulty is 8. In the case of truly alien causes and effects, the difficulty could be 9 (Vhujunka plotting to sail into the Deep Umbra, etc.)",
@@ -400,7 +400,7 @@
         "shifter_type": "Mokole",
         "splat": "Shifter"
     },
-    "Walk the Matre's Mind": {
+    {
         "name": "Walk the Matre's Mind",
         "description": "Similar to the Gift: Dream the Matre's Mind, this Gift lets the Mokole actually enter the astral realm, the Deep Umbra, in physical form. Alternately, if she is already astral, she can remove her cord relatively safely. The use of this Gift is rare, as fewer Mokole are versed in it, but it allows the Mokole to enter the embodiment of Gaia's memory without leaving a helpless body behind and without a silver cord. Some Mokole postulate that the silver cord becomes invisible, but is still there. This Gift is taught only by various spirits familiar with the Deep Umbra.",
         "system": "No roll is needed; the effects are automatic. A Mokole who has used the Gift: Dream the Matre's Mind and passes into the High Umbra may use Walk the Matre's Mind to remove her silver cord and continue. If she does this, she must make sure to return before her body suffers too greatly: Her Stamina is the number of scenes she will be able to voyage (at the Storyteller's discretion).",
@@ -413,7 +413,7 @@
         "splat": "Shifter",
         "auspice": "Shrouded Sun"
     },
-    "Walk into My Eyes": {
+    {
         "name": "Walk into My Eyes",
         "description": "This powerful Gift allows weakness to become strength. The Mokole have been endlessly persecuted: Under some circumstances, this can be an advantage. An Ancestor spirit teaches this Gift.",
         "system": "The Mokole stares into the eyes of a foe and rolls Mnesis. The difficulty is 5 for a relative (including Nagah, Corax, and Kin), 7 for a being who shares even one common ancestor (anyone born human, any saurian and any Changer), and 9 for something completely alien. For each success, the foe is overwhelmed for one turn by memory as he sees all of life from the Mokole's point of view. During this time he will not attack the Mokole (although he may defend himself if attacked) and will not be able to use any specific Gifts or powers of his own kind (such as Garou-only Gifts, shapeshifting, or vampiric Disciplines). After returning to himself, the target is often profoundly changed. Reactions vary: Garou have withdrawn into eternal Harano, while a Sabbat Priscus blessed by this Gift ended his unlife after seeing what he had lost centuries ago. The Storyteller should determine fairly what each target would do.",
@@ -426,7 +426,7 @@
         "splat": "Shifter",
         "varna": "Mokole-mbembe"
     },
-    "Songlines": {
+    {
         "name": "Songlines",
         "description": "This Gift covers the landscape with songs. The Gumagan can navigate from one end of Bandaiyan to the other using legends. This Gift is taught by an Ancestor spirit.",
         "system": "The Gumagan sets out on a journey and begins the Song. He rolls Gnosis and adds to the number of successes the number of sacred songs he knows. The difficulty is 6 in his tribe's territory, 7 outside. In lands other than Bandaiyan, it is 10. The number of successes is the number of times by which the distance is divided when calculating the length of the trip.",
@@ -439,7 +439,7 @@
         "splat": "Shifter",
         "varna": "Gumagan"
     },
-    "Dreamwalk": {
+    {
         "name": "Dreamwalk",
         "description": "The Gumagan may use her connection to the Dreamtime to lower the Gauntlet. A Dreamtime spirit teaches this Gift.",
         "system": "The Gumagan must concentrate on the spirit for a full turn; for the duration of the very next turn, the local Gauntlet is lowered by 2.",
@@ -452,7 +452,7 @@
         "splat": "Shifter",
         "varna": "Gumagan"
     },
-    "Bunyip's Boom": {
+    {
         "name": "Bunyip's Boom",
         "description": "The Gumagan may reach into Mnesis and imitate the mournful cry of the Bunyip. This Gift is taught by servants of Mu-ru-bul Tu-ru-ban the Bunyip.",
         "system": "The Gumagan spends one Gnosis point and rolls Charisma + Performance, difficulty 7. Anyone who hears this roaring noise loses a number of Willpower points equal to the number of successes scored by the Gumagan. Many foes will flee on hearing the echos of the land's past.",
@@ -465,7 +465,7 @@
         "splat": "Shifter",
         "varna": "Gumagan"
     },
-    "Landspeak": {
+    {
         "name": "Landspeak",
         "description": "The Aboriginal folk of Bandaiyan know the land as a series of interconnected songlines, the Ways of the Law. By listening carefully, Gumagan can hear the songs of the earth. A servant of Ngalyod the Rainbow Serpent teaches this Gift.",
         "system": "The Gumagan puts his ear to the ground or into a waterhole. He then makes a Gnosis roll, difficulty 6. The number of successes is the number of miles within which he can hear the Song. He will know what the Earth thinks of events on its surface within this area. If he makes a Mnesis roll instead, he can hear echoes of the past. Note that this Gift is not considered eavesdropping, but rather overhearing the Earth's commentary.",
@@ -478,7 +478,7 @@
         "splat": "Shifter",
         "varna": "Gumagan"
     },
-    "Nightmare Mnesis": {
+    {
         "name": "Nightmare Mnesis",
         "description": "The Gumagan can overcome any foe with Mnesis, forcing them to remember the atrocities committed on the Aboriginal peoples and the animals of the land. This Gift is taught by a Bunyip ghost.",
         "system": "The Gumagan looks into her foe's eyes and makes a Mnesis roll, difficulty of the opponent's Willpower. If she succeeds, the foe will remember lifetimes of slaughter, torture, rape and defilement. He must make a Willpower check, difficulty 7, or fall into despair (usually Harano). Many people who have been struck by this Gift have harmed themselves or sought to atone for the crimes they recall.",
@@ -491,7 +491,7 @@
         "splat": "Shifter",
         "varna": "Gumagan"
     },
-    "Billabong Walk": {
+    {
         "name": "Billabong Walk",
         "description": "The Gumagan goes into any body of water suitable for his varna (fresh or salt for salties, waterholes or streams for perenty) and emerges from another. He must have bathed in the water where he plans to emerge before using this Gift. This Gift is taught by servants of the Bunyip.",
         "system": "The Gumagan submerges himself entirely and spends two Gnosis. Then reappears in the target body of water.",
@@ -504,7 +504,7 @@
         "splat": "Shifter",
         "varna": "Gumagan"
     },
-    "Bloody-Mindedness": {
+    {
         "name": "Bloody-Mindedness",
         "description": "The Gumagan can 'point herself' at a chosen goal or foe, a 'life-enemy'. She will pursue this goal until death and beyond. A servant of Mu-ru-bul Tu-ru-dan the Bunyip teaches this Gift.",
         "system": "The Gumagan must spend a permanent point of Willpower to activate this Gift. Once activated, the Gumagan gains an extra die on all rolls related to pursuing their chosen goal or enemy. This bonus lasts until either the goal is achieved or the Gumagan dies.",
@@ -517,7 +517,7 @@
         "splat": "Shifter",
         "varna": "Gumagan"
     },
-    "The Thousand Arrows": {
+    {
         "name": "The Thousand Arrows",
         "description": "This Gift allows a Makara marksman to greatly multiply his missiles in mid-flight; an archer can send a swarm of arrows, and a machine gun spits forth a cloud of bullets. This Gift is taught by a Wasp Spirit.",
         "system": "The Makara spends one Gnosis and one Rage. Whatever firearm, bow, crossbow or hurled weapon he is using gains the benefits of firing full auto (Werewolf, pg 230), but the difficulty to hit is raised by two rather than 3.",
@@ -530,7 +530,7 @@
         "splat": "Shifter",
         "varna": "Makara"
     },
-    "Beak of the Finch": {
+    {
         "name": "Beak of the Finch",
         "description": "This Gift is taught by Finch, the master of adaptation. Finch helps Mokole adapt to new situations in order to survive. They do so by reshaping themselves into a form which can accomplish a goal.",
         "system": "The Mokole spends a Gnosis point and rolls Mnesis + Survival. She then exerts herself toward the desired change. To grow fins, she jumps into water and starts paddling. To grow a long neck she would stretch. This gift cannot create anything new, but can adapt existing body parts to new situations. Arms could grow into wings, but a new pair of limbs would not appear from nowhere. Likewise, lungs could become gills, but to breathe air again, the Mokole would have to change back. The effects last for one scene per Gnosis point spent.",
@@ -543,7 +543,7 @@
         "splat": "Shifter",
         "varna": "Mokole-mbembe"
     },
-    "Heat Wave": {
+    {
         "name": "Heat Wave",
         "description": "The Mokole can bring the heat of Lord Sun to burn his enemies. Many can stand chill, but no living thing can stand endless heat. A Sun spirit teaches this Gift.",
         "system": "The Mokole dances the Steps of the Sun and spends 1 Gnosis. She then rolls Wits + Expression, difficulty 5 if it is warm, 6 if it is cool, and 8 if it is cold. If below freezing, the difficulty is 9. The difficulty drops by 1 for each hour of dancing and increases by 1 if the Mokole cannot dance except with hand motions (due to injury or imprisonment). For each success, one mile of territory surrounding the Mokole is heated to heatwave temperatures (103 degrees Fahrenheit). Any creature vulnerable to heat will lose one die from their dice pools per hour. The effects last for one hour per point of Gnosis spent. They cannot last for more than one hour after sunset.",
@@ -556,7 +556,7 @@
         "splat": "Shifter",
         "varna": "Mokole-mbembe"
     },
-    "Chi'ih Ming": {
+    {
         "name": "Chi'ih Ming",
         "description": "Chi'ih Ming is an old word meaning balloon, and using this Gift, a Mokole may walk on air at a normal walking pace. A Bird spirit teaches this Gift.",
         "system": "The character spends a Gnosis point and rolls Dexterity + Athletics. One success is enough to activate this Gift.",
@@ -569,7 +569,7 @@
         "splat": "Shifter",
         "varna": "Zhong Lung"
     },
-    "Sleep of Si Wang Mu": {
+    {
         "name": "Sleep of Si Wang Mu",
         "description": "As the Mokole Noonday Sun Gift: Sleep of the Dragon, but the Zhong Lung must sleep in a cave or mountain.",
         "system": "The Mokole may enter the sleep as an act of will. If she sleeps for longer than the duration of one story, she regains all her spent Gnosis. The Zhong Lung must be in a cave or mountain location to use this Gift.",
@@ -581,5 +581,42 @@
         "shifter_type": "Mokole",
         "splat": "Shifter",
         "varna": "Zhong Lung"
+    },
+    {
+        "name": "Spirits of Laughter",
+        "description": "The Mokole can invoke spirits of good humor, lightening everyone's mood. A mockingbird-spirit teaches this Gift.",
+        "system": "The Mokole spends one Gnosis point. For the rest of the scene, all Rage rolls are made at +2 difficulty, and everyone finds it very difficult to become upset or out-of-sorts about anything.",
+        "source": "Mokole BB",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [1],
+        "shifter_type": "Mokole",
+        "splat": "Shifter",
+        "varna": "Mockingbird"
+    },
+    {
+        "name": "Breaking the Tomorrow Wall",
+        "description": "The Mokole swims upstream through the river of Mnesis, catching vague glimpses of the future. A crane-spirit teaches this Gift.",
+        "system": "The Mokole spends one Gnosis point and rolls Perception + Enigmas, difficulty 6. The Mokolé gains one vague insight of the Storyteller's choice per success",
+        "source": "Mokole BB",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [2],
+        "shifter_type": "Mokole",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Fool's Luck",
+        "description": "This Gift grants temporary immunity to bad luck. A rabbit-spirit teaches it.",
+        "system": "The player spends one Gnosis point. The character cannot botch any rolls until the sun next rises; treat any botches as normal failures.",
+        "source": "Mokole BB",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [4],
+        "shifter_type": "Mokole",
+        "splat": "Shifter"
     }
-}
+]

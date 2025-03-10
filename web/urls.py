@@ -71,3 +71,6 @@ urlpatterns = custom_patterns + [
 # Add this at the end of the file, after urlpatterns definition
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Add the new markdown rendering URL
+urlpatterns.append(path('characters/render-markdown/<str:key>/<str:dbref>/', views.render_markdown, name='character-render-markdown'))

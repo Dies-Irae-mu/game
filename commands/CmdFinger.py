@@ -108,19 +108,20 @@ class CmdFinger(MuxCommand):
             # Clean up the search term by removing quotes
             search_term = self.args.strip("'\"").strip()
             
-            # First try direct name match - remove typeclass restriction to find offline characters
-            target = self.caller.search(search_term, global_search=True, quiet=True)
+            # First try direct name match, restricting to Character typeclass
+            target = self.caller.search(search_term, global_search=True, typeclass=Character)
             
-            # If search returns a list, get first match if available
-            if isinstance(target, list):
-                target = target[0] if target else None
-                
-            # If no direct match, try alias
+            # If no direct match or search failed, try alias
             if not target:
                 target = Character.get_by_alias(search_term.lower())
 
             if not target:
-                self.caller.msg(f"This character does not exist.")
+                self.caller.msg(f"Could not find a character named '{search_term}'.")
+                return
+            
+            # Double check that we have a Character
+            if not isinstance(target, Character):
+                self.caller.msg(f"'{search_term}' is not a valid character.")
                 return
 
         # Get basic character info - modified to handle None case

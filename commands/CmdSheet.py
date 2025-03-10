@@ -11,6 +11,7 @@ from itertools import zip_longest
 from evennia.utils.ansi import strip_ansi
 from world.wod20th.utils.sheet_constants import KNOWLEDGES, SECONDARY_KNOWLEDGES, SECONDARY_SKILLS, SECONDARY_TALENTS, SKILLS, TALENTS
 from typeclasses.characters import Character
+from utils.search_helpers import search_character
 # Core utilities
 from world.wod20th.utils.formatting import format_stat, header, footer, divider, format_abilities, format_secondary_abilities
 from world.wod20th.utils.virtue_utils import calculate_willpower, calculate_path, PATH_VIRTUES
@@ -89,22 +90,8 @@ class CmdSheet(MuxCommand):
         if not name:
             return self.caller
             
-        # Try direct name match first
-        chars = self.caller.search(name, global_search=True,
-                               typeclass='typeclasses.characters.Character',
-                               quiet=True)
-        
-        # Handle if search returns a list
-        character = chars[0] if isinstance(chars, list) else chars
-        
-        # If no direct match, try alias
-        if not character:
-            try:
-                character = Character.get_by_alias(name.lower())
-            except Exception:
-                pass
-                
-        return character
+        # Use our search_character helper
+        return search_character(self.caller, name)
 
     def can_view_sheet(self, character):
         """
@@ -370,6 +357,17 @@ class CmdSheet(MuxCommand):
         string += divider("Social", width=25, fillchar=" ") + " "
         string += divider("Mental", width=25, fillchar=" ") + "\n"
 
+        # Get current form and its modifiers if any
+        current_form = character.db.current_form if hasattr(character.db, 'current_form') else None
+        form_modifiers = {}
+        if current_form:
+            try:
+                from world.wod20th.models import ShapeshifterForm
+                form = ShapeshifterForm.objects.get(name=current_form)
+                form_modifiers = form.stat_modifiers
+            except Exception:
+                form_modifiers = {}
+
         # Format each row of attributes
         rows = [
             (
@@ -394,20 +392,30 @@ class CmdSheet(MuxCommand):
         clan = character.get_stat('identity', 'lineage', 'Clan', temp=False) or ''
         is_zero_appearance_clan = clan.lower() in zero_appearance_clans
 
-        current_form = character.db.current_form if hasattr(character.db, 'current_form') else None
         zero_appearance_forms = ['crinos', 'anthros', 'arthren', 'sokto', 'chatro']
         is_zero_appearance_form = current_form and current_form.lower() in zero_appearance_forms
 
         for row in rows:
             row_string = ""
             for attr, category in row:
-                if attr == 'Appearance' and (is_zero_appearance_clan or is_zero_appearance_form):
-                    row_string += format_stat(attr, 0, default=0, tempvalue=0, allow_zero=True, width=25)
-                else:
-                    # Get both permanent and temporary values
-                    perm_value = character.db.stats.get('attributes', {}).get(category, {}).get(attr, {}).get('perm', 1)
-                    temp_value = character.db.stats.get('attributes', {}).get(category, {}).get(attr, {}).get('temp', perm_value)
-                    row_string += format_stat(attr, perm_value, default=1, tempvalue=temp_value, width=25)
+                # Get permanent value
+                perm_value = character.db.stats.get('attributes', {}).get(category, {}).get(attr, {}).get('perm', 1)
+                
+                # Get base temporary value
+                temp_value = character.db.stats.get('attributes', {}).get(category, {}).get(attr, {}).get('temp', perm_value)
+                
+                # Apply form modifier if it exists
+                if form_modifiers and attr in form_modifiers:
+                    form_mod = form_modifiers[attr]
+                    temp_value = max(0, temp_value + form_mod)
+
+                # Special handling for Appearance
+                if attr == 'Appearance':
+                    if is_zero_appearance_clan or is_zero_appearance_form:
+                        temp_value = 0
+                
+                # Format the stat with both permanent and temporary values
+                row_string += format_stat(attr, perm_value, default=1, tempvalue=temp_value, allow_zero=True, width=25)
                 
                 # Add padding for mental attributes
                 if category == 'mental':
@@ -1191,6 +1199,12 @@ class CmdSheet(MuxCommand):
                 value = character.get_stat('virtues', 'moral', virtue, temp=False) or 0
                 temp_value = character.get_stat('virtues', 'moral', virtue, temp=True)
                 self.virtues_list.append(format_stat(virtue, value, width=25, tempvalue=temp_value))
+                
+            # Add path rating for Mortals
+            if splat == 'Mortal':
+                path_rating = character.get_stat('pools', 'moral', 'Path', temp=False) or 0
+                temp_path = character.get_stat('pools', 'moral', 'Path', temp=True)
+                self.virtues_list.append(format_stat('Path', path_rating, width=25, tempvalue=temp_path))
 
         # Handle Vampire and Ghoul virtues and paths
         elif splat == 'Vampire' or (splat == 'Mortal+' and char_type == 'Ghoul'):

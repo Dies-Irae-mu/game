@@ -1,30 +1,27 @@
 """
 Scripts
 
-Scripts are powerful jacks-of-all-trades. They have no in-game
-existence and can be used to represent persistent game systems in some
-circumstances. Scripts can also have a time component that allows them
-to "fire" regularly or a limited number of times.
-
-There is generally no "tree" of Scripts inheriting from each other.
-Rather, each script tends to inherit from the base Script class and
-just overloads its hooks to have it perform its function.
+Scripts are powerful jacks-of-all-trades in the Evennia system,
+and can be used for many different purposes. This is the base
+typeclass for scripts, see evennia.scripts.scripts for more
+info.
 
 """
 
 from evennia.scripts.scripts import DefaultScript
+from world.wod20th.scripts.init_shifter_forms_script import InitShifterFormsScript
 
 
 class Script(DefaultScript):
     """
-    This is the base TypeClass for all Scripts. Scripts describe
-    all entities/systems without a physical existence in the game world
-    that require database storage (like an economic system or
-    combat tracker). They
-    can also have a timer/ticker component.
+    This is the base typeclass for all Scripts. Scripts describe events,
+    timers and states in game, they can have a time component or trigger
+    particular actions. They are what is generally called "cron jobs",
+    "daemons" or "services" in other systems.
 
-    A script type is customized by redefining some or all of its hook
-    methods and variables.
+    Note that scripting in Evennia is fully event-driven and based on
+    callbacks - scripts are never called or activated unless they implement
+    a hook method and is registered to be called at that hook time.
 
     * available properties (check docs for full listing, this could be
       outdated).

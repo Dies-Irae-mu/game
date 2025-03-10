@@ -96,14 +96,6 @@
         "values": [1, 2, 3, 4, 5]
     },
     {
-        "name": "Naming",
-        "description": "Mastery of the fundamental essence of things.",
-        "game_line": "Changeling: The Dreaming",
-        "category": "powers",
-        "stat_type": "art",
-        "values": [1, 2, 3, 4, 5]
-    },
-    {
         "name": "Oneiromancy",
         "description": "Dreams and slumber.",
         "game_line": "Changeling: The Dreaming",
@@ -237,6 +229,30 @@
         "game_line": "Changeling: The Dreaming",
         "category": "powers",
         "stat_type": "sliver",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Infusion",
+        "description": "Given sufficient training and materials any changeling can potentially craft all manner of chimerical wonders or even forge astounding Treasures, but those who delve into the magic of Infusion learn how to manipulate the very nature of such objects in ways that cause even seasoned makers to sit up and take notice. As the nockers who pioneered this Art might put it, learning Infusion won't make you a better crafter, but even just mastering some of its basic cantrips opens up a wealth of options and shortcuts that other crafters simply don't have. At its higher levels, Infusion allows a changeling to store precious Glamour for later use, transform items with a touch, and even create sentient chimerical life.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Kyros",
+        "description": "Ice isn't nearly so feared on land as it is in the water, but it can often spell death for the mer. Although this Art was created by the mer, trolls who witness its ice-sculpting beauty often beg to be taught its ways. Its beauty has a double edge to changelings, who sense its connection to the forces of Banality- immobility, rigidity, crystalline symmetry- all too readily",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Storm Craft",
+        "description": "Since the dawn of time, humankind has made offerings to the gods before undergoing an aquatic journey of any sort. The Changelings who know Storm Craft (referred to previously as 'Skycraft' in the book Blood Dimmed Tides), protect it well as they understand the power of this potent Art. Masters of Storm Craft can control the storms that whip the seas into a frenzy and through this, the lives of whoever mayb be traveling there.",
+        "game_line": "Changeling: The Dreaming",
+        "category": "powers",
+        "stat_type": "art",
         "values": [1, 2, 3, 4, 5]
     }
 ]

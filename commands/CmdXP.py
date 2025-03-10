@@ -724,7 +724,9 @@ class CmdXP(default_cmds.MuxCommand):
             STAT_TYPE_TO_CATEGORY, STAT_VALIDATION,
             TALENTS, SKILLS, KNOWLEDGES,
             SECONDARY_TALENTS, SECONDARY_SKILLS, SECONDARY_KNOWLEDGES,
-            UNIVERSAL_BACKGROUNDS,
+            UNIVERSAL_BACKGROUNDS, VAMPIRE_BACKGROUNDS, CHANGELING_BACKGROUNDS, 
+            MAGE_BACKGROUNDS, TECHNOCRACY_BACKGROUNDS, TRADITIONS_BACKGROUNDS, 
+            NEPHANDI_BACKGROUNDS, SHIFTER_BACKGROUNDS, SORCERER_BACKGROUNDS, KINAIN_BACKGROUNDS,
             MERIT_VALUES, RITE_VALUES, FLAW_VALUES,
         )
         from world.wod20th.utils.sheet_constants import (
@@ -741,13 +743,29 @@ class CmdXP(default_cmds.MuxCommand):
 
         # Convert base name to title case for comparison
         base_name = base_name.title()
+
+        # Check pools first (case-insensitive)
+        pool_stats = {
+            'Willpower': 'dual',
+            'Gnosis': 'dual',
+            'Glamour': 'dual',
+            'Arete': 'advantage',
+            'Enlightenment': 'advantage',
+            'Rage': 'dual'
+        }
         
-        # Normalize the name by replacing underscores with spaces
-        normalized_name = base_name.replace('_', ' ')
+        if base_name in pool_stats or any(k.lower() == base_name.lower() for k in pool_stats.keys()):
+            return ('pools', pool_stats.get(base_name) or pool_stats.get(next(k for k in pool_stats if k.lower() == base_name.lower())))
 
         # Check if it's a background (case-insensitive)
         # Try both with spaces and with underscores
-        if any(k.lower() == normalized_name.lower() or k.lower().replace(' ', '_') == normalized_name.lower() for k in UNIVERSAL_BACKGROUNDS):
+        # Check all background lists
+        all_backgrounds = (UNIVERSAL_BACKGROUNDS + VAMPIRE_BACKGROUNDS + 
+                         CHANGELING_BACKGROUNDS + MAGE_BACKGROUNDS + 
+                         TECHNOCRACY_BACKGROUNDS + TRADITIONS_BACKGROUNDS + 
+                         NEPHANDI_BACKGROUNDS + SHIFTER_BACKGROUNDS + 
+                         SORCERER_BACKGROUNDS + KINAIN_BACKGROUNDS)
+        if any(k.lower() == base_name.lower() or k.lower().replace(' ', '_') == base_name.lower() for k in all_backgrounds):
             return ('backgrounds', 'background')
 
         # Check if it's a merit (case-insensitive)
@@ -803,10 +821,6 @@ class CmdXP(default_cmds.MuxCommand):
             return ('secondary_abilities', 'secondary_skill')
         elif case_insensitive_in(base_name, SECONDARY_KNOWLEDGES):
             return ('secondary_abilities', 'secondary_knowledge')
-
-        # Check backgrounds
-        if case_insensitive_in(base_name, UNIVERSAL_BACKGROUNDS):
-            return ('backgrounds', 'background')
 
         # Check powers
         for power_type in POWERS:
@@ -910,8 +924,8 @@ class CmdXP(default_cmds.MuxCommand):
                 'max_without_approval': 5
             },
             'pools': {
-                'base': 8,
-                'multiplier': 'new',
+                'base': 2,  # Default multiplier for most pools
+                'multiplier': 'current',  # Will be overridden for specific pools
                 'max_without_approval': 10
             }
         }
@@ -924,13 +938,44 @@ class CmdXP(default_cmds.MuxCommand):
         # Check if new rating exceeds limit
         requires_approval = new_rating > cost_settings['max_without_approval']
 
-        # Calculate base cost
-        if cost_settings['multiplier'] == 'new':
-            # Cost is base * new rating
-            total_cost = cost_settings['base'] * new_rating
+        # Calculate total cost
+        total_cost = 0
+        
+        # Special handling for pools
+        if category == 'pools':
+            # Get proper case for stat name for comparison
+            proper_stat_name = self._get_proper_stat_name(stat_name, category, subcategory)
+            
+            # Define pool-specific costs
+            pool_costs = {
+                'Willpower': {'base': 2, 'multiplier': 'current'},      # Current Rating x 2
+                'Path': {'base': 2, 'multiplier': 'current'},           # Current Rating x 2
+                'Rage': {'base': 1, 'multiplier': 'current'},           # Current Rating x 1
+                'Gnosis': {'base': 2, 'multiplier': 'current'},         # Current Rating x 2
+                'Arete': {'base': 8, 'multiplier': 'current'},          # Current Rating x 8
+                'Enlightenment': {'base': 8, 'multiplier': 'current'},  # Current Rating x 8
+                'Glamour': {'base': 3, 'multiplier': 'current'}         # Current Rating x 3
+            }
+
+            # Get cost settings for this specific pool
+            pool_cost = pool_costs.get(proper_stat_name, {'base': 2, 'multiplier': 'current'})
+            
+            # Calculate cost for each point being purchased
+            total_cost = 0
+            for rating in range(current_rating + 1, new_rating + 1):
+                if pool_cost['multiplier'] == 'current':
+                    total_cost += rating * pool_cost['base']
+                else:
+                    total_cost += pool_cost['base']  # Flat cost if not using current rating
+
         else:
-            # Cost is base * number of increases
-            total_cost = cost_settings['base'] * (new_rating - current_rating)
+            # Use standard calculation for other stats
+            if cost_settings['multiplier'] == 'new':
+                # Cost is base * new rating
+                total_cost = cost_settings['base'] * new_rating
+            else:
+                # Cost is base * number of increases
+                total_cost = cost_settings['base'] * (new_rating - current_rating)
 
         # Special handling for different splats and power types
         if category == 'powers':
@@ -1015,8 +1060,22 @@ class CmdXP(default_cmds.MuxCommand):
         Spend XP to increase a stat.
         Returns (success, message)
         """
-        # Get current rating
-        current_rating = self.get_stat(category, subcategory, stat_name, temp=False) or 0
+        # Get current rating based on category
+        current_rating = 0
+        if category == 'pools':
+            # Get proper case for stat name
+            proper_stat_name = self._get_proper_stat_name(stat_name, category, subcategory)
+            
+            # For pools, we need to check in multiple locations
+            # First check in pools
+            if 'pools' in self.db.stats:
+                current_rating = self.db.stats['pools'].get(proper_stat_name, {}).get('perm', 0)
+            
+            # If not found in pools, check in advantages
+            if current_rating == 0 and 'advantages' in self.db.stats:
+                current_rating = self.db.stats['advantages'].get(proper_stat_name, {}).get('perm', 0)
+        else:
+            current_rating = self.get_stat(category, subcategory, stat_name, temp=False) or 0
 
         # Calculate cost
         cost, requires_approval = self.calculate_xp_cost(
@@ -1045,9 +1104,29 @@ class CmdXP(default_cmds.MuxCommand):
 
         # All checks passed, make the purchase
         try:
-            # Update the stat
-            self.set_stat(category, subcategory, stat_name, new_rating, temp=False)
-            self.set_stat(category, subcategory, stat_name, new_rating, temp=True)
+            # Update the stat based on category
+            if category == 'pools':
+                # Get proper case for stat name
+                proper_stat_name = self._get_proper_stat_name(stat_name, category, subcategory)
+                
+                # Ensure both pools and advantages dictionaries exist
+                if 'pools' not in self.db.stats:
+                    self.db.stats['pools'] = {}
+                if 'advantages' not in self.db.stats:
+                    self.db.stats['advantages'] = {}
+                
+                # Update in both locations to ensure compatibility
+                self.db.stats['pools'][proper_stat_name] = {
+                    'perm': new_rating,
+                    'temp': new_rating
+                }
+                self.db.stats['advantages'][proper_stat_name] = {
+                    'perm': new_rating,
+                    'temp': new_rating
+                }
+            else:
+                self.set_stat(category, subcategory, stat_name, new_rating, temp=False)
+                self.set_stat(category, subcategory, stat_name, new_rating, temp=True)
 
             # Deduct XP
             self.db.xp['current'] -= cost
@@ -1057,7 +1136,7 @@ class CmdXP(default_cmds.MuxCommand):
             spend_entry = {
                 'type': 'spend',
                 'amount': float(cost),
-                'stat_name': stat_name,
+                'stat_name': proper_stat_name if category == 'pools' else stat_name,
                 'previous_rating': current_rating,
                 'new_rating': new_rating,
                 'reason': reason,
@@ -1068,7 +1147,7 @@ class CmdXP(default_cmds.MuxCommand):
                 self.db.xp['spends'] = []
             self.db.xp['spends'].insert(0, spend_entry)
 
-            return True, f"Successfully increased {stat_name} from {current_rating} to {new_rating} (Cost: {cost} XP)"
+            return True, f"Successfully increased {proper_stat_name if category == 'pools' else stat_name} from {current_rating} to {new_rating} (Cost: {cost} XP)"
 
         except Exception as e:
             return False, f"Error processing purchase: {str(e)}"
@@ -1079,8 +1158,10 @@ class CmdXP(default_cmds.MuxCommand):
         from world.wod20th.utils.stat_mappings import (
             TALENTS, SKILLS, KNOWLEDGES,
             SECONDARY_TALENTS, SECONDARY_SKILLS, SECONDARY_KNOWLEDGES,
-            UNIVERSAL_BACKGROUNDS,
-            MERIT_VALUES, RITE_VALUES, FLAW_VALUES
+            UNIVERSAL_BACKGROUNDS, VAMPIRE_BACKGROUNDS, CHANGELING_BACKGROUNDS,
+            MAGE_BACKGROUNDS, TECHNOCRACY_BACKGROUNDS, TRADITIONS_BACKGROUNDS,
+            NEPHANDI_BACKGROUNDS, SHIFTER_BACKGROUNDS, SORCERER_BACKGROUNDS,
+            KINAIN_BACKGROUNDS, MERIT_VALUES, RITE_VALUES, FLAW_VALUES
         )
         from world.wod20th.utils.sheet_constants import (
             POWERS
@@ -1096,9 +1177,20 @@ class CmdXP(default_cmds.MuxCommand):
 
         # Check backgrounds first
         if category == 'backgrounds':
+            # First check universal backgrounds
             proper_name = find_proper_key(stat_name, UNIVERSAL_BACKGROUNDS)
             if proper_name:
                 return proper_name
+                
+            # Then check splat-specific backgrounds
+            # Note: The actual splat check is done in validate_xp_purchase
+            # Here we just want to find the proper name if it exists in any background list
+            for bg_list in [VAMPIRE_BACKGROUNDS, CHANGELING_BACKGROUNDS, MAGE_BACKGROUNDS,
+                          TECHNOCRACY_BACKGROUNDS, TRADITIONS_BACKGROUNDS, NEPHANDI_BACKGROUNDS,
+                          SHIFTER_BACKGROUNDS, SORCERER_BACKGROUNDS]:
+                proper_name = find_proper_key(stat_name, bg_list)
+                if proper_name:
+                    return proper_name
 
         # Check merits, rites, and flaws
         if category == 'merits':
@@ -1191,11 +1283,25 @@ class CmdXP(default_cmds.MuxCommand):
                 if proper_name:
                     return proper_name
 
-        # Check backgrounds
-        if category == 'backgrounds':
-            proper_name = find_proper_name(stat_name, UNIVERSAL_BACKGROUNDS)
-            if proper_name:
-                return proper_name
+        # Add pool stats to proper name lookup
+        pool_stats = {
+            'willpower': 'Willpower',
+            'gnosis': 'Gnosis',
+            'glamour': 'Glamour',
+            'arete': 'Arete',
+            'enlightenment': 'Enlightenment',
+            'rage': 'Rage'
+        }
+
+        # Check pools
+        if category == 'pools':
+            stat_name_lower = stat_name.lower()
+            if stat_name_lower in pool_stats:
+                return pool_stats[stat_name_lower]
+            # Check if it matches any pool stat case-insensitively
+            for proper_name in pool_stats.values():
+                if proper_name.lower() == stat_name_lower:
+                    return proper_name
 
         # If no match found in predefined lists, return the title-cased version
         return stat_name

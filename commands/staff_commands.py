@@ -10,6 +10,7 @@ from world.wod20th.utils.sheet_constants import (
     SEEMING, PATHS_OF_ENLIGHTENMENT, SECT, AFFILIATION, TRADITION,
     CONVENTION, NEPHANDI_FACTION
 )
+from utils.search_helpers import search_character
 
 class CmdStaffStat(CmdSelfStat):
     """
@@ -38,13 +39,21 @@ class CmdStaffStat(CmdSelfStat):
     def parse(self):
         """Parse the command arguments for staff usage."""
         if not self.args or "=" not in self.args:
-            self.caller.msg("Usage: +staffstat <character>=<stat>[(<instance>)]/<category>:<value>")
+            self.target = None
+            self.stat_name = None
+            self.instance = None
+            self.category = None
+            self.value_change = None
             return
 
         try:
             # Split into character and stat parts
-            character_name, stat_args = self.args.split("=", 1)
-            self.target_name = character_name.strip()
+            target_name, stat_args = self.args.split("=", 1)
+            
+            # Find the target character
+            self.target = search_character(self.caller, target_name.strip())
+            if not self.target:
+                return
 
             # Handle the colon syntax
             if ':' in stat_args:
@@ -102,7 +111,11 @@ class CmdStaffStat(CmdSelfStat):
 
         except Exception as e:
             self.caller.msg(f"|rError parsing command: {str(e)}|n")
+            self.target = None
             self.stat_name = None
+            self.instance = None
+            self.category = None
+            self.value_change = None
 
     def validate_stat_value(self, stat_name: str, value: str, category: str = None, stat_type: str = None) -> tuple:
         """Override validation to handle type conversion while still allowing staff to bypass normal validation rules."""
@@ -135,33 +148,22 @@ class CmdStaffStat(CmdSelfStat):
             self.caller.msg(self.__doc__)
             return
 
-        # Search for target character with global search
-        target = self.caller.search(self.target_name, global_search=True)
-        if not target:
+        if not self.target or not self.stat_name:
+            self.caller.msg("|rUsage: +staffstat <character>=<stat>[(<instance>)]/<category>:<value>|n")
             return
-        
-        # Store the original caller and args
-        original_caller = self.caller
-        original_args = self.args
-        
-        try:
-            # Temporarily set the caller to the target for stat manipulation
-            self.caller = target
-            
-            # Reconstruct the args without the character name part
-            self.args = original_args.split('=', 1)[1]
 
+        try:
             # Basic validation
             if not self.stat_name:
                 self.caller.msg("|rUsage: +staffstat <character>=<stat>[(<instance>)]/<category>:<value>|n")
                 return
 
             # Get character's splat type and character type 
-            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
-            char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+            splat = self.target.get_stat('other', 'splat', 'Splat', temp=False)
+            char_type = self.target.get_stat('identity', 'lineage', 'Type', temp=False)
 
             # If no category/type specified, try to determine it from the stat name
-            if not self.category or not self.stat_type:
+            if not self.category or not hasattr(self, 'stat_type'):
                 # Check secondary abilities first - these are high priority matches
                 if self.stat_name in SECONDARY_TALENTS:
                     self.category = 'abilities'
@@ -211,31 +213,31 @@ class CmdStaffStat(CmdSelfStat):
 
             # Handle stat removal (empty value)
             if self.value_change == '':
-                if stat.category in self.caller.db.stats and stat.stat_type in self.caller.db.stats[stat.category]:
-                    if full_stat_name in self.caller.db.stats[stat.category][stat.stat_type]:
-                        del self.caller.db.stats[stat.category][stat.stat_type][full_stat_name]
+                if stat.category in self.target.db.stats and stat.stat_type in self.target.db.stats[stat.category]:
+                    if full_stat_name in self.target.db.stats[stat.category][stat.stat_type]:
+                        del self.target.db.stats[stat.category][stat.stat_type][full_stat_name]
                         self.caller.msg(f"|gRemoved stat '{full_stat_name}'.|n")
                         return
                 self.caller.msg(f"|rStat '{full_stat_name}' not found.|n")
                 return
 
             # Initialize the stat structure if needed
-            if stat.category not in self.caller.db.stats:
-                self.caller.db.stats[stat.category] = {}
-            if stat.stat_type not in self.caller.db.stats[stat.category]:
-                self.caller.db.stats[stat.category][stat.stat_type] = {}
+            if stat.category not in self.target.db.stats:
+                self.target.db.stats[stat.category] = {}
+            if stat.stat_type not in self.target.db.stats[stat.category]:
+                self.target.db.stats[stat.category][stat.stat_type] = {}
 
             # Clean up any duplicate flaw entries
             if stat.category == 'flaws':
                 # Remove from flaw.flaw if it exists
-                if 'flaw' in self.caller.db.stats and 'flaw' in self.caller.db.stats['flaw']:
-                    if full_stat_name in self.caller.db.stats['flaw']['flaw']:
-                        del self.caller.db.stats['flaw']['flaw'][full_stat_name]
+                if 'flaw' in self.target.db.stats and 'flaw' in self.target.db.stats['flaw']:
+                    if full_stat_name in self.target.db.stats['flaw']['flaw']:
+                        del self.target.db.stats['flaw']['flaw'][full_stat_name]
                         # Clean up empty categories
-                        if not self.caller.db.stats['flaw']['flaw']:
-                            del self.caller.db.stats['flaw']['flaw']
-                        if not self.caller.db.stats['flaw']:
-                            del self.caller.db.stats['flaw']
+                        if not self.target.db.stats['flaw']['flaw']:
+                            del self.target.db.stats['flaw']['flaw']
+                        if not self.target.db.stats['flaw']:
+                            del self.target.db.stats['flaw']
 
             # Set the stat value
             try:
@@ -245,7 +247,7 @@ class CmdStaffStat(CmdSelfStat):
                     new_value = self.value_change.title()
                     
                     # Reset character's stats before setting new splat
-                    self.caller.db.stats = {
+                    self.target.db.stats = {
                         'other': {
                             'splat': {
                                 'Splat': {
@@ -259,25 +261,25 @@ class CmdStaffStat(CmdSelfStat):
                     # Initialize basic stats based on splat type
                     if new_value == 'Shifter':
                         from world.wod20th.utils.shifter_utils import initialize_shifter_type
-                        initialize_shifter_type(self.caller, None)  # Initialize with no type yet
+                        initialize_shifter_type(self.target, None)  # Initialize with no type yet
                     elif new_value == 'Changeling':
                         from world.wod20th.utils.changeling_utils import initialize_changeling_stats
-                        initialize_changeling_stats(self.caller)
+                        initialize_changeling_stats(self.target)
                     elif new_value == 'Vampire':
                         from world.wod20th.utils.vampire_utils import initialize_vampire_stats
-                        initialize_vampire_stats(self.caller, None)  # Initialize with no clan yet
+                        initialize_vampire_stats(self.target, None)  # Initialize with no clan yet
                     elif new_value == 'Mage':
                         from world.wod20th.utils.mage_utils import initialize_mage_stats
-                        initialize_mage_stats(self.caller)
+                        initialize_mage_stats(self.target)
                     elif new_value == 'Mortal+':
                         from world.wod20th.utils.mortalplus_utils import initialize_mortalplus_stats
-                        initialize_mortalplus_stats(self.caller, None)  # Initialize with no type yet
+                        initialize_mortalplus_stats(self.target, None)  # Initialize with no type yet
                     elif new_value == 'Possessed':
                         from world.wod20th.utils.possessed_utils import initialize_possessed_stats
-                        initialize_possessed_stats(self.caller, None)  # Initialize with no type yet
+                        initialize_possessed_stats(self.target, None)  # Initialize with no type yet
                     elif new_value == 'Companion':
                         from world.wod20th.utils.companion_utils import initialize_companion_stats
-                        initialize_companion_stats(self.caller)
+                        initialize_companion_stats(self.target)
                 else:
                     # Normal stat handling
                     # Validate and convert the value
@@ -288,42 +290,42 @@ class CmdStaffStat(CmdSelfStat):
 
                     # Special handling for Type changes - initialize appropriate stats
                     if stat.name == 'Type' and stat.category == 'identity':
-                        old_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+                        old_type = self.target.get_stat('identity', 'lineage', 'Type', temp=False)
                         
                         # Set the new type first
-                        self.caller.db.stats[stat.category][stat.stat_type][full_stat_name] = {
+                        self.target.db.stats[stat.category][stat.stat_type][full_stat_name] = {
                             'perm': new_value,
                             'temp': new_value
                         }
                         
                         # Get the character's splat
-                        splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+                        splat = self.target.get_stat('other', 'splat', 'Splat', temp=False)
                         
                         # Initialize stats based on splat and type
                         if splat == 'Shifter':
                             from world.wod20th.utils.shifter_utils import initialize_shifter_type
-                            initialize_shifter_type(self.caller, new_value)
+                            initialize_shifter_type(self.target, new_value)
                         elif splat == 'Changeling':
                             from world.wod20th.utils.changeling_utils import initialize_changeling_stats
-                            initialize_changeling_stats(self.caller)
+                            initialize_changeling_stats(self.target)
                         elif splat == 'Vampire':
                             from world.wod20th.utils.vampire_utils import initialize_vampire_stats
-                            initialize_vampire_stats(self.caller, None)  # Initialize with no clan yet
+                            initialize_vampire_stats(self.target, None)  # Initialize with no clan yet
                         elif splat == 'Mage':
                             from world.wod20th.utils.mage_utils import initialize_mage_stats
-                            initialize_mage_stats(self.caller)
+                            initialize_mage_stats(self.target)
                         elif splat == 'Mortal+':
                             from world.wod20th.utils.mortalplus_utils import initialize_mortalplus_stats
-                            initialize_mortalplus_stats(self.caller, new_value)
+                            initialize_mortalplus_stats(self.target, new_value)
                         elif splat == 'Possessed':
                             from world.wod20th.utils.possessed_utils import initialize_possessed_stats
-                            initialize_possessed_stats(self.caller, new_value)
+                            initialize_possessed_stats(self.target, new_value)
                         elif splat == 'Companion':
                             from world.wod20th.utils.companion_utils import initialize_companion_stats
-                            initialize_companion_stats(self.caller)
+                            initialize_companion_stats(self.target)
                     else:
                         # Normal stat setting
-                        self.caller.db.stats[stat.category][stat.stat_type][full_stat_name] = {
+                        self.target.db.stats[stat.category][stat.stat_type][full_stat_name] = {
                             'perm': new_value,
                             'temp': new_value
                         }
@@ -332,23 +334,22 @@ class CmdStaffStat(CmdSelfStat):
                 self._update_dependent_stats(full_stat_name, new_value)
 
                 # Log message for staff
-                log_msg = f"{original_caller.name} set {target.name}'s {full_stat_name}"
+                log_msg = f"{self.caller.name} set {self.target.name}'s {full_stat_name}"
                 if hasattr(self, 'value_change') and self.value_change:
                     log_msg += f" to {self.value_change}"
-                original_caller.msg(f"|gSuccess: {log_msg}|n")
+                self.caller.msg(f"|gSuccess: {log_msg}|n")
 
                 # Notify the target player if they're connected
-                if target.has_account and target.sessions.count():
-                    target.msg(f"|w{original_caller.name} adjusted your {self.stat_name} to {self.value_change}.|n")
+                if self.target.has_account and self.target.sessions.count():
+                    self.target.msg(f"|w{self.caller.name} adjusted your {self.stat_name} to {self.value_change}.|n")
 
             except Exception as e:
                 self.caller.msg(f"|rError setting stat: {str(e)}|n")
                 return
 
-        finally:
-            # Restore the original caller and args
-            self.caller = original_caller
-            self.args = original_args
+        except Exception as e:
+            self.caller.msg(f"|rError: {str(e)}|n")
+            return
 
 class CmdFixStats(MuxCommand):
     """
@@ -373,4 +374,55 @@ class CmdFixStats(MuxCommand):
     def func(self):
         """Execute the command."""
         from world.wod20th.management.commands.fix_stats import do_fix_stats
-        do_fix_stats(self.caller, self.args.strip()) 
+        do_fix_stats(self.caller, self.args.strip())
+
+class CmdSetWyrmTaint(MuxCommand):
+    """
+    Set or remove wyrm taint on a character.
+
+    Usage:
+        +wyrm <character> = <on|off>
+
+    Sets or removes the wyrm taint status on a character. This represents
+    corruption by the Wyrm and can be used for various game mechanics.
+    Only staff members can use this command.
+
+    The character can be anywhere in the game - you don't need to be in 
+    the same location.
+    """
+
+    key = "+wyrm"
+    aliases = ["+wyrmtaint"]
+    locks = "cmd:perm(Admin)"
+    help_category = "Staff"
+
+    def func(self):
+        """Execute command."""
+        caller = self.caller
+
+        if not self.args or not self.rhs:
+            caller.msg("Usage: +wyrm <character> = <on|off>")
+            return
+
+        # Use global search to find the target
+        target = caller.search(self.lhs, global_search=True)
+        if not target:
+            return
+
+        # If target is an account, get their character
+        if hasattr(target, 'character'):
+            target = target.character
+
+        option = self.rhs.lower()
+        if option not in ("on", "off"):
+            caller.msg("The option must be either 'on' or 'off'.")
+            return
+
+        if option == "on":
+            target.tags.add("is_wyrm", category="wyrm_taint")
+            caller.msg(f"Added wyrm taint to {target.name}.")
+            target.msg("You have been set as part of the Wyrm sphere.")
+        else:
+            target.tags.remove("is_wyrm", category="wyrm_taint")
+            caller.msg(f"Removed wyrm taint from {target.name}.")
+            target.msg("You are no longer part of the Wyrm sphere.") 

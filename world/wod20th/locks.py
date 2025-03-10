@@ -580,6 +580,16 @@ def tenant(accessing_obj, accessed_obj, *args, **kwargs):
     current_tenants = housing_data.get('current_tenants', {})
     return str(accessing_obj.id) in current_tenants
 
+def has_wyrm_taint(accessing_obj, accessed_obj, *args, **kwargs):
+    """Check if character has the is_wyrm tag."""
+    if hasattr(accessing_obj, 'character'):
+        accessing_obj = accessing_obj.character
+    
+    try:
+        return accessing_obj.tags.get("is_wyrm", category="wyrm_taint")
+    except Exception:
+        return False
+
 # Register all lock functions
 LOCK_FUNCS.update({
     "has_talent": has_talent,
@@ -601,7 +611,8 @@ LOCK_FUNCS.update({
     "has_convention": has_convention,
     "has_nephandi_faction": has_nephandi_faction,
     "subscribed": subscribed,
-    "tenant": tenant
+    "tenant": tenant,
+    "has_wyrm_taint": has_wyrm_taint
 })
 
 def _get_lock_functions():

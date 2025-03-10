@@ -1291,7 +1291,7 @@
     },
     {
         "name": "Techgnosis",
-        "description": "For many lupus-born, mankind’s technology proves difficult to grasp. This Gift allows a wolf in a bind to make use of human devices via the connection to the world afforded by Gnosis. Use of the Gift does not grant actual understanding of the device or system accesses; from an outsider’s perspective the technology simply cooperates with the Garou.",
+        "description": "For many lupus-born, mankind's technology proves difficult to grasp. This Gift allows a wolf in a bind to make use of human devices via the connection to the world afforded by Gnosis. Use of the Gift does not grant actual understanding of the device or system accesses; from an outsider's perspective the technology simply cooperates with the Garou.",
         "system": "The Garou rolls Wits + Primal-Urge (Difficulty 7) and spends a point of Gnosis. For the remainder of the scene, the Garou can substitute her Primal-Urge for rolls calling for Crafts, Drive, Etiquette, Firearms, and Larceny. With the expenditure of a point of Willpower, they can use Primal-Urge in place of Academics, Computer, Law, Science, and Technology rolls.",
         "source": "Howls of Apocalypse W20",
         "game_line": "Werewolf: The Apocalypse",
@@ -1300,6 +1300,19 @@
         "values": [2], 
         "splat": "Shifter",
         "breed": ["lupus"],
+        "shifter_type": ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+    },
+    {
+        "name": "Beastmind",
+        "description": "The werewolf can reduce the mental faculties of his victim to that of an animal for a time. The victim doesn't necessarily become less intelligent, but human thinking (logic, complex tool use, language, and the like) becomes impossible. An avatar of Griffin teaches this Gift.",  
+        "system": "The player rolls Manipulation + Empathy against a difficulty equal to the target's Willpower. The effects last for one minute per success, during which the target behaves like a wild animal. If a point of Rage is spent when directing this Gift at an ordinary human target, its effects last for one day per success.",
+        "source": "Core book revised",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [1, 2],
+        "splat": "Shifter",
+        "tribe": "Red Talons",
         "shifter_type": ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
     }
 ]

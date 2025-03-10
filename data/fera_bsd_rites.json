@@ -14,7 +14,7 @@
         "rite_type": "Seasonal",
         "description": "The Dancers may perform this rite only during the autumn. The rite enables them to see and speak with ghosts for the next three days. Whether they can convince those ghosts to aid them in any way is another matter entirely. This rite also gives its participants a brief chill down their backs when they're dealing with a Spectre as opposed to a normal wraith. The ritemaster spends a Gnosis Trait to activate this rite.",
         "source": "Mind's Eye Theatre: Book of the Wyrm p. 102",
-        "values": [0],
+        "values": [1],
         "category": "powers",
         "stat_type": "rite",
         "splat": "Shifter"
@@ -24,7 +24,7 @@
         "rite_type": "Seasonal",
         "description": "The Dancers use this rite to encourage high pregnancy rates and large litters among their Hives. It primarily consists of sex, but it's a surprisingly solemn rite. The ritemaster spends one Rage Trait to invoke it.",
         "source": "Mind's Eye Theatre: Book of the Wyrm p. 102",
-        "values": [0],
+        "values": [1],
         "category": "powers",
         "stat_type": "rite",
         "splat": "Shifter"
@@ -44,7 +44,7 @@
         "rite_type": "Death",
         "description": "This rite is performed to send off Dancers who have died. Some Dancers only perform it for those who died in battle against the Garou, but most Dancers have widened the use of this rite in the interest of having a good time more often. The rite is meant to push the Dancer along on his journey around the wheel and make sure he comes back soon. It's a wild, raucous party, including drinking, mock battles (that sometimes turn real), sex and possibly the torture and death of prisoners. Some Dancers throw this party to honor particularly difficult-to-kill enemies. The hope is that the rite will push the Garou's spirit toward the right side the next time around.",
         "source": "Mind's Eye Theatre: Book of the Wyrm p. 101",
-        "values": [0],
+        "values": [1],
         "category": "powers",
         "stat_type": "rite",
         "splat": "Shifter"
@@ -54,7 +54,7 @@
         "rite_type": "Death",
         "description": "This rite is performed by any Dancer too sick, wounded or old to serve the tribe, and it is performed alone or only with the Dancer's pack. If a Dancer is sick or old enough that her peers see her as a burden and she refuses to perform this rite herself, her packmates can perform it for her, forcibly holding her down and killing her. Some young pups refer to this rite as the Rite of the Sick Puppy.",
         "source": "Mind's Eye Theatre: Book of the Wyrm p. 159",
-        "values": [0],
+        "values": [1],
         "category": "powers",
         "stat_type": "rite",
         "splat": "Shifter"
@@ -142,7 +142,7 @@
     {
         "name": "Rite of the Opened Eyes",
         "rite_type": "Mystic",
-        "description": "This rite enables the ritemaster to see through the effects of the Rite of the Shrouded Glen. He must still pick where to look, but he must win a Mental Challenge against one-third of the Gnosis spent in the veil‘s creation (rounded down), rather than all of it. This rite requires the expenditure of one Willpower Trait.",
+        "description": "This rite enables the ritemaster to see through the effects of the Rite of the Shrouded Glen. He must still pick where to look, but he must win a Mental Challenge against one-third of the Gnosis spent in the veil's creation (rounded down), rather than all of it. This rite requires the expenditure of one Willpower Trait.",
         "source": "Mind's Eye Theatre: Book of the Wyrm p. 99",
         "values": [2],
         "category": "powers",
@@ -334,39 +334,31 @@
         "rite_type": "Triumvirate",
         "description": "As the garou rite (Breath of Gaia). During this rite the werewolf breathes deeply of the Mother's breath - clean air - 13 times. While so breathing, she clears her mind of all things save her love of Gaia. System: The character must perform this rite at least once per day for one full cycle of the moon. Doing so enables her to lower the difficulty of any one healing or detection roll by two. ",
         "source": "Laws of the Wild: Changing Breeds 3, Pg. 81 / W20 Pg. 220",
-        "values": [0],
-        "shifter_type": "Ananasi",
-        "category": "powers",
-        "stat_type": "rite",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Rite of Binding",
-        "rite_type": "Triumvirate",
-        "description": "As the garou rite. This rite binds a spirit to a werewolf, making it his servant. The more powerful the spirit is, the more difficult the process is. Although any encountered spirit is subject to binding, the Garou generally feel that spirits should be bound only when needed. Binding spirits for excessive lengths of time is generally viewed as callous abuse of those who should be the allies of the Garou. This point doesn't go uncontested, however, particularly by the mystics of the Uktena tribe. Spirits trapped through this rite may be bound into temporary service or into objects to create talens (see p. 227). No spirit allows itself to be bound unless it is friendly to the binding character's totem. Spirits can be bound into objects, places, and people, although the Garou generally don't perform the last feat unless the need is great. Failing this rite can be dangerous, for the spirit is very likely to become hostile and attempt to harm the mystic. System: A Garou can attempt this rite only in the presence of a spirit, and it is usually performed in the Umbra. When attempting to bind a spirit, a Garou must first spend a number of Gnosis points (minimum of one). Each point of Gnosis spent reduces the spirit's Gnosis rating by one. The Garou's player must then roll Willpower (difficulty equals the spirit's adjusted Gnosis). The number of successes indicates how long the spirit may be forced into service, with each success binding the spirit for one week. In the case of a talen, the spirit is bound until the object is used. ",
-        "source": "Laws of the Wild: Changing Breeds 3, Pg. 81 / W20 Pg. 210",
         "values": [1],
         "shifter_type": "Ananasi",
         "category": "powers",
         "stat_type": "rite",
         "splat": "Shifter"
     },
+
     {
-        "name": "Rite of the Questing Stone",
-        "rite_type": "First",
-        "description": "As the garou rite. This rite allows the werewolf to find a person or object (but not a location). She must know the name of the object or individual, and must dangle a stone or needle from a thread while concentrating on the item or person sought. Glass Walkers often use maps and substitute a compass for the traditional stone and thread. System: Standard roll. If the Garou has a piece of the item or individual (a clipping of hair, a piece of cloth) the difficulty drops by one. The werewolf gains only a sense of the object's general location, not its exact position. ",
-        "source": "Laws of the Wild: Changing Breeds 3, Pg. 81 / W20 Pg. 211",
+        "name": "Rite of Spinning",
+        "rite_type": "Mystic",
+        "description": "The first rite learned by any new Ananasi allows her to create her Sylie. Normally placed in a secure corner of her abode, the Sylie appears to be a large cobweb. From within her Sylie, the Ananasi may communicate with the two werespiders closest to her, so long as they are also within their Sylies. She may also receive messages from Queen Ananasa, learn new Gifts, and generally find respite from the world. System: The werespider purifies herself and the chosen area for a week, then rolls Intelligence + Occult (difficulty 9, though each day of ritual fasting and meditation beyond the mandatory week reduces this difficulty by 1). After spending four Gnosis points, the Ananasi may build her Sylie, which exists in both the physical world and the Umbra. Each success lowers the difficulty to crawl sideways in the Sylie by one. ",
+        "source": "Changing Breeds pg. 68",
         "values": [1],
+        "shifter_type": "Ananasi",
         "category": "powers",
         "stat_type": "rite",
         "splat": "Shifter"
     },
     {
-        "name": "Rite of Silence",
-        "rite_type": "First",
-        "description": "As the garou rite. Garou who need to be silent use this rite to make up for any lack in natural ability. For the duration of this rite, the Garou are incapable of making any noise even if they bang on a drum or shatter glass. With the assistance of Ravenspirits, the Garou can sneak through dry underbrush or over a gravel road without making a sound. System: The Garou invoking this rite confines herself in a dark room or cave. She whispers her darkest secret and then utters an oath of silence. Raven-spirits, attracted by her secret, carry any sound she makes into the Umbra once she leaves her confinement. If the werewolf chooses to speak for any reason, the rite ends immediately. The Raven-spirits, disappointed that the Garou did not reveal any more secrets, return the sounds they carried. For several minutes, the Garou is surrounded by a cacophony she created earlier. This rite silences only those sounds the Garou would have made directly. If she were to throw a rock at a window, for instance, the whistle of the rock through the air would be silent, but the shattering glass would not. If she punched the glass with her bare hand, the breaking window would not make a sound. ",
-        "source": "Laws of the Wild: Changing Breeds 3, Pg. 81 / Werewolf Player's Guide 2nd Ed. Pg. 45",
-        "values": [1],
+        "name": "The Master's Needs",
+        "rite_type": "Mystic",
+        "description": "Many Ananasi sit at the center of webs and pull the strings of others to achieve their goals. This rite ensnares humans into the spider's (usually unwilling) service. The Ananasi can only use this rite on a human who has been injected with her venom without her assistance. The spider then spends an hour spinning a web cocoon over the mortal and waits for him to awaken. The Ananasi must wait patiently to see if her rite succeeds. Over a number of days the victim suffers horrific nightmares as his mind fights the venom. System: After each day the victim makes a Willpower roll (difficulty equal to the Ananasi's Gnosis). If he fails, he owes the werespider a service. Regardless of the result, his body heals one health level of the venom's damage after each roll. When the victim has fully healed, he wakes and pushes his way through the cocoon. The werespider can call on a service by spending a Blood Point per service owed by the victim, which cannot be refilled while services are owed. The Ananasi may call upon each service once in one of the following ways: She may use the servant's senses as her own for a scene. She may take control of the servant and direct his actions for a number of turns equal to her Gnosis. The Ananasi uses her own dice pools to resolve tasks, even if they differ from the servant's pools. She may grant the servant the use of one Gift. He instinctively knows how the Gift works but decides when it is used (unless the Ananasi takes control of his actions, using another service). The Gift draws upon the Ananasi's Gnosis and Blood Points when used. She can release the servant from all remaining services. She may use two services give the servant one specific goal that he will try to accomplish however long it takes and regardless of the cost to himself, even if it results in his death. This must be a simple instruction such as 'kill this person', 'break into that facility', 'plant these explosives', or 'protect this person against all harm' ",
+        "source": "Changing Breeds pg. 69",
+        "values": [4],
+        "shifter_type": "Ananasi",
         "category": "powers",
         "stat_type": "rite",
         "splat": "Shifter"
@@ -1219,6 +1211,17 @@
         "splat": "Shifter"
     },
     {
+        "name": "Proprieties of Conduct",
+        "rite_type": "Accord",
+        "description": "The Kitsune serve a central role within the Beast Courts, smoothing tensions between the different Breeds and ensuring visitors to the Courts follow behavioral expectations. This simple rite helps the foxes smooth things over. System: The rite-master addresses a gathering and announces the expected standards of behavior. Among a group of familiar acquaintances this can be as simple as declaring that everyone must observe 'standard norms;' she has to give more detail if guests are present. The rite does not have to be repeated if attendees arrive late; any latecomers remain bound by the rules as long as they remain among the gathering.",
+        "system": "Anyone attempting to breach the agreed etiquette must make a Willpower roll (difficulty 6). At the point that she would make the roll, the transgressor is well aware that she is about to break the rules, and she may choose not to break the accepted etiquette. The rules of polite society also sooth the tempers of everyone - all Rage rolls are made at +2 difficulty.",
+        "values": [2],
+        "category": "powers",
+        "stat_type": "rite",
+        "shifter_type": "Kitsune",
+        "splat": "Shifter"
+    },
+    {
         "name": "Rite of Naming",
         "rite_type": "Mystic",
         "description": "Twitchers have this thing called the Rite of Naming, and honestly I'm kinda jealous. They find a trashcan or garbage bin and toss out a bag of garbage on the ground. Then they grab a piece of garbage at random with words on it, like a wrapper or a can or something. Whatever that trash says, that becomes part of their spirit name. Neat, huh?",
@@ -1417,19 +1420,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Rite of Fetish Egg",
-        "rite_type": "Mystic",
-        "description": "The Rite of the Fetish Egg is about the birds and the bees - well, no bees - and where new Corax come from. You see, when two Corax love each other very much, you know what happens? Nothing. Absolutely nothing. We can't breed with one another. That's why there are no Corax metis. Hell, a new Corax doesn't even have to be the kid of an old Corax. This is a matter of spirit, not genetics, boyo. Spirit's a lot more important. What it can mean, though, is that you can have real parents and spiritual ones, your flesh-and-blood folks as well as the Corax who gave you your spirit egg. Making a spirit egg requires some hefty investment. There's got to be one spiritual parent from each breed, plus someone's got to plunk some serious spiritual gas in order to create the egg and bind it to its other half. The binding is done with a feather or a human hair from the parent and ensures that the egg and the kid/chick stay linked until such time as the kid can handle getting a double dose of soul. If the binding breaks, it devastates the poor kid - autism is the usual response. The parent usually just goes into depression; many lose the Sun right after that sort of thing.",
-        "system": "This rite requires a Corax to make a Gnosis roll (difficulty 7). If successful, the Corax can create a Fetish Egg. This rite can only be cast from an Anchorhead domain.",
-        "source": "Corax Breed Book p. 82",
-        "values": [2],
-        "shifter_type": "Corax",
-        "category": "powers",
-        "stat_type": "rite",
-        "splat": "Shifter"
-
-    },
-    {
         "name": "Rite of the Sun's Bright Ray",
         "rite_type": "Mystic",
         "description": "This one is proof positive Helios is our buddy. When you do this rite, you get a heaping dose of sunshine that brightens up wherever you are. Doesn't matter if you're underground, in a bank vault, in the middle of Club Whiny Vampire - do this rite and it's Here Comes the Sun. And you know what the best thing about the sunlight that you can conjure up with this one? Well, yes, you can tan to it, but that's not the issue. What matters is that this sunlight hits vampires like the real thing, baby. You've just gotta see the look on the face of Vlad Pretentious, Dark Prince of Mount Laurel, New Jersey when you drop a 73 degrees and sunny grenade in his lap. It's priceless. System: This rite has no cost, as it is a symbol of Helios' special favor toward his adopted children. All that is required is the proper steps and chants, and then a Gnosis roll (difficulty 7). The borrowed sunlight fills a volume 20 feet on a side, give or take a few, and lasts one hour for each success on the Gnosis roll. The glow remains behind even after the Corax leaves the area, which can lead to all sorts of awkward situations.",
@@ -1455,12 +1445,12 @@
         "splat": "Shifter"
     },
     {
-        "name": "Rite of Memory Theft",
+        "name": "Eyes of the Flock",
         "rite_type": "Mystic",
-        "description": "If a fellow Corax has repeatedly acted dumber than a box of rocks, there comes a time when you've just got to scrub out the inside of his head and hope that the next pile of garbage he accumulates between his ears is more useful. If someone does something really, really, really dumb, a bunch of the old-timers can pull this rite out of mothballs and wipe his mental hard drive - downloading all the good bits first. Whoever leads the ritual gets the core dump from the sucker, err, target, errr, object of the rite. Meanwhile the victim has his head pretty much wiped of anything more complex than 'Gee, pretty flowers.' Actually, I'm exaggerating a little bit. The rite takes the victim back to right after First Change, meaning that there's a chance that he'll learn things properly the second time. Basic motor skills, language abilities, things like that - they generally tend to stay in place even when the rite goes really well. By the way, it's a good thing this rite's only available to grand poobahs of the breed. Can you imagine the hell that would break loose if Murder's Daughters got a hold of it?",
-        "system": "This rite requires a small, empty wooden box, preferably painted with scenes from the target's life. At least three Corax, including the one performing the rite, must surround the target (who, hopefully, has been subdued or at least restrained). The box is then opened and a litany of the victim's deeds is chanted. As each event is named, the memories of that moment fly from the Corax into the box. Associated memories flee as well, until such time as the Corax' mind is emptied of everything post-First Change. Note that the rite is an all-or-nothing proposition; one cannot use this to excise only certain memories. The Corax performing the rite must then seal and crush the box, at which point, all of the memories contained enter his mind. This is not a burden to be undertaken lightly - the Rite of Memory Theft is only performed when a Corax has done something truly horrendous, and no Corax carries around the memories of another breed's failure or crime lightly. It's one thing to know of another raven's missteps, another thing entirely to make them your own. This rite costs a point each of Gnosis, Willpower and Rage, and lasts as long as it takes to sing all of the deeds of the victim. The rite also calls for a contested Willpower roll between the Corax casting the rite and the target, though each additional Corax present lowers the ritemaster's difficulty by 1. This rite can only be used on other Corax.",
+        "description": "The Corax using this rite can use the eyes of other corvids to see everything.",
+        "system": "When the rite is successfully performed, the rite-master and any other participants can see through the eyes of every raven, crow, rook, and other corvid within (Gnosis) miles. The sensory load is enormous but can be shared among the participants. The Corax leading the rite rolls Perception + Enigmas (difficulty 9, -1 for every two additional participants) to sift through the overwhelming visual input to find what she is looking for.",
         "source": "Corax Breed Book p. 8",
-        "values": [4],
+        "values": [2],
         "shifter_type": "Corax",
         "category": "powers",
         "stat_type": "rite",
@@ -1471,6 +1461,17 @@
         "rite_type": "Need",
         "description": "Even a cat can need a friend. When a spirit and a Bastet come to an understanding, they offer each other a pledge of friendship. This rite seals that bond; while it has no mystic repercussions, it's considered a formal oath and is taken seriously by both parties.",
         "source": "Bastet Pg. 122; Players Guide to the Changing Breeds Pg. 74-75; Laws of the Wild: Changing Breeds 1 Pg. 205",
+        "values": [1],
+        "shifter_type": "Bastet",
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Cat Calls",
+        "rite_type": "Mystic",
+        "description": "The Bastet tend to be solitary, but like to know what other werecats are up to. This rite is one way of keeping each other informed. With it a werecat enciphers his message into the seemingly random movements of nature. Other Bastet who see similar patterns will know the meaning within them. Some Bastet use this rite with non-natural movements, such as the flow of vehicles in heavy traffic or the turning of a ceiling fan. System: The rite-master meditates, bringing the thoughts he wishes to share clearly to his mind and opens his eyes to the movements around him. For each success when activating the rite, the Bastet may place a message in a type of movement - the swirling of long grass, the swaying of tree leaves, or even the shifting shapes of clouds. The message can be anything that could be imparted in about a minute's speech.",
+        "source": "Changing Breeds, pg. 91",
         "values": [1],
         "shifter_type": "Bastet",
         "category": "powers",
@@ -1626,5 +1627,56 @@
         "category": "powers",
         "stat_type": "rite",
         "splat": "Shifter"
-     }
+     },
+     {
+        "name": "Rock Art",
+        "rite_type": "Caern",
+        "description": "The Mokole dream memories of ages long past, but they know that weresaurians are not the only ones who might have need of what they have learned. This rite enriches Mokole artwork with the memories she would share with future generations. Despite the name, she can infuse any form of visual art with her memories. System: The artist rolls Wits + Expression (difficulty 6) with the number of successes indicating the clarity of the memory stored within the art. Any character with a Gnosis trait can experience the memory by spending a point of Gnosis. The Storyteller decides how much information he gains, but even one success is sufficient to communicate the Mokole's basic message.",
+        "values": [3],
+        "shifter_type": "Bastet",
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+     },
+     {
+        "name": "Tapping Ananasa's Wisdom",
+        "rite_type": "Accord",
+        "description": "Mother is knowledge. When the need arises to learn new Gifts, there is only one source to provide them, and that is Ananasa herself. This special rite opens the Ananasi to learning new Gifts through the connection in his Sylie. The Ananasimustsecludehimself inhis Sylie, and begin the ritual to await the Great Mother's attention. If Ananasa grants her attention to the spiderling, then the learning of the Gift can begin. Once Ananasa has brought her attention to the Ananasi, he must practice the Gift until it meets the Great Mother's approval—and Ananasa is a very exacting teacher.",
+        "values": [2],
+        "shifter_type": "Ananasi",
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+     },
+     {
+        "name": "Recorder",
+        "rite_type": "Mystic",
+        "description": "The Ananasi using this rite can create asimple web that acts as a recording device. The webbing is sound-activated and simply records and stores upto one hour of sounds, much like a tape recorder. The webbing can then be 'played' back at any time, and can even be moved before it is used. System: The web is sensitive and 'intelligent' enough not to record random noises, but rather to record what it is made to record, such as conversations, or specific noises like the howls of wolves. Everything else works as per a standard mystic rite.",
+        "values": [2],
+        "shifter_type": "Ananasi",
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+     },
+     {
+        "name": "Rite of Appeal",
+        "rite_type": "Renown",
+        "description": "Though it is Queen Ananasa who decides when a Damhan has reached the proper knowledge and wisdom for an increase in rank, the Ananasi may call to her if they feel they have been overlooked. It's generally considered appropriate to remind Mother that you've been very good lately, especially if you really have been. System: The Ananasi must remain holed away in his Sylie for two days in preparation — fasting and meditating — for the Appeal. Once the time is right, the character Ananasispends two Gnosis to establish a connection to the Mother-Queen and then speaks to Ananasa — who does indeed listen — and recites the list of accomplishments and goals achieved for the further honor and glory of the Mother-Queen. If the character has indeed reached the proper levels of Renown, Queen Ananasa will reward them with the new Gifts and markings that indicate a higher rank. If not, the character may find himself saddled with a new task which will provide no Renown, as punishment for his hubris.",
+        "values": [2],
+        "shifter_type": "Ananasi",
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Song of Home",
+        "rite_type": "Accord",
+        "description": "The first new rite developed by the Ajaba-in-exile tells the story of their homelands and tragedy through song and dance. This rite has three aspects. Remembrance recalls the loss of their homelands. Restoration reaffirms their link with Gaia. Revenge spits curses at the Simba and swears never to forget. Each aspect empowers the Ajaba in a different way. System: The ritemaster chooses which aspect to emphasize and calls the dancers together. If the rite is successful, at its conclusion all participants feel a sense of renewal and regain all spent Willpower (Remembrance), Gnosis (Restoration) or Rage (Revenge).",
+        "values": [3],
+        "shifter_type": "Ajaba",
+        "category": "powers",
+        "stat_type": "rite",
+        "splat": "Shifter"
+    }
 ]
+

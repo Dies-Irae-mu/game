@@ -1279,8 +1279,61 @@ class Character(DefaultCharacter):
 
     def check_scene_status(self):
         """Check if we should start/continue/end a scene."""
-        # Ensure scene_data exists
-        if not hasattr(self.db, 'scene_data') or not self.db.scene_data:
+        try:
+            # Ensure scene_data exists and is a dictionary
+            if not hasattr(self.db, 'scene_data') or not isinstance(self.db.scene_data, dict):
+                self.db.scene_data = {
+                    'current_scene': None,
+                    'scene_location': None,
+                    'last_activity': None,
+                    'completed_scenes': 0,
+                    'last_weekly_reset': datetime.now()
+                }
+
+            now = datetime.now()
+            
+            # Check for weekly reset - with error handling for datetime conversion
+            try:
+                if self.db.scene_data.get('last_weekly_reset'):
+                    last_reset = self.db.scene_data['last_weekly_reset']
+                    # Convert string to datetime if needed
+                    if isinstance(last_reset, str):
+                        try:
+                            last_reset = datetime.fromisoformat(last_reset)
+                            self.db.scene_data['last_weekly_reset'] = last_reset
+                        except ValueError:
+                            last_reset = now
+                            self.db.scene_data['last_weekly_reset'] = now
+                    
+                    days_since_reset = (now - last_reset).days
+                    if days_since_reset >= 7:
+                        old_count = self.db.scene_data.get('completed_scenes', 0)
+                        self.db.scene_data['completed_scenes'] = 0
+                        self.db.scene_data['last_weekly_reset'] = now
+            except (TypeError, AttributeError) as e:
+                # If any error occurs during datetime handling, reset the data
+                self.db.scene_data['last_weekly_reset'] = now
+                self.db.scene_data['completed_scenes'] = 0
+
+            # If not in a valid scene location, end any current scene
+            if not self.location or not self.is_valid_scene_location():
+                if self.db.scene_data.get('current_scene'):
+                    self.end_scene()
+                return
+
+            # If in a new location, end current scene and start new one
+            if (self.db.scene_data.get('scene_location') and 
+                self.db.scene_data['scene_location'] != self.location):
+                self.end_scene()
+                self.start_scene()
+                return
+
+            # If not in a scene but in valid location, start one
+            if not self.db.scene_data.get('current_scene'):
+                self.start_scene()
+
+        except Exception as e:
+            # If any unexpected error occurs, reset scene_data to a known good state
             self.db.scene_data = {
                 'current_scene': None,
                 'scene_location': None,
@@ -1288,32 +1341,8 @@ class Character(DefaultCharacter):
                 'completed_scenes': 0,
                 'last_weekly_reset': datetime.now()
             }
-
-        now = datetime.now()
-        
-        # Check for weekly reset
-        if self.db.scene_data['last_weekly_reset']:
-            days_since_reset = (now - self.db.scene_data['last_weekly_reset']).days
-            if days_since_reset >= 7:
-                old_count = self.db.scene_data['completed_scenes']
-                self.db.scene_data['completed_scenes'] = 0
-                self.db.scene_data['last_weekly_reset'] = now
-      # If not in a valid scene location, end any current scene
-        if not self.location or not self.is_valid_scene_location():
-            if self.db.scene_data['current_scene']:
-                self.end_scene()
-            return
-
-        # If in a new location, end current scene and start new one
-        if (self.db.scene_data['scene_location'] and 
-            self.db.scene_data['scene_location'] != self.location):
-            self.end_scene()
-            self.start_scene()
-            return
-
-        # If not in a scene but in valid location, start one
-        if not self.db.scene_data['current_scene']:
-            self.start_scene()
+            # Log the error for debugging
+            logger.log_err(f"Error in check_scene_status for {self.key}: {str(e)}")
 
     def is_valid_scene_location(self):
         """Check if current location is valid for scene tracking."""
@@ -1338,10 +1367,25 @@ class Character(DefaultCharacter):
 
     def record_scene_activity(self):
         """Record activity in current scene."""
-        now = datetime.now()
+        try:
+            now = datetime.now()
 
-        # Initialize scene_data if it doesn't exist
-        if not hasattr(self.db, 'scene_data') or not self.db.scene_data:
+            # Initialize scene_data if it doesn't exist or isn't a dictionary
+            if not hasattr(self.db, 'scene_data') or not isinstance(self.db.scene_data, dict):
+                self.db.scene_data = {
+                    'current_scene': None,
+                    'scene_location': None,
+                    'last_activity': None,
+                    'completed_scenes': 0,
+                    'last_weekly_reset': datetime.now()
+                }
+
+            self.check_scene_status()
+            if isinstance(self.db.scene_data, dict) and self.db.scene_data.get('current_scene'):
+                self.db.scene_data['last_activity'] = now
+        except Exception as e:
+            # Log the error and reset to a known good state
+            logger.log_err(f"Error in record_scene_activity for {self.key}: {str(e)}")
             self.db.scene_data = {
                 'current_scene': None,
                 'scene_location': None,
@@ -1349,10 +1393,6 @@ class Character(DefaultCharacter):
                 'completed_scenes': 0,
                 'last_weekly_reset': datetime.now()
             }
-
-        self.check_scene_status()
-        if self.db.scene_data['current_scene']:
-            self.db.scene_data['last_activity'] = now
 
     def at_say(self, message, msg_self=None, msg_location=None, receivers=None, msg_receivers=None, **kwargs):
         """Hook method for the say command."""

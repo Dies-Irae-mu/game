@@ -16,13 +16,13 @@ class CmdMultidesc(MuxCommand):
     Manage multiple character descriptions.
 
     Usage:
-      +desc/list                     - List all your stored descriptions
-      +desc/view <desc-name>         - View a particular description
-      +desc/get <desc-list>          - Set your current description
-      +desc/store <desc-name>=<text> - Create a new description
-      +desc/kill <desc-name>         - Delete a stored description
-      +desc/save <desc-name>         - Save your current description
-      +desc/edit <desc>=<old>/<new>  - Edit a saved description
+      +mdesc/list                     - List all your stored descriptions
+      +mdesc/view <desc-name>         - View a particular description
+      +mdesc/get <desc-list>          - Set your current description
+      +mdesc/store <desc-name>=<text> - Create a new description
+      +mdesc/kill <desc-name>         - Delete a stored description
+      +mdesc/save <desc-name>         - Save your current description
+      +mdesc/edit <desc>=<old>/<new>  - Edit a saved description
 
     This command lets you maintain multiple descriptions for your character
     that you can switch between. You can combine multiple descriptions by
@@ -34,15 +34,15 @@ class CmdMultidesc(MuxCommand):
       %t or %T  - Tab indent (can be used multiple times)
     
     Examples:
-      +desc/store base=A tall woman with auburn hair...%r%rShe stands with perfect posture.
-      +desc/store casual=%tShe wears comfortable jeans...
-      +desc/get base casual         - Combines both descriptions
-      +desc/save winter            - Saves current description as 'winter'
-      +desc/edit casual=jeans/slacks - Replaces 'jeans' with 'slacks' in 'casual'
+      +mdesc/store base=A tall woman with auburn hair...%r%rShe stands with perfect posture.
+      +mdesc/store casual=%tShe wears comfortable jeans...
+      +mdesc/get base casual         - Combines both descriptions
+      +mdesc/save winter            - Saves current description as 'winter'
+      +mdesc/edit casual=jeans/slacks - Replaces 'jeans' with 'slacks' in 'casual'
     """
     
-    key = "+desc"
-    aliases = ["@desc"]
+    key = "+mdesc"
+    aliases = ["mdesc"]
     locks = "cmd:all()"
     help_category = "Description"
     switch_options = ("list", "view", "get", "store", "kill", "save", "edit")
@@ -107,7 +107,7 @@ class CmdMultidesc(MuxCommand):
 
         elif switch == "view":
             if not self.args:
-                caller.msg("Usage: +desc/view <desc-name>")
+                caller.msg("Usage: +mdesc/view <desc-name>")
                 return
             desc = self._get_desc(self.args)
             if not desc:
@@ -126,7 +126,7 @@ class CmdMultidesc(MuxCommand):
 
         elif switch == "get":
             if not self.args:
-                caller.msg("Usage: +desc/get <desc-name1> [<desc-name2> ...]")
+                caller.msg("Usage: +mdesc/get <desc-name1> [<desc-name2> ...]")
                 return
             desc_names = self.args.split()
             final_desc = []
@@ -150,7 +150,7 @@ class CmdMultidesc(MuxCommand):
 
         elif switch == "store":
             if not self.args or "=" not in self.args:
-                caller.msg("Usage: +desc/store <desc-name>=<description>")
+                caller.msg("Usage: +mdesc/store <desc-name>=<description>")
                 return
             name, desc = self.args.split("=", 1)
             name = name.strip()
@@ -170,7 +170,7 @@ class CmdMultidesc(MuxCommand):
 
         elif switch == "kill":
             if not self.args:
-                caller.msg("Usage: +desc/kill <desc-name>")
+                caller.msg("Usage: +mdesc/kill <desc-name>")
                 return
             if self._delete_desc(self.args):
                 caller.msg(header("Description Deleted") + 
@@ -181,7 +181,7 @@ class CmdMultidesc(MuxCommand):
 
         elif switch == "save":
             if not self.args:
-                caller.msg("Usage: +desc/save <desc-name>")
+                caller.msg("Usage: +mdesc/save <desc-name>")
                 return
             current_desc = caller.db.desc
             if not current_desc:
@@ -199,13 +199,13 @@ class CmdMultidesc(MuxCommand):
 
         elif switch == "edit":
             if not self.args or "=" not in self.args:
-                caller.msg("Usage: +desc/edit <desc-name>=<old>/<new>")
+                caller.msg("Usage: +mdesc/edit <desc-name>=<old>/<new>")
                 return
             try:
                 name, rest = self.args.split("=", 1)
                 old, new = rest.split("/", 1)
             except ValueError:
-                caller.msg("Usage: +desc/edit <desc-name>=<old>/<new>")
+                caller.msg("Usage: +mdesc/edit <desc-name>=<old>/<new>")
                 return
 
             name = name.strip()
@@ -230,4 +230,4 @@ class CmdMultidesc(MuxCommand):
             caller.msg("\n".join(output))
 
         else:
-            caller.msg("Invalid switch. See help +desc for valid options.") 
+            caller.msg("Invalid switch. See help +mdesc for valid options.") 

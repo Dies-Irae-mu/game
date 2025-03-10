@@ -1,5 +1,7 @@
 from evennia.commands.default.muxcommand import MuxCommand
 from evennia.utils.search import search_object
+from typeclasses.characters import Character
+from utils.search_helpers import search_character
 
 class CmdAlias(MuxCommand):
     """
@@ -42,13 +44,11 @@ class CmdAlias(MuxCommand):
 
         # Handle viewing other's alias
         if "=" not in self.args:
-            # Search for the character
-            target = search_object(self.args, typeclass='typeclasses.characters.Character')
+            # Search for the character using our new helper
+            target = search_character(self.caller, self.args)
             if not target:
-                self.caller.msg(f"Could not find character '{self.args}'.")
                 return
             
-            target = target[0]
             alias = target.attributes.get("alias", None)
             if alias:
                 self.caller.msg(f"{target.name}'s alias is: {alias}")
@@ -76,8 +76,8 @@ class CmdAlias(MuxCommand):
             self.caller.msg("Alias must contain only letters and numbers.")
             return
 
-        # Check if alias is already in use
-        existing = search_object(new_alias, typeclass='typeclasses.characters.Character')
+        # Check if alias is already in use by a character name or alias
+        existing = search_object(new_alias, typeclass=Character)
         for obj in existing:
             if obj != self.caller and (obj.key.lower() == new_alias.lower() or 
                                      obj.attributes.get("alias", "").lower() == new_alias.lower()):

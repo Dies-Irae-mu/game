@@ -34,57 +34,22 @@ class CmdRent(MuxCommand):
         "Studio": {
             "desc": "A cozy studio apartment with an open floor plan.",
             "rooms": 1,
-            "resource_modifier": 0
+            "resource_modifier": -1
         },
-        "One-Bedroom": {
+        "Apartment": {
             "desc": "A comfortable one-bedroom apartment with a separate living area.",
             "rooms": 2,
-            "resource_modifier": 1
-        },
-        "Two-Bedroom": {
-            "desc": "A spacious two-bedroom apartment with a full living room.",
-            "rooms": 3,
-            "resource_modifier": 2
-        },
-        "Luxury Studio": {
-            "desc": "An upscale studio apartment with premium finishes and city views.",
-            "rooms": 1,
-            "resource_modifier": 2
-        },
-        "Luxury One-Bedroom": {
-            "desc": "A high-end one-bedroom apartment with designer fixtures and an open concept layout.",
-            "rooms": 2,
-            "resource_modifier": 3
-        },
-        "Luxury Two-Bedroom": {
-            "desc": "An elegant two-bedroom apartment with premium amenities and panoramic views.",
-            "rooms": 3,
-            "resource_modifier": 4
-        },
-        "Penthouse": {
-            "desc": "A luxurious penthouse suite with wraparound views and exclusive amenities.",
-            "rooms": 4,
-            "resource_modifier": 5
+            "resource_modifier": 0
         },
         "Motel Room": {
             "desc": "A rundown motel room with a bed and a small desk.",
             "rooms": 1,
             "resource_modifier": -1
         },
-        "Hotel Room": {
-            "desc": "A well-appointed hotel room with daily housekeeping service.",
+        "Splat Housing": {
+            "desc": "Housing for your specific splat, either in a Chantry, Freehold, Sept, or other type.",
             "rooms": 1,
-            "resource_modifier": 0
-        },
-        "Hotel Suite": {
-            "desc": "A well-appointed hotel suite with daily housekeeping service.",
-            "rooms": 1,
-            "resource_modifier": 2
-        },
-        "Executive Suite": {
-            "desc": "A premium hotel suite with separate living and sleeping areas.",
-            "rooms": 2,
-            "resource_modifier": 3
+            "resource_modifier": -5
         }
     }
     
@@ -92,32 +57,7 @@ class CmdRent(MuxCommand):
         "House": {
             "desc": "A modest single-family home with a small yard.",
             "rooms": 4,
-            "resource_modifier": 2
-        },
-        "Townhouse": {
-            "desc": "A multi-level townhouse with modern amenities.",
-            "rooms": 3,
-            "resource_modifier": 1
-        },
-        "Cottage": {
-            "desc": "A charming cottage with a private garden.",
-            "rooms": 2,
             "resource_modifier": 0
-        },
-        "Manor": {
-            "desc": "A stately manor house with extensive grounds and luxury amenities.",
-            "rooms": 6,
-            "resource_modifier": 4
-        },
-        "Villa": {
-            "desc": "An elegant villa with a private pool and landscaped gardens.",
-            "rooms": 5,
-            "resource_modifier": 3
-        },
-        "Estate": {
-            "desc": "A grand estate with multiple buildings and extensive security.",
-            "rooms": 8,
-            "resource_modifier": 5
         }
     }
 
@@ -272,6 +212,24 @@ class CmdRent(MuxCommand):
             available_types = location.get_available_housing_types()
             self.caller.msg(f"Invalid residence type. Available types: {', '.join(available_types.keys())}")
             return
+
+        # For Splat Housing, check if character's splat is allowed
+        if apt_type == "Splat Housing":
+            # Get character's splat
+            char_splat = self.caller.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+            if not char_splat:
+                self.caller.msg("You must have a splat type set to rent splat housing.")
+                return
+
+            # Check if location allows this splat
+            allowed_splats = location.db.allowed_splats or []
+            if not allowed_splats:
+                self.caller.msg("This location is not set up for any splat types.")
+                return
+                
+            if char_splat not in allowed_splats:
+                self.caller.msg(f"This location does not allow {char_splat}s to rent here.")
+                return
             
         required_resources = location.get_housing_cost(apt_type)
         if not required_resources:
@@ -290,7 +248,11 @@ class CmdRent(MuxCommand):
         room_typeclass = class_from_module("typeclasses.rooms.Room")
         available_types = location.get_available_housing_types()
         
-        if is_apartment:
+        # Set the residence name based on type
+        if apt_type == "Splat Housing":
+            residence_name = f"{self.caller.name}'s Room"
+            room_type = "splat_housing"
+        elif is_apartment:
             residence_name = f"Apartment {residence_num}"
             room_type = "apartment"
         else:
@@ -308,7 +270,9 @@ class CmdRent(MuxCommand):
                                location=None)
         residence.db.desc = available_types[apt_type]['desc']
         # Set specific room type based on apartment/house type
-        if is_apartment:
+        if apt_type == "Splat Housing":
+            residence.db.roomtype = f"{self.caller.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')} Room"
+        elif is_apartment:
             residence.db.roomtype = f"{apt_type} Apartment"
         else:
             residence.db.roomtype = apt_type
@@ -531,7 +495,7 @@ class CmdVacate(MuxCommand):
             else:
                 # Try to vacate current location
                 location = self.caller.location
-                if not (location.db.roomtype in ["apartment", "house"] and location.db.owner == self.caller):
+                if not (location.db.roomtype in ["apartment", "house", "splat_housing"] and location.db.owner == self.caller):
                     self.caller.msg("You must be in your residence to vacate it.")
                     return
                     
@@ -563,16 +527,39 @@ class CmdVacate(MuxCommand):
                     for obj in room.contents:
                         if obj.has_account:
                             obj.move_to(building)
+                    # Delete all exits in the child room
+                    for exit in room.exits:
+                        exit.delete()
                     room.delete()
 
         # Update building data
-        del building.db.housing_data['current_tenants'][residence.id]
-        building.db.housing_data['apartment_numbers'].remove(int(residence.key.split()[-1]))
+        if building and building.db.housing_data:
+            if residence.id in building.db.housing_data['current_tenants']:
+                del building.db.housing_data['current_tenants'][residence.id]
+            # Handle apartment numbers for both numeric and string values
+            try:
+                number = int(residence.key.split()[-1])
+                if number in building.db.housing_data['apartment_numbers']:
+                    building.db.housing_data['apartment_numbers'].remove(number)
+            except (ValueError, IndexError):
+                # If it's not a numeric apartment number, try to remove the full name
+                if residence.key in building.db.housing_data['apartment_numbers']:
+                    building.db.housing_data['apartment_numbers'].remove(residence.key)
         
         # Clear home location if this was their home
         if self.caller.home == residence:
             self.caller.home = None
             self.caller.msg("Your home location has been cleared.")
+            
+        # Delete all exits in the main residence
+        for exit in residence.exits:
+            exit.delete()
+            
+        # Delete the entrance exit from the building
+        for exit in building.contents:
+            if (hasattr(exit, 'destination') and 
+                exit.destination == residence):
+                exit.delete()
             
         # Delete the residence
         residence.delete()
@@ -777,14 +764,14 @@ class CmdManageHome(MuxCommand):
     
     Usage:
         +home                 - Go to your home
-        +home/set            - Set current apartment as your home
-        +home/lock           - Lock your apartment
-        +home/unlock         - Unlock your apartment
+        +home/set            - Set current residence as your home
+        +home/lock           - Lock your residence
+        +home/unlock         - Unlock your residence
         +home/key <player>   - Give a key to another player
         +home/unkey <player> - Remove a key from a player
-        +home/keys           - List who has keys to your apartment
-        +home/status         - Show lock status of your apartment
-        +home/find          - Show location of your apartment
+        +home/keys           - List who has keys to your residence
+        +home/status         - Show lock status of your residence
+        +home/find          - Show location of your residence
     """
     
     key = "+home"
@@ -802,21 +789,21 @@ class CmdManageHome(MuxCommand):
             }
         return location.db.home_data
 
-    def find_player_apartment(self, player):
-        """Find a player's apartment globally"""
+    def find_player_residence(self, player):
+        """Find a player's residence globally"""
         from evennia.objects.models import ObjectDB
         for room in ObjectDB.objects.filter(db_typeclass_path__contains="rooms.Room"):
             if (hasattr(room.db, 'roomtype') and 
-                room.db.roomtype == "apartment" and 
+                room.db.roomtype in ["apartment", "house", "splat_housing"] and 
                 room.db.owner == player):
                 return room
         return None
 
-    def update_entrance_lock(self, apartment, home_data):
+    def update_entrance_lock(self, residence, home_data):
         """Helper method to update the entrance lock based on current keyholders"""
-        # Find the entrance to this apartment from the parent room
+        # Find the entrance to this residence from the parent room
         parent_room = None
-        for exit in apartment.exits:
+        for exit in residence.exits:
             if exit.key == "Out":
                 parent_room = exit.destination
                 break
@@ -825,7 +812,7 @@ class CmdManageHome(MuxCommand):
             # Find the entrance in the parent room
             for exit in parent_room.contents:
                 if (hasattr(exit, 'destination') and 
-                    exit.destination == apartment):
+                    exit.destination == residence):
                     # Make sure it's using the ApartmentExit typeclass
                     if not exit.is_typeclass("typeclasses.exits.ApartmentExit"):
                         exit.swap_typeclass("typeclasses.exits.ApartmentExit",
@@ -843,8 +830,8 @@ class CmdManageHome(MuxCommand):
                 self.caller.msg("You haven't set a home yet.")
                 return
                 
-            # Check if home still exists and is an apartment
-            if not hasattr(self.caller.home.db, 'roomtype') or self.caller.home.db.roomtype != "apartment":
+            # Check if home still exists and is a valid residence
+            if not hasattr(self.caller.home.db, 'roomtype') or self.caller.home.db.roomtype not in ["apartment", "house", "splat_housing"]:
                 self.caller.msg("Your home location seems to be invalid. Please set a new home.")
                 return
                 
@@ -862,28 +849,28 @@ class CmdManageHome(MuxCommand):
 
         # Handle find switch
         if "find" in self.switches:
-            apartment = self.find_player_apartment(self.caller)
-            if not apartment:
-                self.caller.msg("You don't own an apartment.")
+            residence = self.find_player_residence(self.caller)
+            if not residence:
+                self.caller.msg("You don't own a residence.")
                 return
                 
             # Find the parent room (floor)
             parent_room = None
-            for exit in apartment.exits:
+            for exit in residence.exits:
                 if exit.key == "Out":
                     parent_room = exit.destination
                     break
                     
             if parent_room:
-                self.caller.msg(f"Your apartment ({apartment.get_display_name(self.caller)}) "
-                              f"is located on {parent_room.get_display_name(self.caller)}.")
+                self.caller.msg(f"Your residence ({residence.get_display_name(self.caller)}) "
+                              f"is located in {parent_room.get_display_name(self.caller)}.")
             return
 
         # Handle key and unkey commands (can be used from anywhere)
         if "key" in self.switches or "unkey" in self.switches:
-            apartment = self.find_player_apartment(self.caller)
-            if not apartment:
-                self.caller.msg("You don't own an apartment.")
+            residence = self.find_player_residence(self.caller)
+            if not residence:
+                self.caller.msg("You don't own a residence.")
                 return
 
                 
@@ -904,38 +891,38 @@ class CmdManageHome(MuxCommand):
                 self.caller.msg(f"Could not find a character for {self.args}.")
                 return
                 
-            home_data = self.init_home_data(apartment)
+            home_data = self.init_home_data(residence)
             
             if "key" in self.switches:
                 if target.id in home_data['keyholders']:
-                    self.caller.msg(f"{target.name} already has a key to your apartment.")
+                    self.caller.msg(f"{target.name} already has a key to your residence.")
                     return
                     
                 home_data['keyholders'].add(target.id)
                 # Update the entrance lock
-                self.update_entrance_lock(apartment, home_data)
-                self.caller.msg(f"You have given {target.name} a key to your apartment.")
+                self.update_entrance_lock(residence, home_data)
+                self.caller.msg(f"You have given {target.name} a key to your residence.")
                 if target.has_account:
-                    target.msg(f"{self.caller.name} has given you a key to their apartment.")
+                    target.msg(f"{self.caller.name} has given you a key to their residence.")
                     
             else:  # unkey
                 if target.id not in home_data['keyholders']:
-                    self.caller.msg(f"{target.name} doesn't have a key to your apartment.")
+                    self.caller.msg(f"{target.name} doesn't have a key to your residence.")
                     return
                     
                 home_data['keyholders'].remove(target.id)
                 # Update the entrance lock
-                self.update_entrance_lock(apartment, home_data)
-                self.caller.msg(f"You have taken back {target.name}'s key to your apartment.")
+                self.update_entrance_lock(residence, home_data)
+                self.caller.msg(f"You have taken back {target.name}'s key to your residence.")
                 if target.has_account:
-                    target.msg(f"{self.caller.name} has taken back your key to their apartment.")
+                    target.msg(f"{self.caller.name} has taken back your key to their residence.")
             return
         
-        # For other commands, we need to be in the apartment
+        # For other commands, we need to be in the residence
         location = self.caller.location
-        if not location.db.roomtype == "apartment":
+        if not location.db.roomtype in ["apartment", "house", "splat_housing"]:
             if "status" not in self.switches:
-                self.caller.msg("This command can only be used inside apartments.")
+                self.caller.msg("This command can only be used inside residences.")
                 return
 
         # Initialize home data
@@ -944,39 +931,39 @@ class CmdManageHome(MuxCommand):
         if "set" in self.switches:
             # Check ownership
             if location.db.owner != self.caller:
-                self.caller.msg("You don't own this apartment.")
+                self.caller.msg("You don't own this residence.")
                 return
                 
             # Set as home
             self.caller.home = location
             home_data['owner'] = self.caller
-            self.caller.msg("You have set this apartment as your home.")
+            self.caller.msg("You have set this residence as your home.")
             
         elif "lock" in self.switches:
             if location.db.owner != self.caller:
-                self.caller.msg("You don't own this apartment.")
+                self.caller.msg("You don't own this residence.")
                 return
                 
             home_data['locked'] = True
             if self.update_entrance_lock(location, home_data):
-                self.caller.msg("You have locked your apartment.")
+                self.caller.msg("You have locked your residence.")
             else:
-                self.caller.msg("Error updating apartment lock. Please contact staff.")
+                self.caller.msg("Error updating residence lock. Please contact staff.")
             
         elif "unlock" in self.switches:
             if location.db.owner != self.caller:
-                self.caller.msg("You don't own this apartment.")
+                self.caller.msg("You don't own this residence.")
                 return
                 
             home_data['locked'] = False
             if self.update_entrance_lock(location, home_data):
-                self.caller.msg("You have unlocked your apartment.")
+                self.caller.msg("You have unlocked your residence.")
             else:
-                self.caller.msg("Error updating apartment lock. Please contact staff.")
+                self.caller.msg("Error updating residence lock. Please contact staff.")
             
         elif "keys" in self.switches:
             if location.db.owner != self.caller:
-                self.caller.msg("You don't own this apartment.")
+                self.caller.msg("You don't own this residence.")
                 return
                 
             keyholders = []
@@ -986,22 +973,22 @@ class CmdManageHome(MuxCommand):
                     keyholders.append(char.name)
                     
             if keyholders:
-                self.caller.msg("People with keys to your apartment:")
+                self.caller.msg("People with keys to your residence:")
                 self.caller.msg("\n".join(f"- {name}" for name in keyholders))
             else:
-                self.caller.msg("Nobody else has keys to your apartment.")
+                self.caller.msg("Nobody else has keys to your residence.")
                 
         elif "status" in self.switches:
-            # Find player's apartment
+            # Find player's residence
             home = self.caller.home
-            if not home or not hasattr(home.db, 'roomtype') or home.db.roomtype != "apartment":
-                self.caller.msg("You haven't set an apartment as your home.")
+            if not home or not hasattr(home.db, 'roomtype') or home.db.roomtype not in ["apartment", "house", "splat_housing"]:
+                self.caller.msg("You haven't set a residence as your home.")
                 return
                 
             status = "locked" if home.db.home_data['locked'] else "unlocked"
-            self.caller.msg(f"Your apartment ({home.get_display_name(self.caller)}) is currently {status}.")
+            self.caller.msg(f"Your residence ({home.get_display_name(self.caller)}) is currently {status}.")
             
-            # Show keyholders if it's the caller's apartment
+            # Show keyholders if it's the caller's residence
             if home.db.owner == self.caller:
                 keyholders = []
                 for pid in home.db.home_data['keyholders']:
@@ -1011,7 +998,7 @@ class CmdManageHome(MuxCommand):
                         
                 if keyholders:
                     self.caller.msg("People with keys:")
-                    self.caller.msg("\n".join(f"- {name}" for name in keyholders)) 
+                    self.caller.msg("\n".join(f"- {name}" for name in keyholders))
 
 class CmdUpdateApartments(MuxCommand):
     """

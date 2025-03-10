@@ -47,7 +47,7 @@ from commands.chargen import CmdSubmit
 from commands.CmdSelfStat import CmdSelfStat
 from commands.CmdShift import CmdShift
 from commands.CmdStaff import CmdStaff, CmdPST
-from commands.staff_commands import CmdStaffStat, CmdFixStats
+from commands.staff_commands import CmdStaffStat, CmdFixStats, CmdSetWyrmTaint
 from commands.unfindable import CmdUnfindable
 from commands.CmdChangelingInteraction import CmdChangelingInteraction
 from commands.CmdBanality import CmdBanality
@@ -79,7 +79,6 @@ from commands.CmdArchid import CmdArchid
 from commands.CmdRoster import CmdRoster
 from commands.CmdSpecialties import CmdSpecialties
 from commands.CmdMultidesc import CmdMultidesc
-
 
 class CharacterCmdSet(cmdset_character.CharacterCmdSet):
     """
@@ -211,7 +210,7 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdDesc())
         self.add(CmdStaffStat())
         self.add(CmdFixStats())
-
+        self.add(CmdSetWyrmTaint())
 class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):
     """
     Command set available to the Session before being logged in.  This

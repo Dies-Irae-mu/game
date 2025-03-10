@@ -13,6 +13,7 @@ from evennia.utils.utils import inherits_from
 from datetime import datetime
 from world.wod20th.models import Roster, RosterMember
 from django.utils import timezone
+from utils.search_helpers import search_character
 
 
 class CmdApprove(AdminCommand):
@@ -37,8 +38,8 @@ class CmdApprove(AdminCommand):
             self.caller.msg("Usage: +approve <character>")
             return
             
-        # First try direct name match with global search
-        target = self.caller.search(self.args, global_search=True)
+        # Use our new search helper
+        target = search_character(self.caller, self.args)
         if not target:
             return
 
@@ -108,8 +109,8 @@ class CmdUnapprove(AdminCommand):
             self.caller.msg("Usage: unapprove <character_name>")
             return
 
-        # Use global search for admin commands
-        target = self.caller.search(self.args, global_search=True)
+        # Use our new search helper
+        target = search_character(self.caller, self.args)
         if not target:
             return
 
@@ -158,8 +159,8 @@ class CmdMassUnapprove(AdminCommand):
         caller = self.caller
         confirm = "confirm" in self.switches
 
-        # Get all characters, both online and offline using global search
-        all_chars = search_object("", typeclass='typeclasses.characters.Character', global_search=True)
+        # Get all characters using Character typeclass
+        all_chars = search_object("", typeclass=Character)
         
         # Filter to only get approved characters
         approved_chars = [char for char in all_chars 
@@ -222,8 +223,8 @@ class CmdAdminLook(CmdLook, AdminCommand):
         if args.startswith('*') and caller.check_permstring("Admin"):
             # Remove the * and any leading/trailing spaces
             target_name = args[1:].strip()
-            # Perform global search
-            target = caller.search(target_name, global_search=True)
+            # Use our new search helper
+            target = search_character(caller, target_name)
             if not target:
                 return
             # Show the target's description
@@ -296,8 +297,8 @@ class CmdTestLock(MuxCommand):
             self.caller.msg("Usage: @testlock <character> = <lockstring>")
             return
             
-        # Search for character with global search
-        char = self.caller.search(self.lhs, global_search=True)
+        # Use our new search helper
+        char = search_character(self.caller, self.lhs)
         if not char:
             return
             
@@ -437,7 +438,8 @@ class CmdPuppetFreeze(MuxCommand):
             
         # Handle unfreeze switch
         if "unfreeze" in self.switches:
-            char = self.caller.search(self.args.strip(), global_search=True)
+            # Use our new search helper
+            char = search_character(self.caller, self.args.strip())
             if not char:
                 return
                 
@@ -451,7 +453,8 @@ class CmdPuppetFreeze(MuxCommand):
             name = name.strip()
             reason = reason.strip()
             
-            char = self.caller.search(name, global_search=True)
+            # Use our new search helper
+            char = search_character(self.caller, name)
             if not char:
                 return
                 
@@ -536,7 +539,11 @@ class CmdSTTeleport(MuxCommand):
         obj_to_teleport = caller
         destination = None
         if self.rhs:
-            obj_to_teleport = caller.search(self.lhs, global_search=True)
+            # Use our new search helper for characters, but allow other objects too
+            obj_to_teleport = search_character(caller, self.lhs, quiet=True)
+            if not obj_to_teleport:
+                # If not a character, try regular search
+                obj_to_teleport = caller.search(self.lhs, global_search=True)
             if not obj_to_teleport:
                 return
             destination = caller.search(self.rhs, global_search=True)
@@ -597,8 +604,8 @@ class CmdSummon(MuxCommand):
             caller.msg("Usage: +summon <character>")
             return
 
-        # Find the character to summon
-        target = caller.search(args, global_search=True)
+        # Use our new search helper
+        target = search_character(caller, args)
         if not target:
             return
 
@@ -722,7 +729,8 @@ class CmdReturn(MuxCommand):
                 caller.msg("Usage: +return/set <character> = <location>")
                 return
                 
-            target = caller.search(self.lhs, global_search=True)
+            # Use our new search helper
+            target = search_character(caller, self.lhs)
             if not target:
                 return
                 
@@ -753,8 +761,8 @@ class CmdReturn(MuxCommand):
             caller.msg("Usage: +return <character>")
             return
 
-        # Find the character to return
-        target = caller.search(args, global_search=True)
+        # Use our new search helper
+        target = search_character(caller, args)
         if not target:
             return
             
@@ -791,8 +799,11 @@ class CmdSTExamine(MuxCommand):
                 caller.msg("You need to supply a target to examine.")
                 return
         else:
-            # Search for object
-            obj = caller.search(args, global_search=True)
+            # First try our character search helper
+            obj = search_character(caller, args, quiet=True)
+            if not obj:
+                # If not a character, try regular search
+                obj = caller.search(args, global_search=True)
             if not obj:
                 return
 
@@ -855,8 +866,18 @@ class CmdSTFind(MuxCommand):
         if "locate" in self.cmdstring:
             self.switches.append("loc")
 
-        # Search for matches
-        results = caller.search(args, global_search=True, quiet=True)
+        # If searching specifically for characters
+        if "char" in self.switches:
+            # Use our character search helper
+            target = search_character(caller, args, quiet=True)
+            if target:
+                results = [target]
+            else:
+                results = []
+        else:
+            # Search for matches
+            results = caller.search(args, global_search=True, quiet=True)
+
         if not results:
             caller.msg(f"No matches found for '{args}'.")
             return

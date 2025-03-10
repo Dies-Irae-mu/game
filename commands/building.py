@@ -732,12 +732,14 @@ class CmdSetLock(MuxCommand):
         nephandi_faction:<name> - Restrict to specific Nephandi faction
         court:<name>      - Restrict to specific changeling court
         kith:<name>       - Restrict to specific changeling kith
+        wyrm:<on/off>     - Restrict based on wyrm taint status
 
     Examples:
         +setlock door=type:Garou                    - Only Garou can pass
         +setlock door=type:Garou,type:Kinfolk      - Both Garou AND Kinfolk must pass
         +setlock door=type:Garou;type:Kinfolk      - Either Garou OR Kinfolk can pass
         +setlock/view door=type:Garou;type:Kinfolk - Either Garou OR Kinfolk can view
+        +setlock door=wyrm:on                       - Only wyrm-tainted beings can pass
     """
     
     key = "+setlock"
@@ -836,12 +838,18 @@ class CmdSetLock(MuxCommand):
                 try:
                     locktype, value = lock_part.strip().split(':', 1)
                     locktype = locktype.strip().lower()
+                    value = value.strip().lower()
                     
                     # Create the appropriate lock string based on type
                     if locktype == "splat":
                         lock_str = f'has_splat({value.strip()})'
                     elif locktype == "type":
                         lock_str = f'has_type({value.strip()})'
+                    elif locktype == "wyrm":
+                        if value not in ("on", "off"):
+                            self.caller.msg("Wyrm lock value must be either 'on' or 'off'.")
+                            return
+                        lock_str = f'has_wyrm_taint()' if value == "on" else f'not has_wyrm_taint()'
                     elif locktype in ["talent", "skill", "knowledge", "secondary_talent", "secondary_skill", "secondary_knowledge"]:
                         if ">" in value:
                             ability, level = value.split(">")
@@ -1651,6 +1659,88 @@ class CmdRoomFaeDesc(MuxCommand):
         self.caller.location.db.fae_desc = self.args
         caller.msg("Room's Fae description set.") 
 
+class CmdSetAllowedSplats(MuxCommand):
+    """
+    Set which splats are allowed to rent in a housing area.
+    
+    Usage:
+        +allowedsplats <splat1>,<splat2>,...  - Set allowed splats
+        +allowedsplats/add <splat>            - Add a splat to allowed list
+        +allowedsplats/remove <splat>         - Remove a splat from allowed list
+        +allowedsplats/clear                  - Clear all allowed splats
+        +allowedsplats/show                   - Show current allowed splats
+        
+    Examples:
+        +allowedsplats Mage,Vampire,Changeling
+        +allowedsplats/add Werewolf
+        +allowedsplats/remove Vampire
+        +allowedsplats/clear
+        +allowedsplats/show
+    """
+    
+    key = "+allowedsplats"
+    aliases = ["+setsplats"]
+    locks = "cmd:perm(builders)"
+    help_category = "Building and Housing"
+    
+    # Valid splat types
+    VALID_SPLATS = [
+        "Mage", "Vampire", "Werewolf", "Changeling", "Mortal+",
+        "Shifter", "Possessed", "Companion"
+    ]
+    
+    def func(self):
+        location = self.caller.location
+        
+        # Initialize allowed_splats if it doesn't exist
+        if not hasattr(location.db, 'allowed_splats'):
+            location.db.allowed_splats = []
+            
+        if "show" in self.switches or not self.args:
+            if location.db.allowed_splats:
+                self.caller.msg(f"Allowed splats in this area: {', '.join(location.db.allowed_splats)}")
+            else:
+                self.caller.msg("No splats are currently allowed in this area.")
+            return
+            
+        if "clear" in self.switches:
+            location.db.allowed_splats = []
+            self.caller.msg("Cleared all allowed splats from this area.")
+            return
+            
+        if "add" in self.switches:
+            splat = self.args.strip()
+            if splat not in self.VALID_SPLATS:
+                self.caller.msg(f"Invalid splat type. Valid types: {', '.join(self.VALID_SPLATS)}")
+                return
+                
+            if splat not in location.db.allowed_splats:
+                location.db.allowed_splats.append(splat)
+                self.caller.msg(f"Added {splat} to allowed splats.")
+            else:
+                self.caller.msg(f"{splat} is already allowed in this area.")
+            return
+            
+        if "remove" in self.switches:
+            splat = self.args.strip()
+            if splat in location.db.allowed_splats:
+                location.db.allowed_splats.remove(splat)
+                self.caller.msg(f"Removed {splat} from allowed splats.")
+            else:
+                self.caller.msg(f"{splat} is not in the allowed splats list.")
+            return
+            
+        # No switch - set entire list
+        splats = [s.strip() for s in self.args.split(",")]
+        invalid_splats = [s for s in splats if s not in self.VALID_SPLATS]
+        
+        if invalid_splats:
+            self.caller.msg(f"Invalid splat types: {', '.join(invalid_splats)}\nValid types: {', '.join(self.VALID_SPLATS)}")
+            return
+            
+        location.db.allowed_splats = splats
+        self.caller.msg(f"Set allowed splats to: {', '.join(splats)}")
+
 class BuildingCmdSet(CmdSet):
     def at_cmdset_creation(self):
         self.priority = 1 #fuck them og commands
@@ -1667,3 +1757,4 @@ class BuildingCmdSet(CmdSet):
         self.add(CmdPlaces())
         self.add(CmdRoomUnfindable())
         self.add(CmdRoomFaeDesc())
+        self.add(CmdSetAllowedSplats())

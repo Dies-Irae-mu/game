@@ -67,6 +67,7 @@ from world.wod20th.utils.archetype_utils import (
 )
 from world.wod20th.utils.banality import get_default_banality
 import re
+from evennia.utils.search import search_object
 
 REQUIRED_INSTANCES = ['Library', 'Status', 'Influence', 'Wonder', 'Secret Weapon', 'Companion', 
                       'Familiar', 'Enhancement', 'Laboratory', 'Favor', 'Acute Senses', 
@@ -178,7 +179,7 @@ class CmdSelfStat(MuxCommand):
         Returns:
             Tuple of (is_valid, error_message)
         """
-        valid_splats = {'Vampire', 'Mage', 'Shifter', 'Changeling', 'Mortal+', 'Possessed', 'Companion'}
+        valid_splats = {'Vampire', 'Mage', 'Shifter', 'Changeling', 'Mortal+', 'Possessed', 'Companion', 'Mortal'}
         is_valid = splat.title() in valid_splats
         error_msg = f"|rInvalid splat type. Valid types are: {', '.join(sorted(valid_splats))}|n"
         return is_valid, error_msg
@@ -497,6 +498,10 @@ class CmdSelfStat(MuxCommand):
             splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
             
         char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+
+        # Only allow Mortals to set Occupation
+        if stat_name.lower() == 'occupation' and splat != 'Mortal':
+            return False, "Only Mortals can set an Occupation.", None
 
         # Special handling for Arcane
         if stat_name.lower() == 'arcane':
@@ -988,7 +993,7 @@ class CmdSelfStat(MuxCommand):
             return 'identity', 'lineage'
         elif stat_title in ['Full Name', 'Concept', 'Date of Birth', 'Date of Chrysalis', 'Date of Awakening',
                           'First Change Date', 'Date of Embrace', 'Date of Possession', 'Nature', 'Demeanor',
-                          'Path of Enlightenment', 'Fae Name', 'Tribal Name']:
+                          'Path of Enlightenment', 'Fae Name', 'Tribal Name', 'Occupation']:
             return 'identity', 'personal'
             
         # If not in direct mappings, check if it's a valid identity stat for the character's splat
@@ -1287,6 +1292,7 @@ class CmdSelfStat(MuxCommand):
             'date of awakening': ('identity', 'personal'),
             'first change date': ('identity', 'personal'),
             'date of possession': ('identity', 'personal'),
+            'occupation': ('identity', 'personal'),
             'patron totem': ('identity', 'lineage'),
             'totem': ('backgrounds', 'background'),
             'possessed wings': ('powers', 'blessing'),
@@ -2434,7 +2440,7 @@ class CmdSelfStat(MuxCommand):
                         return
                     self.value_change = matched_value
                 elif self.affiliation == 'Nephandi':
-                    is_valid, matched_value = self.case_insensitive_in_nested(self.value_change, NEPHANDI_FACTION, self.affiliation)
+                    is_valid, matched_value = self.case_insensitive_in(self.value_change, NEPHANDI_FACTION)
                     if not is_valid:
                         self.caller.msg(f"|rInvalid Nephandi faction. Valid factions are: {', '.join(sorted(NEPHANDI_FACTION))}|n")
                         return
@@ -2825,7 +2831,7 @@ class CmdSelfStat(MuxCommand):
                         if stat.category == 'powers' and stat.stat_type == 'gift':
                             # Remove the alias using the new method
                             if self.caller.remove_gift_alias(full_stat_name):
-                                self.caller.msg(f"|yDEBUG (remove_stat): Removed alias for gift '{full_stat_name}'|n")
+                                self.caller.msg(f"|yRemoved alias for gift '{full_stat_name}'|n")
                         
                         del self.caller.db.stats[stat.category][stat.stat_type][full_stat_name]
                         self.caller.msg(f"|gRemoved stat '{full_stat_name}'.|n")
@@ -3128,6 +3134,51 @@ class CmdSelfStat(MuxCommand):
                     self.caller.db.stats['powers'][category] = {}
         elif splat_lower == 'companion':
             initialize_companion_stats(self.caller, '')
+        elif splat_lower == 'mortal':
+            # Initialize virtues for mortals
+            if 'virtues' not in self.caller.db.stats:
+                self.caller.db.stats['virtues'] = {'moral': {}}
+            if 'moral' not in self.caller.db.stats['virtues']:
+                self.caller.db.stats['virtues']['moral'] = {}
+            
+            # Set default virtues to 1
+            for virtue in ['Conscience', 'Self-Control', 'Courage']:
+                self.caller.db.stats['virtues']['moral'][virtue] = {'perm': 1, 'temp': 1}
+            
+            # Initialize pools
+            if 'pools' not in self.caller.db.stats:
+                self.caller.db.stats['pools'] = {'dual': {}, 'moral': {}}
+            if 'dual' not in self.caller.db.stats['pools']:
+                self.caller.db.stats['pools']['dual'] = {}
+            if 'moral' not in self.caller.db.stats['pools']:
+                self.caller.db.stats['pools']['moral'] = {}
+            
+            # Set Willpower equal to Courage
+            self.caller.db.stats['pools']['dual']['Willpower'] = {'perm': 1, 'temp': 1}
+            
+            # Set default Banality
+            self.caller.db.stats['pools']['dual']['Banality'] = {'perm': 6, 'temp': 6}
+            
+            # Initialize identity structure for Path of Enlightenment
+            if 'identity' not in self.caller.db.stats:
+                self.caller.db.stats['identity'] = {'personal': {}, 'lineage': {}}
+            if 'personal' not in self.caller.db.stats['identity']:
+                self.caller.db.stats['identity']['personal'] = {}
+                
+            # Set Path of Enlightenment to Humanity
+            self.caller.db.stats['identity']['personal']['Path of Enlightenment'] = {'perm': 'Humanity', 'temp': 'Humanity'}
+            
+            # Calculate initial Path rating using virtue_utils
+            from world.wod20th.utils.virtue_utils import calculate_path
+            path_rating = calculate_path(self.caller)
+            
+            # Set initial Path rating
+            self.caller.db.stats['pools']['moral']['Path'] = {'perm': path_rating, 'temp': path_rating}
+            
+            # Get virtue values for feedback message
+            conscience = self.caller.db.stats['virtues']['moral']['Conscience']['perm']
+            self_control = self.caller.db.stats['virtues']['moral']['Self-Control']['perm']
+            self.caller.msg(f"|gInitialized Mortal character with Humanity (Path rating: {path_rating} = Conscience {conscience} + Self-Control {self_control}).|n")
 
         # Set base attributes to 1
         for category, attributes in ATTRIBUTE_CATEGORIES.items():
@@ -3234,10 +3285,11 @@ class CmdSelfStat(MuxCommand):
         return True, ""
 
     def set_stat(self, stat_name: str, value: str, category: str = None, stat_type: str = None) -> None:
-        """Set a stat value after validation."""
-        # Get character's splat and type
+        """Set a stat value."""
+        # Debug output at start of method
+        
+        # Get character's splat
         splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
-        char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
 
         # If category or stat_type is None, try to detect them
         if not category or not stat_type:
@@ -3305,6 +3357,7 @@ class CmdSelfStat(MuxCommand):
 
                 # Update Path rating for vampires when virtues change
                 if stat_name.title() in ['Conscience', 'Self-Control', 'Conviction', 'Instinct'] and splat == 'Vampire':
+                    from world.wod20th.utils.virtue_utils import calculate_path
                     path_rating = calculate_path(self.caller)
                     if 'pools' not in self.caller.db.stats:
                         self.caller.db.stats['pools'] = {'moral': {}}
@@ -3404,6 +3457,9 @@ class CmdSelfStat(MuxCommand):
                 if flaw_value not in valid_values:
                     self.caller.msg(f"|rInvalid value for flaw {stat_name}. Valid values are: {', '.join(map(str, valid_values))}|n")
                     return
+
+                # Get character's type before checking restrictions
+                char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
 
                 # Check splat restrictions
                 if stat_name.title() in FLAW_SPLAT_RESTRICTIONS:
@@ -3558,6 +3614,49 @@ class CmdSelfStat(MuxCommand):
 
         # Provide feedback with category information
         self.caller.msg(f"|gSet {stat_name} to {value} as a {category}.{stat_type}.|n")
+
+        # Update Path rating when virtues change for Mortals
+        if splat == 'Mortal' and category == 'virtues' and stat_type == 'moral' and stat_name.title() in ['Conscience', 'Self-Control']:
+            # Store the virtue value first
+            if 'virtues' not in self.caller.db.stats:
+                self.caller.db.stats['virtues'] = {'moral': {}}
+            if 'moral' not in self.caller.db.stats['virtues']:
+                self.caller.db.stats['virtues']['moral'] = {}
+            self.caller.db.stats['virtues']['moral'][stat_name.title()] = {'perm': value, 'temp': value}
+            
+            # Ensure Path of Enlightenment is set to Humanity
+            if 'identity' not in self.caller.db.stats:
+                self.caller.db.stats['identity'] = {'personal': {}, 'lineage': {}}
+            if 'personal' not in self.caller.db.stats['identity']:
+                self.caller.db.stats['identity']['personal'] = {}
+            self.caller.db.stats['identity']['personal']['Path of Enlightenment'] = {'perm': 'Humanity', 'temp': 'Humanity'}
+            
+            # Calculate new path rating using virtue_utils
+            path_rating = calculate_path(self.caller)
+            
+            # Ensure pools structure exists
+            if 'pools' not in self.caller.db.stats:
+                self.caller.db.stats['pools'] = {'dual': {}, 'moral': {}}
+            if 'moral' not in self.caller.db.stats['pools']:
+                self.caller.db.stats['pools']['moral'] = {}
+                
+            # Update path rating
+            self.caller.db.stats['pools']['moral']['Path'] = {'perm': path_rating, 'temp': path_rating}
+            
+            # Get current virtue values for feedback message
+            conscience = self.caller.db.stats.get('virtues', {}).get('moral', {}).get('Conscience', {}).get('perm', 0)
+            self_control = self.caller.db.stats.get('virtues', {}).get('moral', {}).get('Self-Control', {}).get('perm', 0)
+            self.caller.msg(f"|gPath rating recalculated to {path_rating} (Conscience {conscience} + Self-Control {self_control}).|n")
+
+        # Special handling for gifts to store the alias used
+        if category == 'powers' and stat_type == 'gift' and hasattr(self, 'alias_used'):
+            # Store the alias using the new method
+            self.caller.set_gift_alias(stat_name, self.alias_used, value)
+
+        # Update pools based on splat type
+        if splat == 'Shifter':
+            from world.wod20th.utils.shifter_utils import update_shifter_pools_on_stat_change
+            update_shifter_pools_on_stat_change(self.caller, stat_name, value)
 
     def detect_category_and_type(self):
         """Detect the category and type of a stat based on its name."""

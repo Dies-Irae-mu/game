@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="character-sheet">
+    <h1>{{ character.name }}</h1>
+    
+    <div class="identity-section">
+        <h2>Identity</h2>
+        <p><strong>Splat:</strong> {{ splat }}</p>
+        {% if character.db.stats.identity.personal.Concept.perm %}
+            <p><strong>Concept:</strong> {{ character.db.stats.identity.personal.Concept.perm }}</p>
+        {% endif %}
+    </div>
+
+    <div class="attributes-section">
+        <h2>Attributes</h2>
+        <div class="attributes-grid">
+            {% for category, attrs in attributes.items %}
+            <div class="attribute-category">
+                <h3>{{ category }}</h3>
+                {% for attr in attrs %}
+                <div class="attribute">
+                    <span class="attr-name">{{ attr.name }}</span>
+                    <span class="attr-dots">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= attr.value %}
+                                ●
+                            {% else %}
+                                ○
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if character.db.approved %}
+        <p class="success">This character has been approved!</p>
+    {% else %}
+        <p class="warning">This character has not yet been approved!</p>
+    {% endif %}
+</div>
+
+<style>
+.character-sheet {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.attributes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.attribute {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+}
+
+.attr-dots {
+    letter-spacing: 2px;
+}
+
+.success {
+    color: green;
+    font-weight: bold;
+}
+
+.warning {
+    color: orange;
+    font-weight: bold;
+}
+</style>
+{% endblock %} 

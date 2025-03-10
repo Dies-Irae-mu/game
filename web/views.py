@@ -21,7 +21,20 @@ import os
 import uuid
 from markdown2 import Markdown
 
-markdowner = Markdown(extras=['fenced-code-blocks', 'tables', 'break-on-newline'])
+markdowner = Markdown(extras=[
+    'fenced-code-blocks',
+    'tables',
+    'break-on-newline',
+    'header-ids',
+    'strike',
+    'footnotes',
+    'spoiler',
+    'task-lists',
+    'cuddled-lists',
+    'target-blank-links',
+    'wiki-tables',
+    'tag-friendly'
+])
 
 @login_required
 def sheet(request, key, dbref):
@@ -445,9 +458,17 @@ def upload_character_image(request, key, dbref):
         image.image = filepath
         image.save()
 
-        return JsonResponse({'success': True, 'image_url': image.image.url})
+        # Return JsonResponse with json_dumps_params to prevent pretty printing
+        return JsonResponse(
+            {'success': True, 'image_url': image.image.url},
+            json_dumps_params={'separators': (',', ':')}
+        )
     except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+        return JsonResponse(
+            {'success': False, 'error': str(e)},
+            status=500,
+            json_dumps_params={'separators': (',', ':')}
+        )
 
 @login_required
 @require_POST
@@ -503,4 +524,35 @@ def delete_character_image(request, key, dbref, image_id):
         })
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+@login_required
+def render_markdown(request, key, dbref):
+    """View for rendering markdown content."""
+    try:
+        # Get the character object
+        character = ObjectDB.objects.get(id=dbref)
+        if not character:
+            return JsonResponse({'success': False, 'error': 'Character not found'})
+        
+        # Check permissions
+        account = request.user
+        if not (account.is_staff or character.account == account or character in account.db._playable_characters):
+            return JsonResponse({'success': False, 'error': 'Permission denied'})
+        
+        # Get the field and value from the request
+        field = request.GET.get('field')
+        value = request.GET.get('value', '')
+        
+        # Render the markdown
+        html = markdowner.convert(value)
+        
+        return JsonResponse({
+            'success': True,
+            'html': html
+        })
+        
+    except ObjectDB.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Character not found'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
 
