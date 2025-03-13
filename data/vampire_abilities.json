@@ -281,7 +281,7 @@
     },
     {
         "name": "Intrigue",
-        "description": "Intrigue Talent represents your ability to manipulate and deceive others.",
+        "description": "Skill in navigating power structures, alliances, and manipulative tactics.",
         "game_line": "Various",
         "category": "secondary_abilities",
         "stat_type": "secondary_talent",

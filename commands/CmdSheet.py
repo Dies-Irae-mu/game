@@ -269,7 +269,7 @@ class CmdSheet(MuxCommand):
                          'Spirit Type', 'Spirit Name', 'Domitor', 'Society', 'Order', 'Coven', 'Cabal', 'Plague', 'Crown', 
                          'Stream', 'Kitsune Path', 'Varna', 'Deed Name', 'Motivation', 'Possessed Type', 'Date of Possession',
                          'Companion Type', 'Patron Totem', 'Pack', 'Affinity Realm', 'Fae Court', 'Fae Name', 'Camp', 'Lodge',
-                         'Fang House', 'Nephandi Faction', 'Fuel', 'Elemental Affinity', 'Anchor']:
+                         'Fang House', 'Nephandi Faction', 'Fuel', 'Elemental Affinity', 'Anchor', 'Kinfolk Breed']:
                 value_str = 'None'
             else:
                 value_str = ''
@@ -360,12 +360,31 @@ class CmdSheet(MuxCommand):
         # Get current form and its modifiers if any
         current_form = character.db.current_form if hasattr(character.db, 'current_form') else None
         form_modifiers = {}
+        
         if current_form:
             try:
                 from world.wod20th.models import ShapeshifterForm
                 form = ShapeshifterForm.objects.get(name=current_form)
-                form_modifiers = form.stat_modifiers
-            except Exception:
+                
+                # Special handling for Bastet forms
+                splat = character.get_stat('other', 'splat', 'Splat', temp=False)
+                if splat == 'Shifter':
+                    shifter_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+                    if shifter_type == 'Bastet':
+                        tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
+                        if tribe and form.shifter_type == 'bastet':
+                            # Get the full form data to access tribe modifiers
+                            from world.wod20th.forms import forms_data
+                            form_data = forms_data['bastet'].get(current_form, {})
+                            if 'tribe_modifiers' in form_data:
+                                tribe_mods = form_data['tribe_modifiers'].get(tribe.lower(), {})
+                                if tribe_mods:
+                                    form_modifiers = tribe_mods
+                                    
+                if not form_modifiers:  # If no tribe-specific modifiers were found, use default
+                    form_modifiers = form.stat_modifiers
+            except Exception as e:
+                print(f"Error getting form modifiers: {e}")  # Debug line
                 form_modifiers = {}
 
         # Format each row of attributes
@@ -401,11 +420,12 @@ class CmdSheet(MuxCommand):
                 # Get permanent value
                 perm_value = character.db.stats.get('attributes', {}).get(category, {}).get(attr, {}).get('perm', 1)
                 
-                # Get base temporary value
+                # Get temporary value, defaulting to permanent value if not set
                 temp_value = character.db.stats.get('attributes', {}).get(category, {}).get(attr, {}).get('temp', perm_value)
                 
-                # Apply form modifier if it exists
-                if form_modifiers and attr in form_modifiers:
+                # Only apply form modifier if temporary value equals permanent value
+                # This means no manual temporary modification has been made
+                if form_modifiers and attr in form_modifiers and temp_value == perm_value:
                     form_mod = form_modifiers[attr]
                     temp_value = max(0, temp_value + form_mod)
 

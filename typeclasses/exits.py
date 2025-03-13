@@ -90,29 +90,40 @@ class Exit(DefaultExit):
         Called when exit is first created.
         """
         super().at_object_creation()
-        self.at_cmdset_creation()
         # Ensure view lock is set to allow all by default
         if not any(lock.startswith("view:") for lock in self.locks.all()):
             self.locks.add("view:all()")
+        self.init_exit_cmd()
         
-    def at_cmdset_creation(self):
+    def init_exit_cmd(self):
         """
-        Called when cmdset is first created.
+        Initialize the exit command.
         """
+        # Clear any existing cmdsets first
+        self.cmdset.delete("ExitCmdSet")
+        
+        # Create new cmdset
         cmdset = ExitCmdSet()
         cmdset.key = f"ExitCmdSet_{self.key}"
-        cmdset.priority = 101
+        cmdset.priority = -1  # Lower than admin commands
         cmdset.duplicates = False
-        cmdset.obj = self
         
+        # Create and add the command
         cmd = ExitCommand(
-            key=self.name,
-            aliases=self.aliases.all(),
+            key=self.name.lower(),
+            aliases=[alias.lower() for alias in self.aliases.all()],
             destination=self.destination,
             obj=self
         )
         cmdset.add(cmd)
         self.cmdset.add(cmdset, permanent=True)
+
+    def at_cmdset_creation(self):
+        """
+        Called when cmdset is first created.
+        """
+        # We handle this in init_exit_cmd instead
+        pass
     
     def return_appearance(self, looker, **kwargs):
         """

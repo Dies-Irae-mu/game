@@ -8,7 +8,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "auspice": "Ragabash"
     },
@@ -21,7 +21,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "auspice": "Theurge"
     },
@@ -34,7 +34,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "auspice": "Theurge"
     },
@@ -47,22 +47,22 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "auspice": "Theurge"
     },
     {
         "name": "Break the Bonds",
-        "description": "Called Release from Bondage in older versions. There are many ways to mystically blend the will of another. This Gift shatters all such bonds, from the blood domination of a vampire to a mage's mind control or a Half Moon's geas. Those who know this Gift may use it on any being, including themselves.",
-        "system": "The Garou is automatically immune to any supernatural coercion save from any being more powerful than an Incarna. The Gifted one may break another's mystic compulsion by touching her, spending a Gnosis point and rolling Manipulation + Leadership (difficulty 11 – the target's Willpower).",
+        "description": "Called Release from Bondage in older versions. There are many ways to mystically blend the will of another. This Gift shatters all such bonds, from the blood domination of a vampire to a mage's mind control or a Half Moon's geas. Those who know this Gift may use it on any being, including themselves. This Gift is only granted by an Incarna or equally powerful spirit, usually as a reward for some great service.",
+        "system": "The Garou is automatically immune to any supernatural coercion save from any being more powerful than an Incarna. The Gifted one may break another's mystic compulsion by touching her, spending a Gnosis point and rolling Manipulation + Leadership (difficulty 11 - the target's Willpower).",
         "source": "Book of Auspices / 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
-        "auspice": "Galliard"
+        "auspice": ["Philodox", "Galliard"]
     },
     {
         "name": "Storyteller",
@@ -73,34 +73,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "auspice": "Galliard"
-    },
-    
-    {
-        "name": "Firebringer",
-        "description": "This powerful Gift allows a Ragabash to pull the ultimate stunt, stealing a supernatural power and turning it into a Gift. Moreover, the Gift can be taught to others, as if the New Moon was a spirit teacher. The difficult part is that the Ragabash has to endure having the power used on her first, but after that, she makes it her own to teach, but alas, not to use herself. A powerful spirit, such as the avatar of a trickster Incarna, teaches this Gift.",
-        "system": "Survival, smarts and sacrifice are key to acquiring this Gift, though no specific dice rolls are needed. First, the Ragabash must suffer through the effects of the power being successfully used on her. Then, she can take her experiences, work with the appropriate spirit and turn the power into a Gift she can teach to others. The Ragabash cannot herself use the Gift, and moreover, she now has a vulnerability to its effects.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [6],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
-        "splat": "Shifter",
-        "auspice": "Ragabash"
-    },
-    {
-        "name": "Break the Bonds",
-        "description": "Called Release from Bondage in older versions. There are many ways to mystically blend the will of another. This Gift shatters all such bonds, from the blood domination of a vampire to a mage's mind control or a Half Moon's geas. Those who know this Gift may use it on any being, including themselves. This Gift is only granted by an Incarna or equally powerful spirit, usually as a reward for some great service.",
-        "system": "The Garou is automatically immune to any supernatural coercion save from any being more powerful than an Incarna. The Gifted one may break another's mystic compulsion by touching her, spending a Gnosis point and rolling Manipulation + Leadership (difficulty 11 – the target's Willpower).",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [6],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
-        "splat": "Shifter",
-        "auspice": ["Philodox", "Galliard"]
     },
     {
         "name": "Unstoppable Warrior",
@@ -110,9 +85,85 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "auspice": "Ahroun"
+    },
+    {
+        "name": "One on One",
+        "description": "The World of Darkness is a complex place, filled with intrigue, misdirection and all manner of supernatural evasion. Ahroun, however, are simpler beings, and this Gift allows them to extend their direct methods where they might not otherwise reach. The Garou says a brief prayer to Luna and the other innumerable spirits of blood, terror and vengeance in the Garou pantheon. She is then transported instantly to a single foe of her choice, whom she may engage in one-to-one combat to the death under Luna's own aegis. The foe cannot flee (though tactical withdrawal with the specific intent of continuing the fight this scene is acceptable), nor can she receive aid from outsiders. The invoker is bound by the same restrictions, of course. Luna herself teaches this Gift, and not through an avatar - the petitioner must journey to Luna's court in the Aetherial Realm and convince the capricious goddess that her reasons for needing this power are just.",
+        "system": "This Gift cuts through all supernatural forms of warding, concealment, contingency spells and similar precautions without any roll. For the remainder of the scene, both affected parties can receive no aid from other sources, and can only use powers that are directly physical in nature. A vampire's unearthly strength and speed or a faerie's ability to strike at enemies with the spirit of holly would remain potent, but a member of either race would be stripped of his supernatural mind-clouding and unearthly presence. Likewise, a Namebreaker might throw lightning or increase his own strength, but not teleport away or turn incorporeal to avoid the Garou's strikes utterly. This Gift involves the direct interference of the Celestine Luna in mortal affairs, and the Storyteller should remember that a thinking being is determining the Gift's exact effects, not a defined supernatural spell. The Storyteller should make judgement calls on the Gift's effects keeping it within its intended spirit of providing a fair, open a physical fight. A Garou asking to be transported to a vampire in torpor, for example, might find the Leech awake and ready to fight... The Garou must expend a point of permanent Gnosis to activate this Gift. Once the fight is done, normal rules of reality reassert themselves - which might be bad if the Garou has been sent to Malfeas or some other hellish domain.",
+        "source": "Book of Auspices",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [6],
+		"splat": "Shifter",
+		"auspice": "Ahroun",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Sleep of the Hero",
+        "description": "This powerful Gift has been invoked many times in Fianna history. When a great hero (Rank 5 or higher) ides in battle, the Fianna take the body and dedicate it to the land. This Gift forms a bond between the Fianna and the land and the spirit of the hero. The champion's life returns, but he remains in a deep sleep, not to awaken until the Apocalypse. The target must be placed somewhere in the earth, such as a cave, or within a burial mound. During this sleep, the hero is unaffected by the elements and does not need to breathe. This Gift is taught by Fianna ancestor spirits.",
+        "system": "The Garou spends two points of Gnosis and rolls Intelligence + Rituals against a difficulty of 9. If she succeeds, the life comes back into the hero and he falls into a deep sleep, usually after having a chance to say a few last words. If the wielder of this Gift receives five or more successes, then the hero may awaken and return to the caern at any time of great crisis, at the Storyteller's option.",
+        "source": "Fianna Tribebook",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [6],
+		"splat": "Shifter",
+        "tribe": "Fianna",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Call Great Fenris",
+        "description": "As the ultimate expression of the pact between tribe and totem, the greatest Get heroes my summon the war-avatar of their tribal totem to aid them in their hour of need. The avatar joins in combat, slaying all that are not Get of Fenris or under their protection. However, Great Fenris demands a sacrifice for his intervention - usually the left hand of the summoner. It's said that if the war-avatar is called for no good reason, it will devour the summoner entirely before departing - but there are no concrete tales of any Get of Fenris wise and mighty enough to attain this Gift yet foolish enough to abuse it. This Gift is taught by a wolf-spirit.",
+        "system": "The player spends one Gnosis point and rolls Stamina + Occult (difficulty 6). Success summons the war-avatar of Great Fenris, who will fight at the Fenrir's side for the duration of the scene. At the combat's end, the summoner automatically gains the Battle Scar: Maimed Limb (Werewolf, pg. 190) as the war-avatar claims Fenris' due; even if the Garou already possessed that Battle Scar, he gains it a second time as Fenris devours another limb.",
+        "source": "Tribebook: Get of Fenris (Revised)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [6],
+		"splat": "Shifter",
+        "tribe": "Get of Fenris",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Renew the Cycle",
+        "description": "One of the most potent powers available to the Garou, this Gift allows the correction of a grievous wrong to the natural cycle of Gaia. The undead, whose very existence is an affront to the natural order of things, wither and crumble to dust when struck by the power of this Gift. Whether the undead is a shambling, month-old animated corpse or an ancient vampire, the Fang can destroy it with but a glance. Only an avatar of Helios of Gaia Herself can teach this Gift.",
+        "system": "The Garou and the victim enter into a resisted contest of Gnosis versus Willpower (both difficulty 8). The Garou must then spend three permanent Gnosis points to activate the wrath of Gaia. If the Garou wins the contest, the vampire (or other undead) is reduced to its natural state: Elder vampires turn to dust, whereas freshly exhumed corpses simply lose their animation. This Gift forces mummies into a dead season of sleep but does not destroy them.",
+        "source": "Player's Guide Second Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [6],
+		"splat": "Shifter",
+        "tribe": "Silver Fangs",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Thought-Form of the Twelve Ministers",
+        "description": "The spoken mantra for this Gift is Aum-ka-la-rim-sa-ka-la-rim-ha-ka-la-rim. This Gift allows a Stargazer to attain true spiritual balance for a single moment. In that moment, all extreme desires and impure emotions are blasted away by an unmitigated blast of the Self. A startling crackle of energy travels like lightning to each of the Stargazer's chakra points. It only lasts for a second, and then it is gone. But in its wake, the Stargazer is left empowered and burning with a halo of pale green light. There is only a handful of Stargazers who have ever been worthy enough to learn this Gift, and it can only be taught by an avatar of Chimera.",
+        "system": "The player spends a single temporary point of Gnosis, Rage, and Willpower. For the remainder of the scene, the Garou gains a series of Trait bonuses: +2 to Perception, +3 to Enigmas, +3 to Empathy, and +2 to Brawl. There are two other benefits as well. First, any Garou standing within ten feet of the Stargazer using this Gift find that their temporary Gnosis pools are suddenly refreshed. Also, this Gift burns out any corruption that was contained in the werewolf grasping the power. Hence, any Wyrm-taint that the character had thus disappears.",
+        "source": "Stargazers Tribebook (revised)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [6],
+		"splat": "Shifter",
+        "tribe": "Stargazers",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Becoming Uktena",
+        "description": "The legends of the Cherokee say that a man was transformed into the Great Uktena to try to kill the sun. Great Uktena was around long before the Cherokee, but Garou have taken the form of his children on two or three occasions. Great Uktena teaches this Gift only to the most worthy of his Uktena followers; with it, the hero may transform into a creature even a Thunderwyrm would fear. After the crisis is resolved (assuming he lives), the new uktena slips into the nearest body of water and into the umbra, forever parting with his Garou brethren to join his father in Galunlati. Such a glorious end to an already legendary career is worthy of fireside retellings for generations. System: Once taught the Gift, the Uktena may call upon it at any time by invoking Great Uktena. The initial stage of the transformation takes three full turns, during which the werewolf's body grows and changes to a 20 foot horned serpent. The new uktena still retains the personality of the Garou at this point. After a period of time (usually no more than a scene), the final stage of the transformation begins as the mind of the Garou recedes and the uktena mindset takes over.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [6],
+        "shifter_type": ["Garou"],
+        "splat": "Shifter",
+        "tribe": "Uktena"
     },
     {
         "name": "Shield of Gaia",
@@ -122,9 +173,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [5, 6],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "shifter_type": ["Garou", "Rokea"],
         "splat": "Shifter",
-        "tribe": "Red Talon",
+        "tribe": "Red Talons",
         "gift_alias": ["C'et's Shell"]
     },
     {
@@ -134,19 +185,8 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [6],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
-        "tribe": "Red Talon"
-    },
-    {
-        "name": "Becoming Uktena",
-        "description": "The legends of the Cherokee say that a man was transformed into the Great Uktena to try to kill the sun. Great Uktena was around long before the Cherokee, but Garou have taken the form of his children on two or three occasions. Great Uktena teaches this Gift only to the most worthy of his Uktena followers; with it, the hero may transform into a creature even a Thunderwyrm would fear. After the crisis is resolved (assuming he lives), the new uktena slips into the nearest body of water and into the umbra, forever parting with his Garou brethren to join his father in Galunlati. Such a glorious end to an already legendary career is worthy of fireside retellings for generations. System: Once taught the Gift, the Uktena may call upon it at any time by invoking Great Uktena. The initial stage of the transformation takes three full turns, during which the werewolf's body grows and changes to a 20 foot horned serpent. The new uktena still retains the personality of the Garou at this point. After a period of time (usually no more than a scene), the final stage of the transformation begins as the mind of the Garou recedes and the uktena mindset takes over.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [6],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
-        "splat": "Shifter",
-        "tribe": "Uktena"
+        "tribe": "Red Talons"
     }
-] 
+]

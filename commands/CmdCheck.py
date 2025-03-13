@@ -269,9 +269,9 @@ class CmdCheck(MuxCommand):
 
         # Track totals for each category including secondary abilities
         category_totals = {
-            'talent': {'regular': 0, 'secondary': 0},
-            'skill': {'regular': 0, 'secondary': 0},
-            'knowledge': {'regular': 0, 'secondary': 0}
+            'talent': {'regular': 0, 'secondary': 0, 'total': 0},
+            'skill': {'regular': 0, 'secondary': 0, 'total': 0},
+            'knowledge': {'regular': 0, 'secondary': 0, 'total': 0}
         }
 
         for category in ['talent', 'skill', 'knowledge']:
@@ -284,21 +284,23 @@ class CmdCheck(MuxCommand):
 
             # Check secondary abilities category
             secondary_category = f'secondary_{category}'
-            # Fix: Get secondary abilities from the correct path
             secondary_abilities_dict = character.db.stats.get('secondary_abilities', {}).get(secondary_category, {})
             for ability, values in secondary_abilities_dict.items():
                 ability_value = values.get('perm', 0)
                 if ability_value > 0:
                     category_totals[category]['secondary'] += ability_value * 0.5  # Secondary abilities cost half points
                     # Store in results
-                    secondary_category = f'secondary_{category}'  # Use consistent naming with 'secondary_' prefix
                     results['secondary_abilities'][secondary_category][ability] = ability_value
 
-        # Calculate total points for each category
-        for category, totals in category_totals.items():
-            total_points = totals['regular'] + totals['secondary']
-            if total_points > 0:
-                all_ability_points.append((category, total_points))
+            # Calculate exact total (keeping fractional values)
+            category_totals[category]['total'] = (
+                category_totals[category]['regular'] + 
+                category_totals[category]['secondary']
+            )
+            
+            # Only add to all_ability_points if there are any points
+            if category_totals[category]['total'] > 0:
+                all_ability_points.append((category, category_totals[category]['total']))
 
         # Sort all categories by their point totals
         all_ability_points.sort(key=lambda x: x[1], reverse=True)
@@ -312,28 +314,54 @@ class CmdCheck(MuxCommand):
         for i, priority in enumerate(priority_levels):
             results['abilities'][priority] = {
                 'category': all_ability_points[i][0],
-                'points': all_ability_points[i][1]
+                'points': all_ability_points[i][1]  # Store exact value including decimals
             }
             results['secondary_abilities'][priority] = {
                 'category': all_ability_points[i][0],
                 'points': category_totals[all_ability_points[i][0]]['secondary'] if i < len(all_ability_points) and all_ability_points[i][0] in category_totals else 0
             }
 
-        # Check against expected values
+        # Check against expected values using exact comparison
+        # Primary abilities (13 points)
         if all_ability_points[0][1] > 13:
-            results['errors'].append(f"Primary abilities ({all_ability_points[0][0]}) should have 13 points, has {all_ability_points[0][1]}")
+            results['errors'].append(
+                f"Primary abilities ({all_ability_points[0][0]}) should have 13 points, "
+                f"has {all_ability_points[0][1]:.1f} "
+                f"({category_totals[all_ability_points[0][0]]['regular']} regular + "
+                f"{category_totals[all_ability_points[0][0]]['secondary']} secondary)"
+            )
         elif all_ability_points[0][1] < 13:
-            results['errors'].append(f"Primary abilities ({all_ability_points[0][0]}) should have 13 points, has {all_ability_points[0][1]}")
+            results['errors'].append(
+                f"Primary abilities ({all_ability_points[0][0]}) should have 13 points, "
+                f"has {all_ability_points[0][1]:.1f} "
+                f"({category_totals[all_ability_points[0][0]]['regular']} regular + "
+                f"{category_totals[all_ability_points[0][0]]['secondary']} secondary)"
+            )
 
+        # Secondary abilities (9 points)
         if all_ability_points[1][1] > 9:
-            results['errors'].append(f"Secondary abilities ({all_ability_points[1][0]}) should have 9 points, has {all_ability_points[1][1]}")
+            results['errors'].append(
+                f"Secondary abilities ({all_ability_points[1][0]}) should have 9 points, "
+                f"has {all_ability_points[1][1]:.1f} "
+                f"({category_totals[all_ability_points[1][0]]['regular']} regular + "
+                f"{category_totals[all_ability_points[1][0]]['secondary']} secondary)"
+            )
         elif all_ability_points[1][1] < 9:
-            results['errors'].append(f"Secondary abilities ({all_ability_points[1][0]}) should have 9 points, has {all_ability_points[1][1]}")
+            results['errors'].append(
+                f"Secondary abilities ({all_ability_points[1][0]}) should have 9 points, "
+                f"has {all_ability_points[1][1]:.1f} "
+                f"({category_totals[all_ability_points[1][0]]['regular']} regular + "
+                f"{category_totals[all_ability_points[1][0]]['secondary']} secondary)"
+            )
 
+        # Tertiary abilities (5 points)
         if all_ability_points[2][1] > 5:
-            results['errors'].append(f"Tertiary abilities ({all_ability_points[2][0]}) should have 5 points, has {all_ability_points[2][1]}")
-        elif all_ability_points[2][1] < 5:
-            results['errors'].append(f"Tertiary abilities ({all_ability_points[2][0]}) should have 5 points, has {all_ability_points[2][1]}")
+            results['errors'].append(
+                f"Tertiary abilities ({all_ability_points[2][0]}) should have 5 points, "
+                f"has {all_ability_points[2][1]:.1f} "
+                f"({category_totals[all_ability_points[2][0]]['regular']} regular + "
+                f"{category_totals[all_ability_points[2][0]]['secondary']} secondary)"
+            )
 
     def check_backgrounds(self, character, results):
         """Check background point allocation."""
@@ -891,7 +919,6 @@ class CmdCheck(MuxCommand):
             
             # Secondary abilities (count as half points)
             secondary_category = f'secondary_{category}'
-            # Fix: Get secondary abilities from the correct path
             secondary_abilities = character.db.stats.get('secondary_abilities', {}).get(secondary_category, {})
             for ability, values in secondary_abilities.items():
                 ability_value = values.get('perm', 0)
@@ -927,55 +954,239 @@ class CmdCheck(MuxCommand):
             for merit, values in merits.items():
                 merit_value = values.get('perm', 0)
                 spent_freebies += merit_value * self.FREEBIE_COSTS['merit']
+
         # Splat-specific calculations
         if splat == 'shifter':
-            # Get shifter type to determine free gifts
-            shifter_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '').lower()
+            shifter_type = character.get_stat('identity', 'lineage', 'Type', '').lower()
+            breed = character.get_stat('identity', 'lineage', 'Breed', '').lower()
+            current_rage = character.get_stat('pools', 'dual', 'Rage', temp=False) or 0
+            current_gnosis = character.get_stat('pools', 'dual', 'Gnosis', temp=False) or 0
+            current_willpower = character.get_stat('pools', 'dual', 'Willpower', temp=False) or 0
+
+            if shifter_type == 'ajaba':
+                aspect = character.get_stat('identity', 'lineage', 'Aspect', '').lower()
+                AJABA_ASPECT_STATS = {
+                    'dawn': {'rage': 5, 'gnosis': 1},
+                    'midnight': {'rage': 3, 'gnosis': 3},
+                    'dusk': {'rage': 1, 'gnosis': 5}
+                }
+                if aspect in AJABA_ASPECT_STATS:
+                    base_stats = AJABA_ASPECT_STATS[aspect]
+                    if current_rage > base_stats['rage']:
+                        spent_freebies += (current_rage - base_stats['rage']) * self.FREEBIE_COSTS['rage']
+                    if current_gnosis > base_stats['gnosis']:
+                        spent_freebies += (current_gnosis - base_stats['gnosis']) * self.FREEBIE_COSTS['gnosis']
+                    if current_willpower > 3:  # Base Willpower for Ajaba is 3
+                        spent_freebies += (current_willpower - 3) * self.FREEBIE_COSTS['willpower']
+
+            elif shifter_type == 'ananasi':
+                # Ananasi don't have Rage, use Blood instead
+                if breed == 'homid':
+                    base_willpower, base_gnosis = 3, 1
+                else:  # arachnid or animal-born
+                    base_willpower, base_gnosis = 4, 5
+                if current_willpower > base_willpower:
+                    spent_freebies += (current_willpower - base_willpower) * self.FREEBIE_COSTS['willpower']
+                if current_gnosis > base_gnosis:
+                    spent_freebies += (current_gnosis - base_gnosis) * self.FREEBIE_COSTS['gnosis']
+
+            elif shifter_type == 'bastet':
+                tribe = character.get_stat('identity', 'lineage', 'Tribe', '').lower()
+                BASTET_TRIBE_STATS = {
+                    'balam': {'rage': 4, 'willpower': 3},
+                    'bubasti': {'rage': 1, 'willpower': 5},
+                    'ceilican': {'rage': 3, 'willpower': 3},
+                    'khan': {'rage': 5, 'willpower': 2},
+                    'pumonca': {'rage': 4, 'willpower': 4},
+                    'qualmi': {'rage': 2, 'willpower': 5},
+                    'simba': {'rage': 5, 'willpower': 2},
+                    'swara': {'rage': 2, 'willpower': 4}
+                }
+                if tribe in BASTET_TRIBE_STATS:
+                    base_stats = BASTET_TRIBE_STATS[tribe]
+                    if current_rage > base_stats['rage']:
+                        spent_freebies += (current_rage - base_stats['rage']) * self.FREEBIE_COSTS['rage']
+                    if current_willpower > base_stats['willpower']:
+                        spent_freebies += (current_willpower - base_stats['willpower']) * self.FREEBIE_COSTS['willpower']
+                # Breed-based Gnosis
+                base_gnosis = 1 if breed == 'homid' else 3 if breed == 'metis' else 5
+                if current_gnosis > base_gnosis:
+                    spent_freebies += (current_gnosis - base_gnosis) * self.FREEBIE_COSTS['gnosis']
+
+            elif shifter_type == 'corax':
+                # Fixed base values
+                if current_rage > 1:
+                    spent_freebies += (current_rage - 1) * self.FREEBIE_COSTS['rage']
+                if current_gnosis > 6:
+                    spent_freebies += (current_gnosis - 6) * self.FREEBIE_COSTS['gnosis']
+                if current_willpower > 3:
+                    spent_freebies += (current_willpower - 3) * self.FREEBIE_COSTS['willpower']
+
+            elif shifter_type == 'gurahl':
+                # Base Willpower 6
+                if current_willpower > 6:
+                    spent_freebies += (current_willpower - 6) * self.FREEBIE_COSTS['willpower']
+                # Breed-based stats
+                if breed == 'homid':
+                    if current_rage > 3:
+                        spent_freebies += (current_rage - 3) * self.FREEBIE_COSTS['rage']
+                    if current_gnosis > 4:
+                        spent_freebies += (current_gnosis - 4) * self.FREEBIE_COSTS['gnosis']
+                elif breed in ['ursine', 'animal-born']:
+                    if current_rage > 4:
+                        spent_freebies += (current_rage - 4) * self.FREEBIE_COSTS['rage']
+                    if current_gnosis > 5:
+                        spent_freebies += (current_gnosis - 5) * self.FREEBIE_COSTS['gnosis']
+
+            elif shifter_type == 'kitsune':
+                # Base Willpower 5
+                if current_willpower > 5:
+                    spent_freebies += (current_willpower - 5) * self.FREEBIE_COSTS['willpower']
+                # Path-based Rage
+                path = character.get_stat('identity', 'lineage', 'Kitsune Path', '').title()
+                KITSUNE_PATH_RAGE = {
+                    'Kataribe': 2, 'Gukutsushi': 2, 'Doshi': 3, 'Eji': 4
+                }
+                if path in KITSUNE_PATH_RAGE and current_rage > KITSUNE_PATH_RAGE[path]:
+                    spent_freebies += (current_rage - KITSUNE_PATH_RAGE[path]) * self.FREEBIE_COSTS['rage']
+                # Breed-based Gnosis
+                breed = breed.title()
+                KITSUNE_BREED_GNOSIS = {
+                    'Kojin': 3, 'Homid': 3, 'Roko': 5, 'Animal-Born': 5,
+                    'Shinju': 4, 'Metis': 4
+                }
+                if breed in KITSUNE_BREED_GNOSIS and current_gnosis > KITSUNE_BREED_GNOSIS[breed]:
+                    spent_freebies += (current_gnosis - KITSUNE_BREED_GNOSIS[breed]) * self.FREEBIE_COSTS['gnosis']
+
+            elif shifter_type == 'mokole':
+                # Breed-based Gnosis
+                breed = breed.title()
+                MOKOLE_BREED_GNOSIS = {
+                    'Homid': 2, 'Animal-Born': 4, 'Suchid': 4
+                }
+                if breed in MOKOLE_BREED_GNOSIS and current_gnosis > MOKOLE_BREED_GNOSIS[breed]:
+                    spent_freebies += (current_gnosis - MOKOLE_BREED_GNOSIS[breed]) * self.FREEBIE_COSTS['gnosis']
+                # Auspice-based Willpower
+                auspice = character.get_stat('identity', 'lineage', 'Auspice', '').title()
+                MOKOLE_AUSPICE_WILLPOWER = {
+                    'Rising Sun': 3, 'Noonday Sun': 5, 'Setting Sun': 3,
+                    'Shrouded Sun': 4, 'Midnight Sun': 4, 'Decorated Sun': 5,
+                    'Solar Eclipse': 5
+                }
+                if auspice in MOKOLE_AUSPICE_WILLPOWER and current_willpower > MOKOLE_AUSPICE_WILLPOWER[auspice]:
+                    spent_freebies += (current_willpower - MOKOLE_AUSPICE_WILLPOWER[auspice]) * self.FREEBIE_COSTS['willpower']
+                # Varna-based Rage
+                varna = character.get_stat('identity', 'lineage', 'Varna', '').title()
+                MOKOLE_VARNA_RAGE = {
+                    'Champsa': 3, 'Gharial': 4, 'Halpatee': 4, 'Karna': 3,
+                    'Makara': 3, 'Ora': 5, 'Piasa': 4, 'Syrta': 4, 'Unktehi': 5
+                }
+                if varna in MOKOLE_VARNA_RAGE and current_rage > MOKOLE_VARNA_RAGE[varna]:
+                    spent_freebies += (current_rage - MOKOLE_VARNA_RAGE[varna]) * self.FREEBIE_COSTS['rage']
+
+            elif shifter_type == 'nagah':
+                # Base Willpower 4
+                if current_willpower > 4:
+                    spent_freebies += (current_willpower - 4) * self.FREEBIE_COSTS['willpower']
+                # Breed-based Gnosis
+                breed = breed.title()
+                NAGAH_BREED_GNOSIS = {
+                    'Balaram': 1, 'Homid': 1, 'Ahi': 1, 'Vasuki': 5
+                }
+                if breed in NAGAH_BREED_GNOSIS and current_gnosis > NAGAH_BREED_GNOSIS[breed]:
+                    spent_freebies += (current_gnosis - NAGAH_BREED_GNOSIS[breed]) * self.FREEBIE_COSTS['gnosis']
+                # Auspice-based Rage
+                auspice = character.get_stat('identity', 'lineage', 'Auspice', '').title()
+                NAGAH_AUSPICE_RAGE = {
+                    'Kamakshi': 3, 'Kartikeya': 4, 'Kamsa': 3, 'Kali': 4
+                }
+                if auspice in NAGAH_AUSPICE_RAGE and current_rage > NAGAH_AUSPICE_RAGE[auspice]:
+                    spent_freebies += (current_rage - NAGAH_AUSPICE_RAGE[auspice]) * self.FREEBIE_COSTS['rage']
+
+            elif shifter_type == 'nuwisha':
+                # Base Willpower 4, no Rage
+                if current_willpower > 4:
+                    spent_freebies += (current_willpower - 4) * self.FREEBIE_COSTS['willpower']
+                # Breed-based Gnosis
+                base_gnosis = 1 if breed == 'homid' else 5  # 5 for latrani/animal-born
+                if current_gnosis > base_gnosis:
+                    spent_freebies += (current_gnosis - base_gnosis) * self.FREEBIE_COSTS['gnosis']
+
+            elif shifter_type == 'ratkin':
+                # Base Willpower 3
+                if current_willpower > 3:
+                    spent_freebies += (current_willpower - 3) * self.FREEBIE_COSTS['willpower']
+                # Breed-based Gnosis
+                if breed == 'homid':
+                    base_gnosis = 1
+                elif breed == 'metis':
+                    base_gnosis = 3
+                else:  # rodens or animal-born
+                    base_gnosis = 5
+                if current_gnosis > base_gnosis:
+                    spent_freebies += (current_gnosis - base_gnosis) * self.FREEBIE_COSTS['gnosis']
+                # Aspect-based Rage
+                aspect = character.get_stat('identity', 'lineage', 'Aspect', '').lower()
+                RATKIN_ASPECT_RAGE = {
+                    'tunnel runner': 1, 'shadow seer': 2, 'knife skulker': 3,
+                    'warrior': 5, 'engineer': 2, 'plague lord': 3,
+                    'munchmausen': 4, 'twitcher': 5
+                }
+                if aspect in RATKIN_ASPECT_RAGE and current_rage > RATKIN_ASPECT_RAGE[aspect]:
+                    spent_freebies += (current_rage - RATKIN_ASPECT_RAGE[aspect]) * self.FREEBIE_COSTS['rage']
+
+            elif shifter_type == 'rokea':
+                # Base Willpower 4
+                if current_willpower > 4:
+                    spent_freebies += (current_willpower - 4) * self.FREEBIE_COSTS['willpower']
+                # Breed-based Gnosis
+                base_gnosis = 1 if breed == 'homid' else 5  # 5 for squamus/animal-born
+                if current_gnosis > base_gnosis:
+                    spent_freebies += (current_gnosis - base_gnosis) * self.FREEBIE_COSTS['gnosis']
+                # Auspice-based Rage
+                auspice = character.get_stat('identity', 'lineage', 'Auspice', '').lower()
+                ROKEA_AUSPICE_RAGE = {
+                    'brightwater': 5, 'dimwater': 4, 'darkwater': 3
+                }
+                if auspice in ROKEA_AUSPICE_RAGE and current_rage > ROKEA_AUSPICE_RAGE[auspice]:
+                    spent_freebies += (current_rage - ROKEA_AUSPICE_RAGE[auspice]) * self.FREEBIE_COSTS['rage']
+
+            elif shifter_type == 'garou':
+                # Auspice-based Rage
+                auspice = character.get_stat('identity', 'lineage', 'Auspice', '').lower()
+                GAROU_AUSPICE_RAGE = {
+                    'ahroun': 5, 'galliard': 4, 'philodox': 3,
+                    'theurge': 2, 'ragabash': 1
+                }
+                if auspice in GAROU_AUSPICE_RAGE and current_rage > GAROU_AUSPICE_RAGE[auspice]:
+                    spent_freebies += (current_rage - GAROU_AUSPICE_RAGE[auspice]) * self.FREEBIE_COSTS['rage']
+                # Breed-based Gnosis
+                base_gnosis = 1 if breed == 'homid' else 3 if breed == 'metis' else 5
+                if current_gnosis > base_gnosis:
+                    spent_freebies += (current_gnosis - base_gnosis) * self.FREEBIE_COSTS['gnosis']
+                # Tribe-based Willpower
+                tribe = character.get_stat('identity', 'lineage', 'Tribe', '').lower()
+                GAROU_TRIBE_WILLPOWER = {
+                    'black furies': 3, 'black spiral dancers': 3, 'bone gnawers': 4,
+                    'children of gaia': 4, 'fianna': 3, 'get of fenris': 3,
+                    'glass walkers': 3, 'red talons': 3, 'shadow lords': 3,
+                    'silent striders': 3, 'silver fangs': 3, 'stargazers': 4,
+                    'uktena': 3, 'wendigo': 4
+                }
+                if tribe in GAROU_TRIBE_WILLPOWER and current_willpower > GAROU_TRIBE_WILLPOWER[tribe]:
+                    spent_freebies += (current_willpower - GAROU_TRIBE_WILLPOWER[tribe]) * self.FREEBIE_COSTS['willpower']
+
+            # Calculate Gift costs
             gift_requirements = {
-                'ajaba': 3,
-                'bastet': 3,
-                'corax': 3,
-                'gurahl': 3,
-                'kitsune': 3,
-                'mokole': 2,
-                'nagah': 3,
-                'nuwisha': 3,
-                'ratkin': 3,
-                'rokea': 2
+                'ajaba': 3, 'bastet': 3, 'corax': 3, 'gurahl': 3, 'kitsune': 3,
+                'mokole': 2, 'nagah': 3, 'nuwisha': 3, 'ratkin': 3, 'rokea': 2
             }
             free_gifts = gift_requirements.get(shifter_type, 3)  # Default to 3 if type not found
-                        # Calculate Gift costs (only for gifts beyond the free ones)
             gifts = character.db.stats.get('powers', {}).get('gift', {})
             total_gifts = len(gifts) if gifts else 0
             if total_gifts > free_gifts:
                 spent_freebies += (total_gifts - free_gifts) * self.FREEBIE_COSTS['gift']
-            # Calculate Rage and Gnosis costs
-            rage = character.db.stats.get('pools', {}).get('dual', {}).get('Rage', {}).get('perm', 0)
-            gnosis = character.db.stats.get('pools', {}).get('dual', {}).get('Gnosis', {}).get('perm', 0)
-            
-            # Get base Rage based on auspice
-            auspice_data = character.db.stats.get('identity', {}).get('lineage', {}).get('Auspice', {})
-            auspice = auspice_data.get('perm') if isinstance(auspice_data, dict) else None
-            base_rage = {
-                'Ragabash': 1,
-                'Theurge': 2,
-                'Philodox': 3,
-                'Galliard': 4,
-                'Ahroun': 5
-            }.get(auspice, 1)  # Default to 1 if auspice not found
-            
-            # Get base Gnosis based on breed
-            breed_data = character.db.stats.get('identity', {}).get('lineage', {}).get('Breed', {})
-            breed = breed_data.get('perm') if isinstance(breed_data, dict) else None
-            base_gnosis = 1 if breed == 'Homid' else 3 if breed == 'Metis' else 5
-            
-            if rage > base_rage:
-                spent_freebies += (rage - base_rage) * self.FREEBIE_COSTS['rage']
-            if gnosis > base_gnosis:
-                spent_freebies += (gnosis - base_gnosis) * self.FREEBIE_COSTS['gnosis']
 
-
-        # Vampire-specific calculations
         elif splat == 'vampire':
             # Calculate discipline costs
             disciplines = character.db.stats.get('powers', {}).get('discipline', {})
@@ -1193,7 +1404,6 @@ class CmdCheck(MuxCommand):
         knowledge_total = sum(values.get('perm', 0) for values in character.db.stats.get('abilities', {}).get('knowledge', {}).values())
 
         # Calculate secondary ability totals
-        # Fix: Access secondary abilities from the correct path
         sec_talent_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('secondary_abilities', {}).get('secondary_talent', {}).values())
         sec_skill_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('secondary_abilities', {}).get('secondary_skill', {}).values())
         sec_knowledge_total = sum(values.get('perm', 0) * 0.5 for values in character.db.stats.get('secondary_abilities', {}).get('secondary_knowledge', {}).values())
@@ -1264,9 +1474,22 @@ class CmdCheck(MuxCommand):
         # Power Traits
         splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '').lower()
 
+        # Get Rage, Gnosis, and Willpower from pools/dual
+        rage = character.db.stats.get('pools', {}).get('dual', {}).get('Rage', {}).get('perm', 0)
+        gnosis = character.db.stats.get('pools', {}).get('dual', {}).get('Gnosis', {}).get('perm', 0)
+        willpower = character.db.stats.get('pools', {}).get('dual', {}).get('Willpower', {}).get('perm', 0)
+        glamour = character.db.stats.get('pools', {}).get('dual', {}).get('Glamour', {}).get('perm', 0)
+        quintessence = character.db.stats.get('pools', {}).get('dual', {}).get('Quintessence', {}).get('perm', 0)
+        arete = character.db.stats.get('pools', {}).get('advantage', {}).get('Arete', {}).get('perm', 0)
+        enlightenment = character.db.stats.get('pools', {}).get('advantage', {}).get('Enlightenment', {}).get('perm', 0)
+        affiliation = character.db.stats.get('identity', {}).get('lineage', {}).get('Affiliation', {}).get('perm', '')
         # Arete for Mages
         if splat == 'mage':
-            string += f"|yArete:|n {results['arete']}\n\n"
+            if affiliation == 'Technocracy':
+                string += f"|yEnlightenment:|n {enlightenment}\n\n"
+            else:
+                string += f"|yArete:|n {arete}\n"
+
             # Spheres
             string += "|ySpheres:|n\n"
             spheres = character.db.stats.get('powers', {}).get('sphere', {})
@@ -1280,8 +1503,8 @@ class CmdCheck(MuxCommand):
 
         # Gnosis and Rage for Shifters
         if splat == 'shifter':
-            string += f"|yGnosis:|n {results['gnosis']}\n"
-            string += f"|yRage:|n {results['rage']}\n"
+            string += f"|yGnosis:|n {gnosis}\n"
+            string += f"|yRage:|n {rage}\n"
             # Gifts
             string += "|yGifts:|n\n"
             gifts = character.db.stats.get('powers', {}).get('gift', {})
@@ -1381,7 +1604,7 @@ class CmdCheck(MuxCommand):
 
         # Willpower for all splats that use it
         if splat in ['changeling', 'mortal+', 'possessed', 'companion', 'vampire', 'mage', 'shifter', 'mortal']:
-            string += f"|yWillpower:|n {results['willpower']}\n\n"
+            string += f"|yWillpower:|n {willpower}\n\n"
 
         # Freebie Points
         # Determine base freebies based on splat

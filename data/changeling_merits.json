@@ -217,7 +217,7 @@
 },
 {
     "name": "Animalistic Favor",
-    "description": "Your mien possesses a minor animalistic feature. The features and their effects are:\n\n3 points:\n- 360 Vision: –2 difficulty when looking for something or someone. +2 difficulty on attempts to surprise you.\n- Tough Hide: –1 difficulty to soak damage.\n- Whip Tail: Natural weapon with reach. 2B damage.\n\n4 points:\n- Extra Legs: Near impossible to trip. Can run at twice the normal speed.\n- Fly Fingers: Fingers end in tiny, stiff hooks, capable of supporting your weight. You can climb sheer walls and hang from ceilings providing the surface can support your weight.\n- Stinger: Natural weapon. 1L damage. Paralyzes opponents for one turn unless they succeed on a Stamina roll (difficulty 4).\n\n5 points:\n- Venomous Bite: Natural weapon. 3L damage. 1L damage each subsequent turn for six hours (may be soaked).",
+    "description": "Your mien possesses a minor animalistic feature. The features and their effects are:\n\n3 points:\n- 360 Vision: -2 difficulty when looking for something or someone. +2 difficulty on attempts to surprise you.\n- Tough Hide: -1 difficulty to soak damage.\n- Whip Tail: Natural weapon with reach. 2B damage.\n\n4 points:\n- Extra Legs: Near impossible to trip. Can run at twice the normal speed.\n- Fly Fingers: Fingers end in tiny, stiff hooks, capable of supporting your weight. You can climb sheer walls and hang from ceilings providing the surface can support your weight.\n- Stinger: Natural weapon. 1L damage. Paralyzes opponents for one turn unless they succeed on a Stamina roll (difficulty 4).\n\n5 points:\n- Venomous Bite: Natural weapon. 3L damage. 1L damage each subsequent turn for six hours (may be soaked).",
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "physical",
@@ -247,23 +247,13 @@
 },
 {
     "name": "Nature's Child",
-    "description": "You are one with nature and beasts. You receive a –2 to your difficulty on rolls when dealing with nonsapient animals in their natural environment, whether training them, tracking them, or simply petting them. Changelings should take care relying on this Merit when dealing with chimera, however; some of them are much more intelligent than they appear.",
+    "description": "You are one with nature and beasts. You receive a -2 to your difficulty on rolls when dealing with nonsapient animals in their natural environment, whether training them, tracking them, or simply petting them. Changelings should take care relying on this Merit when dealing with chimera, however; some of them are much more intelligent than they appear.",
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "social",
     "values": [2],
     "splat": "Changeling",
     "source": "C20 p.184"
-},
-{
-    "name": "Nightsight",
-    "description": "Night blinds many eyes, but not yours. Regardless of the lighting conditions, your eyes adjust automatically, so you can see equally well at high noon, midnight, or entering pitch darkness. The adjustment is instantaneous, so if you are standing in a dark room and someone lights a candle, you're not blinded.",
-    "game_line": "Changeling: The Dreaming",
-    "category": "merits",
-    "stat_type": "physical",
-    "values": [2],
-    "splat": "Changeling",
-    "source": "C20 p.177"
 },
 {
     "name": "Prehensile Tongue",
@@ -277,7 +267,7 @@
 },
 {
     "name": "Voice of a Songbird",
-    "description": "The satyrs say your voice could charm apples from the trees. You have perfect pitch and can sing a cappella without missing a single note or going off key. Even when only speaking, your voice has a seductive quality that attracts people to you. Whenever you make a roll that involves inspirational speaking or singing, you are at a –2 difficulty.",
+    "description": "The satyrs say your voice could charm apples from the trees. You have perfect pitch and can sing a cappella without missing a single note or going off key. Even when only speaking, your voice has a seductive quality that attracts people to you. Whenever you make a roll that involves inspirational speaking or singing, you are at a -2 difficulty.",
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "social",
@@ -397,7 +387,7 @@
 },
 {
     "name": "Friendly Face",
-    "description": "You have a face strangers are inclined to trust. The effect doesn't fade even if you attempt self-deprecation, leaving you at –2 difficulty on all appropriate Social rolls (yes for first impressions, no for Intimidation, for example) when a stranger is involved. This Merit only functions on a first meeting.",
+    "description": "You have a face strangers are inclined to trust. The effect doesn't fade even if you attempt self-deprecation, leaving you at -2 difficulty on all appropriate Social rolls (yes for first impressions, no for Intimidation, for example) when a stranger is involved. This Merit only functions on a first meeting.",
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "physical",
@@ -433,7 +423,7 @@
 },
 {
     "name": "Your Best Advocate",
-    "description": "You are especially convincing when telling tall tales about your exploits. You receive a –2 to your difficulty on Social rolls related to recounting your deeds, whether true or not.",
+    "description": "You are especially convincing when telling tall tales about your exploits. You receive a -2 to your difficulty on Social rolls related to recounting your deeds, whether true or not.",
     "game_line": "Changeling: The Dreaming",
     "category": "merits",
     "stat_type": "social",

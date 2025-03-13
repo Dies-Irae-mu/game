@@ -9,12 +9,12 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Glass Walker",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "tribe": "Glass Walkers",
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Walk With Hades",
-        "description": "When Persephone entered the lands of the dead with Hedes, her lover, her mother, Demeter, the harvest goddess, went in after her. As an aspect of Gaia, Demeter understood her daughter's desire for Hades, but refused to let a powerful spirit remain in the deadlands for long. Eventually, Persephone acquiesced to return to the living realm, under the agreement that she could periodically return to Hades' side, and could return to the Underworld eventually. Demeter agreed to this arrangement verbally, but eventually performed a secret ritual to block her daughter from entering the realms of the dead. Such travel is, after all, counter to the proper way of things. Embittered by her now-permanent separation from her lover, Persephone taught a number of favored Black Furies the secret roads into the land of the dead; these secrets have been passed down by Persephone's servitor spirits and aged Garou to the present day. Technically, use of this Gift violates one of Gaia's laws – 'The living live, and the dead remain dead.' But since it is only used by the most ancient and respected Black Furies, and even then only in the most extreme circumstances, few punishments have come down onto those forced to use it.",
+        "description": "When Persephone entered the lands of the dead with Hedes, her lover, her mother, Demeter, the harvest goddess, went in after her. As an aspect of Gaia, Demeter understood her daughter's desire for Hades, but refused to let a powerful spirit remain in the deadlands for long. Eventually, Persephone acquiesced to return to the living realm, under the agreement that she could periodically return to Hades' side, and could return to the Underworld eventually. Demeter agreed to this arrangement verbally, but eventually performed a secret ritual to block her daughter from entering the realms of the dead. Such travel is, after all, counter to the proper way of things. Embittered by her now-permanent separation from her lover, Persephone taught a number of favored Black Furies the secret roads into the land of the dead; these secrets have been passed down by Persephone's servitor spirits and aged Garou to the present day. Technically, use of this Gift violates one of Gaia's laws - 'The living live, and the dead remain dead.' But since it is only used by the most ancient and respected Black Furies, and even then only in the most extreme circumstances, few punishments have come down onto those forced to use it.",
         "system": "Spend 1 Gnosis and roll Gnosis (the difficulty is the local Gauntlet) to step sideways into the lands of the dead. If the Fury succeeds, she enters the Dark Umbra rather than the Penumbra. She can remain there for only a single day (24 hours), after which point she must cross back to the mortal realm (rolling to step sideways as usual) or risk eternal capture in the ghost-world. If the character takes more than 24 hours to return, the Gauntlet equivalent increases by 1 for every 2 hours the Fury remains past the deadline: when it reaches 10, the Fury is trapped and will begin her afterlife as a ghost. She will not become an ancestor-spirit. The dead lurk near places, people, and things that were important to them in life, and they are creatures of almost pure emotion in death. They are still coherent, thinking beings, but are occasionally possesed of a terrible hate and fury toward the living, and may attack without provocation. When not so enraged, they do have most of their memories of life, and are likely to be willing to answer the Fury's question if the two were friendly in life. This scene should be roleplayed out: no dice roll is an appropriate way to describe the character's encounter with a deceased love one.",
         "source": "Tribebook: Black Furies (Revised)",
         "game_line": "Werewolf: The Apocalypse",
@@ -24,12 +24,12 @@
         "splat": "Shifter",
         "tribe": "Black Furies",
         "camp": "Temple of Artemis",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Storm of Mother's Wrath",
         "description": "When the Black Furies take up arms to destroy an enemy of Gaia, they are like unto a force of nature. Should a pack of Bacchantes include one with Storm of Mother's Wrath, they nearly become a force of nature. The Fury wielding this Gift causes a fearful dark hailstorm to erupt, even out of a clear sky; the pack of Bacchantes, however, are not inconvenienced by the storm, and can move around and fight in it without difficulty. Signs of such a hailstorm in the area tend to be a red flag to Wyrm-creatures, who know that a pack of Furies must be involved in a desperate fight; they may move to join in, or they may wait in ambush outside of the storm. A Mammatus, a Wyld-spirit of the air, teaches this Gift.",
-        "system": "Spend a point of Gnosis and roll Stamina + Survival (Difficulty 7). The storm has a 100-meter diameter and a duration of one miute. Every success on thr roll extends the storm's diameter by 100 meters, and extends the storm's duration by 1 minute. Physical being caught within the storm – humans, Garou, formori, and materialized spirits – take a 3-die penalty to all physical dice pools. The exception to this is the pack of the character resposible for the storm; that group recieves no penalty. Humans react to the storm as though faced with delirium; most will attempt to flee its fury. The storm cannot be generated indoors or underground, and its effects will not penatrate solid walls (though the pelting hail can and does break glass windows).",
+        "system": "Spend a point of Gnosis and roll Stamina + Survival (Difficulty 7). The storm has a 100-meter diameter and a duration of one miute. Every success on thr roll extends the storm's diameter by 100 meters, and extends the storm's duration by 1 minute. Physical being caught within the storm - humans, Garou, formori, and materialized spirits - take a 3-die penalty to all physical dice pools. The exception to this is the pack of the character resposible for the storm; that group recieves no penalty. Humans react to the storm as though faced with delirium; most will attempt to flee its fury. The storm cannot be generated indoors or underground, and its effects will not penatrate solid walls (though the pelting hail can and does break glass windows).",
         "source": "Tribebook: Black Furies (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -38,7 +38,7 @@
         "splat": "Shifter",
         "tribe": "Black Furies",
         "camp": "Bacchantes",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Gorgon's Gaze",
@@ -51,7 +51,7 @@
         "values": [5], 
         "splat": "Shifter",
         "tribe": "Black Furies",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou", "Mokole"]
     },
     {
         "name": "Wyld Warp",
@@ -64,7 +64,7 @@
         "values": [5], 
         "splat": "Shifter",
         "tribe": "Black Furies",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Gluttony",
@@ -77,7 +77,7 @@
         "values": [5], 
         "splat": "Shifter",
         "tribe": "Bone Gnawers",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Help Me",
@@ -90,7 +90,7 @@
         "values": [5], 
         "splat": "Shifter",
         "tribe": "Bone Gnawers",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Piping",
@@ -103,7 +103,7 @@
         "values": [5], 
         "splat": "Shifter",
         "tribe": "Bone Gnawers",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Riot",
@@ -116,8 +116,8 @@
         "values": [5], 
         "splat": "Shifter",
         "tribe": "Bone Gnawers",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
-        "gift_alias": ["Madness of Crowds"]
+		"shifter_type":  ["Garou", "Bastet", "Ratkin"],
+        "gift_alias": ["Madness of Crowds", "The Madness of Crowds"]
     },
     {
         "name": "Chaos Mechanics",
@@ -129,8 +129,168 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Glass Walker",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "tribe": "Glass Walkers",
+		"shifter_type":  ["Garou", "Mokole"]
+    },
+    {
+        "name": "Trust of Gaia",
+        "description": "With this Gift, the Garou instantly earns the trust of all who meet him or hear him, even over a telephone or television. They feel instinctively that he is a good and trustworthy person. This feeling wells up from such a deep level that it cannot be changed by even the most invasive mind control. People affected by this Gift can still be mind-controlled to attack the Garou, but hate doing so. Those who are Wyrm-corrupted feel intense dislike instead of trust. This trust is strong, but it does not supersede the person's common sense. If the Child of Gaia is firing a machine gun into the crowd, the people will still scatter, rather than trust that he'll miss them. However, they will all be convinced that he had a very good reason for firing. The Children of Gaia warn that this Gift has great potential for abuse, and punish those who use it for petty gain. This Gift is taught by an avatar of Unicorn.",
+        "system": "The Garou rolls Manipulation + Empathy against a difficulty of 6. The difficulty against Garou, or humans corrupted by the Wyrm, is 8. Wyrm beasts are immune. If successful, everyone who sees, hears, or experiences the Garou in any way must make a resistance roll (Willpower against difficulty 6) or feel a high degree of trust for the Garou. They will confide in him as they would a trusted friend. The effect will last for one scene, or as long as the person remains in contact with the Garou. however, even once the Gift's effect has worn off, the person will feel good will toward the Garou.",
+        "source": "Tribebook: Children of Gaia",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Children of Gaia",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "The Living Wood",
+        "description": "The Garou calls upon the spirits of the forest to come to her aid. The trees around the Child of Gaia animate, and they can restrain or right foes. A Glade Child teaches this Gift.",
+        "system": "The player spends one Gnosis point and rolls Charisma + Survival (difficulty8). Each success animates one tree. The trees move with the Dexterity of the Child of Gaia, and they can have Strength ratings from 4 to 15, depending on their size. Other Traits are up to the Storyteller's discretion.",
+        "source": "Core book revised",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Children of Gaia",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Halo of the Sun",
+        "description": "The Garou is surrounded by a nimbus of blazing sunlight. Some Wyrm-creatures may flee before this terrifying sight, but any who stay and fight discover that the Garou strikes with added power. Helios, the Celestine of the sun, teaches this Gift.",
+        "system": "The player spends one Gnosis point, and the effects of the Gift last for one scene. The Garou is surrounded in blinding sunlight, and anyone looking directly at the werewolf is blinded (add three to difficulties to attack the Garou). The Garou adds two dice of damage to all hand attacks, and hand damage is considered aggravated in all forms. Any vampires within 20 feet take damage as though exposed to true, direct sunlight.",
+        "source": "Core book revised",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Children of Gaia",
+		"gift_alias": ["Halo of the Sun", "Surya's Radiance", "Blood of Darkness"],
+        "shifter_type": ["Garou", "Mokole", "Nagah", "Rokea"]
+    },
+    {
+        "name": "Fog on the Moor",
+        "description": "This Gift transforms the Fianna into a ghostly outline of himself, allowing him to pass through anything except silver as though he were incorporeal. He may communicate and strike opponents normally. He cannot be harmed by anything except silver; all incoming attacks pass through him. A fog-spirit teaches this Gift.",
+        "system": "The player spends one Willpower point and rolls Gnosis (difficulty 7) to instantly transform the Garou into a ghostly form. Each success allows the Garou to stay in that form for one turn, though the Garou may change back at will. The character cannot regenerate while in this form.",
+        "source": "20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5], 
+        "splat": "Shifter",
+        "tribe": "Fianna",
+		"shifter_type":  ["Garou", "Camazotz", "Kitsune"],
+        "gift_alias": ["Mist on the Water", "Cloud on the Wing"]  
+    },
+    {
+        "name": "Havgan's Healing",
+        "description": "Named after the foe Pwyll dueled with in the Otherworld, this powerful Gift lets wounds alternately harm and heal the Garou, giving the Fianna a critical edge in a sustained battle. A death-spirit teaches this Gift.",
+        "system": "To activate this Gift, the Fianna must spend two Gnosis points and concentrate for one turn. For the duration of the scene, any health levels that are not soaked alternately harm or heal the Garou. The first blow to strike the Garou injures him as normal; with the second blow, any damage that is not soaked (and the player must roll soak as normal) instead is treated as healing. Bashing wounds heal bashing damage, lethal wounds can heal bashing or lethal damage, and aggravated wounds heal all forms of damage. The third blow injures, the fourth heals, and so on. Wounds suffered from silver can never heal, however; they inflict damage as normal, and “use up” that blow - for instance, a Fianna wounded by silver by the fourth blow after activating this Gift takes unsoakable aggravated damage as normal, and the fifth blow will injure, not heal. (However, any aggravated damage taken on the sixth blow and every other attack after that could heal the silver damage.) Any wounds left unhealed by the end of the scene must be healed as usual.",
+        "source": "Fianna Tribebook (revised)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Fianna",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Forms of Cernunnos",
+        "description": "Celtic legends abound with heroes transforming into animals, whether to escape, to hunt, or to spy. Cernunnos the Horned God was the master of animals; with this Gift the Garou is able to master the form of any animal. A Wyld spirit or a faerie spirit teaches this Gift.",
+        "system": "As per the Ragabash Gift: The Thousand Forms, with the limitation that mythical beasts are not possible forms, but with the addition that another willing person can be changed at the cost of two Gnosis and +1 difficulty. Said person cannot change back without the assistance of someone who knows this Gift. The Thousand Forms: Most trickster archetypes are shapeshifters, and the Ragabash is no different. The Garou with this Gift may change herself into any animal between the sizes of a small bird and a bison. The Garou gains all the special powers (flight, gills, poison, sensory abilities, etc.) of the animal she mimics. She may not take the form of Wyrm-beasts (not that she would wish to!), but she may take the form of mythical beasts with some extra effort. The player spends a Gnosis point and rolls Intelligence + Animal Ken. The difficulty varies, rising higher the farther removed from the Garou's natural form the desired animal is. For example, an ape or panther (mammals of roughly equal mass) might be difficulty 5, while an alligator (a reptile of slightly larger size) would be difficulty 7, and a frog (a much smaller amphibian) would be difficulty 0. Mimicking mythical animals is always difficulty 10.",
+        "source": "Fianna Tribebook (revised)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Fianna",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Gift of the Spriggan",
+        "description": "The Fianna may grow up to three times her usual size or shrink to the size of a small puppy. A faerie or a Chimerling teaches this Gift.",
+        "system": "The player spends one Gnosis point and rolls Stamina + Primal-Urge (difficulty 8). The effects last for one hour per success or until the Garou cancels the Gift. If the Garou grows larger, she gains three Strength dice for every 100% increase in size. If she grows smaller, she retains her normal Traits, but she may sneak around unnoticed or masquerade as someone's pet.",
+        "source": "Core book revised",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Fianna",
+		"gift_alias": ["Great as a White Hill"],
+        "shifter_type": ["Garou", "Mokole"]
+    },
+    {
+        "name": "Call the Hunt",
+        "description": "The werewolf may use this Gift only once per month, and only if there is an overwhelming need for it (such as discovering that a truly great evil infests an area). This Gift calls the Huntsman of Celtic mythology to harry and slay the evil. The Huntsman himself teaches this Gift.",
+        "system": "The Garou must chant and concentrate for one full hour. The player then spend one Gnosis point and rolls Charisma + Occult (difficulty 8). The Huntsman appears with a single hound, plus one hound for each extra Rage or Gnosis point the player wishes to expend. If the roll is botched, the evil is not worthy of the Huntsman's attention. If the summoner does not join the hunt, the Huntsman instead leads the hunt against the Garou.",
+        "source": "Core book revised",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Fianna",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "The Good Death",
+        "description": "No true Get of Fenris fears death - only dying poorly. This Gift is Great Fenris' final blessing to his children; the Fenrir who activates this Gfit intends to die with her foes' heartsblood on her claws. The werewolf calls on Great Fenris to aid her and sets herself against her foe. The Fenrir continues fighting long after she should be dead, and doesn't fall until her enemy (or enemies) dies with her. The avatar of Great Fenris himself teaches this Gift.",
+        "system": "The Fenrir concentrates for one full turn and spends all her Gnosis in calling for Fenris' favor. Once the Gift has been activated, the Garou suffers no wound penalties whatsoever, and will not fall until her foe is dead, at which point she dies immediately. This Gift works only if the named enemy is already on the battlefield with the Fenrir; it cannot be used to hunt down an absent enemy. Once the battle is won, an avatar of Fenris descends on the battlefield to devour what's left of the hero and her worldly possession. For obvious reasons, this Gift can be used only once, most likely when the character is out of all other options. Improper use of this Gift (such as attempting to use the Gift to slay an old rival rather than a “true enemy of Gaia”) angers Fernris, who strikes the unworthy Get dead on the spot.",
+        "source": "Tribebook: Get of Fenris (Revised)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Get of Fenris",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Strength of the Ancestors",
+        "description": "Called Strength of the Einherjar in the non-revised tribebook. This gift allows a Fenrir to call upon his greatest ancestral heroes for assistance. It is only used in dire situations, when the lives of more than one Garou are endangered. Calling on the strength of one's ancestors allows a Get to increase his physical might, wisdom or even sense acuity substantially, albeit for a limited time. These ancestral heroes come to the aid of a Get only in times of great peril, and punish any Fenrir who attempts to call on them without need. This Gift is taught by an ancestor-spirit.",
+        "system": "Only Get with at least one dot in the Ancestors Background may learn this Gift. The player spends one Rage point and rolls Charisma + Rituals (difficulty 10); he may subtract one from the difficulty for every dot he has in Ancestors. During the casting of this Gift, he must carve the specific runes of his ancestors into his flesh. For each success, he may add one dot to any Attribute; these dots may be split among different Attributes, or all applied to the same one. If the Storyteller believes this Gift has been used inappropriately, his hero-ancestors still give assistance, but then turn on their descendant, permanently removing a number of Attribute dots equal to those they granted. There is no appeal.",
+        "source": "Tribebook: Get of Fenris (Revised)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Get of Fenris",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Fenris' Bite",
+        "description": "The Garou's already vicious bite increases in power terribly, to the point that the Garou can mangle or even sever limbs with a single bite. An avatar of Fenris teaches this Gift.",
+        "system": "The player spends one Rage point and rolls Strength + Medicine (difficulty of the opponent's Stamina + 3). The Garou's next bite attack, if it hits, will mangle and disable one of the target's limbs, inflicting three automatic, unsoakable, aggravated health levels of damage in addition to any damage already rolled. The limb is rendered useless until the target can regenerate the damage, or permanently in the case of humans and other creatures who do not regenerate. If the player achieves five or more successes on the Strength + Medicine roll, the limb is severed.",
+        "source": "Core book revised",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [4, 5], 
+        "splat": "Shifter",
+        "breed": "Lupus",
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin", "Rokea"],
+        "gift_alias": ["Kun's Maw", "Bone Cracker"]
+    },
+    {
+        "name": "Horde of Valhalla",
+        "description": "The Garou who uses this Gift must be in good standing with his tribe's totem, and he must have a great need for aid, for he is asking help of Fenris himself. This Gift - taught by an avatar of Fenris - summons great wolves to come to the Garou's aid.",
+        "system": "The player spends as much Rage and/or Gnosis as he wishes and rolls Charisma + Animal Ken. If successful, a number of spirit wolves appear from the Umbra to do battle with the Garou foes. The number of wolves is equal to the number of points spent by the player. The wolves are functionally identical to the wolves of the Great Hunt. They remain for the entire scene.",
+        "source": "Core book revised",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Get of Fenris",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Huang Di's Sacrifice",
@@ -142,8 +302,8 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Glass Walker",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "tribe": "Glass Walkers",
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Phone Travel",
@@ -155,9 +315,9 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Glass Walker",
+        "tribe": "Glass Walkers",
         "camp": "Random Interrupts",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Calm the Flock",
@@ -169,8 +329,8 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Glass Walker",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "tribe": "Glass Walkers",
+		"shifter_type":  ["Garou", "Mokole"]
     },
     {
         "name": "Technotheocratic Apocalyptica",
@@ -182,8 +342,8 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Glass Walker",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "tribe": "Glass Walkers",
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Song of the City-Beast",
@@ -195,8 +355,8 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Glass Walker",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "tribe": "Glass Walkers",
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Family Debt",
@@ -208,9 +368,9 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Glass Walker",
+        "tribe": "Glass Walkers",
         "camp": "Wise Guys",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Takeover",
@@ -222,9 +382,9 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Glass Walker",
+        "tribe": "Glass Walkers",
         "camp": "Corporate Wolves",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Custom Built",
@@ -236,8 +396,8 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Glass Walker",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "tribe": "Glass Walkers",
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Find the Transgressor",
@@ -249,9 +409,9 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Shadow Lord",
+        "tribe": "Shadow Lords",
         "camp": "Judges of Doom",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Purity of Blood",
@@ -263,9 +423,9 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Shadow Lord",
+        "tribe": "Shadow Lords",
         "camp": "Bringers of Light",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Mask Taint",
@@ -277,22 +437,22 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Shadow Lord",
+        "tribe": "Shadow Lords",
         "camp": "Lords of Summit",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Wounding Lies",
-        "description": "For all their ability to prevaricate or misdirect when the need is there, few Shadow Lords – particularly elders – like being lied to. This Gift is the ultimate expression of that conceit; it forces those whom the Lord is interrogating to speak the truth or suffer the consequences. A person that lies to the elder suffers great wounds that mystically appear across his body with each untruth. A pain-spirit teaches this Gift.",
-        "system": "The player spends one Gnosis and rolls Charisma + Intimidation (difficulty of target's Willpower). If he succeeds, the power takes effect; for the rest of the scene, each fib the subject tells inflicts one level of aggravated damage on the subject, which cannot be soaked. Even half-truths open small, stinging wound (no actual damage, but painful and obvious). A Garou targeted by this Gift may overcome the effect by spending a number of Gnosis points equal to the interrogator's successes. Most others usually begin telling the truth after the first wound or two (the Storyteller may call for a Willpower check, difficulty 8, to keep silent). Some Shadow Lords heighten the effect by claiming that silence will wound the target just as surely as lies will – an untruth on the Lord's behalf, but one that gets results.",
+        "description": "For all their ability to prevaricate or misdirect when the need is there, few Shadow Lords - particularly elders - like being lied to. This Gift is the ultimate expression of that conceit; it forces those whom the Lord is interrogating to speak the truth or suffer the consequences. A person that lies to the elder suffers great wounds that mystically appear across his body with each untruth. A pain-spirit teaches this Gift.",
+        "system": "The player spends one Gnosis and rolls Charisma + Intimidation (difficulty of target's Willpower). If he succeeds, the power takes effect; for the rest of the scene, each fib the subject tells inflicts one level of aggravated damage on the subject, which cannot be soaked. Even half-truths open small, stinging wound (no actual damage, but painful and obvious). A Garou targeted by this Gift may overcome the effect by spending a number of Gnosis points equal to the interrogator's successes. Most others usually begin telling the truth after the first wound or two (the Storyteller may call for a Willpower check, difficulty 8, to keep silent). Some Shadow Lords heighten the effect by claiming that silence will wound the target just as surely as lies will - an untruth on the Lord's behalf, but one that gets results.",
         "source": "Shadow Lords Tribebook Revised",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Shadow Lord",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "tribe": "Shadow Lords",
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Shadow Pack",
@@ -304,8 +464,9 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Shadow Lord",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "tribe": "Shadow Lords",
+		"gift_alias": "Shadow Brethren",
+		"shifter_type":  ["Garou", "Ajaba", "Bastet"]
     },
     {
         "name": "Obedience",
@@ -317,8 +478,8 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Shadow Lord",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "tribe": "Shadow Lords",
+		"shifter_type":  ["Garou", "Bastet", "Mokole"]
     },
     {
         "name": "Invocation of the Pharaoh",
@@ -331,7 +492,21 @@
         "values": [5], 
         "splat": "Shifter",
         "tribe": "Silent Striders",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
+    },
+    {
+        "name": "Fetish Doll",
+        "description": "Sympathetic magic is the oldest form of sorcery, and it is still effective. Although many cultures find this sort of magic repellent, the Uktena believe that the ends well justify the means. The Garou can harm his victim from afar using a specially created doll. He must have a piece of his victim or an object belonging to him, and he must then construct the doll. An ancestor-spirit teaches this Gift.",
+        "system": "The doll takes one week to construct and enchant. The player rolls Perception + Crafts (difficulty 8) to construct the doll. When the doll is complete, the player may roll Intelligence + Medicine (difficulty of the victim's Willpower). Each success inflicts one level of aggravated damage on the victim, which eh may soak if he is capable of doing so. The doll is only capable of transferring 10 levels of damage. After 10 successes, the doll is too mutilated to be of further use. A botched roll destroys the doll without inflicting any damage.",
+        "source": "Core book revised / Tribebook: Silent Striders",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5], 
+        "splat": "Shifter",
+        "tribe": ["Uktena", "Silent Striders"],
+        "camp": "Bitter Hex",
+		"shifter_type":  ["Garou", "Nuwisha"]
     },
     {
         "name": "Reach the Umbra",
@@ -344,7 +519,7 @@
         "values": [5], 
         "splat": "Shifter",
         "tribe": "Silent Striders",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou", "Ajaba"]
     },
     {
         "name": "Gate of the Moon",
@@ -357,75 +532,46 @@
         "values": [5], 
         "splat": "Shifter",
         "tribe": "Silent Striders",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
-        "name": "Fetish Doll",
-        "description": "Sympathetic magic is the oldest form of sorcery, and it is still effective. Although many cultures find this sort of magic repellent, the Uktena believe that the ends well justify the means. The Garou can harm his victim from afar using a specially created doll. He must have a piece of his victim or an object belonging to him, and he must then construct the doll. An ancestor-spirit teaches this Gift.",
-        "system": "The doll takes one week to construct and enchant. The player rolls Perception + Crafts (difficulty 8) to construct the doll. When the doll is complete, the player may roll Intelligence + Medicine (difficulty of the victim's Willpower). Each success inflicts one level of aggravated damage on the victim, which eh may soak if he is capable of doing so. The doll is only capable of transferring 10 levels of damage. After 10 successes, the doll is too mutilated to be of further use. A botched roll destroys the doll without inflicting any damage.",
-        "source": "Core book revised / Tribebook: Silent Striders",
+        "name": "New Moon Legerdemain",
+        "description": "Camp: Moon Lodge (Waning Cycle.) This Gift allows the werewolf to summon and command a group of small trickster spirits. This last step in the Cycle brings the werewolf to an understanding of Luna's need for the tricksters and the madness that she welcomes. The spirits, once summoned, dance around the Garou in the Penumbra, protecting her from harm but disturbing and unsettling all those around her. They play tricks on everyone in the vicinity; harmless and amusing ones on the werewolf's allies and destructive ones on her enemies. An avatar of Luna herself teaches this Gift, which puts the Garou in her debt - and service - forever. To learn the Gift, the Garou must undertake a great quest in Luna's name, one that may take several game sessions to play out. Once the werewolf succeeds, Luna gifts her loyal subject an understanding of the true nature of madness. Thus, the werewolf makes the New Moon's twisted wisdom part of herself.",
+        "system": "The Gift costs a point of permanent Gnosis to learn. Once the spirits are summoned, strangelings, chimera and Wyldlings usually, they never leave their werewolf. At time, they may rest quietly, semi dormant in the Penumbra near the Garou, although they may occasionally play tricks on her or those around her. They are always dormant during the day. They awaken into full life during the New Moon or at the call of the Garou. To awaken the spirits, the player rolls Gnosis (difficulty 6, 5 if the character is a Ragabash) and spends a point of Gnosis. The pack of spirits becomes active for one night per success. If the werewolf wishes them to go back to sleep, the player must roll Gnosis as above, spending another point of Gnosis and get at least two successes. Once they are active, the spirits play games and vicious tricks on all the werewolf's enemies within a 25-foot radius, pinching, tripping and interfering with them in all manner of ways. This creates a +2 difficulty to all the enemies' rolls and removes two dice from their dice pools to boot. The spirits may steal an object from an enemy in the Umbra once per day. It will only be a minor item of little worth or power, as defined by the Storyteller. The spirits might show their werewolf their prize, or they may not, depending on their whims. If no enemies are at hand, the spirits may turn their attentions to whomever is at hand (save the Gift's master) - even allies are not quite safe, although the spirits harass them somewhat more infrequently. It is the wise Garou who sings the spirits back to slumber when the battle is done. A powerful spirit of Jaggling level or higher, may disperse the spirits for a scene by spending a point of Gnosis.",
+        "source": "Tribebook: Silver Fangs (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": ["Uktena", "Silent Strider"],
-        "camp": "Bitter Hex",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Silver Fangs",
+        "shifter_type": ["Garou"]
     },
     {
-        "name": "Gaia's Vengeance",
-        "description": "The Red Talon becomes a living vessel for Gaia's wrath, transforming into a horrifying creature of primal destruction. The Garou's teeth and claws drip acid, her eyes glow with green fire, and her howl can shatter stone. A Wyld spirit teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Stamina + Primal-Urge (difficulty 8). For the rest of the scene, all the Garou's damage is aggravated, and she gains an additional die of damage for each success. The Garou also becomes immune to silver for the duration of the Gift.",
-        "source": "Core book revised",
+        "name": "Full Moon's Wrath",
+        "description": "Camp: Moon Lodge (Waxing Cycle.) Sometimes Luna's wrath waxes so great that her enemies fall before her chosen like corn before a scythe. This Gift allows a hard-pressed werewolf to summon war-spirits to her aid, striking at her enemies and giving her respite. Their power teaches the werewolf and her allies, not to mention her enemies, the wisdom and strength of the Full Moon. The werewolf must find an defeat nine of Falcon's brood of Jagglings in succession on a night of the full moon to learn this Gift. At the end of the night, an Avatar of Luna appears and binds the defeated spirits to the Fang's service ever more. However, she demands that the Garou be at her disposal on nights of the full moon in exchange.",
+        "system": "To activate the Gift the player spends a point of Rage and Gnosis and then rolls Gnosis (difficulty 7, 5 for Ahroun). One of the defeated bird-spirits appears and attacks the enemies of the werewolf for each success rolled. The spirits remain part of the fray until they are defeated, the werewolf dies or the battle ends, at which point they depart into the Umbra once more.",
+        "source": "Tribebook: Silver Fangs (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "Red Talons",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
-        "gift_alias": ["Revolt of the Land"]
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Silver Fangs",
+        "shifter_type": ["Garou"]
     },
     {
-        "name": "Curse of Lycaon",
-        "description": "The Red Talon can inflict a terrible curse upon a human, transforming them into a wolf. Unlike the traditional werewolf curse, this transformation is permanent and irreversible. The victim becomes a normal wolf, albeit one with human intelligence and memories. This Gift is taught by an avatar of Wolf.",
-        "system": "The player spends one Gnosis point and rolls Gnosis (difficulty of the target's Willpower). The target may resist with a Willpower roll (difficulty 8). If the Garou wins, the target transforms into a wolf over the course of the next day. The transformation is permanent and cannot be reversed by any means short of the direct intervention of an Incarna or Celestine.",
-        "source": "Red Talons Tribebook",
+        "name": "The Secret of Gaia",
+        "description": "Some Silver Fang legends tell of a Great White Wolf who gave his own life to save Mother Gaia. He was the ancestor of the Silver Fangs, and of all the werewolves. Those werewolves who rise to the highest rank amongst the tribe sometimes learn the secret that Gaia imparted to the Great White Wolf after his sacrifice, one that deepens their connection to Her and allows them to be completely aware of their surroundings. Everything about her environment suddenly becomes part of the werewolf's awareness. She can sense the lay of the land, the type and nature of the plants growing on it and what forms of animal life live there. She can sense what spirits are at work in the area's Penumbra. The werewolf also gains some sense of the health of Gaia in that area. In an urban area, she might feel constricted or restrained, while in an area under attack by the Wyrm, she might feel itchy or in pain, depending on how successful the Wyrm minions are. Any Silver Fang of sufficient rank may learn this Gift, but the majority of those who learn it are Theurges. For some reason, members of House Wise Heart receive this Gift more frequently than to those of any other House. It is technically possible for a Garou of another tribe to learn this Gift, but it has not happened in living memory, and no song records such an event occurring. Those werewolves who do learn this Gift are often changed as a result. Many choose to walk barefoot on the earth whenever they can, and show a greater than usual aversion to cities. None of them can actually articulate what the secret is, saying that it is either something you understand, or you don't.",
+        "system": "Secret of Gaia is a more powerful version of the Theurge Gifts Spirit Speech (Werewolf, p. 138) and Pulse of the Invisible (Werewolf, p. 139) and works in a similar fashion. The player spends a point of Gnosis to activate the Gift and then rolls the character's permanent Gnosis (difficulty 7). The werewolf gains an uncanny awareness of her surroundings for a one-mile radius for every success achieved on this roll, almost integrating her awareness into the very landscape. She can automatically see into the Penumbra and may look at both the Penumbra and the material realm simultaneously if she wishes and can step sideways at -2 difficulty. Some Theurges have likened the experiences to what the world must have been like before matter and spirit separated. App Perception rolls made within that radius are at -3 difficulty. All local spirits that are free of Wyrm taint can sense the character's oneness with Gaia and are well disposed towards her. All social rolls are at -2 difficulty while dealing with spirits. This same oneness grants the player an extra die in all rolls, save those involving combat, that occur while the character is in the state in addition to the other bonuses. The Gift lasts for one hour for each point of permanent Gnosis the werewolf has. If the roll is a botch, the pain of Gaia overwhelms the character's senses and Harano cripples him for the duration of the scene.",
+        "source": "Tribebook: Silver Fangs (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "Red Talons",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Howl of Death",
-        "description": "The Red Talon unleashes a terrible howl that can kill humans instantly. The sound is pitched at a frequency that causes human hearts to stop and blood vessels to burst. This Gift is taught by a death-spirit.",
-        "system": "The player spends one Gnosis point and rolls Stamina + Primal-Urge (difficulty 7). All humans (but not Garou, Kinfolk, or other supernatural beings) within earshot must roll Stamina (difficulty 8) and get more successes than the Garou, or die instantly. Even those who survive are stunned for one turn per success the Garou achieved.",
-        "source": "Red Talons Tribebook",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "Red Talons",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Scabwalker Curse",
-        "description": "The Red Talon can inflict a terrible curse that causes a human's flesh to rot and fall away, leaving them as a living skeleton. This Gift is taught by a Bane of decay.",
-        "system": "The player spends two Gnosis points and rolls Gnosis (difficulty of the target's Willpower). The target takes one unsoakable level of aggravated damage per success, and their flesh begins to rot and slough off. This damage cannot be healed by any means until the curse is lifted by the Red Talon who inflicted it or by another Garou with this Gift.",
-        "source": "Red Talons Tribebook",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "Red Talons",
-        "camp": "Warders",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Silver Fangs",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Paws of the Newborn Cub",
@@ -438,7 +584,7 @@
         "values": [5], 
         "splat": "Shifter",
         "tribe": "Silver Fangs",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Luna's Avenger",
@@ -451,60 +597,7 @@
         "values": [5], 
         "splat": "Shifter",
         "tribe": "Silver Fangs",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Falcon's Grasp",
-        "description": "The Silver Fang can leap incredible distances and snatch prey from the ground while in flight. A falcon-spirit teaches this Gift.",
-        "system": "The player spends one Gnosis point. For the rest of the scene, the character can leap up to 100 yards in a single bound and can remain airborne for up to three turns. While in the air, she can make diving attacks that add three dice to damage and are made at -2 difficulty.",
-        "source": "Silver Fangs Tribebook",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "Silver Fangs",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Sidestep Death",
-        "description": "The Silver Fang can avoid what would normally be a killing blow, stepping between moments to evade certain death. This Gift is taught by a death-spirit.",
-        "system": "Once per scene, when the character would be killed by an attack, the player may spend two Gnosis points to negate the attack entirely. This Gift only works against single attacks; it cannot negate ongoing effects or environmental hazards.",
-        "source": "Silver Fangs Tribebook",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "Silver Fangs",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Wisdom of the Seer",
-        "description": "The Stargazer gains perfect clarity of thought and perception, allowing them to see the true nature of all things. This Gift is taught by a Chimerling.",
-        "system": "The player spends one Gnosis point and rolls Intelligence + Enigmas (difficulty 8). Success allows the character to see through all illusions and supernatural deceptions for the rest of the scene. Additionally, the character gains insight into the motivations and true nature of anyone they observe, adding their successes to any Perception or Empathy rolls.",
-        "source": "Core book revised",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "Stargazers",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Circular Attack",
-        "description": "The Stargazer's martial arts training reaches its pinnacle, allowing them to strike all enemies around them simultaneously. This Gift is taught by a spirit of the wind.",
-        "system": "The player spends one Rage point. The character can make one attack against every opponent within melee range, using the same dice pool for each attack. These attacks are all considered to occur simultaneously.",
-        "source": "Stargazers Tribebook",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "Stargazers",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
-        "gift_alias": ["Blessed Frenzy"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Harmonious Unity of the Emerald Mother",
@@ -517,33 +610,153 @@
         "values": [5], 
         "splat": "Shifter",
         "tribe": "Stargazers",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
-        "name": "Spirit Drain",
-        "description": "The Uktena can drain the Essence from a spirit, using it to heal themselves or replenish their own Gnosis. This Gift is taught by an ancestor-spirit.",
-        "system": "The player rolls Gnosis (difficulty of the spirit's Willpower). Each success drains one point of Essence from the spirit, which can be used to either heal one Health Level or restore one point of Gnosis. The spirit may resist with a Willpower roll.",
+        "name": "Break the Loom",
+        "description": "The Stargazer uses controlled cognitive dissonance to temporarily confuse Paradox and banish it. With riddles and conundrums posed to the t h in air, the Stargazer thus confuses the Weaver, who halts her spinning as she tries to solve the riddle. This Gift is taught by Chimera herself.",
+        "system": "The player rolls Wits + Enigmas and spends one Gnosis point. If successful, a particular manifestation of Paradox is canceled. In addition, the Gauntlet of the area drops for the rest of the scene by one point for each success gained. This is an immensely powerful Gift when put: to use for a mage; however, Stargazers usually let mages learn from their own mistakes, intervening only if the Paradox threatens someone other than the unwise willworker.",
+        "source": "Stargazers Tribebook",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Stargazers",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Atma",
+        "description": "Awakening the Serpent Fire Gift: The Serpent Fire gifts must be learned in order, from 1 - 5. The crown chakra stirs and the third eye opens. The Stargazer gains immense wisdom and occult perception.",
+        "system": "Roll Wits + Enigmas and spend one Gnosis point. Each success lowers the difficulty of any Enigmas roll by one and adds one to the character's Enigmas skill. This effect lasts for one scene. In addition, for the following scene, the character sees spirits interacting with the world, and knows if Gifts or other supernatural powers (Disciplines, Spheres, Cantrips, etc.) are active within his sight.",
+        "source": "Stargazers Tribebook (revised, 1st ed.)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Stargazers",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Eyes of Ignorance",
+        "description": "The ksatriya using this Gift can look into another's eyes and, for a period of time, literally strip them of their knowledge, leaving them ignorant and empty of ability. This Gift can be taught by an owl-spirit.",
+        "system": "The player spends a Gnosis point and rolls Gnosis (difficulty is the target's Willpower). Successes on the roll allows the Garou to intrinsically “know” the target's Knowledge (and the accompanying dots in each Knowledge). Also, for each success, the ksatriya may subtract two dots from the target's Knowledge traits. This Gift lasts for one day, at which point the ksatriya loses the gained Knowledge points and the target regains the ones “lost.”",
+        "source": "Stargazers Tribebook (revised)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Stargazers",
+		"camp": "The Sacred Thread",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Liberation of Flesh",
+        "description": "The spoken mantra for this Gift is Aum-waha-guru-dha-yan. Some Stargazers (particularly those among the Tranquil) posit that all flesh is weak, and like an anchor, it drags the spirit. Stargazers using this Gift find themselves “liberated” from their physical forms, becoming insubstantial and bodiless.",
+        "system": "No roll is necessary to become incorporeal, but the player must spend a Gnosis point to reduce the Stargazer's physical form to an insubstantial one. When this Gift is activated, the Stargazer becomes quite literally like a silvery ghost of her physical body, and can be seen with a successful Perception + Alertness roll (difficulty 7). The Stargazer may take no actions except for simple movement, and even that takes a strong concentration. To move from one place to another, the player must roll Wits + Meditation (difficulty 7). Only one success is necessary for movement, but the shimmering ghostly form may only travel no faster than the werewolf's usual walking speed. Failure means the character may not move; a botch on the roll to move is disastrous. A botch disrupts the Stargazer's concentration keeping her form non-corporeal, and it reduces her Gnosis pool to zero. The Stargazer may stay in this bodiless state for as long as she chooses, and may not be physically harmed by other physical creatures or spirits. To return to a corporeal, physical form, the Stargazer spends another Gnosis point and her ghostly form becomes immediately corporeal once again.",
+        "source": "Stargazers Tribebook (revised)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Stargazers",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Ancestral Incarnation",
+        "description": "The connection of a Stargazer to his ancestors can be deemed more “intense” than that of other Garou. This Gift is proof of that. The few Stargazers with this Gift are not only able to plumb the depths of the ancestral memories for help, but are literally able to become one (or many) of their ancestors for a short time. The Stargazer glows with a pale nimbus of light and actually exhibits the physical traits (altering her appearance) of one or several of her ancestors. For a time, the Stargazer may also tap into the wealth of knowledge and ability of her forebears and use that to enhance her own actions for a time. This Gift is taught by an Epiphling of Truth.",
+        "system": "The player spends three Gnosis points. The Stargazer exhibits a number of ancestral traits equal to the dots in her Ancestors Background. (For instance, Naipurya Sunblade has an Ancestors score of three. She exhibits three traits of her ancestors that alter her appearance. From her ancestor Silverstar she gains a mane of gray hair, from her ancestor Fu-Kui-Kang she shows bright yellow eyes, and from her ancestor Gi-on Shows-the-Way she gains a long scar along the length of her muzzle.) For the remainder of the scene, the Stargazer may also add her Ancestors score to any roll she makes.",
+        "source": "Stargazers Tribebook (revised)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Stargazers",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Directing the Soul",
+        "description": "Stargazers with this Gift can redirect the effects of their Rage and Gnosis. By attaining this higher control over their inner selves, they influence the world around them in their favor. This Gift is taught by an Enigmatic spirit.",
+        "system": "After learning this Gift, the Stargazer can spend her Rage or Gnosis, instead of Willpower, to receive one automatic success on a roll.",
+        "source": "Player's Guide Second Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Stargazers",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Wisdom of the Seer",
+        "description": "The Stargazer gains perfect clarity of thought and perception, allowing them to see the true nature of all things. This Gift is taught by a Chimerling.",
+        "system": "The player spends one Gnosis point and rolls Intelligence + Enigmas (difficulty 8). Success allows the character to see through all illusions and supernatural deceptions for the rest of the scene. Additionally, the character gains insight into the motivations and true nature of anyone they observe, adding their successes to any Perception or Empathy rolls.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Uktena",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "tribe": "Stargazers",
+		"gift_alias": "Wisdom of the Sun",
+		"shifter_type":  ["Garou", "Mokole"]
     },
     {
-        "name": "Rending the Craft",
-        "description": "The Uktena can destroy magical effects and enchantments by unraveling their spiritual essence. This Gift is taught by a spirit of magic.",
-        "system": "The player spends one Gnosis point and rolls Intelligence + Occult (difficulty 8). Each success negates one level of magical power affecting a person, place, or thing. The specific effects are up to the Storyteller.",
-        "source": "Uktena Tribebook",
+        "name": "Circular Attack",
+        "description": "The Stargazer's martial arts training reaches its pinnacle, allowing them to strike all enemies around them simultaneously. This Gift is taught by a spirit of the wind.",
+        "system": "The player spends one Rage point. The character can make one attack against every opponent within melee range, using the same dice pool for each attack. These attacks are all considered to occur simultaneously.",
+        "source": "Stargazers Tribebook",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
+        "tribe": "Stargazers",
+		"shifter_type":  ["Garou", "Ratkin"],
+        "gift_alias": ["Blessed Frenzy"]
+    },
+    {
+        "name": "Uktena's Glare",
+        "description": "Just as the anger within Great Uktena burns those who dare to face him, so can the follower of Uktena sear foes with his own Rage. To one who is worthy, Uktena may teach this Gift.",
+        "system": "The Garou concentrates for a full turn, focusing on the anger that burns within. Meeting the gaze of a single foe, he must spend a Rage point and make a roll as if to frenzy. If successful, the Uktena does not frenzy but inflicts one level of aggravated damage per success just from his heated gaze. The difficulty to use this Gift increases by one with each subsequent attempt during the same scene.",
+        "source": "Tribebook: Uktena (revised)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
         "tribe": "Uktena",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Fabric of the Mind",
+        "description": "The highest-ranked Galliards can bring the products of their imagination to very solid live, crafting creatures from the spiritual essence of dreams. Chimerlings teach this Gift.",
+        "system": "The player makes an extended roll of Intelligence + Performance (difficulty 8). She can create any form of life she can imagine, assigning it one dot of Traits for each success gained on the roll. The werewolf can take as long as she wants to form the creature, accumulating successes from turn to turn, but once she stops, the dream being takes form and requires the expenditure of Gnosis to keep it manifested. The cost is one Gnosis per scene if the dream being remains relatively inactive (such as doing minor chores or watching a location), or one point per turn if the being engages in combat or similarly strenuous activity. The werewolf must be careful, because if she botches at any point, the dream being escapes her control. It will remain in the physical world for as long as it sees fit.",
+        "source": "Core book revised",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5], 
+        "splat": "Shifter",
+        "auspice": "Galliard",
+		"shifter_type":  ["Garou", "Ajaba", "Kitsune"]
+    },
+    {
+        "name": "Balance of Wormwood",
+        "description": "With this Gift, a character can learn to aid another Garou who has succumbed to the service of the Wyrm, and guard them from the Destroyer's influence. Because Great Wendigo treasures the purity of his Tribe, he has conferred this Gift upon his children, to give them greater power to continue the fight against the Wyrm. Like a taste of wormwood, which brings clarity to the mind, two Garou join their spirits together beneath the cleansing, eternal winds of Wendigo's spirit. With this Gift, depending upon each other, they may resist the attraction of the Wyrm that drives werewolves into unspeakable acts and mindless vile savagery. An avatar of Great Wendigo teaches this Gift.",
+        "system": "The target character must already have fallen into the service of the Wyrm, by walking the Black Spiral or through other means. The Garou using this Gift must spend a point of Gnosis and make a Willpower + Manipulation roll against her target's Willpower. If she succeeds, the target character may resist the horrific urges that the Wyrm brings for the remainder of the scene. This may be enough to allow the fallen Garou to attempt the long road back to Gaia's graces, but those who are long fallen or far from Gaia's grace may need much more than a simple application of this Gift. If the Gifted werewolf fails, her own current frenzy difficulty decreases by one, and she may be unable to avoid falling into the Thrall of the Wyrm.",
+        "source": "Wendigo Tribebook (revised)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Wendigo",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Heart of Ice",
@@ -553,247 +766,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "Wendigo",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
-        "gift_alias": ["Magistrate's Icy Judgment"]
-    },
-    {
-        "name": "Chill of Early Frost",
-        "description": "The Wendigo summons the bitter cold of winter, freezing everything in the area. This Gift is taught by a spirit of winter.",
-        "system": "The player spends one Gnosis point and rolls Stamina + Survival (difficulty 7). The area within 100 yards becomes deathly cold for one scene. Each success reduces the temperature by 20 degrees Fahrenheit. Ordinary humans must make Stamina rolls (difficulty 7) each turn or take one level of lethal damage from the cold.",
-        "source": "Wendigo Tribebook",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "Wendigo",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Planetary Spirit",
-        "description": "The Garou can summon and command the spirit of any planet in the solar system. This Gift is taught by Planetary Incarna.",
-        "system": "The player spends two Gnosis points and rolls Charisma + Astronomy (difficulty 8). Success allows the character to summon and command a planetary spirit for one scene. The spirit's power depends on the planet chosen and the number of successes rolled.",
-        "source": "Core book revised",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "All",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Umbral Fortress",
-        "description": "The Theurge can create an impenetrable fortress in the Umbra, completely safe from any spiritual or physical attack. This Gift is taught by a Chimerling.",
-        "system": "The player spends three Gnosis points and rolls Intelligence + Occult (difficulty 8). Success creates a fortress that can shelter one person per success for one scene. The fortress is completely impervious to any form of damage or intrusion.",
-        "source": "Core book revised",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "auspice": "Theurge",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Strength of the Guardian",
-        "description": "The Philodox channels the strength of all previous Guardians of the Sept, gaining immense power. This Gift is taught by an ancestor-spirit.",
-        "system": "The player spends one Gnosis point and rolls Stamina + Rituals (difficulty 7). Each success adds one dot to both Strength and Stamina for the remainder of the scene.",
-        "source": "Core book revised",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "auspice": "Philodox",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Kiss of Helios",
-        "description": "The Garou channels the burning power of the sun itself, becoming a being of pure solar fire. This Gift is taught by a Solar Incarna.",
-        "system": "The player spends two Gnosis points and rolls Stamina + Occult (difficulty 8). Success transforms the character into a being of pure sunlight for one turn per success. While transformed, the character is immune to all damage and their attacks inflict aggravated damage equal to their Rage rating.",
-        "source": "Core book revised",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
         "values": [4, 5], 
         "splat": "Shifter",
-        "tribe": "All",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
-        "gift_alias": ["Fire Immunity"]
-    },
-    {
-        "name": "Mercurial Messenger",
-        "description": "The Garou can send messages or small objects across vast distances by channeling the power of Mercury. This Gift is taught by a spirit of Mercury.",
-        "system": "The player spends one Gnosis point and rolls Intelligence + Occult (difficulty 7). Success allows the character to instantly transport a message or small object (no larger than what could fit in a pocket) to any location they have previously visited or any person they know well.",
-        "source": "Book of the City",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "All",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Venusian Grace",
-        "description": "The Garou channels the beauty and harmony of Venus, becoming irresistibly attractive to others. This Gift is taught by a spirit of Venus.",
-        "system": "The player spends one Gnosis point and rolls Appearance + Expression (difficulty 7). For the rest of the scene, the character adds their successes to all Social rolls and can attempt to affect even hostile creatures with Social abilities.",
-        "source": "Book of the City",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "All",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Martian Fury",
-        "description": "The Garou channels the warlike aspect of Mars, becoming an unstoppable engine of destruction. This Gift is taught by a spirit of Mars.",
-        "system": "The player spends one Gnosis point and rolls Rage (difficulty 7). For the rest of the scene, the character adds their successes to all damage rolls and can spend Rage points without risk of frenzy.",
-        "source": "Book of the City",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "All",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Jovian Thunder",
-        "description": "The Garou channels the majesty and power of Jupiter, commanding respect and obedience from others. This Gift is taught by a spirit of Jupiter.",
-        "system": "The player spends one Gnosis point and rolls Charisma + Leadership (difficulty 7). For the rest of the scene, the character adds their successes to all Leadership and Intimidation rolls, and their commands are treated as though they came from someone of much higher rank.",
-        "source": "Book of the City",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "All",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Saturn's Curse",
-        "description": "The Garou channels the grim aspect of Saturn, bringing misfortune and decay to their enemies. This Gift is taught by a spirit of Saturn.",
-        "system": "The player spends one Gnosis point and rolls Manipulation + Occult (difficulty 8). Each success forces the target to automatically fail one action of the Garou's choice during the scene. These failures occur at dramatically appropriate moments chosen by the Storyteller.",
-        "source": "Book of the City",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "All",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Blasphemy",
-        "description": "The Garou can corrupt holy sites and items, turning them into conduits for the Wyrm's power. This Gift is taught by a Bane of corruption.",
-        "system": "The player spends one Gnosis point and rolls Intelligence + Occult (difficulty 8). Each success allows the character to corrupt one holy site or item, turning it into a source of Wyrm power. The corruption lasts for one scene per success.",
-        "source": "Book of the Wyrm",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "Black Spiral Dancers",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Corruption",
-        "description": "The Black Spiral Dancer can infect others with the Wyrm's taint, slowly turning them to its service. This Gift is taught by a Bane of corruption.",
-        "system": "The player spends two Gnosis points and rolls Manipulation + Leadership (difficulty of the target's Willpower). Each success adds one point of temporary corruption to the target. When the target's temporary corruption equals their Willpower, they become permanently corrupted.",
-        "source": "Book of the Wyrm",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "tribe": "Black Spiral Dancers",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Shared Strength",
-        "description": "No matter how strong you are, you can't be everywhere. Sooner or later, if you live long enough, every Ahroun will experience the heartbreak of seeing a packmate die in combat, and knowing that they simply couldn't be there to help. Elders have seen this more than any, so it is not unusual that they would learn a Gift like this. This Gift allows an Ahroun to donate his capacities to one of his packmates for a single turn, imbuing them with their strength, speed and skill. However, they pay a high price for this help, losing their own strength for the same amount of time. This Gift is taught by a wolf-spirit.",
-        "system": "The player spends two Gnosis and states a period of time for the Gift to remain active. This could be 'the next turn', 'an hour', 'the rest of the scene' or even 'until the day I die'. If the Ahroun dies, the Gift ceases to work immediately, so 'until the Final Battle' won't work unless you survive to see it. For that amount of time, one Garou of the Ahroun's choice and within their line of sight immediately is treated as possessing the Ahroun's Physical Attributes, Brawl, Dodge and Melee abilities (if the target has higher abilities, they retain their own high scores). However, the Ahroun is treated as having a mere one dot in all Physical attributes, in all forms, as long as the Gift is active and no dots in Brawl, Melee and Dodge. The target and Ahroun cannot spend experience points to raise any of the shared Traits until the Gift ends.",
-        "source": "Players' Guide to Garou (revised)",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "auspice": "Ahroun",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Aegis",
-        "description": "This Gift grants a Garou a mystical aegis protecting her from attacks. This is not a literal shield; rather, strikes simply fail to hit vital areas, bullets deflects of a belt buckle and circumstance otherwise conspires to prevent blows from landing solidly on the warrior while this ability is in effect. A wind-spirit teaches this Gift.",
-        "system": "The player spends a point of Willpower, and the difficulty of all attack rolls made against her for the duration of the scene are increased by two. Any attack roll that scores only one success (after dodge, if applicable) against the Garou is considered to be a graze, and inflicts only bashing damage.",
-        "source": "Book of Auspices",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "auspice": "Ahroun",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Strength of Will",
-        "description": "The Ahroun with this Gift could lead his pack to the gates of Hell itself if that were what it took. A wolf-spirit or an Incarna avatar teaches this Gift.",
-        "system": "The Garou's player spends a point of Willpower and rolls Charisma + Leadership (difficulty 8). Each success grants all the Garou's allies within 100 feet an extra point of Willpower. These extra points last for the rest of the scene, and they can be spent as usual. This Gift can even raise an ally's Willpower above its maximum or even above 10. This Gift may be used only once per scene.",
-        "source": "Core book revised",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "auspice": "Ahroun",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Soul's Guilt",
-        "description": "This powerful but very temperamental Gift allows the weight of guilt which rests on the heart to emerge to the surface. The effect varies but usually appears as shadowing across the subject's features; the shadows deepen as the guilt grows (other effects include \"howls of demons,\" the sound of winter winds or even ominous background music). Note that, while useful, it has some severe limitations, for it registers only what troubles the individual. To a single old lady, a white lie may give her nightmares and deeply shade her soul, while a vigilante may sleep the sleep of the just and go undetected by this Gift. Soul's Guilt is taught by one of Falcon's brood, or any spirit associated with Justice.",
-        "system": "The Garou must look at (or in some cases, listen to or smell) the target and concentrate for one full turn. The player rolls Perception + Empathy (difficulty of 7); number of successes indicate the clarity of the Garou's impression.",
-        "source": "Book of Auspices",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "auspice": "Philodox",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Wall of Granite",
-        "description": "Philodox have a stronger relationship with the elementals of the earth than do other werewolves, for just as the earth upholds those upon it, the Philodox uphold their people's ways. While in contact with earth or rock, the Philodox can invoke a wall to protect himself. This wall will move with the Garou, defending him from all angles. Earth elementals teach this gift.",
-        "system": "The Garou spends on Gnosis point. The wall's dimensions are three yards high, two yards long and one yard thick. It has a soak pool of 10 dice, and 15 health levels must be inflicted to penetrate it at any point. The wall lasts for one scene or until released into the earth by the Garou.",
-        "source": "Core book revised / 20th Anniversary Edition",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "auspice": "Philodox",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Geas",
-        "description": "This Gift places its target under a geas, a sacred oath to obey the Philodox's bidding. The geas cannot make the targets act contrary to their basic instincts (such as self-preservation). Therefore, she could send a group on a quest, but she could not make its members attack and try to kill each other - unless they were psychotics or werewolves without pack bonds. An Incarna avatar teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Manipulation + Leadership (difficulty of the target's Willpower). In the case of a group, the difficulty is the highest Willpower among its members. The geas' compulsion lasts until the task is completed or until the target is dropped to the Incapacitated health level in pursuit of the quest. No victim can labor under more than one geas at a time; the first one laid always takes precedence.",
-        "source": "Core book revised",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "auspice": "Philodox",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
-        "gift_alias": ["Oath of the Great Bear", "Imperial Obligation"]
+        "tribe": "Wendigo",
+		"shifter_type":  ["Garou", "Nagah"],
+        "gift_alias": ["Magistrate's Icy Judgment"]
     },
     {
         "name": "Violation",
@@ -806,7 +783,7 @@
         "values": [5], 
         "splat": "Shifter",
         "auspice": "Ragabash",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou", "Kitsune"]
     },
     {
         "name": "Blank",
@@ -819,7 +796,7 @@
         "values": [5], 
         "splat": "Shifter",
         "auspice": "Ragabash",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Weakest Link",
@@ -832,7 +809,7 @@
         "values": [5], 
         "splat": "Shifter",
         "auspice": "Ragabash",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Turn the Moon",
@@ -845,7 +822,7 @@
         "values": [5], 
         "splat": "Shifter",
         "auspice": "Ragabash",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Thousand Forms",
@@ -858,7 +835,7 @@
         "values": [4, 5], 
         "splat": "Shifter",
         "auspice": "Ragabash",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+		"shifter_type":  ["Garou", "Bastet", "Mokole", "Kitsune"],
         "gift_alias": ["The Thousand Forms", "All Beasts Under the Sun", "Beast Shape"]
     },
     {
@@ -872,7 +849,7 @@
         "values": [5], 
         "splat": "Shifter",
         "auspice": "Ragabash",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+		"shifter_type":  ["Garou", "Ananasi", "Corax"],
         "gift_alias": ["Thieving Touch of Spiders"]
     },
     {
@@ -886,7 +863,7 @@
         "values": [5], 
         "splat": "Shifter",
         "auspice": "Theurge",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Healing the Soul",
@@ -899,7 +876,7 @@
         "values": [5], 
         "splat": "Shifter",
         "auspice": "Theurge",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Spirit Vessel",
@@ -912,7 +889,7 @@
         "values": [5], 
         "splat": "Shifter",
         "auspice": "Theurge",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Malleable Spirit",
@@ -925,7 +902,7 @@
         "values": [5], 
         "splat": "Shifter",
         "auspice": "Theurge",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou", "Mokole", "Kitsune"]
     },
     {
         "name": "Feral Lobotomy",
@@ -938,8 +915,48 @@
         "values": [4, 5], 
         "splat": "Shifter",
         "auspice": "Theurge",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+		"shifter_type":  ["Garou", "Ananasi", "Kitsune", "Ratkin"],
         "gift_alias": ["Nature of the Beast"]
+    },
+    {
+        "name": "Soul's Guilt",
+        "description": "This powerful but very temperamental Gift allows the weight of guilt which rests on the heart to emerge to the surface. The effect varies but usually appears as shadowing across the subject's features; the shadows deepen as the guilt grows (other effects include \"howls of demons,\" the sound of winter winds or even ominous background music). Note that, while useful, it has some severe limitations, for it registers only what troubles the individual. To a single old lady, a white lie may give her nightmares and deeply shade her soul, while a vigilante may sleep the sleep of the just and go undetected by this Gift. Soul's Guilt is taught by one of Falcon's brood, or any spirit associated with Justice.",
+        "system": "The Garou must look at (or in some cases, listen to or smell) the target and concentrate for one full turn. The player rolls Perception + Empathy (difficulty of 7); number of successes indicate the clarity of the Garou's impression.",
+        "source": "Book of Auspices",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5], 
+        "splat": "Shifter",
+        "auspice": "Philodox",
+		"shifter_type":  ["Garou"]
+    },
+    {
+        "name": "Wall of Granite",
+        "description": "Philodox have a stronger relationship with the elementals of the earth than do other werewolves, for just as the earth upholds those upon it, the Philodox uphold their people's ways. While in contact with earth or rock, the Philodox can invoke a wall to protect himself. This wall will move with the Garou, defending him from all angles. Earth elementals teach this gift.",
+        "system": "The Garou spends on Gnosis point. The wall's dimensions are three yards high, two yards long and one yard thick. It has a soak pool of 10 dice, and 15 health levels must be inflicted to penetrate it at any point. The wall lasts for one scene or until released into the earth by the Garou.",
+        "source": "Core book revised / 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5], 
+        "splat": "Shifter",
+        "auspice": "Philodox",
+		"shifter_type":  ["Garou", "Mokole", "Rokea"]
+    },
+    {
+        "name": "Geas",
+        "description": "This Gift places its target under a geas, a sacred oath to obey the Philodox's bidding. The geas cannot make the targets act contrary to their basic instincts (such as self-preservation). Therefore, she could send a group on a quest, but she could not make its members attack and try to kill each other - unless they were psychotics or werewolves without pack bonds. An Incarna avatar teaches this Gift.",
+        "system": "The player spends one Gnosis point and rolls Manipulation + Leadership (difficulty of the target's Willpower). In the case of a group, the difficulty is the highest Willpower among its members. The geas' compulsion lasts until the task is completed or until the target is dropped to the Incapacitated health level in pursuit of the quest. No victim can labor under more than one geas at a time; the first one laid always takes precedence.",
+        "source": "Core book revised",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5], 
+        "splat": "Shifter",
+        "auspice": "Philodox",
+		"shifter_type":  ["Garou", "Gurahl", "Mokole", "Kitsune", "Ratkin"],
+        "gift_alias": ["Oath of the Great Bear", "Imperial Obligation"]
     },
     {
         "name": "Legend's Insight",
@@ -952,7 +969,7 @@
         "values": [5], 
         "splat": "Shifter",
         "auspice": "Galliard",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou"]
     },
     {
         "name": "Head Games",
@@ -965,21 +982,62 @@
         "values": [5], 
         "splat": "Shifter",
         "auspice": "Galliard",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+		"shifter_type":  ["Garou", "Nagah"],
         "gift_alias": ["Heart Strings", "Heartstrings"]
     },
     {
-        "name": "Fabric of the Mind",
-        "description": "The highest-ranked Galliards can bring the products of their imagination to very solid live, crafting creatures from the spiritual essence of dreams. Chimerlings teach this Gift.",
-        "system": "The player makes an extended roll of Intelligence + Performance (difficulty 8). She can create any form of life she can imagine, assigning it one dot of Traits for each success gained on the roll. The werewolf can take as long as she wants to form the creature, accumulating successes from turn to turn, but once she stops, the dream being takes form and requires the expenditure of Gnosis to keep it manifested. The cost is one Gnosis per scene if the dream being remains relatively inactive (such as doing minor chores or watching a location), or one point per turn if the being engages in combat or similarly strenuous activity. The werewolf must be careful, because if she botches at any point, the dream being escapes her control. It will remain in the physical world for as long as it sees fit.",
+        "name": "Shared Strength",
+        "description": "No matter how strong you are, you can't be everywhere. Sooner or later, if you live long enough, every Ahroun will experience the heartbreak of seeing a packmate die in combat, and knowing that they simply couldn't be there to help. Elders have seen this more than any, so it is not unusual that they would learn a Gift like this. This Gift allows an Ahroun to donate his capacities to one of his packmates for a single turn, imbuing them with their strength, speed and skill. However, they pay a high price for this help, losing their own strength for the same amount of time. This Gift is taught by a wolf-spirit.",
+        "system": "The player spends two Gnosis and states a period of time for the Gift to remain active. This could be 'the next turn', 'an hour', 'the rest of the scene' or even 'until the day I die'. If the Ahroun dies, the Gift ceases to work immediately, so 'until the Final Battle' won't work unless you survive to see it. For that amount of time, one Garou of the Ahroun's choice and within their line of sight immediately is treated as possessing the Ahroun's Physical Attributes, Brawl, Dodge and Melee abilities (if the target has higher abilities, they retain their own high scores). However, the Ahroun is treated as having a mere one dot in all Physical attributes, in all forms, as long as the Gift is active and no dots in Brawl, Melee and Dodge. The target and Ahroun cannot spend experience points to raise any of the shared Traits until the Gift ends.",
+        "source": "Players' Guide to Garou (revised)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5], 
+        "splat": "Shifter",
+        "auspice": "Ahroun",
+		"shifter_type":  ["Garou"]
+    },
+    {
+        "name": "Aegis",
+        "description": "This Gift grants a Garou a mystical aegis protecting her from attacks. This is not a literal shield; rather, strikes simply fail to hit vital areas, bullets deflects of a belt buckle and circumstance otherwise conspires to prevent blows from landing solidly on the warrior while this ability is in effect. A wind-spirit teaches this Gift.",
+        "system": "The player spends a point of Willpower, and the difficulty of all attack rolls made against her for the duration of the scene are increased by two. Any attack roll that scores only one success (after dodge, if applicable) against the Garou is considered to be a graze, and inflicts only bashing damage.",
+        "source": "Book of Auspices",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5], 
+        "splat": "Shifter",
+        "auspice": "Ahroun",
+		"shifter_type":  ["Garou"]
+    },
+    {
+        "name": "Strength of Will",
+        "description": "The Ahroun with this Gift could lead his pack to the gates of Hell itself if that were what it took. A wolf-spirit or an Incarna avatar teaches this Gift.",
+        "system": "The Garou's player spends a point of Willpower and rolls Charisma + Leadership (difficulty 8). Each success grants all the Garou's allies within 100 feet an extra point of Willpower. These extra points last for the rest of the scene, and they can be spent as usual. This Gift can even raise an ally's Willpower above its maximum or even above 10. This Gift may be used only once per scene.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "auspice": "Galliard",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "auspice": "Ahroun",
+		"gift_alias": ["Call to Battle"],
+		"shifter_type":  ["Garou", "Ajaba", "Bastet"]
+    },
+    {
+        "name": "Kiss of Helios",
+        "description": "The Garou channels the burning power of the sun itself, becoming a being of pure solar fire. This Gift is taught by a Solar Incarna.",
+        "system": "The player spends two Gnosis points and rolls Stamina + Occult (difficulty 8). Success transforms the character into a being of pure sunlight for one turn per success. While transformed, the character is immune to all damage and their attacks inflict aggravated damage equal to their Rage rating.",
+        "source": "Core book revised",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [4, 5], 
+        "splat": "Shifter",
+        "tribe": "All",
+		"shifter_type":  ["Garou", "Corax", "Kitsune"],
+        "gift_alias": ["Fire Immunity"]
     },
     {
         "name": "Beyond Human",
@@ -992,7 +1050,7 @@
         "values": [5], 
         "splat": "Shifter",
         "breed": "Homid",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
         "name": "Part the Veil",
@@ -1005,7 +1063,7 @@
         "values": [5], 
         "splat": "Shifter",
         "breed": "Homid",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
         "gift_alias": ["Ugly Truth", "Fearless Unveiling"]
     },
     {
@@ -1019,73 +1077,7 @@
         "values": [5], 
         "splat": "Shifter",
         "breed": "Homid",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Protean Form",
-        "description": "Born misshapen, the metis takes her deformity and makes it a source of power. She can twist her flesh in any number of ways, sprouting a number of unnatural features, from extra limbs to additional mouths to grasping tentacles. A Chimerling teaches this Gift.",
-        "system": "The character's ability to partially transform (see p. 286) is permanently modified, allowing her to make almost any grotesque modifications the player can imagine. These modifications must logically bestow one of the following benefits: +2 dice on a certain category of attack rolls (extra clawed limbs for claw attacks, tentacles for clinches, etc), +2 damage on a certain category of attack rolls (a chest-mounted squid beak for extra damage on clinches, arms coated in shark teeth for boosted claw attacks, etc.), or +5 yards per turn of movement (extra legs, vestigial wings, etc.).",
-        "source": "20th Anniversary Edition",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "breed": "Metis",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Umbral Body",
-        "description": "The metis body is strange. Born in a form not intended by Gaia or nature, deformed and occasionally showing signs of animals entirely unrelated to man or wolf, it is little wonder the breed has been outcast and hated. But some metis have used this body to their advantage, and it is perhaps this strangeness that allows their body to withstand the pressures this Gift inflicts. With this Gift, the metis can partially reach into the Umbra, sending certain body parts into the Umbra while maintaining others in the physical world. Doing so makes the metis difficult to hit in combat, to say the least. A Pattern spider teaches this Gift.",
-        "system": "The metis rolls Gnosis (difficulty of the local Gauntlet) and if the roll succeeds spends 1 Gnosis. For the rest of the scene, the metis receives one extra automatic success on all Dodge rolls.",
-        "source": "Players' Guide to Garou (revised)",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "breed": "Metis",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Twist of Fate",
-        "description": "Some Stargazer metis have used this Gift to deliver a fatal blow to unsuspecting enemies, even knowing that the cost will be their own lives. After a Garou has been dealt her own deathblow, if she invokes this Gift, she may strike her enemy once more ere she dies. It's bittersweet but often leads to an enemy falling dead alongside the metis warrior. This Gift is taught by a Cobra-spirit.",
-        "system": "The player need only spend one Rage point to get that final shot; no wound penalties apply. The attack doesn't automatically land, although the metis may spend Willpower to add to the attack roll's successes (even though she's already spent Rage in the turn). The metis' damage pool is increased by ten dice - a metis' parting shot channels a lifetime of Rage, and is almost always lethal.",
-        "source": "Guardians of the Caerns",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "breed": "Metis",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Totem Gift",
-        "description": "Due to the metis' strong ties with Garou society, she can plead directly with her tribal totem, gaining some of its power. The effects of this Gift depend on the nature of the tribal totem power. Rat (totem of the Bone Gnawers) might send swarms of rats to attack the Garous's enemies, and Grandfather Thunder (totem of the Shadow Lords) might smite the Garou's enemies with a blast of thunder and lightning. The potential of this Gift depends only on the favor of the totem, and it may cross over into the miraculous. Only the tribal totem teaches this gift.",
-        "system": "The player spends on Gnosis point and rolls Charisma + Rituals (difficulty 7). The greater the number of successes, the more dramatic the effects. One success might cause a minor distraction, whereas 10 successes is the dramatic equivalent of summoning a localized twister to destroy the metis' foes.",
-        "source": "Core book revised",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "breed": "Metis",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
-    },
-    {
-        "name": "Madness",
-        "description": "The metis struggles his whole life to find a place, a purpose and a sense of stability in his horrifying existence. With this Gift, he can force others to face their inner demons, including insanity and madness. The nature of the derangement varies among individuals, but it will always be severe, making it impossible for the victim to function normally. Lunes, along with spirits of trickery and madness teach this Gift.",
-        "system": "The player spends a Gnosis point and rolls Manipulation + Intimidation (difficulty of the victim's Willpower). The insanity lasts a number of days equal to the successes rolled on the attempt. During this time, the metis can increase or decrease the effects of the madness, granting the victim lucidity and then driving him into psychosis. Even after the Gift has ended, the repercussions from the bout with madness often haunt the target for the rest of his life.",
-        "source": "Core book revised",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "breed": "Metis",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
-        "gift_alias": ["Jungle Snake Visions"]
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
         "name": "Boon of the Animal Fathers",
@@ -1098,7 +1090,7 @@
         "values": [5], 
         "splat": "Shifter",
         "breed": "Lupus",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
         "name": "Song of the Great Beast",
@@ -1111,7 +1103,7 @@
         "values": [5], 
         "splat": "Shifter",
         "breed": "Lupus",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin", "Mokole", "Rokea"],
         "gift_alias": ["Great Summons", "War of Vengeance", "Call of the Cave Bear", "Dragon Ally"]
     },
     {
@@ -1125,49 +1117,113 @@
         "values": [5], 
         "splat": "Shifter",
         "breed": "Lupus",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
-        "name": "Endurance of Heimhall",
-        "description": "This powerful Gift grants the Garou great endurance and hardiness for a time. This Gift is taught by a Boar-spirit.",
-        "system": "The Garou spends one Gnosis point and rolls Willpower (difficulty 6). If successful, the Garou's Stamina rating is doubled for the duration of the scene. This will aid Stamina and Soak rolls.",
-        "source": "Get of Fenris Tribebook",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "breed": "Lupus",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
-        "gift_alias": ["Strength of Kilimanjaro"]
-    },
-    {
-        "name": "Fenris' Bite",
-        "description": "The Garou's already vicious bite increases in power terribly, to the point that the Garou can mangle or even sever limbs with a single bite. An avatar of Fenris teaches this Gift.",
-        "system": "The player spends one Rage point and rolls Strength + Medicine (difficulty of the opponent's Stamina + 3). The Garou's next bite attack, if it hits, will mangle and disable one of the target's limbs, inflicting three automatic, unsoakable, aggravated health levels of damage in addition to any damage already rolled. The limb is rendered useless until the target can regenerate the damage, or permanently in the case of humans and other creatures who do not regenerate. If the player achieves five or more successes on the Strength + Medicine roll, the limb is severed.",
-        "source": "Core book revised",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5], 
-        "splat": "Shifter",
-        "breed": "Lupus",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
-        "gift_alias": ["Kun's Maw", "Bone Cracker"]
-    },
-    {
-        "name": "Fog on the Moor",
-        "description": "This Gift transforms the Fianna into a ghostly outline of himself, allowing him to pass through anything except silver as though he were incorporeal. He may communicate and strike opponents normally. He cannot be harmed by anything except silver; all incoming attacks pass through him. A fog-spirit teaches this Gift.",
-        "system": "The player spends one Willpower point and rolls Gnosis (difficulty 7) to instantly transform the Garou into a ghostly form. Each success allows the Garou to stay in that form for one turn, though the Garou may change back at will. The character cannot regenerate while in this form.",
+        "name": "Protean Form",
+        "description": "Born misshapen, the metis takes her deformity and makes it a source of power. She can twist her flesh in any number of ways, sprouting a number of unnatural features, from extra limbs to additional mouths to grasping tentacles. A Chimerling teaches this Gift.",
+        "system": "The character's ability to partially transform (see p. 286) is permanently modified, allowing her to make almost any grotesque modifications the player can imagine. These modifications must logically bestow one of the following benefits: +2 dice on a certain category of attack rolls (extra clawed limbs for claw attacks, tentacles for clinches, etc), +2 damage on a certain category of attack rolls (a chest-mounted squid beak for extra damage on clinches, arms coated in shark teeth for boosted claw attacks, etc.), or +5 yards per turn of movement (extra legs, vestigial wings, etc.).",
         "source": "20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "breed": "Fianna",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"],
-        "gift_alias": ["Mist on the Water"]  
+        "breed": "Metis",
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
+    },
+    {
+        "name": "Umbral Body",
+        "description": "The metis body is strange. Born in a form not intended by Gaia or nature, deformed and occasionally showing signs of animals entirely unrelated to man or wolf, it is little wonder the breed has been outcast and hated. But some metis have used this body to their advantage, and it is perhaps this strangeness that allows their body to withstand the pressures this Gift inflicts. With this Gift, the metis can partially reach into the Umbra, sending certain body parts into the Umbra while maintaining others in the physical world. Doing so makes the metis difficult to hit in combat, to say the least. A Pattern spider teaches this Gift.",
+        "system": "The metis rolls Gnosis (difficulty of the local Gauntlet) and if the roll succeeds spends 1 Gnosis. For the rest of the scene, the metis receives one extra automatic success on all Dodge rolls.",
+        "source": "Players' Guide to Garou (revised)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5], 
+        "splat": "Shifter",
+        "breed": "Metis",
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
+    },
+    {
+        "name": "Twist of Fate",
+        "description": "Some Stargazer metis have used this Gift to deliver a fatal blow to unsuspecting enemies, even knowing that the cost will be their own lives. After a Garou has been dealt her own deathblow, if she invokes this Gift, she may strike her enemy once more ere she dies. It's bittersweet but often leads to an enemy falling dead alongside the metis warrior. This Gift is taught by a Cobra-spirit.",
+        "system": "The player need only spend one Rage point to get that final shot; no wound penalties apply. The attack doesn't automatically land, although the metis may spend Willpower to add to the attack roll's successes (even though she's already spent Rage in the turn). The metis' damage pool is increased by ten dice - a metis' parting shot channels a lifetime of Rage, and is almost always lethal.",
+        "source": "Guardians of the Caerns",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5], 
+        "splat": "Shifter",
+        "breed": "Metis",
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
+    },
+    {
+        "name": "Totem Gift",
+        "description": "Due to the metis' strong ties with Garou society, she can plead directly with her tribal totem, gaining some of its power. The effects of this Gift depend on the nature of the tribal totem power. Rat (totem of the Bone Gnawers) might send swarms of rats to attack the Garous's enemies, and Grandfather Thunder (totem of the Shadow Lords) might smite the Garou's enemies with a blast of thunder and lightning. The potential of this Gift depends only on the favor of the totem, and it may cross over into the miraculous. Only the tribal totem teaches this gift.",
+        "system": "The player spends on Gnosis point and rolls Charisma + Rituals (difficulty 7). The greater the number of successes, the more dramatic the effects. One success might cause a minor distraction, whereas 10 successes is the dramatic equivalent of summoning a localized twister to destroy the metis' foes.",
+        "source": "Core book revised",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5], 
+        "splat": "Shifter",
+        "breed": "Metis",
+		"gift_alias": ["Bear's Bounty"],
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
+    },
+    {
+        "name": "Madness",
+        "description": "The metis struggles his whole life to find a place, a purpose and a sense of stability in his horrifying existence. With this Gift, he can force others to face their inner demons, including insanity and madness. The nature of the derangement varies among individuals, but it will always be severe, making it impossible for the victim to function normally. Lunes, along with spirits of trickery and madness teach this Gift.",
+        "system": "The player spends a Gnosis point and rolls Manipulation + Intimidation (difficulty of the victim's Willpower). The insanity lasts a number of days equal to the successes rolled on the attempt. During this time, the metis can increase or decrease the effects of the madness, granting the victim lucidity and then driving him into psychosis. Even after the Gift has ended, the repercussions from the bout with madness often haunt the target for the rest of his life.",
+        "source": "Core book revised",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5], 
+        "splat": "Shifter",
+        "breed": "Metis",
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin", "Rokea"],
+        "gift_alias": ["Jungle Snake Visions"]
+    },
+    {
+        "name": "Umbral Burrowing",
+        "description": "This Gift allows a Croatian to dig his own Umbral tunnel which he can travel through just as in the gift Underearth. The tunnel must connect two points and, as it is unoccupied, is always safe to travel. The spirits of burrowing animals teach this Gift.",
+        "system": "The Garou spends three Gnosis points and starts digging. A successful Perception + Occult roll is necessary to make certain that the tunnel comes out in the right place. The process of digging is, of course, slower than normal Umbral travel and takes about twice as long as walking a moon path would. The Garou does not need to eat or rest as he digs and the tunnel will remain a permanent part of the Umbra. It isn't necessary to know the Underearth Gift to use Umbral Burrowing, but the werewolf without knowledge of Underearth cannot necessarily travel tunnels not of his own make without getting lost.",
+        "source": "Past Lives",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Croatan",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Katanka-Sonnak's Spear",
+        "description": "Some cultures that the Croatan took as Kin were sun-worshippers. The Croatan in turn established strong ties with Helios and the Planetary Incarna of the sun, Katanka-Sonnak. This Gift springs from this alliance; by invoking the power of the sun, the Garou can call a shaft of fire from the sky to impale an enemy and immolate him in continuously burning flames. An avatar of Katanka-Sonnak teaches this Gift.",
+        "system": "The player spends a point of Gnosis and rolls Dexterity + Occult to strike the target; no range penalties apply, although the Garou must be able to see her target. If the strike is accurate then the victim takes 10 dice of fire damage each turn; this damage is aggravated, although supernatural creatures can soak it with the appropriate power (vampires with Fortitude, shapeshifters with Stamina, etc.). The fire cannot be doused with ordinary water; it will burn for 10 turns unless quenched by a water-spirit, somehow dispelled, or until the victim takes no damage on a particular turn.",
+        "source": "Past Lives",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Croatan",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Resolute Vow",
+        "description": "The Croatan's legendary stubbornness and strength of purpose was often a hindrance, but they often drew great power from it as well. A Garou with this Gift can persevere against all odds, pursuing a goal of vengeance or a spiritual quest to its end when even great heroes would turn back. Croatan ancestor-spirits teach this Gift.",
+        "system": "As the Garou ritually declares his purpose or quest to all within earshot he spends a permanent Gnosis point. From that point on, the Garou has no choice but to follow his quest to the bitter end. However, any Willpower rolls made in pursuit of that quest always gain six extra dice (even if this takes his dice pool over 10) and the Garou also gains six extra Willpower points to spend while on his quest (unused points disappear at the quest's completion). If the Garou chooses to give up her quest before it is completed, she loses any remaining bonus Willpower points and loses one permanent Willpower point for each of the bonus Willpower points that she spent after activating this Gift. The Garou may never regain permanently lost Willpower points. For instance, if the Garou gives up her quest after spending three of her bonus Willpower points, she may never have a Willpower rating higher than 7. Note that the quest does not have to succeed, but it must come to a definite resolution for the Garou not to lose permanent Willpower.",
+        "source": "Wendigo Tribebook",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Croatan",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Survivor",
@@ -1179,20 +1235,361 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Bone Gnawer",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "tribe": "Bone Gnawers",
+		"shifter_type":  ["Garou", "Ajaba", "Ananasi", "Ratkin"]
     },
     {
-        "name": "Assimilation",
-        "description": "A werewolf with this Gift blends smoothly into any culture, no matter how strange or unfamiliar he might normally find it. He could slip among Bedouin nomads as if he were one of them, or he could shop in a Chinese market without anyone noticing that he does not belong. The Gift doesn’t hide racial differences, but it does allow the user to mimic the behaviors and mannerisms of a native. It also grants the ability to speak and understand the culture’s language, although this knowledge vanishes as the Gift ends. Ancestor-spirits teach this gift.",
-        "system": "The player rolls Manipulation + Empathy. If successful, the character interacts with members of another culture as if he were one of them. This difficulty depends on how alien the culture is. The difficulty would be 5 for another Garou sept, but it could be as high as 9 when trying to assimilate into a Black Spiral Hive in a foreign country. The character will not suffer Social-roll penalties when interacting with members of the culture, although he will not receive any special benefits. The Gift lasts for one scene plus one day per Willpower point spent when activating it.",
+        "name": "Pack Mind",
+        "description": "This Gift forces a group of foes to behave like a single-minded pack. All individuals must perform the same task at the same time regardless of its appropriateness to a given situation. For example, if one individual fights, all the others fight; if one person attempts to sneak up behind an opponent, all the others make this attempt as well. This Gift lasts for one combat scene.",
+        "system": "The player spends a point of Gnosis and rolls Willpower (difficulty 8). A single success allows the character to inflict Pack Mind on a group of up to four individuals. Additional successes allow the character to increase the number of people affected in increments of two; five successes, therefore, enables the character to affect twelve individuals. For the duration of this Gift, all the affected victims mimic the actions of their leader - or, more typically, the first person in a group to act each turn. If one decides to speak, all of them attempt to do so; if one throws a left hook, all of them choose this form of combat, ignoring any weapons they may have. Failure means the Gift has no effect, while a botch inadvertently links the character's mind with another individual for the remainder of the scene. (The Storyteller should decide whether the character becomes linked with a friend or an enemy.",
+        "source": "Rage Across the Heavens",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "shifter_type": ["Garou"],
+        "tribe": "Planetary"
+    },
+    {
+        "name": "Drown",
+        "description": "This Gift causes the lungs of an opponent to fill with liquid. The victim must receive immediate medical or magical assistance or die within a few minutes. The target of the Gift can attempt to help herself but she can do nothing but attempt to expel the fluid. This Gift can either function as a way to capture an opponent, render an enemy helpless or inflict punishment on an individual.",
+        "system": "The player spends a point of Rage and rolls her Willpower (difficulty of the victim's Willpower). Only one success is necessary to activate this Gift. The victim must receive help immediately or else die by drowning. The victim may attempt to help herself by trying to cough up or otherwise expel the fluid, but she can take no other actions (including movement away from her surroundings) while she is making the attempt. No successes means the Gift fails, while a botch inflicts the Gift on the character attempting to use it.",
+        "source": "Rage Across the Heavens",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "shifter_type": ["Garou"],
+        "tribe": "Planetary"
+    },
+    {
+        "name": "Diplomatic Immunity",
+        "description": "This Gift enables the Garou to walk about in the middle of a hostile group without provoking the outbreak of hostilities. The Garou can enter a caern belonging to a rival or walk openly into the middle of a group of Black Spiral Dancers in order to retrieve something or deliver a message. The Garou surrounds herself with an aura of “neutrality” that negates her enemies' or rivals' animosity long enough to accomplish her task and leave without incident. The Gift only lasts for one scene, after which all bets are off.",
+        "system": "The player spends a point of Willpower and rolls Manipulation + Subterfuge (difficulty 8). A successful roll allows the character to interact with a group of potential enemies for the purpose of delivering a message, retrieving an item or delivering an ultimatum. A failure means that the Gift does not take effect (in which case the character would be wise to avoid confronting the intended group). A Botch means that the character believes the Gift is in effect - a belief which will more than likely disappear as soon as she encounters the opposing group.",
+        "source": "Rage Across the Heavens",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "shifter_type": ["Garou"],
+        "tribe": "Planetary"
+    },
+    {
+        "name": "Burden of Knowledge",
+        "description": "The Garou floods an individual with the knowledge of all her own limitations, making the victim aware of every flaw or failing and reminding her of all the wrongs she has committed or caused. The weight of this enlightenment can either change an individual for the better, or drive her into suicidal despair or murderous frenzy. Few individuals survive the effect of this Gift unscathed. This Gift can sometimes bring an errant Garou back from the edge of corruption or cause an enemy of the Garou to be “born again.”",
+        "system": "The player spends a point of Gnosis and rolls Intelligence + Empathy (difficulty of the victim's Willpower). Success causes the victim to experience every negative aspect of her personality and past, including secret vices, shortcomings, failures and other similar faults. The Storyteller should decide what ultimate effect the Gift produces in the victim - either a desire to reform her ways and correct her failings, an impulse to kill herself out of shame and despair or some course of action in between the two extremes. Once the victim has experienced the total effect of the Gift, the intense awareness begins to fade - but residual memories may plague the victim for a long time afterward.",
+        "source": "Rage Across the Heavens",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "shifter_type": ["Garou"],
+        "tribe": "Planetary"
+    },
+    {
+        "name": "Grand Gesture",
+        "description": "By bestowing appropriate gifts on an individual or a group, the Garou increases her esteem and reputation in the eyes of the recipients of her largesse. The targets of this Gift tend to listen favorably to suggestions made by the Gift's user and to support her arguments or come to her aid in a battle of words or weapons. This Gift lasts for an entire scene. When the effects of the Gift come to an end, the individuals affected may still continue to regard the Garou with some residual respect depending on their experiences while the Gift was active.",
+        "system": "The player rolls Manipulation + Empathy (difficulty of the highest Willpower in the target group). Each success allows her to affect one individual. While the Gift is in effect, all Gifts or Social rolls involving persuasion are automatically successful against the affected individuals. No successes indicates that the Gift has no effect while a botch makes the targeted person or group resent the character, who suffers a penalty of +1 to the difficulty of Social rolls for the remainder of the scene.",
+        "source": "Rage Across the Heavens",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "shifter_type": ["Garou"],
+        "tribe": "Planetary"
+    },
+    {
+        "name": "Essential Transformation",
+        "description": "This Gift allows the Garou to convert part of her essence into Gnosis for use in situations which require the expenditure of large amounts of spiritual power. The Garou can either use the Gnosis gained by this Gift to create or replenish fetishes, enact Gifts that require Gnosis or for any other purpose that requires her to spend Gnosis. However, its residual effects are cumulative. Each use of this Gift imbues the Garou's physical and mental abilities with more and more “spirit substance” until eventually she becomes a spirit creature lacking in material substance. When this happens, the Garou can no longer maintain her earthly existence and must either relocate to the Umbra as a permanent resident (not unlike the members of the Sept of the Stars) or else “die” and allow her spirit to return to Gaia.",
+        "system": "The player rolls Willpower (difficulty 9). Only one success is necessary for the character to convert one dot in a chosen Attribute into 10 points of temporary Gnosis. Until the character uses all 10 of these points, she has one less dot in the chosen Attribute. When the converted Gnosis is depleted, the Attribute returns to its normal level. However, the Storyteller (and the character) should keep track of the number of times this Gift is used. When the character has used this Gift a number of times equal to her total number of dots in Physical, Mental and Social Attributes, her body loses its material substance and the character becomes a spirit. The character's fate once this occurs is left to the Storyteller's discretion, although in most cases this means that the player must retire the character from active play.",
+        "source": "Rage Across the Heavens",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "shifter_type": ["Garou"],
+        "tribe": "Planetary"
+    },
+    {
+        "name": "Bring Forth the Future",
+        "description": "This Gift allows the Garou to call upon Tambiyah to change one facet of the individual's future. The change must be specific, such as preventing the subject of the Gift from encountering a known situation that will result in her certain death. While this Gift does not guarantee that a foreseen future will be altered, it does allow the Garou to attempt to avert disaster or improve an individual's lot.",
+        "system": "The player sacrifices a permanent point of Gnosis and rolls Perception + Enigmas (difficulty 8). Only one success is necessary to effect a change in a future event. The player should explain to the Storyteller which element of the future even she wishes to alter. (For example, “I want my packmate to survive the coming battle against the fomori horde.”). If possible, the Storyteller should arrange events so that the change takes place exactly as stated. The Gift only affects events that will occur within the 24 hours immediately following the activation of the Gift; furthermore, characters cannot ensure the death or destruction of their foes with this power. Only pleas for preservation meet with the Veiled Mother's approval.",
+        "source": "Rage Across the Heavens",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "shifter_type": ["Garou"],
+        "tribe": "Planetary"
+    },
+    {
+        "name": "Ebon Binding",
+        "description": "This Gift allows the Garou to take her knowledge of someone's fault, practice or secret vice and bind a fitting punishment to that person. Most often, a target suffers crippling pains when he thinks of indulging in the forbidden action. The Garou may use this Gift to prevent rapists, child molesters, murderers or traitors from repeat offenses (assuming the Garou allows these individuals to live in the first place.",
+        "system": "The player must sacrifice a point of permanent Gnosis and roll her Willpower (difficulty of the target's Willpower). Only one success is necessary to make the binding permanent. A failed roll means that the binding is unsuccessful while a botch causes the character to undergo the mental or physical pain she intended to bind to her target - a one-time-only occurrence.",
+        "source": "Rage Across the Heavens",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "shifter_type": ["Garou"],
+        "tribe": "Planetary"
+    },
+    {
+        "name": "Cleansing Flame",
+        "description": "The Garou can pinpoint an area (or an individual) and set the target ablaze with an intense and purifying flame that rages for 60 seconds and then dies out completely. The fire can burn out all Wyrm-taint or human-made pollution from an area or cleanse an individual (provided the victim survives) of Wyrm-taint. The fire does not spread beyond the target area or person and cannot be quenched by normal means. For instance, if the Garou targets a house occupied by a Pentex official, the fire blazes through the house destroying any vestige of the Wyrm's corruption and leaving untouched anything not tainted by the Wyrm.",
+        "system": "The player sacrifices a permanent point of Rage and rolls her Willpower. The difficulty is 8 to affect an area; the area cannot be larger than a large house. To target an individual, the difficulty of the Willpower roll equals the victim's Willpower. Living or undead creatures set on fire must roll their Stamina (difficulty 9) or die from the shock. The flame destroys fomori utterly; Black Spiral Dancers who survive the Stamina roll must make Gnosis rolls, difficulty 9, or lose their Wyrm-taint and its accompanying Derangement. Such purified Garou are stripped of all Rank and Gifts; they may well fall again to corruption, but they are given a second chance. A failure on the Willpower roll indicates that the Garou fails to activate the Gift (and the permanent Rage point is not expended after all), while a botch inflicts one unsoakable health level of aggravated damage on the wielder (and the permanent Rage point is still lost).",
+        "source": "Rage Across the Heavens",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "shifter_type": ["Garou"],
+        "tribe": "Planetary"
+    },
+    {
+        "name": "Moondream",
+        "description": "The Garou petitions Sokhta to grant her a prophetic dream before she falls asleep beneath the light of the moon. She then enters a state of lucid dreaming in which she explores some potential future. The Garou may interact with the creatures and situations she encounters in the dream and, thus, learn the possible effects of certain actions upon the subject of the dream. The Garou may replay the dream several times in order to test various actions and their consequences until she awakens from the dream, eight hours late. Once the Garou has entered her Moon Dream, she may not be awakened until the full eight hours has passed.",
+        "system": "The player spends a point of Gnosis and rolls Wits + Enigmas. The number of successes indicates the degree of control the character has over her part in the dream. The Storyteller may either take the player aside to run the dream privately or else create a scene that involves the entire troupe (particularly if the subject of the dream also involves the character's park mates). The dream should give a reasonably accurate picture of the next two or three scenes so that the character may experiment with ways of handling the future, or, perhaps, changing it. No successes means that the character receives no dream while a botch gives the character an eight-hour long nightmare which she cannot remember but which results in a -1 penalty to all rolls involving Alertness.",
+        "source": "Rage Across the Heavens",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "shifter_type": ["Garou"],
+        "tribe": "Planetary"
+    },
+    {
+        "name": "Madthought",
+        "description": "This trick literally makes the werewolf's foes too clever for their own good. The Garou can cause her enemies' thought processes to speed up so radically that they literally think too rapidly to put any one plan into motion. The victim of the Gift can only stand still as his thoughts run away with him, rushing madly from one brilliant plan to another or considering all the multiple alternatives for their “next” action.",
+        "system": "The player spends a point of Willpower and rolls Wits + Subterfuge (difficulty of the victim's Willpower). The number of successes determines how many turns the victim stands “lost in thought”. When the victim recovers from the Gift, he is most likely highly disoriented, and may need to regain focus and otherwise discover what's been happening while he “was out”. A failure simply means that the Gift does not work, while a botch gives the victim not only rapid thought but the ability to translate those thoughts into immediate action - usually to the detriment of the character.",
+        "source": "Rage Across the Heavens",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "shifter_type": ["Garou"],
+        "tribe": "Planetary"
+    },
+    {
+        "name": "Earth Heal",
+        "description": "This Gift allows the Garou to help a piece of land recover from blight, Wyrm-taint, poisoning or some other type of environmental disturbance. The Garou gives part of her essence to the damaged land and thus begins a process of renewal that spreads to encompass such details as purifying tainted soil, causing the growth of new plant life or purging signs of the Wyrm's corruption from the designated spot.",
+        "system": "The player sacrifices a permanent point of Gnosis and rolls Wits + Occult (difficulty 7 for naturally caused damage; difficulty 8 for Wyrm-taint). Each success contributes to the overall recovery of the designated piece of land; the area can be as large as a few miles, but must constitute a single terrain feature (a lake, forest or mountain, for instance). One success makes minimal but significant improvements in the target area, while five successes results in the area's return (over time) to a state of unspoiled health and fertility. Although this is a potent Gift, it doesn't prevent the healed land from being polluted once more. Even so, offering up one's Gnosis to heal a portion of Gaia if often cause for significant rewards of Honor.",
+        "source": "Rage Across the Heavens",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "shifter_type": ["Garou"],
+        "tribe": "Planetary"
+    },
+    {
+        "name": "Heart of the Ice Warrior",
+        "description": "Usually used only in the most dire circumstance, this Gift renders the Garou impervious to damage long enough to deliver a final blow to her opponent. The exertion causes the Garou to collapse, mortally wounded. Unless healed immediately, the Garou dies, having given her all in battle.",
+        "system": "No roll is necessary to invoke the Gift, but the player must spend a point of Rage. The character may not dodge when invoking this Gift, but no damage levied against the Garou will impair her in any way until her attack lands - lightning strikes won't blow her back, and blades can't sever her limbs. The character makes her next attack at +4 to her attack dice pool. The player may reroll any 1s rolled on this attack - they simply to not count. In addition, any damage rolls gain four extra dice. After delivering her attack, the character falls to Incapacitated. Unless somehow mystically healed by another using Mother's Touch or a similar Gift or fetish (regeneration isn't an option) within the same turn, the character dies at the end of the turn.",
+        "source": "Rage Across the Heavens",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "shifter_type": ["Garou"],
+        "tribe": "Planetary"
+    },
+    {
+        "name": "Invoke the Spirits of the Storm",
+        "description": "The Shadow Lord versions is called Call the Storm. The Garou can summon nearly any weather effect she desires, be it a tornado, fog, blizzard or thunderstorms. An avatar of Wendigo teaches this Gift. An avatar of Rainbow Serpent teaches the Bunyip version.",
+        "system": "The player spends one Gnosis pint and rolls Willpower (difficulty varies based on how close the desired effect is to the actual weather patterns of the area). The storm covers 10 miles per success. If the Garou summons a thunderstorm, she may spend Gnosis to call lightning down on her enemies (Dexterity + Occult to hit, 10 dice of aggravated damage).",
+        "source": "Core book revised / Shadow Lord Tribebook (revised)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Wendigo",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Crocodile Pact",
+        "description": "When the Red Talons first came to Africa and struck their deal with the Mokolé, the mighty werecrocodiles agreed that if the Garou could breed with the hunting dogs and do their appointed task in Africa without making war on the other Fera, they could stay. The Red Talons have (thus far) made good on their promises, and the eldest of the Kucha Ekundu have been rewarded with this Gift. The werewolf may call upon the Mokolé-mbembe for aid, in battle or otherwise. The spirits of the Dragon Kings teach this Gift.",
+        "system": "The player spends two Gnosis points and rolls Charisma + Rituals (difficulty 7). If the roll succeeds, the Garou receives aid within the hour, whether it's from a local clutch or from the spirits who witnessed the pacts between the Memory of Gaia and the Garou. The Storyteller has the final say over exactly what form the Garou's succor takes, but it might range from rampaging werecrocodiles arriving to fight with the Kucha Ekundu to great ancestor-spirits called forth by the Mokolé to give the Garou advice.",
+        "source": "20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Red Talons",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Scabwalker Curse",
+        "description": "The Red Talon can inflict a terrible curse that causes a human's flesh to rot and fall away, leaving them as a living skeleton. This Gift is taught by a Bane of decay.",
+        "system": "The player spends two Gnosis points and rolls Gnosis (difficulty of the target's Willpower). The target takes one unsoakable level of aggravated damage per success, and their flesh begins to rot and slough off. This damage cannot be healed by any means until the curse is lifted by the Red Talon who inflicted it or by another Garou with this Gift.",
+        "source": "Red Talons Tribebook",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5], 
+        "splat": "Shifter",
+        "tribe": "Red Talons",
+        "camp": "Warders",
+		"shifter_type":  ["Garou"]
+    },
+    {
+        "name": "Shattering Howl (RT Version)",
+        "description": "By using this Gift, the Garou releases a howl with enough power to shatter any man-made object. The Shattering Howl can splinter plastic, crack stone, and puncture rubber and similar materials. The werewolf does not have any control over what she shatters with this Gift, however, so she is advised to use it with care.",
+        "system": "The player spends one Willpower point and rolls Rage (difficulty 7). Exactly what kind of material the howl shatters depends on the number of successes rolled. One success shatters normal glass. Three cracks concrete. Five successes rends solid steel. The character may use this Gift on successive turns, but each use requires another Willpower point and a new roll.",
+        "source": "Tribebook: Red Talons (revised)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Red Talons",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Blessing of the First Pack",
+        "description": "The Red Talons believe that the very first pack of Garou set the standards for the auspices, and that only the Talons retain a strong enough connection to that First Pack to use this Gift. This may or may not be true, but no non-Talon Garou has ever exhibited this mighty Gift (but then, very few among the Talons even know of it). To learn this Gift, the Talon must have at least one dot in Ancestors. The Garou calls upon her the originator of her auspice and is temporarily transformed into the pinnacle of her moon-sign. An avatar of Wolf or a powerful Lune may teach this Gift, but neither does so often.",
+        "system": "The player spends two Gnosis points and rolls Charisma + Ancestors (difficulty 8). If the roll succeeds, the character becomes infused with the very essence of her auspice. For the remainder of the scene, the character receives five dots of Pure Breed in addition to any she already possesses. She may also make use of any auspice Gift for her particular auspice of level 4 or lower. (Gifts taken from sources other than Werewolf are subject to Storyteller approval.) In addition, Blessing of the First Pack grants power based on the character's auspice: Auspice / Bonus Ragabash: +3 to Stealth, +2 to Wits and Dexterity Theurge: +3 to Enigmas, +2 to Intelligence and Gnosis Philodox: +3 to Rituals, +2 to Manipulation and Stamina Galliard: +3 to Expression, +2 to Charisma and Strength Ahroun: +3 to Leadership, +2 to Strength and Rage",
+        "source": "Tribebook: Red Talons (revised)",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Red Talons",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Gaia's Vengeance",
+        "description": "The Red Talon becomes a living vessel for Gaia's wrath, transforming into a horrifying creature of primal destruction. The Garou's teeth and claws drip acid, her eyes glow with green fire, and her howl can shatter stone. A Wyld spirit teaches this Gift.",
+        "system": "The player spends one Gnosis point and rolls Stamina + Primal-Urge (difficulty 8). For the rest of the scene, all the Garou's damage is aggravated, and she gains an additional die of damage for each success. The Garou also becomes immune to silver for the duration of the Gift.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "breed": "Homid",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Camazotz", "Ratkin", "Ananasi", "Nagah", "Nuwisha", "Rokea"]
+        "tribe": "Red Talons",
+		"shifter_type":  ["Garou", "Bastet"],
+        "gift_alias": ["Revolt of the Land"]
+    },
+    {
+        "name": "Curse of Lycaon",
+        "description": "The Red Talon can inflict a terrible curse upon a human, transforming them into a wolf. Unlike the traditional werewolf curse, this transformation is permanent and irreversible. The victim becomes a normal wolf, albeit one with human intelligence and memories. This Gift is taught by an avatar of Wolf.",
+        "system": "The player spends one Gnosis point and rolls Gnosis (difficulty of the target's Willpower). The target may resist with a Willpower roll (difficulty 8). If the Garou wins, the target transforms into a wolf over the course of the next day. The transformation is permanent and cannot be reversed by any means short of the direct intervention of an Incarna or Celestine.",
+        "source": "Red Talons Tribebook",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5], 
+        "splat": "Shifter",
+        "tribe": "Red Talons",
+		"gift_alias": "Song of Takshaka",
+		"shifter_type":  ["Garou", "Nagah"]
+    },
+    {
+        "name": "Myth Walking",
+        "description": "Myth and dream walk among the Garous. This Gift, preserved by the Mokolé in the form of the Gift: Dream Semblance, enables the loyal descendants of the ancestor-heroes to return them to the world. It is taught by an ancestor-spirit, or by the Mokolé.",
+        "system": "The Garou spends two permanent Gnosis points and prays to the greatest hero of their breed, tribe, etc. The hero, if well pleased with the Garou's prayer, manifests in the Garou's own body. The Garou visibly transforms into the hero's own self, retaining her own personality mixed with the memories and attributes of the hero. Thus a Shadow Lord might manifest Ivan Tsarevitch, the Children of Gaia see the return of Lore-Speaker Gron, while the Get of Fenris transform into the great wolves of Norse myth. Only one Garou at a time may become any given hero, and this Gift can be invoked only once in a Garou's lifetime. Indeed, many who invoke it do not survive doing so. The powers of the hero are determined by the Storyteller, but should be suitable to the hero's legendary self. Shu-Horus, for example, would be a great warrior, but would have no knowledge of electronics.",
+        "source": "Apocalypse",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Gift of the Giants",
+        "description": "The Garou knew this Gift in the First Times, but only the Mokolé remember it now. Mammoth or Elephant teaches this Gift (and so the Mokolé cannot learn it save through Mnesis).",
+        "system": "The user spends a Gnosis point and becomes the largest creature in the scene, whether they are in battle, at a rite, or simply hunting. The Garou is bigger than the next biggest character, so allow 1 extra point of each Physical Attribute beyond the attributes of the next largest character. Note that if multiple characters use this, then it only works once for each Gnosis point spent. This is different from the Fianna: Gift of the Spriggan in that the Garou may not increase very much in size, or (around Mokoleé, huge Gurahl, and so on) may become gigantic indeed. If multiple Garou in one scene use this Gift, then each must spend twice as much Gnosis (two, four, then eight points for each successive use of the Gift by an individual) to become larger than the others. This can go on until all are out of Gnosis.",
+        "source": "Apocalypse",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Black Swans",
+        "description": "The Australian Aborigines attributed the Bunyip with the ability to transform people into black swans. Nobody remembers whether the folktales arose from use of this Gift, or if this Gift arose from the folktales, but the stories are certainly true. The Bunyip used this Gift as a means of punishing those who went against Gaia, and their ancestor-spirits teach it only to those inheritors who display a tremendous sense of justice.",
+        "system": "The Garou must successfully splash an opponent with water taken from the environment; bottled water would not work, while water taken from a local river and carried in a bottle would, and tap water is effective in urban environments. The player spends two Gnosis points and rolls Wits + Occult; supernatural targets (but not ordinary humans) may resist the roll with Willpower. If the player scores more successes than the target, the target is transformed into a blackfeathered swan. The swan loses access to most of its supernatural abilities while transformed, although its basic nature is unchanged; a vampire transformed into a black swan would have no heartbeat or pulse, and would have to drink blood to survive (although it could not expend blood to increase its Attributes or use Disciplines). Shapeshifters and other creatures that can take other forms (such as vampires with shapeshifting Disciplines) remain in swan form for the duration of the scene; for those with no shapeshifting ability, the transformation is permanent unless somehow reversed.",
+        "source": "Past Lives",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Bunyip",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Billabong Bridge",
+        "description": "Called Billabong Stride in older editions. Great Bunyip's children used this Gift to successfully cross large expanses of Australian terrain by using water as a shortcut. The Garou enters one body of fresh water and emerges from another such body any distance away; salt water “fouls” the Gift, and cannot transport the Gift user. Both bodies of water must be personally well-known to the Garou using the Gift.",
+        "system": "The player spends two Gnosis points and announces her destination. At the Storyteller's discretion, using this Gift to leave or arrive in an area of high Gauntlet may require a roll to step sideways to make the transition safely. The Gift user cannot take anyone with her while using this Gift; only those items dedicated to her complete the journey.",
+        "source": "Past Lives / Rage Across Australia",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Bunyip",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Bloody-Mindedness",
+        "description": "The Bunyip gains the ability to dedicate himself to one particular task, be it combat or an artistic endeavor. Nothing will sway the Bunyip from that task. This Gift is taught by servants of Mu-ru-bul Tu-ru-dun the Bunyip.",
+        "system": "The Bunyip spends two Willpower points. Afterward, nothing save death can distract or dissuade the Bunyip from her chosen task. She need not eat or sleep. If the power is used in combat, the Bunyip becomes oblivious to any other opponents and consequently may not dodge their attacks. Her soak roll pool versus these attacks, however, is doubled. Versus the chosen opponent, the Bunyip gains one extra attack per turn, and the difficulties of all actions against that target are reduced by one. She also becomes immune to supernatural attempts to dissuade her.",
+        "source": "Rage Across Australia",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Bunyip",
+        "shifter_type": ["Garou"]
+    },
+    {
+        "name": "Divine Wind",
+        "description": "The Hakken can call forth a powerful storm in a designated area. The storm uproots trees and overturns cars in its fury. An ancestor-spirit or a servant of Narukami, Lord of Thunder, teaches this Gift.",
+        "system": "The player rolls Stamina + Enigmas (difficulty 7) and spends a minimum of one Rage point. Each success equals a one-mile (1.6 km) radius for the storm. Each Rage point spent adds a success and, therefore, increases the size of the storm, which lasts for no more than one scene.",
+        "source": "20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+		"splat": "Shifter",
+        "tribe": "Hakken",
+		"gift_alias": ["Wrath of Nala", "Thunderbird's Cry"],
+        "shifter_type": ["Garou", "Bastet"]
+    },
+    {
+        "name": "Endurance of Heimdall",
+        "description": "This powerful Gift grants the Garou great endurance and hardiness for a time. This Gift is taught by a Boar-spirit.",
+        "system": "The Garou spends one Gnosis point and rolls Willpower (difficulty 6). If successful, the Garou's Stamina rating is doubled for the duration of the scene. This will aid Stamina and Soak rolls.",
+        "source": "Get of Fenris Tribebook",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5], 
+        "splat": "Shifter",
+        "breed": "Lupus",
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
+        "gift_alias": ["Strength of Kilimanjaro"]
     }
-] 
+]

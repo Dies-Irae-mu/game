@@ -143,10 +143,20 @@ class CmdHangout(MuxCommand):
             if h.db.hangout_id is None:
                 h.attributes.add("hangout_id", HangoutDB._get_next_hangout_id())
             
-            district = h.db.district or "Uncategorized"
-            if district not in district_groups:
-                district_groups[district] = []
-            district_groups[district].append(h)
+            # Check if the hangout has players before adding to district group
+            room = h.db.room
+            player_count = len([obj for obj in room.contents if obj.has_account]) if room else 0
+            
+            if show_all or player_count > 0:
+                district = h.db.district or "Uncategorized"
+                if district not in district_groups:
+                    district_groups[district] = []
+                district_groups[district].append((h, player_count))
+
+        # If no hangouts to display
+        if not district_groups:
+            self.caller.msg("No active hangouts found.")
+            return
 
         # Header
         self.caller.msg(self._format_header("Hangouts"))
@@ -161,22 +171,14 @@ class CmdHangout(MuxCommand):
             self.caller.msg(f"|w{district}|n")
             
             # Display hangouts in this district, sorted by hangout_id
-            district_hangouts = sorted(district_groups[district], key=lambda x: x.db.hangout_id)
-            for hangout in district_hangouts:
+            district_hangouts = sorted(district_groups[district], key=lambda x: x[0].db.hangout_id)
+            for hangout, player_count in district_hangouts:
                 number, info_line, desc_line = hangout.get_display_entry(show_restricted=True)
                 
-                # Only show hangouts with players unless /all is used
-                room = hangout.db.room
-                if room:
-                    player_count = len([obj for obj in room.contents if obj.has_account])
-                else:
-                    player_count = 0
-                    
-                if show_all or player_count > 0:
-                    # Format the hangout ID to be right-aligned in 3 spaces
-                    formatted_id = str(hangout.db.hangout_id).rjust(3)
-                    self.caller.msg(f"{formatted_id} | {info_line}")
-                    self.caller.msg(desc_line)
+                # Format the hangout ID to be right-aligned in 3 spaces
+                formatted_id = str(hangout.db.hangout_id).rjust(3)
+                self.caller.msg(f"{formatted_id} | {info_line}")
+                self.caller.msg(desc_line)
 
         # Footer with help text
         self.caller.msg(self._format_separator())

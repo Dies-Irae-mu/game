@@ -7,7 +7,7 @@ from typeclasses.characters import Character
 from django.db import transaction
 from evennia.utils import logger
 from django.db.models import Q
-from world.wod20th.utils.stat_mappings import MERIT_VALUES, RITE_VALUES, FLAW_VALUES, MERIT_CATEGORIES, REQUIRED_INSTANCES
+from world.wod20th.utils.stat_mappings import MERIT_VALUES, RITE_VALUES, FLAW_VALUES, MERIT_CATEGORIES, REQUIRED_INSTANCES, ARTS, REALMS
 
 class CmdXP(default_cmds.MuxCommand):
     """
@@ -24,6 +24,7 @@ class CmdXP(default_cmds.MuxCommand):
       +xp/spend <name> <rating>=<reason> - Spend XP (Must be in OOC area)
       +xp/forceweekly       - Force weekly XP distribution (Staff only)
       +xp/staffspend <name>/<stat> <rating>=<reason> - Spend XP on behalf of a character (Staff only)
+      +xp/fixstats <name>   - Fix a character's stats structure (Staff only)
       
     Examples:
       +xp/spend Strength 3=Getting stronger
@@ -216,6 +217,10 @@ class CmdXP(default_cmds.MuxCommand):
                 try:
                     # Fix any power issues before proceeding
                     self.fix_powers(self.caller)
+                    
+                    # Fix any secondary abilities issues
+                    if hasattr(self.caller, 'fix_secondary_abilities'):
+                        self.caller.fix_secondary_abilities()
 
                     # Parse input
                     if "=" not in self.args:
@@ -260,18 +265,21 @@ class CmdXP(default_cmds.MuxCommand):
                     current_rating = 0
                     if category == 'attributes':
                         current_rating = self.caller.db.stats.get('attributes', {}).get(subcategory, {}).get(proper_stat_name, {}).get('perm', 0)
-                        # self.caller.msg(f"DEBUG: Looking up attribute {proper_stat_name} in attributes.{subcategory}: {current_rating}")
                     elif category == 'powers' and subcategory == 'discipline':
-                        # Debug the full powers structure
-                        # self.caller.msg(f"DEBUG: Full powers structure: {self.caller.db.stats.get('powers', {})}")
-                        # Debug the discipline subcategory
-                        # self.caller.msg(f"DEBUG: Discipline subcategory: {self.caller.db.stats.get('powers', {}).get('discipline', {})}")
-                        # Get and debug the current rating
                         current_rating = self.caller.db.stats.get('powers', {}).get('discipline', {}).get(proper_stat_name, {}).get('perm', 0)
-                        # self.caller.msg(f"DEBUG: Looking up discipline {proper_stat_name} in powers.discipline: {current_rating}")
+                    elif category == 'secondary_abilities':
+                        # Directly check the secondary_abilities structure
+                        current_rating = self.caller.db.stats.get('secondary_abilities', {}).get(subcategory, {}).get(proper_stat_name, {}).get('perm', 0)
+                        
+                        # If not found, try case-insensitive search
+                        if current_rating == 0:
+                            for stat_name_key, stat_data in self.caller.db.stats.get('secondary_abilities', {}).get(subcategory, {}).items():
+                                if stat_name_key.lower() == proper_stat_name.lower():
+                                    current_rating = stat_data.get('perm', 0)
+                                    proper_stat_name = stat_name_key  # Use the existing name with correct case
+                                    break
                     else:
                         current_rating = self.caller.get_stat(category, subcategory, proper_stat_name)
-                        # self.caller.msg(f"DEBUG: Looking up {proper_stat_name} using get_stat({category}, {subcategory}): {current_rating}")
 
                     # Debug the final current_rating being passed
                     # self.caller.msg(f"DEBUG: Final current_rating being passed to buy_stat: {current_rating}")
@@ -391,6 +399,9 @@ class CmdXP(default_cmds.MuxCommand):
                         
                     stat_name = " ".join(stat_parts[:-1])
                     
+                    # Store the original input case for secondary abilities
+                    original_stat_name = stat_name
+                    
                     # Find target character
                     target = search_object(target_name.strip(), 
                                         typeclass='typeclasses.characters.Character')
@@ -401,6 +412,10 @@ class CmdXP(default_cmds.MuxCommand):
                     
                     # Fix any power issues before proceeding
                     self.fix_powers(target)
+                    
+                    # Fix any secondary abilities issues
+                    if hasattr(target, 'fix_secondary_abilities'):
+                        target.fix_secondary_abilities()
                     
                     # Determine category and subcategory
                     category, subcategory = self._determine_stat_category(stat_name)
@@ -420,9 +435,26 @@ class CmdXP(default_cmds.MuxCommand):
                         current_rating = target.db.stats.get('attributes', {}).get(subcategory, {}).get(proper_stat_name, {}).get('perm', 0)
                     elif category == 'powers' and subcategory == 'discipline':
                         current_rating = target.db.stats.get('powers', {}).get('discipline', {}).get(proper_stat_name, {}).get('perm', 0)
+                    elif category == 'secondary_abilities':
+                        # Use title case for secondary abilities
+                        stat_display_name = ' '.join(word.title() for word in stat_name.split())
+                        
+                        # First try with the title-cased name
+                        current_rating = target.db.stats.get('secondary_abilities', {}).get(subcategory, {}).get(stat_display_name, {}).get('perm', 0)
+                        
+                        # If not found, try case-insensitive search
+                        if current_rating == 0:
+                            for stat_name_key, stat_data in target.db.stats.get('secondary_abilities', {}).get(subcategory, {}).items():
+                                if stat_name_key.lower() == stat_display_name.lower():
+                                    current_rating = stat_data.get('perm', 0)
+                                    stat_display_name = stat_name_key  # Use the existing name with correct case
+                                    break
+                        
+                        # Update original_stat_name to use the title-cased version
+                        original_stat_name = stat_display_name
                     else:
                         current_rating = target.get_stat(category, subcategory, proper_stat_name)
-                        
+                    
                     # Calculate cost
                     if category == 'powers' and subcategory == 'gift':
                         # Gifts cost 3 XP per level
@@ -451,6 +483,26 @@ class CmdXP(default_cmds.MuxCommand):
                         else:
                             self.caller.msg(f"Rite '{proper_stat_name}' not found in rite database.")
                             return
+                    elif category == 'powers' and subcategory == 'art':
+                        # Arts have special costs:
+                        # New art (0->1): 7xp
+                        # Then 4xp * current rating for each level
+                        cost = 0
+                        for rating in range(current_rating + 1, new_rating + 1):
+                            if rating == 1:
+                                cost += 7  # First dot costs 7
+                            else:
+                                cost += 4 * (rating - 1)  # Subsequent dots cost 4 * previous rating
+                    elif category == 'powers' and subcategory == 'realm':
+                        # Realms have special costs:
+                        # New realm (0->1): 5xp
+                        # Then 3xp * current rating for each level
+                        cost = 0
+                        for rating in range(current_rating + 1, new_rating + 1):
+                            if rating == 1:
+                                cost += 5  # First dot costs 5
+                            else:
+                                cost += 3 * (rating - 1)  # Subsequent dots cost 3 * previous rating
                     elif category == 'flaws' and reason.lower() == 'flaw buyoff':
                         # Flaw buyoff costs 5 XP per point
                         # Get current flaw value from character's stats
@@ -491,7 +543,7 @@ class CmdXP(default_cmds.MuxCommand):
                     else:
                         # Use standard cost calculation for other stats
                         cost, _ = target.calculate_xp_cost(
-                            stat_name=proper_stat_name,
+                            stat_name=original_stat_name if category == 'secondary_abilities' else proper_stat_name,
                             new_rating=new_rating,
                             current_rating=current_rating,
                             category=category,
@@ -543,8 +595,25 @@ class CmdXP(default_cmds.MuxCommand):
                             'temp': new_rating
                         }
                         # Store the alias
-                        original_name = " ".join(stat_parts[:-1])  # Get the original input name without the rating
-                        target.set_gift_alias(proper_stat_name, original_name, new_rating)
+                        target.set_gift_alias(proper_stat_name, original_stat_name, new_rating)
+                    elif category == 'secondary_abilities':
+                        # Ensure the secondary_abilities structure exists
+                        if 'secondary_abilities' not in target.db.stats:
+                            target.db.stats['secondary_abilities'] = {}
+                        if subcategory not in target.db.stats['secondary_abilities']:
+                            target.db.stats['secondary_abilities'][subcategory] = {}
+                        
+                        # Use title case for secondary abilities
+                        stat_display_name = ' '.join(word.title() for word in stat_name.split())
+                        
+                        # Store the secondary ability in the correct location
+                        target.db.stats['secondary_abilities'][subcategory][stat_display_name] = {
+                            'perm': new_rating,
+                            'temp': new_rating
+                        }
+                        
+                        # Update original_stat_name to use the title-cased version for display
+                        original_stat_name = stat_display_name
                     else:
                         target.set_stat(category, subcategory, proper_stat_name, new_rating, temp=False)
                         target.set_stat(category, subcategory, proper_stat_name, new_rating, temp=True)
@@ -557,7 +626,7 @@ class CmdXP(default_cmds.MuxCommand):
                     spend_entry = {
                         'type': 'spend',
                         'amount': float(cost),
-                        'stat_name': proper_stat_name,
+                        'stat_name': original_stat_name if category == 'secondary_abilities' else proper_stat_name,
                         'previous_rating': current_rating,
                         'new_rating': new_rating if not (category == 'flaws' and reason.lower() == 'flaw buyoff') else 0,
                         'reason': f"Staff Spend: {reason}",
@@ -575,13 +644,57 @@ class CmdXP(default_cmds.MuxCommand):
                         self.caller.msg(f"Successfully bought off {proper_stat_name} flaw (Cost: {cost} XP)")
                         target.msg(f"{self.caller.name} has spent {cost} XP to buy off your {proper_stat_name} flaw.")
                     else:
-                        self.caller.msg(f"Successfully increased {proper_stat_name} from {current_rating} to {new_rating} (Cost: {cost} XP)")
-                        target.msg(f"{self.caller.name} has spent {cost} XP to set your {proper_stat_name} to {new_rating}.")
+                        stat_display_name = original_stat_name if category == 'secondary_abilities' else proper_stat_name
+                        self.caller.msg(f"Successfully increased {stat_display_name} from {current_rating} to {new_rating} (Cost: {cost} XP)")
+                        target.msg(f"{self.caller.name} has spent {cost} XP to set your {stat_display_name} to {new_rating}.")
                     self._display_xp(target)
                     
                 except Exception as e:
                     self.caller.msg(f"Error: {str(e)}")
                     self.caller.msg("Usage: +xp/staffspend <name>/<stat> <rating>=<reason>")
+                return
+
+            if "fixstats" in self.switches:
+                # Only staff can fix stats
+                if not self.caller.check_permstring("builders"):
+                    self.caller.msg("You don't have permission to fix stats.")
+                    return
+                    
+                try:
+                    # Parse input
+                    target_name = self.args.strip()
+                    if not target_name:
+                        self.caller.msg("Usage: +xp/fixstats <name>")
+                        return
+                        
+                    # Find target character
+                    target = search_object(target_name, typeclass='typeclasses.characters.Character')
+                    if not target:
+                        self.caller.msg(f"Character '{target_name}' not found.")
+                        return
+                    target = target[0]
+                    
+                    # Fix stats
+                    powers_fixed = self.fix_powers(target)
+                    
+                    # Fix secondary abilities
+                    secondary_fixed = False
+                    if hasattr(target, 'fix_secondary_abilities'):
+                        secondary_fixed = target.fix_secondary_abilities()
+                    
+                    if powers_fixed or secondary_fixed:
+                        self.caller.msg(f"Stats fixed for {target.name}")
+                    else:
+                        self.caller.msg(f"No stats needed fixing for {target.name}")
+                    
+                    self._display_xp(target)
+                    
+                except ValueError as e:
+                    self.caller.msg(f"Error: Invalid input - {str(e)}")
+                    self.caller.msg("Usage: +xp/fixstats <name>")
+                except Exception as e:
+                    self.caller.msg(f"Error: {str(e)}")
+                    self.caller.msg("An error occurred while processing your request.")
                 return
 
         # Staff viewing another character's XP
@@ -727,7 +840,7 @@ class CmdXP(default_cmds.MuxCommand):
             UNIVERSAL_BACKGROUNDS, VAMPIRE_BACKGROUNDS, CHANGELING_BACKGROUNDS, 
             MAGE_BACKGROUNDS, TECHNOCRACY_BACKGROUNDS, TRADITIONS_BACKGROUNDS, 
             NEPHANDI_BACKGROUNDS, SHIFTER_BACKGROUNDS, SORCERER_BACKGROUNDS, KINAIN_BACKGROUNDS,
-            MERIT_VALUES, RITE_VALUES, FLAW_VALUES,
+            MERIT_VALUES, RITE_VALUES, FLAW_VALUES, ARTS, REALMS,
         )
         from world.wod20th.utils.sheet_constants import (
             ABILITIES, SECONDARY_ABILITIES, BACKGROUNDS,
@@ -755,7 +868,14 @@ class CmdXP(default_cmds.MuxCommand):
         }
         
         if base_name in pool_stats or any(k.lower() == base_name.lower() for k in pool_stats.keys()):
-            return ('pools', pool_stats.get(base_name) or pool_stats.get(next(k for k in pool_stats if k.lower() == base_name.lower())))
+            # Get the pool subcategory
+            if base_name in pool_stats:
+                return ('pools', pool_stats[base_name])
+            else:
+                # Find the matching key case-insensitively
+                for k in pool_stats:
+                    if k.lower() == base_name.lower():
+                        return ('pools', pool_stats[k])
 
         # Check if it's a background (case-insensitive)
         # Try both with spaces and with underscores
@@ -779,6 +899,14 @@ class CmdXP(default_cmds.MuxCommand):
         # Check if it's a flaw (case-insensitive)
         if any(k.lower() == base_name.lower() for k in FLAW_VALUES.keys()):
             return ('flaws', 'flaw')
+
+        # Check if it's an Art (case-insensitive)
+        if any(art.lower() == base_name.lower() for art in ARTS):
+            return ('powers', 'art')
+
+        # Check if it's a Realm (case-insensitive)
+        if any(realm.lower() == base_name.lower() for realm in REALMS):
+            return ('powers', 'realm')
 
         # Check if it's a gift without a prefix
         from world.wod20th.models import Stat
@@ -968,6 +1096,106 @@ class CmdXP(default_cmds.MuxCommand):
                 else:
                     total_cost += pool_cost['base']  # Flat cost if not using current rating
 
+        # Special handling for Kinfolk gifts
+        elif category == 'powers' and subcategory == 'gift' and splat == 'Mortal+':
+            char_type = self.get_stat('identity', 'lineage', 'Type', temp=False)
+            if char_type and char_type.lower() == 'kinfolk':
+                # Check if they have Gnosis merit for level 2 gifts
+                if new_rating > 1:
+                    gnosis_merit = next((value.get('perm', 0) for merit, value in self.db.stats.get('merits', {}).get('merit', {}).items() 
+                                      if merit.lower() == 'gnosis'), 0)
+                    if not gnosis_merit:
+                        return 0, True  # Requires Gnosis merit for level 2 gifts
+                
+                # Get the gift details from the database
+                from world.wod20th.models import Stat
+                gift = Stat.objects.filter(
+                    name__iexact=stat_name,
+                    category='powers',
+                    stat_type='gift'
+                ).first()
+                
+                if gift:
+                    # Check if it's a homid gift (breed gift) or tribal gift
+                    is_homid = False
+                    is_tribal = False
+                    is_special = False
+                    
+                    # Check if it's a homid gift
+                    if gift.shifter_type:
+                        allowed_types = gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type]
+                        is_homid = 'homid' in [t.lower() for t in allowed_types]
+                    
+                    # Check if it's a tribal gift
+                    if gift.tribe:
+                        kinfolk_tribe = self.get_stat('identity', 'lineage', 'Tribe', temp=False)
+                        if kinfolk_tribe:
+                            allowed_tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+                            is_tribal = kinfolk_tribe.lower() in [t.lower() for t in allowed_tribes]
+                    
+                    # Check if it's a Croatan or Planetary gift
+                    if gift.tribe:
+                        tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+                        is_special = any(t.lower() in ['croatan', 'planetary'] for t in tribes)
+                    
+                    # Calculate cost based on gift type
+                    if is_special:
+                        total_cost = new_rating * 7  # Croatan/Planetary gifts cost 7 XP per level
+                    elif is_homid or is_tribal:
+                        total_cost = new_rating * 6   # Breed/Tribe gifts
+                    else:
+                        total_cost = new_rating * 10  # Outside Breed/Tribe gifts
+                    
+                    return total_cost, requires_approval
+
+        # Special handling for Shifter gifts
+        elif category == 'powers' and subcategory == 'gift' and splat == 'Shifter':
+            # Get the gift details from the database
+            from world.wod20th.models import Stat
+            gift = Stat.objects.filter(
+                name__iexact=stat_name,
+                category='powers',
+                stat_type='gift'
+            ).first()
+            
+            if gift:
+                # Get character's breed, auspice, and tribe
+                breed = self.get_stat('identity', 'lineage', 'Breed', temp=False)
+                auspice = self.get_stat('identity', 'lineage', 'Auspice', temp=False)
+                tribe = self.get_stat('identity', 'lineage', 'Tribe', temp=False)
+                
+                # Check if it's a breed, auspice, or tribe gift
+                is_breed_gift = False
+                is_auspice_gift = False
+                is_tribe_gift = False
+                is_special = False
+                
+                # Check breed gifts
+                if gift.shifter_type:
+                    allowed_types = gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type]
+                    is_breed_gift = breed and breed.lower() in [t.lower() for t in allowed_types]
+                
+                # Check auspice gifts
+                if hasattr(gift, 'auspice') and gift.auspice:
+                    allowed_auspices = gift.auspice if isinstance(gift.auspice, list) else [gift.auspice]
+                    is_auspice_gift = auspice and auspice.lower() in [a.lower() for a in allowed_auspices]
+                
+                # Check tribe gifts and special gifts
+                if gift.tribe:
+                    tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+                    is_tribe_gift = tribe and tribe.lower() in [t.lower() for t in tribes]
+                    is_special = any(t.lower() in ['croatan', 'planetary'] for t in tribes)
+                
+                # Calculate cost based on gift type
+                if is_special:
+                    total_cost = new_rating * 7  # Croatan/Planetary gifts cost 7 XP per level
+                elif is_breed_gift or is_auspice_gift or is_tribe_gift:
+                    total_cost = new_rating * 3  # Breed/Auspice/Tribe gifts cost 3 XP per level
+                else:
+                    total_cost = new_rating * 5  # Other gifts cost 6 XP per level
+                
+                return total_cost, requires_approval
+
         else:
             # Use standard calculation for other stats
             if cost_settings['multiplier'] == 'new':
@@ -982,27 +1210,51 @@ class CmdXP(default_cmds.MuxCommand):
             # Adjust costs based on splat and power type
             if splat == 'Vampire':
                 if subcategory == 'discipline':
-                    # Out-of-clan disciplines cost more
+                    # Calculate cost based on clan status
                     clan = self.get_stat('identity', 'lineage', 'Clan', temp=False)
                     if clan:
                         from world.wod20th.utils.vampire_utils import get_clan_disciplines
                         clan_disciplines = get_clan_disciplines(clan)
-                        if stat_name not in clan_disciplines:
-                            total_cost *= 2  # Double cost for out-of-clan disciplines
+                        # In-clan: 5 * current rating, Out-of-clan: 7 * current rating
+                        base_cost = 5 if stat_name in clan_disciplines else 7
+                        total_cost = 0
+                        for rating in range(current_rating + 1, new_rating + 1):
+                            total_cost += base_cost * rating
 
             elif splat == 'Mage':
                 if subcategory == 'sphere':
-                    # Adjust costs based on affinity sphere
+                    # Get affinity sphere
                     affinity_sphere = self.get_stat('identity', 'personal', 'Affinity Sphere', temp=False)
-                    if affinity_sphere and stat_name != affinity_sphere:
-                        total_cost *= 1.5  # Higher cost for non-affinity spheres
-
+                    # Calculate cost: Affinity = 7 * current rating, Other = 8 * current rating
+                    base_cost = 7 if stat_name == affinity_sphere else 8
+                    total_cost = 0
+                    for rating in range(current_rating + 1, new_rating + 1):
+                        total_cost += base_cost * rating
+            
             elif splat == 'Changeling':
                 if subcategory == 'art':
-                    # Check for affinity art
-                    affinity_art = self.get_stat('identity', 'personal', 'Affinity Art', temp=False)
-                    if affinity_art and stat_name != affinity_art:
-                        total_cost *= 1.5  # Higher cost for non-affinity arts
+                    # Arts have special costs:
+                    # New art (0->1): 7xp
+                    # Then 4xp * current rating for each level
+                    total_cost = 0
+                    for rating in range(current_rating + 1, new_rating + 1):
+                        if rating == 1:
+                            total_cost += 7  # First dot costs 7
+                        else:
+                            total_cost += 4 * (rating - 1)  # Subsequent dots cost 4 * previous rating
+                    return total_cost, requires_approval
+                
+                elif subcategory == 'realm':
+                    # Realms have special costs:
+                    # New realm (0->1): 5xp
+                    # Then 3xp * current rating for each level
+                    total_cost = 0
+                    for rating in range(current_rating + 1, new_rating + 1):
+                        if rating == 1:
+                            total_cost += 5  # First dot costs 5
+                        else:
+                            total_cost += 3 * (rating - 1)  # Subsequent dots cost 3 * previous rating
+                    return total_cost, requires_approval
 
         return total_cost, requires_approval
 
@@ -1022,6 +1274,20 @@ class CmdXP(default_cmds.MuxCommand):
         # Validate rating increase
         if new_rating <= current_rating:
             return False, "New rating must be higher than current rating"
+
+        # Check for Croatan/Planetary gifts - these require staff approval
+        if category == 'powers' and subcategory == 'gift':
+            from world.wod20th.models import Stat
+            gift = Stat.objects.filter(
+                name__iexact=stat_name,
+                category='powers',
+                stat_type='gift'
+            ).first()
+            
+            if gift and gift.tribe:
+                tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+                if any(t.lower() in ['croatan', 'planetary'] for t in tribes):
+                    return False, "Croatan and Planetary gifts can only be purchased through staff approval (+xp/staffspend)"
 
         # Check if stat exists and is valid for character's splat
         if category == 'powers':
@@ -1074,6 +1340,20 @@ class CmdXP(default_cmds.MuxCommand):
             # If not found in pools, check in advantages
             if current_rating == 0 and 'advantages' in self.db.stats:
                 current_rating = self.db.stats['advantages'].get(proper_stat_name, {}).get('perm', 0)
+        elif category == 'secondary_abilities':
+            # Get proper case for stat name
+            proper_stat_name = self._get_proper_stat_name(stat_name, category, subcategory)
+            
+            # Directly check the secondary_abilities structure
+            current_rating = self.db.stats.get('secondary_abilities', {}).get(subcategory, {}).get(proper_stat_name, {}).get('perm', 0)
+            
+            # If not found, try case-insensitive search
+            if current_rating == 0:
+                for stat_name_key, stat_data in self.db.stats.get('secondary_abilities', {}).get(subcategory, {}).items():
+                    if stat_name_key.lower() == proper_stat_name.lower():
+                        current_rating = stat_data.get('perm', 0)
+                        proper_stat_name = stat_name_key  # Use the existing name with correct case
+                        break
         else:
             current_rating = self.get_stat(category, subcategory, stat_name, temp=False) or 0
 
@@ -1124,6 +1404,18 @@ class CmdXP(default_cmds.MuxCommand):
                     'perm': new_rating,
                     'temp': new_rating
                 }
+            elif category == 'secondary_abilities':
+                # Ensure the secondary_abilities structure exists
+                if 'secondary_abilities' not in self.db.stats:
+                    self.db.stats['secondary_abilities'] = {}
+                if subcategory not in self.db.stats['secondary_abilities']:
+                    self.db.stats['secondary_abilities'][subcategory] = {}
+                
+                # Store the secondary ability in the correct location
+                self.db.stats['secondary_abilities'][subcategory][proper_stat_name] = {
+                    'perm': new_rating,
+                    'temp': new_rating
+                }
             else:
                 self.set_stat(category, subcategory, stat_name, new_rating, temp=False)
                 self.set_stat(category, subcategory, stat_name, new_rating, temp=True)
@@ -1161,7 +1453,7 @@ class CmdXP(default_cmds.MuxCommand):
             UNIVERSAL_BACKGROUNDS, VAMPIRE_BACKGROUNDS, CHANGELING_BACKGROUNDS,
             MAGE_BACKGROUNDS, TECHNOCRACY_BACKGROUNDS, TRADITIONS_BACKGROUNDS,
             NEPHANDI_BACKGROUNDS, SHIFTER_BACKGROUNDS, SORCERER_BACKGROUNDS,
-            KINAIN_BACKGROUNDS, MERIT_VALUES, RITE_VALUES, FLAW_VALUES
+            KINAIN_BACKGROUNDS, MERIT_VALUES, RITE_VALUES, FLAW_VALUES, ARTS, REALMS
         )
         from world.wod20th.utils.sheet_constants import (
             POWERS
@@ -1261,6 +1553,22 @@ class CmdXP(default_cmds.MuxCommand):
             # For gifts, just use the name as provided (in Title case)
             if subcategory == 'gift':
                 return stat_name
+                
+            # Check if it's an Art
+            if subcategory == 'art':
+                # Try to find the proper case in ARTS
+                for art in ARTS:
+                    if art.lower() == stat_name.lower():
+                        return art
+                return stat_name  # Return as-is if not found
+                
+            # Check if it's a Realm
+            if subcategory == 'realm':
+                # Try to find the proper case in REALMS
+                for realm in REALMS:
+                    if realm.lower() == stat_name.lower():
+                        return realm
+                return stat_name  # Return as-is if not found
 
             # Define power type mappings
             power_mappings = {
@@ -1269,8 +1577,8 @@ class CmdXP(default_cmds.MuxCommand):
                     'Mind', 'Prime', 'Spirit', 'Time', 'Dimensional Science',
                     'Primal Utility', 'Data'
                 ],
-                'art': POWERS.get('art', []),
-                'realm': POWERS.get('realm', []),
+                'art': ARTS,
+                'realm': REALMS,
                 'discipline': POWERS.get('discipline', []),
                 'numina': POWERS.get('numina', []),
                 'charm': POWERS.get('charm', []),
@@ -1309,13 +1617,13 @@ class CmdXP(default_cmds.MuxCommand):
     def fix_powers(self, character):
         """Fix duplicate powers and ensure proper categorization in character stats."""
         if not character.db.stats:
-            return
+            return False
 
         # Get the powers dictionary
         powers = character.db.stats.get('powers', {})
         if not powers:
-            return
-
+            return False
+            
         # Define power type mappings (plural to singular)
         power_mappings = {
             'spheres': 'sphere',
@@ -1376,5 +1684,5 @@ class CmdXP(default_cmds.MuxCommand):
 
         if changes_made:
             character.db.stats['powers'] = powers
-            return True
-        return False 
+            
+        return changes_made

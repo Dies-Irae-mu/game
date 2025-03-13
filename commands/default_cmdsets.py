@@ -30,9 +30,8 @@ from commands.CmdEmit import CmdEmit
 from commands.CmdNotes import CmdNotes
 from commands.CmdRenown import CmdRenown
 from commands.building import (
-    CmdSetRoomResources, CmdSetRoomType, CmdSetUmbraDesc, 
-    CmdSetGauntlet, CmdUmbraInfo, CmdSetHousing, CmdManageBuilding, 
-    CmdSetLock, CmdDesc, CmdView, CmdPlaces, CmdRoomUnfindable, CmdRoomFaeDesc
+    CmdRoom, CmdUmbraInfo, CmdManageBuilding, 
+    CmdSetLock, CmdDesc, CmdView, CmdPlaces
 )
 from commands.CmdInit import CmdInit
 from commands.CmdRoomLog import CmdRoomLog
@@ -69,7 +68,7 @@ from evennia.commands.default import cmdset_character, cmdset_account
 from commands.CmdXP import CmdXP
 from commands.CmdXPCost import CmdXPCost
 from commands.CmdWho import CmdWho
-from commands.housing import CmdRent, CmdVacate, CmdSetApartmentDesc, CmdSetApartmentExit, CmdManageHome, CmdUpdateApartments, CmdListApartments, CmdUpdateExits
+from commands.housing import CmdRent, CmdManageHome
 from commands.comms import CustomCmdChannel, CmdNotifications
 from commands.CmdCheck import CmdCheck
 from commands.CmdPlots import CmdPlots
@@ -146,9 +145,6 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdXPCost())
         self.add(CmdWho())
         self.add(CmdRent())
-        self.add(CmdVacate())
-        self.add(CmdSetApartmentDesc())
-        self.add(CmdSetApartmentExit())
         self.add(CmdManageHome())
         self.add(CmdSetLock())
         self.add(CmdPuppetFreeze())
@@ -162,11 +158,9 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdPlaces())
         self.add(CmdRoster())
         self.add(CmdSpecialties())
-        self.add(CmdRoomUnfindable())
-        self.add(CmdRoomFaeDesc())
         self.add(CmdNotifications())
         self.add(CmdMultidesc())
-        
+        self.add(CmdUmbraInfo())
 class AccountCmdSet(cmdset_account.AccountCmdSet):
     """
     This is the cmdset available to the Account at all times. It is
@@ -186,11 +180,6 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         # Add our custom channel command
         self.add(CustomCmdChannel())
         
-        self.add(CmdSetRoomResources())
-        self.add(CmdSetRoomType())
-        self.add(CmdSetUmbraDesc())
-        self.add(CmdSetGauntlet())
-        self.add(CmdUmbraInfo())
         self.add(CmdNotes())
         self.add(CmdSummon())
         self.add(CmdJoin())
@@ -198,11 +187,7 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdUnapprove())
         self.add(CmdMassUnapprove())
         self.add(CmdUnpuppet())
-        self.add(CmdSetHousing())
         self.add(CmdManageBuilding())
-        self.add(CmdUpdateApartments())
-        self.add(CmdListApartments())
-        self.add(CmdUpdateExits())
         self.add(CmdTestLock())
         self.add(CmdResetBBS())
         self.add(CmdNPC())
@@ -211,6 +196,8 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdStaffStat())
         self.add(CmdFixStats())
         self.add(CmdSetWyrmTaint())
+        self.add(CmdRoom())
+
 class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):
     """
     Command set available to the Session before being logged in.  This
@@ -249,6 +236,7 @@ class SessionCmdSet(default_cmds.SessionCmdSet):
         #
         # any commands you add below will overload the default ones.
         #
+
 class CmdTab(default_cmds.MuxCommand):
     key = "|-"
     aliases = ["^t"]

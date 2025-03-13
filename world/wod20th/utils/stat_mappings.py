@@ -43,6 +43,17 @@ CATEGORIES = [
     ('other', 'Other')
 ]
 
+REQUIRED_INSTANCES = ['Library', 'Status', 'Influence', 'Wonder', 'Secret Weapon', 'Companion', 
+                      'Familiar', 'Enhancement', 'Laboratory', 'Favor', 'Acute Senses', 
+                      'Enchanting Feature', 'Secret Code Language', 'Hideaway', 'Safehouse', 
+                      'Sphere Natural', 'Phobia', 'Addiction', 'Allies', 'Contacts', 'Caretaker',
+                      'Alternate Identity', 'Equipment', 'Professional Certification', 'Allergic',
+                      'Impediment', 'Enemy', 'Mentor', 'Old Flame', 'Additional Discipline', 
+                      'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish', 'Chimerical Item', 'Chimerical Companion',
+                      'Dreamers', 'Digital Dreamers', 'Addiction', 'Phobia', 'Derangement',
+                      'Obsession', 'Compulsion', 'Bigot', 'Ability Deficit', 'Sect Enmity', 'Camp Enmity'
+                     ] 
+
 # Stat types define the actual type of the stat
 STAT_TYPES = [
     ('attribute', 'Attribute'),
@@ -214,7 +225,8 @@ IDENTITY_LINEAGE = {
     'affinity sphere': ('identity', 'lineage'),
     'nephandi faction': ('identity', 'lineage'),
     'deed name': ('identity', 'lineage'),
-    'phyla': ('identity', 'lineage')
+    'phyla': ('identity', 'lineage'),
+    'kinfolk breed': ('identity', 'lineage')
 }
 
 ELEMENTAL_AFFINITY = {
@@ -699,7 +711,8 @@ GENERATION_FLAWS = {
 # Add ARTS and REALMS if they don't exist
 ARTS = {
     'Autumn', 'Chicanery', 'Chronos', 'Contract', "Dragon's Ire", 'Legerdemain', 'Metamorphosis', 'Naming', 
-    'Oneiromancy', 'Primal', 'Pyretics', 'Skycraft', 'Soothsay', 'Sovereign', 'Spring', 'Summer', 'Wayfare', 'Winter'
+    'Oneiromancy', 'Primal', 'Pyretics', 'Skycraft', 'Soothsay', 'Sovereign', 'Spring', 'Summer', 'Wayfare', 'Winter',
+    'Infusion', 'Kryos', 'Storm Craft'
 }
 
 REALMS = {
@@ -711,6 +724,20 @@ MAGE_SPHERES = {
     'Correspondence', 'Data', 'Dimensional Science', 'Entropy', 'Forces',
     'Life', 'Matter', 'Mind', 'Prime', 'Primal Utility', 'Spirit', 'Time'
 }
+
+KINFOLK_BREED_CHOICES = [
+    ('Ajaba', 'Ajaba'),
+    ('Ananasi', 'Ananasi'),
+    ('Ratkin', 'Ratkin'),
+    ('Garou', 'Garou'),
+    ('Kitsune', 'Kitsune'),
+    ('Rokea', 'Rokea'),
+    ('Mokole', 'Mokole'),
+    ('Gurahl', 'Gurahl'),
+    ('Bastet', 'Bastet'),
+    ('Nuwisha', 'Nuwisha'),
+    ('Nagah', 'Nagah')
+]
 
 TRADITION_SUBFACTION = {
     'Akashic_Brotherhood': [

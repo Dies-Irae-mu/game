@@ -121,7 +121,7 @@
 		},
 		{
 			"name": "Step on a Crack",
-			"description": "A common rhyme among children says, \"If you step on a crack, you break your mother's back.\" It's just a childish version of an ancient belief that touching cracks brings misfortune. This belief is made manifest in this ritual. Unlike most curses, the magician must inform their target of the curse for it to take effect, and the curse doesn't automatically occur. Instead, the victim can attempt to evade the curse by not touching cracks. This, of course, inevitably proves to be impossible, triggering a curse bringing some non-life-threatening but potentially permanent harm to the victim or to their loved ones. If they can Unweave this curse before stepping on a crack, it is done at –2 difficulty. However, once the curse is triggered, any attempt to rid the victim of it is at +2 difficulty instead, as their actions were the direct cause of their misfortune, unfair as that may be.",
+			"description": "A common rhyme among children says, \"If you step on a crack, you break your mother's back.\" It's just a childish version of an ancient belief that touching cracks brings misfortune. This belief is made manifest in this ritual. Unlike most curses, the magician must inform their target of the curse for it to take effect, and the curse doesn't automatically occur. Instead, the victim can attempt to evade the curse by not touching cracks. This, of course, inevitably proves to be impossible, triggering a curse bringing some non-life-threatening but potentially permanent harm to the victim or to their loved ones. If they can Unweave this curse before stepping on a crack, it is done at -2 difficulty. However, once the curse is triggered, any attempt to rid the victim of it is at +2 difficulty instead, as their actions were the direct cause of their misfortune, unfair as that may be.",
 			"game_line": "Mage: The Awakening",
 			"category": "powers",
 			"stat_type": "hedge_ritual",
@@ -257,7 +257,7 @@
 		},
 		{
 			"name": "Fire's Weal",
-			"description": "Fire is one of the most dangerous hazards in the World of Darkness; even natural flames can easily cause permanent damage to powerful supernatural beings. With this ritual, the magician can give protection against fire of all sorts. With two successes, the ritual allows the target to soak fire damage, even supernatural flame, as though it were bashing, regardless of what damage it causes. Successes in excess of two reduce the difficulty on soak rolls against fire (to a maximum modifier of –3), so four total successes result in soaking fire damage at –2 difficulty.",
+			"description": "Fire is one of the most dangerous hazards in the World of Darkness; even natural flames can easily cause permanent damage to powerful supernatural beings. With this ritual, the magician can give protection against fire of all sorts. With two successes, the ritual allows the target to soak fire damage, even supernatural flame, as though it were bashing, regardless of what damage it causes. Successes in excess of two reduce the difficulty on soak rolls against fire (to a maximum modifier of -3), so four total successes result in soaking fire damage at -2 difficulty.",
 			"game_line": "Mage: The Awakening",
 			"category": "powers",
 			"stat_type": "hedge_ritual",
@@ -361,7 +361,7 @@
 		},
 		{
 			"name": "Forced Medium",
-			"description": "Some people are naturally easier for ghosts to possess. These mediums may view this as a gift or a curse, but it marks them apart. These are the people who deal with the spirit worlds, and who ghosts will come to in order to either ask them to solve a problem or else take over their body to compel them do so. This ritual gives the target the merit Medium (BoS p. 69) for a week, along with a –2 difficulty on attempts by ghosts to possess them.",
+			"description": "Some people are naturally easier for ghosts to possess. These mediums may view this as a gift or a curse, but it marks them apart. These are the people who deal with the spirit worlds, and who ghosts will come to in order to either ask them to solve a problem or else take over their body to compel them do so. This ritual gives the target the merit Medium (BoS p. 69) for a week, along with a -2 difficulty on attempts by ghosts to possess them.",
 			"game_line": "Mage: The Awakening",
 			"category": "powers",
 			"stat_type": "hedge_ritual",
@@ -440,7 +440,7 @@
 			"values": [4]
 		},
 		{
-			"name": "Infusion",
+			"name": "Infusion Ritual",
 			"description": "While a spell can only store a single point of mana, this ritual allows the sorcerer to store several points of mana in some consumable object, usually a potion (especially for alchemists). Each success allows the item to store one point of mana, though the transfer is imperfect. For each success, up to two mana can be spent, half of which (rounded up) \"leaks\" and is lost, leaving the other half (rounded down) in the consumable.",
 			"game_line": "Mage: The Awakening",
 			"category": "powers",

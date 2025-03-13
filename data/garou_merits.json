@@ -123,7 +123,7 @@
     },
     {
         "name": "Camp Goodwill",
-        "description": "You have earned the attention and favor of a particular Garou tribal camp (see pg. 491). Perhaps you've done them a favor, or maybe they're trying to recruit you. Regardless, all Social rolls when interacting with that camp are made at –1 difficulty. You may not be a member of this camp when you first take this Merit, although you can become recruited into the camp during play at the Storyteller's discretion. You may take this Merit multiple times for different camps, and may take it for tribal camps other than your own tribe, each with the Storyteller's approval.",
+        "description": "You have earned the attention and favor of a particular Garou tribal camp (see pg. 491). Perhaps you've done them a favor, or maybe they're trying to recruit you. Regardless, all Social rolls when interacting with that camp are made at -1 difficulty. You may not be a member of this camp when you first take this Merit, although you can become recruited into the camp during play at the Storyteller's discretion. You may take this Merit multiple times for different camps, and may take it for tribal camps other than your own tribe, each with the Storyteller's approval.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "merits",
         "stat_type": "social",
@@ -134,7 +134,7 @@
     },
     {
         "name": "Notable Heritage",
-        "description": "Your direct family line is particularly renowned, either in Garou society or in the human world. You must choose (with your Storyteller's approval) which world your heritage relates to, and detail your family line accordingly. You are at –1 difficulty to all Social rolls when working in the appropriate society (with Garou and Kinfolk who are aware of werewolf society, or when dealing with humans who are aware of your heritage). You are expected to live up to your lineage's reputation. If you fail to do so, you may find the Merit dwindling over time as stories of your own failings begin to outweigh the high regard your family receives. This Merit may not be taken by Bone Gnawers.",
+        "description": "Your direct family line is particularly renowned, either in Garou society or in the human world. You must choose (with your Storyteller's approval) which world your heritage relates to, and detail your family line accordingly. You are at -1 difficulty to all Social rolls when working in the appropriate society (with Garou and Kinfolk who are aware of werewolf society, or when dealing with humans who are aware of your heritage). You are expected to live up to your lineage's reputation. If you fail to do so, you may find the Merit dwindling over time as stories of your own failings begin to outweigh the high regard your family receives. This Merit may not be taken by Bone Gnawers.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "merits",
         "stat_type": "social",
@@ -155,7 +155,7 @@
     },
     {
         "name": "Ancestor Ally",
-        "description": "One of your ancestor spirits is particularly close to you. You have –2 to your difficulty to contact this ancestor via your Ancestors Background. Flesh out your special ancestor with a name, personality characteristics, significant abilities or powers, details about her life, and her reputation among Garou. To purchase this Merit, you must have Ancestors as a Background.",
+        "description": "One of your ancestor spirits is particularly close to you. You have -2 to your difficulty to contact this ancestor via your Ancestors Background. Flesh out your special ancestor with a name, personality characteristics, significant abilities or powers, details about her life, and her reputation among Garou. To purchase this Merit, you must have Ancestors as a Background.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "merits",
         "stat_type": "supernatural",

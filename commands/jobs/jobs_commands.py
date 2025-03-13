@@ -151,30 +151,50 @@ class CmdJobs(MuxCommand):
             self.caller.msg("You have no open jobs.")
             return
 
+        # Define column widths
+        col_widths = {
+            'job_id': 6,    # "Job # "
+            'queue': 10,    # "Queue     "
+            'title': 25,    # "Job Title                "
+            'originator': 12, # "Originator   "
+            'assignee': 12,   # "Assignee     "
+            'status': 8      # "Status   "
+        }
+
         output = header("Dies Irae Jobs", width=78, fillchar="|r-|n") + "\n"
         
-        # Create the header row with adjusted widths
-        header_row = "|cJob #  Queue      Job Title                 Originator    Assignee      Status|n"
+        # Create the header row with fixed column widths
+        header_row = (
+            f"|cJob #".ljust(col_widths['job_id']) +
+            f"Queue".ljust(col_widths['queue']) +
+            f"Job Title".ljust(col_widths['title']) +
+            f"Originator".ljust(col_widths['originator']) +
+            f"Assignee".ljust(col_widths['assignee']) +
+            f"Status|n"
+        )
         output += header_row + "\n"
         output += ANSIString("|r" + "-" * 78 + "|n") + "\n"
 
-        # Add each job as a row with adjusted widths
+        # Add each job as a row with proper column spacing
         for job in jobs:
             assignee = job.assignee.username if job.assignee else "-----"
             originator = job.requester.username if job.requester else "-----"
             
-            # Check if job has been viewed by this user using is_updated_since_last_view
+            # Check if job has been viewed by this user
             unread = job.is_updated_since_last_view(self.caller.account)
             title_marker = "|r*|n " if unread else "  "
             
-            row = (
-                f"{job.id:<6}"
-                f"{crop(job.queue.name, width=10):<11}"
-                f"{title_marker}{crop(job.title, width=23):<23}"
-                f"{crop(originator, width=13):<14}"
-                f"{crop(assignee, width=13):<14}"
-                f"{crop(job.status, width=10):<10}"
-            )
+            # Format each field with proper width
+            job_id = str(job.id).ljust(col_widths['job_id'])
+            queue = crop(job.queue.name, width=col_widths['queue']-2).ljust(col_widths['queue'])  # -2 for spacing
+            title = title_marker + crop(job.title, width=col_widths['title']-2)  # -2 for marker
+            title = title.ljust(col_widths['title'])
+            originator = crop(originator, width=col_widths['originator']-2).ljust(col_widths['originator'])
+            assignee = crop(assignee, width=col_widths['assignee']-2).ljust(col_widths['assignee'])
+            status = crop(job.status, width=col_widths['status'])
+            
+            # Combine all fields with proper spacing
+            row = f"{job_id}{queue}{title}{originator}{assignee}{status}"
             output += row + "\n"
 
         output += footer(width=78, fillchar="|r-|n")
@@ -201,6 +221,17 @@ class CmdJobs(MuxCommand):
             output += f"|cCreated At:|n {job.created_at.strftime('%Y-%m-%d %H:%M:%S')}\n"
             output += f"|cClosed At:|n {job.closed_at.strftime('%Y-%m-%d %H:%M:%S') if job.closed_at else '-----'}\n"
             
+            # Add participants list including requester
+            participants = list(job.participants.all())
+            # Add requester if not already in participants
+            if job.requester not in participants:
+                participants.insert(0, job.requester)  # Add requester at the start of the list
+            
+            if participants:
+                output += f"|cParticipants:|n {', '.join(p.username for p in participants)}\n"
+            else:
+                output += "|cParticipants:|n None\n"
+            
             attached_objects = JobAttachment.objects.filter(job=job)
             if attached_objects:
                 output += "|cAttached Objects:|n " + ", ".join([obj.object.key for obj in attached_objects]) + "\n"
@@ -209,13 +240,10 @@ class CmdJobs(MuxCommand):
             
             output += divider("Description", width=78, fillchar="-", color="|r", text_color="|c") + "\n"
             
-            # Handle description text wrapping
+            # Handle description text without wrapping
             paragraphs = [p.strip() for p in job.description.split('\n\n') if p.strip()]
             for i, paragraph in enumerate(paragraphs):
-                # Wrap text at a consistent width with proper indentation
-                lines = wrap_ansi(paragraph, width=70)  # Reduced width for consistent wrapping
-                for line in lines.split('\n'):
-                    output += "  " + line.strip() + "\n"
+                output += paragraph + "\n"
                 if i < len(paragraphs) - 1:
                     output += "\n"
             
@@ -223,7 +251,7 @@ class CmdJobs(MuxCommand):
                 output += divider("Comments", width=78, fillchar="-", color="|r", text_color="|c") + "\n"
                 for comment in job.comments:
                     output += f"|c{comment['author']} [{comment['created_at']}]:|n\n"
-                    output += wrap_ansi(comment['text'], width=78) + "\n\n"
+                    output += comment['text'] + "\n\n"
             
             output += divider("", width=78, fillchar="-", color="|r") + "\n"
             self.caller.msg(output)
@@ -502,35 +530,59 @@ class CmdJobs(MuxCommand):
             return
 
         job_id, player_name = self.args.split("=", 1)
+        job_id = job_id.strip()
+        player_name = player_name.strip()
         
         try:
             job_id = int(job_id)
+            # Debug message for job lookup
+            self.caller.msg(f"Looking for job #{job_id}...")
             job = Job.objects.get(id=job_id)
+            self.caller.msg(f"Found job: {job.title}")
 
             if not (job.requester == self.caller.account or self.caller.check_permstring("Admin")):
                 self.caller.msg("You don't have permission to add players to this job.")
                 return
 
-            # Use account_search for global search
+            # Debug message for player search
+            self.caller.msg(f"Searching for player: {player_name}")
             player = search_account(player_name)
             if not player:
                 self.caller.msg(f"Could not find account '{player_name}'.")
                 return
             
             if len(player) > 1:
-                self.caller.msg("Multiple matches found. Please be more specific.")
+                # Show matching accounts for debugging
+                matches = ", ".join([p.username for p in player])
+                self.caller.msg(f"Multiple matches found: {matches}")
+                self.caller.msg("Please be more specific.")
                 return
                 
             player = player[0]
+            self.caller.msg(f"Found player: {player.username}")
 
+            # Check if player is already a participant
+            if player in job.participants.all():
+                self.caller.msg(f"{player.username} is already a participant in this job.")
+                return
+
+            # Add the player and verify
             job.participants.add(player)
             job.save()
 
-            self.caller.msg(f"Player {player.username} added to job #{job_id}.")
-            self.post_to_jobs_channel(self.caller.name, job.id, f"added {player.username} to")
+            # Verify the addition
+            if player in job.participants.all():
+                self.caller.msg(f"Player {player.username} successfully added to job #{job_id}.")
+                self.post_to_jobs_channel(self.caller.name, job.id, f"added {player.username} to")
+            else:
+                self.caller.msg(f"Failed to add {player.username} to job #{job_id}. Please contact an administrator.")
 
-        except (ValueError, Job.DoesNotExist):
-            self.caller.msg("Invalid job ID.")
+        except ValueError:
+            self.caller.msg(f"Invalid job ID: {job_id}")
+        except Job.DoesNotExist:
+            self.caller.msg(f"Job #{job_id} not found.")
+        except Exception as e:
+            self.caller.msg(f"Error adding player: {str(e)}")
 
     def remove_player(self):
         if not self.args or "=" not in self.args:
@@ -1008,11 +1060,11 @@ class CmdJobs(MuxCommand):
                 output += f"|cClosed At:|n {archived_job.closed_at.strftime('%Y-%m-%d %H:%M:%S')}\n"
                 
                 output += divider("Description", width=78, fillchar="-", color="|r", text_color="|c") + "\n"
-                output += wrap_ansi(archived_job.description, width=76, left_padding=2) + "\n\n"
+                output += archived_job.description + "\n\n"
                 
                 if archived_job.comments:
                     output += divider("Comments", width=78, fillchar="-", color="|r", text_color="|c") + "\n"
-                    output += wrap_ansi(archived_job.comments, width=76, left_padding=2) + "\n"
+                    output += archived_job.comments + "\n"
                 
                 output += footer(width=78, fillchar="|r-|n")
                 self.caller.msg(output)
@@ -1193,27 +1245,24 @@ class CmdJobs(MuxCommand):
 
         output = header("My Dies Irae Jobs", width=78, fillchar="|r-|n") + "\n"
         
-        # Create the header row with adjusted widths
+        # Create the header row without fixed widths
         header_row = "|cJob #  Queue      Job Title           Originator    Assignee      Status|n"
         output += header_row + "\n"
         output += ANSIString("|r" + "-" * 78 + "|n") + "\n"
 
-        # Add each job as a row with adjusted widths
+        # Add each job as a row without cropping
         for job in jobs:
             assignee = job.assignee.username if job.assignee else "-----"
             originator = job.requester.username if job.requester else "-----"
             
-            # Check if job has been viewed by this user using is_updated_since_last_view
+            # Check if job has been viewed by this user
             unread = job.is_updated_since_last_view(self.caller.account)
             title_marker = "|r*|n " if unread else "  "
             
             row = (
                 f"{job.id:<6}"
-                f"{crop(job.queue.name, width=10):<11}"
-                f"{title_marker}{crop(job.title, width=23):<23}"
-                f"{crop(originator, width=13):<14}"
-                f"{crop(assignee, width=13):<14}"
-                f"{crop(job.status, width=10):<10}"
+                f"{job.queue.name:<11}"
+                f"{title_marker}{job.title}"
             )
             output += row + "\n"
 
@@ -1300,25 +1349,23 @@ class CmdJobs(MuxCommand):
 
         output = header("My Assigned Jobs", width=78, fillchar="|r-|n") + "\n"
         
-        # Create the header row with adjusted widths
+        # Create the header row without fixed widths
         header_row = "|cJob #  Queue      Job Title                 Originator    Status|n"
         output += header_row + "\n"
         output += ANSIString("|r" + "-" * 78 + "|n") + "\n"
 
-        # Add each job as a row with adjusted widths
+        # Add each job as a row without cropping
         for job in jobs:
             originator = job.requester.username if job.requester else "-----"
             
-            # Check if job has been viewed by this user using is_updated_since_last_view
+            # Check if job has been viewed by this user
             unread = job.is_updated_since_last_view(self.caller.account)
             title_marker = "|r*|n " if unread else "  "
             
             row = (
                 f"{job.id:<6}"
-                f"{crop(job.queue.name, width=10):<11}"
-                f"{title_marker}{crop(job.title, width=23):<23}"
-                f"{crop(originator, width=13):<14}"
-                f"{crop(job.status, width=10):<10}"
+                f"{job.queue.name:<11}"
+                f"{title_marker}{job.title}"
             )
             output += row + "\n"
 

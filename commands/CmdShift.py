@@ -233,11 +233,30 @@ class CmdShift(default_cmds.MuxCommand):
         if homid_form:
             table.add_row("Homid", "Base Stats", "6")
         
-        # Get character's Varna for Mokolé Suchid form
+        # Get character's Varna for Mokolé Suchid form or Tribe for Bastet forms
         varna = None
+        tribe = None
         if shifter_type == 'mokole':
             varna = character.get_stat('identity', 'lineage', 'Varna', temp=False)
-        
+        elif shifter_type == 'bastet':
+            tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
+            tribe = tribe.lower() if tribe else 'simba'  # Default to Simba if no tribe set
+
+        def format_stat_modifier(stat, mod, form_name):
+            """Format a stat modifier, showing explicit 0 for Appearance in Crinos form and absolute values for Crawlerling form."""
+            # Handle Crawlerling form's absolute values
+            if form_name.lower() == 'crawlerling':
+                if stat == 'Dexterity':
+                    return f"{stat} +5"  # Show modifier
+                elif stat in ['Strength', 'Stamina', 'Manipulation']:
+                    return f"{stat} 0"  # Show absolute value
+            # Handle Crinos form's Appearance
+            elif stat == 'Appearance' and form_name.lower() == 'crinos':
+                return f"{stat} 0"  # Show explicit 0 for Appearance in Crinos form
+            elif mod != 0:
+                return f"{stat} {mod:+d}"  # Show +/- for non-zero modifiers
+            return None  # Return None for unmodified stats or 0 modifiers
+
         for form in available_forms:
             if form.name.lower() != 'homid':
                 # Special handling for Mokolé Suchid form
@@ -264,16 +283,41 @@ class CmdShift(default_cmds.MuxCommand):
                     
                     # Use Varna-specific modifiers if available
                     if varna in varna_modifiers:
-                        mods = ", ".join([f"{stat} {mod:+d}" for stat, mod in varna_modifiers[varna].items()])
-                        table.add_row(f"{form.name} ({varna})", mods, str(form.difficulty))
+                        mods = [format_stat_modifier(stat, mod, form.name) for stat, mod in varna_modifiers[varna].items()]
+                        mods = [m for m in mods if m is not None]  # Filter out None values
+                        table.add_row(f"{form.name} ({varna})", ", ".join(mods), str(form.difficulty))
                     else:
                         # Use default (Makara) stats
-                        mods = ", ".join([f"{stat} {mod:+d}" for stat, mod in form.stat_modifiers.items()])
-                        table.add_row(f"{form.name} (Default)", mods, str(form.difficulty))
+                        mods = [format_stat_modifier(stat, mod, form.name) for stat, mod in form.stat_modifiers.items()]
+                        mods = [m for m in mods if m is not None]  # Filter out None values
+                        table.add_row(f"{form.name} (Default)", ", ".join(mods), str(form.difficulty))
+                # Special handling for Bastet forms
+                elif shifter_type == 'bastet' and tribe:
+                    # Get tribe-specific modifiers from the _get_form_modifiers method
+                    tribe_modifiers = self._get_form_modifiers(form, shifter_type, None, tribe)
+                    if tribe_modifiers:
+                        mods = [format_stat_modifier(stat, mod, form.name) for stat, mod in tribe_modifiers.items()]
+                        mods = [m for m in mods if m is not None]  # Filter out None values
+                        table.add_row(f"{form.name} ({tribe.title()})", ", ".join(mods), str(form.difficulty))
+                    else:
+                        # Use default (Simba) stats if no tribe-specific modifiers found
+                        mods = [format_stat_modifier(stat, mod, form.name) for stat, mod in form.stat_modifiers.items()]
+                        mods = [m for m in mods if m is not None]  # Filter out None values
+                        table.add_row(f"{form.name} (Default)", ", ".join(mods), str(form.difficulty))
+                elif form.name.lower() == 'crawlerling':
+                    # Show Crawlerling's special stats
+                    mods = [
+                        "Strength 0",
+                        "Dexterity +5",
+                        "Stamina 0",
+                        "Manipulation 0"
+                    ]
+                    table.add_row(form.name, ", ".join(mods), str(form.difficulty))
                 else:
                     # For non-Suchid forms or non-Mokolé characters
-                    mods = ", ".join([f"{stat} {mod:+d}" for stat, mod in form.stat_modifiers.items()])
-                    table.add_row(form.name, mods, str(form.difficulty))
+                    mods = [format_stat_modifier(stat, mod, form.name) for stat, mod in form.stat_modifiers.items()]
+                    mods = [m for m in mods if m is not None]  # Filter out None values
+                    table.add_row(form.name, ", ".join(mods), str(form.difficulty))
         
         if not available_forms and not homid_form:
             self.caller.msg(f"No forms found for shifter type: {shifter_type}")
@@ -473,11 +517,8 @@ class CmdShift(default_cmds.MuxCommand):
                     # Get permanent value from our saved values
                     perm_value = permanent_values.get(stat_obj.stat_type, {}).get(stat_obj.name, 0)
                     
-                    # For stats that should be set to 0, we still preserve the permanent value
-                    if mod == 0 and stat in ['Strength', 'Stamina', 'Appearance']:
-                        temp_value = 0
-                    else:
-                        temp_value = max(0, perm_value + mod)  # Ensure non-negative
+                    # Calculate temporary value based on permanent value and modifier
+                    temp_value = max(0, perm_value + mod)  # Ensure non-negative
                     
                     # Ensure the category and subcategory exist
                     if stat_obj.category not in character.db.stats:
@@ -493,9 +534,8 @@ class CmdShift(default_cmds.MuxCommand):
             except Stat.DoesNotExist:
                 continue
 
-        # Handle special cases for Appearance and Manipulation
-        zero_appearance_forms = ['crinos', 'anthros', 'arthren', 'sokto', 'chatro']
-        if form.name.lower() in zero_appearance_forms:
+        # Handle special cases for different forms
+        if form.name.lower() == 'crinos':
             # Get the permanent Appearance value
             appearance_perm = permanent_values.get('social', {}).get('Appearance', 0)
             
@@ -503,19 +543,52 @@ class CmdShift(default_cmds.MuxCommand):
             if 'social' not in character.db.stats['attributes']:
                 character.db.stats['attributes']['social'] = {}
             
-            # Set Appearance with permanent value preserved but temp value at 0
+            # Set Appearance to 0 only in Crinos form
             character.db.stats['attributes']['social']['Appearance'] = {
                 'perm': appearance_perm,
                 'temp': 0
             }
             
-            # Also handle Manipulation in Crinos form
-            if form.name.lower() == 'crinos':
-                manip_perm = permanent_values.get('social', {}).get('Manipulation', 0)
-                character.db.stats['attributes']['social']['Manipulation'] = {
-                    'perm': manip_perm,
-                    'temp': max(0, manip_perm - 2)  # -2 penalty in Crinos
-                }
+            # Handle Manipulation in Crinos form
+            manip_perm = permanent_values.get('social', {}).get('Manipulation', 0)
+            character.db.stats['attributes']['social']['Manipulation'] = {
+                'perm': manip_perm,
+                'temp': max(0, manip_perm - 2)  # -2 penalty in Crinos
+            }
+        elif form.name.lower() == 'crawlerling':
+            # Handle Crawlerling form's special stats
+            # Set Strength, Stamina, and Manipulation to 0
+            # Set Dexterity to base + 5
+            
+            # Get permanent values
+            str_perm = permanent_values.get('physical', {}).get('Strength', 0)
+            dex_perm = permanent_values.get('physical', {}).get('Dexterity', 0)
+            sta_perm = permanent_values.get('physical', {}).get('Stamina', 0)
+            man_perm = permanent_values.get('social', {}).get('Manipulation', 0)
+            
+            # Ensure categories exist
+            if 'physical' not in character.db.stats['attributes']:
+                character.db.stats['attributes']['physical'] = {}
+            if 'social' not in character.db.stats['attributes']:
+                character.db.stats['attributes']['social'] = {}
+            
+            # Set the stats
+            character.db.stats['attributes']['physical']['Strength'] = {
+                'perm': str_perm,
+                'temp': 0  # Always 0 in Crawlerling
+            }
+            character.db.stats['attributes']['physical']['Dexterity'] = {
+                'perm': dex_perm,
+                'temp': dex_perm + 5  # Add 5 to base Dexterity
+            }
+            character.db.stats['attributes']['physical']['Stamina'] = {
+                'perm': sta_perm,
+                'temp': 0  # Always 0 in Crawlerling
+            }
+            character.db.stats['attributes']['social']['Manipulation'] = {
+                'perm': man_perm,
+                'temp': 0  # Always 0 in Crawlerling
+            }
 
         # Handle Mokolé Archid traits if applicable
         if form.name.lower() == 'archid' and character.get_stat('identity', 'lineage', 'Type', temp=False).lower() == 'mokole':

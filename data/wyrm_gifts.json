@@ -204,7 +204,7 @@
     {
         "name": "Death Sight",
         "description": "The White Howler version is called Death Sight. Otherwise, Visions of Dust. The werewolf's eyes become cloudy and pale as she attunes her vision to the ashen landscape of the Underworld. An owl-spirit teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Perception + Occult (difficulty 7). For the rest of the scene, the character can see (and hear) ghosts and detect haunted areas with another Perception + Occult roll (difficulty corresponds to the severity of the haunting). This Gift bestows no power to touch or communicate with the dead, however — that usually requires the use of the Descent into the Underworld rite. A botch causes the Garou's eyes to shine as beacons in the underworld, drawing the notice of broken, vengeful shades.",
+        "system": "The player spends one Gnosis point and rolls Perception + Occult (difficulty 7). For the rest of the scene, the character can see (and hear) ghosts and detect haunted areas with another Perception + Occult roll (difficulty corresponds to the severity of the haunting). This Gift bestows no power to touch or communicate with the dead, however - that usually requires the use of the Descent into the Underworld rite. A botch causes the Garou's eyes to shine as beacons in the underworld, drawing the notice of broken, vengeful shades.",
         "source": "20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -243,7 +243,7 @@
     {
         "name": "Plague Child",
         "description": "The favored children of the Plague Rats may choose to learn this Gift to represent their fallen totem's favor. The fallen werewolf who knows this Gift finds that ordinary diseases just can't take hold in his system. He does act as a carrier, though, and can inadvertently (or deliberately) infect passersby with a cough or sneeze. Plague Child does not especially protect against supernatural plagues.",
-        "system": "The character is immune to non-magical, non-biowarfare diseases. No roll or expenditure is needed. Magical plagues (like the Metamorphic Plague that troubles the Black Furies) can still infect the werewolf, and specially engineered germ warfare agents also remain dangerous. The werewolf remains a carrier of these diseases — they live on or in him, but do him no harm. A Plague Rat or Black Spiral Dancer with this Gift may find that those he encounters fall ill with one of the dozens of diseases from tuberculosis to malaria. Plague Child doesn't make these diseases any more virulent, but a healthy and mobile carrier is always better able to spread a disease than one incapacitated by it.",
+        "system": "The character is immune to non-magical, non-biowarfare diseases. No roll or expenditure is needed. Magical plagues (like the Metamorphic Plague that troubles the Black Furies) can still infect the werewolf, and specially engineered germ warfare agents also remain dangerous. The werewolf remains a carrier of these diseases - they live on or in him, but do him no harm. A Plague Rat or Black Spiral Dancer with this Gift may find that those he encounters fall ill with one of the dozens of diseases from tuberculosis to malaria. Plague Child doesn't make these diseases any more virulent, but a healthy and mobile carrier is always better able to spread a disease than one incapacitated by it.",
         "source": "Apocalypse",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -256,7 +256,7 @@
     {
         "name": "Terrify",
         "description": "The Dancer with this Gift is more intimidating and terrifying than normal. A sneer from her is as effective as a full-throated grown from another.",
-        "system": "Roll Charisma + Intimidation (difficulty is the target's Willpower). If successful, the difficulties for Social rolls made against that target decrease by one — but only if intimidation could conceivably alter the outcome in the Dancer's favor. The target's difficulty to strike the Dancer in combat is one higher as well.",
+        "system": "Roll Charisma + Intimidation (difficulty is the target's Willpower). If successful, the difficulties for Social rolls made against that target decrease by one - but only if intimidation could conceivably alter the outcome in the Dancer's favor. The target's difficulty to strike the Dancer in combat is one higher as well.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -444,7 +444,7 @@
     {
         "name": "Nobody's Bastard",
         "description": "Nobody wants to recognize a metis, and with this Gift, nobody will. A metis using this Gift is unrecognizable to all who see her. A Bane of abandonment teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Manipulation + Stealth (difficulty 7). If the roll succeeds, nobody who sees the metis will know who she is for the rest of the scene. Observers don't mistake her for anyone else; they simply see her as an unknown stranger. Their memories remain even after the scene – they don't suddenly remember that the Garou using this Gift is the stranger.",
+        "system": "The player spends one Gnosis point and rolls Manipulation + Stealth (difficulty 7). If the roll succeeds, nobody who sees the metis will know who she is for the rest of the scene. Observers don't mistake her for anyone else; they simply see her as an unknown stranger. Their memories remain even after the scene - they don't suddenly remember that the Garou using this Gift is the stranger.",
         "source": "Book of the Wyrm W20",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -486,7 +486,7 @@
     },
     {
         "name": "Foaming Fury",
-        "description": "The Dancer's mouth bubbles and foams with a noxious, greenish fluid. His eyes widen and roll in their sockets, showing the whites. The Dancer yips, barks and howls madly (and uncontrollably) as if in the grip of a rabid madness — a contagious one.",
+        "description": "The Dancer's mouth bubbles and foams with a noxious, greenish fluid. His eyes widen and roll in their sockets, showing the whites. The Dancer yips, barks and howls madly (and uncontrollably) as if in the grip of a rabid madness - a contagious one.",
         "system": "The player of anyone bitten by a Dancer using this Gift must succeed in a Stamina roll (difficulty 8, 6 if the Garou has Resist Toxin), lest the character fly into a rabid frenzy. (In effect, the character enters the Thrall of the Wyrm).",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
@@ -525,7 +525,7 @@
     },
     {
         "name": "Maddening Howl",
-        "description": "This howl-Gift represents one of the White Howlers' worst weapons, a terrible ululating wail that bends the minds of those who hear it to the breaking point. Only White Howlers are immune to the howl — even in modern-day settings.",
+        "description": "This howl-Gift represents one of the White Howlers' worst weapons, a terrible ululating wail that bends the minds of those who hear it to the breaking point. Only White Howlers are immune to the howl - even in modern-day settings.",
         "system": "The player spends one point of Rage and one point of Gnosis and rolls Charisma + Performance, difficulty 7; all non-White Howlers within earshot may roll Willpower, difficulty 7, to resist. If the player gains more successes than the victim, the victim is driven mad for the duration of the scene. Victims are treated as if they were affected by the 'Catatonic Fear,' 'Panic,' 'Disbelief,' 'Berserk,' or 'Terror' effects on the Delirium chart. The Storyteller chooses the specific effect, although the Gift's effects tend to be random rather than governed by the victim's personality.",
         "source": "Past Lives",
         "game_line": "Werewolf: The Apocalypse",

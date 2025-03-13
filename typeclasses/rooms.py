@@ -955,7 +955,7 @@ class RoomParent(DefaultRoom):
                     "Apartment Building", "Apartments", 
                     "Condos", "Condominiums",
                     "Residential Area", "Residential Neighborhood", 
-                    "Neighborhood"
+                    "Neighborhood", "Splat Housing"
                 ])
 
     def is_apartment_building(self):
@@ -964,7 +964,8 @@ class RoomParent(DefaultRoom):
         return (hasattr(self.db, 'roomtype') and 
                 self.db.roomtype in [
                     "Apartment Building", "Apartments", 
-                    "Condos", "Condominiums"
+                    "Condos", "Condominiums",
+                    "Splat Housing"  # Add Splat Housing to apartment-style buildings
                 ])
 
     def is_residential_area(self):
@@ -975,6 +976,66 @@ class RoomParent(DefaultRoom):
                     "Residential Area", "Residential Neighborhood", 
                     "Neighborhood"
                 ])
+
+    def update_splat_room(self, splat_type=None, lobby=None):
+        """
+        Update an existing room's splat housing configuration.
+        If splat_type is not provided, will attempt to determine from room name.
+        If lobby is not provided, will attempt to find from existing connections.
+        """
+        # If no splat type provided, try to determine from room name
+        if not splat_type:
+            room_name = self.key.lower()
+            if "mage" in room_name:
+                splat_type = "Mage"
+            elif "vampire" in room_name:
+                splat_type = "Vampire"
+            elif "werewolf" in room_name:
+                splat_type = "Werewolf"
+            elif "changeling" in room_name:
+                splat_type = "Changeling"
+            else:
+                splat_type = "Splat"  # Generic if can't determine
+
+        # If no lobby provided, try to find from existing connections
+        if not lobby and self.db.housing_data and self.db.housing_data.get('building_zone'):
+            from evennia import search_object
+            possible_lobby = search_object(self.db.housing_data['building_zone'])
+            if possible_lobby:
+                lobby = possible_lobby[0]
+
+        # Now set up the room with the determined parameters
+        self.setup_splat_room(splat_type, lobby)
+        return True
+
+    def setup_splat_room(self, splat_type, lobby):
+        """Set up a room as a splat-specific residence."""
+        # Store original description if it exists and isn't the default
+        original_desc = None
+        default_desc = "Housing for your specific splat, either in a Chantry, Freehold, Sept, or other type."
+        if self.db.desc and self.db.desc != default_desc:
+            original_desc = self.db.desc
+
+        self.db.roomtype = f"{splat_type} Room"
+        
+        # Initialize housing data
+        housing_data = self.ensure_housing_data()
+        housing_data.update({
+            'is_housing': True,
+            'is_residence': True,
+            'building_zone': lobby.dbref if lobby else None,
+            'connected_rooms': {self.dbref, lobby.dbref} if lobby else {self.dbref},
+            'available_types': ["Splat Housing"],
+            'max_apartments': 1,  # Individual room
+            'current_tenants': {},
+            'apartment_numbers': set()
+        })
+        
+        # Restore original description or set default if none exists
+        if original_desc:
+            self.db.desc = original_desc
+        elif not self.db.desc:
+            self.db.desc = default_desc
 
     def setup_housing(self, housing_type="Apartment Building", max_units=20):
         """Set up room as a housing area."""
@@ -989,8 +1050,42 @@ class RoomParent(DefaultRoom):
             'current_tenants': {},
             'apartment_numbers': set(),
             'is_lobby': True,
-            'available_types': []
+            'available_types': ["Splat Housing"] if housing_type == "Splat Housing" else [],
+            'building_zone': self.dbref,  # Set building zone to self
+            'connected_rooms': {self.dbref}  # Initialize connected rooms with self
         })
+
+        # For splat housing, modify any existing exits to use initials
+        if housing_type == "Splat Housing":
+            for exit in self.exits:
+                if exit.destination:
+                    # Get the destination room's name and create initials
+                    room_name = exit.destination.key
+                    # Split on spaces and get first letter of each word
+                    initials = ''.join(word[0].lower() for word in room_name.split())
+                    # Update exit key and add original name as alias
+                    original_key = exit.key
+                    exit.key = initials
+                    if original_key != initials:
+                        exit.aliases.add(original_key)
+                    
+                    # Set up the destination room as a splat residence
+                    dest = exit.destination
+                    if dest:
+                        # Determine splat type from room name if possible
+                        room_name = dest.key.lower()
+                        if "mage" in room_name:
+                            splat_type = "Mage"
+                        elif "vampire" in room_name:
+                            splat_type = "Vampire"
+                        elif "werewolf" in room_name:
+                            splat_type = "Werewolf"
+                        elif "changeling" in room_name:
+                            splat_type = "Changeling"
+                        else:
+                            splat_type = "Splat"  # Generic if can't determine
+                            
+                        dest.setup_splat_room(splat_type, self)
         
         # Force room appearance update
         self.at_object_creation()
@@ -1078,6 +1173,55 @@ class RoomParent(DefaultRoom):
         # Ensure the room has a Fae description
         if not self.db.desc:
             self.db.desc = "This is a realm that exists only in the world of the Fae."
+
+    def is_residence(self):
+        """Check if this room is a residence."""
+        self.ensure_housing_data()
+        return (hasattr(self.db, 'roomtype') and 
+                (self.db.roomtype == "Residence" or
+                 "Room" in self.db.roomtype or  # Check for "Mage Room", "Vampire Room", etc.
+                 self.db.housing_data.get('is_residence', False)))
+
+    def is_valid_residence(self):
+        """
+        Check if this room is a valid residence that can be used with home commands.
+        
+        Returns:
+            bool: True if this is a valid residence, False otherwise
+        """
+        if not hasattr(self, 'db'):
+            return False
+            
+        # Check for housing data
+        home_data = self.db.home_data if hasattr(self.db, 'home_data') else None
+        housing_data = self.db.housing_data if hasattr(self.db, 'housing_data') else None
+        
+        # Valid room types for residences
+        valid_types = [
+            "apartment", "house", "splat_housing",
+            "mortal_room", "mortal_plus_room", "possessed_room",
+            "mage_room", "vampire_room", "changeling_room", 
+            "motel_room"
+        ]
+        
+        # Check if room type is valid
+        has_valid_type = False
+        roomtype = self.db.roomtype if hasattr(self.db, 'roomtype') else None
+        if roomtype:
+            roomtype_lower = roomtype.lower()
+            has_valid_type = (
+                roomtype_lower in [t.lower() for t in valid_types] or
+                roomtype_lower.endswith("room")
+            )
+        
+        # Check both roomtype and housing data
+        has_housing_data = (
+            (home_data is not None and (home_data.get('owner') or home_data.get('co_owners'))) or
+            (housing_data is not None and housing_data.get('is_residence')) or
+            hasattr(self.db, 'owner')  # Legacy check
+        )
+        
+        return has_valid_type and has_housing_data
 
 class Room(RoomParent):
     pass

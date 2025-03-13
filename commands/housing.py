@@ -21,7 +21,7 @@ class CmdRent(MuxCommand):
         +rent
         +rent/type         - Shows detailed info about available types
         +rent Studio
-        +rent "Two-Bedroom"
+        +rent Apartment
         +rent House
     """
     
@@ -254,7 +254,10 @@ class CmdRent(MuxCommand):
             room_type = "splat_housing"
         elif is_apartment:
             residence_name = f"Apartment {residence_num}"
-            room_type = "apartment"
+            if apt_type == "Studio":
+                room_type = "studio_apartment"
+            else:
+                room_type = "apartment"
         else:
             residence_name = str(residence_num)  # Already includes street name
             if apt_type == "Townhouse":
@@ -269,21 +272,66 @@ class CmdRent(MuxCommand):
                                key=residence_name,
                                location=None)
         residence.db.desc = available_types[apt_type]['desc']
-        # Set specific room type based on apartment/house type
-        if apt_type == "Splat Housing":
-            residence.db.roomtype = f"{self.caller.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')} Room"
-        elif is_apartment:
-            residence.db.roomtype = f"{apt_type} Apartment"
-        else:
-            residence.db.roomtype = apt_type
+        # Set owner first
         residence.db.owner = self.caller
-        # Inherit resources from lobby
-        residence.db.resources = location.db.resources
+
+        # Initialize home_data
         residence.db.home_data = {
             'locked': False,
             'keyholders': set(),
-            'owner': self.caller
+            'owner': self.caller,
+            'co_owners': set()
         }
+
+        # Set room type and housing data based on type
+        if apt_type == "Splat Housing":
+            # Set specific room type for splat housing
+            residence.db.roomtype = f"{self.caller.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')} Room"
+            
+            # Set housing data specific to splat housing
+            residence.db.housing_data = {
+                'is_housing': True,
+                'is_residence': True,
+                'max_apartments': 1,
+                'current_tenants': {str(residence.id): self.caller.id},
+                'apartment_numbers': set(),
+                'required_resources': 0,  # Splat housing is free
+                'building_zone': location.dbref,
+                'connected_rooms': {location.dbref, residence.dbref},
+                'available_types': ["Splat Housing"]
+            }
+        elif apt_type == "Studio":
+            residence.db.roomtype = "Studio Apartment"
+            # Set standard housing data
+            residence.db.housing_data = {
+                'is_housing': True,
+                'is_residence': True,
+                'max_apartments': 1,
+                'current_tenants': {str(residence.id): self.caller.id},
+                'apartment_numbers': set(),
+                'required_resources': location.get_housing_cost(apt_type),
+                'building_zone': location.dbref,
+                'connected_rooms': {location.dbref, residence.dbref},
+                'available_types': [apt_type]
+            }
+        else:
+            # Set room type for regular apartments/houses
+            residence.db.roomtype = "Apartment" if is_apartment else apt_type
+            # Set standard housing data
+            residence.db.housing_data = {
+                'is_housing': True,
+                'is_residence': True,
+                'max_apartments': 1,
+                'current_tenants': {str(residence.id): self.caller.id},
+                'apartment_numbers': set(),
+                'required_resources': location.get_housing_cost(apt_type),
+                'building_zone': location.dbref,
+                'connected_rooms': {location.dbref, residence.dbref},
+                'available_types': [apt_type]
+            }
+
+        # Inherit resources from lobby
+        residence.db.resources = location.db.resources
         
         # Create additional rooms
         num_rooms = available_types[apt_type]['rooms']
@@ -323,48 +371,89 @@ class CmdRent(MuxCommand):
 
     def create_exits(self, location, residence, residence_name, child_rooms, is_apartment, residence_num):
         """Helper method to create all necessary exits"""
+        from evennia.utils.create import create_object
+        
         exit_typeclass = "typeclasses.exits.ApartmentExit"
         
-        # Create entrance
-        entrance = create_object(exit_typeclass,
-                              key=residence_name,
-                              location=location,
-                              destination=residence)
-        if is_apartment:
-            # Add number as alias for apartments
-            entrance.aliases.add(str(residence_num))
+        # Create entrance from lobby to residence
+        if location.db.roomtype == "Splat Housing":
+            # For splat housing, use full name as key and initials as alias
+            initials = ''.join(word[0].lower() for word in residence_name.split()).upper()
+            entrance = create_object(
+                exit_typeclass,
+                key=residence_name,
+                location=location,
+                destination=residence,
+                aliases=[initials.lower()]
+            )
         else:
-            # For houses, add the house number
-            entrance.aliases.add(str(residence_num).split()[0])  # Just the number part
-        
+            alias = str(residence_num) if is_apartment else str(residence_num).split()[0]
+            entrance = create_object(
+                exit_typeclass,
+                key=residence_name,
+                location=location,
+                destination=residence,
+                aliases=[alias]
+            )
+
+        # Set ownership and permissions for entrance
+        entrance.locks.add(f"control:id({self.caller.id}) or perm(Admin);delete:id({self.caller.id}) or perm(Admin)")
+        entrance.db.owner = self.caller
+
         # Create exit back to building/street
-        back_exit = create_object(exit_typeclass,
-                               key="Out",
-                               location=residence,
-                               destination=location)
-        # Always add 'o' and 'out' as aliases for the exit
-        back_exit.aliases.add("o")
-        back_exit.aliases.add("out")
-        back_exit.aliases.add("exit")
+        back_exit = create_object(
+            exit_typeclass,
+            key="Out",
+            location=residence,
+            destination=location,
+            aliases=["o", "out", "exit", "leave"]
+        )
         
-        # Create exits between rooms
-        for i, room in enumerate(child_rooms, 2):
-            # Create exit to child room
-            to_room = create_object(exit_typeclass,
-                                 key=f"Room {i}",
-                                 location=residence,
-                                 destination=room)
-            to_room.aliases.add(str(i))
+        # Set ownership and permissions for back exit
+        back_exit.locks.add(f"control:id({self.caller.id}) or perm(Admin);delete:id({self.caller.id}) or perm(Admin)")
+        back_exit.db.owner = self.caller
+        
+        # Create exits between rooms if there are child rooms
+        if child_rooms:
+            for i, room in enumerate(child_rooms, 2):
+                # Create exit to child room
+                to_room = create_object(
+                    exit_typeclass,
+                    key=f"Room {i}",
+                    location=residence,
+                    destination=room,
+                    aliases=[str(i)]
+                )
+                
+                # Set ownership and permissions for room exit
+                to_room.locks.add(f"control:id({self.caller.id}) or perm(Admin);delete:id({self.caller.id}) or perm(Admin)")
+                to_room.db.owner = self.caller
+
+                # Create exit back to main room
+                to_main = create_object(
+                    exit_typeclass,
+                    key="Out",
+                    location=room,
+                    destination=residence,
+                    aliases=["o", "out", "exit", "leave"]
+                )
+                
+                # Set ownership and permissions for back exit
+                to_main.locks.add(f"control:id({self.caller.id}) or perm(Admin);delete:id({self.caller.id}) or perm(Admin)")
+                to_main.db.owner = self.caller
+
+        # Set proper traverse permissions for all exits
+        for exit in residence.exits:
+            exit.locks.add("traverse:all()")
             
-            # Create exit back to main room
-            to_main = create_object(exit_typeclass,
-                                 key="Out",
-                                 location=room,
-                                 destination=residence)
-            # Add same aliases as main exit
-            to_main.aliases.add("o")
-            to_main.aliases.add("out")
-            to_main.aliases.add("exit")
+        # Set proper traverse permissions for entrance
+        entrance.locks.add("traverse:all()")
+        
+        # For child rooms
+        if child_rooms:
+            for room in child_rooms:
+                for exit in room.exits:
+                    exit.locks.add("traverse:all()")
 
     def generate_residence_number(self, location, is_apartment):
         """
@@ -411,6 +500,53 @@ class CmdRent(MuxCommand):
         except Exception as e:
             self.caller.msg(f"Error generating residence number: {str(e)}")
             return None
+
+    def is_valid_residence(self, room):
+        """
+        Check if a room is a valid residence.
+        
+        Args:
+            room (Object): The room to check
+            
+        Returns:
+            bool: True if this is a valid residence, False otherwise
+        """
+        if not room or not hasattr(room, 'db'):
+            return False
+            
+        # Debug output
+        roomtype = room.db.roomtype if hasattr(room.db, 'roomtype') else None
+        
+        # Check for housing data
+        home_data = room.db.home_data if hasattr(room.db, 'home_data') else None
+        housing_data = room.db.housing_data if hasattr(room.db, 'housing_data') else None
+        
+        # Valid room types for residences
+        valid_types = [
+            "apartment", "house", "splat_housing",
+            "mortal_room", "mortal_plus_room", "possessed_room",
+            "mage_room", "vampire_room", "changeling_room", 
+            "motel_room", "apartment_room", "house_room", "studio",
+            "studio_apartment"
+        ]
+        
+        # Check if room type is valid
+        has_valid_type = False
+        if roomtype:
+            roomtype_lower = roomtype.lower()
+            has_valid_type = (
+                roomtype_lower in [t.lower() for t in valid_types] or
+                roomtype_lower.endswith("room")
+            )
+        
+        # Check both roomtype and housing data
+        has_housing_data = (
+            (home_data is not None and home_data.get('owner')) or
+            (housing_data is not None and housing_data.get('is_residence')) or
+            hasattr(room.db, 'owner')  # Legacy check
+        )
+        
+        return has_valid_type and has_housing_data
 
 class CmdVacate(MuxCommand):
     """
@@ -495,7 +631,10 @@ class CmdVacate(MuxCommand):
             else:
                 # Try to vacate current location
                 location = self.caller.location
-                if not (location.db.roomtype in ["apartment", "house", "splat_housing"] and location.db.owner == self.caller):
+                if not (location.db.roomtype and 
+                        any(rtype.lower() in location.db.roomtype.lower() 
+                            for rtype in ["apartment", "house", "splat_housing", "studio", "room"]) and 
+                        self.is_owner(location, self.caller)):
                     self.caller.msg("You must be in your residence to vacate it.")
                     return
                     
@@ -565,19 +704,889 @@ class CmdVacate(MuxCommand):
         residence.delete()
         self.caller.msg("You have vacated the residence.")
 
-class CmdSetApartmentDesc(MuxCommand):
+class CmdManageHome(MuxCommand):
     """
-    Set the description of your residence or its rooms.
+    Manage your auto-build home, including locks, keys, descriptions, exits, and co-owners.
     
     Usage:
-        +adesc              - Show current room description
-        +adesc <text>       - Set description for current room
-        +adesc/room <num> = <text>  - Set description for specific room
+        +home                - Go to your home
+        +home/set            - Set current residence as your home
+        +home/lock           - Lock your residence
+        +home/unlock         - Unlock your residence
+        +home/key <player>   - Give a key to another player
+        +home/unkey <player> - Remove a key from a player
+        +home/keys           - List who has keys to your residence
+        +home/status         - Show lock status of your residence
+        +home/find           - Show location of your residence
         
-    Example:
-        +adesc This cozy studio has been decorated with vintage posters.
-        +adesc/room 2 = This bedroom features a comfortable queen-sized bed.
+        +home/desc              - Show current room description
+        +home/desc <text>       - Set description for current room
+        +home/desc <num> = <text>  - Set description for specific room
+        
+        +home/exit <exit> = <new name>      - Rename an exit
+        +home/exit/alias <exit> = <alias>   - Add an alias to an exit
+        +home/exit/clear <exit>             - Clear all aliases from an exit
+        +home/exit/remove <exit> = <alias>  - Remove specific alias from an exit
+        
+        +home/coowner                    - List current co-owners
+        +home/coowner <player1,player2>  - Add co-owner(s)
+        +home/coowner/remove <player>    - Remove a co-owner
+        
+        +home/vacate              - Vacate your residence in current building
+        +home/vacate/all         - List all your residences
+        +home/vacate <number>    - Vacate specific residence
     """
+    
+    key = "+home"
+    aliases = ["home"]
+    locks = "cmd:all()"
+    help_category = "Housing"
+    
+    def init_home_data(self, location):
+        """Initialize home data if it doesn't exist"""
+        if not location.db.home_data:
+            location.db.home_data = {
+                'locked': False,
+                'keyholders': set(),
+                'owner': location.db.owner if hasattr(location.db, 'owner') else None,
+                'co_owners': set()
+            }
+        elif location.db.home_data.get('owner') is None and hasattr(location.db, 'owner'):
+            location.db.home_data['owner'] = location.db.owner
+        return location.db.home_data
+
+    def find_player_residence(self, player):
+        """
+        Find a player's residence globally.
+        
+        Args:
+            player (Object): The player to search for
+            
+        Returns:
+            Object or None: The player's residence if found, None otherwise
+        """
+        from evennia.objects.models import ObjectDB
+        
+        
+        for room in ObjectDB.objects.filter(db_typeclass_path__contains="rooms.Room"):
+            if not hasattr(room, 'db'):
+                continue
+                
+            # Debug room info
+            if hasattr(room.db, 'roomtype'):
+                roomtype = room.db.roomtype
+            else:
+                roomtype = None
+            # Check if this is a valid residence first
+            is_valid = self.is_valid_residence(room)
+            
+            if not is_valid:
+                continue
+                
+            # Now check if the player owns it
+            is_owner = self.is_owner(room, player)
+
+            if is_owner:
+                return room
+        return None
+
+    def is_valid_residence(self, room):
+        """
+        Check if a room is a valid residence.
+        
+        Args:
+            room (Object): The room to check
+            
+        Returns:
+            bool: True if this is a valid residence, False otherwise
+        """
+        if not room or not hasattr(room, 'db'):
+            return False
+            
+        # Debug output
+        roomtype = room.db.roomtype if hasattr(room.db, 'roomtype') else None
+        
+        # Check for housing data
+        home_data = room.db.home_data if hasattr(room.db, 'home_data') else None
+        housing_data = room.db.housing_data if hasattr(room.db, 'housing_data') else None
+        
+        # Valid room types for residences
+        valid_types = [
+            "apartment", "house", "splat_housing",
+            "mortal_room", "mortal_plus_room", "possessed_room",
+            "mage_room", "vampire_room", "changeling_room", 
+            "motel_room", "apartment_room", "house_room"
+        ]
+        
+        # Check if room type is valid
+        has_valid_type = False
+        if roomtype:
+            roomtype_lower = roomtype.lower()
+            has_valid_type = (
+                roomtype_lower in [t.lower() for t in valid_types] or
+                roomtype_lower.endswith("room")
+            )
+        
+        # Check both roomtype and housing data
+        has_housing_data = (
+            (home_data is not None and home_data.get('owner')) or
+            (housing_data is not None and housing_data.get('is_residence')) or
+            hasattr(room.db, 'owner')  # Legacy check
+        )
+        return has_valid_type and has_housing_data
+
+    def is_owner(self, room, player):
+        """
+        Check if a player owns a residence.
+        
+        Args:
+            room (Object): The room to check
+            player (Object): The player to check ownership for
+            
+        Returns:
+            bool: True if the player owns the residence, False otherwise
+        """
+        if not room or not player or not hasattr(room, 'db'):
+            return False
+
+        # Check home_data first
+        home_data = room.db.home_data if hasattr(room.db, 'home_data') else None
+        if home_data:
+            # Check primary owner
+            if home_data.get('owner') and home_data['owner'].id == player.id:
+                return True
+            # Check co-owners
+            if player.id in home_data.get('co_owners', set()):
+                return True
+            
+        # Check housing_data next
+        housing_data = room.db.housing_data if hasattr(room.db, 'housing_data') else None
+        if housing_data:
+            # Check owner field
+            if housing_data.get('owner'):
+                is_housing_owner = housing_data['owner'].id == player.id
+                if is_housing_owner:
+                    return True
+            
+            # Check current_tenants
+            if housing_data.get('current_tenants'):
+                is_tenant = str(room.id) in housing_data['current_tenants'] and housing_data['current_tenants'][str(room.id)] == player.id
+                if is_tenant:
+                    return True
+            
+        # Finally check legacy owner
+        if hasattr(room.db, 'owner') and room.db.owner:
+            is_legacy_owner = room.db.owner.id == player.id
+            if is_legacy_owner:
+                return True
+            
+        return False
+
+    def update_entrance_lock(self, residence, home_data):
+        """Helper method to update the entrance lock based on current keyholders"""
+        # Find the entrance to this residence from the parent room
+        parent_room = None
+        for exit in residence.exits:
+            if exit.key == "Out":
+                parent_room = exit.destination
+                break
+                
+        if parent_room:
+            # Find the entrance in the parent room
+            for exit in parent_room.contents:
+                if (hasattr(exit, 'destination') and 
+                    exit.destination == residence):
+                    # Make sure it's using the ApartmentExit typeclass
+                    if not exit.is_typeclass("typeclasses.exits.ApartmentExit"):
+                        exit.swap_typeclass("typeclasses.exits.ApartmentExit",
+                                          clean_attributes=False)
+                    # Update lock string
+                    lockstring = "view:all()"
+                    if home_data['locked']:
+                        # When locked, only owner, keyholders, and staff can enter
+                        keyholders = ",".join([f"id({pid})" for pid in home_data['keyholders']])
+                        if home_data.get('owner'):
+                            lockstring += f";traverse:id({home_data['owner'].id})"
+                            if keyholders:
+                                lockstring += f" or {keyholders}"
+                        lockstring += " or perm(Admin) or perm(Builder) or perm(Staff)"
+                    else:
+                        # When unlocked, anyone can enter
+                        lockstring += ";traverse:all()"
+                    exit.locks.add(lockstring)
+                    return True
+        return False
+
+    def func(self):
+        # If no switches and no args, treat as "go home" command
+        if not self.switches and not self.args:
+            # Check if player has a home set
+            if not self.caller.home:
+                self.caller.msg("You haven't set a home yet.")
+                return
+                
+            # Check if home still exists and is a valid residence
+            if not self.is_valid_residence(self.caller.home):
+                self.caller.msg("Your home location seems to be invalid. Please set a new home.")
+                return
+                
+            # Initialize home data if needed
+            home_data = self.init_home_data(self.caller.home)
+                
+            # Check if the home is locked and we don't have access
+            if (home_data['locked'] and 
+                not self.is_owner(self.caller.home, self.caller) and 
+                self.caller.id not in home_data['keyholders'] and
+                not self.caller.check_permstring("builders")):
+                self.caller.msg("Your home is currently locked and you don't have a key.")
+                return
+                
+            # Try to go home
+            self.caller.move_to(self.caller.home)
+            return
+
+        # Handle find switch
+        if "find" in self.switches:
+            residence = self.find_player_residence(self.caller)
+            if not residence:
+                self.caller.msg("You don't own a residence.")
+                return
+                
+            # Find the parent room (floor)
+            parent_room = None
+            for exit in residence.exits:
+                if exit.key == "Out":
+                    parent_room = exit.destination
+                    break
+                    
+            if parent_room:
+                self.caller.msg(f"Your residence ({residence.get_display_name(self.caller)}) "
+                              f"is located in {parent_room.get_display_name(self.caller)}.")
+            return
+
+        # Handle key and unkey commands (can be used from anywhere)
+        if "key" in self.switches or "unkey" in self.switches:
+            residence = self.find_player_residence(self.caller)
+            if not residence:
+                self.caller.msg("You don't own a residence.")
+                return
+                
+            if not self.args:
+                self.caller.msg(f"Usage: +home/{self.switches[0]} <player>")
+                return
+                
+            # Search for player account instead of character
+            from evennia.accounts.models import AccountDB
+            target_account = AccountDB.objects.filter(username__iexact=self.args).first()
+            if not target_account:
+                self.caller.msg(f"Player '{self.args}' not found.")
+                return
+                
+            # Get their active character or most recent puppet
+            target = target_account.puppet or target_account.db._last_puppet
+            if not target:
+                self.caller.msg(f"Could not find a character for {self.args}.")
+                return
+                
+            home_data = self.init_home_data(residence)
+            
+            if "key" in self.switches:
+                if target.id in home_data['keyholders']:
+                    self.caller.msg(f"{target.name} already has a key to your residence.")
+                    return
+                    
+                home_data['keyholders'].add(target.id)
+                # Update the entrance lock
+                self.update_entrance_lock(residence, home_data)
+                self.caller.msg(f"You have given {target.name} a key to your residence.")
+                if target.has_account:
+                    target.msg(f"{self.caller.name} has given you a key to their residence.")
+                    
+            else:  # unkey
+                if target.id not in home_data['keyholders']:
+                    self.caller.msg(f"{target.name} doesn't have a key to your residence.")
+                    return
+                    
+                home_data['keyholders'].remove(target.id)
+                # Update the entrance lock
+                self.update_entrance_lock(residence, home_data)
+                self.caller.msg(f"You have taken back {target.name}'s key to your residence.")
+                if target.has_account:
+                    target.msg(f"{self.caller.name} has taken back your key to their residence.")
+            return
+        
+        # For other commands, we need to be in a residence
+        location = self.caller.location
+        if not self.is_valid_residence(location):
+            self.caller.msg("This command can only be used inside residences.")
+            return
+
+        # Initialize home data
+        home_data = self.init_home_data(location)
+            
+        if "set" in self.switches:
+            # Check ownership
+            if not self.is_owner(location, self.caller):
+                self.caller.msg("You don't own this residence.")
+                return
+                
+            # Set as home
+            self.caller.home = location
+            self.caller.msg("You have set this residence as your home.")
+            
+        elif "lock" in self.switches:
+            if not self.is_owner(location, self.caller):
+                self.caller.msg("You don't own this residence.")
+                return
+                
+            # Ensure owner is set
+            if not home_data.get('owner'):
+                home_data['owner'] = self.caller
+                
+            home_data['locked'] = True
+            if self.update_entrance_lock(location, home_data):
+                self.caller.msg("You have locked your residence.")
+            else:
+                self.caller.msg("Error updating residence lock. Please contact staff.")
+            
+        elif "unlock" in self.switches:
+            if not self.is_owner(location, self.caller):
+                self.caller.msg("You don't own this residence.")
+                return
+                
+            home_data['locked'] = False
+            if self.update_entrance_lock(location, home_data):
+                self.caller.msg("You have unlocked your residence.")
+            else:
+                self.caller.msg("Error updating residence lock. Please contact staff.")
+            
+        elif "keys" in self.switches:
+            if not self.is_owner(location, self.caller):
+                self.caller.msg("You don't own this residence.")
+                return
+                
+            keyholders = []
+            for pid in home_data['keyholders']:
+                char = self.caller.search(f"#{pid}")
+                if char:
+                    keyholders.append(char.name)
+                    
+            if keyholders:
+                self.caller.msg("People with keys to your residence:")
+                self.caller.msg("\n".join(f"- {name}" for name in keyholders))
+            else:
+                self.caller.msg("Nobody else has keys to your residence.")
+                
+        elif "status" in self.switches:
+            # Find player's residence
+            home = self.caller.home
+            if not home or not self.is_valid_residence(home):
+                self.caller.msg("You haven't set a residence as your home.")
+                return
+                
+            home_data = self.init_home_data(home)
+            status = "locked" if home_data['locked'] else "unlocked"
+            self.caller.msg(f"Your residence ({home.get_display_name(self.caller)}) is currently {status}.")
+            
+            # Show keyholders if it's the caller's residence
+            if self.is_owner(home, self.caller) and 'keyholders' in home_data and home_data['keyholders']:
+                keyholders = []
+                for pid in home_data['keyholders']:
+                    char = self.caller.search(f"#{pid}")
+                    if char:
+                        keyholders.append(char.name)
+                        
+                if keyholders:
+                    self.caller.msg("People with keys:")
+                    self.caller.msg("\n".join(f"- {name}" for name in keyholders))
+
+        # Handle description commands
+        elif "desc" in self.switches:
+            if not self.is_owner(location, self.caller):
+                self.caller.msg("You don't own this residence.")
+                return
+
+            if not self.args:
+                # Show current description
+                self.caller.msg(location.db.desc)
+                return
+
+            if "=" in self.args:
+                # Setting description for specific room
+                room_num, desc = self.args.split("=", 1)
+                try:
+                    room_num = int(room_num.strip())
+                except ValueError:
+                    self.caller.msg("Please specify a valid room number.")
+                    return
+
+                # Find the room
+                if location.db.parent_room:
+                    main_room = location.db.parent_room
+                else:
+                    main_room = location
+
+                target_room = None
+                if room_num == 1:
+                    target_room = main_room
+                else:
+                    for room in main_room.db.child_rooms:
+                        if room and room.key.endswith(f"Room {room_num}"):
+                            target_room = room
+                            break
+
+                if not target_room:
+                    self.caller.msg(f"Room {room_num} not found in your residence.")
+                    return
+
+                target_room.db.desc = desc.strip()
+                self.caller.msg(f"Description set for Room {room_num}.")
+            else:
+                # Set description for current room
+                location.db.desc = self.args
+                self.caller.msg("Description set.")
+
+        # Handle exit commands
+        elif "exit" in self.switches:
+            if not self.is_owner(location, self.caller):
+                self.caller.msg("You don't own this residence.")
+                return
+
+            if not self.args:
+                # List current exits and their aliases
+                exits = [ex for ex in location.contents 
+                        if ex.destination and ex.key != "Out"]
+                if not exits:
+                    self.caller.msg("No customizable exits found.")
+                    return
+
+                from evennia.utils.evtable import EvTable
+                table = EvTable("|wExit Name|n", "|wAliases|n", border="table")
+                for ex in exits:
+                    aliases = ", ".join(ex.aliases.all()) if ex.aliases.all() else "None"
+                    table.add_row(ex.name, aliases)
+                self.caller.msg(table)
+                return
+
+            # Don't allow modifying the "Out" exit
+            if self.lhs.lower() == "out" or (self.rhs and self.rhs.lower() == "out"):
+                self.caller.msg("The 'Out' exit cannot be modified.")
+                return
+
+            if "alias" in self.switches:
+                if not self.rhs or not self.lhs:
+                    self.caller.msg("Usage: +home/aexit/alias <exit> = <alias>")
+                    return
+
+                exit = self.caller.search(self.lhs, location=location, 
+                                        typeclass="typeclasses.exits.ApartmentExit")
+                if not exit:
+                    return
+
+                exit.aliases.add(self.rhs)
+                self.caller.msg(f"Added alias '{self.rhs}' to exit '{exit.name}'.")
+
+            elif "clear" in self.switches:
+                exit = self.caller.search(self.args, location=location, 
+                                        typeclass="typeclasses.exits.ApartmentExit")
+                if not exit:
+                    return
+
+                exit.aliases.clear()
+                self.caller.msg(f"Cleared all aliases from exit '{exit.name}'.")
+
+            elif "remove" in self.switches:
+                if not self.rhs or not self.lhs:
+                    self.caller.msg("Usage: +home/aexit/remove <exit> = <alias>")
+                    return
+
+                exit = self.caller.search(self.lhs, location=location, 
+                                        typeclass="typeclasses.exits.ApartmentExit")
+                if not exit:
+                    return
+
+                if self.rhs in exit.aliases.all():
+                    exit.aliases.remove(self.rhs)
+                    self.caller.msg(f"Removed alias '{self.rhs}' from exit '{exit.name}'.")
+                else:
+                    self.caller.msg(f"Exit '{exit.name}' doesn't have alias '{self.rhs}'.")
+
+            else:
+                # Rename exit
+                if not self.rhs or not self.lhs:
+                    self.caller.msg("Usage: +home/aexit <exit> = <new name>")
+                    return
+
+                exit = self.caller.search(self.lhs, location=location, 
+                                        typeclass="typeclasses.exits.ApartmentExit")
+                if not exit:
+                    return
+
+                old_name = exit.name
+                exit.name = self.rhs
+                self.caller.msg(f"Renamed exit '{old_name}' to '{self.rhs}'.")
+
+        # Handle co-owner commands
+        elif "coowner" in self.switches:
+            if not self.is_owner(location, self.caller):
+                self.caller.msg("You don't own this residence.")
+                return
+
+            if "remove" in self.switches:
+                if not self.args:
+                    self.caller.msg("Usage: +home/coowner/remove <player>")
+                    return
+
+                # Search for player account
+                from evennia.accounts.models import AccountDB
+                target_account = AccountDB.objects.filter(username__iexact=self.args).first()
+                if not target_account:
+                    self.caller.msg(f"Player '{self.args}' not found.")
+                    return
+
+                # Get their active character or most recent puppet
+                target = target_account.puppet or target_account.db._last_puppet
+                if not target:
+                    self.caller.msg(f"Could not find a character for {self.args}.")
+                    return
+
+                if target.id not in home_data.get('co_owners', set()):
+                    self.caller.msg(f"{target.name} is not a co-owner of your residence.")
+                    return
+
+                home_data['co_owners'].remove(target.id)
+                self.caller.msg(f"Removed {target.name} as a co-owner of your residence.")
+                if target.has_account:
+                    target.msg(f"{self.caller.name} has removed you as a co-owner of their residence.")
+
+            elif not self.args:
+                # List co-owners
+                co_owners = []
+                for pid in home_data.get('co_owners', set()):
+                    char = self.caller.search(f"#{pid}")
+                    if char:
+                        co_owners.append(char.name)
+
+                if co_owners:
+                    self.caller.msg("Co-owners of your residence:")
+                    self.caller.msg("\n".join(f"- {name}" for name in co_owners))
+                else:
+                    self.caller.msg("Your residence has no co-owners.")
+
+            else:
+                # Add co-owner(s)
+                from evennia.accounts.models import AccountDB
+                for player_name in self.args.split(','):
+                    player_name = player_name.strip()
+                    target_account = AccountDB.objects.filter(username__iexact=player_name).first()
+                    if not target_account:
+                        self.caller.msg(f"Player '{player_name}' not found.")
+                        continue
+
+                    target = target_account.puppet or target_account.db._last_puppet
+                    if not target:
+                        self.caller.msg(f"Could not find a character for {player_name}.")
+                        continue
+
+                    if target.id in home_data.get('co_owners', set()):
+                        self.caller.msg(f"{target.name} is already a co-owner.")
+                        continue
+
+                    if 'co_owners' not in home_data:
+                        home_data['co_owners'] = set()
+                    home_data['co_owners'].add(target.id)
+                    self.caller.msg(f"Added {target.name} as a co-owner of your residence.")
+                    if target.has_account:
+                        target.msg(f"{self.caller.name} has made you a co-owner of their residence.")
+
+        # Handle vacate commands
+        elif "vacate" in self.switches:
+            if "all" in self.switches:
+                # List all residences owned by player
+                residences = []
+                from evennia.objects.models import ObjectDB
+                for room in ObjectDB.objects.filter(db_typeclass_path__contains="rooms.Room"):
+                    if room.is_housing_area():
+                        tenants = room.db.housing_data.get('current_tenants', {})
+                        for res_id, tenant_id in tenants.items():
+                            if tenant_id == self.caller.id:
+                                try:
+                                    residence = ObjectDB.objects.get(id=res_id)
+                                    residences.append((room, residence))
+                                except ObjectDB.DoesNotExist:
+                                    continue
+
+                if not residences:
+                    self.caller.msg("You don't own any residences.")
+                    return
+
+                from evennia.utils.evtable import EvTable
+                table = EvTable("|wResidence|n", "|wLocation|n", "|wType|n", border="table")
+                for area, residence in residences:
+                    table.add_row(
+                        residence.get_display_name(self.caller),
+                        area.get_display_name(self.caller),
+                        residence.db.roomtype.title()
+                    )
+                self.caller.msg(table)
+                return
+
+            # Find the residence to vacate
+            building = None
+            residence = None
+
+            if self.args:
+                # Try to find specific residence by number
+                from evennia.objects.models import ObjectDB
+                for room in ObjectDB.objects.filter(db_typeclass_path__contains="rooms.Room"):
+                    if room.is_housing_area():
+                        tenants = room.db.housing_data.get('current_tenants', {})
+                        for res_id, tenant_id in tenants.items():
+                            if tenant_id == self.caller.id:
+                                try:
+                                    res = ObjectDB.objects.get(id=res_id)
+                                    if res.key.endswith(str(self.args)):
+                                        building = room
+                                        residence = res
+                                        break
+                                except ObjectDB.DoesNotExist:
+                                    continue
+                if not residence:
+                    self.caller.msg("You don't own that residence.")
+                    return
+            else:
+                # Try to vacate current location
+                location = self.caller.location
+                if not (location.db.roomtype and 
+                        any(rtype.lower() in location.db.roomtype.lower() 
+                            for rtype in ["apartment", "house", "splat_housing", "studio", "room"]) and 
+                        self.is_owner(location, self.caller)):
+                    self.caller.msg("You must be in your residence to vacate it.")
+                    return
+
+                # Find the building
+                for exit in location.exits:
+                    if exit.key == "Out":
+                        building = exit.destination
+                        residence = location
+                        break
+                else:
+                    self.caller.msg("Error finding building. Please contact staff.")
+                    return
+
+            # Perform the vacate
+            if not self.is_owner(residence, self.caller):
+                self.caller.msg("You don't own this residence.")
+                return
+
+            # Move any occupants to the building
+            for obj in residence.contents:
+                if obj.has_account:
+                    obj.msg("This residence is being vacated. You are being moved out.")
+                    obj.move_to(building)
+
+            # Clean up child rooms if they exist
+            if hasattr(residence.db, 'child_rooms'):
+                for room in residence.db.child_rooms:
+                    if room:
+                        for obj in room.contents:
+                            if obj.has_account:
+                                obj.move_to(building)
+                        # Delete all exits in the child room
+                        for exit in room.exits:
+                            exit.delete()
+                        room.delete()
+
+            # Update building data
+            if building and building.db.housing_data:
+                if str(residence.id) in building.db.housing_data['current_tenants']:
+                    del building.db.housing_data['current_tenants'][str(residence.id)]
+                # Handle apartment numbers for both numeric and string values
+                try:
+                    number = int(residence.key.split()[-1])
+                    if number in building.db.housing_data['apartment_numbers']:
+                        building.db.housing_data['apartment_numbers'].remove(number)
+                except (ValueError, IndexError):
+                    # If it's not a numeric apartment number, try to remove the full name
+                    if residence.key in building.db.housing_data['apartment_numbers']:
+                        building.db.housing_data['apartment_numbers'].remove(residence.key)
+
+            # Clear home location if this was their home
+            if self.caller.home == residence:
+                self.caller.home = None
+                self.caller.msg("Your home location has been cleared.")
+
+            # Delete all exits in the main residence
+            for exit in residence.exits:
+                exit.delete()
+
+            # Delete the entrance exit from the building
+            for exit in building.contents:
+                if (hasattr(exit, 'destination') and 
+                    exit.destination == residence):
+                    exit.delete()
+
+            # Delete the residence
+            residence.delete()
+            self.caller.msg("You have vacated the residence.")
+
+class CmdSetLock(MuxCommand):
+    """
+    Set various types of locks on an exit or room.
+    
+    Usage:
+        +lock <target>=<locktype>:<value>
+        +lock/list <target>          - List current locks
+        +lock/clear <target>         - Clear all locks
+        
+    Lock Types:
+        splat:<type>      - Restrict to specific splat (Vampire, Werewolf, etc)
+        talent:<name>     - Require specific talent
+        skill:<name>      - Require specific skill
+        knowledge:<name>  - Require specific knowledge
+        merit:<name>      - Require specific merit
+        shifter_type:<type> - Restrict to specific shifter type
+        clan:<name>       - Restrict to specific vampire clan
+        tribe:<name>      - Restrict to specific werewolf tribe
+        auspice:<name>    - Restrict to specific werewolf auspice
+        tradition:<name>  - Restrict to specific mage tradition
+        
+    Examples:
+        +lock north=splat:Vampire
+        +lock door=talent:Streetwise
+        +lock gate=shifter_type:Ratkin
+        +lock portal=splat:Mage
+        +lock/list north
+        +lock/clear door
+    """
+    
+    key = "+lock"
+    locks = "cmd:perm(builders)"
+    help_category = "Building and Housing"
+    
+    def func(self):
+        if not self.args:
+            self.caller.msg("Usage: +lock <target>=<locktype>:<value>")
+            return
+            
+        # Handle switches first
+        if "list" in self.switches:
+            target = self.caller.search(self.args, location=self.caller.location)
+            if not target:
+                return
+                
+            # Get current locks
+            lock_types = target.locks.all()
+            if not lock_types:
+                self.caller.msg(f"No locks set on {target.get_display_name(self.caller)}.")
+                return
+                
+            # Format and display locks
+            table = evtable.EvTable("|wLock Type|n", "|wDefinition|n", border="table")
+            for lock in lock_types:
+                table.add_row(lock[0], lock[1])
+            self.caller.msg(table)
+            return
+            
+        elif "clear" in self.switches:
+            target = self.caller.search(self.args, location=self.caller.location)
+            if not target:
+                return
+                
+            # Clear all locks except system defaults
+            target.locks.clear()
+            # Re-add basic traverse lock
+            if target.is_typeclass("typeclasses.exits.Exit") or target.is_typeclass("typeclasses.exits.ApartmentExit"):
+                target.locks.add("traverse:all()")
+            self.caller.msg(f"Cleared all locks from {target.get_display_name(self.caller)}.")
+            return
+            
+        if not self.rhs:
+            self.caller.msg("Usage: +lock <target>=<locktype>:<value>")
+            return
+            
+        # Parse lock type and value
+        try:
+            locktype, value = self.rhs.split(":", 1)
+        except ValueError:
+            self.caller.msg("Invalid format. Use: +lock <target>=<locktype>:<value>")
+            return
+            
+        # Find target
+        target = self.caller.search(self.lhs, location=self.caller.location, 
+                                typeclass="typeclasses.exits.ApartmentExit")
+        if not target:
+            return
+            
+        # Validate lock type
+        valid_locktypes = {
+            'splat': 'db.splat',
+            'talent': 'db.talents',
+            'skill': 'db.skills',
+            'knowledge': 'db.knowledges',
+            'merit': 'db.merits',
+            'type': 'db.type',
+            'clan': 'db.clan',
+            'tribe': 'db.tribe',
+            'auspice': 'db.auspice',
+            'tradition': 'db.tradition',
+            'affiliation': 'db.affiliation',
+            'convention': 'db.convention',
+            'kith': 'db.kith'
+
+        }
+        
+        if locktype not in valid_locktypes:
+            self.caller.msg(f"Invalid lock type. Valid types: {', '.join(valid_locktypes.keys())}")
+            return
+            
+        # Build the lock string
+        if locktype == 'splat':
+            # For splats, we want to check if the value matches exactly
+            lock_str = f'attr({valid_locktypes[locktype]}) == "{value}"'
+        elif locktype in ['talent', 'skill', 'knowledge', 'merit']:
+            # For abilities and merits, we want to check if they have any dots in it
+            lock_str = f'attr({valid_locktypes[locktype]}) ? "{value}"'
+        else:
+            # For other types, exact match
+            lock_str = f'attr({valid_locktypes[locktype]}) == "{value}"'
+            
+        # Add the lock
+        try:
+            # Get existing traverse lock if it's an exit
+            if target.is_typeclass("typeclasses.exits.Exit") or target.is_typeclass("typeclasses.exits.ApartmentExit"):
+                current_traverse = target.locks.get("traverse")
+                if current_traverse and current_traverse != "all()":
+                    # Combine with OR operator
+                    lock_str = f"{current_traverse} or {lock_str}"
+                
+            # Set the lock
+            if target.is_typeclass("typeclasses.exits.Exit") or target.is_typeclass("typeclasses.exits.ApartmentExit"):
+                target.locks.add(f"traverse:{lock_str}")
+            else:
+                target.locks.add(f"enter:{lock_str}")
+                
+            self.caller.msg(f"Added {locktype}:{value} lock to {target.get_display_name(self.caller)}.")
+            
+        except Exception as e:
+            self.caller.msg(f"Error setting lock: {str(e)}") 
+
+
+"""
+Antiquated commands
+
+class CmdSetApartmentDesc(MuxCommand):
+
+    #Set the description of your residence or its rooms.
+    
+    #Usage:
+    #    +adesc              - Show current room description
+    #    +adesc <text>       - Set description for current room
+    #    +adesc/room <num> = <text>  - Set description for specific room
+        
+    #Example:
+    #    +adesc This cozy studio has been decorated with vintage posters.
+    #    +adesc/room 2 = This bedroom features a comfortable queen-sized bed.
     
     key = "+adesc"
     aliases = ["+rdesc"]  # Added alias for residences
@@ -588,7 +1597,10 @@ class CmdSetApartmentDesc(MuxCommand):
         location = self.caller.location
         
         # Check if we're in a residence
-        if location.db.roomtype not in ["apartment", "house", "apartment_room"]:
+        if not (location.db.roomtype in ["apartment", "house", "apartment_room", "shifter_room", 
+                                       "mage_room", "vampire_room", "possessed_room", "mortal_room", 
+                                       "motel_room", "mortal+_room", "changeling_room"] or
+                "Room" in location.db.roomtype):  # This catches "Mage Room", "Vampire Room", etc.
             self.caller.msg("This command can only be used inside residences.")
             return
             
@@ -646,21 +1658,21 @@ class CmdSetApartmentDesc(MuxCommand):
         self.caller.msg("Description set.")
 
 class CmdSetApartmentExit(MuxCommand):
-    """
-    Modify exits in your residence.
+
+    #Modify exits in your residence.
     
-    Usage:
-        +aexit <exit> = <new name>           - Rename an exit
-        +aexit/alias <exit> = <alias>        - Add an alias to an exit
-        +aexit/clear <exit>                  - Clear all aliases from an exit
-        +aexit/remove <exit> = <alias>       - Remove specific alias from an exit
+    #Usage:
+    #    +aexit <exit> = <new name>           - Rename an exit
+    #    +aexit/alias <exit> = <alias>        - Add an alias to an exit
+    #    +aexit/clear <exit>                  - Clear all aliases from an exit
+    #    +aexit/remove <exit> = <alias>       - Remove specific alias from an exit
         
-    Example:
-        +aexit Room 2 = Bedroom
-        +aexit/alias Bedroom = bed
-        +aexit/clear Bedroom
-        +aexit/remove Bedroom = bed
-    """
+    #Example:
+    #    +aexit Room 2 = Bedroom
+    #    +aexit/alias Bedroom = bed
+    #    +aexit/clear Bedroom
+    #    +aexit/remove Bedroom = bed
+
     
     key = "+aexit"
     aliases = ["+rexit"]  # Added alias for residences
@@ -671,7 +1683,10 @@ class CmdSetApartmentExit(MuxCommand):
         location = self.caller.location
         
         # Check if we're in a residence
-        if location.db.roomtype not in ["apartment", "house", "apartment_room"]:
+        if location.db.roomtype not in ["apartment", "house", "apartment_room", "shifter_room", 
+                                        "mage_room", "vampire_room", "possessed_room", 
+                                        "mortal_room", "motel_room", "mortal+_room", 
+                                        "changeling_room"]:
             self.caller.msg("This command can only be used inside residences.")
             return
             
@@ -758,250 +1773,105 @@ class CmdSetApartmentExit(MuxCommand):
             exit.name = self.rhs
             self.caller.msg(f"Renamed exit '{old_name}' to '{self.rhs}'.")
 
-class CmdManageHome(MuxCommand):
-    """
-    Manage your auto-build home, including locks and keys.
+class CmdCoOwner(MuxCommand):
+
+    Manage co-owners of your residence.
     
     Usage:
-        +home                 - Go to your home
-        +home/set            - Set current residence as your home
-        +home/lock           - Lock your residence
-        +home/unlock         - Unlock your residence
-        +home/key <player>   - Give a key to another player
-        +home/unkey <player> - Remove a key from a player
-        +home/keys           - List who has keys to your residence
-        +home/status         - Show lock status of your residence
-        +home/find          - Show location of your residence
-    """
+        +coowner                    - List current co-owners
+        +coowner <player>          - Add a co-owner
+        +coowner/remove <player>   - Remove a co-owner
+        
+    Co-owners have the same access rights as the owner, including:
+    - Can enter when locked
+    - Can modify room descriptions
+    - Can give out and revoke keys
+    - Can lock/unlock the residence
     
-    key = "+home"
-    aliases = ["home"]
+    You cannot remove the primary owner using this command.
+
+    
+    key = "+coowner"
+    aliases = ["@coowner"]
     locks = "cmd:all()"
     help_category = "Housing"
     
-    def init_home_data(self, location):
-        """Initialize home data if it doesn't exist"""
-        if not location.db.home_data:
-            location.db.home_data = {
-                'locked': False,
-                'keyholders': set(),
-                'owner': None
-            }
-        return location.db.home_data
-
-    def find_player_residence(self, player):
-        """Find a player's residence globally"""
-        from evennia.objects.models import ObjectDB
-        for room in ObjectDB.objects.filter(db_typeclass_path__contains="rooms.Room"):
-            if (hasattr(room.db, 'roomtype') and 
-                room.db.roomtype in ["apartment", "house", "splat_housing"] and 
-                room.db.owner == player):
-                return room
-        return None
-
-    def update_entrance_lock(self, residence, home_data):
-        """Helper method to update the entrance lock based on current keyholders"""
-        # Find the entrance to this residence from the parent room
-        parent_room = None
-        for exit in residence.exits:
-            if exit.key == "Out":
-                parent_room = exit.destination
-                break
-                
-        if parent_room:
-            # Find the entrance in the parent room
-            for exit in parent_room.contents:
-                if (hasattr(exit, 'destination') and 
-                    exit.destination == residence):
-                    # Make sure it's using the ApartmentExit typeclass
-                    if not exit.is_typeclass("typeclasses.exits.ApartmentExit"):
-                        exit.swap_typeclass("typeclasses.exits.ApartmentExit",
-                                          clean_attributes=False)
-                    # Clear any old lock strings
-                    exit.locks.add("traverse:all()")
-                    return True
-        return False
-
     def func(self):
-        # If no switches and no args, treat as "go home" command
-        if not self.switches and not self.args:
-            # Check if player has a home set
-            if not self.caller.home:
-                self.caller.msg("You haven't set a home yet.")
-                return
-                
-            # Check if home still exists and is a valid residence
-            if not hasattr(self.caller.home.db, 'roomtype') or self.caller.home.db.roomtype not in ["apartment", "house", "splat_housing"]:
-                self.caller.msg("Your home location seems to be invalid. Please set a new home.")
-                return
-                
-            # Check if the home is locked and we don't have access
-            if (self.caller.home.db.home_data.get('locked', False) and 
-                self.caller.home.db.owner != self.caller and 
-                self.caller.id not in self.caller.home.db.home_data.get('keyholders', set()) and
-                not self.caller.check_permstring("builders")):
-                self.caller.msg("Your home is currently locked and you don't have a key.")
-                return
-                
-            # Try to go home
-            self.caller.move_to(self.caller.home)
-            return
-
-        # Handle find switch
-        if "find" in self.switches:
-            residence = self.find_player_residence(self.caller)
-            if not residence:
-                self.caller.msg("You don't own a residence.")
-                return
-                
-            # Find the parent room (floor)
-            parent_room = None
-            for exit in residence.exits:
-                if exit.key == "Out":
-                    parent_room = exit.destination
-                    break
-                    
-            if parent_room:
-                self.caller.msg(f"Your residence ({residence.get_display_name(self.caller)}) "
-                              f"is located in {parent_room.get_display_name(self.caller)}.")
-            return
-
-        # Handle key and unkey commands (can be used from anywhere)
-        if "key" in self.switches or "unkey" in self.switches:
-            residence = self.find_player_residence(self.caller)
-            if not residence:
-                self.caller.msg("You don't own a residence.")
-                return
-
-                
-            if not self.args:
-                self.caller.msg(f"Usage: +home/{self.switches[0]} <player>")
-                return
-                
-            # Search for player account instead of character
-            from evennia.accounts.models import AccountDB
-            target_account = AccountDB.objects.filter(username__iexact=self.args).first()
-            if not target_account:
-                self.caller.msg(f"Player '{self.args}' not found.")
-                return
-                
-            # Get their active character or most recent puppet
-            target = target_account.puppet or target_account.db._last_puppet
-            if not target:
-                self.caller.msg(f"Could not find a character for {self.args}.")
-                return
-                
-            home_data = self.init_home_data(residence)
-            
-            if "key" in self.switches:
-                if target.id in home_data['keyholders']:
-                    self.caller.msg(f"{target.name} already has a key to your residence.")
-                    return
-                    
-                home_data['keyholders'].add(target.id)
-                # Update the entrance lock
-                self.update_entrance_lock(residence, home_data)
-                self.caller.msg(f"You have given {target.name} a key to your residence.")
-                if target.has_account:
-                    target.msg(f"{self.caller.name} has given you a key to their residence.")
-                    
-            else:  # unkey
-                if target.id not in home_data['keyholders']:
-                    self.caller.msg(f"{target.name} doesn't have a key to your residence.")
-                    return
-                    
-                home_data['keyholders'].remove(target.id)
-                # Update the entrance lock
-                self.update_entrance_lock(residence, home_data)
-                self.caller.msg(f"You have taken back {target.name}'s key to your residence.")
-                if target.has_account:
-                    target.msg(f"{self.caller.name} has taken back your key to their residence.")
-            return
-        
-        # For other commands, we need to be in the residence
         location = self.caller.location
-        if not location.db.roomtype in ["apartment", "house", "splat_housing"]:
-            if "status" not in self.switches:
-                self.caller.msg("This command can only be used inside residences.")
-                return
-
-        # Initialize home data
-        home_data = self.init_home_data(location)
+        
+        # First check if we're in a valid residence
+        if not location.is_valid_residence():
+            self.caller.msg("This command can only be used inside residences.")
+            return
             
-        if "set" in self.switches:
-            # Check ownership
-            if location.db.owner != self.caller:
-                self.caller.msg("You don't own this residence.")
+        # Check ownership
+        if not location.db.home_data or location.db.home_data.get('owner') != self.caller:
+            self.caller.msg("You don't own this residence.")
+            return
+            
+        # Initialize co-owners set if it doesn't exist
+        if 'co_owners' not in location.db.home_data:
+            location.db.home_data['co_owners'] = set()
+            
+        # List co-owners if no arguments
+        if not self.args:
+            co_owners = location.db.home_data['co_owners']
+            if not co_owners:
+                self.caller.msg("This residence has no co-owners.")
                 return
                 
-            # Set as home
-            self.caller.home = location
-            home_data['owner'] = self.caller
-            self.caller.msg("You have set this residence as your home.")
-            
-        elif "lock" in self.switches:
-            if location.db.owner != self.caller:
-                self.caller.msg("You don't own this residence.")
-                return
-                
-            home_data['locked'] = True
-            if self.update_entrance_lock(location, home_data):
-                self.caller.msg("You have locked your residence.")
-            else:
-                self.caller.msg("Error updating residence lock. Please contact staff.")
-            
-        elif "unlock" in self.switches:
-            if location.db.owner != self.caller:
-                self.caller.msg("You don't own this residence.")
-                return
-                
-            home_data['locked'] = False
-            if self.update_entrance_lock(location, home_data):
-                self.caller.msg("You have unlocked your residence.")
-            else:
-                self.caller.msg("Error updating residence lock. Please contact staff.")
-            
-        elif "keys" in self.switches:
-            if location.db.owner != self.caller:
-                self.caller.msg("You don't own this residence.")
-                return
-                
-            keyholders = []
-            for pid in home_data['keyholders']:
-                char = self.caller.search(f"#{pid}")
+            co_owner_names = []
+            for co_owner_id in co_owners:
+                char = self.caller.search(f"#{co_owner_id}")
                 if char:
-                    keyholders.append(char.name)
-                    
-            if keyholders:
-                self.caller.msg("People with keys to your residence:")
-                self.caller.msg("\n".join(f"- {name}" for name in keyholders))
+                    co_owner_names.append(char.name)
+            
+            if co_owner_names:
+                self.caller.msg("Current co-owners:")
+                self.caller.msg("\n".join(f"- {name}" for name in co_owner_names))
             else:
-                self.caller.msg("Nobody else has keys to your residence.")
-                
-        elif "status" in self.switches:
-            # Find player's residence
-            home = self.caller.home
-            if not home or not hasattr(home.db, 'roomtype') or home.db.roomtype not in ["apartment", "house", "splat_housing"]:
-                self.caller.msg("You haven't set a residence as your home.")
+                self.caller.msg("This residence has no valid co-owners.")
+            return
+            
+        # Handle removal
+        if "remove" in self.switches:
+            # Find the target player
+            target = self.caller.search(self.args)
+            if not target:
                 return
                 
-            status = "locked" if home.db.home_data['locked'] else "unlocked"
-            self.caller.msg(f"Your residence ({home.get_display_name(self.caller)}) is currently {status}.")
+            if target.id not in location.db.home_data['co_owners']:
+                self.caller.msg(f"{target.name} is not a co-owner of this residence.")
+                return
+                
+            location.db.home_data['co_owners'].remove(target.id)
+            self.caller.msg(f"Removed {target.name} as a co-owner.")
+            if target.has_account:
+                target.msg(f"{self.caller.name} has removed you as a co-owner of their residence.")
+            return
             
-            # Show keyholders if it's the caller's residence
-            if home.db.owner == self.caller:
-                keyholders = []
-                for pid in home.db.home_data['keyholders']:
-                    char = self.caller.search(f"#{pid}")
-                    if char:
-                        keyholders.append(char.name)
-                        
-                if keyholders:
-                    self.caller.msg("People with keys:")
-                    self.caller.msg("\n".join(f"- {name}" for name in keyholders))
+        # Add new co-owner
+        target = self.caller.search(self.args)
+        if not target:
+            return
+            
+        # Don't allow adding self as co-owner
+        if target == self.caller:
+            self.caller.msg("You are already the owner of this residence.")
+            return
+            
+        # Don't allow adding someone who is already a co-owner
+        if target.id in location.db.home_data['co_owners']:
+            self.caller.msg(f"{target.name} is already a co-owner of this residence.")
+            return
+            
+        location.db.home_data['co_owners'].add(target.id)
+        self.caller.msg(f"Added {target.name} as a co-owner.")
+        if target.has_account:
+            target.msg(f"{self.caller.name} has made you a co-owner of their residence at {location.get_display_name(target)}.")
 
 class CmdUpdateApartments(MuxCommand):
-    """
+
     Update apartment exits to use the new system.
     
     Usage:
@@ -1010,7 +1880,7 @@ class CmdUpdateApartments(MuxCommand):
         
     This command converts existing apartment exits to use the ApartmentExit
     typeclass and updates their permissions.
-    """
+
     
     key = "+updateapts"
     locks = "cmd:perm(builders)"
@@ -1089,7 +1959,7 @@ class CmdUpdateApartments(MuxCommand):
         self.caller.msg(f"Updated {count} exits across {len(apartments)} apartments.") 
 
 class CmdListApartments(MuxCommand):
-    """
+
     List apartments owned by a player or all apartments.
     
     Usage:
@@ -1104,7 +1974,7 @@ class CmdListApartments(MuxCommand):
     - Lock status
     - Number of keyholders
     - Whether it's set as the owner's home
-    """
+
     
     key = "+apartments"
     aliases = ["@apartments"]
@@ -1116,7 +1986,7 @@ class CmdListApartments(MuxCommand):
         from evennia.accounts.models import AccountDB
         
         def format_apartment(apt):
-            """Helper to format apartment info"""
+            #Helper to format apartment info
             owner = apt.db.owner.name if apt.db.owner else "None"
             home_data = apt.db.home_data or {}
             locked = "Locked" if home_data.get('locked', False) else "Unlocked"
@@ -1202,115 +2072,12 @@ class CmdListApartments(MuxCommand):
             
         self.caller.msg("\n".join(output)) 
 
-class CmdUpdateExits(MuxCommand):
-    """
-    Update all exits to use the new Exit system.
-    
-    Usage:
-        +updateexits            - Update all exits
-        +updateexits <room>    - Update exits in specific room
-        +updateexits/area <area> - Update all exits in an area
-        
-    This command ensures all exits use the new Exit class that
-    properly handles channel conflicts and aliases.
-    """
-    
-    key = "+updateexits"
-    locks = "cmd:perm(builders)"
-    help_category = "Building and Housing"
-    
-    def func(self):
-        from evennia.objects.models import ObjectDB
-        from typeclasses.exits import Exit, ApartmentExit
-        
-        def update_room_exits(room):
-            """Helper to update exits in a single room"""
-            count = 0
-            for exit in room.contents:
-                if not hasattr(exit, 'destination'):
-                    continue
-                    
-                # Skip if already using correct typeclass
-                if exit.is_typeclass("typeclasses.exits.ApartmentExit"):
-                    continue
-                elif exit.is_typeclass("typeclasses.exits.Exit"):
-                    continue
-                    
-                # Determine correct typeclass
-                if (hasattr(exit.destination, 'db') and 
-                    hasattr(exit.destination.db, 'roomtype') and 
-                    exit.destination.db.roomtype == "apartment"):
-                    new_typeclass = "typeclasses.exits.ApartmentExit"
-                else:
-                    new_typeclass = "typeclasses.exits.Exit"
-                
-                try:
-                    # Store current aliases
-                    old_aliases = exit.aliases.all()
-                    
-                    # Update typeclass
-                    exit.swap_typeclass(new_typeclass, clean_attributes=False)
-                    
-                    # Ensure aliases are preserved
-                    exit.aliases.clear()
-                    for alias in old_aliases:
-                        exit.aliases.add(alias)
-                    
-                    count += 1
-                except Exception as e:
-                    self.caller.msg(f"Error updating {exit.get_display_name(self.caller)}: {str(e)}")
-            
-            return count
-        
-        if "area" in self.switches:
-            if not self.args:
-                self.caller.msg("Please specify an area name.")
-                return
-                
-            # Find all rooms in the area
-            area_rooms = ObjectDB.objects.filter(
-                db_typeclass_path__contains="rooms.Room",
-                db_key__icontains=self.args
-            )
-            
-            if not area_rooms:
-                self.caller.msg("No rooms found in that area.")
-                return
-                
-            total_count = 0
-            for room in area_rooms:
-                count = update_room_exits(room)
-                total_count += count
-                
-            self.caller.msg(f"Updated {total_count} exits across {len(area_rooms)} rooms in {self.args}.")
-            
-        elif self.args:
-            # Update specific room
-            room = self.caller.search(self.args)
-            if not room:
-                return
-                
-            count = update_room_exits(room)
-            self.caller.msg(f"Updated {count} exits in {room.get_display_name(self.caller)}.")
-            
-        else:
-            # Update all rooms
-            rooms = ObjectDB.objects.filter(db_typeclass_path__contains="rooms.Room")
-            total_count = 0
-            
-            for room in rooms:
-                count = update_room_exits(room)
-                total_count += count
-                
-            self.caller.msg(f"Updated {total_count} exits across {len(rooms)} rooms.") 
-
 class CmdSetHousing(MuxCommand):
-    """
     Set up a room as a housing area.
     
     Usage:
         +sethousing/apartment <resources> [max_units]  - Set as apartment building
-        +sethousing/condo <resources> [max_units]      - Set as condominium
+        +sethousing/motel <resources> [max_units]      - Set as motel
         +sethousing/residential <resources> [max_units] - Set as residential area
         +sethousing/clear                              - Clear housing settings
         
@@ -1320,8 +2087,7 @@ class CmdSetHousing(MuxCommand):
     Example:
         +sethousing/apartment 2 20    - Set up as apartment building with resource 2, 20 units
         +sethousing/residential 3 10  - Set up as residential area with resource 3, 10 houses
-    """
-    
+        
     key = "+sethousing"
     locks = "cmd:perm(builders)"
     help_category = "Building and Housing"
@@ -1394,149 +2160,92 @@ class CmdSetHousing(MuxCommand):
             location.db.resources = resources
             self.caller.msg(f"Set up room as apartment building with {resources} resources and {max_units} maximum units.")
             
-        elif "condo" in self.switches:
-            location.setup_housing("Condominiums", max_units)
+        elif "motel" in self.switches:
+            location.setup_housing("Motel", max_units)
             location.db.resources = resources
-            self.caller.msg(f"Set up room as condominium with {resources} resources and {max_units} maximum units.")
+            self.caller.msg(f"Set up room as motel with {resources} resources and {max_units} maximum units.")
             
         elif "residential" in self.switches:
             location.setup_housing("Residential Area", max_units)
             location.db.resources = resources
             self.caller.msg(f"Set up room as residential area with {resources} resources and {max_units} maximum units.") 
 
-class CmdSetLock(MuxCommand):
-    """
-    Set various types of locks on an exit or room.
+
+class CmdSetAllowedSplats(MuxCommand):
+    #Set which splats are allowed to rent in a housing area.
     
-    Usage:
-        +lock <target>=<locktype>:<value>
-        +lock/list <target>          - List current locks
-        +lock/clear <target>         - Clear all locks
+    #Usage:
+    #    +allowedsplats <splat1>,<splat2>,...  - Set allowed splats
+    #    +allowedsplats/add <splat>            - Add a splat to allowed list
+    #    +allowedsplats/remove <splat>         - Remove a splat from allowed list
+    #    +allowedsplats/clear                  - Clear all allowed splats
+    #    +allowedsplats/show                   - Show current allowed splats
         
-    Lock Types:
-        splat:<type>      - Restrict to specific splat (Vampire, Werewolf, etc)
-        talent:<name>     - Require specific talent
-        skill:<name>      - Require specific skill
-        knowledge:<name>  - Require specific knowledge
-        merit:<name>      - Require specific merit
-        shifter_type:<type> - Restrict to specific shifter type
-        clan:<name>       - Restrict to specific vampire clan
-        tribe:<name>      - Restrict to specific werewolf tribe
-        auspice:<name>    - Restrict to specific werewolf auspice
-        tradition:<name>  - Restrict to specific mage tradition
-        
-    Examples:
-        +lock north=splat:Vampire
-        +lock door=talent:Streetwise
-        +lock gate=shifter_type:Ratkin
-        +lock portal=splat:Mage
-        +lock/list north
-        +lock/clear door
-    """
+    #Examples:
+    #    +allowedsplats Mage,Vampire,Changeling,Possessed
+    #    +allowedsplats/add Shifter
+    #    +allowedsplats/remove Vampire
+    #    +allowedsplats/clear
+    #    +allowedsplats/show
     
-    key = "+lock"
+    key = "+allowedsplats"
+    aliases = ["+setsplats"]
     locks = "cmd:perm(builders)"
     help_category = "Building and Housing"
     
+    # Valid splat types
+    VALID_SPLATS = [
+        "Mage", "Vampire", "Werewolf", "Changeling", "Mortal+",
+        "Shifter", "Possessed", "Companion"
+    ]
+    
     def func(self):
-        if not self.args:
-            self.caller.msg("Usage: +lock <target>=<locktype>:<value>")
-            return
-            
-        # Handle switches first
-        if "list" in self.switches:
-            target = self.caller.search(self.args, location=self.caller.location)
-            if not target:
-                return
-                
-            # Get current locks
-            lock_types = target.locks.all()
-            if not lock_types:
-                self.caller.msg(f"No locks set on {target.get_display_name(self.caller)}.")
-                return
-                
-            # Format and display locks
-            table = evtable.EvTable("|wLock Type|n", "|wDefinition|n", border="table")
-            for lock in lock_types:
-                table.add_row(lock[0], lock[1])
-            self.caller.msg(f"Locks on {target.get_display_name(self.caller)}:")
-            self.caller.msg(table)
-            return
-            
-        elif "clear" in self.switches:
-            target = self.caller.search(self.args, location=self.caller.location)
-            if not target:
-                return
-                
-            # Clear all locks except system defaults
-            target.locks.clear()
-            # Re-add basic traverse lock
-            if target.is_typeclass("typeclasses.exits.Exit") or target.is_typeclass("typeclasses.exits.ApartmentExit"):
-                target.locks.add("traverse:all()")
-            self.caller.msg(f"Cleared all locks from {target.get_display_name(self.caller)}.")
-            return
-            
-        if not self.rhs:
-            self.caller.msg("Usage: +lock <target>=<locktype>:<value>")
-            return
-            
-        # Parse lock type and value
-        try:
-            locktype, value = self.rhs.split(":", 1)
-        except ValueError:
-            self.caller.msg("Invalid format. Use: +lock <target>=<locktype>:<value>")
-            return
-            
-        # Find target
-        target = self.caller.search(self.lhs, location=self.caller.location)
-        if not target:
-            return
-            
-        # Validate lock type
-        valid_locktypes = {
-            'splat': 'db.splat',
-            'talent': 'db.talents',
-            'skill': 'db.skills',
-            'knowledge': 'db.knowledges',
-            'merit': 'db.merits',
-            'shifter_type': 'db.shifter_type',
-            'clan': 'db.clan',
-            'tribe': 'db.tribe',
-            'auspice': 'db.auspice',
-            'tradition': 'db.tradition'
-        }
+        location = self.caller.location
         
-        if locktype not in valid_locktypes:
-            self.caller.msg(f"Invalid lock type. Valid types: {', '.join(valid_locktypes.keys())}")
+        # Initialize allowed_splats if it doesn't exist
+        if not hasattr(location.db, 'allowed_splats'):
+            location.db.allowed_splats = []
+            
+        if "show" in self.switches or not self.args:
+            if location.db.allowed_splats:
+                self.caller.msg(f"Allowed splats in this area: {', '.join(location.db.allowed_splats)}")
+            else:
+                self.caller.msg("No splats are currently allowed in this area.")
             return
             
-        # Build the lock string
-        if locktype == 'splat':
-            # For splats, we want to check if the value matches exactly
-            lock_str = f'attr({valid_locktypes[locktype]}) == "{value}"'
-        elif locktype in ['talent', 'skill', 'knowledge', 'merit']:
-            # For abilities and merits, we want to check if they have any dots in it
-            lock_str = f'attr({valid_locktypes[locktype]}) ? "{value}"'
-        else:
-            # For other types, exact match
-            lock_str = f'attr({valid_locktypes[locktype]}) == "{value}"'
+        if "clear" in self.switches:
+            location.db.allowed_splats = []
+            self.caller.msg("Cleared all allowed splats from this area.")
+            return
             
-        # Add the lock
-        try:
-            # Get existing traverse lock if it's an exit
-            if target.is_typeclass("typeclasses.exits.Exit") or target.is_typeclass("typeclasses.exits.ApartmentExit"):
-                current_traverse = target.locks.get("traverse")
-                if current_traverse and current_traverse != "all()":
-                    # Combine with OR operator
-                    lock_str = f"{current_traverse} or {lock_str}"
+        if "add" in self.switches:
+            splat = self.args.strip()
+            if splat not in self.VALID_SPLATS:
+                self.caller.msg(f"Invalid splat type. Valid types: {', '.join(self.VALID_SPLATS)}")
+                return
                 
-            # Set the lock
-            if target.is_typeclass("typeclasses.exits.Exit") or target.is_typeclass("typeclasses.exits.ApartmentExit"):
-                target.locks.add(f"traverse:{lock_str}")
+            if splat not in location.db.allowed_splats:
+                location.db.allowed_splats.append(splat)
+                self.caller.msg(f"Added {splat} to allowed splats.")
+            return
+            
+        if "remove" in self.switches:
+            splat = self.args.strip()
+            if splat in location.db.allowed_splats:
+                location.db.allowed_splats.remove(splat)
+                self.caller.msg(f"Removed {splat} from allowed splats.")
             else:
-                target.locks.add(f"enter:{lock_str}")
-                
-            self.caller.msg(f"Added {locktype}:{value} lock to {target.get_display_name(self.caller)}.")
+                self.caller.msg(f"{splat} is not in the allowed splats list.")
+            return
             
-        except Exception as e:
-            self.caller.msg(f"Error setting lock: {str(e)}") 
+        # No switch - set entire list
+        splats = [s.strip() for s in self.args.split(',')]
+        invalid_splats = [s for s in splats if s not in self.VALID_SPLATS]
+        
+        if invalid_splats:
+            self.caller.msg(f"Invalid splat types: {', '.join(invalid_splats)}\nValid types: {', '.join(self.VALID_SPLATS)}")
+            return
+            
+        location.db.allowed_splats = splats
+        self.caller.msg(f"Set allowed splats to: {', '.join(splats)}")
+"""

@@ -293,7 +293,7 @@
     },
     {
         "name": "Isolated Upbringing",
-        "description": "You were raised within a reclusive environment and have had little contact with the mundane world. This could mean you were the child of Arcanum scholars, were born in a Uzome ile, or were extensively home-schooled away from society. This gives you a limited understanding of how the normal world works, and whenever you are outside of your childhood Affiliation, you have a –1 die penalty to all social skills.",
+        "description": "You were raised within a reclusive environment and have had little contact with the mundane world. This could mean you were the child of Arcanum scholars, were born in a Uzome ile, or were extensively home-schooled away from society. This gives you a limited understanding of how the normal world works, and whenever you are outside of your childhood Affiliation, you have a -1 die penalty to all social skills.",
         "game_line": "Sorcerer",
         "category": "flaws",
         "stat_type": "social",
@@ -322,7 +322,7 @@
     },
     {   
         "name": "Wild Talent Flaw", 
-        "description": "While many psychics never receive proper training to develop their gifts, you lack even basic control of your powers. However, without burdensome control over your talents comes greater power. Use the following table to determine the costs and effect of this Merit (or Flaw) which cannot exceed 4 points: –1 You must make a Willpower roll (Difficulty 7) to use the power. –2 You can only consciously use the power defensively. (Your precognitive powers warn you of an attack using Danger Sense, or your telekinesis can stop an oncoming car.) –3 You have no conscious control of the power, but it works more often to your benefit than not. (Your clairvoyancy manifests in useful prophetic dreams.) –4 Your powers activate randomly (a minimum of once per session) and often when you least expect or desire it. (Telekinetically flinging books around a library while attempting to do research.)",
+        "description": "While many psychics never receive proper training to develop their gifts, you lack even basic control of your powers. However, without burdensome control over your talents comes greater power. Use the following table to determine the costs and effect of this Merit (or Flaw) which cannot exceed 4 points: -1 You must make a Willpower roll (Difficulty 7) to use the power. -2 You can only consciously use the power defensively. (Your precognitive powers warn you of an attack using Danger Sense, or your telekinesis can stop an oncoming car.) -3 You have no conscious control of the power, but it works more often to your benefit than not. (Your clairvoyancy manifests in useful prophetic dreams.) -4 Your powers activate randomly (a minimum of once per session) and often when you least expect or desire it. (Telekinetically flinging books around a library while attempting to do research.)",
         "game_line": "Sorcerer",
         "category": "flaws",
         "stat_type": "supernatural",

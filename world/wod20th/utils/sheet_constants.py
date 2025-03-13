@@ -183,14 +183,16 @@ POWERS = {
         "Autumn": 0,
         "Winter": 0,
         "Wayfare": 0,
-        "Naming": 0,
         "Oneiromancy": 0,
         "Skycraft": 0,
         "Tale Craft": 0,
         "Chronos": 0,
         "Dragon's Ire": 0,
         "Metamorphosis": 0,
-        "Contract": 0
+        "Contract": 0,
+        "Infusion": 0,
+        "Kryos": 0,
+        "Storm Craft": 0
     },
     "Rites": {},
     "Sorcery": {

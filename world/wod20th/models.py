@@ -514,11 +514,6 @@ class MokoleArchidTrait(models.Model):
                 'stat_modifiers': {},
                 'special_rules': 'Tail can be used as hand'
             },
-            'Resplendent Crest': {
-                'description': '+3 to Appearance and +1 to Charisma.',
-                'can_stack': False,
-                'stat_modifiers': {'appearance': 3, 'charisma': 1},
-            },
             'Royal Crest': {
                 'description': '+2 to Social rolls involving Nagah or any Mokolé stream.',
                 'can_stack': False,

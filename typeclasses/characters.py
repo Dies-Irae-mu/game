@@ -816,31 +816,48 @@ class Character(DefaultCharacter):
             # Handle secondary abilities similar to attributes
             if stat_type == 'secondary_abilities':
                 if category in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
-                    stat_type = category
-                    category = 'secondary_abilities'
+                    # Ensure the secondary_abilities structure exists
+                    if 'secondary_abilities' not in self.db.stats:
+                        self.db.stats['secondary_abilities'] = {}
+                    if category not in self.db.stats['secondary_abilities']:
+                        self.db.stats['secondary_abilities'][category] = {}
+                    
+                    # Store the secondary ability in the correct location
+                    if stat_name not in self.db.stats['secondary_abilities'][category]:
+                        self.db.stats['secondary_abilities'][category][stat_name] = {}
+                    
+                    # Set the value
+                    self.db.stats['secondary_abilities'][category][stat_name]['perm' if not temp else 'temp'] = value
+                    return
                 else:
                     # Try to find the stat in any secondary ability category
                     found = False
                     for subcat in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
                         if (subcat in self.db.stats.get('secondary_abilities', {}) and
                             stat_name in self.db.stats['secondary_abilities'][subcat]):
-                            stat_type = subcat
-                            category = 'secondary_abilities'
-                            found = True
-                            break
+                            # Ensure the secondary_abilities structure exists
+                            if 'secondary_abilities' not in self.db.stats:
+                                self.db.stats['secondary_abilities'] = {}
+                            if subcat not in self.db.stats['secondary_abilities']:
+                                self.db.stats['secondary_abilities'][subcat] = {}
+                            
+                            # Store the secondary ability in the correct location
+                            if stat_name not in self.db.stats['secondary_abilities'][subcat]:
+                                self.db.stats['secondary_abilities'][subcat][stat_name] = {}
+                            
+                            # Set the value
+                            self.db.stats['secondary_abilities'][subcat][stat_name]['perm' if not temp else 'temp'] = value
+                            return
                         # Check lowercase version
                         stat_name_lower = stat_name.lower()
                         if (subcat in self.db.stats.get('secondary_abilities', {}) and
-                            stat_name_lower in self.db.stats['secondary_abilities'][subcat]):
-                            stat_name = stat_name  # Keep original case
-                            stat_type = subcat
-                            category = 'secondary_abilities'
-                            found = True
-                            break
-                    if not found:
-                        # Default to secondary_talent if not found
-                        stat_type = 'secondary_talent'
-                        category = 'secondary_abilities'
+                            any(k.lower() == stat_name_lower for k in self.db.stats['secondary_abilities'][subcat])):
+                            # Find the existing key with the correct case
+                            for k in self.db.stats['secondary_abilities'][subcat]:
+                                if k.lower() == stat_name_lower:
+                                    # Set the value
+                                    self.db.stats['secondary_abilities'][subcat][k]['perm' if not temp else 'temp'] = value
+                                    return
 
             if stat_type not in self.db.stats:
                 self.db.stats[stat_type] = {}
@@ -1093,9 +1110,6 @@ class Character(DefaultCharacter):
     def update_merit(self, merit_name, new_value):
         """Update a merit's value and validate languages if necessary."""
         old_value = self.db.stats.get('merits', {}).get(merit_name, 0)
-        
-        # Update the merit value
-        # ... your existing merit update code ...
         
         # If it's a language-related merit, validate languages
         if (merit_name == 'Language' or 
@@ -1548,7 +1562,7 @@ class Character(DefaultCharacter):
                 # Handle arts
                 if subcategory == 'art':
                     if rating == 1:
-                        dot_cost = 3  # First dot costs 3
+                        dot_cost = 7  # First dot costs 7
                     else:
                         dot_cost = (rating - 1) * 4  # Each subsequent dot costs previous rating × 4
                     requires_approval = rating > 2
@@ -1603,6 +1617,56 @@ class Character(DefaultCharacter):
                             dot_cost = (rating - 1) * 8
                     
                     requires_approval = rating > 2
+
+                # Handle Kinfolk gifts
+                elif splat == 'Mortal+' and mortal_type == 'Kinfolk' and subcategory == 'gift':
+                    # Get the gift details from the database
+                    from world.wod20th.models import Stat
+                    from django.db.models import Q
+                    
+                    gift = Stat.objects.filter(
+                        Q(name__iexact=stat_name) | Q(gift_alias__icontains=stat_name),
+                        category='powers',
+                        stat_type='gift'
+                    ).first()
+                    
+                    if gift:
+                        # Check if it's a homid gift
+                        is_homid = False
+                        if gift.shifter_type:
+                            allowed_types = gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type]
+                            is_homid = 'homid' in [t.lower() for t in allowed_types]
+                            
+                        # Check if it's a tribal gift
+                        is_tribal = False
+                        kinfolk_tribe = self.db.stats.get('identity', {}).get('lineage', {}).get('Tribe', {}).get('perm', '')
+                        if gift.tribe and kinfolk_tribe:
+                            allowed_tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+                            is_tribal = kinfolk_tribe.lower() in [t.lower() for t in allowed_tribes]
+                            
+                        # Check if it's a Croatan or Planetary gift
+                        is_special = gift.tribe and any(tribe.lower() in ['croatan', 'planetary'] for tribe in (gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]))
+                        
+                        # Calculate cost based on gift type and rating
+                        if is_homid or is_tribal:
+                            dot_cost = 6  # Breed/tribe gifts cost 6 XP per level
+                        elif is_special:
+                            dot_cost = 14  # Croatan/Planetary gifts cost 14 XP per level
+                        else:
+                            dot_cost = 10  # Other gifts cost 10 XP per level
+                            
+                        # Multiply cost by rating for level 2 gifts
+                        if rating > 1:
+                            dot_cost *= 2  # Double cost for level 2
+                            
+                            # Check for Gnosis merit
+                            gnosis_merit = next((value.get('perm', 0) for merit, value in self.db.stats.get('merits', {}).get('merit', {}).items() 
+                                               if merit.lower() == 'gnosis'), 0)
+                            if not gnosis_merit:
+                                return (0, False)  # Can't buy level 2 gifts without Gnosis merit
+                            requires_approval = True  # Level 2 gifts always require staff approval
+                    else:
+                        return (0, False)  # Gift not found in database
 
             total_cost += dot_cost
 
@@ -1912,19 +1976,33 @@ class Character(DefaultCharacter):
                 
                 # Update the stat with form handling
                 if category and subcategory:
-                    if stat_name not in self.db.stats[category][subcategory]:
-                        self.db.stats[category][subcategory][stat_name] = {}
-                    
-                    # Set the permanent value
-                    self.db.stats[category][subcategory][stat_name]['perm'] = new_rating
-                    
-                    # Calculate temporary value with form modifier
-                    if form_modifier == -999:  # Special case for forced 0
-                        temp_value = 0
+                    # Special handling for secondary abilities
+                    if category == 'secondary_abilities':
+                        # Ensure the secondary_abilities structure exists
+                        if 'secondary_abilities' not in self.db.stats:
+                            self.db.stats['secondary_abilities'] = {}
+                        if subcategory not in self.db.stats['secondary_abilities']:
+                            self.db.stats['secondary_abilities'][subcategory] = {}
+                        
+                        # Store the secondary ability in the correct location
+                        self.db.stats['secondary_abilities'][subcategory][stat_name] = {
+                            'perm': new_rating,
+                            'temp': new_rating
+                        }
                     else:
-                        temp_value = max(0, new_rating + form_modifier)  # Ensure non-negative
-                    
-                    self.db.stats[category][subcategory][stat_name]['temp'] = temp_value
+                        if stat_name not in self.db.stats[category][subcategory]:
+                            self.db.stats[category][subcategory][stat_name] = {}
+                        
+                        # Set the permanent value
+                        self.db.stats[category][subcategory][stat_name]['perm'] = new_rating
+                        
+                        # Calculate temporary value with form modifier
+                        if form_modifier == -999:  # Special case for forced 0
+                            temp_value = 0
+                        else:
+                            temp_value = max(0, new_rating + form_modifier)  # Ensure non-negative
+                        
+                        self.db.stats[category][subcategory][stat_name]['temp'] = temp_value
                 else:
                     # Use set_stat for non-form-modified stats
                     self.set_stat(category, subcategory, stat_name, new_rating, temp=False)
@@ -2281,13 +2359,17 @@ class Character(DefaultCharacter):
             self.db.stats['powers'] = powers
 
     def fix_powers(self):
-        """Fix powers that were incorrectly stored in plural form."""
-        if not self.db.stats or 'powers' not in self.db.stats:
-            return
+        """Fix duplicate powers and ensure proper categorization in character stats."""
+        if not hasattr(self, 'db') or not hasattr(self.db, 'stats'):
+            return False
 
-        powers = self.db.stats['powers']
+        # First fix secondary abilities
+        secondary_abilities_fixed = self.fix_secondary_abilities()
+
+        # Get the powers dictionary
+        powers = self.db.stats.get('powers', {})
         if not powers:
-            return
+            return secondary_abilities_fixed
 
         # Define power type mappings (plural to singular)
         power_mappings = {
@@ -2308,18 +2390,13 @@ class Character(DefaultCharacter):
 
         # Fix each power type
         for plural, singular in power_mappings.items():
-            # Ensure singular category exists
-            if singular not in powers:
-                powers[singular] = {}
-                changes_made = True
-
-            # If plural form exists, merge into singular
-            if plural in powers:
+            if plural in powers and singular in powers:
+                # Merge plural into singular
                 for power_name, values in powers[plural].items():
                     if power_name not in powers[singular]:
                         powers[singular][power_name] = values
                     else:
-                        # Take the higher value if power exists in both places
+                        # Take the higher value if the power exists in both places
                         current_perm = powers[singular][power_name].get('perm', 0)
                         current_temp = powers[singular][power_name].get('temp', 0)
                         new_perm = values.get('perm', 0)
@@ -2329,6 +2406,12 @@ class Character(DefaultCharacter):
 
                 # Remove the plural category
                 del powers[plural]
+                changes_made = True
+
+        # Ensure all power categories exist
+        for singular in power_mappings.values():
+            if singular not in powers:
+                powers[singular] = {}
                 changes_made = True
 
         # Special handling for gifts - ensure they're properly formatted
@@ -2342,7 +2425,7 @@ class Character(DefaultCharacter):
                         fixed_gifts[gift_name] = values
                     else:
                         # Add generic 'Gift:' prefix if we can't determine the type
-                        fixed_gifts[f'Gift: {gift_name}'] = values
+                        fixed_gifts[f'{gift_name}'] = values
                 else:
                     fixed_gifts[gift_name] = values
             if fixed_gifts != powers['gift']:
@@ -2351,8 +2434,8 @@ class Character(DefaultCharacter):
 
         if changes_made:
             self.db.stats['powers'] = powers
-            return True
-        return False
+            
+        return changes_made or secondary_abilities_fixed
 
     def validate_xp_purchase(self, stat_name, new_rating, category=None, subcategory=None):
         """
@@ -2402,6 +2485,51 @@ class Character(DefaultCharacter):
                 return False, error_msg
 
         return True, ""
+
+    def fix_secondary_abilities(self):
+        """Fix secondary abilities that might be stored in the wrong structure."""
+        if not hasattr(self, 'db') or not hasattr(self.db, 'stats'):
+            return False
+            
+        changes_made = False
+        
+        # Check if any secondary abilities are stored directly under subcategory names
+        for subcategory in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+            if subcategory in self.db.stats:
+                # Ensure secondary_abilities structure exists
+                if 'secondary_abilities' not in self.db.stats:
+                    self.db.stats['secondary_abilities'] = {}
+                if subcategory not in self.db.stats['secondary_abilities']:
+                    self.db.stats['secondary_abilities'][subcategory] = {}
+                    
+                # Move abilities from wrong location to correct location
+                for ability_name, ability_data in self.db.stats[subcategory].items():
+                    self.db.stats['secondary_abilities'][subcategory][ability_name] = ability_data
+                    changes_made = True
+                    
+                # Remove the old structure
+                del self.db.stats[subcategory]
+                
+        # Check if any secondary abilities are stored with inverted structure
+        for subcategory in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+            if subcategory in self.db.stats and 'secondary_abilities' in self.db.stats[subcategory]:
+                # Ensure secondary_abilities structure exists
+                if 'secondary_abilities' not in self.db.stats:
+                    self.db.stats['secondary_abilities'] = {}
+                if subcategory not in self.db.stats['secondary_abilities']:
+                    self.db.stats['secondary_abilities'][subcategory] = {}
+                    
+                # Move abilities from wrong location to correct location
+                for ability_name, ability_data in self.db.stats[subcategory]['secondary_abilities'].items():
+                    self.db.stats['secondary_abilities'][subcategory][ability_name] = ability_data
+                    changes_made = True
+                    
+                # Remove the old structure
+                del self.db.stats[subcategory]['secondary_abilities']
+                if not self.db.stats[subcategory]:  # If empty, remove the subcategory
+                    del self.db.stats[subcategory]
+                    
+        return changes_made
 
 class Note:
     def __init__(self, name, text, category="General", is_public=False, is_approved=False, 

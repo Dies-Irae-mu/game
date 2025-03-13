@@ -100,7 +100,7 @@
     },
     {
         "name": "Shape Of All Beasts",
-        "description": "Cainites with the Protean power of Shape of the Beast can take their choice of two animal forms in a matter of seconds. Cainites with Vicissitude can reshape their bodies into the form of any animal of the same mass, given time and enough vitae to power the Discipline. A Cainite with both – and some knowledge of zoology and comparative anatomy – can learn to take the form of any animal between the size of a tiger and a rabbit. They can also force other beings into animal form.",
+        "description": "Cainites with the Protean power of Shape of the Beast can take their choice of two animal forms in a matter of seconds. Cainites with Vicissitude can reshape their bodies into the form of any animal of the same mass, given time and enough vitae to power the Discipline. A Cainite with both - and some knowledge of zoology and comparative anatomy - can learn to take the form of any animal between the size of a tiger and a rabbit. They can also force other beings into animal form.",
         "system": "Changing form costs one blood point and takes three turns. Each additional blood point spent reduces the time by one turn, to a minimum of one turn. If the character uses the power to transform someone else, the transformation takes minutes instead of turns. Additionally, an unwilling character can resist, with the player making a contested Willpower roll (difficulty 6) against the would-be flesh-shaper's Dexterity + Body Crafts (difficulty 7). If the potential victim gains more successes, she successfully resists the restructuring of her body. Unlike Shadow of the Beast, the transformation does not assimilate the Cainite's clothing and small personal possessions. While in animal form, a character can use any of her Disciplines except for Necromancy, Serpentis, Thaumaturgy or Vicissitude.",
         "game_line": "Vampire: the Masquerade",
         "category": "powers",
@@ -112,7 +112,7 @@
     {
         "name": "Brace For Impact",
         "description": "A Cainite who possesses both the unnatural strength of Potence and the supernatural toughness of Fortitude can learn to apply that strength to resisting some forms of damage. The power does not help against normal combat damage such as fists, bullets or blades. It does not grant extra protection against fire, electricity, sunlight or other energy-based sources of damage. The power only helps the character soak physical impacts that affect the entire body: Falling damage, car crashes, explosions, or being struck with very large objects.",
-        "system": "A character with this power can automatically soak one health level of impact damage for each dot of Potence that she has. This can be bashing, lethal or aggravated damage (as from falling off a skyscraper), but it must come only from impact – no cutting, piercing, burning or other forms of damage. At the Storyteller's option, Brace for Impact can also help a Cainite resist crushing pressure or vacuum decompression.",
+        "system": "A character with this power can automatically soak one health level of impact damage for each dot of Potence that she has. This can be bashing, lethal or aggravated damage (as from falling off a skyscraper), but it must come only from impact - no cutting, piercing, burning or other forms of damage. At the Storyteller's option, Brace for Impact can also help a Cainite resist crushing pressure or vacuum decompression.",
         "game_line": "Vampire: the Masquerade",
         "category": "powers",
         "stat_type": "combodiscipline",
@@ -144,7 +144,7 @@
     },
     {
         "name": "Psychic Double",
-        "description": "Astral projection has the annoying limit that the vampire's disembodied mind cannot affect the material world, and even the faintest visible manifestation requires great effort. Through this combination power, a vampire still cannot affect material objects – but she can make other people imagine that they see and speak to her.",
+        "description": "Astral projection has the annoying limit that the vampire's disembodied mind cannot affect the material world, and even the faintest visible manifestation requires great effort. Through this combination power, a vampire still cannot affect material objects - but she can make other people imagine that they see and speak to her.",
         "system": "Projecting a Psychic Double costs one Willpower point. As with Astral Projection, the vampire picks a target somewhere in the world and hopes he projects to the right place. Arriving at the desired location depends on a Perception + Occult roll, with the difficulty set by how well the vampire knows the target location. A familiar location not too far away is difficulty 7; a place on the other side of the world that the vampire merely read about is difficulty 10. A botch on this roll indicates getting lost, and maybe even breaking the silver cord back to the vampire's body. Evoking a psychic image with his own appearance automatically succeeds. Appearing as someone else calls for a Manipulation + Performance roll (difficulty 7), just as for Mask of a Thousand Faces.",
         "game_line": "Vampire: the Masquerade",
         "category": "powers",

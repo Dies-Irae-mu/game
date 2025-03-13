@@ -48,5 +48,15 @@
         "category": "identity",
         "stat_type": "lineage",
         "values": ["Nature", "Time", "Prop", "Actor", "Fae", "Scene"]
+    },
+    {
+        "name": "Kinfolk Breed",
+        "description": "Which changing breed group a Kinfolk belongs to.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Ajaba", "Ananasi", "Ratkin", "Garou", "Kitsune", 
+                   "Rokea", "Mokole", "Gurahl", "Bastet", "Nuwisha", 
+                   "Nagah"]
     }
 ]

@@ -188,7 +188,7 @@
     {
         "name": "Ojas Surge",
         "description": "By channeling the spiritual energy within himself, the Bagheera can boost his physical and perceptual abilities to impossible levels.",
-        "system": "To perform this Gift, the Bagheera must first meditate for (6 – current Rank) minutes, then the player rolls Gnosis (difficulty 7). Each success may be used to boost one of the following Attributes by one dot for the rest of the scene: Strength, Dexterity, Stamina, Charisma, Perception or Wits. The successes may be distributed as the Bagheera wishes, and can raise Attributes beyond five dots. Multiple uses of this Gift do not stack.",
+        "system": "To perform this Gift, the Bagheera must first meditate for (6 - current Rank) minutes, then the player rolls Gnosis (difficulty 7). Each success may be used to boost one of the following Attributes by one dot for the rest of the scene: Strength, Dexterity, Stamina, Charisma, Perception or Wits. The successes may be distributed as the Bagheera wishes, and can raise Attributes beyond five dots. Multiple uses of this Gift do not stack.",
         "source": "Bastet Breed Book",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -201,7 +201,7 @@
     {
         "name": "The Paradox of Time",
         "description": "The werecat shows her target a dizzying and nonlinear view of the vast sweep of time, producing sickness and confusion rather than enlightenment.",
-        "system": "The player spends one Gnosis point and rolls Manipulation + Enigmas against a difficulty of the target's Willpower. For each success, the subject becomes disoriented for two turns, suffering a –3 penalty to all dice pools. Mages with any dots in the Time Sphere are immune to this Gift.",
+        "system": "The player spends one Gnosis point and rolls Manipulation + Enigmas against a difficulty of the target's Willpower. For each success, the subject becomes disoriented for two turns, suffering a -3 penalty to all dice pools. Mages with any dots in the Time Sphere are immune to this Gift.",
         "source": "Bastet Breed Book",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",

@@ -233,7 +233,8 @@ def get_mortalplus_identity_stats(mortalplus_type: str) -> List[str]:
         return base_stats + [
             'Tribe',
             'Pack',
-            'Patron Totem'
+            'Patron Totem',
+            'Kinfolk Breed'
         ]
     elif mortalplus_type == 'Sorcerer':
         return base_stats + [
@@ -493,9 +494,13 @@ def validate_ghoul_disciplines(character, discipline_name: str, value: str) -> t
 
 def validate_kinfolk_gifts(character, gift_name: str, value: str) -> tuple[bool, str]:
     """Validate a kinfolk's gifts."""
-    # Check if the gift exists in the database
-    gift = get_stat_model().objects.filter(
-        name__iexact=gift_name,
+    from world.wod20th.models import Stat
+    from django.db.models import Q
+
+    # First try exact match
+    gift = Stat.objects.filter(
+        Q(name__iexact=gift_name) |
+        Q(gift_alias__icontains=gift_name),  # Check aliases
         category='powers',
         stat_type='gift'
     ).first()
@@ -509,11 +514,12 @@ def validate_kinfolk_gifts(character, gift_name: str, value: str) -> tuple[bool,
         if gift_value < 0 or gift_value > 2:  # Kinfolk can only learn level 1-2 gifts
             return False, "Kinfolk can only learn level 1-2 gifts"
             
-        # Check if it's a homid gift or tribe gift
-        if gift.tribe:
-            allowed_types = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
-            if not any(t.lower() in ['homid', character.get_stat('identity', 'lineage', 'Type', temp=False).lower()] for t in allowed_types):
-                return False, "Kinfolk can only learn Homid gifts or gifts from their tribe"
+        # For level 2 gifts, check for Gnosis merit
+        if gift_value > 1:
+            gnosis_merit = next((value.get('perm', 0) for merit, value in character.db.stats.get('merits', {}).get('merit', {}).items() 
+                               if merit.lower() == 'gnosis'), 0)
+            if not gnosis_merit:
+                return False, "Must have the Gnosis Merit to learn level 2 gifts"
                 
         return True, ""
     except ValueError:

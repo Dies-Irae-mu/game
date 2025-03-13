@@ -19,7 +19,8 @@ from world.wod20th.utils.stat_mappings import (
     SORCERER_BACKGROUNDS, IDENTITY_PERSONAL, IDENTITY_LINEAGE,
     ARTS, REALMS, VALID_DATES, MERIT_VALUES, FLAW_VALUES,
     MERIT_CATEGORIES, FLAW_CATEGORIES, MERIT_SPLAT_RESTRICTIONS,
-    FLAW_SPLAT_RESTRICTIONS
+    FLAW_SPLAT_RESTRICTIONS, ARTS, REALMS, ALL_MERITS, ALL_FLAWS,
+    KINFOLK_BREED_CHOICES
 )
 from world.wod20th.models import Stat
 from world.wod20th.utils.vampire_utils import (
@@ -39,7 +40,7 @@ from world.wod20th.utils.shifter_utils import (
     validate_shifter_stats
 )
 from world.wod20th.utils.changeling_utils import (
-    FAE_COURTS, HOUSES, PHYLA, initialize_changeling_stats, KITH, SEEMING, ARTS, REALMS,
+    FAE_COURTS, HOUSES, PHYLA, initialize_changeling_stats, KITH, SEEMING,
     SEELIE_LEGACIES, UNSEELIE_LEGACIES, KINAIN_LEGACIES,
     validate_changeling_stats
 )
@@ -698,7 +699,13 @@ class CmdSelfStat(MuxCommand):
             # Validate the gift value
             try:
                 gift_value = int(value)
-                if gift_value < 0 or gift_value > 5:
+                # First check if the gift has specific valid values
+                if gift.values:
+                    valid_values = gift.values if isinstance(gift.values, list) else [gift.values]
+                    if gift_value not in valid_values:
+                        return False, f"Invalid value for {gift.name}. Valid values are: {', '.join(map(str, valid_values))}", None
+                # If no specific values defined, use default range check
+                elif gift_value < 0 or gift_value > 5:
                     return False, "Gift values must be between 0 and 5", None
                 # Return the canonical name and the original alias
                 return True, "", str(gift_value)
@@ -984,7 +991,7 @@ class CmdSelfStat(MuxCommand):
         elif stat_title in IDENTITY_LINEAGE:
             return 'identity', 'lineage'
         elif stat_title in ['House', 'Fae Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
-                          'Type', 'Tribe', 'Breed', 'Auspice', 'Clan', 'Generation', 'Affiliation',
+                          'Type', 'Tribe', 'Breed', 'Kinfolk Breed', 'Auspice', 'Clan', 'Generation', 'Affiliation',
                           'Tradition', 'Convention', 'Methodology', 'Traditions Subfaction',
                           'Nephandi Faction', 'Possessed Type', 'Companion Type', 'Pryio', 'Lodge',
                           'Camp', 'Fang House', 'Crown', 'Plague', 'Ananasi Faction', 'Ananasi Cabal',
@@ -2616,7 +2623,10 @@ class CmdSelfStat(MuxCommand):
                         self.caller.msg(error_msg)
                         return
                     self.value_change = matched_value
-                    # Update pools based on breed
+                    # Set the breed first
+                    self.caller.set_stat('identity', 'lineage', 'Breed', matched_value, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'Breed', matched_value, temp=True)
+                    # Then update pools based on breed
                     update_shifter_pools_on_stat_change(self.caller, 'breed', matched_value)
                     return ('identity', 'lineage')
 
@@ -2671,6 +2681,35 @@ class CmdSelfStat(MuxCommand):
                     # Update pools based on aspect
                     update_shifter_pools_on_stat_change(self.caller, 'aspect', matched_value)
                     return ('identity', 'lineage')
+
+        # Special handling for Kinfolk Breed
+        elif self.stat_name.lower() == 'kinfolk breed':
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            # Get character type directly from stats dictionary
+            char_type = None
+            if ('identity' in self.caller.db.stats and 
+                'lineage' in self.caller.db.stats['identity'] and 
+                'Type' in self.caller.db.stats['identity']['lineage']):
+                char_type = self.caller.db.stats['identity']['lineage']['Type'].get('perm')
+            
+            if splat and splat.lower() == 'mortal+' and char_type == 'Kinfolk':
+                # Get valid breed types from KINFOLK_BREED_CHOICES
+                valid_breeds = [breed[1] for breed in KINFOLK_BREED_CHOICES]
+                is_valid, matched_value = self.case_insensitive_in(self.value_change, set(valid_breeds))
+                if not is_valid:
+                    self.caller.msg(f"|rInvalid Kinfolk breed. Valid breeds are: {', '.join(sorted(valid_breeds))}|n")
+                    return
+                
+                self.value_change = matched_value
+                # Set the breed in identity/lineage
+                self.caller.set_stat('identity', 'lineage', 'Kinfolk Breed', matched_value, temp=False)
+                self.caller.set_stat('identity', 'lineage', 'Kinfolk Breed', matched_value, temp=True)
+                self.caller.msg(f"|gSet Kinfolk Breed to {matched_value}.|n")
+                return ('identity', 'lineage')
+            else:
+                # Add debug information
+                self.caller.msg(f"|rOnly Mortal+ Kinfolk characters can set Kinfolk Breed. Current splat: {splat}, Type: {char_type}|n")
+                return
 
         # When setting Companion-specific stats
         elif self.stat_name.lower() == 'companion type':

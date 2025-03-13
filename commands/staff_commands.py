@@ -12,6 +12,17 @@ from world.wod20th.utils.sheet_constants import (
 )
 from utils.search_helpers import search_character
 
+REQUIRED_INSTANCES = ['Library', 'Status', 'Influence', 'Wonder', 'Secret Weapon', 'Companion', 
+                      'Familiar', 'Enhancement', 'Laboratory', 'Favor', 'Acute Senses', 
+                      'Enchanting Feature', 'Secret Code Language', 'Hideaway', 'Safehouse', 
+                      'Sphere Natural', 'Phobia', 'Addiction', 'Allies', 'Contacts', 'Caretaker',
+                      'Alternate Identity', 'Equipment', 'Professional Certification', 'Allergic',
+                      'Impediment', 'Enemy', 'Mentor', 'Old Flame', 'Additional Discipline', 
+                      'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish', 'Chimerical Item', 'Chimerical Companion',
+                      'Dreamers', 'Digital Dreamers', 'Addiction', 'Phobia', 'Derangement',
+                      'Obsession', 'Compulsion', 'Bigot', 'Ability Deficit', 'Sect Enmity', 'Camp Enmity'
+                     ] 
+
 class CmdStaffStat(CmdSelfStat):
     """
     Staff command to set stats on players, bypassing normal restrictions.
@@ -82,32 +93,95 @@ class CmdStaffStat(CmdSelfStat):
                     self.category = None
                 self.value_change = value.strip()
 
-                # Remove any "Gift:" prefix if present
-                if self.stat_name.startswith('Gift:'):
-                    self.stat_name = self.stat_name[5:].strip()
+            # Remove any "Gift:" prefix if present
+            if self.stat_name and self.stat_name.startswith('Gift:'):
+                self.stat_name = self.stat_name[5:].strip()
 
-                # If no category was specified but we have a stat name, try to detect the category
-                if self.stat_name and not self.category:
-                    # Try to find the stat in the database
-                    stat = Stat.objects.filter(name__iexact=self.stat_name).first()
-                    if stat:
-                        self.category = stat.category
-                        self.stat_type = stat.stat_type
+            # If no category was specified but we have a stat name, try to detect the category
+            if self.stat_name and not self.category:
+                # Try to find the stat in the database
+                stat = Stat.objects.filter(name__iexact=self.stat_name).first()
+                if stat:
+                    self.category = stat.category
+                    self.stat_type = stat.stat_type
+                else:
+                    # If not found in database, try to detect from common categories
+                    if self.stat_name.lower() in ['strength', 'dexterity', 'stamina']:
+                        self.category = 'attributes'
+                        self.stat_type = 'physical'
+                    elif self.stat_name.lower() in ['charisma', 'manipulation', 'appearance']:
+                        self.category = 'attributes'
+                        self.stat_type = 'social'
+                    elif self.stat_name.lower() in ['perception', 'intelligence', 'wits']:
+                        self.category = 'attributes'
+                        self.stat_type = 'mental'
+                    # Check if it's a background that requires an instance
+                    elif self.stat_name in REQUIRED_INSTANCES:
+                        self.category = 'backgrounds'
+                        self.stat_type = 'background'
+
+            # Get the stat definition from the database for instance checking
+            stat = Stat.objects.filter(name__iexact=self.stat_name).first()
+
+            # Store the original stat name for gift aliases
+            if self.category == 'powers' and self.stat_type == 'gift':
+                self.alias_used = self.stat_name
+
+            # Special handling for Gnosis
+            if self.stat_name and self.stat_name.lower() == 'gnosis':
+                splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+                char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+                
+                if splat and splat.lower() in ['shifter', 'possessed']:
+                    self.category = 'pools'
+                    self.stat_type = 'dual'
+                elif splat and splat.lower() == 'mortal+' and char_type and char_type.lower() == 'kinfolk':
+                    self.category = 'merits'
+                    self.stat_type = 'supernatural'
+
+            # Handle instance requirements
+            requires_instance = self._requires_instance(self.stat_name, self.category)
+            should_support = self._should_support_instance(self.stat_name, self.category)
+
+            # If the stat requires an instance
+            if self.stat_name and requires_instance:
+                if not self.instance:
+                    self._display_instance_requirement_message(self.stat_name)
+                    self.stat_name = None
+                    return
+                # If no category specified for an instanced stat, default to backgrounds
+                if not self.category:
+                    self.category = 'backgrounds'
+                    self.stat_type = 'background'
+            # Only check for unsupported instances if the stat doesn't require one
+            elif self.instance and not requires_instance:
+                self.caller.msg(f"|rThe stat '{self.stat_name}' does not support instances.|n")
+                self.stat_name = None
+                return
+        
+            # Special handling for Nature and Time
+            if not self.category:
+                splat = self.target.get_stat('other', 'splat', 'Splat', temp=False)
+                char_type = self.target.get_stat('identity', 'lineage', 'Type', temp=False)
+                
+                if self.stat_name.lower() == 'nature':
+                    # For Changelings and Kinain, Nature is a realm power
+                    if splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
+                        self.category = 'powers'
+                        self.stat_type = 'realm'
                     else:
-                        # If not found in database, try to detect from common categories
-                        if self.stat_name.lower() in ['strength', 'dexterity', 'stamina']:
-                            self.category = 'attributes'
-                            self.stat_type = 'physical'
-                        elif self.stat_name.lower() in ['charisma', 'manipulation', 'appearance']:
-                            self.category = 'attributes'
-                            self.stat_type = 'social'
-                        elif self.stat_name.lower() in ['perception', 'intelligence', 'wits']:
-                            self.category = 'attributes'
-                            self.stat_type = 'mental'
-
-                # Store the original stat name for gift aliases
-                if self.category == 'powers' and self.stat_type == 'gift':
-                    self.alias_used = self.stat_name
+                        self.category = 'identity'
+                        self.stat_type = 'personal'
+                elif self.stat_name.lower() == 'demeanor':
+                    self.category = 'identity'
+                    self.stat_type = 'personal'
+                elif self.stat_name.lower() == 'time':
+                    if splat == 'Mage':
+                        self.category = 'powers'
+                        self.stat_type = 'sphere'
+                    else:
+                        self.category = 'attributes'
+                        self.stat_type = 'physical'
 
         except Exception as e:
             self.caller.msg(f"|rError parsing command: {str(e)}|n")
@@ -116,6 +190,40 @@ class CmdStaffStat(CmdSelfStat):
             self.instance = None
             self.category = None
             self.value_change = None
+
+    def _requires_instance(self, stat_name: str, category: str = None) -> bool:
+        """
+        Check if a stat MUST have an instance.
+        """
+        # Stats in REQUIRED_INSTANCES must have instances (case-insensitive)
+        if any(stat_name.lower() == required.lower() for required in REQUIRED_INSTANCES):
+            return True
+            
+        # Check database for required instance flag
+        from world.wod20th.models import Stat
+        stat = Stat.objects.filter(name__iexact=stat_name).first()
+        
+        if stat and stat.instanced:
+            return True
+            
+        return False
+        
+    def _should_support_instance(self, stat_name: str, category: str = None) -> bool:
+        """
+        Check if a stat CAN have an instance.
+        
+        Args:
+            stat_name (str): The name of the stat to check
+            category (str, optional): The category of the stat
+            
+        Returns:
+            bool: True if the stat can have an instance, False otherwise
+        """
+        # If it requires an instance, it can have one
+        if self._requires_instance(stat_name, category):
+            return True
+            
+        return False
 
     def validate_stat_value(self, stat_name: str, value: str, category: str = None, stat_type: str = None) -> tuple:
         """Override validation to handle type conversion while still allowing staff to bypass normal validation rules."""
@@ -130,6 +238,31 @@ class CmdStaffStat(CmdSelfStat):
             'virtues': True,
             'pools': True
         }
+
+        # Special handling for Nature and Demeanor
+        if stat_name.lower() in ['nature', 'demeanor']:
+            # Check the target character's splat type
+            splat = self.target.get_stat('other', 'splat', 'Splat', temp=False)
+            char_type = self.target.get_stat('identity', 'lineage', 'Type', temp=False)
+            
+            # For Changelings and Kinain, Nature is a realm power and should be numeric
+            if splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
+                try:
+                    numeric_value = int(value)
+                    return True, "", numeric_value
+                except ValueError:
+                    return False, f"{stat_name} must be a number for Changelings", None
+            # For all other splat types, Nature and Demeanor should be strings
+            else:
+                return True, "", value
+        
+        # Special handling for Time when it's a sphere for Mages
+        if stat_name.lower() == 'time' and category == 'powers' and stat_type == 'sphere':
+            try:
+                numeric_value = int(value)
+                return True, "", numeric_value
+            except ValueError:
+                return False, f"{stat_name} must be a number", None
 
         # Check if this stat belongs to a numeric category
         if category in numeric_categories:
@@ -199,8 +332,42 @@ class CmdStaffStat(CmdSelfStat):
             # Use the canonical name from the database
             self.stat_name = stat.name
 
+            # Special handling for Nature based on character's splat type
+            if self.stat_name.lower() == 'nature':
+                splat = self.target.get_stat('other', 'splat', 'Splat', temp=False)
+                char_type = self.target.get_stat('identity', 'lineage', 'Type', temp=False)
+                
+                # For Changelings and Kinain, Nature is a realm power
+                if splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
+                    stat.category = 'powers'
+                    stat.stat_type = 'realm'
+                    self.category = 'powers'
+                    self.stat_type = 'realm'
+                else:
+                    stat.category = 'identity'
+                    stat.stat_type = 'personal'
+                    self.category = 'identity'
+                    self.stat_type = 'personal'
+            
+            # Special handling for Time based on character's splat type
+            elif self.stat_name.lower() == 'time':
+                splat = self.target.get_stat('other', 'splat', 'Splat', temp=False)
+                
+                # For Mages, Time is a sphere power
+                if splat == 'Mage':
+                    stat.category = 'powers'
+                    stat.stat_type = 'sphere'
+                    self.category = 'powers'
+                    self.stat_type = 'sphere'
+                else:
+                    stat.category = 'attributes'
+                    stat.stat_type = 'physical'
+                    self.category = 'attributes'
+                    self.stat_type = 'physical'
+
             # Handle instances for background stats
-            if stat.instanced:
+            requires_instance = self._requires_instance(self.stat_name, self.category)
+            if requires_instance:
                 if not self.instance:
                     self._display_instance_requirement_message(self.stat_name)
                     return
@@ -426,3 +593,4 @@ class CmdSetWyrmTaint(MuxCommand):
             target.tags.remove("is_wyrm", category="wyrm_taint")
             caller.msg(f"Removed wyrm taint from {target.name}.")
             target.msg("You are no longer part of the Wyrm sphere.") 
+            

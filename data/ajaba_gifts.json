@@ -11,6 +11,18 @@
         "shifter_type": "ajaba",
         "splat": "Shifter"
     },
+	    {
+        "name": "Whispers in the Grass",
+        "description": "The werehyena may move soundlessly through any natural environment; grass bends without making any noise, and dry twigs break silently beneath her tread. A mouse-spirit teaches this Gift.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            1
+        ],
+        "shifter_type": "ajaba",
+        "splat": "Shifter"
+    },
     {
         "name": "Finishing Blow",
         "description": "A merely wounded enemy is an enemy that can still fight; dead, they can do no more harm. This Gift, taught by a lion-spirit, helps the Ajaba finish their kills.",

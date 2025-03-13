@@ -638,12 +638,9 @@ class CmdNotes(MuxCommand):
         output = header(f"Notes in category '{category}'", width=width, fillchar="|r=|n")
         
         for note in category_notes:
-            truncated_text = note.text[:60] + "..." if len(note.text) > 60 else note.text
-            wrapped_text = wrap_ansi(truncated_text, width=width-4)
-            
             note_header = f"|y* |w#{note.note_id} |n{note.name}"
             output += note_header + "\n"
-            output += "    " + wrapped_text.replace("\n", "\n    ") + "\n\n"
+            output += "    " + note.text + "\n\n"
 
         output += footer(width=width, fillchar="|r=|n")
         self.caller.msg(output)
@@ -881,19 +878,17 @@ class CmdNotes(MuxCommand):
 
         output += divider("", width=width, fillchar="-", color="|r") + "\n"
         
-        # Note content - properly handle line breaks
+        # Note content - display without wrapping
         text = note.text.strip()
         # Split on actual newlines, preserving empty lines for spacing
         content_lines = text.split('\n')
-        wrapped_lines = []
         for line in content_lines:
             if line.strip():
                 # Add a space before each non-empty line for better readability
-                wrapped_lines.extend([' ' + l for l in wrap_ansi(line.strip(), width=width-2).split('\n')])
+                output += ' ' + line + '\n'
             else:
-                wrapped_lines.append('')  # Preserve empty lines
+                output += '\n'  # Preserve empty lines
 
-        output += '\n'.join(wrapped_lines) + "\n"
         output += footer(width=width, fillchar="|r=|n")
         self.caller.msg(output)
 
