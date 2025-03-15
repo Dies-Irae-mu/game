@@ -1206,8 +1206,8 @@ class CmdManageBuilding(MuxCommand):
                 location.db.roomtype = "Splat Housing"
                 location.db.resources = 0  # Splat housing is free
                 
-                # Set up housing data with direct assignment
-                location.db.housing_data = {
+                # Set up housing data directly
+                housing_data = {
                     'is_housing': True,
                     'max_apartments': max_units,
                     'current_tenants': {},
@@ -1219,8 +1219,11 @@ class CmdManageBuilding(MuxCommand):
                     'available_types': ["Splat Housing"]
                 }
                 
-                # Force room appearance update
-                location.at_object_creation()
+                # Set the housing data directly
+                location.db.housing_data = housing_data
+                
+                # Force a save by accessing the attribute again
+                _ = location.db.housing_data
                 
                 self.caller.msg(f"Set up room as free splat-specific housing with {max_units} maximum units. Room is automatically set as a lobby.")
                 return

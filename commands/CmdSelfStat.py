@@ -81,6 +81,20 @@ REQUIRED_INSTANCES = ['Library', 'Status', 'Influence', 'Wonder', 'Secret Weapon
                       'Obsession', 'Compulsion', 'Bigot', 'Ability Deficit', 'Sect Enmity', 'Camp Enmity',
                       'Retainers'
                      ] 
+
+# Add the REQUIRED_SPECIALTIES constant
+REQUIRED_SPECIALTIES = {
+    'Crafts': 'mechanics, blacksmithing, woodworking, etc.',
+    'Artistry': 'painting, sculpture, graphic design, etc.',
+    'Pilot': 'boat, plane, tank, etc.',
+    'Area Knowledge': 'an area of San Diego',
+    'Martial Arts': 'requires a style',
+    'Performance': 'singing, dancing, guitar, etc.',
+    'Fencing': 'western or kenjutsu',
+    'Science': 'biology, chemistry, physics, etc.',
+    'Hypertech': 'electronics, computers, robotics, etc.'
+}
+
 class CmdSelfStat(MuxCommand):
     """
     Usage:
@@ -3150,17 +3164,18 @@ class CmdSelfStat(MuxCommand):
         # Initialize the character's stats
         self.caller.db.stats = base_stats
 
-        # Initialize splat-specific stats using lowercase for comparison
+        # Set base attributes to 1 directly in the attributes structure
+        for category in ['physical', 'social', 'mental']:
+            for attribute in ATTRIBUTE_CATEGORIES[category]:
+                base_stats['attributes'][category][attribute] = {'perm': 1, 'temp': 1}
+
+        # Initialize splat-specific stats
         if splat_lower == 'vampire':
             initialize_vampire_stats(self.caller, '')
             # Set default Banality for Vampires
             self.caller.db.stats['pools']['dual']['Banality'] = {'perm': 5, 'temp': 5}
         elif splat_lower == 'mage':
             initialize_mage_stats(self.caller, '')
-            affiliation = self.caller.get_stat('identity', 'lineage', 'Affiliation', temp=False)
-            allowed_backgrounds = set(bg.title() for bg in MAGE_BACKGROUNDS)
-            if affiliation == 'Technocracy':
-                allowed_backgrounds.update(bg.title() for bg in TECHNOCRACY_BACKGROUNDS)
         elif splat_lower == 'shifter':
             initialize_shifter_type(self.caller, '')
         elif splat_lower == 'changeling':
@@ -3219,12 +3234,6 @@ class CmdSelfStat(MuxCommand):
             conscience = self.caller.db.stats['virtues']['moral']['Conscience']['perm']
             self_control = self.caller.db.stats['virtues']['moral']['Self-Control']['perm']
             self.caller.msg(f"|gInitialized Mortal character with Humanity (Path rating: {path_rating} = Conscience {conscience} + Self-Control {self_control}).|n")
-
-        # Set base attributes to 1
-        for category, attributes in ATTRIBUTE_CATEGORIES.items():
-            for attribute in attributes:
-                self.caller.set_stat('attributes', category, attribute, 1, temp=False)
-                self.caller.set_stat('attributes', category, attribute, 1, temp=True)
 
         self.caller.msg(f"|gInitialized {splat_title} character sheet.|n")
 
@@ -3541,7 +3550,6 @@ class CmdSelfStat(MuxCommand):
                 'temp': value
             }
             self.caller.msg(f"|gSet {stat_name} to {value}.|n")
-            return
 
         # Special handling for pools
         if category == 'pools':

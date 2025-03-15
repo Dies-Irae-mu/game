@@ -1,5 +1,6 @@
 from evennia.commands.default.muxcommand import MuxCommand
 from world.wod20th.models import Stat
+from commands.CmdSelfStat import REQUIRED_SPECIALTIES
 
 class CmdCheck(MuxCommand):
     """
@@ -271,7 +272,8 @@ class CmdCheck(MuxCommand):
         category_totals = {
             'talent': {'regular': 0, 'secondary': 0, 'total': 0},
             'skill': {'regular': 0, 'secondary': 0, 'total': 0},
-            'knowledge': {'regular': 0, 'secondary': 0, 'total': 0}
+            'knowledge': {'regular': 0, 'secondary': 0, 'total': 0},
+            'unused': {'regular': 0, 'secondary': 0, 'total': 0}  # Add this for unused category
         }
 
         for category in ['talent', 'skill', 'knowledge']:
@@ -312,14 +314,25 @@ class CmdCheck(MuxCommand):
         # Store the results for both abilities and secondary_abilities
         priority_levels = ['primary', 'secondary', 'tertiary']
         for i, priority in enumerate(priority_levels):
+            category = all_ability_points[i][0]
             results['abilities'][priority] = {
-                'category': all_ability_points[i][0],
+                'category': category,
                 'points': all_ability_points[i][1]  # Store exact value including decimals
             }
             results['secondary_abilities'][priority] = {
-                'category': all_ability_points[i][0],
-                'points': category_totals[all_ability_points[i][0]]['secondary'] if i < len(all_ability_points) and all_ability_points[i][0] in category_totals else 0
+                'category': category,
+                'points': category_totals[category]['secondary'] if category in category_totals else 0
             }
+
+        # Check for required specialties
+        specialties = character.db.specialties or {}
+        for category in ['talent', 'skill', 'knowledge']:
+            abilities = character.db.stats.get('abilities', {}).get(category, {})
+            for ability, values in abilities.items():
+                ability_value = values.get('perm', 0)
+                if ability_value > 0 and ability in REQUIRED_SPECIALTIES:
+                    if ability.lower() not in specialties or not specialties[ability.lower()]:
+                        results['errors'].append(f"{ability} requires a specialty. Examples: {REQUIRED_SPECIALTIES[ability]}")
 
         # Check against expected values using exact comparison
         # Primary abilities (13 points)
