@@ -753,6 +753,7 @@ class CmdManageBuilding(MuxCommand):
             try:
                 # Show available apartment types from CmdRent
                 from commands.housing import CmdRent
+                from evennia.utils.evtable import EvTable
                 table = EvTable(
                     "|wType|n",
                     "|wRooms|n",
@@ -1201,15 +1202,12 @@ class CmdManageBuilding(MuxCommand):
                     self.caller.msg("Usage: +manage/sethousing/splat [max_units]")
                     return
                     
-                # Initialize housing data first
-                housing_data = self.initialize_housing_data(location)
-                
-                # Set up basic room configuration
+                # Set up basic room configuration first
                 location.db.roomtype = "Splat Housing"
                 location.db.resources = 0  # Splat housing is free
                 
-                # Set up housing data
-                housing_data.update({
+                # Set up housing data with direct assignment
+                location.db.housing_data = {
                     'is_housing': True,
                     'max_apartments': max_units,
                     'current_tenants': {},
@@ -1219,7 +1217,7 @@ class CmdManageBuilding(MuxCommand):
                     'connected_rooms': {location.dbref},
                     'is_lobby': True,
                     'available_types': ["Splat Housing"]
-                })
+                }
                 
                 # Force room appearance update
                 location.at_object_creation()

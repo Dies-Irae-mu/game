@@ -78,6 +78,7 @@ from commands.CmdArchid import CmdArchid
 from commands.CmdRoster import CmdRoster
 from commands.CmdSpecialties import CmdSpecialties
 from commands.CmdMultidesc import CmdMultidesc
+from world.wod20th.scripts.weekly_xp import CmdDebugXP
 
 class CharacterCmdSet(cmdset_character.CharacterCmdSet):
     """
@@ -161,6 +162,7 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdNotifications())
         self.add(CmdMultidesc())
         self.add(CmdUmbraInfo())
+
 class AccountCmdSet(cmdset_account.AccountCmdSet):
     """
     This is the cmdset available to the Account at all times. It is
@@ -197,6 +199,7 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdFixStats())
         self.add(CmdSetWyrmTaint())
         self.add(CmdRoom())
+        self.add(CmdDebugXP())
 
 class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):
     """

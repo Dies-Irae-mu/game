@@ -782,7 +782,7 @@
         "game_line": "Vampire: The Masquerade"
     },
 	{
-        "name": "Legerdemain",
+        "name": "Legerdemain Merit",
         "stat_type": "physical",
         "category": "merits",
         "values": [1],

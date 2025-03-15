@@ -163,12 +163,7 @@ class CmdPose(PoseBreakMixin, default_cmds.MuxCommand):
                 # No language-tagged speech, send normal pose
                 receiver.msg(f"{poser_name} {processed_args}")
 
-        # Add this at the end of the func method
-        try:
-            caller.record_scene_activity()
-        except KeyError:
-            # Initialize scene data if it doesn't exist
-            if not caller.db.scene_data:
-                caller.db.scene_data = {}
-            caller.db.scene_data['last_weekly_reset'] = None
-            caller.record_scene_activity()
+        # Record scene activity, initializing if needed
+        if not hasattr(caller.db, 'scene_data') or not isinstance(caller.db.scene_data, dict):
+            caller.init_scene_data()
+        caller.record_scene_activity()

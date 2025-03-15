@@ -20,7 +20,8 @@ REQUIRED_INSTANCES = ['Library', 'Status', 'Influence', 'Wonder', 'Secret Weapon
                       'Impediment', 'Enemy', 'Mentor', 'Old Flame', 'Additional Discipline', 
                       'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish', 'Chimerical Item', 'Chimerical Companion',
                       'Dreamers', 'Digital Dreamers', 'Addiction', 'Phobia', 'Derangement',
-                      'Obsession', 'Compulsion', 'Bigot', 'Ability Deficit', 'Sect Enmity', 'Camp Enmity'
+                      'Obsession', 'Compulsion', 'Bigot', 'Ability Deficit', 'Sect Enmity', 'Camp Enmity',
+                      'Retainers'
                      ] 
 
 class CmdStaffStat(CmdSelfStat):

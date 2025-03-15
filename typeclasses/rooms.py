@@ -707,10 +707,17 @@ class RoomParent(DefaultRoom):
                 self.db.roll_log = []
 
     def at_object_creation(self):
-        """
-        Called when the room is first created.
-        """
+        """Called when the room is first created."""
         super().at_object_creation()
+        
+        # Initialize scene tracking with proper structure
+        self.db.scene_data = {
+            'start_time': None,
+            'participants': set(),
+            'last_activity': None,
+            'completed': False
+        }
+        
         self.db.unfindable = False
         self.db.fae_desc = ""
         self.db.roll_log = []  # Initialize empty roll log
@@ -955,7 +962,7 @@ class RoomParent(DefaultRoom):
                     "Apartment Building", "Apartments", 
                     "Condos", "Condominiums",
                     "Residential Area", "Residential Neighborhood", 
-                    "Neighborhood", "Splat Housing"
+                    "Neighborhood", "Splat Housing", "Motel"
                 ])
 
     def is_apartment_building(self):
@@ -1044,13 +1051,21 @@ class RoomParent(DefaultRoom):
         
         # Initialize housing data
         housing_data = self.ensure_housing_data()
+        
+        # Set initial available types based on housing type
+        initial_types = []
+        if housing_type == "Splat Housing":
+            initial_types = ["Splat Housing"]
+        elif housing_type == "Motel":
+            initial_types = ["Motel Room"]
+        
         housing_data.update({
             'is_housing': True,
             'max_apartments': max_units,
             'current_tenants': {},
             'apartment_numbers': set(),
             'is_lobby': True,
-            'available_types': ["Splat Housing"] if housing_type == "Splat Housing" else [],
+            'available_types': initial_types,
             'building_zone': self.dbref,  # Set building zone to self
             'connected_rooms': {self.dbref}  # Initialize connected rooms with self
         })
@@ -1092,9 +1107,11 @@ class RoomParent(DefaultRoom):
 
     def get_available_housing_types(self):
         """Get available housing types based on area type."""
-        self.ensure_housing_data()
+        self.ensure_housing_data()  # Ensure housing data exists
         from commands.housing import CmdRent
-        if self.is_apartment_building():
+        if self.db.roomtype == "Motel":
+            return {"Motel Room": CmdRent.APARTMENT_TYPES["Motel Room"]}
+        elif self.is_apartment_building():
             return CmdRent.APARTMENT_TYPES
         elif self.is_residential_area():
             return CmdRent.RESIDENTIAL_TYPES
@@ -1201,7 +1218,8 @@ class RoomParent(DefaultRoom):
             "apartment", "house", "splat_housing",
             "mortal_room", "mortal_plus_room", "possessed_room",
             "mage_room", "vampire_room", "changeling_room", 
-            "motel_room"
+            "motel_room", "apartment_room", "house_room", "studio",
+            "studio apartment"
         ]
         
         # Check if room type is valid
@@ -1222,6 +1240,176 @@ class RoomParent(DefaultRoom):
         )
         
         return has_valid_type and has_housing_data
+
+    def start_scene(self, character):
+        """
+        Start a new scene in this room.
+        
+        Args:
+            character (Object): The character starting the scene
+        """
+        now = datetime.now()
+        
+        # Initialize scene data if needed
+        if not hasattr(self.db, 'scene_data') or not isinstance(self.db.scene_data, dict):
+            self.db.scene_data = {
+                'start_time': now,
+                'participants': {character.key},
+                'last_activity': now,
+                'completed': False
+            }
+        else:
+            # If no active scene, start one
+            if not self.db.scene_data.get('start_time'):
+                self.db.scene_data.update({
+                    'start_time': now,
+                    'participants': {character.key},
+                    'last_activity': now,
+                    'completed': False
+                })
+
+    def end_scene(self):
+        """End the current scene in this room."""
+        if not hasattr(self.db, 'scene_data') or not self.db.scene_data.get('start_time'):
+            return
+            
+        # Mark scene as completed
+        self.db.scene_data.update({
+            'start_time': None,
+            'participants': set(),
+            'last_activity': None,
+            'completed': True
+        })
+
+    def add_scene_participant(self, character):
+        """
+        Add a character as a participant in the current scene.
+        
+        Args:
+            character (Object): The character to add
+        """
+        if not hasattr(self.db, 'scene_data'):
+            self.start_scene(character)
+            return
+            
+        # Initialize participants as a set if needed
+        if not isinstance(self.db.scene_data.get('participants'), set):
+            self.db.scene_data['participants'] = set()
+            
+        # Add the character
+        self.db.scene_data['participants'].add(character.key)
+        self.db.scene_data['last_activity'] = datetime.now()
+
+    def remove_scene_participant(self, character):
+        """
+        Remove a character from the current scene.
+        
+        Args:
+            character (Object): The character to remove
+        """
+        if not hasattr(self.db, 'scene_data') or not isinstance(self.db.scene_data.get('participants'), set):
+            return
+            
+        # Remove the character
+        self.db.scene_data['participants'].discard(character.key)
+        
+        # If no participants left, end the scene
+        if not self.db.scene_data['participants']:
+            self.end_scene()
+
+    def get_scene_participants(self):
+        """
+        Get all current scene participants.
+        
+        Returns:
+            set: Set of character keys participating in the scene
+        """
+        if not hasattr(self.db, 'scene_data'):
+            return set()
+        return self.db.scene_data.get('participants', set())
+
+    def record_scene_activity(self, character):
+        """
+        Record activity in the current scene.
+        
+        Args:
+            character (Object): The character performing the activity
+        """
+        now = datetime.now()
+        
+        # Ensure scene_data exists and has proper structure
+        if not hasattr(self.db, 'scene_data') or not isinstance(self.db.scene_data, dict):
+            self.db.scene_data = {
+                'start_time': now,
+                'participants': set(),
+                'last_activity': now,
+                'completed': False
+            }
+        
+        # Initialize participants as a set if needed
+        if not isinstance(self.db.scene_data.get('participants'), set):
+            self.db.scene_data['participants'] = set()
+        
+        # Add character as participant and update activity time
+        self.db.scene_data['participants'].add(character.key)
+        self.db.scene_data['last_activity'] = now
+        
+        # If no active scene, start one
+        if not self.db.scene_data.get('start_time'):
+            self.db.scene_data['start_time'] = now
+
+    def is_valid_scene_location(self):
+        """
+        Check if this room is valid for scene tracking.
+        
+        Returns:
+            bool: True if valid scene location, False otherwise
+        """
+        # Must be IC room
+        if getattr(self.db, 'roomtype', None) == 'OOC Area':
+            return False
+            
+        # Must have at least two characters present
+        character_count = sum(
+            1 for obj in self.contents 
+            if hasattr(obj, 'has_account') and obj.has_account
+        )
+        
+        return character_count >= 2
+
+    def get_scene_duration(self):
+        """
+        Get the duration of the current scene in minutes.
+        
+        Returns:
+            float: Duration in minutes, or 0 if no scene
+        """
+        if not hasattr(self.db, 'scene_data') or not self.db.scene_data.get('start_time'):
+            return 0
+            
+        start_time = self.db.scene_data['start_time']
+        if isinstance(start_time, str):
+            start_time = datetime.fromisoformat(start_time)
+            
+        return (datetime.now() - start_time).total_seconds() / 60
+
+    def cleanup_inactive_scenes(self, timeout_minutes=60):
+        """
+        Clean up scenes that have been inactive for too long.
+        
+        Args:
+            timeout_minutes (int): Minutes of inactivity before cleanup
+        """
+        if not hasattr(self.db, 'scene_data') or not self.db.scene_data.get('last_activity'):
+            return
+            
+        last_activity = self.db.scene_data['last_activity']
+        if isinstance(last_activity, str):
+            last_activity = datetime.fromisoformat(last_activity)
+            
+        # If scene has been inactive for too long, end it
+        if (datetime.now() - last_activity).total_seconds() / 60 > timeout_minutes:
+            self.end_scene()
 
 class Room(RoomParent):
     pass

@@ -10,6 +10,7 @@ from evennia.utils.search import search_object
 from world.wod20th.models import Roster, RosterMember
 from world.hangouts.models import HangoutDB
 from evennia.utils.ansi import ANSIString
+from utils.search_helpers import search_character
 import time
 
 def format_idle_time(sessions):
@@ -339,12 +340,10 @@ class CmdRoster(default_cmds.MuxCommand):
             self.caller.msg("You don't have permission to add characters to this roster.")
             return
 
-        # Search for character
-        char = search_object(character_name)
+        # Search for character using our helper
+        char = search_character(self.caller, character_name)
         if not char:
-            self.caller.msg(f"Character '{character_name}' not found.")
-            return
-        char = char[0]  # Get first match
+            return  # Error message already handled by search_character
 
         # Check if already in roster
         if RosterMember.objects.filter(roster=roster, character=char).exists():
@@ -375,12 +374,10 @@ class CmdRoster(default_cmds.MuxCommand):
             self.caller.msg("You don't have permission to remove characters from this roster.")
             return
 
-        # Search for character
-        char = search_object(character_name)
+        # Search for character using our helper
+        char = search_character(self.caller, character_name)
         if not char:
-            self.caller.msg(f"Character '{character_name}' not found.")
-            return
-        char = char[0]  # Get first match
+            return  # Error message already handled by search_character
 
         # Remove from roster
         try:
@@ -404,12 +401,10 @@ class CmdRoster(default_cmds.MuxCommand):
             self.caller.msg("You don't have permission to approve characters in this roster.")
             return
 
-        # Search for character
-        char = search_object(character_name)
+        # Search for character using our helper
+        char = search_character(self.caller, character_name)
         if not char:
-            self.caller.msg(f"Character '{character_name}' not found.")
-            return
-        char = char[0]  # Get first match
+            return  # Error message already handled by search_character
 
         try:
             member = RosterMember.objects.get(roster=roster, character=char)
@@ -475,12 +470,10 @@ class CmdRoster(default_cmds.MuxCommand):
             self.caller.msg("You don't have permission to set titles in this roster.")
             return
 
-        # Search for character
-        char = search_object(character_name)
+        # Search for character using our helper
+        char = search_character(self.caller, character_name)
         if not char:
-            self.caller.msg(f"Character '{character_name}' not found.")
-            return
-        char = char[0]  # Get first match
+            return  # Error message already handled by search_character
 
         try:
             member = RosterMember.objects.get(roster=roster, character=char)

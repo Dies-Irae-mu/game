@@ -137,7 +137,6 @@ POWERS = {
         "Inspiration": 1,
         "Razor Claws": 1,
         "Falling Touch": 1,
-        "Persuasion": 1,
         "Smell of Man": 1,
         "Staredown": 1,
         "Create Element": 1,

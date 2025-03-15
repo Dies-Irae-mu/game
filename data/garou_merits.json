@@ -175,16 +175,6 @@
         "source": "W20 p. 482"
     },
     {
-        "name": "Spirit Magnet",
-        "description": "You naturally attract the attention of the spirits whenever you cross the Gauntlet into the Umbra. Most of the time, the Umbral inhabitants are simply curious, gathering around you to see who you are and what you're doing in their \"neck of the woods.\" Occasionally you attract more than you bargained for - Banes are also likely to come calling. None of the spirits who collect in your vicinity are under your command unless you use a Gift that allows you to command them or influence them in some way.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "merits",
-        "stat_type": "supernatural",
-        "values": [1],
-        "splat": "Shifter",
-        "source": "W20 p. 482"
-    },
-    {
         "name": "Immune to Wyrm Emanations",
         "description": "Gaia has blessed you with a powerful resistance to the poisons of the Wyrm. Although you still take damage from balefire, supernaturally-caused radiation, Wyrm elementals, or other forms of Wyrm toxins, you do not suffer any dice pool penalties from them. Banes cannot possess you.",
         "game_line": "Werewolf: The Apocalypse",

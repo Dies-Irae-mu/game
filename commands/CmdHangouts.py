@@ -27,13 +27,13 @@ class CmdHangout(MuxCommand):
         +hangout/setdistrict <#>=<district name>
         +hangout/setsplat <#>=<splat type>
         +hangout/delete <#>
-        +hangout/restrict <#>=<yes/no>
+        +hangout/hidden <#>=<yes/no>
 
     The +hangout command allows you to view a list of hangout spots and landmarks 
     in the reality your character is currently in.
 
     Switches:
-        /all        - Show all hangouts, including those with no visitors
+        /all        - Show all hangouts you have access to see
         /type       - List hangouts by category or show available categories
         /jump       - Teleport to the specified hangout (OOC convenience)
         /tel        - Alias for /jump
@@ -48,11 +48,11 @@ class CmdHangout(MuxCommand):
         /setdistrict - Set the district for a hangout
         /setsplat   - Set splat requirements for a hangout
         /delete     - Delete a hangout
-        /restrict   - Set whether the hangout is restricted
+        /hidden     - Set whether the hangout is hidden from non-splat members
 
     Examples:
         +hangout            - Show hangouts with active visitors
-        +hangout/all       - Show all hangouts
+        +hangout/all       - Show all hangouts you can access
         +hangout/type      - List all available categories
         +hangout/type Club - Show all Club category hangouts
         +hangout 42        - View detailed info about hangout #42
@@ -65,7 +65,7 @@ class CmdHangout(MuxCommand):
         +hangout/settype 42=Club
         +hangout/setdistrict 42=Downtown
         +hangout/setsplat 42=Mage
-        +hangout/restrict 42=yes
+        +hangout/hidden 42=yes
     """
     
     key = "+hangout"
@@ -76,6 +76,42 @@ class CmdHangout(MuxCommand):
     def _check_staff_perms(self):
         """Check if the caller has staff permissions."""
         return self.caller.check_permstring("builders") or self.caller.check_permstring("wizards")
+
+    def _has_splat_access(self, hangout):
+        """Check if the caller has access to the splat-restricted hangout."""
+        # If the hangout isn't hidden, everyone has access regardless of splat
+        if not hangout.db.hidden:
+            return True
+            
+        # Staff always have access
+        if self._check_staff_perms():
+            return True
+            
+        # If hidden but no splat requirements, everyone has access
+        if not hangout.db.required_splats:
+            return True
+            
+        # Get character's splat from the stats structure
+        try:
+            stats = self.caller.db.stats
+            if stats and 'other' in stats:
+                if 'splat' in stats['other']:
+                    if 'Splat' in stats['other']['splat']:
+                        character_splat = stats['other']['splat']['Splat']['perm']
+                    else:
+                        character_splat = None
+                else:
+                    character_splat = None
+            else:
+                character_splat = None
+        except (AttributeError, KeyError, TypeError):
+            character_splat = None
+            
+        if not character_splat:
+            return False
+            
+        # Check if the character's splat matches any required splat
+        return character_splat in hangout.db.required_splats
 
     def _get_hangout_by_id(self, hangout_id):
         """Get a hangout by ID, with staff override for visibility."""
@@ -102,6 +138,11 @@ class CmdHangout(MuxCommand):
         """Create a detailed display for a single hangout."""
         if not hangout:
             self.caller.msg("Hangout not found.")
+            return
+            
+        # Check splat access for viewing details only if hangout is hidden
+        if hangout.db.hidden and hangout.db.required_splats and not self._has_splat_access(hangout):
+            self.caller.msg("You do not have access to view this hangout.")
             return
 
         # Get access requirements
@@ -139,6 +180,10 @@ class CmdHangout(MuxCommand):
         # Group hangouts by district
         district_groups = {}
         for h in hangouts:
+            # Skip if hangout is hidden and user doesn't have splat access
+            if h.db.hidden and h.db.required_splats and not self._has_splat_access(h):
+                continue
+                
             # Ensure hangout has an ID before displaying
             if h.db.hangout_id is None:
                 h.attributes.add("hangout_id", HangoutDB._get_next_hangout_id())
@@ -233,13 +278,30 @@ class CmdHangout(MuxCommand):
                 if not hangout:
                     self.caller.msg("That hangout was not found or is not accessible.")
                     return
+                
+                # Check splat requirements for teleporting only if hangout is hidden
+                if hangout.db.hidden and hangout.db.required_splats and not self._has_splat_access(hangout):
+                    self.caller.msg("You do not have the required splat type to access this location.")
+                    return
                     
                 room = hangout.db.room
                 if not room:
                     self.caller.msg("That hangout's location is not properly set up.")
                     return
+                
+                # Store the current location before moving
+                old_location = self.caller.location
+                
+                # Announce departure to the old room
+                old_location.msg_contents(f"{self.caller.name} has left for hangout {hangout_id}.")
                     
+                # Move the character
                 self.caller.move_to(room, quiet=True)
+                
+                # Announce arrival to the new room
+                room.msg_contents(f"{self.caller.name} has arrived.")
+                
+                # Message to the character
                 self.caller.msg(f"You teleport to {hangout.key}.")
                 return
                 
@@ -308,13 +370,17 @@ class CmdHangout(MuxCommand):
                 self.caller.msg(f"Set district for hangout #{hangout.db.hangout_id} to {value}")
                 
             elif "setsplat" in self.switches:
-                hangout.db.required_splats = [value.strip()]
-                self.caller.msg(f"Set splat requirement for hangout #{hangout.db.hangout_id} to {value}")
+                if not value.strip():
+                    hangout.db.required_splats = []
+                    self.caller.msg(f"Removed splat requirements for hangout #{hangout.db.hangout_id}")
+                else:
+                    hangout.db.required_splats = [value.strip()]
+                    self.caller.msg(f"Set splat requirement for hangout #{hangout.db.hangout_id} to {value}")
                 
-            elif "restrict" in self.switches:
-                restricted = value.lower() in ("yes", "true", "1")
-                hangout.db.restricted = restricted
-                self.caller.msg(f"Set restricted status for hangout #{hangout.db.hangout_id} to {restricted}")
+            elif "hidden" in self.switches:
+                hidden = value.lower() in ("yes", "true", "1")
+                hangout.db.hidden = hidden
+                self.caller.msg(f"Set hidden status for hangout #{hangout.db.hangout_id} to {hidden}")
                 
             elif "delete" in self.switches:
                 if value.lower() != "yes":

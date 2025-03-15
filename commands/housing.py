@@ -7,6 +7,7 @@ from evennia.objects.models import ObjectDB
 from evennia.commands.default.muxcommand import MuxCommand
 from evennia.utils import evtable
 from django.db.models import Q
+import string
 
 class CmdRent(MuxCommand):
     """
@@ -252,6 +253,9 @@ class CmdRent(MuxCommand):
         if apt_type == "Splat Housing":
             residence_name = f"{self.caller.name}'s Room"
             room_type = "splat_housing"
+        elif apt_type == "Motel Room":
+            residence_name = f"Room {residence_num}"  # residence_num for motels goes like: "1A", "2B", etc.
+            room_type = "motel_room"
         elif is_apartment:
             residence_name = f"Apartment {residence_num}"
             if apt_type == "Studio":
@@ -259,10 +263,10 @@ class CmdRent(MuxCommand):
             else:
                 room_type = "apartment"
         else:
-            residence_name = str(residence_num)  # Already includes street name
-            if apt_type == "Townhouse":
+            residence_name = str(residence_num)  # includes street name
+            if apt_type == "Townhouse": #these are outdated, but still in the database
                 room_type = "townhouse"
-            elif apt_type == "Cottage":
+            elif apt_type == "Cottage": #these are outdated, but still in the database
                 room_type = "cottage"
             else:
                 room_type = "house"
@@ -299,6 +303,20 @@ class CmdRent(MuxCommand):
                 'building_zone': location.dbref,
                 'connected_rooms': {location.dbref, residence.dbref},
                 'available_types': ["Splat Housing"]
+            }
+        elif apt_type == "Motel Room":
+            residence.db.roomtype = "Motel Room"
+            # Set housing data for motel room
+            residence.db.housing_data = {
+                'is_housing': True,
+                'is_residence': True,
+                'max_apartments': 1,
+                'current_tenants': {str(residence.id): self.caller.id},
+                'apartment_numbers': set(),
+                'required_resources': location.get_housing_cost(apt_type),
+                'building_zone': location.dbref,
+                'connected_rooms': {location.dbref, residence.dbref},
+                'available_types': ["Motel Room"]
             }
         elif apt_type == "Studio":
             residence.db.roomtype = "Studio Apartment"
@@ -349,6 +367,30 @@ class CmdRent(MuxCommand):
                 child_room.db.parent_room = residence
                 # Inherit resources from main residence
                 child_room.db.resources = residence.db.resources
+                
+                # Set up proper housing data for child room
+                child_room.db.housing_data = {
+                    'is_housing': True,
+                    'is_residence': True,
+                    'building_zone': residence.db.housing_data.get('building_zone'),
+                    'owner': self.caller,
+                    'current_tenants': {str(child_room.id): self.caller.id},
+                    'apartment_numbers': set(),
+                    'required_resources': residence.db.housing_data.get('required_resources', 0),
+                    'connected_rooms': residence.db.housing_data.get('connected_rooms', set())
+                }
+                
+                # Set up proper home data for child room
+                child_room.db.home_data = {
+                    'locked': False,
+                    'keyholders': set(),
+                    'owner': self.caller,
+                    'co_owners': set()
+                }
+                
+                # Set owner directly as well for compatibility
+                child_room.db.owner = self.caller
+                
                 child_rooms.append(child_room)
         
         residence.db.child_rooms = child_rooms
@@ -470,7 +512,22 @@ class CmdRent(MuxCommand):
             # Get existing apartment numbers
             used_numbers = location.db.housing_data.get('apartment_numbers', set())
             
-            if is_apartment:
+            # For motel rooms, generate a number (1-9) followed by a letter (A-Z)
+            if location.db.roomtype in ["Motel", "Motel Room"]:  # Check for both possible types
+                import string
+                letters = list(string.ascii_uppercase)  # A through Z
+                numbers = list(range(1, 10))  # 1 through 9
+                
+                attempts = 0
+                while attempts < 100:  # Prevent infinite loop
+                    number = random.choice(numbers)
+                    letter = random.choice(letters)
+                    room_code = f"{number}{letter}"
+                    
+                    if room_code not in used_numbers:
+                        return room_code
+                    attempts += 1
+            elif is_apartment:
                 # For apartments, generate a number between 101 and 999
                 attempts = 0
                 while attempts < 100:  # Prevent infinite loop
@@ -524,10 +581,10 @@ class CmdRent(MuxCommand):
         # Valid room types for residences
         valid_types = [
             "apartment", "house", "splat_housing",
-            "mortal_room", "mortal_plus_room", "possessed_room",
+            "mortal_room", "mortal_plus_room", "mortal+_room", "possessed_room",
             "mage_room", "vampire_room", "changeling_room", 
             "motel_room", "apartment_room", "house_room", "studio",
-            "studio_apartment"
+            "studio apartment", "shifter_room", "companion_room"
         ]
         
         # Check if room type is valid
@@ -718,6 +775,10 @@ class CmdManageHome(MuxCommand):
         +home/keys           - List who has keys to your residence
         +home/status         - Show lock status of your residence
         +home/find           - Show location of your residence
+        +home/unfindable <on/off> - Set whether your residence can be found
+        +home/dig <roomname>[;alias;alias...] [= <exit_to_there>[;alias], <exit_to_here>[;alias]] 
+                            - Create a new room connected to your current room (max 2 extra rooms)
+        +home/destroy [obj, obj2, obj3|here] - Destroy rooms or exits in your residence
         
         +home/desc              - Show current room description
         +home/desc <text>       - Set description for current room
@@ -735,6 +796,20 @@ class CmdManageHome(MuxCommand):
         +home/vacate              - Vacate your residence in current building
         +home/vacate/all         - List all your residences
         +home/vacate <number>    - Vacate specific residence
+
+        +home/view               - List all views in your residence
+        +home/view <viewname>    - Show specific view
+        +home/view set/<viewname>=<text>  - Set a view
+        +home/view del/<viewname>  - Delete a view
+
+    Examples:
+        +home/dig kitchen = north;n, south;s
+        +home/dig bedroom = east;e, west;w
+        +home/dig "Master Bedroom" = up;u, down;d
+        +home/destroy north, south, door
+        +home/destroy here
+        +home/view set/window=Through the window you see a beautiful garden
+        +home/view del/window
     """
     
     key = "+home"
@@ -813,9 +888,10 @@ class CmdManageHome(MuxCommand):
         # Valid room types for residences
         valid_types = [
             "apartment", "house", "splat_housing",
-            "mortal_room", "mortal_plus_room", "possessed_room",
+            "mortal_room", "mortal_plus_room", "mortal+_room", "possessed_room",
             "mage_room", "vampire_room", "changeling_room", 
-            "motel_room", "apartment_room", "house_room"
+            "motel_room", "apartment_room", "house_room", "studio",
+            "studio apartment", "shifter_room", "companion_room"
         ]
         
         # Check if room type is valid
@@ -1301,6 +1377,10 @@ class CmdManageHome(MuxCommand):
 
         # Handle vacate commands
         elif "vacate" in self.switches:
+            # Check if we're in a child room first
+            if hasattr(location.db, 'parent_room') and location.db.parent_room:
+                self.caller.msg("You must be in your main room to vacate your residence.")
+                return
             if "all" in self.switches:
                 # List all residences owned by player
                 residences = []
@@ -1429,6 +1509,435 @@ class CmdManageHome(MuxCommand):
             # Delete the residence
             residence.delete()
             self.caller.msg("You have vacated the residence.")
+
+        elif "unfindable" in self.switches:
+            if not self.is_owner(location, self.caller):
+                self.caller.msg("You don't own this residence.")
+                return
+                
+            if not self.args:
+                self.caller.msg("Usage: +home/unfindable <on/off>")
+                return
+                
+            setting = self.args.strip().lower()
+            if setting not in ["on", "off"]:
+                self.caller.msg("Please specify either 'on' or 'off'.")
+                return
+                
+            location.db.unfindable = (setting == "on")
+            self.caller.msg(f"Your residence is now {'unfindable' if setting == 'on' else 'findable'}.")
+
+        elif "dig" in self.switches:
+            # Check if we're in a valid residence
+            if not self.is_valid_residence(location):
+                self.caller.msg("This command can only be used inside residences.")
+                return
+
+            # Check ownership
+            if not self.is_owner(location, self.caller):
+                self.caller.msg("You don't own this residence.")
+                return
+
+            # Get the main residence room (in case we're in a child room)
+            main_room = None
+            if hasattr(location.db, 'parent_room') and location.db.parent_room:
+                main_room = location.db.parent_room
+            else:
+                main_room = location
+
+            # Check if this is a motel room, splat housing, or studio
+            is_restricted = False
+            # Check room type directly
+            if main_room.db.roomtype in ["Motel Room", "Splat Housing", "Studio", "Studio Apartment", "Mage Room", "Shifter Room", "Vampire Room", "Mortal+ Room", "Mortal Room", "Changeling Room", "Companion Room", "Possessed Room"]:
+                is_restricted = True
+            # Also check available types from housing data
+            elif main_room.db.housing_data and main_room.db.housing_data.get('available_types'):
+                available_types = main_room.db.housing_data.get('available_types', [])
+                if "Splat Housing" in available_types or "Studio" in available_types:
+                    is_restricted = True
+
+            if is_restricted:
+                self.caller.msg(f"{main_room.db.roomtype}s cannot be expanded with additional rooms.")
+                return
+
+            # Initialize child_rooms if needed
+            if not hasattr(main_room.db, 'child_rooms'):
+                main_room.db.child_rooms = []
+            elif main_room.db.child_rooms is None:
+                main_room.db.child_rooms = []
+
+            # Clean up any None values in child_rooms list
+            main_room.db.child_rooms = [room for room in main_room.db.child_rooms if room]
+
+            # Get the residence type and its base number of rooms
+            apt_type = None
+            if main_room.db.housing_data and main_room.db.housing_data.get('available_types'):
+                apt_type = main_room.db.housing_data['available_types'][0]
+
+            if apt_type:
+                from commands.housing import CmdRent
+                # Check residential types first since houses have more rooms
+                base_rooms = CmdRent.RESIDENTIAL_TYPES.get(apt_type, {}).get('rooms', 0)
+                if not base_rooms:
+                    # If not found in residential types, check apartment types
+                    base_rooms = CmdRent.APARTMENT_TYPES.get(apt_type, {}).get('rooms', 1)
+            else:
+                # Default to 1 if no type is found
+                base_rooms = 1
+
+            # Calculate how many additional rooms the player can create
+            # They can create up to 2 rooms beyond their base room count
+            base_child_rooms = max(0, base_rooms - 1)  # Subtract 1 for the main room
+            current_extra_rooms = len([room for room in main_room.db.child_rooms if room]) - base_child_rooms
+            max_extra_rooms = 2  # Maximum number of additional rooms beyond base
+
+            if current_extra_rooms >= max_extra_rooms:
+                self.caller.msg(f"You can only create up to {max_extra_rooms} additional rooms beyond your base {base_rooms} room{'s' if base_rooms > 1 else ''}.")
+                return
+
+            if not self.args:
+                self.caller.msg("Usage: +home/dig <roomname>[;alias;alias...] [= <exit_to_there>[;alias], <exit_to_here>[;alias]]")
+                return
+
+            # Split args into room name and exits
+            if "=" in self.args:
+                roomname, exits = self.args.split("=", 1)
+                exits = exits.strip()
+            else:
+                roomname = self.args
+                exits = None
+
+            # Handle room aliases
+            if ";" in roomname:
+                roomname, *aliases = roomname.split(";")
+            else:
+                aliases = []
+            roomname = roomname.strip()
+
+            # Create the new room with the same typeclass as the main room
+            room_typeclass = main_room.typeclass_path
+            try:
+                # Get the main residence's prefix (address/name)
+                main_prefix = " - ".join(main_room.key.split(" - ")[:-1]) if " - " in main_room.key else main_room.key
+                full_room_name = f"{main_prefix} - {roomname}"
+                
+                new_room = create_object(
+                    room_typeclass,
+                    key=full_room_name,
+                    aliases=aliases,
+                    location=None  # Rooms should have no location
+                )
+                
+                # Set room type based on parent room's base type
+                base_roomtype = main_room.db.roomtype
+                if base_roomtype:
+                    # Handle special cases for splat housing
+                    if "Room" in base_roomtype:
+                        # If it's already a "Room" type (like "Mage Room"), use it as is
+                        new_room.db.roomtype = base_roomtype
+                    else:
+                        # For other types, append "_room" if it's not already there
+                        if not base_roomtype.endswith(" room"):
+                            new_room.db.roomtype = f"{base_roomtype} room"
+                        else:
+                            new_room.db.roomtype = base_roomtype
+                else:
+                    # Fallback to a generic room type
+                    new_room.db.roomtype = "Room"
+                
+                # Copy relevant attributes from main room
+                new_room.db.resources = main_room.db.resources
+                new_room.db.unfindable = main_room.db.unfindable
+                
+                # Set up housing data
+                new_room.db.housing_data = {
+                    'is_housing': True,
+                    'is_residence': True,
+                    'building_zone': main_room.db.housing_data.get('building_zone'),
+                    'owner': self.caller,
+                    'current_tenants': {},
+                    'apartment_numbers': set(),
+                    'required_resources': main_room.db.housing_data.get('required_resources', 0),
+                    'connected_rooms': main_room.db.housing_data.get('connected_rooms', set())
+                }
+                
+                # Set up home data
+                new_room.db.home_data = {
+                    'locked': False,
+                    'keyholders': set(),
+                    'owner': self.caller,
+                    'co_owners': set()
+                }
+                
+                # Set parent room reference
+                new_room.db.parent_room = main_room
+                
+                # Add to child rooms list
+                main_room.db.child_rooms.append(new_room)
+
+                # Handle exit creation if specified
+                if exits:
+                    try:
+                        exit_to_there, exit_to_here = map(str.strip, exits.split(","))
+                    except ValueError:
+                        exit_to_there = exits.strip()
+                        exit_to_here = None
+
+                    # Create exit to the new room
+                    if exit_to_there:
+                        if ";" in exit_to_there:
+                            exit_name, *exit_aliases = exit_to_there.split(";")
+                        else:
+                            exit_name, exit_aliases = exit_to_there, []
+                            
+                        # Create the exit using ApartmentExit typeclass
+                        exit_to = create_object(
+                            "typeclasses.exits.ApartmentExit",
+                            key=exit_name.strip(),
+                            aliases=exit_aliases,
+                            location=location,
+                            destination=new_room
+                        )
+                        exit_to.locks.add("traverse:all()")
+                        exit_to.db.owner = self.caller
+
+                    # Create return exit if specified
+                    if exit_to_here:
+                        if ";" in exit_to_here:
+                            exit_name, *exit_aliases = exit_to_here.split(";")
+                        else:
+                            exit_name, exit_aliases = exit_to_here, []
+                            
+                        # Create the return exit using ApartmentExit typeclass
+                        exit_from = create_object(
+                            "typeclasses.exits.ApartmentExit",
+                            key=exit_name.strip(),
+                            aliases=exit_aliases,
+                            location=new_room,
+                            destination=location
+                        )
+                        exit_from.locks.add("traverse:all()")
+                        exit_from.db.owner = self.caller
+
+                self.caller.msg(f"Created new room '{full_room_name}' with appropriate exits.")
+
+            except Exception as e:
+                self.caller.msg(f"Error creating room: {str(e)}")
+                # Clean up if something went wrong
+                if 'new_room' in locals():
+                    new_room.delete()
+                return
+
+        elif "destroy" in self.switches:
+            # Check if we're in a valid residence
+            if not self.is_valid_residence(location):
+                self.caller.msg("This command can only be used inside residences.")
+                return
+
+            # Get the main residence room (in case we're in a child room)
+            main_room = None
+            if hasattr(location.db, 'parent_room') and location.db.parent_room:
+                main_room = location.db.parent_room
+            else:
+                main_room = location
+
+            # Check ownership of the main residence
+            if not self.is_owner(main_room, self.caller):
+                self.caller.msg("You don't own this residence.")
+                return
+
+            # Handle 'here' case
+            if not self.args or self.args.strip().lower() == "here":
+                # Can't destroy the main room
+                if location == main_room:
+                    self.caller.msg("You cannot destroy your main room. Use +home/vacate to remove your entire residence.")
+                    return
+
+                # Verify this is a child room
+                if location not in main_room.db.child_rooms:
+                    self.caller.msg("This room is not part of your residence.")
+                    return
+
+                # Ask for confirmation
+                self.caller.msg(f"|rAre you sure you want to destroy {location.get_display_name(self.caller)}?|n")
+                self.caller.msg("This will delete the room and all its exits. Type '+home/destroy here/yes' to confirm.")
+                return
+
+            # Handle confirmation for 'here'
+            if self.args.strip().lower() == "here/yes":
+                if location == main_room:
+                    self.caller.msg("You cannot destroy your main room. Use +home/vacate to remove your entire residence.")
+                    return
+
+                if location not in main_room.db.child_rooms:
+                    self.caller.msg("This room is not part of your residence.")
+                    return
+
+                # Move any occupants to the main room
+                for obj in location.contents:
+                    if obj.has_account:
+                        obj.msg("This room is being destroyed. You are being moved out.")
+                        obj.move_to(main_room)
+
+                # Remove from child rooms list
+                if location in main_room.db.child_rooms:
+                    main_room.db.child_rooms.remove(location)
+
+                # Delete all exits in both directions
+                for exit in location.exits:
+                    exit.delete()
+                for exit in main_room.exits:
+                    if hasattr(exit, 'destination') and exit.destination == location:
+                        exit.delete()
+
+                # Delete the room
+                location.delete()
+                self.caller.msg("Room destroyed.")
+                return
+
+            # Handle object list case
+            if "," in self.args:
+                targets = [obj.strip() for obj in self.args.split(",")]
+            else:
+                targets = [self.args.strip()]
+
+            # Process each target
+            for target in targets:
+                obj = self.caller.search(target, location=location)
+                if not obj:
+                    continue
+
+                # Only allow destroying exits and rooms
+                if not (obj.is_typeclass("typeclasses.exits.ApartmentExit") or 
+                       obj.is_typeclass("typeclasses.rooms.Room")):
+                    self.caller.msg(f"You can only destroy exits and rooms, not {obj.get_display_name(self.caller)}.")
+                    continue
+
+                # For rooms, verify it's a child room
+                if obj.is_typeclass("typeclasses.rooms.Room"):
+                    if obj == main_room:
+                        self.caller.msg("You cannot destroy your main room. Use +home/vacate to remove your entire residence.")
+                        continue
+                    if obj not in main_room.db.child_rooms:
+                        self.caller.msg(f"{obj.get_display_name(self.caller)} is not part of your residence.")
+                        continue
+
+                # For exits, verify they're in your residence
+                if obj.is_typeclass("typeclasses.exits.ApartmentExit"):
+                    if not (obj.location == location or 
+                           (obj.destination and obj.destination in main_room.db.child_rooms)):
+                        self.caller.msg(f"{obj.get_display_name(self.caller)} is not part of your residence.")
+                        continue
+
+                # Ask for confirmation
+                self.caller.msg(f"|rAre you sure you want to destroy {obj.get_display_name(self.caller)}?|n")
+                self.caller.msg(f"Type '+home/destroy {target}/yes' to confirm.")
+                continue
+
+            # Handle confirmation for specific objects
+            if self.args.strip().lower().endswith("/yes"):
+                target = self.args[:-4].strip()  # Remove '/yes'
+                obj = self.caller.search(target, location=location)
+                if not obj:
+                    return
+
+                # Verify the same conditions as above
+                if obj.is_typeclass("typeclasses.rooms.Room"):
+                    if obj == main_room:
+                        self.caller.msg("You cannot destroy your main room. Use +home/vacate to remove your entire residence.")
+                        return
+                    if obj not in main_room.db.child_rooms:
+                        self.caller.msg(f"{obj.get_display_name(self.caller)} is not part of your residence.")
+                        return
+
+                    # For rooms, handle occupants and cleanup
+                    for content in obj.contents:
+                        if content.has_account:
+                            content.msg("This room is being destroyed. You are being moved out.")
+                            content.move_to(main_room)
+
+                    # Remove from child rooms list
+                    main_room.db.child_rooms.remove(obj)
+
+                    # Delete all exits in both directions
+                    for exit in obj.exits:
+                        exit.delete()
+                    for exit in location.exits:
+                        if hasattr(exit, 'destination') and exit.destination == obj:
+                            exit.delete()
+
+                elif obj.is_typeclass("typeclasses.exits.ApartmentExit"):
+                    if not (obj.location == location or 
+                           (obj.destination and obj.destination in main_room.db.child_rooms)):
+                        self.caller.msg(f"{obj.get_display_name(self.caller)} is not part of your residence.")
+                        return
+
+                    # For exits, also delete the return exit if it exists
+                    if obj.destination:
+                        for exit in obj.destination.exits:
+                            if exit.destination == obj.location:
+                                exit.delete()
+
+                # Delete the object
+                obj.delete()
+                self.caller.msg(f"{target} destroyed.")
+
+        elif "view" in self.switches:
+            # Check if we're in a valid residence
+            if not self.is_valid_residence(location):
+                self.caller.msg("This command can only be used inside residences.")
+                return
+
+            # Check ownership
+            if not self.is_owner(location, self.caller):
+                self.caller.msg("You don't own this residence.")
+                return
+
+            # Initialize views dict if it doesn't exist
+            if not hasattr(location.db, 'views') or location.db.views is None:
+                location.db.views = {}
+
+            # Handle setting a view
+            if "set" in self.switches or "view/set" in self.switches:
+                if not self.args or "=" not in self.args:
+                    self.caller.msg("Usage: +home/view/set <viewname>=<text>")
+                    return
+
+                try:
+                    viewname, text = self.args.split("=", 1)
+                    viewname = viewname.strip()
+                    text = text.strip()
+                except ValueError:
+                    self.caller.msg("Usage: +home/view/set <viewname>=<text>")
+                    return
+
+                # Additional validation
+                if not viewname or not text:
+                    self.caller.msg("You must provide both a view name and description.")
+                    return
+
+                location.db.views[viewname] = text
+                self.caller.msg(f"Added view '{viewname}' to your residence.")
+                return
+
+            # Handle deleting a view
+            elif "del" in self.switches or "view/del" in self.switches:
+                if not self.args:
+                    self.caller.msg("Usage: +home/view/del <viewname>")
+                    return
+
+                viewname = self.args.strip()
+                if viewname in location.db.views:
+                    del location.db.views[viewname]
+                    self.caller.msg(f"Removed view '{viewname}' from your residence.")
+                else:
+                    self.caller.msg(f"No view named '{viewname}' found in your residence.")
+                return
+
+            # If no valid switch, show usage
+            self.caller.msg("Usage: +home/view/set <viewname>=<text> or +home/view/del <viewname>")
+            self.caller.msg("Use +view to look at views.")
+            return
 
 class CmdSetLock(MuxCommand):
     """

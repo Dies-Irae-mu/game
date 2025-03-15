@@ -1259,41 +1259,85 @@ class Character(DefaultCharacter):
 
     def start_scene(self):
         """Start tracking a new scene."""
-        now = datetime.now()
-        self.db.scene_data['current_scene'] = now
-        self.db.scene_data['scene_location'] = self.location
-        self.db.scene_data['last_activity'] = now
+        try:
+            now = datetime.now()
+            
+            # Use a transaction to ensure atomic operation
+            with transaction.atomic():
+                scene_data = self.db.scene_data
+                if not scene_data or not isinstance(scene_data, dict):
+                    scene_data = {
+                        'current_scene': None,
+                        'scene_location': None,
+                        'last_activity': None,
+                        'completed_scenes': 0,
+                        'last_weekly_reset': now
+                    }
+                
+                scene_data.update({
+                    'current_scene': now,
+                    'scene_location': self.location,
+                    'last_activity': now
+                })
+                
+                self.db.scene_data = scene_data
+                
+        except Exception as e:
+            logger.log_err(f"Error in start_scene for {self.key}: {str(e)}")
 
     def end_scene(self):
         """End current scene and check if it counts."""
-        
-        if not self.db.scene_data['current_scene']:
-            self.msg("|rNo current scene to end.|n")
-            return False
+        try:
+            if not self.location or not hasattr(self.location.db, 'scene_data'):
+                return False
 
-        now = datetime.now()
-        scene_start = self.db.scene_data['current_scene']
-        last_activity = self.db.scene_data['last_activity']
-
-        # Check if scene meets duration requirement (20 minutes)
-        duration = (now - scene_start).total_seconds() / 60
-
-        if duration >= 20:  # Scene must be 20+ mins
-            self.db.scene_data['completed_scenes'] += 1
-            self.msg(f"|gScene completed and counted! Total completed scenes: {self.db.scene_data['completed_scenes']}|n")
-        else:
-            self.msg(f"|rScene too short to count ({int(duration)} minutes - needs 20+)|n")
+            now = datetime.now()
+            room_scene = self.location.db.scene_data
             
-        # Reset scene tracking
-        self.db.scene_data['current_scene'] = None
-        self.db.scene_data['scene_location'] = None
-        self.db.scene_data['last_activity'] = None
+            if not room_scene or not room_scene.get('start_time'):
+                return False
 
-        return True
+            # Calculate duration in minutes
+            scene_start = room_scene['start_time']
+            if isinstance(scene_start, str):
+                scene_start = datetime.fromisoformat(scene_start)
+
+            duration = (now - scene_start).total_seconds() / 60
+
+            # Remove this character from participants
+            if isinstance(room_scene.get('participants'), set):
+                room_scene['participants'].discard(self.key)
+                self.location.db.scene_data = room_scene
+
+            # If this was a valid scene (20+ mins), increment completed scenes
+            if duration >= 20 and hasattr(self.db, 'scene_data'):
+                self.db.scene_data['completed_scenes'] = self.db.scene_data.get('completed_scenes', 0) + 1
+                logger.log_info(f"{self.key}: Scene completed ({int(duration)} minutes). Total completed: {self.db.scene_data['completed_scenes']}")
+            else:
+                logger.log_info(f"{self.key}: Scene ended but too short to count ({int(duration)} minutes)")
+
+            # Reset character's scene tracking
+            if hasattr(self.db, 'scene_data'):
+                self.db.scene_data.update({
+                    'current_scene': None,
+                    'scene_location': None,
+                    'last_activity': None
+                })
+
+            return True
+            
+        except Exception as e:
+            logger.log_err(f"Error in end_scene for {self.key}: {str(e)}")
+            return False
 
     def check_scene_status(self):
         """Check if we should start/continue/end a scene."""
         try:
+            # Store current scene data before any modifications
+            current_scene_data = None
+            if hasattr(self.db, 'scene_data') and isinstance(self.db.scene_data, dict):
+                current_scene_data = dict(self.db.scene_data)
+
             # Ensure scene_data exists and is a dictionary
             if not hasattr(self.db, 'scene_data') or not isinstance(self.db.scene_data, dict):
                 self.db.scene_data = {
@@ -1325,6 +1369,7 @@ class Character(DefaultCharacter):
                         self.db.scene_data['completed_scenes'] = 0
                         self.db.scene_data['last_weekly_reset'] = now
             except (TypeError, AttributeError) as e:
+                logger.log_err(f"Error handling weekly reset for {self.key}: {str(e)}")
                 # If any error occurs during datetime handling, reset the data
                 self.db.scene_data['last_weekly_reset'] = now
                 self.db.scene_data['completed_scenes'] = 0
@@ -1360,53 +1405,176 @@ class Character(DefaultCharacter):
 
     def is_valid_scene_location(self):
         """Check if current location is valid for scene tracking."""
-        if not self.location:
-            return False
+        try:
+            if not self.location:
+                return False
+                
+            # Must be IC room
+            if (hasattr(self.location, 'db') and 
+                getattr(self.location.db, 'roomtype', None) == 'OOC Area'):
+                return False
+                
+            # Must have other players present in the same realm
+            other_players = [
+                obj for obj in self.location.contents 
+                if (obj != self and 
+                    hasattr(obj, 'has_account') and 
+                    obj.has_account and
+                    obj.db.in_umbra == self.db.in_umbra)
+            ]
             
-        # Must be IC room
-        if (hasattr(self.location, 'db') and 
-            getattr(self.location.db, 'roomtype', None) == 'OOC Area'):
-            return False
+            # Check if there's an active scene with participants
+            if hasattr(self.location.db, 'scene_data'):
+                scene_data = self.location.db.scene_data
+                if scene_data and isinstance(scene_data.get('participants'), set):
+                    active_participants = [
+                        obj for obj in self.location.contents
+                        if obj.key in scene_data['participants'] and
+                        obj.db.in_umbra == self.db.in_umbra
+                    ]
+                    if active_participants:
+                        return True
             
-        # Must have other players present
-        other_players = [
-            obj for obj in self.location.contents 
-            if (obj != self and 
-                hasattr(obj, 'has_account') and 
-                obj.has_account and
-                obj.db.in_umbra == self.db.in_umbra)  # Must be in same realm
-        ]
-        
-        valid = len(other_players) > 0
+            return len(other_players) > 0
+
+        except Exception as e:
+            logger.log_err(f"Error in is_valid_scene_location for {self.key}: {str(e)}")
+            return False
 
     def record_scene_activity(self):
         """Record activity in current scene."""
         try:
+            if not self.location:
+                logger.log_info(f"{self.key}: record_scene_activity called with no location")
+                return
+
+            # Check if this is an IC scene
+            if (getattr(self.location.db, 'roomtype', None) == 'OOC Area'):
+                logger.log_info(f"{self.key}: record_scene_activity called in OOC Area")
+                return
+
             now = datetime.now()
 
-            # Initialize scene_data if it doesn't exist or isn't a dictionary
+            # Handle room's scene data
+            if not hasattr(self.location.db, 'scene_data'):
+                logger.log_info(f"{self.key}: Room has no scene data, initializing")
+                self.location.db.scene_data = {
+                    'start_time': now,
+                    'participants': set(),
+                    'last_activity': now,
+                    'completed': False
+                }
+            elif not isinstance(self.location.db.scene_data, dict):
+                # Convert non-dict scene_data to proper format
+                old_data = self.location.db.scene_data
+                self.location.db.scene_data = {
+                    'start_time': now,
+                    'participants': set(),
+                    'last_activity': now,
+                    'completed': False
+                }
+            else:
+                # Check for scene inactivity
+                last_activity = self.location.db.scene_data.get('last_activity')
+                if last_activity:
+                    if isinstance(last_activity, str):
+                        last_activity = datetime.fromisoformat(last_activity)
+                    inactivity_time = (now - last_activity).total_seconds() / 3600  # Convert to hours
+                    
+                    # If more than 2 hours of inactivity, start a new scene
+                    if inactivity_time > 2:
+                        logger.log_info(f"{self.key}: Scene inactive for {inactivity_time:.1f} hours, starting new scene")
+                        self.location.db.scene_data.update({
+                            'start_time': now,
+                            'participants': set(),
+                            'last_activity': now,
+                            'completed': False
+                        })
+
+            # Initialize character's scene tracking if needed
             if not hasattr(self.db, 'scene_data') or not isinstance(self.db.scene_data, dict):
+                logger.log_info(f"{self.key}: Initializing character scene data")
                 self.db.scene_data = {
                     'current_scene': None,
                     'scene_location': None,
                     'last_activity': None,
                     'completed_scenes': 0,
-                    'last_weekly_reset': datetime.now()
+                    'last_weekly_reset': now
                 }
 
-            self.check_scene_status()
-            if isinstance(self.db.scene_data, dict) and self.db.scene_data.get('current_scene'):
-                self.db.scene_data['last_activity'] = now
+            # Initialize participants as a set if needed
+            if not isinstance(self.location.db.scene_data.get('participants'), set):
+                logger.log_info(f"{self.key}: Converting participants to set")
+                self.location.db.scene_data['participants'] = set()
+
+            # Update participants list - only add active participants
+            active_participants = set()
+            for obj in self.location.contents:
+                if (hasattr(obj, 'has_account') and obj.has_account and 
+                    obj.db.in_umbra == self.db.in_umbra):
+                    active_participants.add(obj.key)
+                    logger.log_info(f"{self.key}: Added {obj.key} to scene participants")
+
+            # Remove any participants no longer in the room
+            self.location.db.scene_data['participants'] = active_participants
+
+            # Update room's last activity time
+            self.location.db.scene_data['last_activity'] = now
+
+            # Only start a new scene if there isn't one already
+            if not self.location.db.scene_data.get('start_time'):
+                logger.log_info(f"{self.key}: Starting new scene in room")
+                self.location.db.scene_data['start_time'] = now
+
+            # Update character's scene data - preserve completed_scenes and last_weekly_reset
+            completed_scenes = self.db.scene_data.get('completed_scenes', 0)
+            last_weekly_reset = self.db.scene_data.get('last_weekly_reset', now)
+            
+            self.db.scene_data.update({
+                'current_scene': self.location.db.scene_data['start_time'],  # Use room's start time
+                'scene_location': self.location,
+                'last_activity': now,
+                'completed_scenes': completed_scenes,
+                'last_weekly_reset': last_weekly_reset
+            })
+
+            # Handle XP tracking
+            if not hasattr(self.db, 'xp'):
+                logger.log_info(f"{self.key}: Initializing XP data")
+                self.db.xp = {
+                    'total': Decimal('0.00'),
+                    'current': Decimal('0.00'),
+                    'spent': Decimal('0.00'),
+                    'ic_xp': Decimal('0.00'),
+                    'monthly_spent': Decimal('0.00'),
+                    'last_reset': now,
+                    'spends': [],
+                    'last_scene': None,
+                    'scenes_this_week': 0
+                }
+
+            # Only update scene participation if enough time has passed
+            last_scene = self.db.xp.get('last_scene')
+            if not last_scene:
+                logger.log_info(f"{self.key}: First scene participation recorded")
+                self.db.xp['last_scene'] = now.isoformat()
+                self.db.xp['scenes_this_week'] = self.db.xp.get('scenes_this_week', 0) + 1
+            elif isinstance(last_scene, str):
+                last_scene_time = datetime.fromisoformat(last_scene)
+                time_diff = (now - last_scene_time).total_seconds()
+                logger.log_info(f"{self.key}: Time since last scene: {time_diff} seconds")
+                if time_diff > 1200:  # 20 minutes
+                    logger.log_info(f"{self.key}: Recording new scene participation")
+                    self.db.xp['last_scene'] = now.isoformat()
+                    self.db.xp['scenes_this_week'] = self.db.xp.get('scenes_this_week', 0) + 1
+
+            # Add debug logging for final state
+            logger.log_info(f"{self.key}: Final room scene data: {self.location.db.scene_data}")
+            logger.log_info(f"{self.key}: Final character scene data: {self.db.scene_data}")
+            logger.log_info(f"{self.key}: Final XP data: {self.db.xp}")
+
         except Exception as e:
-            # Log the error and reset to a known good state
             logger.log_err(f"Error in record_scene_activity for {self.key}: {str(e)}")
-            self.db.scene_data = {
-                'current_scene': None,
-                'scene_location': None,
-                'last_activity': None,
-                'completed_scenes': 0,
-                'last_weekly_reset': datetime.now()
-            }
 
     def at_say(self, message, msg_self=None, msg_location=None, receivers=None, msg_receivers=None, **kwargs):
         """Hook method for the say command."""
@@ -1430,11 +1598,18 @@ class Character(DefaultCharacter):
         super().at_init()
         
         try:
-            # Initialize scene_data if it doesn't exist
+            # Only initialize scene_data if it doesn't exist at all
             if not hasattr(self.db, 'scene_data'):
-                # Ensure we're in a transaction
+                logger.log_info(f"{self.key}: No scene_data found, initializing")
                 with transaction.atomic():
                     self.init_scene_data()
+            elif not isinstance(self.db.scene_data, dict):
+                logger.log_info(f"{self.key}: Invalid scene_data format, reinitializing")
+                with transaction.atomic():
+                    self.init_scene_data()
+            else:
+                # Preserve existing scene data
+                logger.log_info(f"{self.key}: Preserving existing scene data: {self.db.scene_data}")
 
             # Initialize stats if they don't exist
             if not self.db.stats:
@@ -1463,27 +1638,47 @@ class Character(DefaultCharacter):
                 self.msg("|rError during character initialization. Please contact staff.|n")
 
     def init_scene_data(self):
-        """Force initialize scene data."""
-        # Ensure we're working with a fresh instance from the database
-        self.refresh_from_db()
-        
-        # Create the scene data dictionary
-        scene_data = {
-            'current_scene': None,
-            'scene_location': None,
-            'last_activity': None,
-            'completed_scenes': 0,
-            'last_weekly_reset': datetime.now()
-        }
-        
+        """Initialize scene data structure."""
         try:
-            # Use the attribute API directly instead of db shortcut
-            self.attributes.add('scene_data', scene_data)
-            self.msg("|wScene data initialized.|n")
+            now = datetime.now()
+            
+            # Use a transaction to ensure atomic operation
+            with transaction.atomic():
+                # Add debug logging for initialization trigger
+                logger.log_info(f"{self.key}: init_scene_data called")
+                
+                # If scene_data exists and is valid, preserve it
+                if hasattr(self.db, 'scene_data') and isinstance(self.db.scene_data, dict):
+                    existing_data = self.db.scene_data
+                    # Only update if missing required fields
+                    if not all(key in existing_data for key in ['current_scene', 'scene_location', 'last_activity', 'completed_scenes', 'last_weekly_reset']):
+                        missing_fields = {
+                            'current_scene': existing_data.get('current_scene'),
+                            'scene_location': existing_data.get('scene_location'),
+                            'last_activity': existing_data.get('last_activity'),
+                            'completed_scenes': existing_data.get('completed_scenes', 0),
+                            'last_weekly_reset': existing_data.get('last_weekly_reset', now)
+                        }
+                        self.db.scene_data.update(missing_fields)
+                        logger.log_info(f"{self.key}: Updated missing scene data fields: {missing_fields}")
+                    else:
+                        logger.log_info(f"{self.key}: Scene data already valid, preserving: {self.db.scene_data}")
+                        return self.db.scene_data
+                else:
+                    # Initialize new scene data if none exists
+                    self.db.scene_data = {
+                        'current_scene': None,
+                        'scene_location': None,
+                        'last_activity': None,
+                        'completed_scenes': 0,
+                        'last_weekly_reset': now
+                    }
+                    logger.log_info(f"{self.key}: Scene data initialized with {self.db.scene_data}")
+                return self.db.scene_data
+            
         except Exception as e:
-            # Log the error and provide feedback
-            logger.log_err(f"Error initializing scene data for {self}: {e}")
-            self.msg("|rError initializing scene data. Please contact staff.|n")
+            logger.log_err(f"Error initializing scene data for {self.key}: {str(e)}")
+            return None
 
     def calculate_xp_cost(self, stat_name, new_rating, category=None, subcategory=None, current_rating=None):
         """Calculate XP cost for increasing a stat."""

@@ -122,12 +122,7 @@ class CmdEmit(PoseBreakMixin, default_cmds.MuxCommand):
                     # No language-tagged content, send as is
                     receiver.msg(processed_args)
 
-        # Add this at the end of the func method
-        try:
-            self.caller.record_scene_activity()
-        except KeyError:
-            # Initialize scene data if it doesn't exist
-            if not self.caller.db.scene_data:
-                self.caller.db.scene_data = {}
-            self.caller.db.scene_data['last_weekly_reset'] = None
-            self.caller.record_scene_activity()
+        # Record scene activity, initializing if needed
+        if not hasattr(caller.db, 'scene_data') or not isinstance(caller.db.scene_data, dict):
+            caller.init_scene_data()
+        caller.record_scene_activity()
