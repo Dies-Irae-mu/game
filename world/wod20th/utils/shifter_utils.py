@@ -1136,47 +1136,55 @@ def validate_shifter_aspect(shifter_type: str, value: str) -> tuple[bool, str, s
     # If no match found, return full list of valid aspects
     return False, f"Invalid aspect for {shifter_type}. Valid aspects are: {', '.join(sorted(valid_aspects))}", None
 
-def validate_shifter_gift(character, gift_name: str, value: str) -> tuple[bool, str, str]:
-    """Validate a shifter gift."""
-    # Import Stat here to avoid circular import
+def validate_shifter_gift(character, gift_name, gift_value):
+    """Validate a gift for a shifter character."""
     from world.wod20th.models import Stat
-    
-    # Get character's type and other relevant attributes
-    shifter_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
-    if not shifter_type:
-        return False, "Character must have a shifter type set", None
-        
-    # Validate value first
-    try:
-        gift_value = int(value)
-        if gift_value < 0 or gift_value > 5:
-            return False, "Gift values must be between 0 and 5", None
-    except ValueError:
-        return False, "Gift values must be numbers", None
-    
-    # Check if the gift exists in the database
+    from django.db.models import Q
+
+    # First, try to find the gift in the database
     gift = Stat.objects.filter(
-        name__iexact=gift_name,
+        Q(name__iexact=gift_name) | Q(gift_alias__icontains=gift_name),
         category='powers',
         stat_type='gift'
     ).first()
-    
+
     if not gift:
-        return False, f"'{gift_name}' is not a valid gift", None
-        
-    # If the gift exists but has a specific shifter_type requirement,
-    # validate that the character can use it
-    if gift.shifter_type:
-        allowed_types = []
-        if isinstance(gift.shifter_type, list):
-            allowed_types = [t.lower() for t in gift.shifter_type]
-        else:
-            allowed_types = [gift.shifter_type.lower()]
-            
-        if shifter_type.lower() not in allowed_types:
-            return False, f"The gift '{gift.name}' is not available to {shifter_type}. Available to: {', '.join(t.title() for t in allowed_types)}", None
-        
-    return True, "", str(gift_value)
+        return False, f"Gift '{gift_name}' not found in database", None
+
+    # Get the canonical name from the database
+    canonical_name = gift.name
+
+    # Check if character can use gifts
+    splat = character.get_stat('other', 'splat', 'Splat', temp=False)
+    char_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+    can_use_gifts = (
+        splat == 'Shifter' or 
+        splat == 'Possessed' or 
+        (splat == 'Mortal+' and char_type == 'Kinfolk')
+    )
+
+    if not can_use_gifts:
+        return False, "Character cannot use gifts", None
+
+    # Check if the gift is available to the character's shifter type
+    shifter_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+    if shifter_type and gift.shifter_type:
+        allowed_types = gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type]
+        if shifter_type.lower() not in [t.lower() for t in allowed_types]:
+            return False, f"The gift '{gift.name}' is not available to {shifter_type}", None
+
+    # Validate gift value
+    try:
+        gift_value = int(gift_value)
+        if gift_value < 0:
+            return False, "Gift value cannot be negative", None
+        if gift_value > 5:
+            return False, "Gift value cannot be greater than 5", None
+    except ValueError:
+        return False, "Gift value must be a number", None
+
+    # Return success with the canonical name
+    return True, None, canonical_name
 
 def validate_shifter_backgrounds(character, background_name: str, value: str) -> tuple[bool, str, str]:
     """Validate shifter backgrounds."""

@@ -18,6 +18,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db import transaction
 from django.db import transaction
+from django.db.models import Q
 
 class Character(DefaultCharacter):
     """
@@ -808,11 +809,6 @@ class Character(DefaultCharacter):
             if not hasattr(self, 'db') or not hasattr(self.db, 'stats'):
                 self.db.stats = {}
 
-            # Handle attributes by using their category as the stat_type
-            if stat_type == 'attributes':
-                stat_type = category  # Use physical/social/mental as the stat_type
-                category = 'attributes'  # Set category to 'attributes'
-
             # Handle secondary abilities similar to attributes
             if stat_type == 'secondary_abilities':
                 if category in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
@@ -859,15 +855,21 @@ class Character(DefaultCharacter):
                                     self.db.stats['secondary_abilities'][subcat][k]['perm' if not temp else 'temp'] = value
                                     return
 
+            # Initialize the stat_type if it doesn't exist
             if stat_type not in self.db.stats:
                 self.db.stats[stat_type] = {}
+
+            # Initialize the category if it doesn't exist
             if category not in self.db.stats[stat_type]:
                 self.db.stats[stat_type][category] = {}
+
+            # Initialize the stat if it doesn't exist
             if stat_name not in self.db.stats[stat_type][category]:
                 self.db.stats[stat_type][category][stat_name] = {'perm': 0, 'temp': 0}
 
             # Set the stat value
             self.db.stats[stat_type][category][stat_name]['temp' if temp else 'perm'] = value
+
         except Exception as e:
             self.msg(f"|rError processing stat value: {str(e)}|n")
             return
@@ -1691,6 +1693,7 @@ class Character(DefaultCharacter):
         # Get character's splat and type
         splat = self.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
         mortal_type = self.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+        logger.log_info(f"Calculating XP cost for {stat_name} - Splat: {splat}, Type: {mortal_type}")
 
         # Special handling for Time based on splat
         if stat_name == 'Time':
@@ -1729,6 +1732,118 @@ class Character(DefaultCharacter):
         # Initialize cost and requires_approval
         total_cost = 0
         requires_approval = False
+
+        # Special handling for gifts
+        if category == 'powers' and subcategory == 'gift':
+            from world.wod20th.models import Stat
+            from django.db.models import Q
+            logger.log_info("Processing gift cost calculation")
+            
+            # Search for the gift in the database
+            search_name = stat_name.lower().strip()
+            logger.log_info(f"Searching for gift with name: {search_name}")
+            
+            # First try exact name match
+            found_gift = Stat.objects.filter(
+                Q(name__iexact=search_name),
+                category='powers',
+                stat_type='gift'
+            ).first()
+            
+            # If not found by name, try aliases
+            if not found_gift:
+                all_gifts = Stat.objects.filter(
+                    category='powers',
+                    stat_type='gift'
+                )
+                for gift in all_gifts:
+                    if gift.gift_alias and any(alias.lower() == search_name for alias in gift.gift_alias):
+                        found_gift = gift
+                        break
+
+            if found_gift:
+                logger.log_info(f"Found gift: {found_gift.name}")
+                # Calculate cost based on character type
+                if splat == 'Mortal+' and mortal_type == 'Kinfolk':
+                    logger.log_info("Calculating cost for Kinfolk")
+                    # Check if it's a breed gift (homid) or tribal gift
+                    is_homid = False
+                    is_tribal = False
+                    
+                    # Check if it's a homid gift
+                    if found_gift.shifter_type:
+                        allowed_types = found_gift.shifter_type if isinstance(found_gift.shifter_type, list) else [found_gift.shifter_type]
+                        is_homid = 'homid' in [t.lower() for t in allowed_types]
+                        logger.log_info(f"Checking homid gift - allowed_types: {allowed_types}, is_homid: {is_homid}")
+                    
+                    # Check if it's a tribal gift
+                    if found_gift.tribe:
+                        kinfolk_tribe = self.get_stat('identity', 'lineage', 'Tribe', temp=False)
+                        if kinfolk_tribe:
+                            allowed_tribes = found_gift.tribe if isinstance(found_gift.tribe, list) else [found_gift.tribe]
+                            is_tribal = kinfolk_tribe.lower() in [t.lower() for t in allowed_tribes]
+                            logger.log_info(f"Checking tribal gift - kinfolk_tribe: {kinfolk_tribe}, allowed_tribes: {allowed_tribes}, is_tribal: {is_tribal}")
+                    
+                    # Calculate cost based on gift type
+                    if is_homid or is_tribal:
+                        total_cost = new_rating * 6  # Breed/Tribe gifts cost 6 XP per level
+                    else:
+                        total_cost = new_rating * 10  # Outside Breed/Tribe gifts cost 10 XP per level
+                    logger.log_info(f"Kinfolk cost calculation - total_cost: {total_cost}")
+                elif splat == 'Shifter' and mortal_type == 'Garou':
+                    # For Garou, calculate cost based on gift type
+                    logger.log_info("Calculating cost for Garou")
+                    # Get character's breed, auspice, and tribe
+                    breed = self.get_stat('identity', 'lineage', 'Breed', temp=False)
+                    auspice = self.get_stat('identity', 'lineage', 'Auspice', temp=False)
+                    tribe = self.get_stat('identity', 'lineage', 'Tribe', temp=False)
+                    logger.log_info(f"Character details - Breed: {breed}, Auspice: {auspice}, Tribe: {tribe}")
+                    
+                    # Check if it's a breed, auspice, or tribe gift
+                    is_breed_gift = False
+                    is_auspice_gift = False
+                    is_tribe_gift = False
+                    is_special = False
+                    
+                    # Check breed gifts
+                    if found_gift.shifter_type:
+                        allowed_types = found_gift.shifter_type if isinstance(found_gift.shifter_type, list) else [found_gift.shifter_type]
+                        is_breed_gift = breed and breed.lower() in [t.lower() for t in allowed_types]
+                        logger.log_info(f"Checking breed gift - allowed_types: {allowed_types}, is_breed_gift: {is_breed_gift}")
+                    
+                    # Check auspice gifts
+                    if found_gift.auspice:
+                        allowed_auspices = found_gift.auspice if isinstance(found_gift.auspice, list) else [found_gift.auspice]
+                        is_auspice_gift = auspice and auspice.lower() in [a.lower() for a in allowed_auspices]
+                        logger.log_info(f"Checking auspice gift - allowed_auspices: {allowed_auspices}, is_auspice_gift: {is_auspice_gift}")
+                    
+                    # Check tribe gifts and special gifts
+                    if found_gift.tribe:
+                        tribes = found_gift.tribe if isinstance(found_gift.tribe, list) else [found_gift.tribe]
+                        is_tribe_gift = tribe and tribe.lower() in [t.lower() for t in tribes]
+                        is_special = any(t.lower() in ['croatan', 'planetary'] for t in tribes)
+                        logger.log_info(f"Checking tribe gift - tribes: {tribes}, is_tribe_gift: {is_tribe_gift}, is_special: {is_special}")
+                    
+                    # Calculate cost based on gift type
+                    if is_special:
+                        total_cost = new_rating * 7  # Croatan/Planetary gifts cost 7 XP per level
+                    elif is_breed_gift or is_auspice_gift or is_tribe_gift:
+                        total_cost = new_rating * 3  # Breed/Auspice/Tribe gifts cost 3 XP per level
+                    else:
+                        total_cost = new_rating * 5  # Other gifts cost 5 XP per level
+                    logger.log_info(f"Garou cost calculation - total_cost: {total_cost}")
+                else:
+                    # For all other shifter types (Ajaba, Bastet, etc.), use simplified cost
+                    logger.log_info(f"Calculating cost for non-Garou shifter: {mortal_type}")
+                    total_cost = new_rating * 3  # All gifts cost 3 XP per level
+                    logger.log_info(f"Non-Garou cost calculation - total_cost: {total_cost}")
+                
+                requires_approval = new_rating > 2  # Gifts above level 2 require staff approval
+                logger.log_info(f"Final cost calculation - total_cost: {total_cost}, requires_approval: {requires_approval}")
+                return (total_cost, requires_approval)
+            else:
+                logger.log_info(f"Gift '{stat_name}' not found in database")
+                return (0, False)
 
         # Calculate cost for each dot being purchased
         for rating in range(current_rating + 1, new_rating + 1):
@@ -2069,11 +2184,15 @@ class Character(DefaultCharacter):
     def buy_stat(self, stat_name, new_rating, category=None, subcategory=None, reason="", current_rating=None):
         """Buy or increase a stat with XP."""
         try:
+            # Add debug logging
+            logger.log_info(f"Starting buy_stat for {stat_name} with new_rating {new_rating}, category {category}, subcategory {subcategory}")
+            
             # Preserve original case of stat_name
             original_stat_name = stat_name
             
             # Fix any power issues before proceeding
             if category == 'powers':
+                logger.log_info("Fixing powers structure")
                 self.fix_powers()
                 # After fixing, ensure we're using the correct subcategory
                 if subcategory in ['spheres', 'arts', 'realms', 'disciplines', 'gifts', 'charms', 'blessings', 'rituals', 'sorceries', 'advantages']:
@@ -2081,17 +2200,43 @@ class Character(DefaultCharacter):
                     subcategory = subcategory.rstrip('s')
                     if subcategory == 'advantage':
                         subcategory = 'special_advantage'
+                logger.log_info(f"After fixing powers, subcategory is {subcategory}")
 
-            # For secondary abilities, ensure proper case
-            if category == 'secondary_abilities':
-                stat_name = ' '.join(word.title() for word in stat_name.split())
+            # For gifts and secondary abilities, ensure proper case while preserving apostrophes
+            if category == 'powers' and subcategory == 'gift':
+                # Get the canonical name from the database
+                from world.wod20th.models import Stat
+                gift = Stat.objects.filter(
+                    Q(name__iexact=stat_name) |
+                    Q(gift_alias__icontains=stat_name),
+                    category='powers',
+                    stat_type='gift'
+                ).first()
+                
+                if gift:
+                    stat_name = gift.name  # Use the canonical name from the database
+                    original_stat_name = gift.name  # Update original_stat_name to match
+                    logger.log_info(f"Using canonical gift name from database: {stat_name}")
+            elif category == 'secondary_abilities':
+                # Split by apostrophe to preserve possessive case
+                parts = stat_name.split("'")
+                titled_parts = []
+                for i, part in enumerate(parts):
+                    if i == 0 or not part.startswith('s '):  # Don't title case 's ' after apostrophe
+                        titled_parts.append(' '.join(word.title() for word in part.split()))
+                    else:
+                        titled_parts.append(part)  # Keep original case for 's ' parts
+                stat_name = "'".join(titled_parts)
                 original_stat_name = stat_name  # Update original_stat_name to match proper case
+                logger.log_info(f"Adjusted stat_name for secondary ability: {stat_name}")
 
             # Ensure proper structure exists
+            logger.log_info("Ensuring stat structure exists")
             self.ensure_stat_structure(category, subcategory)
             
             # Get character's splat
             splat = self.get_stat('other', 'splat', 'Splat', temp=False)
+            logger.log_info(f"Character splat: {splat}")
             if not splat:
                 return False, "Character splat not set"
 
@@ -2105,37 +2250,46 @@ class Character(DefaultCharacter):
                     # Get character's shifter type
                     shifter_type = self.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '').lower()
                     
-                    # Query form by both name and shifter type
-                    form = ShapeshifterForm.objects.get(
+                    # Query form by exact name and shifter type
+                    form = ShapeshifterForm.objects.filter(
                         name__iexact=current_form,
-                        shifter_type=shifter_type
-                    )
-                    form_modifier = form.stat_modifiers.get(stat_name.lower(), 0)
+                        shifter_type__iexact=shifter_type
+                    ).first()
                     
-                    # Special handling for stats that should be set to 0 in certain forms
-                    zero_appearance_forms = [
-                        'crinos',      # All shapeshifters
-                        'anthros',     # Ajaba war form
-                        'arthren',     # Gurahl war form
-                        'sokto',       # Bastet war form
-                        'chatro'       # Bastet battle form
-                    ]
-                    if (stat_name.lower() == 'appearance' and 
-                        current_form.lower() in zero_appearance_forms):
-                        form_modifier = -999  # Force to 0
-                    elif (stat_name.lower() == 'manipulation' and 
-                          current_form.lower() == 'crinos'):
-                        form_modifier = -2  # Crinos form penalty
+                    if form:
+                        form_modifier = form.stat_modifiers.get(stat_name.lower(), 0)
+                        
+                        # Special handling for stats that should be set to 0 in certain forms
+                        zero_appearance_forms = [
+                            'crinos',      # All shapeshifters
+                            'anthros',     # Ajaba war form
+                            'arthren',     # Gurahl war form
+                            'sokto',       # Bastet war form
+                            'chatro'       # Bastet battle form
+                        ]
+                        if (stat_name.lower() == 'appearance' and 
+                            current_form.lower() in zero_appearance_forms):
+                            form_modifier = -999  # Force to 0
+                        elif (stat_name.lower() == 'manipulation' and 
+                              current_form.lower() == 'crinos'):
+                            form_modifier = -2  # Crinos form penalty
                     
-                except (ShapeshifterForm.DoesNotExist, AttributeError) as e:
-                    print(f"DEBUG: Form lookup error - {str(e)}")
+                except Exception as e:
+                    logger.log_err(f"Error getting form modifiers: {str(e)}")
                     form_modifier = 0
 
             # If current_rating wasn't provided, get it
             if current_rating is None:
-                current_rating = self.get_stat(category, subcategory, stat_name, temp=False) or 0
+                if category == 'powers' and subcategory == 'discipline':
+                    current_rating = self.db.stats.get('powers', {}).get('discipline', {}).get(stat_name, {}).get('perm', 0)
+                elif category == 'powers':
+                    current_rating = self.db.stats.get('powers', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
+                else:
+                    current_rating = self.get_stat(category, subcategory, stat_name) or 0
+            logger.log_info(f"Current rating: {current_rating}")
 
             # Calculate cost
+            logger.log_info("Calculating XP cost")
             cost, requires_approval = self.calculate_xp_cost(
                 stat_name=stat_name,
                 new_rating=new_rating,
@@ -2143,33 +2297,40 @@ class Character(DefaultCharacter):
                 subcategory=subcategory,
                 current_rating=current_rating
             )
+            logger.log_info(f"Calculated cost: {cost}, requires_approval: {requires_approval}")
 
             if cost == 0:
+                logger.log_info("Cost is 0, invalid stat or no increase needed")
                 return False, "Invalid stat or no increase needed"
 
             if requires_approval:
+                logger.log_info("Purchase requires staff approval")
                 return False, "This purchase requires staff approval"
 
             # Check if we have enough XP
             if self.db.xp['current'] < cost:
+                logger.log_info(f"Not enough XP. Cost: {cost}, Available: {self.db.xp['current']}")
                 return False, f"Not enough XP. Cost: {cost}, Available: {self.db.xp['current']}"
 
             # Validate the purchase
+            logger.log_info("Validating purchase")
             can_purchase, error_msg = self.validate_xp_purchase(
                 stat_name, new_rating,
                 category=category, subcategory=subcategory
             )
+            logger.log_info(f"Validation result: can_purchase={can_purchase}, error_msg={error_msg}")
 
             if not can_purchase:
                 return False, error_msg
 
             # All checks passed, make the purchase
             try:
+                logger.log_info("Making the purchase")
                 # For secondary abilities, use the original case
                 if category == 'secondary_abilities':
                     stat_name = original_stat_name
                 
-                # Update the stat with form handling
+                # Update the stat
                 if category and subcategory:
                     # Special handling for secondary abilities
                     if category == 'secondary_abilities':
@@ -2197,7 +2358,7 @@ class Character(DefaultCharacter):
                         else:
                             temp_value = max(0, new_rating + form_modifier)  # Ensure non-negative
                         
-                        self.db.stats[category][subcategory][stat_name]['temp'] = temp_value
+                        self.db.stats[category][subcategory][stat_name]['temp'] = new_rating
                 else:
                     # Use set_stat for non-form-modified stats
                     self.set_stat(category, subcategory, stat_name, new_rating, temp=False)
@@ -2207,11 +2368,11 @@ class Character(DefaultCharacter):
                 self.db.xp['current'] -= Decimal(str(cost))
                 self.db.xp['spent'] += Decimal(str(cost))
 
-                # Log the spend
+                # Log the spend - use the properly cased stat_name
                 spend_entry = {
                     'type': 'spend',
                     'amount': float(cost),
-                    'stat_name': stat_name,
+                    'stat_name': stat_name,  # Use the properly cased name
                     'previous_rating': current_rating,
                     'new_rating': new_rating,
                     'reason': reason,
@@ -2222,12 +2383,19 @@ class Character(DefaultCharacter):
                     self.db.xp['spends'] = []
                 self.db.xp['spends'].insert(0, spend_entry)
 
+                # If this is a gift, store the alias with proper case
+                if category == 'powers' and subcategory == 'gift':
+                    self.set_gift_alias(stat_name, stat_name, new_rating)
+
+                logger.log_info("Purchase completed successfully")
                 return True, f"Successfully increased {stat_name} from {current_rating} to {new_rating} (Cost: {cost} XP)"
 
             except Exception as e:
+                logger.log_err(f"Error processing purchase: {str(e)}")
                 return False, f"Error processing purchase: {str(e)}"
 
         except Exception as e:
+            logger.log_err(f"Error in buy_stat: {str(e)}")
             return False, f"Error: {str(e)}"
 
     def _display_xp(self, target):
@@ -2642,43 +2810,62 @@ class Character(DefaultCharacter):
         if not splat:
             return False, "Character splat not set"
 
-        # Get current rating
-        current_rating = self.get_stat(category, subcategory, stat_name, temp=False) or 0
+        # For gifts, use database lookup instead of JSON files
+        if category == 'powers' and subcategory == 'gift':
+            from world.wod20th.models import Stat
+            from django.db.models import Q
+            
+            # Log the search
+            logger.log_info(f"[Gift Search] Looking for gift with name: '{stat_name}'")
+            
+            # Search for the gift in the database
+            gift_query = Q(stat_type='gift')
+            gift = Stat.objects.filter(
+                gift_query & (
+                    Q(name__iexact=stat_name) |
+                    Q(gift_alias__icontains=stat_name)
+                )
+            ).first()
+            
+            if not gift:
+                logger.log_info(f"[Gift Search] Gift '{stat_name}' not found in database")
+                return False, f"Gift '{stat_name}' not found in database"
+                
+            logger.log_info(f"[Gift Search] Found gift: {gift.name}")
+            
+            # For non-Garou shifters, we don't need to validate tribe/auspice
+            char_type = self.get_stat('identity', 'lineage', 'Type', temp=False)
+            if char_type and char_type.lower() != 'garou':
+                return True, ""
+                
+            # For Garou, validate breed/auspice/tribe
+            breed = self.get_stat('identity', 'lineage', 'Breed', temp=False)
+            auspice = self.get_stat('identity', 'lineage', 'Auspice', temp=False)
+            tribe = self.get_stat('identity', 'lineage', 'Tribe', temp=False)
+            
+            # Check if it matches any of the character's traits
+            matches_breed = False
+            matches_auspice = False
+            matches_tribe = False
+            
+            if gift.shifter_type:
+                allowed_types = gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type]
+                matches_breed = breed and breed.lower() in [t.lower() for t in allowed_types]
+            
+            if hasattr(gift, 'auspice') and gift.auspice:
+                allowed_auspices = gift.auspice if isinstance(gift.auspice, list) else [gift.auspice]
+                matches_auspice = auspice and auspice.lower() in [a.lower() for a in allowed_auspices]
+            
+            if gift.tribe:
+                allowed_tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+                matches_tribe = tribe and tribe.lower() in [t.lower() for t in allowed_tribes]
+            
+            if not (matches_breed or matches_auspice or matches_tribe):
+                return False, f"Gift '{stat_name}' is not available to your character"
+            
+            return True, ""
 
-        # Validate rating increase
-        if new_rating <= current_rating:
-            return False, "New rating must be higher than current rating"
-
-        # Check if stat exists and is valid for character's splat
-        if category == 'powers':
-            # Validate power based on splat
-            if splat == 'Vampire':
-                from world.wod20th.utils.vampire_utils import validate_vampire_stats
-                is_valid, error_msg = validate_vampire_stats(self, stat_name, str(new_rating), category, subcategory)
-            elif splat == 'Mage':
-                from world.wod20th.utils.mage_utils import validate_mage_stats
-                is_valid, error_msg = validate_mage_stats(self, stat_name, str(new_rating), category, subcategory)
-            elif splat == 'Changeling':
-                from world.wod20th.utils.changeling_utils import validate_changeling_stats
-                is_valid, error_msg = validate_changeling_stats(self, stat_name, str(new_rating), category, subcategory)
-            elif splat == 'Shifter':
-                from world.wod20th.utils.shifter_utils import validate_shifter_stats
-                is_valid, error_msg = validate_shifter_stats(self, stat_name, str(new_rating), category, subcategory)
-            elif splat == 'Mortal+':
-                from world.wod20th.utils.mortalplus_utils import validate_mortalplus_stats
-                is_valid, error_msg = validate_mortalplus_stats(self, stat_name, str(new_rating), category, subcategory)
-            elif splat == 'Possessed':
-                from world.wod20th.utils.possessed_utils import validate_possessed_stats
-                is_valid, error_msg = validate_possessed_stats(self, stat_name, str(new_rating), category, subcategory)
-            elif splat == 'Companion':
-                from world.wod20th.utils.companion_utils import validate_companion_stats
-                is_valid, error_msg = validate_companion_stats(self, stat_name, str(new_rating), category, subcategory)
-            else:
-                is_valid, error_msg = False, "Invalid splat type"
-
-            if not is_valid:
-                return False, error_msg
-
+        # For other stats, use existing validation
         return True, ""
 
     def fix_secondary_abilities(self):
@@ -2776,4 +2963,5 @@ class Note:
                 note_data[field] = None
                 
         return cls(**note_data)
+        
         

@@ -40,6 +40,100 @@ class CmdXP(default_cmds.MuxCommand):
     locks = "cmd:all()"
     help_category = "General"
     
+    def repair_xp_data(self, character):
+        """
+        Repair corrupted XP data structure.
+        Returns True if repairs were made, False if no repairs needed.
+        """
+        try:
+            # Check if xp attribute exists and is corrupted
+            xp_data = character.attributes.get('xp', None)
+            
+            # If it's None (missing), initialize it
+            if xp_data is None:
+                new_xp_data = {
+                    'total': Decimal('0.00'),
+                    'current': Decimal('0.00'),
+                    'spent': Decimal('0.00'),
+                    'ic_earned': Decimal('0.00'),
+                    'monthly_spent': Decimal('0.00'),
+                    'last_reset': datetime.now(),
+                    'spends': [],
+                    'last_scene': None,
+                    'scenes_this_week': 0
+                }
+                character.attributes.add('xp', new_xp_data)
+                return True
+            
+            # If it's a string (corrupted), try to repair it
+            if isinstance(xp_data, str):
+                try:
+                    # Convert string representation to dictionary
+                    import ast
+                    parsed_data = ast.literal_eval(xp_data)
+                    
+                    # Create new XP data structure preserving existing values
+                    new_xp_data = {
+                        'total': Decimal(str(parsed_data.get('total', '0.00'))),
+                        'current': Decimal(str(parsed_data.get('current', '0.00'))),
+                        'spent': Decimal(str(parsed_data.get('spent', '0.00'))),
+                        'ic_earned': Decimal(str(parsed_data.get('ic_xp', '0.00'))),
+                        'monthly_spent': Decimal(str(parsed_data.get('monthly_spent', '0.00'))),
+                        'last_reset': parsed_data.get('last_reset', datetime.now()),
+                        'spends': parsed_data.get('spends', []),
+                        'last_scene': parsed_data.get('last_scene'),
+                        'scenes_this_week': parsed_data.get('scenes_this_week', 0)
+                    }
+                    
+                    # Save the repaired data structure
+                    character.attributes.add('xp', new_xp_data)
+                    return True
+                except Exception as e:
+                    logger.error(f"Failed to parse corrupted XP data for {character.name}: {str(e)}")
+                    # Don't create new data if parsing fails - better to keep corrupted data than lose it
+                    return False
+            
+            # If it's a dict but missing required keys, add them with defaults
+            if isinstance(xp_data, dict):
+                was_modified = False
+                required_keys = {
+                    'total': Decimal('0.00'),
+                    'current': Decimal('0.00'),
+                    'spent': Decimal('0.00'),
+                    'ic_earned': Decimal('0.00'),
+                    'monthly_spent': Decimal('0.00'),
+                    'last_reset': datetime.now(),
+                    'spends': [],
+                    'last_scene': None,
+                    'scenes_this_week': 0
+                }
+                
+                for key, default_value in required_keys.items():
+                    if key not in xp_data:
+                        xp_data[key] = default_value
+                        was_modified = True
+                
+                # Convert any string decimal values to Decimal objects
+                decimal_keys = ['total', 'current', 'spent', 'ic_earned', 'monthly_spent']
+                for key in decimal_keys:
+                    if isinstance(xp_data[key], str):
+                        try:
+                            xp_data[key] = Decimal(xp_data[key])
+                            was_modified = True
+                        except (InvalidOperation, ValueError):
+                            xp_data[key] = Decimal('0.00')
+                            was_modified = True
+                
+                if was_modified:
+                    character.attributes.add('xp', xp_data)
+                    return True
+            
+            return False
+            
+        except Exception as e:
+            logger.error(f"Error repairing XP data for {character.name}: {str(e)}")
+            return False
+
     def func(self):
         """Execute command"""
         if not self.args and not self.switches:
@@ -728,9 +822,13 @@ class CmdXP(default_cmds.MuxCommand):
     def _display_xp(self, target):
         """Display XP information for a character"""
         try:
+            # First try to repair any corrupted XP data
+            if self.repair_xp_data(target):
+                self.caller.msg("XP data structure has been repaired.")
+            
             # Get XP data
             xp_data = target.attributes.get('xp')
-            if not xp_data:
+            if not xp_data or not isinstance(xp_data, dict):
                 xp_data = {
                     'total': Decimal('0.00'),
                     'current': Decimal('0.00'),
@@ -826,6 +924,47 @@ class CmdXP(default_cmds.MuxCommand):
         except Exception as e:
             logger.error(f"Error displaying XP for {target.name}: {str(e)}")
             self.caller.msg("Error displaying XP information.")
+
+    def _display_detailed_history(self, character):
+        """Display detailed XP history for a character."""
+        # First try to repair any corrupted XP data
+        if self.repair_xp_data(character):
+            self.caller.msg("XP data structure has been repaired.")
+            
+        xp_data = character.attributes.get('xp')
+        if not xp_data or not isinstance(xp_data, dict) or not xp_data.get('spends'):
+            self.caller.msg(f"{character.name} has no XP history.")
+            return
+            
+        table = EvTable("|wTimestamp|n", 
+                       "|wType|n", 
+                       "|wAmount|n", 
+                       "|wDetails|n",
+                       width=78)
+                       
+        for entry in character.db.xp['spends']:
+            timestamp = datetime.fromisoformat(entry['timestamp'])
+            entry_type = entry['type'].title()
+            amount = f"{float(entry['amount']):.2f}"
+            
+            if entry_type == "Spend":
+                if 'stat_name' in entry and 'previous_rating' in entry:
+                    details = (f"{entry['stat_name']} "
+                             f"({entry['previous_rating']} -> {entry['new_rating']})")
+                else:
+                    details = entry.get('reason', 'No reason given')
+            else:
+                details = entry.get('reason', 'No reason given')
+                
+            table.add_row(
+                timestamp.strftime('%Y-%m-%d %H:%M'),
+                entry_type,
+                amount,
+                details
+            )
+            
+        self.caller.msg(f"\n|wDetailed XP History for {character.name}|n")
+        self.caller.msg(str(table))
 
     @staticmethod
     def _determine_stat_category(stat_name):
@@ -973,42 +1112,6 @@ class CmdXP(default_cmds.MuxCommand):
             'Academics', 'Computer', 'Finance', 'Gremayre', 'Enigmas', 'Investigation', 'Law',
             'Medicine', 'Occult', 'Politics', 'Rituals', 'Science', 'Technology'
         ] 
-
-    def _display_detailed_history(self, character):
-        """Display detailed XP history for a character."""
-        if not character.db.xp or not character.db.xp.get('spends'):
-            self.caller.msg(f"{character.name} has no XP history.")
-            return
-            
-        table = EvTable("|wTimestamp|n", 
-                       "|wType|n", 
-                       "|wAmount|n", 
-                       "|wDetails|n",
-                       width=78)
-                       
-        for entry in character.db.xp['spends']:
-            timestamp = datetime.fromisoformat(entry['timestamp'])
-            entry_type = entry['type'].title()
-            amount = f"{float(entry['amount']):.2f}"
-            
-            if entry_type == "Spend":
-                if 'stat_name' in entry and 'previous_rating' in entry:
-                    details = (f"{entry['stat_name']} "
-                             f"({entry['previous_rating']} -> {entry['new_rating']})")
-                else:
-                    details = entry.get('reason', 'No reason given')
-            else:
-                details = entry.get('reason', 'No reason given')
-                
-            table.add_row(
-                timestamp.strftime('%Y-%m-%d %H:%M'),
-                entry_type,
-                amount,
-                details
-            )
-            
-        self.caller.msg(f"\n|wDetailed XP History for {character.name}|n")
-        self.caller.msg(str(table)) 
 
     def calculate_xp_cost(self, stat_name, new_rating, current_rating, category=None, subcategory=None):
         """

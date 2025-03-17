@@ -3738,12 +3738,7 @@ class CmdSelfStat(MuxCommand):
             self.category = 'identity'
             self.stat_type = 'lineage'
             return
-            
-        # Special handling for Mother's Touch - it's a gift, not a secondary ability
-        if self.stat_name.lower() == 'mother\'s touch':
-            self.category = 'powers'
-            self.stat_type = 'gift'
-            return
+
             
         # Special handling for Nature - should only be a realm power for Changelings and Kinain
         if self.stat_name.lower() == 'nature':
