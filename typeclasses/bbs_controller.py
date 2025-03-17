@@ -1,6 +1,7 @@
-from evennia import DefaultObject
+from evennia import DefaultObject, evennia
 from evennia.utils.utils import datetime_format
 from datetime import datetime
+from world.wod20th.models import RosterMember
 
 class BBSController(DefaultObject):
     """
@@ -51,9 +52,15 @@ class BBSController(DefaultObject):
         # If no gaps found, return next number after highest
         return existing_ids[-1] + 1
 
-    def create_board(self, name, description, public=True, read_only=False):
+    def create_board(self, name, description, public=True, read_only=False, roster_names=None):
         """
         Create a new board.
+        Args:
+            name (str): Name of the board
+            description (str): Board description
+            public (bool): Whether the board is public
+            read_only (bool): Whether the board is read-only
+            roster_names (list, optional): List of roster names this board is restricted to
         """
         if any(board['name'].lower() == name.lower() for board in self.db.boards.values()):
             raise ValueError("A board with this name already exists.")
@@ -68,7 +75,10 @@ class BBSController(DefaultObject):
             'read_only': read_only,
             'posts': [],
             'access_list': {},
-            'locked': False
+            'locked': False,
+            'roster_names': roster_names or [],  # Store as list of roster names
+            'faction_list': {},
+            'splat_list': {}
         }
         self.db.boards[board_id] = board
         self.db.next_board_id = self._find_next_available_board_id()
@@ -172,26 +182,86 @@ class BBSController(DefaultObject):
         if board and character_name in board['access_list']:
             del board['access_list'][character_name]
 
+    def has_roster_access(self, board, character_name):
+        """
+        Check if a character has access through roster membership.
+        Args:
+            board (dict): The board to check
+            character_name (str): The character's name
+        Returns:
+            bool: Whether the character has roster access
+        """
+        if not board.get('roster_names'):
+            return True  # No roster restriction
+            
+        try:
+            # Check if character is a member of any of the required rosters
+            for roster_name in board['roster_names']:
+                member = RosterMember.objects.filter(
+                    character__db_key=character_name,
+                    roster__name=roster_name,
+                    approved=True
+                ).exists()
+                if member:
+                    return True
+            return False
+        except Exception:
+            return False
+
     def has_access(self, board_reference, character_name):
         """
         Check if a character has read access to a board.
+        Now considers roster membership.
         """
         board = self.get_board(board_reference)
-        if board:
-            if board['public']:
-                return True
-            return character_name in board['access_list']
-        return False
+        if not board:
+            return False
+            
+        # Admin/Builder override
+        if any(caller.locks.check_lockstring(caller, f"perm({perm})") 
+               for perm in ["Admin", "Builder"] 
+               for caller in [evennia.search_object(character_name)[0]] 
+               if caller):
+            return True
+            
+        # Check roster access first
+        if not self.has_roster_access(board, character_name):
+            return False
+            
+        # Then check normal access rules
+        if board['public']:
+            return True
+            
+        # For private boards, check explicit access
+        return character_name in board['access_list']
 
     def has_write_access(self, board_reference, character_name):
         """
         Check if a character has write access to a board.
+        Now considers roster membership.
         """
         board = self.get_board(board_reference)
-        if board:
-            access_level = board['access_list'].get(character_name)
-            return access_level == "full_access" or (board['public'] and not board['read_only'])
-        return False
+        if not board:
+            return False
+            
+        # Admin/Builder override
+        if any(caller.locks.check_lockstring(caller, f"perm({perm})") 
+               for perm in ["Admin", "Builder"] 
+               for caller in [evennia.search_object(character_name)[0]] 
+               if caller):
+            return True
+            
+        # First check roster access
+        if not self.has_roster_access(board, character_name):
+            return False
+            
+        # Then check normal access rules
+        if board['public'] and not board.get('read_only', False):
+            return True
+            
+        # For private boards, check explicit access level
+        access_level = board['access_list'].get(character_name)
+        return access_level == "full_access"
 
     def delete_board(self, board_reference):
         """
@@ -304,3 +374,65 @@ class BBSController(DefaultObject):
             if self.is_post_unread(board_reference, i, character_name):
                 unread.append(i + 1)  # Convert to 1-based index
         return unread
+
+    def add_roster_to_board(self, board_reference, roster_name):
+        """
+        Add a roster restriction to a board.
+        Args:
+            board_reference (str or int): The board to modify
+            roster_name (str): The name of the roster to add
+        Returns:
+            str: Status message
+        """
+        board = self.get_board(board_reference)
+        if not board:
+            return "Board not found"
+            
+        # Verify roster exists
+        from world.wod20th.models import Roster
+        try:
+            Roster.objects.get(name=roster_name)
+        except Roster.DoesNotExist:
+            return f"Error: Roster '{roster_name}' does not exist"
+            
+        if 'roster_names' not in board:
+            board['roster_names'] = []
+            
+        if roster_name in board['roster_names']:
+            return f"Roster '{roster_name}' is already associated with this board"
+            
+        board['roster_names'].append(roster_name)
+        return f"Added roster '{roster_name}' to board '{board['name']}'"
+
+    def remove_roster_from_board(self, board_reference, roster_name):
+        """
+        Remove a roster restriction from a board.
+        Args:
+            board_reference (str or int): The board to modify
+            roster_name (str): The name of the roster to remove
+        Returns:
+            str: Status message
+        """
+        board = self.get_board(board_reference)
+        if not board:
+            return "Board not found"
+            
+        if 'roster_names' not in board or roster_name not in board['roster_names']:
+            return f"Roster '{roster_name}' is not associated with this board"
+            
+        board['roster_names'].remove(roster_name)
+        return f"Removed roster '{roster_name}' from board '{board['name']}'"
+
+    def get_board_rosters(self, board_reference):
+        """
+        Get all rosters associated with a board.
+        Args:
+            board_reference (str or int): The board to check
+        Returns:
+            list: List of roster names
+        """
+        board = self.get_board(board_reference)
+        if not board:
+            return []
+            
+        return board.get('roster_names', [])
