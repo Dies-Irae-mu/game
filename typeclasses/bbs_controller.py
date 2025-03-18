@@ -124,11 +124,12 @@ class BBSController(DefaultObject):
         board = self.get_board(board_reference)
         if not board:
             return "Board not found"
+        now = datetime.now()
         post = {
             'title': title,
             'content': content,
             'author': author,
-            'created_at': datetime_format(datetime.now()),  # Pass current datetime
+            'created_at': now.strftime("%Y-%m-%d %H:%M:%S"),  # Format as YYYY-MM-DD HH:MM:SS
             'edited_at': None,
             'pinned': False  # Initialize pinned status
         }
@@ -149,7 +150,7 @@ class BBSController(DefaultObject):
         board = self.get_board(board_reference)
         if board and 0 <= post_index < len(board['posts']):
             board['posts'][post_index]['content'] = new_content
-            board['posts'][post_index]['edited_at'] = datetime_format(datetime.now())
+            board['posts'][post_index]['edited_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Format as YYYY-MM-DD HH:MM:SS
 
     def delete_post(self, board_reference, post_index):
         """
