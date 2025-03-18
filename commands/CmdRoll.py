@@ -3,6 +3,8 @@ from evennia.utils.ansi import ANSIString
 from evennia.utils import inherits_from
 from world.wod20th.models import Stat
 from world.wod20th.utils.dice_rolls import roll_dice, interpret_roll_results
+from world.jobs.models import Job
+from django.utils import timezone
 import re
 from difflib import get_close_matches
 from datetime import datetime
@@ -13,8 +15,8 @@ class CmdRoll(default_cmds.MuxCommand):
     Roll dice for World of Darkness 20th Anniversary Edition.
 
     Usage:
-      +roll <expression> [vs <difficulty>]
-      +roll/nightmare [<number>] <expression> [vs <difficulty>]
+      +roll <expression> [vs <difficulty>] [--job <id>]
+      +roll/nightmare [<number>] <expression> [vs <difficulty>] [--job <id>]
       +roll/log
 
     Examples:
@@ -23,6 +25,8 @@ class CmdRoll(default_cmds.MuxCommand):
       +roll/nightmare Legerdemain+Prop vs 6
       +roll/nightmare/3 Legerdemain+Prop vs 6
       +roll/log
+      +roll strength+dexterity+3-2 --job 123
+      +roll stre+dex+3-2 vs 7 --job 123
 
     This command allows you to roll dice based on your character's stats
     and any modifiers. You can specify stats by their full name or abbreviation.
@@ -33,7 +37,10 @@ class CmdRoll(default_cmds.MuxCommand):
     dice with Nightmare dice. The number of Nightmare dice can be specified
     after the switch, or it will default to the character's current Nightmare rating.
 
-    Use +roll/log to view the last 10 rolls made in the current location.
+    Use +roll/log to view the last 10 rolls made in this location.
+
+    The --job option allows you to submit the roll result as a comment to a job.
+    You must have permission to comment on the specified job.
     """
 
     key = "+roll"
@@ -45,6 +52,43 @@ class CmdRoll(default_cmds.MuxCommand):
         if self.switches and "log" in self.switches:
             self.display_roll_log()
             return
+
+        # Check for job option at the end of the command
+        job_id = None
+        args = self.args.strip()
+        
+        # Look for --job at the end of the command
+        if args.endswith('--job'):
+            self.caller.msg("Usage: +roll <expression> [vs <difficulty>] [--job <id>]")
+            return
+            
+        job_parts = args.split(' --job ')
+        if len(job_parts) > 1:
+            args = job_parts[0].strip()
+            try:
+                job_id = int(job_parts[1].strip())
+                
+                # Verify job exists and user has permission
+                try:
+                    job = Job.objects.get(id=job_id)
+                    if not (job.requester == self.caller.account or 
+                            job.participants.filter(id=self.caller.account.id).exists() or 
+                            self.caller.check_permstring("Admin")):
+                        self.caller.msg("You don't have permission to comment on this job.")
+                        return
+                except Job.DoesNotExist:
+                    self.caller.msg(f"Job #{job_id} not found.")
+                    return
+                    
+            except ValueError:
+                self.caller.msg("Invalid job ID. Must be a number.")
+                return
+            except IndexError:
+                self.caller.msg("Usage: +roll <expression> [vs <difficulty>] [--job <id>]")
+                return
+
+        # Store original args and restore after job check
+        self.args = args
 
         # Handle Nightmare dice
         nightmare_dice = 0
@@ -330,6 +374,33 @@ class CmdRoll(default_cmds.MuxCommand):
                     obj.msg(builder_output)
                 else:
                     obj.msg(public_output)
+
+        # After sending outputs and before logging, handle job comment if needed
+        if job_id is not None:
+            try:
+                job = Job.objects.get(id=job_id)
+                # Format the roll result as a comment
+                comment_text = f"Roll Result: {private_description} vs {difficulty} => {result}"
+                if warnings:
+                    comment_text += "\nWarnings:\n" + "\n".join(warnings)
+                
+                # Add the comment to the job
+                new_comment = {
+                    "author": self.caller.account.username,
+                    "text": comment_text,
+                    "created_at": timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+                }
+                
+                if not job.comments:
+                    job.comments = []
+                job.comments.append(new_comment)
+                job.save()
+
+                self.caller.msg(f"Roll result added as comment to job #{job_id}.")
+            except Job.DoesNotExist:
+                self.caller.msg(f"Error: Job #{job_id} not found.")
+            except Exception as e:
+                self.caller.msg(f"|rError adding comment to job: {str(e)}|n")
 
         # After processing the roll, log it
         try:
