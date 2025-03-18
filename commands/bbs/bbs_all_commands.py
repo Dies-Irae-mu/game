@@ -21,11 +21,11 @@ class CmdBBS(default_cmds.MuxCommand):
       +bbs/delete <board>/<post> - Delete one of your posts
       
     Admin/Builder commands:
-      +bbs/create <name> = <description>/<access>[/roster=<roster1>,<roster2>...]
-                                - Create a new board (access: public/private)
+      +bbs/create <name> = <description>[/roster=<roster1>,<roster2>...]
+                                - Create a new board
                                 - Optional roster restrictions can be specified
       +bbs/editboard <board> = <field>, <value>
-                                - Edit board settings (description, public)
+                                - Edit board settings (description)
       +bbs/editboard/rosters <board> = <roster1>[,<roster2>...]
                                 - Set roster restrictions for a board
                                 - Use empty value to clear all restrictions
@@ -37,11 +37,39 @@ class CmdBBS(default_cmds.MuxCommand):
       +bbs/lock <board>         - Lock a board to prevent new posts
       +bbs/pin <board>/<post>   - Pin a post to the top
       +bbs/unpin <board>/<post> - Unpin a post
-      +bbs/grant <board> = <player>[/readonly]
-                                - Grant access to a private board
-      +bbs/revoke <board> = <player>
-                                - Revoke access from a private board
       +bbs/deleteboard <board>  - Delete an entire board
+      +bbs/readonly <board>     - Toggle read-only mode for a board
+      
+    Board Permissions:
+      Boards can have multiple permission settings that interact:
+      
+      1. Roster Restrictions:
+         - When a board has roster restrictions:
+           * Only members of the specified rosters can see and post
+           * This is indicated by a * after the board name
+           * Admins/Builders can always see and post
+      
+      2. Read-Only Mode:
+         - When a board is read-only:
+           * Only Admins/Builders can post/edit/delete
+           * Everyone else can still read the board
+           * This is indicated by a * before the board name
+      
+      Examples:
+        - A board with roster restrictions:
+          * Only roster members can see and post
+          * Admins/Builders have full access
+          * Shows as "BoardName*" in listings
+      
+        - A read-only board:
+          * Everyone can read
+          * Only Admins/Builders can post
+          * Shows as "* BoardName" in listings
+      
+        - A read-only board with roster restrictions:
+          * Only roster members can read
+          * Only Admins/Builders can post
+          * Shows as "* BoardName*" in listings
       
     Examples:
       +bbs
@@ -50,12 +78,12 @@ class CmdBBS(default_cmds.MuxCommand):
       +bbs/post announcements/Welcome! = Hello everyone!
       +bbs/edit 1/1 = This is the corrected message.
       +bbs/delete 1/1
-      +bbs/create Staff = Staff Discussion/private
-      +bbs/create IC = In Character/private/roster=Vampire,Werewolf
+      +bbs/create Staff = Staff Discussion
+      +bbs/create IC = In Character/roster=Vampire,Werewolf
       +bbs/editboard/rosters IC = Vampire,Werewolf,Mage
       +bbs/addroster IC = Hunter
       +bbs/removeroster IC = Vampire
-      +bbs/grant staff = Bob/readonly
+      +bbs/readonly Announcements
     """
     key = "+bbs"
     aliases = ["bbs", "@bbs", "bb", "+bb"]
@@ -92,7 +120,7 @@ class CmdBBS(default_cmds.MuxCommand):
                 self.do_scan()
             
             # Admin/Builder commands
-            elif switch in ["create", "editboard", "editboard/rosters", "addroster", "removeroster", "listrosters", "lock", "pin", "unpin", "grant", "revoke", "deleteboard"]:
+            elif switch in ["create", "editboard", "editboard/rosters", "addroster", "removeroster", "listrosters", "lock", "pin", "unpin", "deleteboard", "readonly"]:
                 if not (self.check_admin_access() or self.check_builder_access()):
                     self.caller.msg("You don't have permission to use this command.")
                     return
@@ -115,12 +143,10 @@ class CmdBBS(default_cmds.MuxCommand):
                     self.do_pin()
                 elif switch == "unpin":
                     self.do_unpin()
-                elif switch == "grant":
-                    self.do_grant()
-                elif switch == "revoke":
-                    self.do_revoke()
                 elif switch == "deleteboard":
                     self.do_deleteboard()
+                elif switch == "readonly":
+                    self.do_readonly()
             else:
                 self.caller.msg("Invalid switch or insufficient permissions.")
             return
@@ -158,11 +184,6 @@ class CmdBBS(default_cmds.MuxCommand):
         title, content = [arg.strip() for arg in post_data.split("=", 1)]
 
         controller = get_or_create_bbs_controller()
-        try:
-            board_ref = int(board_ref)
-        except ValueError:
-            pass
-
         board = controller.get_board(board_ref)
         if not board:
             self.caller.msg(f"No board found with the name or number '{board_ref}'.")
@@ -170,11 +191,11 @@ class CmdBBS(default_cmds.MuxCommand):
         if board.get('locked', False) and not (self.check_admin_access() or self.check_builder_access()):
             self.caller.msg(f"The board '{board['name']}' is locked. No new posts can be made.")
             return
-        if not controller.has_write_access(board_ref, self.caller.key):
+        if not controller.has_write_access(board['id'], self.caller.key):
             self.caller.msg(f"You do not have write access to post on the board '{board['name']}'.")
             return
             
-        controller.create_post(board_ref, title, content, self.caller.key)
+        controller.create_post(board['id'], title, content, self.caller.key)
         self.caller.msg(f"Post '{title}' added to board '{board['name']}'.")
 
     def do_edit(self):
@@ -187,13 +208,6 @@ class CmdBBS(default_cmds.MuxCommand):
         post_number, new_content = [arg.strip() for arg in post_data.split("=", 1)]
 
         controller = get_or_create_bbs_controller()
-        
-        # Try to convert board_ref to integer for ID lookup
-        try:
-            board_ref = int(board_ref)
-        except ValueError:
-            pass  # Keep as string for name lookup
-
         board = controller.get_board(board_ref)
         if not board:
             self.caller.msg(f"No board found with the name or number '{board_ref}'.")
@@ -240,13 +254,6 @@ class CmdBBS(default_cmds.MuxCommand):
         board_ref, post_number = [arg.strip() for arg in self.args.split("/", 1)]
 
         controller = get_or_create_bbs_controller()
-        
-        # Try to convert board_ref to integer for ID lookup
-        try:
-            board_ref = int(board_ref)
-        except ValueError:
-            pass  # Keep as string for name lookup
-
         board = controller.get_board(board_ref)
         if not board:
             self.caller.msg(f"No board found with the name or number '{board_ref}'.")
@@ -265,24 +272,52 @@ class CmdBBS(default_cmds.MuxCommand):
             
         post = posts[post_number - 1]
         if self.check_admin_access() or self.check_builder_access() or self.caller.key == post['author']:
-            controller.delete_post(board['id'], post_number - 1)  # Use board ID for consistency
+            controller.delete_post(board['id'], post_number - 1)
             self.caller.msg(f"Post {post_number} has been deleted from board '{board['name']}'.")
         else:
             self.caller.msg("You do not have permission to delete this post.")
 
     def do_create(self):
         """Handle the create switch"""
-        if not self.args or "=" not in self.args or "/" not in self.args.split("=")[1]:
-            self.caller.msg("Usage: +bbs/create <name> = <description>/public|private")
+        if not self.args or "=" not in self.args:
+            self.caller.msg("Usage: +bbs/create <name> = <description>[/roster=<roster1>,<roster2>...]")
             return
             
-        name_desc, privacy = self.args.rsplit("/", 1)
-        name, description = [arg.strip() for arg in name_desc.split("=", 1)]
-        public = privacy.strip().lower() == "public"
+        # Split into name_desc and description/roster parts
+        name_desc, remainder = self.args.split("=", 1)
+        parts = remainder.split("/")
+        
+        if len(parts) < 1:
+            self.caller.msg("Usage: +bbs/create <name> = <description>[/roster=<roster1>,<roster2>...]")
+            return
+            
+        description = parts[0].strip()
+        
+        # Check for roster specification
+        roster_names = []
+        if len(parts) > 1:
+            for part in parts[1:]:
+                if part.strip().lower().startswith("roster="):
+                    roster_list = part.split("=")[1].strip()
+                    roster_names = [r.strip() for r in roster_list.split(",")]
+                    
+                    # Verify all rosters exist
+                    for roster_name in roster_names:
+                        try:
+                            Roster.objects.get(name=roster_name)
+                        except Roster.DoesNotExist:
+                            self.caller.msg(f"Error: Roster '{roster_name}' does not exist.")
+                            return
 
+        name = name_desc.strip()
         controller = get_or_create_bbs_controller()
-        controller.create_board(name, description, public)
-        self.caller.msg(f"Board '{name}' created as {'public' if public else 'private'} with description: {description}")
+        controller.create_board(name, description, roster_names=roster_names)
+        
+        msg = f"Board '{name}' created"
+        if roster_names:
+            msg += f" (restricted to rosters: {', '.join(roster_names)})"
+        msg += f" with description: {description}"
+        self.caller.msg(msg)
 
     def do_editboard(self):
         """Handle the editboard switch"""
@@ -299,8 +334,8 @@ class CmdBBS(default_cmds.MuxCommand):
             self.caller.msg(f"No board found with the name '{board_name}'.")
             return
             
-        if field not in ["description", "public"]:
-            self.caller.msg("Invalid field. Use 'description' or 'public'.")
+        if field not in ["description"]:
+            self.caller.msg("Invalid field. Use 'description'.")
             return
             
         if value not in ["true", "false"]:
@@ -406,14 +441,18 @@ class CmdBBS(default_cmds.MuxCommand):
             
         board_ref, post_number = [arg.strip() for arg in self.args.split("/", 1)]
         controller = get_or_create_bbs_controller()
-        
+        board = controller.get_board(board_ref)
+        if not board:
+            self.caller.msg(f"No board found with the name or number '{board_ref}'.")
+            return
+            
         try:
             post_number = int(post_number)
         except ValueError:
             self.caller.msg("Post number must be an integer.")
             return
             
-        result = controller.pin_post(board_ref, post_number - 1)
+        result = controller.pin_post(board['id'], post_number - 1)
         self.caller.msg(result)
 
     def do_unpin(self):
@@ -424,60 +463,19 @@ class CmdBBS(default_cmds.MuxCommand):
             
         board_ref, post_number = [arg.strip() for arg in self.args.split("/", 1)]
         controller = get_or_create_bbs_controller()
-        
+        board = controller.get_board(board_ref)
+        if not board:
+            self.caller.msg(f"No board found with the name or number '{board_ref}'.")
+            return
+            
         try:
             post_number = int(post_number)
         except ValueError:
             self.caller.msg("Post number must be an integer.")
             return
             
-        result = controller.unpin_post(board_ref, post_number - 1)
+        result = controller.unpin_post(board['id'], post_number - 1)
         self.caller.msg(result)
-
-    def do_grant(self):
-        """Handle the grant switch"""
-        if not self.args or "=" not in self.args:
-            self.caller.msg("Usage: +bbs/grant <board> = <character>[/readonly]")
-            return
-            
-        board_name, args = [arg.strip() for arg in self.args.split("=", 1)]
-        character_name, *options = [arg.strip() for arg in args.split(" ")]
-        access_level = "read_only" if "/readonly" in options else "full_access"
-
-        controller = get_or_create_bbs_controller()
-        board = controller.get_board(board_name)
-        if not board:
-            self.caller.msg(f"No board found with the name '{board_name}'.")
-            return
-
-        controller.grant_access(board_name, character_name, access_level=access_level)
-        access_type = "read-only" if access_level == "read_only" else "full access"
-        self.caller.msg(f"Granted {access_type} to {character_name} for board '{board_name}'.")
-
-    def do_revoke(self):
-        """Handle the revoke switch"""
-        if not self.args or "=" not in self.args:
-            self.caller.msg("Usage: +bbs/revoke <board> = <character>")
-            return
-            
-        board_name, character_name = [arg.strip() for arg in self.args.split("=", 1)]
-
-        controller = get_or_create_bbs_controller()
-        board = controller.get_board(board_name)
-        if not board:
-            self.caller.msg(f"No board found with the name '{board_name}'.")
-            return
-            
-        if board['public']:
-            self.caller.msg(f"Board '{board_name}' is public; access control is not required.")
-            return
-            
-        if character_name not in board['access_list']:
-            self.caller.msg(f"{character_name} does not have access to board '{board_name}'.")
-            return
-            
-        controller.revoke_access(board_name, character_name)
-        self.caller.msg(f"Access for {character_name} has been revoked from board '{board_name}'.")
 
     def do_deleteboard(self):
         """Handle the deleteboard switch"""
@@ -488,6 +486,24 @@ class CmdBBS(default_cmds.MuxCommand):
         board_name = self.args.strip()
         controller = get_or_create_bbs_controller()
         result = controller.delete_board(board_name)
+        self.caller.msg(result)
+
+    def do_readonly(self):
+        """Handle the readonly switch"""
+        if not self.args:
+            self.caller.msg("Usage: +bbs/readonly <board>")
+            return
+            
+        board_ref = self.args.strip()
+        controller = get_or_create_bbs_controller()
+        board = controller.get_board(board_ref)
+        if not board:
+            self.caller.msg(f"No board found with the name or number '{board_ref}'.")
+            return
+            
+        # Toggle read-only status
+        current_status = board.get('read_only', False)
+        result = controller.set_read_only(board['id'], not current_status)
         self.caller.msg(result)
 
     def do_scan(self):
@@ -561,8 +577,6 @@ class CmdBBS(default_cmds.MuxCommand):
         output.append("-" * 78)
         if total_unread > 0:
             capacity = (total_unread / sum(len(b['posts']) for b in boards.values())) * 100
-            output.append(f"{capacity:.1f}% of posts available are unread.")
-        output.append("-" * 78)
 
         self.caller.msg("\n".join(output))
 
@@ -575,41 +589,41 @@ class CmdBBS(default_cmds.MuxCommand):
 
         # Table Header
         output = []
-        output.append("=" * 78)
-        output.append("{:<5} {:<10} {:<30} {:<20} {:<15}".format("ID", "Access", "Group Name", "Last Post", "# of messages"))
-        output.append("-" * 78)
+        output.append("=" * 90)
+        output.append("{:<5} {:<10} {:<40} {:<20} {:<15}".format("ID", "Access", "Name", "Last Post", "# of messages"))
+        output.append("-" * 90)
 
         # Sort boards by ID and convert to list of tuples
         sorted_boards = sorted(boards.items(), key=lambda x: x[0])
 
         for board_id, board in sorted_boards:
-            # Skip boards the character doesn't have access to
-            if not board['public']:
-                # For private boards, check both roster access and explicit access
-                if not (controller.has_roster_access(board, self.caller.key) or 
-                       controller.has_access(board_id, self.caller.key) or
-                       self.check_admin_access() or 
-                       self.check_builder_access()):
-                    continue
-            else:
-                # For public boards, still check roster restrictions
-                if not controller.has_roster_access(board, self.caller.key):
-                    continue
+            # Skip boards the character doesn't have access to, unless admin/builder
+            if not (controller.has_access(board_id, self.caller.key) or 
+                   self.check_admin_access() or 
+                   self.check_builder_access()):
+                continue
                 
-            access_type = "Private" if not board['public'] else "Public"
-            if board.get('roster_names'):  # Changed from roster_name to roster_names
-                access_type = f"{access_type}*"
-                
-            read_only = "*" if controller.has_access(board_id, self.caller.key) and not controller.has_write_access(board_id, self.caller.key) else " "
-            last_post = max((post['created_at'] for post in board['posts']), default="No posts")
+            # Check if user has write access, considering admin/builder status
+            has_write = controller.has_write_access(board_id, self.caller.key) or self.check_admin_access() or self.check_builder_access()
+            read_only = "*" if not has_write else " "
+            
+            # Determine access type
+            access_type = "Roster" if board.get('roster_names') else "Public"
+            
+            # Get last post time, ensuring it's a date/time string
+            last_post = "No posts"
+            if board['posts']:
+                last_post = max((post['created_at'] for post in board['posts']), default="No posts")
+                if last_post == "No posts":
+                    last_post = "Unknown"
+            
             num_posts = len(board['posts'])
-            output.append(f"{board_id:<5} {access_type:<10} {read_only} {board['name']:<30} {last_post:<20} {num_posts:<15}")
+            output.append(f"{board_id:<5} {access_type:<10} {read_only} {board['name']:<40} {last_post:<20} {num_posts:<15}")
 
         # Table Footer
-        output.append("-" * 78)
+        output.append("-" * 90)
         output.append("* = read only")
-        output.append("* after access type = roster restricted")
-        output.append("=" * 78)
+        output.append("=" * 90)
 
         self.caller.msg("\n".join(output))
 
@@ -631,6 +645,19 @@ class CmdBBS(default_cmds.MuxCommand):
         output = []
         output.append("=" * 78)
         output.append(f"{'*' * 20} {board['name']} {'*' * 20}")
+        
+        # Add roster information if any, but only for admins and builders
+        roster_names = board.get('roster_names', [])
+        if roster_names and (self.check_admin_access() or self.check_builder_access()):
+            output.append("Restricted to rosters:")
+            for roster_name in roster_names:
+                try:
+                    roster = Roster.objects.get(name=roster_name)
+                    member_count = roster.get_members().count()
+                    output.append(f"- {roster_name}(ref: {roster.id}, members: {member_count})")
+                except Roster.DoesNotExist:
+                    output.append(f"- {roster_name} (WARNING: Roster no longer exists!)")
+        
         output.append("{:<5} {:<40} {:<20} {:<15}".format("ID", "Message", "Posted", "By"))
         output.append("-" * 78)
 

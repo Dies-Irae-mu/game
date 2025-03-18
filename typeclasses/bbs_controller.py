@@ -52,13 +52,12 @@ class BBSController(DefaultObject):
         # If no gaps found, return next number after highest
         return existing_ids[-1] + 1
 
-    def create_board(self, name, description, public=True, read_only=False, roster_names=None):
+    def create_board(self, name, description, read_only=False, roster_names=None):
         """
         Create a new board.
         Args:
             name (str): Name of the board
             description (str): Board description
-            public (bool): Whether the board is public
             read_only (bool): Whether the board is read-only
             roster_names (list, optional): List of roster names this board is restricted to
         """
@@ -71,29 +70,52 @@ class BBSController(DefaultObject):
             'id': board_id,
             'name': name,
             'description': description,
-            'public': public,
             'read_only': read_only,
             'posts': [],
-            'access_list': {},
-            'locked': False,
             'roster_names': roster_names or [],  # Store as list of roster names
-            'faction_list': {},
-            'splat_list': {}
         }
         self.db.boards[board_id] = board
         self.db.next_board_id = self._find_next_available_board_id()
 
-    def get_board(self, reference):
+    def get_board(self, board_reference):
         """
-        Retrieve a board by its name or ID.
-        :param reference: (str or int) The name or ID of the board.
-        :return: (dict) The board data or None if not found.
+        Get a board by either its ID or name.
+        
+        Args:
+            board_reference: Either a board ID (integer) or board name (string)
+            
+        Returns:
+            dict: The board data if found, None otherwise
         """
-        if isinstance(reference, int):
-            return self.db.boards.get(reference)
-        else:
-            reference = reference.lower()
-            return next((board for board in self.db.boards.values() if board['name'].lower() == reference), None)
+        boards = self.db.boards
+        
+        # Try to convert to integer for ID lookup
+        try:
+            board_id = int(board_reference)
+            if board_id in boards:
+                return boards[board_id]
+        except (ValueError, TypeError):
+            pass
+            
+        # If not found by ID or not a valid ID, try name lookup
+        for board in boards.values():
+            if board['name'].lower() == str(board_reference).lower():
+                return board
+                
+        return None
+
+    def get_board_id(self, board_reference):
+        """
+        Get a board ID from either an ID or name reference.
+        
+        Args:
+            board_reference: Either a board ID (integer) or board name (string)
+            
+        Returns:
+            int: The board ID if found, None otherwise
+        """
+        board = self.get_board(board_reference)
+        return board['id'] if board else None
 
     def create_post(self, board_reference, title, content, author):
         """
@@ -208,60 +230,51 @@ class BBSController(DefaultObject):
         except Exception:
             return False
 
-    def has_access(self, board_reference, character_name):
-        """
-        Check if a character has read access to a board.
-        Now considers roster membership.
-        """
-        board = self.get_board(board_reference)
+    def has_access(self, board_id, character_name):
+        """Check if a character has access to a board."""
+        board = self.get_board(board_id)
         if not board:
             return False
             
-        # Admin/Builder override
-        if any(caller.locks.check_lockstring(caller, f"perm({perm})") 
-               for perm in ["Admin", "Builder"] 
-               for caller in [evennia.search_object(character_name)[0]] 
-               if caller):
-            return True
+        # Check if character is an admin/builder
+        try:
+            character = evennia.search_object(character_name)[0]
+            if character.locks.check_lockstring(character, "perm(Admin)") or character.locks.check_lockstring(character, "perm(Builder)"):
+                return True
+        except:
+            pass
             
-        # Check roster access first
-        if not self.has_roster_access(board, character_name):
-            return False
+        # If board has roster restrictions, check roster access
+        if board.get('roster_names'):
+            return self.has_roster_access(board, character_name)
             
-        # Then check normal access rules
-        if board['public']:
-            return True
-            
-        # For private boards, check explicit access
-        return character_name in board['access_list']
+        # If no roster restrictions, everyone has access
+        return True
 
-    def has_write_access(self, board_reference, character_name):
-        """
-        Check if a character has write access to a board.
-        Now considers roster membership.
-        """
-        board = self.get_board(board_reference)
+    def has_write_access(self, board_id, character_name):
+        """Check if a character has write access to a board."""
+        board = self.get_board(board_id)
         if not board:
             return False
             
-        # Admin/Builder override
-        if any(caller.locks.check_lockstring(caller, f"perm({perm})") 
-               for perm in ["Admin", "Builder"] 
-               for caller in [evennia.search_object(character_name)[0]] 
-               if caller):
-            return True
+        # Check if character is an admin/builder
+        try:
+            character = evennia.search_object(character_name)[0]
+            if character.locks.check_lockstring(character, "perm(Admin)") or character.locks.check_lockstring(character, "perm(Builder)"):
+                return True
+        except:
+            pass
             
-        # First check roster access
-        if not self.has_roster_access(board, character_name):
+        # Read-only boards only allow admin/builder writes
+        if board.get('read_only', False):
             return False
             
-        # Then check normal access rules
-        if board['public'] and not board.get('read_only', False):
-            return True
+        # If board has roster restrictions, check roster access
+        if board.get('roster_names'):
+            return self.has_roster_access(board, character_name)
             
-        # For private boards, check explicit access level
-        access_level = board['access_list'].get(character_name)
-        return access_level == "full_access"
+        # If no roster restrictions, everyone has write access unless read-only
+        return True
 
     def delete_board(self, board_reference):
         """
@@ -436,3 +449,13 @@ class BBSController(DefaultObject):
             return []
             
         return board.get('roster_names', [])
+
+    def set_read_only(self, board_name, read_only=True):
+        """Set a board to read-only mode."""
+        board = self.get_board(board_name)
+        if not board:
+            return f"No board found with the name '{board_name}'."
+            
+        board['read_only'] = read_only
+        self.save_board(board_name, board)
+        return f"Board '{board_name}' has been set to {'read-only' if read_only else 'writable'} mode."
