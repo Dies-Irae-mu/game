@@ -1,7 +1,17 @@
 #commands/bbs/bbs_all_commands.py
 
+# Standard Library Imports
+from datetime import datetime
+
+# Django Imports
+from django.utils import timezone
+
+# Evennia Imports
 from evennia import default_cmds
 from evennia import create_object
+from evennia.server.sessionhandler import SESSION_HANDLER
+
+# Local Imports
 from typeclasses.bbs_controller import BBSController
 from world.wod20th.utils.bbs_utils import get_or_create_bbs_controller
 from world.wod20th.models import Roster
@@ -97,6 +107,27 @@ class CmdBBS(default_cmds.MuxCommand):
     def check_builder_access(self):
         """Check if the caller has builder access."""
         return self.caller.locks.check_lockstring(self.caller, "perm(Builder)")
+
+    def send_bbs_notification(self, board, message, exclude_char=None):
+        """
+        Send a notification about BBS activity to all eligible online users.
+        
+        Args:
+            board (dict): The board dictionary containing board information
+            message (str): The notification message to send
+            exclude_char (Character, optional): Character to exclude from notification
+        """
+        session_list = SESSION_HANDLER.get_sessions()
+        controller = get_or_create_bbs_controller()
+        
+        for session in session_list:
+            if not session.logged_in:
+                continue
+            puppet = session.get_puppet()
+            if not puppet or (exclude_char and puppet == exclude_char):
+                continue
+            if controller.has_access(board['id'], puppet.key):
+                puppet.msg(f"|w{message}|n")
 
     def func(self):
         if not self.args and not self.switches:
@@ -195,8 +226,14 @@ class CmdBBS(default_cmds.MuxCommand):
             self.caller.msg(f"You do not have write access to post on the board '{board['name']}'.")
             return
             
+        post_number = len(board['posts']) + 1
         controller.create_post(board['id'], title, content, self.caller.key)
+        
         self.caller.msg(f"Post '{title}' added to board '{board['name']}'.")
+        
+        # Notify online users about the new post
+        message = f"New post on {board['name']} (+bb {board['id']}/{post_number}) by {self.caller.key}: {title}"
+        self.send_bbs_notification(board, message, exclude_char=self.caller)
 
     def do_edit(self):
         """Handle the edit switch"""
