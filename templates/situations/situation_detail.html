@@ -1,0 +1,209 @@
+{% extends "situations/base_situations.html" %}
+{% load static %}
+
+{% block situation_content %}
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2>{{ situation.title }}</h2>
+        {% if user.is_staff %}
+        <div class="btn-group">
+            <a href="{% url 'situations:edit' situation.pk %}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            <a href="{% url 'situations:delete' situation.pk %}" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Delete
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <div class="mb-4">
+            <h5>Description</h5>
+            <p>{{ situation.description|linebreaks }}</p>
+        </div>
+
+        {% if user.is_staff %}
+        <div class="mb-4">
+            <h5>Access Information</h5>
+            <p>
+                {% if situation.roster_names %}
+                Visible to rosters: {{ situation.roster_names|join:", " }}
+                {% else %}
+                Visible to everyone
+                {% endif %}
+            </p>
+        </div>
+
+        {% if situation.staff_notes %}
+        <div class="mb-4">
+            <h5 class="text-warning">Staff Notes</h5>
+            <p>{{ situation.staff_notes|linebreaks }}</p>
+        </div>
+        {% endif %}
+        {% endif %}
+
+        <!-- Details Section -->
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5>Details</h5>
+                {% if user.is_staff %}
+                <a href="{% url 'situations:detail_create' situation.pk %}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus"></i> Add Detail
+                </a>
+                {% endif %}
+            </div>
+            {% if details %}
+            <div class="list-group mt-2">
+                {% for detail in details %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6>{{ detail.title }}</h6>
+                            {% if user.is_staff and detail.secrecy_rating > 0 %}
+                            <span class="badge bg-warning">Secrecy: {{ detail.secrecy_rating }}</span>
+                            {% endif %}
+                            <p>{{ detail.content|linebreaks }}</p>
+                            {% if user.is_staff and detail.staff_notes %}
+                            <div class="text-warning">
+                                <small><strong>Staff Notes:</strong> {{ detail.staff_notes }}</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% if user.is_staff %}
+                        <div class="btn-group">
+                            <a href="{% url 'situations:detail_edit' detail.pk %}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'situations:detail_delete' detail.pk %}" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted">No details available.</p>
+            {% endif %}
+        </div>
+
+        <!-- Developments Section -->
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5>Developments</h5>
+                {% if user.is_staff %}
+                <a href="{% url 'situations:development_create' situation.pk %}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus"></i> Add Development
+                </a>
+                {% endif %}
+            </div>
+            {% if developments %}
+            <div class="list-group mt-2">
+                {% for development in developments %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6>{{ development.title }}</h6>
+                            <span class="badge {% if development.resolved %}bg-success{% else %}bg-primary{% endif %}">
+                                {{ development.resolved|yesno:"Resolved,Open" }}
+                            </span>
+                            <p>{{ development.content|linebreaks }}</p>
+                            {% if development.resolved %}
+                            <div class="text-success">
+                                <strong>Resolution:</strong>
+                                <p>{{ development.resolution_text|linebreaks }}</p>
+                                <small>Resolved at: {{ development.resolved_at|date:"Y-m-d H:i" }}</small>
+                            </div>
+                            {% endif %}
+                            {% if user.is_staff and development.staff_notes %}
+                            <div class="text-warning">
+                                <small><strong>Staff Notes:</strong> {{ development.staff_notes }}</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% if user.is_staff %}
+                        <div class="btn-group">
+                            <a href="{% url 'situations:development_edit' development.pk %}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'situations:development_delete' development.pk %}" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted">No developments available.</p>
+            {% endif %}
+        </div>
+
+        <!-- Related Jobs Section (Staff Only) -->
+        {% if user.is_staff and situation.related_jobs.exists %}
+        <div class="mb-4">
+            <h5>Related Jobs</h5>
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Assignee</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in situation.related_jobs.all %}
+                        <tr>
+                            <td>{{ job.id }}</td>
+                            <td>{{ job.title }}</td>
+                            <td>{{ job.status }}</td>
+                            <td>{{ job.assignee|default:"Unassigned" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Related Plots Section -->
+        {% if situation.related_plots.exists %}
+        <div class="mb-4">
+            <h5>Related Plots</h5>
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Genre</th>
+                            <th>Status</th>
+                            {% if user.is_staff %}
+                            <th>Storyteller</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for plot in situation.related_plots.all %}
+                        <tr>
+                            <td>{{ plot.id }}</td>
+                            <td>{{ plot.title }}</td>
+                            <td>{{ plot.genre }}</td>
+                            <td>{{ plot.claimed|yesno:"Claimed,Open" }}</td>
+                            {% if user.is_staff %}
+                            <td>{{ plot.storyteller|default:"Unassigned" }}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

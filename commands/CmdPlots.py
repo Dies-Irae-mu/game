@@ -3,6 +3,7 @@ from world.plots.models import Plot, Session, STATUS_CHOICES, RISK_LEVEL_CHOICES
 from evennia.utils.utils import crop, list_to_string
 from django.utils import timezone
 from datetime import datetime, timedelta
+from evennia.utils.ansi import ANSIString
 
 class CmdPlots(MuxCommand):
     """
@@ -14,10 +15,12 @@ class CmdPlots(MuxCommand):
                                       - Add a new plot
         +plot/secret <#>=<text>        - Add secret info to a plot
         +plot/claim <#>                - Claim a plot to run
-        +plot/assign <#>=<n>        - Assign a plot to someone
+        +plot/assign <#>=<n>           - Assign a plot to someone
         +plot/return <#>               - Return a plot to the queue
         +plot/done <#>                 - Mark a plot as completed
         +plot/view <#>                 - View detailed plot information
+        +plot/linksit <#>=<sit#>       - Link a situation to a plot
+        +plot/unlinksit <#>=<sit#>     - Unlink a situation from a plot
 
     Session Management:
         +plot/sessions <#>             - List all sessions for a plot
@@ -213,6 +216,9 @@ class CmdPlots(MuxCommand):
         
         self.caller.msg("|b=================================>|n |yDescription|n |b<==================================|n")
         self.caller.msg(plot.description)
+        
+        # Add related situations display
+        self.caller.msg(self.display_related_situations(plot))
         
         # Add sessions summary
         sessions = Session.objects.filter(plot=plot).order_by('date')
@@ -510,6 +516,60 @@ class CmdPlots(MuxCommand):
         session.save()
         self.caller.msg(f"Updated {field} for session {session.id}")
 
+    def display_related_situations(self, plot):
+        """Display related situations in a formatted list."""
+        from typeclasses.situation_controller import get_or_create_situation_controller
+        
+        if not plot.related_situations:
+            return "\nNo related situations.\n|wTip:|n Use |y+plot/linksit <#>=<sit#>|n to link a situation to this plot."
+            
+        controller = get_or_create_situation_controller()
+        output = ["\nRelated Situations:"]
+        output.append("|wTip:|n Use |y+plot/linksit <#>=<sit#>|n to link a situation to this plot.")
+        output.append(divider("", width=78, fillchar="-", color="|r"))
+        
+        # Define column widths
+        col_widths = {
+            'sit_id': 6,     # "Sit # "
+            'title': 35,     # "Title                                "
+            'created': 15,   # "Created        "
+            'access': 10,    # "Access    "
+            'jobs': 10       # "Jobs      "
+        }
+        
+        # Create header row
+        header_row = (
+            f"|cSit #".ljust(col_widths['sit_id']) +
+            f"Title".ljust(col_widths['title']) +
+            f"Created".ljust(col_widths['created']) +
+            f"Access".ljust(col_widths['access']) +
+            f"Jobs|n"
+        )
+        output.append(header_row)
+        output.append(ANSIString("|r" + "-" * 78 + "|n"))
+        
+        # Get all related situations
+        for sit_id in plot.related_situations:
+            situation = controller.get_situation(sit_id)
+            if situation:
+                # Format access info
+                access = "All" if not situation['roster_names'] else f"{len(situation['roster_names'])} roster(s)"
+                jobs = len(situation['related_jobs']) if situation['related_jobs'] else 0
+                
+                # Format each field
+                sit_id = str(situation['id']).ljust(col_widths['sit_id'])
+                title = crop(situation['title'], col_widths['title']-2).ljust(col_widths['title'])
+                created = situation['created_at'][:10].ljust(col_widths['created'])
+                access = crop(access, col_widths['access']-2).ljust(col_widths['access'])
+                jobs = str(jobs).ljust(col_widths['jobs'])
+                
+                # Combine fields
+                row = f"{sit_id}{title}{created}{access}{jobs}"
+                output.append(row)
+                
+        output.append(divider("", width=78, fillchar="-", color="|r"))
+        return "\n".join(output)
+
     def func(self):
         """Main function for plot commands"""
         # Check permissions first
@@ -526,7 +586,7 @@ class CmdPlots(MuxCommand):
             self.view_plot()
             return
 
-        switch = self.switches[0].lower()  # Convert to lowercase for consistent matching
+        switch = self.switches[0].lower()
 
         if switch == "add":
             self.add_plot()
@@ -554,5 +614,37 @@ class CmdPlots(MuxCommand):
             self.remove_session_player()
         elif switch == "session/edit":
             self.edit_session()
+        elif switch == "linksit":
+            if not self.args or "=" not in self.args:
+                self.caller.msg("Usage: +plot/linksit <#>=<sit#>")
+                return
+                
+            try:
+                plot_id, sit_id = [int(i.strip()) for i in self.args.split("=")]
+            except ValueError:
+                self.caller.msg("Both plot ID and situation ID must be numbers.")
+                return
+                
+            from typeclasses.situation_controller import get_or_create_situation_controller
+            controller = get_or_create_situation_controller()
+            result = controller.link_plot(sit_id, plot_id)
+            self.caller.msg(result)
+            
+        elif switch == "unlinksit":
+            if not self.args or "=" not in self.args:
+                self.caller.msg("Usage: +plot/unlinksit <#>=<sit#>")
+                return
+                
+            try:
+                plot_id, sit_id = [int(i.strip()) for i in self.args.split("=")]
+            except ValueError:
+                self.caller.msg("Both plot ID and situation ID must be numbers.")
+                return
+                
+            from typeclasses.situation_controller import get_or_create_situation_controller
+            controller = get_or_create_situation_controller()
+            result = controller.unlink_plot(sit_id, plot_id)
+            self.caller.msg(result)
+            
         else:
             self.caller.msg(f"Unknown switch: {switch}") 

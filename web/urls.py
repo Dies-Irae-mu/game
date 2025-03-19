@@ -47,6 +47,9 @@ custom_patterns = [
     
     # Wiki URLs
     path('wiki/', include('wiki.urls', namespace='wiki')),
+    
+    # World URLs
+    path('', include('world.urls')),
 ]
 
 # Default Evennia patterns

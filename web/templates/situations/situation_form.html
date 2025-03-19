@@ -1,0 +1,138 @@
+{% extends "situations/base_situations.html" %}
+{% load static %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script type="text/javascript" src="{% static 'admin/js/core.js' %}"></script>
+<script type="text/javascript" src="{% static 'admin/js/admin/RelatedObjectLookups.js' %}"></script>
+<script type="text/javascript" src="{% static 'admin/js/jquery.init.js' %}"></script>
+<script type="text/javascript" src="{% static 'admin/js/SelectBox.js' %}"></script>
+<script type="text/javascript" src="{% static 'admin/js/SelectFilter2.js' %}"></script>
+{% endblock %}
+
+{% block situation_content %}
+<div class="card">
+    <div class="card-header">
+        <h2>{% if object %}Edit{% else %}Create{% endif %} Situation</h2>
+    </div>
+    <div class="card-body">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" class="form">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            {% if field.name != "job_id" %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                    {{ field.label }}
+                    {% if field.field.required %}
+                    <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="alert alert-danger">
+                    {{ field.errors }}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+
+            {% if object %}
+            <!-- Related Jobs Section -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">Related Jobs</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Add Job Form -->
+                    <div class="mb-3">
+                        <label for="{{ form.job_id.id_for_label }}" class="form-label">
+                            {{ form.job_id.label }}
+                        </label>
+                        <div class="input-group">
+                            {{ form.job_id }}
+                            <button type="submit" class="btn btn-primary">Add Job</button>
+                        </div>
+                        {% if form.job_id.help_text %}
+                        <div class="form-text">{{ form.job_id.help_text }}</div>
+                        {% endif %}
+                        {% if form.job_id.errors %}
+                        <div class="alert alert-danger">
+                            {{ form.job_id.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Linked Jobs Table -->
+                    {% if form.related_jobs %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Creator</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for job in form.related_jobs %}
+                                <tr>
+                                    <td>{{ job.id }}</td>
+                                    <td>{{ job.title }}</td>
+                                    <td>{{ job.creator }}</td>
+                                    <td>{{ job.status }}</td>
+                                    <td>
+                                        <form method="post" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" name="remove_job" value="{{ job.id }}" 
+                                                    class="btn btn-sm btn-danger">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No jobs linked to this situation.</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    {% if object %}Update{% else %}Create{% endif %} Situation
+                </button>
+                <a href="{% if object %}{% url 'situations:detail' object.pk %}{% else %}{% url 'situations:list' %}{% endif %}" 
+                   class="btn btn-secondary">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

@@ -16,6 +16,7 @@ from django.db.models import Max, F
 import json
 import copy
 from evennia.help.models import HelpEntry
+from typeclasses.situation_controller import get_or_create_situation_controller
 
 class CmdJobs(MuxCommand):
     """
@@ -47,6 +48,8 @@ class CmdJobs(MuxCommand):
       +jobs/archive <#>
       +jobs/complete <#>=<reason>
       +jobs/cancel <#>=<reason>
+      +jobs/linksit <#>=<situation #>  - Link a situation to a job
+      +jobs/unlinksit <#>=<situation #> - Unlink a situation from a job
 
     Categories:
       REQ    - General requests
@@ -134,6 +137,10 @@ class CmdJobs(MuxCommand):
             self.complete_job()
         elif "cancel" in self.switches:
             self.cancel_job()
+        elif "linksit" in self.switches:
+            self.link_situation()
+        elif "unlinksit" in self.switches:
+            self.unlink_situation()
         else:
             self.caller.msg("Invalid switch. See help +jobs for usage.")
 
@@ -237,6 +244,18 @@ class CmdJobs(MuxCommand):
                 output += "|cAttached Objects:|n " + ", ".join([obj.object.key for obj in attached_objects]) + "\n"
             else:
                 output += "|cAttached Objects:|n None\n"
+
+            # Add linked situations
+            controller = get_or_create_situation_controller()
+            linked_situations = []
+            for sit_id, situation in controller.get_all_situations().items():
+                if job.id in situation['related_jobs']:
+                    if controller.has_access(sit_id, self.caller) or self.caller.check_permstring("Admin"):
+                        linked_situations.append(f"#{sit_id}: {situation['title']}")
+            if linked_situations:
+                output += "|cLinked Situations:|n " + ", ".join(linked_situations) + "\n"
+            else:
+                output += "|cLinked Situations:|n None\n"
             
             output += divider("Description", width=78, fillchar="-", color="|r", text_color="|c") + "\n"
             
@@ -1371,6 +1390,88 @@ class CmdJobs(MuxCommand):
 
         output += footer(width=78, fillchar="|r-|n")
         self.caller.msg(output)
+
+    def link_situation(self):
+        """Link a situation to a job."""
+        if not self.args or "=" not in self.args:
+            self.caller.msg("Usage: +jobs/linksit <#>=<situation #>")
+            return
+
+        try:
+            job_id, sit_id = self.args.split("=", 1)
+            job_id = int(job_id.strip())
+            sit_id = int(sit_id.strip())
+            
+            job = Job.objects.get(id=job_id)
+            controller = get_or_create_situation_controller()
+            situation = controller.get_situation(sit_id)
+            
+            if not situation:
+                self.caller.msg(f"No situation found with ID {sit_id}.")
+                return
+                
+            # Check permissions - staff can always link, players need access to both job and situation
+            has_job_access = (self.caller.check_permstring("Admin") or 
+                            job.requester == self.caller.account or 
+                            job.assignee == self.caller.account or 
+                            self.caller.account in job.participants.all())
+            
+            has_situation_access = (self.caller.check_permstring("Admin") or 
+                                  controller.has_access(sit_id, self.caller))
+            
+            if not (has_job_access and has_situation_access):
+                self.caller.msg("You don't have permission to link this job and situation.")
+                return
+
+            result = controller.link_job(sit_id, job_id)
+            self.caller.msg(result)
+            self.post_to_jobs_channel(self.caller.name, job_id, f"linked to situation {sit_id}")
+
+        except ValueError:
+            self.caller.msg("Both job ID and situation ID must be numbers.")
+        except Job.DoesNotExist:
+            self.caller.msg(f"No job found with ID {job_id}.")
+
+    def unlink_situation(self):
+        """Unlink a situation from a job."""
+        if not self.args or "=" not in self.args:
+            self.caller.msg("Usage: +jobs/unlinksit <#>=<situation #>")
+            return
+
+        try:
+            job_id, sit_id = self.args.split("=", 1)
+            job_id = int(job_id.strip())
+            sit_id = int(sit_id.strip())
+            
+            job = Job.objects.get(id=job_id)
+            controller = get_or_create_situation_controller()
+            situation = controller.get_situation(sit_id)
+            
+            if not situation:
+                self.caller.msg(f"No situation found with ID {sit_id}.")
+                return
+                
+            # Check permissions - staff can always unlink, players need access to both job and situation
+            has_job_access = (self.caller.check_permstring("Admin") or 
+                            job.requester == self.caller.account or 
+                            job.assignee == self.caller.account or 
+                            self.caller.account in job.participants.all())
+            
+            has_situation_access = (self.caller.check_permstring("Admin") or 
+                                  controller.has_access(sit_id, self.caller))
+            
+            if not (has_job_access and has_situation_access):
+                self.caller.msg("You don't have permission to unlink this job and situation.")
+                return
+
+            result = controller.unlink_job(sit_id, job_id)
+            self.caller.msg(result)
+            self.post_to_jobs_channel(self.caller.name, job_id, f"unlinked from situation {sit_id}")
+
+        except ValueError:
+            self.caller.msg("Both job ID and situation ID must be numbers.")
+        except Job.DoesNotExist:
+            self.caller.msg(f"No job found with ID {job_id}.")
 
 class JobSystemCmdSet(CmdSet):
     """

@@ -79,6 +79,7 @@ from commands.CmdRoster import CmdRoster
 from commands.CmdSpecialties import CmdSpecialties
 from commands.CmdMultidesc import CmdMultidesc
 from world.wod20th.scripts.weekly_xp import CmdDebugXP
+from commands.CmdSituation import CmdSituation
 
 class CharacterCmdSet(cmdset_character.CharacterCmdSet):
     """
@@ -162,6 +163,7 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdNotifications())
         self.add(CmdMultidesc())
         self.add(CmdUmbraInfo())
+        self.add(CmdSituation())
 
 class AccountCmdSet(cmdset_account.AccountCmdSet):
     """

@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'situations:list' %}">Situations</a></li>
+                <li class="breadcrumb-item active">{{ situation.title }}</li>
+            </ol>
+        </nav>
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Situation #{{ situation.id }}: {{ situation.title }}</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Created: {{ situation.created_at|date:"Y-m-d H:i" }}</p>
+                
+                {% if is_staff or situation.roster_names %}
+                <p class="text-muted">
+                    Visible to: 
+                    {% if situation.roster_names %}
+                    {{ situation.roster_names|join:", " }}
+                    {% else %}
+                    Everyone
+                    {% endif %}
+                </p>
+                {% endif %}
+                
+                <div class="description mb-4">
+                    {{ situation.description|linebreaks }}
+                </div>
+                
+                {% if is_staff and situation.staff_notes %}
+                <div class="alert alert-warning">
+                    <h6>Staff Notes:</h6>
+                    {{ situation.staff_notes|linebreaks }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Details Section -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Details</h5>
+            </div>
+            <div class="card-body">
+                {% if details %}
+                <div class="list-group">
+                    {% for detail in details %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">
+                                <a href="{% url 'situations:detail_view' situation.id detail.id %}">
+                                    {{ detail.title }}
+                                </a>
+                                {% if is_staff and detail.secrecy_rating > 0 %}
+                                <span class="badge bg-warning">Secrecy: {{ detail.secrecy_rating }}</span>
+                                {% endif %}
+                            </h6>
+                            <small>{{ detail.created_at|date:"Y-m-d H:i" }}</small>
+                        </div>
+                        <p class="mb-1">{{ detail.content|truncatewords:30 }}</p>
+                        {% if is_staff and detail.staff_notes %}
+                        <small class="text-warning">Has staff notes</small>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">No details available.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Developments Section -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Developments</h5>
+            </div>
+            <div class="card-body">
+                {% if developments %}
+                <div class="list-group">
+                    {% for development in developments %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">
+                                <a href="{% url 'situations:development_view' situation.id development.id %}">
+                                    {{ development.title }}
+                                </a>
+                                {% if development.resolved %}
+                                <span class="badge bg-success">Resolved</span>
+                                {% else %}
+                                <span class="badge bg-primary">Open</span>
+                                {% endif %}
+                            </h6>
+                            <small>{{ development.created_at|date:"Y-m-d H:i" }}</small>
+                        </div>
+                        <p class="mb-1">{{ development.content|truncatewords:30 }}</p>
+                        {% if development.resolved %}
+                        <small class="text-muted">Resolved: {{ development.resolved_at|date:"Y-m-d H:i" }}</small>
+                        {% endif %}
+                        {% if is_staff and development.staff_notes %}
+                        <small class="text-warning">Has staff notes</small>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">No developments available.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if is_staff and related_jobs %}
+        <!-- Related Jobs Section (Staff Only) -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Related Jobs</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for job in related_jobs %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">
+                                <a href="{% url 'jobs:detail' job.id %}">
+                                    #{{ job.id }}: {{ job.title }}
+                                </a>
+                            </h6>
+                            <small>{{ job.status }}</small>
+                        </div>
+                        <p class="mb-1">
+                            Queue: {{ job.queue.name }}
+                            {% if job.assignee %}
+                            | Assignee: {{ job.assignee.username }}
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Related Plots Section -->
+        {% if related_plots %}
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Related Plots</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for plot in related_plots %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">
+                                <a href="{% url 'plots:detail' plot.id %}">
+                                    #{{ plot.id }}: {{ plot.title }}
+                                </a>
+                            </h6>
+                            <small>{{ plot.genre }}</small>
+                        </div>
+                        <p class="mb-1">
+                            Status: {{ plot.claimed|yesno:"Claimed,Open" }}
+                            {% if plot.storyteller %}
+                            | Storyteller: {{ plot.storyteller.username }}
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %} 

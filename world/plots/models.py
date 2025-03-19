@@ -37,6 +37,7 @@ class Plot(SharedMemoryModel):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     next_session = models.DateTimeField(null=True, blank=True)
+    related_situations = models.JSONField(default=list, blank=True)  # Store situation IDs as a list
 
     def __str__(self):
         return f"{self.id}: {self.title}"

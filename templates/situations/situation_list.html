@@ -1,0 +1,71 @@
+{% extends "situations/base_situations.html" %}
+{% load static %}
+
+{% block situation_content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2>Situations</h2>
+        {% if user.is_staff %}
+        <a href="{% url 'situations:create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create Situation
+        </a>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        {% if situations %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Created</th>
+                        {% if user.is_staff %}
+                        <th>Access</th>
+                        <th>Actions</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for situation in situations %}
+                    <tr>
+                        <td>{{ situation.id }}</td>
+                        <td>
+                            <a href="{% url 'situations:detail' situation.pk %}">
+                                {{ situation.title }}
+                                {% if user.is_staff and situation.staff_notes %}
+                                <i class="fas fa-sticky-note text-warning" title="Has staff notes"></i>
+                                {% endif %}
+                            </a>
+                        </td>
+                        <td>{{ situation.created_at|date:"Y-m-d H:i" }}</td>
+                        {% if user.is_staff %}
+                        <td>
+                            {% if situation.roster_names %}
+                            {{ situation.roster_names|length }} roster(s)
+                            {% else %}
+                            All
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{% url 'situations:edit' situation.pk %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'situations:delete' situation.pk %}" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">No situations available.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 
