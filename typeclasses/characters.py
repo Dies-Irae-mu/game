@@ -95,6 +95,10 @@ class Character(DefaultCharacter):
                 self.location.for_contents(message, exclude=[self], from_obj=self)
                 self.db.prelogout_location = self.location
                 self.location = None
+                
+            # Store the current time as the last disconnect time
+            from time import time
+            self.attributes.add("last_disconnect", time())
 
     def at_post_puppet(self, **kwargs):
         """
@@ -102,7 +106,7 @@ class Character(DefaultCharacter):
         Account<->Object links have been established.
         """
         from evennia.utils import logger
-        logger.log_info(f"at_post_puppet called for {self.key}")
+        # # logger.log_info(f"at_post_puppet called for {self.key}")
         
         # Send connection message to room
         if self.location:
@@ -119,9 +123,9 @@ class Character(DefaultCharacter):
             self.msg((self.at_look(self.location)))
 
         # Display login notifications
-        logger.log_info(f"About to call display_login_notifications for {self.key}")
+        # # logger.log_info(f"About to call display_login_notifications for {self.key}")
         self.display_login_notifications()
-        logger.log_info(f"Finished display_login_notifications for {self.key}")
+        # # logger.log_info(f"Finished display_login_notifications for {self.key}")
 
     @property
     def notification_settings(self):
@@ -1314,9 +1318,9 @@ class Character(DefaultCharacter):
             # If this was a valid scene (20+ mins), increment completed scenes
             if duration >= 20 and hasattr(self.db, 'scene_data'):
                 self.db.scene_data['completed_scenes'] = self.db.scene_data.get('completed_scenes', 0) + 1
-                logger.log_info(f"{self.key}: Scene completed ({int(duration)} minutes). Total completed: {self.db.scene_data['completed_scenes']}")
-            else:
-                logger.log_info(f"{self.key}: Scene ended but too short to count ({int(duration)} minutes)")
+                # # logger.log_info(f"{self.key}: Scene completed ({int(duration)} minutes). Total completed: {self.db.scene_data['completed_scenes']}")
+            # else:
+                # # logger.log_info(f"{self.key}: Scene ended but too short to count ({int(duration)} minutes)")
 
             # Reset character's scene tracking
             if hasattr(self.db, 'scene_data'):
@@ -1447,19 +1451,19 @@ class Character(DefaultCharacter):
         """Record activity in current scene."""
         try:
             if not self.location:
-                logger.log_info(f"{self.key}: record_scene_activity called with no location")
+                # # logger.log_info(f"{self.key}: record_scene_activity called with no location")
                 return
 
             # Check if this is an IC scene
             if (getattr(self.location.db, 'roomtype', None) == 'OOC Area'):
-                logger.log_info(f"{self.key}: record_scene_activity called in OOC Area")
+                # # logger.log_info(f"{self.key}: record_scene_activity called in OOC Area")
                 return
 
             now = datetime.now()
 
             # Handle room's scene data
             if not hasattr(self.location.db, 'scene_data'):
-                logger.log_info(f"{self.key}: Room has no scene data, initializing")
+                # # logger.log_info(f"{self.key}: Room has no scene data, initializing")
                 self.location.db.scene_data = {
                     'start_time': now,
                     'participants': set(),
@@ -1485,7 +1489,7 @@ class Character(DefaultCharacter):
                     
                     # If more than 2 hours of inactivity, start a new scene
                     if inactivity_time > 2:
-                        logger.log_info(f"{self.key}: Scene inactive for {inactivity_time:.1f} hours, starting new scene")
+                        # # logger.log_info(f"{self.key}: Scene inactive for {inactivity_time:.1f} hours, starting new scene")
                         self.location.db.scene_data.update({
                             'start_time': now,
                             'participants': set(),
@@ -1495,7 +1499,7 @@ class Character(DefaultCharacter):
 
             # Initialize character's scene tracking if needed
             if not hasattr(self.db, 'scene_data') or not isinstance(self.db.scene_data, dict):
-                logger.log_info(f"{self.key}: Initializing character scene data")
+                # # logger.log_info(f"{self.key}: Initializing character scene data")
                 self.db.scene_data = {
                     'current_scene': None,
                     'scene_location': None,
@@ -1506,7 +1510,7 @@ class Character(DefaultCharacter):
 
             # Initialize participants as a set if needed
             if not isinstance(self.location.db.scene_data.get('participants'), set):
-                logger.log_info(f"{self.key}: Converting participants to set")
+                # # logger.log_info(f"{self.key}: Converting participants to set")
                 self.location.db.scene_data['participants'] = set()
 
             # Update participants list - only add active participants
@@ -1515,7 +1519,7 @@ class Character(DefaultCharacter):
                 if (hasattr(obj, 'has_account') and obj.has_account and 
                     obj.db.in_umbra == self.db.in_umbra):
                     active_participants.add(obj.key)
-                    logger.log_info(f"{self.key}: Added {obj.key} to scene participants")
+                    # # logger.log_info(f"{self.key}: Added {obj.key} to scene participants")
 
             # Remove any participants no longer in the room
             self.location.db.scene_data['participants'] = active_participants
@@ -1525,7 +1529,7 @@ class Character(DefaultCharacter):
 
             # Only start a new scene if there isn't one already
             if not self.location.db.scene_data.get('start_time'):
-                logger.log_info(f"{self.key}: Starting new scene in room")
+                # # logger.log_info(f"{self.key}: Starting new scene in room")
                 self.location.db.scene_data['start_time'] = now
 
             # Update character's scene data - preserve completed_scenes and last_weekly_reset
@@ -1542,7 +1546,7 @@ class Character(DefaultCharacter):
 
             # Handle XP tracking
             if not hasattr(self.db, 'xp'):
-                logger.log_info(f"{self.key}: Initializing XP data")
+                # # logger.log_info(f"{self.key}: Initializing XP data")
                 self.db.xp = {
                     'total': Decimal('0.00'),
                     'current': Decimal('0.00'),
@@ -1558,22 +1562,22 @@ class Character(DefaultCharacter):
             # Only update scene participation if enough time has passed
             last_scene = self.db.xp.get('last_scene')
             if not last_scene:
-                logger.log_info(f"{self.key}: First scene participation recorded")
+                # # logger.log_info(f"{self.key}: First scene participation recorded")
                 self.db.xp['last_scene'] = now.isoformat()
                 self.db.xp['scenes_this_week'] = self.db.xp.get('scenes_this_week', 0) + 1
             elif isinstance(last_scene, str):
                 last_scene_time = datetime.fromisoformat(last_scene)
                 time_diff = (now - last_scene_time).total_seconds()
-                logger.log_info(f"{self.key}: Time since last scene: {time_diff} seconds")
+                # # logger.log_info(f"{self.key}: Time since last scene: {time_diff} seconds")
                 if time_diff > 1200:  # 20 minutes
-                    logger.log_info(f"{self.key}: Recording new scene participation")
+                    # # logger.log_info(f"{self.key}: Recording new scene participation")
                     self.db.xp['last_scene'] = now.isoformat()
                     self.db.xp['scenes_this_week'] = self.db.xp.get('scenes_this_week', 0) + 1
 
             # Add debug logging for final state
-            logger.log_info(f"{self.key}: Final room scene data: {self.location.db.scene_data}")
-            logger.log_info(f"{self.key}: Final character scene data: {self.db.scene_data}")
-            logger.log_info(f"{self.key}: Final XP data: {self.db.xp}")
+            # # logger.log_info(f"{self.key}: Final room scene data: {self.location.db.scene_data}")
+            # # logger.log_info(f"{self.key}: Final character scene data: {self.db.scene_data}")
+            # # logger.log_info(f"{self.key}: Final XP data: {self.db.xp}")
 
         except Exception as e:
             logger.log_err(f"Error in record_scene_activity for {self.key}: {str(e)}")
@@ -1602,16 +1606,16 @@ class Character(DefaultCharacter):
         try:
             # Only initialize scene_data if it doesn't exist at all
             if not hasattr(self.db, 'scene_data'):
-                logger.log_info(f"{self.key}: No scene_data found, initializing")
+                # # logger.log_info(f"{self.key}: No scene_data found, initializing")
                 with transaction.atomic():
                     self.init_scene_data()
             elif not isinstance(self.db.scene_data, dict):
-                logger.log_info(f"{self.key}: Invalid scene_data format, reinitializing")
+                # # logger.log_info(f"{self.key}: Invalid scene_data format, reinitializing")
                 with transaction.atomic():
                     self.init_scene_data()
-            else:
+            # else:
                 # Preserve existing scene data
-                logger.log_info(f"{self.key}: Preserving existing scene data: {self.db.scene_data}")
+                # # logger.log_info(f"{self.key}: Preserving existing scene data: {self.db.scene_data}")
 
             # Initialize stats if they don't exist
             if not self.db.stats:
@@ -1623,7 +1627,7 @@ class Character(DefaultCharacter):
                     'total': Decimal('0.00'),
                     'current': Decimal('0.00'),
                     'spent': Decimal('0.00'),
-                    'ic_earned': Decimal('0.00'),
+                    'ic_xp': Decimal('0.00'),
                     'monthly_spent': Decimal('0.00'),
                     'last_reset': datetime.now(),
                     'spends': [],
@@ -1647,7 +1651,7 @@ class Character(DefaultCharacter):
             # Use a transaction to ensure atomic operation
             with transaction.atomic():
                 # Add debug logging for initialization trigger
-                logger.log_info(f"{self.key}: init_scene_data called")
+                # # logger.log_info(f"{self.key}: init_scene_data called")
                 
                 # If scene_data exists and is valid, preserve it
                 if hasattr(self.db, 'scene_data') and isinstance(self.db.scene_data, dict):
@@ -1662,9 +1666,9 @@ class Character(DefaultCharacter):
                             'last_weekly_reset': existing_data.get('last_weekly_reset', now)
                         }
                         self.db.scene_data.update(missing_fields)
-                        logger.log_info(f"{self.key}: Updated missing scene data fields: {missing_fields}")
+                        # # logger.log_info(f"{self.key}: Updated missing scene data fields: {missing_fields}")
                     else:
-                        logger.log_info(f"{self.key}: Scene data already valid, preserving: {self.db.scene_data}")
+                        # # logger.log_info(f"{self.key}: Scene data already valid, preserving: {self.db.scene_data}")
                         return self.db.scene_data
                 else:
                     # Initialize new scene data if none exists
@@ -1675,7 +1679,7 @@ class Character(DefaultCharacter):
                         'completed_scenes': 0,
                         'last_weekly_reset': now
                     }
-                    logger.log_info(f"{self.key}: Scene data initialized with {self.db.scene_data}")
+                    # # logger.log_info(f"{self.key}: Scene data initialized with {self.db.scene_data}")
                 return self.db.scene_data
             
         except Exception as e:
@@ -1693,7 +1697,7 @@ class Character(DefaultCharacter):
         # Get character's splat and type
         splat = self.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
         mortal_type = self.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
-        logger.log_info(f"Calculating XP cost for {stat_name} - Splat: {splat}, Type: {mortal_type}")
+        # # logger.log_info(f"Calculating XP cost for {stat_name} - Splat: {splat}, Type: {mortal_type}")
 
         # Special handling for Time based on splat
         if stat_name == 'Time':
@@ -1737,11 +1741,11 @@ class Character(DefaultCharacter):
         if category == 'powers' and subcategory == 'gift':
             from world.wod20th.models import Stat
             from django.db.models import Q
-            logger.log_info("Processing gift cost calculation")
+            # # logger.log_info("Processing gift cost calculation")
             
             # Search for the gift in the database
             search_name = stat_name.lower().strip()
-            logger.log_info(f"Searching for gift with name: {search_name}")
+            # # logger.log_info(f"Searching for gift with name: {search_name}")
             
             # First try exact name match
             found_gift = Stat.objects.filter(
@@ -1762,10 +1766,10 @@ class Character(DefaultCharacter):
                         break
 
             if found_gift:
-                logger.log_info(f"Found gift: {found_gift.name}")
+                # # logger.log_info(f"Found gift: {found_gift.name}")
                 # Calculate cost based on character type
                 if splat == 'Mortal+' and mortal_type == 'Kinfolk':
-                    logger.log_info("Calculating cost for Kinfolk")
+                    # # logger.log_info("Calculating cost for Kinfolk")
                     # Check if it's a breed gift (homid) or tribal gift
                     is_homid = False
                     is_tribal = False
@@ -1774,7 +1778,7 @@ class Character(DefaultCharacter):
                     if found_gift.shifter_type:
                         allowed_types = found_gift.shifter_type if isinstance(found_gift.shifter_type, list) else [found_gift.shifter_type]
                         is_homid = 'homid' in [t.lower() for t in allowed_types]
-                        logger.log_info(f"Checking homid gift - allowed_types: {allowed_types}, is_homid: {is_homid}")
+                        # # logger.log_info(f"Checking homid gift - allowed_types: {allowed_types}, is_homid: {is_homid}")
                     
                     # Check if it's a tribal gift
                     if found_gift.tribe:
@@ -1782,22 +1786,22 @@ class Character(DefaultCharacter):
                         if kinfolk_tribe:
                             allowed_tribes = found_gift.tribe if isinstance(found_gift.tribe, list) else [found_gift.tribe]
                             is_tribal = kinfolk_tribe.lower() in [t.lower() for t in allowed_tribes]
-                            logger.log_info(f"Checking tribal gift - kinfolk_tribe: {kinfolk_tribe}, allowed_tribes: {allowed_tribes}, is_tribal: {is_tribal}")
+                            # # logger.log_info(f"Checking tribal gift - kinfolk_tribe: {kinfolk_tribe}, allowed_tribes: {allowed_tribes}, is_tribal: {is_tribal}")
                     
                     # Calculate cost based on gift type
                     if is_homid or is_tribal:
                         total_cost = new_rating * 6  # Breed/Tribe gifts cost 6 XP per level
                     else:
                         total_cost = new_rating * 10  # Outside Breed/Tribe gifts cost 10 XP per level
-                    logger.log_info(f"Kinfolk cost calculation - total_cost: {total_cost}")
+                    # # logger.log_info(f"Kinfolk cost calculation - total_cost: {total_cost}")
                 elif splat == 'Shifter' and mortal_type == 'Garou':
                     # For Garou, calculate cost based on gift type
-                    logger.log_info("Calculating cost for Garou")
+                    # # logger.log_info("Calculating cost for Garou")
                     # Get character's breed, auspice, and tribe
                     breed = self.get_stat('identity', 'lineage', 'Breed', temp=False)
                     auspice = self.get_stat('identity', 'lineage', 'Auspice', temp=False)
                     tribe = self.get_stat('identity', 'lineage', 'Tribe', temp=False)
-                    logger.log_info(f"Character details - Breed: {breed}, Auspice: {auspice}, Tribe: {tribe}")
+                    # # logger.log_info(f"Character details - Breed: {breed}, Auspice: {auspice}, Tribe: {tribe}")
                     
                     # Check if it's a breed, auspice, or tribe gift
                     is_breed_gift = False
@@ -1809,20 +1813,20 @@ class Character(DefaultCharacter):
                     if found_gift.shifter_type:
                         allowed_types = found_gift.shifter_type if isinstance(found_gift.shifter_type, list) else [found_gift.shifter_type]
                         is_breed_gift = breed and breed.lower() in [t.lower() for t in allowed_types]
-                        logger.log_info(f"Checking breed gift - allowed_types: {allowed_types}, is_breed_gift: {is_breed_gift}")
+                        # # logger.log_info(f"Checking breed gift - allowed_types: {allowed_types}, is_breed_gift: {is_breed_gift}")
                     
                     # Check auspice gifts
                     if found_gift.auspice:
                         allowed_auspices = found_gift.auspice if isinstance(found_gift.auspice, list) else [found_gift.auspice]
                         is_auspice_gift = auspice and auspice.lower() in [a.lower() for a in allowed_auspices]
-                        logger.log_info(f"Checking auspice gift - allowed_auspices: {allowed_auspices}, is_auspice_gift: {is_auspice_gift}")
+                        # # logger.log_info(f"Checking auspice gift - allowed_auspices: {allowed_auspices}, is_auspice_gift: {is_auspice_gift}")
                     
                     # Check tribe gifts and special gifts
                     if found_gift.tribe:
                         tribes = found_gift.tribe if isinstance(found_gift.tribe, list) else [found_gift.tribe]
                         is_tribe_gift = tribe and tribe.lower() in [t.lower() for t in tribes]
                         is_special = any(t.lower() in ['croatan', 'planetary'] for t in tribes)
-                        logger.log_info(f"Checking tribe gift - tribes: {tribes}, is_tribe_gift: {is_tribe_gift}, is_special: {is_special}")
+                        # # logger.log_info(f"Checking tribe gift - tribes: {tribes}, is_tribe_gift: {is_tribe_gift}, is_special: {is_special}")
                     
                     # Calculate cost based on gift type
                     if is_special:
@@ -1831,18 +1835,18 @@ class Character(DefaultCharacter):
                         total_cost = new_rating * 3  # Breed/Auspice/Tribe gifts cost 3 XP per level
                     else:
                         total_cost = new_rating * 5  # Other gifts cost 5 XP per level
-                    logger.log_info(f"Garou cost calculation - total_cost: {total_cost}")
+                    # # logger.log_info(f"Garou cost calculation - total_cost: {total_cost}")
                 else:
                     # For all other shifter types (Ajaba, Bastet, etc.), use simplified cost
-                    logger.log_info(f"Calculating cost for non-Garou shifter: {mortal_type}")
+                    # # logger.log_info(f"Calculating cost for non-Garou shifter: {mortal_type}")
                     total_cost = new_rating * 3  # All gifts cost 3 XP per level
-                    logger.log_info(f"Non-Garou cost calculation - total_cost: {total_cost}")
+                    # # logger.log_info(f"Non-Garou cost calculation - total_cost: {total_cost}")
                 
                 requires_approval = new_rating > 2  # Gifts above level 2 require staff approval
-                logger.log_info(f"Final cost calculation - total_cost: {total_cost}, requires_approval: {requires_approval}")
+                # # logger.log_info(f"Final cost calculation - total_cost: {total_cost}, requires_approval: {requires_approval}")
                 return (total_cost, requires_approval)
             else:
-                logger.log_info(f"Gift '{stat_name}' not found in database")
+                # # logger.log_info(f"Gift '{stat_name}' not found in database")
                 return (0, False)
 
         # Calculate cost for each dot being purchased
@@ -2185,14 +2189,14 @@ class Character(DefaultCharacter):
         """Buy or increase a stat with XP."""
         try:
             # Add debug logging
-            logger.log_info(f"Starting buy_stat for {stat_name} with new_rating {new_rating}, category {category}, subcategory {subcategory}")
+            # # logger.log_info(f"Starting buy_stat for {stat_name} with new_rating {new_rating}, category {category}, subcategory {subcategory}")
             
             # Preserve original case of stat_name
             original_stat_name = stat_name
             
             # Fix any power issues before proceeding
             if category == 'powers':
-                logger.log_info("Fixing powers structure")
+                # # logger.log_info("Fixing powers structure")
                 self.fix_powers()
                 # After fixing, ensure we're using the correct subcategory
                 if subcategory in ['spheres', 'arts', 'realms', 'disciplines', 'gifts', 'charms', 'blessings', 'rituals', 'sorceries', 'advantages']:
@@ -2200,7 +2204,7 @@ class Character(DefaultCharacter):
                     subcategory = subcategory.rstrip('s')
                     if subcategory == 'advantage':
                         subcategory = 'special_advantage'
-                logger.log_info(f"After fixing powers, subcategory is {subcategory}")
+                # # logger.log_info(f"After fixing powers, subcategory is {subcategory}")
 
             # For gifts and secondary abilities, ensure proper case while preserving apostrophes
             if category == 'powers' and subcategory == 'gift':
@@ -2216,7 +2220,7 @@ class Character(DefaultCharacter):
                 if gift:
                     stat_name = gift.name  # Use the canonical name from the database
                     original_stat_name = gift.name  # Update original_stat_name to match
-                    logger.log_info(f"Using canonical gift name from database: {stat_name}")
+                    # # logger.log_info(f"Using canonical gift name from database: {stat_name}")
             elif category == 'secondary_abilities':
                 # Split by apostrophe to preserve possessive case
                 parts = stat_name.split("'")
@@ -2228,15 +2232,15 @@ class Character(DefaultCharacter):
                         titled_parts.append(part)  # Keep original case for 's ' parts
                 stat_name = "'".join(titled_parts)
                 original_stat_name = stat_name  # Update original_stat_name to match proper case
-                logger.log_info(f"Adjusted stat_name for secondary ability: {stat_name}")
+                # # logger.log_info(f"Adjusted stat_name for secondary ability: {stat_name}")
 
             # Ensure proper structure exists
-            logger.log_info("Ensuring stat structure exists")
+            # # logger.log_info("Ensuring stat structure exists")
             self.ensure_stat_structure(category, subcategory)
             
             # Get character's splat
             splat = self.get_stat('other', 'splat', 'Splat', temp=False)
-            logger.log_info(f"Character splat: {splat}")
+            # # logger.log_info(f"Character splat: {splat}")
             if not splat:
                 return False, "Character splat not set"
 
@@ -2286,10 +2290,10 @@ class Character(DefaultCharacter):
                     current_rating = self.db.stats.get('powers', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
                 else:
                     current_rating = self.get_stat(category, subcategory, stat_name) or 0
-            logger.log_info(f"Current rating: {current_rating}")
+            # # logger.log_info(f"Current rating: {current_rating}")
 
             # Calculate cost
-            logger.log_info("Calculating XP cost")
+            # # logger.log_info("Calculating XP cost")
             cost, requires_approval = self.calculate_xp_cost(
                 stat_name=stat_name,
                 new_rating=new_rating,
@@ -2297,35 +2301,35 @@ class Character(DefaultCharacter):
                 subcategory=subcategory,
                 current_rating=current_rating
             )
-            logger.log_info(f"Calculated cost: {cost}, requires_approval: {requires_approval}")
+            # # logger.log_info(f"Calculated cost: {cost}, requires_approval: {requires_approval}")
 
             if cost == 0:
-                logger.log_info("Cost is 0, invalid stat or no increase needed")
+                # # logger.log_info("Cost is 0, invalid stat or no increase needed")
                 return False, "Invalid stat or no increase needed"
 
             if requires_approval:
-                logger.log_info("Purchase requires staff approval")
+                # # logger.log_info("Purchase requires staff approval")
                 return False, "This purchase requires staff approval"
 
             # Check if we have enough XP
             if self.db.xp['current'] < cost:
-                logger.log_info(f"Not enough XP. Cost: {cost}, Available: {self.db.xp['current']}")
+                # logger.log_info(f"Not enough XP. Cost: {cost}, Available: {self.db.xp['current']}")
                 return False, f"Not enough XP. Cost: {cost}, Available: {self.db.xp['current']}"
 
             # Validate the purchase
-            logger.log_info("Validating purchase")
+            # logger.log_info("Validating purchase")
             can_purchase, error_msg = self.validate_xp_purchase(
                 stat_name, new_rating,
                 category=category, subcategory=subcategory
             )
-            logger.log_info(f"Validation result: can_purchase={can_purchase}, error_msg={error_msg}")
+            # logger.log_info(f"Validation result: can_purchase={can_purchase}, error_msg={error_msg}")
 
             if not can_purchase:
                 return False, error_msg
 
             # All checks passed, make the purchase
             try:
-                logger.log_info("Making the purchase")
+                # logger.log_info("Making the purchase")
                 # For secondary abilities, use the original case
                 if category == 'secondary_abilities':
                     stat_name = original_stat_name
@@ -2387,7 +2391,7 @@ class Character(DefaultCharacter):
                 if category == 'powers' and subcategory == 'gift':
                     self.set_gift_alias(stat_name, stat_name, new_rating)
 
-                logger.log_info("Purchase completed successfully")
+                # logger.log_info("Purchase completed successfully")
                 return True, f"Successfully increased {stat_name} from {current_rating} to {new_rating} (Cost: {cost} XP)"
 
             except Exception as e:
@@ -2408,7 +2412,7 @@ class Character(DefaultCharacter):
                     'total': Decimal('0.00'),
                     'current': Decimal('0.00'),
                     'spent': Decimal('0.00'),
-                    'ic_earned': Decimal('0.00'),
+                    'ic_xp': Decimal('0.00'),
                     'monthly_spent': Decimal('0.00'),
                     'last_reset': datetime.now(),
                     'spends': [],
@@ -2816,7 +2820,7 @@ class Character(DefaultCharacter):
             from django.db.models import Q
             
             # Log the search
-            logger.log_info(f"[Gift Search] Looking for gift with name: '{stat_name}'")
+            # logger.log_info(f"[Gift Search] Looking for gift with name: '{stat_name}'")
             
             # Search for the gift in the database
             gift_query = Q(stat_type='gift')
@@ -2828,10 +2832,10 @@ class Character(DefaultCharacter):
             ).first()
             
             if not gift:
-                logger.log_info(f"[Gift Search] Gift '{stat_name}' not found in database")
+                # # logger.log_info(f"[Gift Search] Gift '{stat_name}' not found in database")
                 return False, f"Gift '{stat_name}' not found in database"
                 
-            logger.log_info(f"[Gift Search] Found gift: {gift.name}")
+            # # logger.log_info(f"[Gift Search] Found gift: {gift.name}")
             
             # For non-Garou shifters, we don't need to validate tribe/auspice
             char_type = self.get_stat('identity', 'lineage', 'Type', temp=False)

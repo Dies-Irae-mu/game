@@ -167,17 +167,17 @@ class CmdRoster(default_cmds.MuxCommand):
 
         members = roster.get_online_members() if online_only else roster.get_members()
         
-        if not members:
+        if not members and not online_only:
             self.caller.msg("No members found in this roster.")
             return
 
         # Format header
-        title = f"|yRoster {roster_id}: {roster.name}|b"
-        header = f"|b{title.center(82, '=')}|n"
+        title = f" |yRoster {roster_id}: {roster.name} |b"
+        header = f"|b{title.center(82, '-')}|n"
         
         # Column headers with fixed widths
-        col_headers = f"|y{'Name':20s}|n |y{'Title':45s}|n |y{'Idle':10s}|n"
-        separator = "|b-|n" * 78
+        col_headers = f"|yName|n{' ' * 16}|yTitle|n{' ' * 40}|yIdle|n"
+        separator = f"|b{'-' * 78}|n"
         
         # Format each member row
         member_rows = []
@@ -187,21 +187,50 @@ class CmdRoster(default_cmds.MuxCommand):
             idle_time = format_idle_time(sessions)
             
             # Format each column with fixed width
-            name = char.name[:20].ljust(20)
-            title = member.title[:45].ljust(45)
-            idle = idle_time[:10].ljust(10)
+            name = char.name[:20]
+            title = member.title[:45] if member.title else ""
             
-            member_rows.append(f"{name} {title} {idle}")
+            # Format the row with proper spacing for column alignment
+            member_rows.append(f"{name.ljust(20)}{title.ljust(45)}{idle_time}")
 
         # Join all components
         output = [
-            "",  # Empty line before header
             header,
             separator,
             col_headers,
             separator,
-            *member_rows,  # Unpack all member rows
         ]
+        
+        # Add member rows if any exist
+        if member_rows:
+            output.extend(member_rows)
+        elif online_only:
+            output.append("No members are currently online.")
+
+        # Add linked groups section if any exist
+        from world.groups.models import Group
+        linked_groups = Group.objects.filter(roster=roster).order_by('group_id')
+        if linked_groups.exists():
+            output.extend([
+                "",  # Empty line before groups
+                f"|b{' |yLinked Groups|b '.center(82, '-')}",
+                f"|yID#|n  |yGroup Name|n{' ' * 28}|yMembers|n  |yLeader|n"
+            ])
+            
+            # Add a divider of tildes for the linked groups section
+            output.append(f"|b{'~' * 78}|n")
+            
+            for group in linked_groups:
+                # Get member count
+                member_count = group.groupmembership_set.count()
+                # Get leader name
+                leader_name = "None"
+                if group.leader and hasattr(group.leader, 'db_object'):
+                    leader_name = group.leader.db_object.name
+                # Format group info
+                name = group.name
+                # Add the group entry with proper spacing
+                output.append(f"{group.group_id:<3d} | {name.ljust(40)}{str(member_count).center(8)}{leader_name}")
 
         # Add website section if it exists
         if roster.website:
@@ -215,10 +244,10 @@ class CmdRoster(default_cmds.MuxCommand):
         if roster.hangouts.exists():
             output.extend([
                 "",  # Empty line before hangouts
-                "|b" + ("-" * 35) + " |yHangouts|n|b " + ("-" * 35) + "|n",
-                " |wID#  Hangout Name                                  Players|n"
+                f"|b{' Hangouts '.center(78, '-')}|n",
+                f"|yID#|n  |yHangout Name|n{' ' * 35}|yPlayers|n"
             ])
-            for i, hangout in enumerate(roster.hangouts.all(), 1):
+            for hangout in roster.hangouts.all():
                 # Format hangout name and truncate if needed
                 name = hangout.key[:47] + "..." if len(hangout.key) > 47 else hangout.key
                 # Get player count for this hangout
@@ -233,9 +262,7 @@ class CmdRoster(default_cmds.MuxCommand):
                     output.append(f"    | {desc}")
 
         # Add footer
-        footer = "|b" + ("=" * 78) + "|n"
-        output.append("")  # Empty line before footer
-        output.append(footer)
+        output.append(f"|b{'-' * 78}|n")
 
         # Send the complete formatted output
         self.caller.msg("\n".join(output))
@@ -265,6 +292,19 @@ class CmdRoster(default_cmds.MuxCommand):
         header = f"|b{title.center(84, '=')}|n"
         info = f"\nDescription:\n{roster.description}\n\n"
         
+        # Add linked groups information
+        from world.groups.models import Group
+        linked_groups = Group.objects.filter(roster=roster).order_by('group_id')
+        if linked_groups.exists():
+            info += "|yLinked Groups:|n\n"
+            for group in linked_groups:
+                member_count = group.groupmembership_set.count()
+                leader_name = "None"
+                if group.leader and hasattr(group.leader, 'db_object'):
+                    leader_name = group.leader.db_object.name
+                info += f"- {group.name} (#{group.group_id}) - Members: {member_count}, Leader: {leader_name}\n"
+            info += "\n"
+            
         if roster.admins.exists():
             info += "|yAdministrators:|n\n"
             for admin in roster.admins.all():

@@ -32,6 +32,8 @@ def format_stat(name: str, value: int, default: int = 0, tempvalue: int = None, 
     # If temporary value differs from permanent, show both
     if tempvalue != value:
         value_str = f"{value}({tempvalue})"
+        # Add yellow highlighting for boosted stats
+        return f"|y {name}|x{'.' * (width - len(name) - len(value_str) - 2)} |y{value_str}|n"
 
     # Format the full string with padding
     return f" {name}{'.' * (width - len(name) - len(value_str) - 2)} {value_str}"

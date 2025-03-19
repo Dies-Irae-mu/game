@@ -144,10 +144,10 @@ class CmdSheet(MuxCommand):
         
         # Get target character
         name = self.args.strip()
-        character = self.get_character(name)
+        self.target_character = self.get_character(name)  # Store target character as instance variable
         
         # Validate character exists and has required stats
-        is_valid, result = self.validate_character(character)
+        is_valid, result = self.validate_character(self.target_character)
         if not is_valid:
             self.caller.msg(f"|r{result}|n")
             return
@@ -155,27 +155,27 @@ class CmdSheet(MuxCommand):
         splat = result  # result contains splat type if validation passed
         
         # Check viewing permissions
-        if not self.can_view_sheet(character):
-            self.caller.msg(f"|rYou can't see the sheet of {character.key}.|n")
+        if not self.can_view_sheet(self.target_character):
+            self.caller.msg(f"|rYou can't see the sheet of {self.target_character.key}.|n")
             return
 
         # Start building the character sheet
-        string = header(f"Character Sheet for:|n {character.get_display_name(self.caller)}")
+        string = header(f"Character Sheet for:|n {self.target_character.get_display_name(self.caller)}")
 
         # Add Identity section
-        string += self.format_identity_section(character, splat)
+        string += self.format_identity_section(self.target_character, splat)
 
         # Add Attributes section
-        string += self.format_attributes_section(character)
+        string += self.format_attributes_section(self.target_character)
 
         # Add Abilities section
-        string += self.format_abilities_section(character)
+        string += self.format_abilities_section(self.target_character)
 
         # Add Secondary Abilities section
-        string += self.format_secondary_abilities_section(character)
+        string += self.format_secondary_abilities_section(self.target_character)
 
         # Process advantages section
-        string += self.process_advantages(character, string)
+        string += self.process_advantages(self.target_character, string)
 
         # Display Pools & Status (or Pools, Virtues & Status for non-Companions)
         if splat in ['Companion', 'Possessed']:
@@ -184,18 +184,18 @@ class CmdSheet(MuxCommand):
             string += header("Pools, Virtues & Status", width=78, color="|y")
 
         # Process pools
-        self.process_pools(character)
+        self.process_pools(self.target_character)
 
         # Calculate health bonuses before getting health status
-        bonus_health = self.calculate_health_bonuses(character)
+        bonus_health = self.calculate_health_bonuses(self.target_character)
 
         # Add health status to status_list without extra padding
-        health_status = format_damage_stacked(character)
+        health_status = format_damage_stacked(self.target_character)
         self.status_list.extend(health_status)
 
         # Handle virtues for non-Companions and Possessed
         if splat not in ['Companion', 'Possessed']:
-            self.process_virtues(character, splat)
+            self.process_virtues(self.target_character, splat)
 
         # Display the pools, virtues and status in columns with adjusted spacing
         if splat in ['Companion', 'Possessed']:
@@ -220,7 +220,7 @@ class CmdSheet(MuxCommand):
                 string += f"{pool:<25}  {virtue:>25}  {status}\n"
 
         # Check approval status and add it at the end
-        if character.db.approved:
+        if self.target_character.db.approved:
             string += header("Approved Character", width=78, fillchar="-")
         else:
             string += header("Unapproved Character", width=78, fillchar="-")
@@ -228,8 +228,26 @@ class CmdSheet(MuxCommand):
         # Send the complete sheet to the caller
         self.caller.msg(string)
 
-    def format_stat_with_dots(self, stat, value, width=38):
+    def format_stat(self, stat_name, value, width=25, tempvalue=None):
         """Format a stat with dots for display."""
+        # Check if this stat is boosted
+        is_boosted = False
+        proper_stat_name = self._get_proper_case(stat_name)
+        if hasattr(self.target_character, 'db') and hasattr(self.target_character.db, 'attribute_boosts'):
+            is_boosted = proper_stat_name in self.target_character.db.attribute_boosts
+
+        # Format the stat string
+        stat_str = f" {stat_name}"
+        dots = "." * (width - len(stat_str) - len(str(value)))
+        
+        # Add yellow highlighting for boosted stats
+        if is_boosted:
+            return f"|y{stat_str}|x{dots}|y{value}|n"
+        else:
+            return f"{stat_str}|x{dots}|n{value}"
+
+    def format_stat_with_dots(self, stat, value, width=38):
+        """Format a stat with dots for identity section display."""
         # Initialize display_stat with the original stat name
         display_stat = stat
         if '(' in stat and ')' in stat:
@@ -242,7 +260,6 @@ class CmdSheet(MuxCommand):
             display_stat = 'Type' if stat == 'companion_type' else display_stat
             display_stat = 'Enlightenment' if stat == 'Path of Enlightenment' else display_stat
             display_stat = 'Element' if stat == 'Elemental Affinity' else display_stat
-
         stat_str = f" {display_stat}"
 
         # Handle dictionary values
@@ -488,18 +505,48 @@ class CmdSheet(MuxCommand):
 
         # Process talents
         for ability in sorted(base_abilities['Talents']):
-            value = character.get_stat('abilities', 'talent', ability, temp=False) or 0
-            talents.append(format_stat(ability, value, width=25))
+            perm_value = character.get_stat('abilities', 'talent', ability, temp=False) or 0
+            temp_value = character.get_stat('abilities', 'talent', ability, temp=True)
+            if temp_value is None:
+                temp_value = perm_value
+            
+            # Format the stat string with wider spacing
+            stat_str = f" {ability}"
+            dots = "." * (20 - len(stat_str))  # Increased from 15 to 20
+            value_str = str(perm_value)
+            if temp_value > perm_value:
+                value_str += f"({temp_value})"
+            talents.append(f"{stat_str}{dots} {value_str}".ljust(25))
 
         # Process skills
         for ability in sorted(base_abilities['Skills']):
-            value = character.get_stat('abilities', 'skill', ability, temp=False) or 0
-            skills.append(format_stat(ability, value, width=25))
+            perm_value = character.get_stat('abilities', 'skill', ability, temp=False) or 0
+            temp_value = character.get_stat('abilities', 'skill', ability, temp=True)
+            if temp_value is None:
+                temp_value = perm_value
+                
+            # Format the stat string with wider spacing
+            stat_str = f" {ability}"
+            dots = "." * (20 - len(stat_str))  # Increased from 15 to 20
+            value_str = str(perm_value)
+            if temp_value > perm_value:
+                value_str += f"({temp_value})"
+            skills.append(f"{stat_str}{dots} {value_str}".ljust(25))
 
         # Process knowledges
         for ability in sorted(base_abilities['Knowledges']):
-            value = character.get_stat('abilities', 'knowledge', ability, temp=False) or 0
-            knowledges.append(format_stat(ability, value, width=25))
+            perm_value = character.get_stat('abilities', 'knowledge', ability, temp=False) or 0
+            temp_value = character.get_stat('abilities', 'knowledge', ability, temp=True)
+            if temp_value is None:
+                temp_value = perm_value
+                
+            # Format the stat string with wider spacing
+            stat_str = f" {ability}"
+            dots = "." * (20 - len(stat_str))  # Increased from 15 to 20
+            value_str = str(perm_value)
+            if temp_value > perm_value:
+                value_str += f"({temp_value})"
+            knowledges.append(f"{stat_str}{dots} {value_str}".ljust(25))
 
         # Ensure all columns have the same length
         max_len = max(len(talents), len(skills), len(knowledges))
@@ -557,20 +604,50 @@ class CmdSheet(MuxCommand):
         formatted_secondary_skills = []
         formatted_secondary_knowledges = []
 
-        # Process talents
+        # Process talents with wider spacing
         for talent in base_secondary_talents:
-            value = secondary_talents.get(talent, {}).get('perm', 0)
-            formatted_secondary_talents.append(format_stat(talent, value, width=25))
+            perm_value = secondary_talents.get(talent, {}).get('perm', 0)
+            temp_value = secondary_talents.get(talent, {}).get('temp')
+            if temp_value is None:
+                temp_value = perm_value
+                
+            # Format the stat string with wider spacing
+            stat_str = f" {talent}"
+            dots = "." * (20 - len(stat_str))  # Increased from 15 to 20
+            value_str = str(perm_value)
+            if temp_value > perm_value:
+                value_str += f"({temp_value})"
+            formatted_secondary_talents.append(f"{stat_str}{dots} {value_str}".ljust(25))
 
-        # Process skills
+        # Process skills with wider spacing
         for skill in base_secondary_skills:
-            value = secondary_skills.get(skill, {}).get('perm', 0)
-            formatted_secondary_skills.append(format_stat(skill, value, width=25))
+            perm_value = secondary_skills.get(skill, {}).get('perm', 0)
+            temp_value = secondary_skills.get(skill, {}).get('temp')
+            if temp_value is None:
+                temp_value = perm_value
+                
+            # Format the stat string with wider spacing
+            stat_str = f" {skill}"
+            dots = "." * (20 - len(stat_str))  # Increased from 15 to 20
+            value_str = str(perm_value)
+            if temp_value > perm_value:
+                value_str += f"({temp_value})"
+            formatted_secondary_skills.append(f"{stat_str}{dots} {value_str}".ljust(25))
 
-        # Process knowledges
+        # Process knowledges with wider spacing
         for knowledge in base_secondary_knowledges:
-            value = secondary_knowledges.get(knowledge, {}).get('perm', 0)
-            formatted_secondary_knowledges.append(format_stat(knowledge, value, width=25))
+            perm_value = secondary_knowledges.get(knowledge, {}).get('perm', 0)
+            temp_value = secondary_knowledges.get(knowledge, {}).get('temp')
+            if temp_value is None:
+                temp_value = perm_value
+                
+            # Format the stat string with wider spacing
+            stat_str = f" {knowledge}"
+            dots = "." * (20 - len(stat_str))  # Increased from 15 to 20
+            value_str = str(perm_value)
+            if temp_value > perm_value:
+                value_str += f"({temp_value})"
+            formatted_secondary_knowledges.append(f"{stat_str}{dots} {value_str}".ljust(25))
 
         # Ensure all columns have the same length
         max_len = max(len(formatted_secondary_talents), len(formatted_secondary_skills), len(formatted_secondary_knowledges))
@@ -1151,9 +1228,9 @@ class CmdSheet(MuxCommand):
                     has_advantages = True
                     # Properly capitalize each word in the advantage name
                     display_name = ' '.join(word.capitalize() for word in advantage_name.split())
-                    # Special case for "Aww!"
-                    if advantage_name.lower() == "aww!":
-                        display_name = "Aww!"
+                    # Special case for "Aww"
+                    if advantage_name.lower() == "Aww":
+                        display_name = "Aww"
                     powers.append(format_stat(display_name, advantage_value, width=self.POWERS_WIDTH))
                     seen_advantages.add(advantage_name.lower())
         if not has_advantages:

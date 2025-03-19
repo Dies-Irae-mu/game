@@ -175,5 +175,82 @@
         "splat": "Shifter",
         "shifter_type": ["Bastet", "Gurahl", "Mokole", "Nagah", "Rokea"],
         "source": "W20 Changing Breeds, pg. 209"
+    },
+    {
+        "name": "Organized",
+        "description": "All Ananasi are ordered and structured, but youtake it to a new level. If someone needs to have abag of rice sorted by size and shape, you are the one to do it. Many of the organizational tasks that otherswould consider mind-numbinglyboringcome as second nature to you, and you can achieve them in half the time that it would take anyone else. You would make the perfect accountant or comptroller for a company, and they would gladly pay extra to have you on their staff.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "merits",
+        "stat_type": "social",
+        "values": [1],
+        "splat": "Shifter",
+        "shifter_type": "Ananasi",
+        "source": "W20 Changing Breeds, pg. 209"
+    },
+    {
+        "name": "Human Form",
+        "description": "Unlike most Ananasi, you appear completely human when in Homid. There are no telltale signs that apart of your genetic makeup involves members of the arachnid species. You still have pedipalps, but they can hide away completely, not even showing up on dental X-rays. Your blood, if examined, appears completely human, with no trace of foreign antigens in it. Any medical test, no matter how rigorous, would still prove you 'human.'",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "merits",
+        "stat_type": "physical",
+        "values": [3],
+        "splat": "Shifter",
+        "shifter_type": "Ananasi",
+        "source": "W20 Changing Breeds, pg. 209"
+    },
+    {
+        "name": "Venomous",
+        "description": "Unlike most of your brethren, you retain your venom sacs even when in the Homid form. In this form, you can still use any Gifts involving venom that could normally only be used in Pithus or Lilian. This Merit cannot be taken with the Human Form Merit.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "merits",
+        "stat_type": "physical",
+        "values": [3],
+        "splat": "Shifter",
+        "shifter_type": "Ananasi",
+        "source": "W20 Changing Breeds, pg. 209"
+    },
+    {
+        "name": "Crawlerling Alteration",
+        "description": "You can choose not only the size of the Crawlerlings you break into, but also the breed of spider you become. As long as you have consumed at least a few of the spiders in question, you can become any type of spider you so desire, or as many breeds as you so desire for that matter.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "merits",
+        "stat_type": "supernatural",
+        "values": [4],
+        "splat": "Shifter",
+        "shifter_type": "Ananasi",
+        "source": "W20 Changing Breeds, pg. 209"
+    },
+    {
+        "name": "Pithus Alteration",
+        "description": "Unlike most of the Damhan you have conscious control over exactly the appearance your body will take when you convert to the Pithus form. The actual changes to what you can do are minimal, but there are advantages to picking the spiderj form you want to employ. Most Ananasi look a certain wayand arereadilyrecognizablebytheirappearance.Withthisability it's easier to blend in wherever you might not be known (and want to keep it that way). Mostly, however, the advantage is psychological. Some people are more terrified by the image of a tarantula than they are by the idea of a giant black widow. Good (Reputation (5 point Merit) Forwhateverreason, the otherOvid inyourarea accept you as a kindred spirit; perhaps their spirit allies speak well of you. They may not like the Ananasi as a whole — and most of them don't — but they accept you asan equal. Your Rank among your own kind carries over to all other Ovid who follow the same aspect of the Triat that you do.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "merits",
+        "stat_type": "social",
+        "values": [4],
+        "splat": "Shifter",
+        "shifter_type": "Ananasi",
+        "source": "W20 Changing Breeds, pg. 209"
+    },
+    {
+        "name": "Hive Mind",
+        "description": "You truly have a hivemind. Unlike most of the Ananasi, you do not need to choose leaders and drones when you break into the Crawlerling form. You retain your full consciousness while in this state, throughout all of your individual spiders.The only wayto truly destroy youwould be to obliterate every single spider that is a part of your form. If even one survives, you retain all of your memories.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "merits",
+        "stat_type": "supernatural",
+        "values": [7],
+        "splat": "Shifter",
+        "shifter_type": "Ananasi",
+        "source": "W20 Changing Breeds, pg. 209"
+    },
+    {
+        "name": "Lilian Alteration",
+        "description": "An Ananasi's Lilian form is determined unconsciously; after the Metamorphosis, it seldom changes. However, you have aspecial talent for alteringyour Lilian form. You're better suited toface new terrain, asyoucanadjust your body tosuit the territory — not only in how you can camouflage yourself against the land, but also in how you can maneuver over die landscape. There are also serious psychological advantages, as you can alter yourself to look more or less menacing, as necessary. You can even fabricate a seemingly completely human form from the waist up, making others believe you are defenseless, even when you are ready to destroy them.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "merits",
+        "stat_type": "physical",
+        "values": [6],
+        "splat": "Shifter",
+        "shifter_type": "Ananasi",
+        "source": "W20 Changing Breeds, pg. 209"
     }
-] 
+]

@@ -319,7 +319,7 @@ POWERS = {
     "Special Advantages": {
         "Alacrity": 0,
         "Armor": 0,
-        "Aww!": 0,
+        "Aww": 0,
         "Companion Acute Smell": 0,
         "Bare Necessities": 0,
         "Bioluminescence": 0,

@@ -25,6 +25,7 @@ class CmdXP(default_cmds.MuxCommand):
       +xp/forceweekly       - Force weekly XP distribution (Staff only)
       +xp/staffspend <name>/<stat> <rating>=<reason> - Spend XP on behalf of a character (Staff only)
       +xp/fixstats <name>   - Fix a character's stats structure (Staff only)
+      +xp/fixdata <name>    - Fix a character's XP data structure (Staff only)
       
     Examples:
       +xp/spend Strength 3=Getting stronger
@@ -33,6 +34,7 @@ class CmdXP(default_cmds.MuxCommand):
       +xp/staffspend Bob/Strength 3=Staff correction
       +xp/sub Bob/5=Correcting XP error
       +xp/staffspend ryan/<FLAW NAME>=Flaw Buyoff
+      +xp/fixdata Bob       - Fix Bob's XP data structure
     """
     
     key = "+xp"
@@ -40,100 +42,6 @@ class CmdXP(default_cmds.MuxCommand):
     locks = "cmd:all()"
     help_category = "General"
     
-    def repair_xp_data(self, character):
-        """
-        Repair corrupted XP data structure.
-        Returns True if repairs were made, False if no repairs needed.
-        """
-        try:
-            # Check if xp attribute exists and is corrupted
-            xp_data = character.attributes.get('xp', None)
-            
-            # If it's None (missing), initialize it
-            if xp_data is None:
-                new_xp_data = {
-                    'total': Decimal('0.00'),
-                    'current': Decimal('0.00'),
-                    'spent': Decimal('0.00'),
-                    'ic_earned': Decimal('0.00'),
-                    'monthly_spent': Decimal('0.00'),
-                    'last_reset': datetime.now(),
-                    'spends': [],
-                    'last_scene': None,
-                    'scenes_this_week': 0
-                }
-                character.attributes.add('xp', new_xp_data)
-                return True
-            
-            # If it's a string (corrupted), try to repair it
-            if isinstance(xp_data, str):
-                try:
-                    # Convert string representation to dictionary
-                    import ast
-                    parsed_data = ast.literal_eval(xp_data)
-                    
-                    # Create new XP data structure preserving existing values
-                    new_xp_data = {
-                        'total': Decimal(str(parsed_data.get('total', '0.00'))),
-                        'current': Decimal(str(parsed_data.get('current', '0.00'))),
-                        'spent': Decimal(str(parsed_data.get('spent', '0.00'))),
-                        'ic_earned': Decimal(str(parsed_data.get('ic_xp', '0.00'))),
-                        'monthly_spent': Decimal(str(parsed_data.get('monthly_spent', '0.00'))),
-                        'last_reset': parsed_data.get('last_reset', datetime.now()),
-                        'spends': parsed_data.get('spends', []),
-                        'last_scene': parsed_data.get('last_scene'),
-                        'scenes_this_week': parsed_data.get('scenes_this_week', 0)
-                    }
-                    
-                    # Save the repaired data structure
-                    character.attributes.add('xp', new_xp_data)
-                    return True
-                except Exception as e:
-                    logger.error(f"Failed to parse corrupted XP data for {character.name}: {str(e)}")
-                    # Don't create new data if parsing fails - better to keep corrupted data than lose it
-                    return False
-            
-            # If it's a dict but missing required keys, add them with defaults
-            if isinstance(xp_data, dict):
-                was_modified = False
-                required_keys = {
-                    'total': Decimal('0.00'),
-                    'current': Decimal('0.00'),
-                    'spent': Decimal('0.00'),
-                    'ic_earned': Decimal('0.00'),
-                    'monthly_spent': Decimal('0.00'),
-                    'last_reset': datetime.now(),
-                    'spends': [],
-                    'last_scene': None,
-                    'scenes_this_week': 0
-                }
-                
-                for key, default_value in required_keys.items():
-                    if key not in xp_data:
-                        xp_data[key] = default_value
-                        was_modified = True
-                
-                # Convert any string decimal values to Decimal objects
-                decimal_keys = ['total', 'current', 'spent', 'ic_earned', 'monthly_spent']
-                for key in decimal_keys:
-                    if isinstance(xp_data[key], str):
-                        try:
-                            xp_data[key] = Decimal(xp_data[key])
-                            was_modified = True
-                        except (InvalidOperation, ValueError):
-                            xp_data[key] = Decimal('0.00')
-                            was_modified = True
-                
-                if was_modified:
-                    character.attributes.add('xp', xp_data)
-                    return True
-            
-            return False
-            
-        except Exception as e:
-            logger.error(f"Error repairing XP data for {character.name}: {str(e)}")
-            return False
-
     def func(self):
         """Execute command"""
         if not self.args and not self.switches:
@@ -175,6 +83,7 @@ class CmdXP(default_cmds.MuxCommand):
 
                     # amount validation
                     try:
+                        from decimal import Decimal, ROUND_DOWN
                         xp_amount = Decimal(amount).quantize(Decimal('0.01'), rounding=ROUND_DOWN)
                         if xp_amount <= 0:
                             raise ValueError
@@ -201,6 +110,7 @@ class CmdXP(default_cmds.MuxCommand):
                     return
                     
                 try:
+                    from decimal import Decimal, ROUND_DOWN
                     # Parse input
                     if "=" not in self.args:
                         self.caller.msg("Usage: +xp/sub <name>/<amount>=<reason>")
@@ -309,12 +219,16 @@ class CmdXP(default_cmds.MuxCommand):
                     return
 
                 try:
+                    logger.log_info(f"{self.caller.name}: Processing XP spend command")
+                    
                     # Fix any power issues before proceeding
                     self.fix_powers(self.caller)
+                    logger.log_info(f"{self.caller.name}: Fixed powers")
                     
                     # Fix any secondary abilities issues
                     if hasattr(self.caller, 'fix_secondary_abilities'):
                         self.caller.fix_secondary_abilities()
+                        logger.log_info(f"{self.caller.name}: Fixed secondary abilities")
 
                     # Parse input
                     if "=" not in self.args:
@@ -324,6 +238,7 @@ class CmdXP(default_cmds.MuxCommand):
                     stat_info, reason = self.args.split("=", 1)
                     stat_info = stat_info.strip()
                     reason = reason.strip()
+                    logger.log_info(f"{self.caller.name}: Parsed input - stat_info: {stat_info}, reason: {reason}")
 
                     # Parse stat info
                     stat_parts = stat_info.split()
@@ -342,15 +257,20 @@ class CmdXP(default_cmds.MuxCommand):
                         return
                         
                     stat_name = " ".join(stat_parts[:-1])
+                    logger.log_info(f"{self.caller.name}: Parsed stat - name: {stat_name}, rating: {new_rating}")
 
                     # Determine category and subcategory
                     category, subcategory = self._determine_stat_category(stat_name)
+                    logger.log_info(f"{self.caller.name}: Determined category: {category}, subcategory: {subcategory}")
+                    
                     if not category or not subcategory:
                         self.caller.msg(f"Invalid stat name: {stat_name}")
                         return
 
                     # Get proper case for the stat name based on category
                     proper_stat_name = self._get_proper_stat_name(stat_name, category, subcategory)
+                    logger.log_info(f"{self.caller.name}: Got proper stat name: {proper_stat_name}")
+                    
                     if not proper_stat_name:
                         self.caller.msg(f"Invalid stat name: {stat_name}")
                         return
@@ -361,6 +281,12 @@ class CmdXP(default_cmds.MuxCommand):
                         current_rating = self.caller.db.stats.get('attributes', {}).get(subcategory, {}).get(proper_stat_name, {}).get('perm', 0)
                     elif category == 'powers' and subcategory == 'discipline':
                         current_rating = self.caller.db.stats.get('powers', {}).get('discipline', {}).get(proper_stat_name, {}).get('perm', 0)
+                    elif category == 'powers' and subcategory == 'gift':
+                        logger.log_info(f"Getting current rating for gift: {proper_stat_name}")
+                        logger.log_info(f"Powers structure: {self.caller.db.stats.get('powers', {})}")
+                        logger.log_info(f"Gift structure: {self.caller.db.stats.get('powers', {}).get('gift', {})}")
+                        current_rating = self.caller.db.stats.get('powers', {}).get('gift', {}).get(proper_stat_name, {}).get('perm', 0)
+                        logger.log_info(f"Retrieved current rating: {current_rating}")
                     elif category == 'secondary_abilities':
                         # Directly check the secondary_abilities structure
                         current_rating = self.caller.db.stats.get('secondary_abilities', {}).get(subcategory, {}).get(proper_stat_name, {}).get('perm', 0)
@@ -375,8 +301,7 @@ class CmdXP(default_cmds.MuxCommand):
                     else:
                         current_rating = self.caller.get_stat(category, subcategory, proper_stat_name)
 
-                    # Debug the final current_rating being passed
-                    # self.caller.msg(f"DEBUG: Final current_rating being passed to buy_stat: {current_rating}")
+                    logger.log_info(f"{self.caller.name}: Current rating: {current_rating}")
 
                     # Attempt to spend XP
                     success, message = self.caller.buy_stat(
@@ -387,6 +312,7 @@ class CmdXP(default_cmds.MuxCommand):
                         reason=reason,
                         current_rating=current_rating
                     )
+                    logger.log_info(f"{self.caller.name}: buy_stat result - success: {success}, message: {message}")
                     
                     self.caller.msg(message)
                     if success:
@@ -394,12 +320,14 @@ class CmdXP(default_cmds.MuxCommand):
                         self._display_xp(self.caller)
 
                 except ValueError as e:
+                    logger.log_err(f"{self.caller.name}: ValueError in XP spend - {str(e)}")
                     self.caller.msg(f"Error: Invalid input - {str(e)}")
                     self.caller.msg("Usage: +xp/spend <name> <rating>=<reason>")
                 except Exception as e:
+                    logger.log_err(f"{self.caller.name}: Error in XP spend - {str(e)}")
                     self.caller.msg(f"Error: {str(e)}")
                     self.caller.msg("An error occurred while processing your request.")
-                return  # Add return here to prevent duplicate XP display
+                return
 
             if "desc" in self.switches:
                 if not self.caller.check_permstring("builders"):
@@ -421,6 +349,7 @@ class CmdXP(default_cmds.MuxCommand):
                     return
                     
                 try:
+                    from decimal import Decimal
                     # Find all character objects that:
                     # 1. Are not staff
                     # 2. Have scene data
@@ -462,6 +391,7 @@ class CmdXP(default_cmds.MuxCommand):
                     return
                     
                 try:
+                    from decimal import Decimal, ROUND_DOWN
                     # Parse input
                     if "=" not in self.args:
                         self.caller.msg("Usage: +xp/staffspend <name>/<stat> <rating>=<reason>")
@@ -529,6 +459,12 @@ class CmdXP(default_cmds.MuxCommand):
                         current_rating = target.db.stats.get('attributes', {}).get(subcategory, {}).get(proper_stat_name, {}).get('perm', 0)
                     elif category == 'powers' and subcategory == 'discipline':
                         current_rating = target.db.stats.get('powers', {}).get('discipline', {}).get(proper_stat_name, {}).get('perm', 0)
+                    elif category == 'powers' and subcategory == 'gift':
+                        logger.log_info(f"Getting current rating for gift: {proper_stat_name}")
+                        logger.log_info(f"Powers structure: {self.caller.db.stats.get('powers', {})}")
+                        logger.log_info(f"Gift structure: {self.caller.db.stats.get('powers', {}).get('gift', {})}")
+                        current_rating = self.caller.db.stats.get('powers', {}).get('gift', {}).get(proper_stat_name, {}).get('perm', 0)
+                        logger.log_info(f"Retrieved current rating: {current_rating}")
                     elif category == 'secondary_abilities':
                         # Use title case for secondary abilities
                         stat_display_name = ' '.join(word.title() for word in stat_name.split())
@@ -683,13 +619,42 @@ class CmdXP(default_cmds.MuxCommand):
                             'temp': rite_value
                         }
                     elif category == 'powers' and subcategory == 'gift':
-                        # For gifts, store without any prefix
-                        target.db.stats['powers']['gift'][proper_stat_name] = {
-                            'perm': new_rating,
-                            'temp': new_rating
-                        }
-                        # Store the alias
-                        target.set_gift_alias(proper_stat_name, original_stat_name, new_rating)
+                        # For gifts, get the canonical name from the database
+                        from world.wod20th.models import Stat
+                        from django.db.models import Q
+                        
+                        # Special handling for Mother's Touch
+                        if proper_stat_name.lower() == "mother's touch":
+                            gift = Stat.objects.filter(
+                                name__iexact="Mother's Touch",
+                                category='powers',
+                                stat_type='gift'
+                            ).first()
+                        else:
+                            # Look for exact match first, then try aliases
+                            gift = Stat.objects.filter(
+                                (Q(name__iexact=proper_stat_name) | Q(gift_alias__icontains=proper_stat_name)),
+                                category='powers',
+                                stat_type='gift'
+                            ).first()
+                        
+                        if gift:
+                            # Use the canonical name from the database
+                            canonical_name = gift.name
+                            target.db.stats['powers']['gift'][canonical_name] = {
+                                'perm': new_rating,
+                                'temp': new_rating
+                            }
+                            # Store the alias
+                            target.set_gift_alias(canonical_name, original_stat_name, new_rating)
+                        else:
+                            # Fallback to original behavior if gift not found
+                            target.db.stats['powers']['gift'][proper_stat_name] = {
+                                'perm': new_rating,
+                                'temp': new_rating
+                            }
+                            # Store the alias
+                            target.set_gift_alias(proper_stat_name, original_stat_name, new_rating)
                     elif category == 'secondary_abilities':
                         # Ensure the secondary_abilities structure exists
                         if 'secondary_abilities' not in target.db.stats:
@@ -791,6 +756,116 @@ class CmdXP(default_cmds.MuxCommand):
                     self.caller.msg("An error occurred while processing your request.")
                 return
 
+            if "fixdata" in self.switches:
+                # Only staff can fix XP data
+                if not self.caller.check_permstring("builders"):
+                    self.caller.msg("You don't have permission to fix XP data.")
+                    return
+                    
+                try:
+                    from decimal import Decimal
+                    # Parse input
+                    target_name = self.args.strip()
+                    if not target_name:
+                        self.caller.msg("Usage: +xp/fixdata <name>")
+                        return
+                        
+                    # Find target character
+                    target = search_object(target_name, typeclass='typeclasses.characters.Character')
+                    if not target:
+                        self.caller.msg(f"Character '{target_name}' not found.")
+                        return
+                    target = target[0]
+                    
+                    # Get current XP data
+                    old_xp = target.attributes.get('xp')
+                    if not old_xp:
+                        self.caller.msg(f"No XP data found for {target.name}")
+                        return
+
+                    # Handle case where XP data is stored as a string
+                    if isinstance(old_xp, str):
+                        try:
+                            # First try to clean up the string for evaluation
+                            import ast
+                            
+                            # Replace Decimal objects with their string values
+                            cleaned_str = old_xp.replace("Decimal('", "'")
+                            cleaned_str = cleaned_str.replace("')", "'")
+                            
+                            # Try to parse the cleaned string
+                            parsed_data = ast.literal_eval(cleaned_str)
+                            
+                            # Convert string values back to Decimal objects
+                            if isinstance(parsed_data, dict):
+                                for key in ['total', 'current', 'spent', 'ic_xp', 'monthly_spent']:
+                                    if key in parsed_data and isinstance(parsed_data[key], str):
+                                        parsed_data[key] = Decimal(parsed_data[key])
+                                old_xp = parsed_data
+                            else:
+                                # If parsing fails, initialize new XP data
+                                self.caller.msg(f"Could not parse XP data string. Initializing new XP data for {target.name}")
+                                old_xp = {
+                                    'total': Decimal('0.00'),
+                                    'current': Decimal('0.00'),
+                                    'spent': Decimal('0.00'),
+                                    'ic_xp': Decimal('0.00'),
+                                    'monthly_spent': Decimal('0.00'),
+                                    'spends': [],
+                                    'last_scene': None,
+                                    'scenes_this_week': 0
+                                }
+                        except Exception as e:
+                            logger.log_err(f"Error parsing XP data string: {str(e)}")
+                            self.caller.msg(f"Error parsing XP data string: {str(e)}")
+                            # Initialize new XP data
+                            old_xp = {
+                                'total': Decimal('0.00'),
+                                'current': Decimal('0.00'),
+                                'spent': Decimal('0.00'),
+                                'ic_xp': Decimal('0.00'),
+                                'monthly_spent': Decimal('0.00'),
+                                'spends': [],
+                                'last_scene': None,
+                                'scenes_this_week': 0
+                            }
+                        
+                    # Create new XP data structure with proper Decimal objects
+                    new_xp = {
+                        'total': Decimal(str(old_xp.get('total', '0.00'))).quantize(Decimal('0.01')),
+                        'current': Decimal(str(old_xp.get('current', '0.00'))).quantize(Decimal('0.01')),
+                        'spent': Decimal(str(old_xp.get('spent', '0.00'))).quantize(Decimal('0.01')),
+                        'ic_xp': Decimal(str(old_xp.get('ic_xp', old_xp.get('ic_earned', '0.00')))).quantize(Decimal('0.01')),
+                        'monthly_spent': Decimal(str(old_xp.get('monthly_spent', '0.00'))).quantize(Decimal('0.01')),
+                        'spends': [],
+                        'last_scene': old_xp.get('last_scene'),
+                        'scenes_this_week': old_xp.get('scenes_this_week', 0)
+                    }
+                    
+                    # Preserve and fix spends data
+                    if 'spends' in old_xp and isinstance(old_xp['spends'], list):
+                        for spend in old_xp['spends']:
+                            if isinstance(spend, dict):
+                                # Convert amount to float if it's not already
+                                if isinstance(spend.get('amount'), str):
+                                    try:
+                                        spend['amount'] = float(spend['amount'])
+                                    except (ValueError, TypeError):
+                                        spend['amount'] = 0.0
+                                new_xp['spends'].append(spend)
+                    
+                    # Set the fixed XP data
+                    target.attributes.add('xp', new_xp)
+                    
+                    self.caller.msg(f"Successfully fixed XP data structure for {target.name}")
+                    # Display the fixed XP data
+                    self._display_xp(target)
+                    
+                except Exception as e:
+                    logger.error(f"Error fixing XP data: {str(e)}")
+                    self.caller.msg(f"Error fixing XP data: {str(e)}")
+                return
+
         # Staff viewing another character's XP
         if self.args and not self.switches:
             # Check if viewing self
@@ -822,18 +897,15 @@ class CmdXP(default_cmds.MuxCommand):
     def _display_xp(self, target):
         """Display XP information for a character"""
         try:
-            # First try to repair any corrupted XP data
-            if self.repair_xp_data(target):
-                self.caller.msg("XP data structure has been repaired.")
-            
+            from decimal import Decimal
             # Get XP data
             xp_data = target.attributes.get('xp')
-            if not xp_data or not isinstance(xp_data, dict):
+            if not xp_data:
                 xp_data = {
                     'total': Decimal('0.00'),
                     'current': Decimal('0.00'),
                     'spent': Decimal('0.00'),
-                    'ic_earned': Decimal('0.00'),
+                    'ic_xp': Decimal('0.00'),
                     'monthly_spent': Decimal('0.00'),
                     'last_reset': datetime.now(),
                     'spends': [],
@@ -868,12 +940,7 @@ class CmdXP(default_cmds.MuxCommand):
             dash_count = (total_width - title_len) // 2
             msg = f"{'|b-|n' * dash_count}{title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
             
-            # XP Section
-            exp_title = "|y Experience Points |n"
-            title_len = len(exp_title)
-            dash_count = (total_width - title_len) // 2
-            msg += f"{'|b-|n' * dash_count}{exp_title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
-            
+           
             # Format XP display
             left_col_width = 20
             right_col_width = 12
@@ -900,13 +967,13 @@ class CmdXP(default_cmds.MuxCommand):
                     timestamp = datetime.fromisoformat(entry['timestamp'])
                     formatted_time = timestamp.strftime("%Y-%m-%d %H:%M")
                     if entry['type'] == 'receive':
-                        msg += f"{formatted_time} - Received {entry['amount']} XP ({entry['reason']})\n"
+                        msg += f"{formatted_time} - Received {entry['amount']} XP: {entry['reason']}\n"
                     elif entry['type'] == 'spend':
                         if entry.get('flaw_buyoff'):
                             msg += f"{formatted_time} - Spent {entry['amount']} XP to buy off {entry['stat_name']} flaw\n"
                         elif 'previous_rating' in entry:
                             # This is a normal XP spend
-                            msg += f"{formatted_time} - Spent {entry['amount']} XP on {entry['stat_name']} (increased from {entry['previous_rating']} to {entry['new_rating']})\n"
+                            msg += f"{formatted_time} - Spent {entry['amount']} XP on {entry['stat_name']} - increased from {entry['previous_rating']} to {entry['new_rating']}\n"
                         elif 'staff_name' in entry:
                             # This is an XP removal by staff
                             msg += f"{formatted_time} - XP Removed by {entry['staff_name']}: {entry['amount']} XP ({entry['reason']})\n"
@@ -925,52 +992,10 @@ class CmdXP(default_cmds.MuxCommand):
             logger.error(f"Error displaying XP for {target.name}: {str(e)}")
             self.caller.msg("Error displaying XP information.")
 
-    def _display_detailed_history(self, character):
-        """Display detailed XP history for a character."""
-        # First try to repair any corrupted XP data
-        if self.repair_xp_data(character):
-            self.caller.msg("XP data structure has been repaired.")
-            
-        xp_data = character.attributes.get('xp')
-        if not xp_data or not isinstance(xp_data, dict) or not xp_data.get('spends'):
-            self.caller.msg(f"{character.name} has no XP history.")
-            return
-            
-        table = EvTable("|wTimestamp|n", 
-                       "|wType|n", 
-                       "|wAmount|n", 
-                       "|wDetails|n",
-                       width=78)
-                       
-        for entry in character.db.xp['spends']:
-            timestamp = datetime.fromisoformat(entry['timestamp'])
-            entry_type = entry['type'].title()
-            amount = f"{float(entry['amount']):.2f}"
-            
-            if entry_type == "Spend":
-                if 'stat_name' in entry and 'previous_rating' in entry:
-                    details = (f"{entry['stat_name']} "
-                             f"({entry['previous_rating']} -> {entry['new_rating']})")
-                else:
-                    details = entry.get('reason', 'No reason given')
-            else:
-                details = entry.get('reason', 'No reason given')
-                
-            table.add_row(
-                timestamp.strftime('%Y-%m-%d %H:%M'),
-                entry_type,
-                amount,
-                details
-            )
-            
-        self.caller.msg(f"\n|wDetailed XP History for {character.name}|n")
-        self.caller.msg(str(table))
-
     @staticmethod
     def _determine_stat_category(stat_name):
         """
         Determine the category and type of a stat based on its name.
-        Uses the stat mappings from world.wod20th.utils.stat_mappings.
         """
         from world.wod20th.utils.stat_mappings import (
             STAT_TYPE_TO_CATEGORY, STAT_VALIDATION,
@@ -985,6 +1010,8 @@ class CmdXP(default_cmds.MuxCommand):
             ABILITIES, SECONDARY_ABILITIES, BACKGROUNDS,
             POWERS, POOLS
         )
+        import json
+        import os
 
         # Handle instanced stats - extract base name
         base_name = stat_name
@@ -995,6 +1022,89 @@ class CmdXP(default_cmds.MuxCommand):
 
         # Convert base name to title case for comparison
         base_name = base_name.title()
+
+        # Special handling for Time and Nature
+        if base_name.lower() in ['time', 'nature']:
+            # Since this is a static method, we need to get the caller from the current command
+            from evennia import search_object
+            from typeclasses.characters import Character
+            from evennia.commands.default.muxcommand import MuxCommand
+            from evennia import Command
+            
+            # Get the current command instance
+            import inspect
+            frame = inspect.currentframe()
+            while frame:
+                if 'self' in frame.f_locals:
+                    cmd_instance = frame.f_locals['self']
+                    if isinstance(cmd_instance, (Command, MuxCommand)):
+                        break
+                frame = frame.f_back
+            
+            if frame and 'self' in frame.f_locals:
+                cmd = frame.f_locals['self']
+                # Get the target character
+                if hasattr(cmd, 'caller'):
+                    char = cmd.caller
+                    # For staffspend, check if there's a target character
+                    if cmd.switches and 'staffspend' in cmd.switches and cmd.args:
+                        target_name = cmd.args.split('/')[0].strip()
+                        target = search_object(target_name, typeclass=Character)
+                        if target:
+                            char = target[0]
+                    
+                    if char:
+                        splat = char.get_stat('other', 'splat', 'Splat', temp=False)
+                        char_type = char.get_stat('identity', 'lineage', 'Type', temp=False)
+                        
+                        if base_name.lower() == 'time':
+                            if splat == 'Mage':
+                                return ('powers', 'sphere')
+                            elif splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
+                                return ('powers', 'realm')
+                        elif base_name.lower() == 'nature':
+                            if splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
+                                return ('powers', 'realm')
+                            else:
+                                return ('identity', 'personal')
+
+        # Special handling for Mother's Touch and similar gifts - check first
+        if stat_name.lower() in ["mother's touch", "grandmother's touch", "lover's touch"]:
+            return ('powers', 'gift')
+
+        # Check if it's a gift in the JSON files
+        gift_files = [
+            'rank1_garou_gifts.json',
+            'rank2_garou_gifts.json',
+            'rank3_garou_gifts.json',
+            'rank4_garou_gifts.json',
+            'rank5_garou_gifts.json',
+            'ajaba_gifts.json',
+            'bastet_gifts.json',
+            'corax_gifts.json',
+            'gurahl_gifts.json',
+            'kitsune_gifts.json',
+            'mokole_gifts.json',
+            'nagah_gifts.json',
+            'nuwisha_gifts.json',
+            'ratkin_gifts.json',
+            'rokea_gifts.json'
+        ]
+
+        data_dir = os.path.join('diesirae', 'data')
+        for gift_file in gift_files:
+            try:
+                file_path = os.path.join(data_dir, gift_file)
+                if os.path.exists(file_path):
+                    with open(file_path, 'r') as f:
+                        gifts = json.load(f)
+                        # Check if the gift exists in this file
+                        for gift in gifts:
+                            if gift.get('name', '').lower() == stat_name.lower():
+                                return ('powers', 'gift')
+            except Exception as e:
+                logger.log_err(f"Error reading gift file {gift_file}: {str(e)}")
+                continue
 
         # Check pools first (case-insensitive)
         pool_stats = {
@@ -1049,12 +1159,22 @@ class CmdXP(default_cmds.MuxCommand):
 
         # Check if it's a gift without a prefix
         from world.wod20th.models import Stat
+        from django.db.models import Q
+        
+        # Special handling for Mother's Touch - it's always a gift
+        if stat_name.lower() == "mother's touch":
+            return ('powers', 'gift')
+            
+        # Check for gifts in database with case-insensitive name or alias match
         gift_query = Q(stat_type='gift')
-        for gift in Stat.objects.filter(gift_query):
-            # Check both the name and any aliases
-            if (gift.name.lower() == base_name.lower() or
-                (gift.gift_alias and any(alias.lower() == base_name.lower() for alias in gift.gift_alias))):
-                return ('powers', 'gift')
+        gift = Stat.objects.filter(
+            (Q(name__iexact=stat_name) | Q(gift_alias__icontains=stat_name)),
+            category='powers',
+            stat_type='gift'
+        ).first()
+        
+        if gift:
+            return ('powers', 'gift')
 
         # Check attributes based on the actual structure
         physical_attrs = ['Strength', 'Dexterity', 'Stamina']
@@ -1113,18 +1233,65 @@ class CmdXP(default_cmds.MuxCommand):
             'Medicine', 'Occult', 'Politics', 'Rituals', 'Science', 'Technology'
         ] 
 
+    def _display_detailed_history(self, character):
+        """Display detailed XP history for a character."""
+        if not character.db.xp or not character.db.xp.get('spends'):
+            self.caller.msg(f"{character.name} has no XP history.")
+            return
+            
+        table = EvTable("|wTimestamp|n", 
+                       "|wType|n", 
+                       "|wAmount|n", 
+                       "|wDetails|n",
+                       width=78)
+                       
+        for entry in character.db.xp['spends']:
+            timestamp = datetime.fromisoformat(entry['timestamp'])
+            entry_type = entry['type'].title()
+            amount = f"{float(entry['amount']):.2f}"
+            
+            if entry_type == "Spend":
+                if 'stat_name' in entry and 'previous_rating' in entry:
+                    # Handle stat names with parentheses
+                    stat_name = entry['stat_name']
+                    details = f"{stat_name} ({entry['previous_rating']} -> {entry['new_rating']})"
+                else:
+                    details = entry.get('reason', 'No reason given')
+                
+            table.add_row(
+                timestamp.strftime('%Y-%m-%d %H:%M'),
+                entry_type,
+                amount,
+                details
+            )
+            
+        self.caller.msg(f"\n|wDetailed XP History for {character.name}|n")
+        self.caller.msg(str(table)) 
+
     def calculate_xp_cost(self, stat_name, new_rating, current_rating, category=None, subcategory=None):
         """
         Calculate XP cost for increasing a stat.
         Returns (cost, requires_approval)
         """
-        # Validate inputs
-        if new_rating <= current_rating:
+        # Add debug logging
+        logger.log_info(f"Calculating XP cost for: {stat_name} (category: {category}, subcategory: {subcategory})")
+        logger.log_info(f"Current rating: {current_rating}, New rating: {new_rating}")
+        logger.log_info(f"Stats structure: {self.db.stats}")
+        
+        # Validate inputs - allow 0 to 1 for initial purchases
+        if new_rating < current_rating or (new_rating == current_rating and current_rating > 0):
+            logger.log_info(f"New rating ({new_rating}) not valid compared to current rating ({current_rating})")
             return 0, False
             
+        # Special case for initial purchase (0 to 1)
+        if current_rating == 0 and new_rating == 1:
+            logger.log_info("Processing initial purchase (0 to 1)")
+        
         # Get character's splat
         splat = self.get_stat('other', 'splat', 'Splat', temp=False)
+        logger.log_info(f"Character splat: {splat}")
         if not splat:
+            logger.log_info("Character splat not set")
             return 0, False
 
         # Base costs per category
@@ -1163,11 +1330,13 @@ class CmdXP(default_cmds.MuxCommand):
 
         # Get cost settings for this category
         if category not in costs:
+            logger.log_info(f"Category {category} not found in costs dictionary")
             return 0, False
         cost_settings = costs[category]
 
         # Check if new rating exceeds limit
         requires_approval = new_rating > cost_settings['max_without_approval']
+        logger.log_info(f"Requires approval: {requires_approval}")
 
         # Calculate total cost
         total_cost = 0
@@ -1176,6 +1345,7 @@ class CmdXP(default_cmds.MuxCommand):
         if category == 'pools':
             # Get proper case for stat name for comparison
             proper_stat_name = self._get_proper_stat_name(stat_name, category, subcategory)
+            logger.log_info(f"Pool stat name: {proper_stat_name}")
             
             # Define pool-specific costs
             pool_costs = {
@@ -1198,15 +1368,19 @@ class CmdXP(default_cmds.MuxCommand):
                     total_cost += rating * pool_cost['base']
                 else:
                     total_cost += pool_cost['base']  # Flat cost if not using current rating
+            return total_cost, requires_approval
 
         # Special handling for Kinfolk gifts
         elif category == 'powers' and subcategory == 'gift' and splat == 'Mortal+':
             char_type = self.get_stat('identity', 'lineage', 'Type', temp=False)
+            logger.log_info(f"Kinfolk check - Character type: {char_type}")
+            
             if char_type and char_type.lower() == 'kinfolk':
                 # Check if they have Gnosis merit for level 2 gifts
                 if new_rating > 1:
                     gnosis_merit = next((value.get('perm', 0) for merit, value in self.db.stats.get('merits', {}).get('merit', {}).items() 
                                       if merit.lower() == 'gnosis'), 0)
+                    logger.log_info(f"Kinfolk Gnosis merit value: {gnosis_merit}")
                     if not gnosis_merit:
                         return 0, True  # Requires Gnosis merit for level 2 gifts
                 
@@ -1219,6 +1393,7 @@ class CmdXP(default_cmds.MuxCommand):
                 ).first()
                 
                 if gift:
+                    logger.log_info(f"Found gift in database: {gift.name}")
                     # Check if it's a homid gift (breed gift) or tribal gift
                     is_homid = False
                     is_tribal = False
@@ -1241,6 +1416,8 @@ class CmdXP(default_cmds.MuxCommand):
                         tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
                         is_special = any(t.lower() in ['croatan', 'planetary'] for t in tribes)
                     
+                    logger.log_info(f"Gift type checks - Homid: {is_homid}, Tribal: {is_tribal}, Special: {is_special}")
+                    
                     # Calculate cost based on gift type
                     if is_special:
                         total_cost = new_rating * 7  # Croatan/Planetary gifts cost 7 XP per level
@@ -1249,25 +1426,42 @@ class CmdXP(default_cmds.MuxCommand):
                     else:
                         total_cost = new_rating * 10  # Outside Breed/Tribe gifts
                     
+                    logger.log_info(f"Calculated cost for Kinfolk gift: {total_cost}")
                     return total_cost, requires_approval
 
         # Special handling for Shifter gifts
         elif category == 'powers' and subcategory == 'gift' and splat == 'Shifter':
-            # Get the gift details from the database
             from world.wod20th.models import Stat
+            from django.db.models import Q
+            
+            logger.log_info("Processing Shifter gift")
+            
+            # Get the gift details from the database
             gift = Stat.objects.filter(
-                name__iexact=stat_name,
+                Q(name__iexact=stat_name) | Q(gift_alias__icontains=stat_name),
                 category='powers',
                 stat_type='gift'
             ).first()
             
             if gift:
+                logger.log_info(f"Found gift in database: {gift.name}")
                 # Get character's breed, auspice, and tribe
                 breed = self.get_stat('identity', 'lineage', 'Breed', temp=False)
                 auspice = self.get_stat('identity', 'lineage', 'Auspice', temp=False)
                 tribe = self.get_stat('identity', 'lineage', 'Tribe', temp=False)
+                shifter_type = self.get_stat('identity', 'lineage', 'Type', temp=False)
                 
-                # Check if it's a breed, auspice, or tribe gift
+                logger.log_info(f"Character details - Breed: {breed}, Auspice: {auspice}, Tribe: {tribe}, Type: {shifter_type}")
+                
+                # For non-Garou shifter types, default to base cost
+                if shifter_type and shifter_type.lower() != 'garou':
+                    total_cost = 0
+                    for rating in range(current_rating + 1, new_rating + 1):
+                        total_cost += 3  # Base cost of 3 XP per level
+                    logger.log_info(f"Non-Garou shifter cost: {total_cost}")
+                    return total_cost, requires_approval
+                
+                # For Garou, check if it's a breed, auspice, or tribe gift
                 is_breed_gift = False
                 is_auspice_gift = False
                 is_tribe_gift = False
@@ -1289,15 +1483,27 @@ class CmdXP(default_cmds.MuxCommand):
                     is_tribe_gift = tribe and tribe.lower() in [t.lower() for t in tribes]
                     is_special = any(t.lower() in ['croatan', 'planetary'] for t in tribes)
                 
-                # Calculate cost based on gift type
-                if is_special:
-                    total_cost = new_rating * 7  # Croatan/Planetary gifts cost 7 XP per level
-                elif is_breed_gift or is_auspice_gift or is_tribe_gift:
-                    total_cost = new_rating * 3  # Breed/Auspice/Tribe gifts cost 3 XP per level
-                else:
-                    total_cost = new_rating * 5  # Other gifts cost 6 XP per level
+                logger.log_info(f"Gift type checks - Breed: {is_breed_gift}, Auspice: {is_auspice_gift}, Tribe: {is_tribe_gift}, Special: {is_special}")
                 
+                # Calculate cost for each level being purchased
+                total_cost = 0
+                for rating in range(current_rating + 1, new_rating + 1):
+                    if is_special:
+                        total_cost += 7  # Croatan/Planetary gifts cost 7 XP per level
+                    elif is_breed_gift or is_auspice_gift or is_tribe_gift:
+                        total_cost += 3  # Breed/Auspice/Tribe gifts cost 3 XP per level
+                    else:
+                        total_cost += 5  # Other gifts cost 5 XP per level
+                
+                logger.log_info(f"Calculated cost for Garou gift: {total_cost}")
                 return total_cost, requires_approval
+            
+            # If gift not found in database, use base cost
+            total_cost = 0
+            for rating in range(current_rating + 1, new_rating + 1):
+                total_cost += 3  # Base cost of 3 XP per level
+            logger.log_info(f"Using base cost for gift not found in database: {total_cost}")
+            return total_cost, requires_approval
 
         else:
             # Use standard calculation for other stats
@@ -1359,6 +1565,7 @@ class CmdXP(default_cmds.MuxCommand):
                             total_cost += 3 * (rating - 1)  # Subsequent dots cost 3 * previous rating
                     return total_cost, requires_approval
 
+        logger.log_info(f"Final calculated cost: {total_cost}")
         return total_cost, requires_approval
 
     def validate_xp_purchase(self, stat_name, new_rating, category=None, subcategory=None):
@@ -1374,23 +1581,85 @@ class CmdXP(default_cmds.MuxCommand):
         # Get current rating
         current_rating = self.get_stat(category, subcategory, stat_name, temp=False) or 0
 
-        # Validate rating increase
-        if new_rating <= current_rating:
+        # Validate rating increase - special handling for initial purchases
+        if new_rating < current_rating:
+            return False, "New rating must be higher than current rating"
+        if new_rating == current_rating and current_rating > 0:
             return False, "New rating must be higher than current rating"
 
-        # Check for Croatan/Planetary gifts - these require staff approval
+        # Check for gifts
         if category == 'powers' and subcategory == 'gift':
-            from world.wod20th.models import Stat
-            gift = Stat.objects.filter(
-                name__iexact=stat_name,
-                category='powers',
-                stat_type='gift'
-            ).first()
+            import json
+            import os
             
-            if gift and gift.tribe:
-                tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+            # Check if character can use gifts
+            char_type = self.get_stat('identity', 'lineage', 'Type', temp=False)
+            can_use_gifts = (
+                splat == 'Shifter' or 
+                splat == 'Possessed' or 
+                (splat == 'Mortal+' and char_type == 'Kinfolk')
+            )
+            
+            if not can_use_gifts:
+                return False, "Character cannot use gifts"
+
+            # Find the gift in JSON files
+            data_dir = os.path.join('diesirae', 'data')
+            gift_files = [
+                'rank1_garou_gifts.json',
+                'rank2_garou_gifts.json',
+                'rank3_garou_gifts.json',
+                'rank4_garou_gifts.json',
+                'rank5_garou_gifts.json',
+                'ajaba_gifts.json',
+                'bastet_gifts.json',
+                'corax_gifts.json',
+                'gurahl_gifts.json',
+                'kitsune_gifts.json',
+                'mokole_gifts.json',
+                'nagah_gifts.json',
+                'nuwisha_gifts.json',
+                'ratkin_gifts.json',
+                'rokea_gifts.json'
+            ]
+            
+            found_gift = None
+            for gift_file in gift_files:
+                try:
+                    file_path = os.path.join(data_dir, gift_file)
+                    if os.path.exists(file_path):
+                        with open(file_path, 'r') as f:
+                            gifts = json.load(f)
+                            # Check if the gift exists in this file
+                            for gift in gifts:
+                                if gift.get('name', '').lower() == stat_name.lower():
+                                    found_gift = gift
+                                    break
+                        if found_gift:
+                            break
+                except Exception as e:
+                    logger.log_err(f"Error reading gift file {gift_file}: {str(e)}")
+                    continue
+            
+            if not found_gift:
+                return False, f"Gift '{stat_name}' not found in any gift lists"
+
+            # Check if the gift is available to the character's shifter type
+            shifter_type = self.get_stat('identity', 'lineage', 'Type', temp=False)
+            if shifter_type and found_gift.get('shifter_type'):
+                allowed_types = found_gift['shifter_type'] if isinstance(found_gift['shifter_type'], list) else [found_gift['shifter_type']]
+                if shifter_type.lower() not in [t.lower() for t in allowed_types]:
+                    return False, f"The gift '{found_gift['name']}' is not available to {shifter_type}"
+
+            # Check for special gifts that require staff approval
+            if found_gift.get('tribe'):
+                tribes = found_gift['tribe'] if isinstance(found_gift['tribe'], list) else [found_gift['tribe']]
                 if any(t.lower() in ['croatan', 'planetary'] for t in tribes):
                     return False, "Croatan and Planetary gifts can only be purchased through staff approval (+xp/staffspend)"
+
+            # For initial purchase (0 to 1), always allow if we got this far
+            if current_rating == 0 and new_rating == 1:
+                return True, ""
 
         # Check if stat exists and is valid for character's splat
         if category == 'powers':
@@ -1431,12 +1700,15 @@ class CmdXP(default_cmds.MuxCommand):
         """
         # Get current rating based on category
         current_rating = 0
-        if category == 'pools':
-            # Get proper case for stat name
-            proper_stat_name = self._get_proper_stat_name(stat_name, category, subcategory)
-            
-            # For pools, we need to check in multiple locations
-            # First check in pools
+        if category == 'powers' and subcategory == 'gift':
+            # Special handling for gifts
+            if 'powers' in self.db.stats and 'gift' in self.db.stats['powers']:
+                # Try to find the gift with case-insensitive match
+                for gift_name, gift_data in self.db.stats['powers']['gift'].items():
+                    if gift_name.lower() == stat_name.lower():
+                        current_rating = gift_data.get('perm', 0)
+                        break
+        elif category == 'pools':
             if 'pools' in self.db.stats:
                 current_rating = self.db.stats['pools'].get(proper_stat_name, {}).get('perm', 0)
             
@@ -1547,8 +1819,7 @@ class CmdXP(default_cmds.MuxCommand):
         except Exception as e:
             return False, f"Error processing purchase: {str(e)}"
 
-    @staticmethod
-    def _get_proper_stat_name(stat_name, category, subcategory):
+    def _get_proper_stat_name(self, stat_name, category, subcategory):
         """Get the proper case-sensitive name for a stat."""
         from world.wod20th.utils.stat_mappings import (
             TALENTS, SKILLS, KNOWLEDGES,
@@ -1561,6 +1832,34 @@ class CmdXP(default_cmds.MuxCommand):
         from world.wod20th.utils.sheet_constants import (
             POWERS
         )
+
+        # Special handling for Mother's Touch and similar gifts
+        if category == 'powers' and subcategory == 'gift':
+            # Check for exact matches in database first
+            from world.wod20th.models import Stat
+            from django.db.models import Q
+            
+            # Special handling for Mother's Touch
+            if stat_name.lower() == "mother's touch":
+                gift = Stat.objects.filter(
+                    name__iexact="Mother's Touch",
+                    category='powers',
+                    stat_type='gift'
+                ).first()
+                if gift:
+                    return gift.name
+            
+            # For other gifts, try exact match or alias
+            gift = Stat.objects.filter(
+                (Q(name__iexact=stat_name) | Q(gift_alias__icontains=stat_name)),
+                category='powers',
+                stat_type='gift'
+            ).first()
+            
+            if gift:
+                return gift.name  # Return the exact name from database
+            
+            return stat_name  # If not found, return as is
 
         # Helper function for case-insensitive key lookup with space/underscore normalization
         def find_proper_key(name, dictionary):
@@ -1789,3 +2088,161 @@ class CmdXP(default_cmds.MuxCommand):
             character.db.stats['powers'] = powers
             
         return changes_made
+
+    def _get_canonical_gift_name(self, stat_name):
+        """Get the canonical name of a gift from the database."""
+        from world.wod20th.models import Stat
+        gift = Stat.objects.filter(
+            Q(name__iexact=stat_name) | Q(gift_alias__icontains=stat_name),
+            category='powers',
+            stat_type='gift'
+        ).first()
+        return gift.name if gift else stat_name
+
+    def buy_stat(self, stat_name, new_rating, category=None, subcategory=None, reason="", current_rating=None):
+        """Buy or increase a stat with XP."""
+        try:
+            # Special handling for Mother's Touch and similar gifts
+            if stat_name.lower() in ["mother's touch", "grandmother's touch", "lover's touch"]:
+                category = 'powers'
+                subcategory = 'gift'
+                # Find the gift in JSON files
+                import json
+                import os
+                
+                data_dir = os.path.join('diesirae', 'data')
+                gift_files = [
+                    'rank1_garou_gifts.json',
+                    'rank2_garou_gifts.json',
+                    'rank3_garou_gifts.json',
+                    'rank4_garou_gifts.json',
+                    'rank5_garou_gifts.json',
+                    'ajaba_gifts.json',
+                    'bastet_gifts.json',
+                    'corax_gifts.json',
+                    'gurahl_gifts.json',
+                    'kitsune_gifts.json',
+                    'mokole_gifts.json',
+                    'nagah_gifts.json',
+                    'nuwisha_gifts.json',
+                    'ratkin_gifts.json',
+                    'rokea_gifts.json'
+                ]
+                
+                found_gift = None
+                for gift_file in gift_files:
+                    try:
+                        file_path = os.path.join(data_dir, gift_file)
+                        if os.path.exists(file_path):
+                            with open(file_path, 'r') as f:
+                                gifts = json.load(f)
+                                # Check if the gift exists in this file
+                                for gift in gifts:
+                                    if gift.get('name', '').lower() == stat_name.lower():
+                                        found_gift = gift
+                                        stat_name = gift['name']  # Use the canonical name from JSON
+                                        logger.log_info(f"Found gift in {gift_file}: {gift['name']}")
+                                        break
+                            if found_gift:
+                                break
+                    except Exception as e:
+                        logger.log_err(f"Error reading gift file {gift_file}: {str(e)}")
+                        continue
+
+            # Preserve original case of stat_name
+            original_stat_name = stat_name
+            
+            # Fix any power issues before proceeding
+            if category == 'powers':
+                self.fix_powers()
+                # After fixing, ensure we're using the correct subcategory
+                if subcategory in ['spheres', 'arts', 'realms', 'disciplines', 'gifts', 'charms', 'blessings', 'rituals', 'sorceries', 'advantages']:
+                    # Convert to singular form
+                    subcategory = subcategory.rstrip('s')
+                    if subcategory == 'advantage':
+                        subcategory = 'special_advantage'
+
+            # For secondary abilities, ensure proper case
+            if category == 'secondary_abilities':
+                stat_name = ' '.join(word.title() for word in stat_name.split())
+                original_stat_name = stat_name  # Update original_stat_name to match proper case
+
+            # Ensure proper structure exists
+            self.ensure_stat_structure(category, subcategory)
+            
+            # Get character's splat
+            splat = self.get_stat('other', 'splat', 'Splat', temp=False)
+            if not splat:
+                return False, "Character splat not set"
+
+            # Calculate cost
+            cost, requires_approval = self.calculate_xp_cost(
+                stat_name, new_rating, current_rating,
+                category=category, subcategory=subcategory
+            )
+            
+            if cost == 0:
+                return False, "Invalid stat or no increase needed"
+                
+            if requires_approval:
+                return False, "This purchase requires staff approval"
+
+            # Check if we have enough XP
+            if self.db.xp['current'] < cost:
+                return False, f"Not enough XP. Cost: {cost}, Available: {self.db.xp['current']}"
+
+            # Validate the purchase
+            can_purchase, error_msg = self.validate_xp_purchase(
+                stat_name, new_rating,
+                category=category, subcategory=subcategory
+            )
+            
+            if not can_purchase:
+                return False, error_msg
+
+            # All checks passed, make the purchase
+            # Special handling for gifts
+            if category == 'powers' and subcategory == 'gift':
+                # Initialize powers and gift structure if needed
+                if 'powers' not in self.db.stats:
+                    self.db.stats['powers'] = {}
+                if 'gift' not in self.db.stats['powers']:
+                    self.db.stats['powers']['gift'] = {}
+                
+                # Store the gift with its canonical name
+                self.db.stats['powers']['gift'][stat_name] = {
+                    'perm': new_rating,
+                    'temp': new_rating
+                }
+                # Store the alias if different from canonical name
+                if original_stat_name.lower() != stat_name.lower():
+                    self.set_gift_alias(stat_name, original_stat_name, new_rating)
+            else:
+                # Handle non-gift stats
+                self.set_stat(category, subcategory, stat_name, new_rating, temp=False)
+                self.set_stat(category, subcategory, stat_name, new_rating, temp=True)
+
+            # Deduct XP
+            self.db.xp['current'] -= cost
+            self.db.xp['spent'] += cost
+
+            # Log the spend
+            spend_entry = {
+                'type': 'spend',
+                'amount': float(cost),
+                'stat_name': stat_name,
+                'previous_rating': current_rating,
+                'new_rating': new_rating,
+                'reason': reason,
+                'timestamp': datetime.now().isoformat()
+            }
+            
+            if 'spends' not in self.db.xp:
+                self.db.xp['spends'] = []
+            self.db.xp['spends'].insert(0, spend_entry)
+
+            return True, f"Successfully increased {stat_name} from {current_rating} to {new_rating} (Cost: {cost} XP)"
+
+        except Exception as e:
+            logger.error(f"Error buying stat: {str(e)}")
+            return False, f"Error processing stat purchase: {str(e)}"

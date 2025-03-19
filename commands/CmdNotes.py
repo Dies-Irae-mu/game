@@ -101,14 +101,15 @@ class CmdNotes(MuxCommand):
                 self.delete_note()
             elif switch == "fix":
                 # Handle fixing notes
-                if "/" in self.args:
-                    target_name = self.args.split("/")[0]
+                target_name = self.args.strip()
+                if not target_name:
+                    target = self.caller
+                else:
                     target = self.search_for_character(target_name)
                     if not target:
                         self.caller.msg(f"Could not find character '{target_name}'.")
                         return
-                else:
-                    target = self.caller
+                
                 if self.fix_notes(target):
                     self.caller.msg(f"Successfully fixed notes for {target.name}.")
                 else:
@@ -121,13 +122,40 @@ class CmdNotes(MuxCommand):
 
     def parse_date(self, date_value):
         """Helper method to parse dates from various formats."""
+        if not date_value:
+            return None
+            
+        # If it's already a datetime object, return it
         if isinstance(date_value, datetime):
             return date_value
-        elif isinstance(date_value, str):
+            
+        # If it's a string, try various formats
+        if isinstance(date_value, str):
+            # List of possible date formats to try
+            formats = [
+                "%Y-%m-%dT%H:%M:%S.%f",  # ISO format with microseconds
+                "%Y-%m-%dT%H:%M:%S",     # ISO format without microseconds
+                "%Y-%m-%d %H:%M:%S.%f",  # Standard format with microseconds
+                "%Y-%m-%d %H:%M:%S",     # Standard format without microseconds
+                "%Y-%m-%d",              # Date only
+            ]
+            
+            # Try each format
+            for fmt in formats:
+                try:
+                    return datetime.strptime(date_value, fmt)
+                except ValueError:
+                    continue
+                    
+            # If none of the formats work, try parsing as ISO format
             try:
                 return datetime.fromisoformat(date_value)
-            except (ValueError, TypeError):
-                return None
+            except ValueError:
+                pass
+                
+            # Log the unparseable date
+            logger.log_trace(f"Could not parse date value: {date_value}")
+            
         return None
 
     def fix_notes(self, target):
@@ -146,6 +174,7 @@ class CmdNotes(MuxCommand):
                 # Store the original raw notes in case conversion fails
                 original_notes = raw_notes
                 notes_dict = None
+                recovered_notes = {}
                 
                 # Try to deserialize using Evennia's utilities first
                 try:
@@ -155,19 +184,43 @@ class CmdNotes(MuxCommand):
                         notes_dict = dict(deserialized)
                         self.caller.msg("Successfully converted notes using Evennia's deserializer.")
                 except Exception as e:
-                    self.caller.msg(f"Evennia deserialize failed: {e}")
+                    logger.log_trace(f"Evennia deserialize failed: {e}")
                     
                 # If Evennia's deserializer failed, try ast.literal_eval
                 if not notes_dict:
                     try:
                         import ast
-                        notes_dict = ast.literal_eval(raw_notes)
-                        if isinstance(notes_dict, dict):
-                            self.caller.msg("Successfully converted notes using ast.literal_eval.")
-                        else:
-                            notes_dict = None
+                        # Clean the string and try to extract dictionary-like structures
+                        cleaned_str = original_notes.strip()
+                        if "'" in cleaned_str:  # Look for dictionary-like structures
+                            # Try to find and parse nested dictionaries
+                            try:
+                                # First, try to parse the entire string
+                                parsed_dict = ast.literal_eval(cleaned_str)
+                                if isinstance(parsed_dict, dict):
+                                    notes_dict = parsed_dict
+                                    self.caller.msg("Successfully converted notes using ast.literal_eval.")
+                            except:
+                                # If that fails, try to extract individual note dictionaries
+                                import re
+                                # Look for dictionary patterns
+                                dict_pattern = r"'(\d+)':\s*({[^}]+})"
+                                matches = re.finditer(dict_pattern, cleaned_str)
+                                
+                                for match in matches:
+                                    note_id, note_data_str = match.groups()
+                                    try:
+                                        note_data = ast.literal_eval(note_data_str)
+                                        if isinstance(note_data, dict):
+                                            recovered_notes[note_id] = note_data
+                                    except:
+                                        continue
+                                
+                                if recovered_notes:
+                                    notes_dict = recovered_notes
+                                    self.caller.msg(f"Successfully recovered {len(recovered_notes)} notes from corrupted data.")
                     except Exception as e:
-                        self.caller.msg(f"ast.literal_eval failed: {e}")
+                        logger.log_trace(f"ast.literal_eval failed: {e}")
                 
                 # If both conversion attempts failed, try to parse as a formatted string
                 if not notes_dict:
@@ -176,31 +229,64 @@ class CmdNotes(MuxCommand):
                         if notes_dict:
                             self.caller.msg("Successfully parsed notes from formatted string.")
                     except Exception as e:
-                        self.caller.msg(f"Format parsing failed: {e}")
+                        logger.log_trace(f"Format parsing failed: {e}")
                 
-                # If all attempts failed, create a recovery note
+                # If we have recovered notes, try to reconstruct them properly
+                if notes_dict:
+                    reconstructed_notes = {}
+                    note_id = 1
+                    
+                    for old_id, note_data in notes_dict.items():
+                        try:
+                            # Ensure all required fields are present
+                            clean_note = {
+                                'name': note_data.get('name', 'Unnamed Note'),
+                                'text': note_data.get('text', ''),
+                                'category': note_data.get('category', 'General'),
+                                'is_public': note_data.get('is_public', False),
+                                'is_approved': note_data.get('is_approved', False),
+                                'approved_by': note_data.get('approved_by'),
+                                'created_at': self.parse_date(note_data.get('created_at')) or datetime.now(),
+                                'updated_at': self.parse_date(note_data.get('updated_at')) or datetime.now(),
+                                'approved_at': self.parse_date(note_data.get('approved_at'))
+                            }
+                            
+                            # Convert datetime objects to ISO format strings
+                            for key in ['created_at', 'updated_at', 'approved_at']:
+                                if isinstance(clean_note[key], datetime):
+                                    clean_note[key] = clean_note[key].isoformat()
+                            
+                            reconstructed_notes[str(note_id)] = clean_note
+                            note_id += 1
+                            
+                        except Exception as e:
+                            logger.log_trace(f"Error reconstructing note {old_id}: {e}")
+                            continue
+                    
+                    if reconstructed_notes:
+                        target.attributes.add('notes', reconstructed_notes)
+                        self.caller.msg(f"Successfully reconstructed {len(reconstructed_notes)} notes.")
+                        return True
+                
+                # If all attempts fail, create a recovery note
                 if not notes_dict:
                     self.caller.msg("All conversion attempts failed. Creating recovery note.")
-                    notes_dict = {
+                    recovery_notes = {
                         '1': {
                             'name': 'Recovered Data',
                             'text': original_notes,
                             'category': 'System',
                             'is_public': False,
                             'is_approved': False,
-                            'created_at': datetime.now(),
-                            'updated_at': datetime.now()
+                            'created_at': datetime.now().isoformat(),
+                            'updated_at': datetime.now().isoformat()
                         }
                     }
-                
-                # Store the fixed dictionary
-                target.attributes.add('notes', notes_dict)
-                self.caller.msg("Notes format has been fixed.")
-                return True
-                
+                    target.attributes.add('notes', recovery_notes)
+                    return True
+                    
         except Exception as e:
-            self.caller.msg(f"Error fixing notes: {e}")
-            logger.log_err(f"Error in fix_notes: {e}")
+            logger.log_trace(f"Error fixing notes: {e}")
             return False
 
     def parse_note_format(self, text):
@@ -247,33 +333,88 @@ class CmdNotes(MuxCommand):
 
     def _convert_notes_to_dict(self, notes_data):
         """Helper method to convert notes data to a proper dictionary."""
+        if not notes_data:
+            return {}
+            
+        # If it's already a dictionary or _SaverDict, return it as a dict
         if isinstance(notes_data, dict):
             return notes_data
         elif isinstance(notes_data, utils.dbserialize._SaverDict):
             return dict(notes_data)
-        elif isinstance(notes_data, str):
+            
+        # If it's a string, try multiple conversion methods
+        if isinstance(notes_data, str):
+            # Try Evennia's deserializer first
             try:
-                # Try to use Evennia's deserializer first
                 from evennia.utils.dbserialize import deserialize
                 deserialized = deserialize(notes_data)
                 if isinstance(deserialized, (dict, utils.dbserialize._SaverDict)):
                     return dict(deserialized)
-                # If that fails, try ast.literal_eval as a fallback
-                import ast
-                return ast.literal_eval(notes_data)
             except Exception as e:
-                self.caller.msg(f"Error converting notes data: {e}")
-                # Try to fix the notes if conversion fails
-                if self.fix_notes(self.caller if notes_data == self.caller.attributes.get('notes', {}) else self.search_for_character(self.args.split('/')[0])):
-                    # Try getting the notes again after fixing
-                    return self._convert_notes_to_dict(self.caller.attributes.get('notes', {}))
-                return {}
-        else:
+                logger.log_trace(f"Evennia deserialize failed: {e}")
+
+            # Try ast.literal_eval with error handling
             try:
-                return dict(notes_data)
-            except (TypeError, ValueError) as e:
-                self.caller.msg(f"Error converting notes to dictionary: {e}")
-                return {}
+                import ast
+                # Clean the string before evaluation
+                cleaned_str = notes_data.strip()
+                # Only attempt literal_eval if it looks like a dictionary
+                if cleaned_str.startswith('{') and cleaned_str.endswith('}'):
+                    result = ast.literal_eval(cleaned_str)
+                    if isinstance(result, dict):
+                        return result
+            except Exception as e:
+                logger.log_trace(f"ast.literal_eval failed: {e}")
+
+            # Try JSON parsing as a last resort
+            try:
+                import json
+                result = json.loads(notes_data)
+                if isinstance(result, dict):
+                    return result
+            except Exception as e:
+                logger.log_trace(f"JSON parsing failed: {e}")
+
+        # If all conversion attempts fail, try to parse as a formatted string
+        try:
+            # Split on note markers (can be customized based on your format)
+            notes_dict = {}
+            note_id = 1
+            
+            # Try to parse any structured format we can find
+            if "note/set" in notes_data:
+                parts = notes_data.split("note/set")
+                for part in parts[1:]:  # Skip the first empty part
+                    try:
+                        # Extract name and text
+                        if "='" in part and "'" in part.split("='", 1)[1]:
+                            name_part, text_part = part.split("='", 1)
+                            name = name_part.split("'")[-1].strip()
+                            text = text_part.split("'")[0].strip()
+                            
+                            # Create note entry
+                            notes_dict[str(note_id)] = {
+                                'name': name,
+                                'text': text,
+                                'category': 'General',
+                                'is_public': False,
+                                'is_approved': False,
+                                'created_at': datetime.now().isoformat(),
+                                'updated_at': datetime.now().isoformat()
+                            }
+                            note_id += 1
+                    except Exception as e:
+                        logger.log_trace(f"Error parsing note part: {e}")
+                        continue
+            
+            if notes_dict:
+                return notes_dict
+        except Exception as e:
+            logger.log_trace(f"Format parsing failed: {e}")
+
+        # If all conversion attempts fail, log the error and return empty dict
+        logger.log_err(f"All note conversion attempts failed for data: {notes_data}")
+        return {}
 
     def get_note_by_name_or_id(self, target, note_identifier):
         """Helper method to find a note by either name or ID."""
@@ -331,49 +472,55 @@ class CmdNotes(MuxCommand):
         """List all notes for the character."""
         notes_dict = self.caller.attributes.get('notes', {})
         
-        # Debug information
-        
-        
-        # Convert notes to dictionary
-        notes_dict = self._convert_notes_to_dict(notes_dict)
-        if notes_dict:
-            # Store back as proper dictionary
-            self.caller.attributes.add('notes', notes_dict)
-        
-        if not notes_dict:
-            self.caller.msg("You don't have any notes.")
-            return
-
-        width = 78
-        notes_by_category = defaultdict(list)
-        
+        # Convert notes to dictionary and handle potential errors
         try:
+            notes_dict = self._convert_notes_to_dict(notes_dict)
+            if notes_dict:
+                # Store back as proper dictionary to prevent future conversion issues
+                self.caller.attributes.add('notes', notes_dict)
+            
+            if not notes_dict:
+                self.caller.msg("You don't have any notes.")
+                return
+
+            width = 78
+            notes_by_category = defaultdict(list)
+            
             # Process each note from the dictionary
             for note_id, note_data in notes_dict.items():
                 if not note_data:
                     continue
                 
-                # Ensure note_data is a dictionary
-                if hasattr(note_data, 'get'):
-                    note_data = dict(note_data)
-                else:
+                try:
+                    # Ensure note_data is a dictionary
+                    if hasattr(note_data, 'get'):
+                        note_data = dict(note_data)
+                    else:
+                        logger.log_err(f"Invalid note data format for note {note_id}: {note_data}")
+                        continue
+                        
+                    # Create Note object with all fields, with error handling for dates
+                    try:
+                        note = Note(
+                            name=note_data.get('name', 'Unnamed Note'),
+                            text=note_data.get('text', ''),
+                            category=note_data.get('category', 'General'),
+                            is_public=note_data.get('is_public', False),
+                            is_approved=note_data.get('is_approved', False),
+                            approved_by=note_data.get('approved_by'),
+                            approved_at=self.parse_date(note_data.get('approved_at')),
+                            created_at=self.parse_date(note_data.get('created_at')) or datetime.now(),
+                            updated_at=self.parse_date(note_data.get('updated_at')) or datetime.now(),
+                            note_id=note_id
+                        )
+                        notes_by_category[note.category].append(note)
+                    except Exception as e:
+                        logger.log_err(f"Error creating Note object for note {note_id}: {e}")
+                        continue
+                        
+                except Exception as e:
+                    logger.log_err(f"Error processing note {note_id}: {e}")
                     continue
-                    
-                # Create Note object with all fields
-                note = Note(
-                    name=note_data.get('name', 'Unnamed Note'),
-                    text=note_data.get('text', ''),
-                    category=note_data.get('category', 'General'),
-                    is_public=note_data.get('is_public', False),
-                    is_approved=note_data.get('is_approved', False),
-                    approved_by=note_data.get('approved_by'),
-                    approved_at=self.parse_date(note_data.get('approved_at')),
-                    created_at=self.parse_date(note_data.get('created_at')),
-                    updated_at=self.parse_date(note_data.get('updated_at')),
-                    note_id=note_id
-                )
-                
-                notes_by_category[note.category].append(note)
 
             if not notes_by_category:
                 self.caller.msg("You don't have any valid notes.")
@@ -411,8 +558,8 @@ class CmdNotes(MuxCommand):
             self.caller.msg(output)
             
         except Exception as e:
-            self.caller.msg(f"Error listing notes: {e}")
             logger.log_err(f"Error in list_notes: {e}")
+            self.caller.msg("There was an error listing your notes. The error has been logged.")
 
     def generate_note_id(self, notes_dict):
         """Generate a sequential note ID."""
@@ -451,6 +598,20 @@ class CmdNotes(MuxCommand):
             category = category.strip().title()
         else:
             category = "General"
+
+        # Check text length and split if necessary
+        MAX_TEXT_LENGTH = 10000  # Adjust this value based on your system's limitations
+        if len(text) > MAX_TEXT_LENGTH:
+            # Split into multiple parts
+            parts = [text[i:i + MAX_TEXT_LENGTH] for i in range(0, len(text), MAX_TEXT_LENGTH)]
+            for i, part in enumerate(parts, 1):
+                part_name = f"{name} (Part {i}/{len(parts)})"
+                try:
+                    note = self.caller.add_note(part_name, part, category=category)
+                    self.caller.msg(f"Created note #{note.note_id}: {part_name}")
+                except Exception as e:
+                    self.caller.msg(f"Error creating note part {i}: {e}")
+            return
 
         try:
             note = self.caller.add_note(name, text, category=category)
@@ -535,56 +696,66 @@ class CmdNotes(MuxCommand):
         """List all viewable notes for a character."""
         notes_dict = target.attributes.get('notes', {})
         
-        # Debug information
-        
-        
-        # Convert notes to dictionary
-        notes_dict = self._convert_notes_to_dict(notes_dict)
-        if notes_dict:
-            # Store back as proper dictionary
-            target.attributes.add('notes', notes_dict)
-        
-        if not notes_dict:
-            self.caller.msg(f"{target.name} has no notes.")
-            return
-
-        width = 78
-        notes_by_category = defaultdict(list)
-        is_staff = (self.caller.check_permstring("builders") or 
-                   self.caller.check_permstring("storyteller"))
-        
         try:
+            # Convert notes to dictionary and handle potential errors
+            notes_dict = self._convert_notes_to_dict(notes_dict)
+            if notes_dict:
+                # Store back as proper dictionary to prevent future conversion issues
+                target.attributes.add('notes', notes_dict)
+            
+            if not notes_dict:
+                self.caller.msg(f"{target.name} has no notes.")
+                return
+
+            width = 78
+            notes_by_category = defaultdict(list)
+            is_staff = (self.caller.check_permstring("builders") or 
+                       self.caller.check_permstring("storyteller"))
+            
             # Process each note from the dictionary
             for note_id, note_data in notes_dict.items():
                 if not note_data:
                     continue
                 
-                # Ensure note_data is a dictionary
-                if hasattr(note_data, 'get'):
-                    note_data = dict(note_data)
-                else:
+                try:
+                    # Ensure note_data is a dictionary
+                    if hasattr(note_data, 'get'):
+                        note_data = dict(note_data)
+                    else:
+                        logger.log_err(f"Invalid note data format for note {note_id} on {target.name}: {note_data}")
+                        continue
+                        
+                    # Create Note object with all fields, with error handling for dates
+                    try:
+                        note = Note(
+                            name=note_data.get('name', 'Unnamed Note'),
+                            text=note_data.get('text', ''),
+                            category=note_data.get('category', 'General'),
+                            is_public=note_data.get('is_public', False),
+                            is_approved=note_data.get('is_approved', False),
+                            approved_by=note_data.get('approved_by'),
+                            approved_at=self.parse_date(note_data.get('approved_at')),
+                            created_at=self.parse_date(note_data.get('created_at')) or datetime.now(),
+                            updated_at=self.parse_date(note_data.get('updated_at')) or datetime.now(),
+                            note_id=note_id
+                        )
+                        
+                        # Only show notes if they're public or viewer is staff/self
+                        if note.is_public or is_staff or target == self.caller:
+                            notes_by_category[note.category].append(note)
+                    except Exception as e:
+                        logger.log_err(f"Error creating Note object for note {note_id} on {target.name}: {e}")
+                        continue
+                        
+                except Exception as e:
+                    logger.log_err(f"Error processing note {note_id} on {target.name}: {e}")
                     continue
-                    
-                # Create Note object with all fields
-                note = Note(
-                    name=note_data.get('name', 'Unnamed Note'),
-                    text=note_data.get('text', ''),
-                    category=note_data.get('category', 'General'),
-                    is_public=note_data.get('is_public', False),
-                    is_approved=note_data.get('is_approved', False),
-                    approved_by=note_data.get('approved_by'),
-                    approved_at=self.parse_date(note_data.get('approved_at')),
-                    created_at=self.parse_date(note_data.get('created_at')),
-                    updated_at=self.parse_date(note_data.get('updated_at')),
-                    note_id=note_id
-                )
-                
-                # Only show notes if they're public or viewer is staff/self
-                if note.is_public or is_staff or target == self.caller:
-                    notes_by_category[note.category].append(note)
 
             if not notes_by_category:
-                self.caller.msg(f"No viewable notes found for {target.name}.")
+                if target == self.caller or is_staff:
+                    self.caller.msg(f"{target.name} has no notes.")
+                else:
+                    self.caller.msg(f"{target.name} has no public notes you can view.")
                 return
 
             # Calculate column width for the tabular display
@@ -607,8 +778,9 @@ class CmdNotes(MuxCommand):
                     row_notes = category_notes[i:i + cols_per_row]
                     row = ""
                     for note in row_notes:
-                        # Format note name with ID
-                        note_display = f"{note.name} (#{note.note_id})"
+                        # Format note name with ID and visibility indicator
+                        visibility = "" if note.is_public else " [P]"
+                        note_display = f"{note.name}{visibility} (#{note.note_id})"
                         if len(note_display) > col_width - 2:
                             note_display = note_display[:col_width - 3] + "…"
                         # Pad with spaces to maintain column width
@@ -619,8 +791,8 @@ class CmdNotes(MuxCommand):
             self.caller.msg(output)
             
         except Exception as e:
-            self.caller.msg(f"Error listing notes: {e}")
-            logger.log_err(f"Error in list_character_notes: {e}")
+            logger.log_err(f"Error in list_character_notes for {target.name}: {e}")
+            self.caller.msg(f"There was an error listing notes for {target.name}. The error has been logged.")
 
     def list_notes_by_category(self, category):
         """List all notes in a specific category."""

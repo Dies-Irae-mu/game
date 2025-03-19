@@ -50,6 +50,7 @@ from commands.staff_commands import CmdStaffStat, CmdFixStats, CmdSetWyrmTaint
 from commands.unfindable import CmdUnfindable
 from commands.CmdChangelingInteraction import CmdChangelingInteraction
 from commands.CmdBanality import CmdBanality
+from commands.groups_commands import CmdGroups
 
 from commands.bbs.bbs_all_commands import CmdBBS
 from commands.bbs.bbs_admin_commands import CmdResetBBS
@@ -162,6 +163,7 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdNotifications())
         self.add(CmdMultidesc())
         self.add(CmdUmbraInfo())
+        self.add(CmdGroups())
 
 class AccountCmdSet(cmdset_account.AccountCmdSet):
     """

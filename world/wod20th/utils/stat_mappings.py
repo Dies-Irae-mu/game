@@ -869,7 +869,7 @@ SPECIAL_ADVANTAGES = {
         'alacrity': {'valid_values': [2, 4, 6], 'desc': "Allows extra actions with Willpower expenditure"},
         'armor': {'valid_values': [1, 2, 3, 4, 5], 'desc': "Provides innate protection, each point adds one soak die"},
         'aura': {'valid_values': [3], 'desc': "Opponents suffer +3 difficulty on rolls against you"},
-        'aww!': {'valid_values': [1, 2, 3, 4], 'desc': "Adds dice to Social rolls based on cuteness"},
+        'aww': {'valid_values': [1, 2, 3, 4], 'desc': "Adds dice to Social rolls based on cuteness"},
         'bare necessities': {'valid_values': [1, 3], 'desc': "Retain items when shapeshifting"},
         'bioluminescence': {'valid_values': [1, 2, 3], 'desc': "Body can glow at will"},
         'blending': {'valid_values': [1], 'desc': "Can alter appearance to match surroundings"},

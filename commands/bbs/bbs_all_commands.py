@@ -740,12 +740,3 @@ class CmdBBS(default_cmds.MuxCommand):
         self.caller.msg(f"{'-'*40}")
         self.caller.msg(f"{post['content']}")
         self.caller.msg(f"{'-'*40}")
-
-        
-
-
-
-
-
-
-

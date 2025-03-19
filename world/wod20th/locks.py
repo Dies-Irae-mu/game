@@ -615,6 +615,174 @@ LOCK_FUNCS.update({
     "has_wyrm_taint": has_wyrm_taint
 })
 
+def is_in_group(accessing_obj, accessed_obj, *args, **kwargs):
+    """
+    Check if the accessing character is a member of the specified group.
+    
+    Args:
+        accessing_obj (Object): The character trying to access
+        accessed_obj (Object): The object being accessed
+        args (list): The first argument should be the group ID or name
+        
+    Returns:
+        bool: True if the character is a member of the group
+    """
+    if not args:
+        return False
+    
+    # Get the real character if this is an Account
+    if hasattr(accessing_obj, 'character'):
+        accessing_obj = accessing_obj.character
+    
+    # Try to get the character sheet
+    try:
+        from world.wod20th.models import CharacterSheet
+        from world.groups.models import Group, GroupMembership
+        
+        # Get character sheet
+        try:
+            if not hasattr(accessing_obj, 'character_sheet'):
+                return False
+            char_sheet = accessing_obj.character_sheet
+        except Exception:
+            return False
+        
+        # Try to find the group by ID first
+        group_identifier = args[0].strip()
+        
+        try:
+            # If it's a number, try it as an ID
+            group_id = int(group_identifier)
+            group = Group.objects.filter(group_id=group_id).first()
+        except ValueError:
+            # If it's not a number, search by name
+            group = Group.objects.filter(name__iexact=group_identifier).first()
+        
+        if not group:
+            return False
+        
+        # Check if the character is a member of the group
+        return GroupMembership.objects.filter(group=group, character=char_sheet).exists()
+        
+    except Exception:
+        return False
+
+def is_group_leader(accessing_obj, accessed_obj, *args, **kwargs):
+    """
+    Check if the accessing character is the leader of the specified group.
+    
+    Args:
+        accessing_obj (Object): The character trying to access
+        accessed_obj (Object): The object being accessed
+        args (list): The first argument should be the group ID or name
+        
+    Returns:
+        bool: True if the character is the leader of the group
+    """
+    if not args:
+        return False
+    
+    # Get the real character if this is an Account
+    if hasattr(accessing_obj, 'character'):
+        accessing_obj = accessing_obj.character
+    
+    # Try to get the character sheet
+    try:
+        from world.wod20th.models import CharacterSheet
+        from world.groups.models import Group
+        
+        # Get character sheet
+        try:
+            if not hasattr(accessing_obj, 'character_sheet'):
+                return False
+            char_sheet = accessing_obj.character_sheet
+        except Exception:
+            return False
+        
+        # Try to find the group by ID first
+        group_identifier = args[0].strip()
+        
+        try:
+            # If it's a number, try it as an ID
+            group_id = int(group_identifier)
+            group = Group.objects.filter(group_id=group_id).first()
+        except ValueError:
+            # If it's not a number, search by name
+            group = Group.objects.filter(name__iexact=group_identifier).first()
+        
+        if not group:
+            return False
+        
+        # Check if the character is the leader of the group
+        return group.leader and group.leader.id == char_sheet.id
+        
+    except Exception:
+        return False
+
+def has_group_role(accessing_obj, accessed_obj, *args, **kwargs):
+    """
+    Check if the accessing character has a specific role in the specified group.
+    
+    Args:
+        accessing_obj (Object): The character trying to access
+        accessed_obj (Object): The object being accessed
+        args (list): First arg is group ID/name, second arg is role name
+        
+    Returns:
+        bool: True if the character has the specified role in the group
+    """
+    if len(args) < 2:
+        return False
+    
+    # Get the real character if this is an Account
+    if hasattr(accessing_obj, 'character'):
+        accessing_obj = accessing_obj.character
+    
+    # Try to get the character sheet
+    try:
+        from world.wod20th.models import CharacterSheet
+        from world.groups.models import Group, GroupMembership, GroupRole
+        
+        # Get character sheet
+        try:
+            if not hasattr(accessing_obj, 'character_sheet'):
+                return False
+            char_sheet = accessing_obj.character_sheet
+        except Exception:
+            return False
+        
+        # Try to find the group by ID first
+        group_identifier = args[0].strip()
+        role_name = args[1].strip()
+        
+        try:
+            # If it's a number, try it as an ID
+            group_id = int(group_identifier)
+            group = Group.objects.filter(group_id=group_id).first()
+        except ValueError:
+            # If it's not a number, search by name
+            group = Group.objects.filter(name__iexact=group_identifier).first()
+        
+        if not group:
+            return False
+        
+        # Check if the character has the specified role in the group
+        membership = GroupMembership.objects.filter(group=group, character=char_sheet).first()
+        if not membership or not membership.role:
+            return False
+            
+        return membership.role.name.lower() == role_name.lower()
+        
+    except Exception:
+        return False
+
+# Add the new group lock functions to the registry
+LOCK_FUNCS.update({
+    "is_in_group": is_in_group,
+    "is_group_leader": is_group_leader,
+    "has_group_role": has_group_role,
+})
+
 def _get_lock_functions():
     """Return the lock functions for this module."""
     return LOCK_FUNCS

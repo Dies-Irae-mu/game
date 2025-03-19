@@ -4,6 +4,7 @@ from evennia.utils.utils import crop, time_format
 from world.wod20th.utils.formatting import header, footer, divider
 from evennia.utils.search import search_object
 from time import time
+import datetime
 from typeclasses.characters import Character
 
 class CmdFinger(MuxCommand):
@@ -17,6 +18,14 @@ class CmdFinger(MuxCommand):
     The +finger command displays public information about a character,
     including their RP preferences, online times, and other IC/OOC details.
     
+    Standard information shown includes:
+    - Character's full name and current activity status
+    - Player status (approved/unapproved) and alias
+    - Online times and pronouns
+    - RP preferences
+    - Character page information (played by, apparent age, RP hooks, soundtrack)
+    - Wiki page URL
+    
     To set your own finger information, use +finger/set:
       +finger/set rp_preferences=Anything goes, but prefer dark themes
       +finger/set online_times=8:30 or 9pm PDT Sunday-Saturday
@@ -27,6 +36,10 @@ class CmdFinger(MuxCommand):
     
     You can create any custom field by using +finger/set <fieldname>=<value>.
     Set a field to @@ to hide it.
+    
+    Note: Some information like the wiki URL, played by, apparent age, RP hooks,
+    and soundtrack are automatically pulled from your character's page and cannot
+    be set using +finger/set.
     """
     
     key = "+finger"
@@ -52,6 +65,20 @@ class CmdFinger(MuxCommand):
             return int(current_time - last_cmd_time)
         return None
 
+    def get_last_online(self, target):
+        """
+        Get the last time the character was online.
+        Returns None if the character is currently online or the
+        information is not available.
+        """
+        # If the character is online, return None
+        if target.sessions.count():
+            return None
+            
+        # Get the last_disconnect attribute
+        last_disconnect = target.attributes.get("last_disconnect", None)
+        return last_disconnect
+
     def format_idle_time(self, seconds):
         """Format idle time into a readable string."""
         if seconds is None:
@@ -66,6 +93,17 @@ class CmdFinger(MuxCommand):
             return f"{minutes}m"
         else:
             return f"{seconds}s"
+
+    def format_last_online(self, timestamp):
+        """Format last online time into a readable string."""
+        if timestamp is None:
+            return "OFFLINE"
+            
+        # Convert timestamp to datetime
+        dt = datetime.datetime.fromtimestamp(timestamp)
+        
+        # Format the date and time - use short format for better display in the narrow field
+        return f"OFFLINE (Last: {dt.strftime('%Y-%m-%d %H:%M')})"
 
     def func(self):
         if not self.args:
@@ -82,9 +120,14 @@ class CmdFinger(MuxCommand):
             field = field.strip().lower()
             value = value.strip()
             
-            # Set the attribute
-            self.caller.attributes.add(f"finger_{field}", value)
-            self.caller.msg(f"Set finger_{field} to: {value}")
+            # If value is empty or @@, remove the attribute
+            if not value or value == "@@":
+                self.caller.attributes.remove(f"finger_{field}")
+                self.caller.msg(f"Removed finger_{field}")
+            else:
+                # Set the attribute
+                self.caller.attributes.add(f"finger_{field}", value)
+                self.caller.msg(f"Set finger_{field} to: {value}")
             return
 
         # Handle old &finger_ syntax for backward compatibility
@@ -95,10 +138,16 @@ class CmdFinger(MuxCommand):
                 
             field = self.raw_string[7:].split(" ")[0]
             _, value = self.raw_string.split("=", 1)
+            value = value.strip()
             
-            # Set the attribute
-            self.caller.attributes.add(f"finger_{field.lower()}", value.strip())
-            self.caller.msg(f"Set finger_{field} to: {value.strip()}")
+            # If value is empty or @@, remove the attribute
+            if not value or value == "@@":
+                self.caller.attributes.remove(f"finger_{field.lower()}")
+                self.caller.msg(f"Removed finger_{field}")
+            else:
+                # Set the attribute
+                self.caller.attributes.add(f"finger_{field.lower()}", value)
+                self.caller.msg(f"Set finger_{field} to: {value}")
             return
 
         # Handle '+finger me'
@@ -134,7 +183,13 @@ class CmdFinger(MuxCommand):
         
         # Calculate idle time
         idle_seconds = self.get_idle_time(target)
-        idle_str = self.format_idle_time(idle_seconds)
+        
+        # Get either idle time or last online time if offline
+        if idle_seconds is not None:
+            idle_str = self.format_idle_time(idle_seconds)
+        else:
+            last_online = self.get_last_online(target)
+            idle_str = self.format_last_online(last_online)
         
         # Start building the display with blue dashes
         string = ANSIString("|b=|n" * 78 + "\n")
@@ -144,7 +199,7 @@ class CmdFinger(MuxCommand):
         string += f"|y{name_display:^78}|n\n"
         
         # Full name and idle time line
-        string += f"|wFull Name|n: {full_name:<30} | |wIdle|n: {idle_str}\n"
+        string += f"|wFull Name|n: {full_name:<20} | |wActivity|n: {idle_str}\n"
         
         # Red divider line
         string += ANSIString("|r=|n" * 78 + "\n")
@@ -152,7 +207,7 @@ class CmdFinger(MuxCommand):
         # Status and Alias line
         status = "Approved Player" if target.db.approved else "Unapproved Player"
         alias = target.attributes.get("alias", "")
-        string += f"|wStatus|n: {status:<35} | |wAlias|n: {alias}\n"
+        string += f"|wStatus|n: {status:<23} | |wAlias|n: {alias}\n"
         
         # Red divider line
         string += ANSIString("|r=|n" * 78 + "\n")
@@ -162,10 +217,22 @@ class CmdFinger(MuxCommand):
             ('Online Times', target.attributes.get("finger_online_times", "")),
             ('Pronouns', target.attributes.get("finger_pronouns", "")),
             ('RP Preferences', target.attributes.get("finger_rp_preferences", "")),
+            # Character page attributes
+            ('Played By', target.attributes.get("appears_as", "")),
+            ('Apparent Age', target.attributes.get("apparent_age", "")),
+            ('RP Hooks', target.attributes.get("rp_hooks", "")),
+            ('Soundtrack', target.attributes.get("soundtrack", "")),
+            # Wiki URL
+            ('Wiki', f"https://diesiraemu.com/characters/detail/{target.id}/{target.id}/"),
         ]
         
         for field, value in fields:
-            string += f"|w{field}|n: {value}\n"
+            if value:  # Only display fields that have values
+                # Format multi-line fields appropriately
+                if isinstance(value, str) and '\n' in value:
+                    string += f"|w{field}|n:\n{value}\n"
+                else:
+                    string += f"|w{field}|n: {value}\n"
         
         # Get remaining custom fields
         custom_fields = {}

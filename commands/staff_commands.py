@@ -21,7 +21,7 @@ REQUIRED_INSTANCES = ['Library', 'Status', 'Influence', 'Wonder', 'Secret Weapon
                       'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish', 'Chimerical Item', 'Chimerical Companion',
                       'Dreamers', 'Digital Dreamers', 'Addiction', 'Phobia', 'Derangement',
                       'Obsession', 'Compulsion', 'Bigot', 'Ability Deficit', 'Sect Enmity', 'Camp Enmity',
-                      'Retainers'
+                      'Retainers', 'Sphere Inept', 'Art Affinity', 'Immunity'
                      ] 
 
 class CmdStaffStat(CmdSelfStat):
@@ -126,7 +126,9 @@ class CmdStaffStat(CmdSelfStat):
 
             # Store the original stat name for gift aliases
             if self.category == 'powers' and self.stat_type == 'gift':
-                self.alias_used = self.stat_name
+                # Only set initially, don't override if it comes from a gift alias check
+                if not hasattr(self, 'alias_used'):
+                    self.alias_used = self.stat_name
 
             # Special handling for Gnosis
             if self.stat_name and self.stat_name.lower() == 'gnosis':
@@ -180,9 +182,7 @@ class CmdStaffStat(CmdSelfStat):
                     if splat == 'Mage':
                         self.category = 'powers'
                         self.stat_type = 'sphere'
-                    else:
-                        self.category = 'attributes'
-                        self.stat_type = 'physical'
+
 
         except Exception as e:
             self.caller.msg(f"|rError parsing command: {str(e)}|n")
@@ -296,6 +296,15 @@ class CmdStaffStat(CmdSelfStat):
             splat = self.target.get_stat('other', 'splat', 'Splat', temp=False)
             char_type = self.target.get_stat('identity', 'lineage', 'Type', temp=False)
 
+            # Check for gift aliases first if the stat might be a gift
+            if not self.category or (self.category == 'powers' and self.stat_type == 'gift'):
+                is_alias, canonical_name = self._check_gift_alias(self.stat_name)
+                if is_alias:
+                    # We found a gift alias, update the stat name
+                    self.stat_name = canonical_name
+                    self.category = 'powers'
+                    self.stat_type = 'gift'
+
             # If no category/type specified, try to determine it from the stat name
             if not self.category or not hasattr(self, 'stat_type'):
                 # Check secondary abilities first - these are high priority matches
@@ -332,6 +341,18 @@ class CmdStaffStat(CmdSelfStat):
 
             # Use the canonical name from the database
             self.stat_name = stat.name
+
+            # Special handling for Obedience based on character's shifter type
+            if self.stat_name.lower() == 'obedience':
+                shifter_type = self.target.get_stat('identity', 'lineage', 'Type', temp=False)
+                if shifter_type == 'Ananasi':
+                    # For Ananasi, Obedience is a renown, not a gift
+                    self.category = 'advantages'
+                    self.stat_type = 'renown'
+                else:
+                    # For other shifter types, Obedience is a gift
+                    self.category = 'powers'
+                    self.stat_type = 'gift'
 
             # Special handling for Nature based on character's splat type
             if self.stat_name.lower() == 'nature':
@@ -498,6 +519,11 @@ class CmdStaffStat(CmdSelfStat):
                             'temp': new_value
                         }
 
+                # Special handling for gifts to store the alias used
+                if stat.category == 'powers' and stat.stat_type == 'gift' and hasattr(self, 'alias_used'):
+                    # Store the alias using the target's set_gift_alias method
+                    self.target.set_gift_alias(stat.name, self.alias_used, new_value)
+
                 # Update any dependent stats (like willpower, path rating, etc.)
                 self._update_dependent_stats(full_stat_name, new_value)
 
@@ -518,6 +544,82 @@ class CmdStaffStat(CmdSelfStat):
         except Exception as e:
             self.caller.msg(f"|rError: {str(e)}|n")
             return
+
+    def _check_gift_alias(self, gift_name: str) -> tuple[bool, str]:
+        """
+        Check if a gift name is an alias and return the canonical name.
+        Modified for staff commands to use target character.
+        
+        Args:
+            gift_name: The name of the gift to check
+            
+        Returns:
+            Tuple of (is_alias, canonical_name)
+        """
+        # Get target character's splat and type
+        splat = self.target.get_stat('other', 'splat', 'Splat', temp=False)
+        char_type = self.target.get_stat('identity', 'lineage', 'Type', temp=False)
+        
+        # Special handling for Obedience which could be both a gift and a renown type
+        if gift_name.lower() == 'obedience':
+            # For Ananasi, prioritize renown over gift
+            if char_type == 'Ananasi':
+                return False, None
+        
+        # Check if character can use gifts
+        can_use_gifts = (
+            splat == 'Shifter' or 
+            splat == 'Possessed' or 
+            (splat == 'Mortal+' and char_type == 'Kinfolk')
+        )
+        
+        if not can_use_gifts:
+            return False, None
+            
+        # Check if the gift exists in the database
+        from world.wod20th.models import Stat
+        gift = Stat.objects.filter(
+            name__iexact=gift_name,
+            category='powers',
+            stat_type='gift'
+        ).first()
+        
+        if gift:
+            # For staff, we allow setting any gift regardless of character type
+            return True, gift.name  # Found exact match
+         
+        # Get all gifts and check their aliases
+        all_gifts = Stat.objects.filter(
+            category='powers',
+            stat_type='gift'
+        )
+        matched_gift = None
+        for g in all_gifts:
+            if g.gift_alias and any(alias.lower() == gift_name.lower() for alias in g.gift_alias):
+                matched_gift = g
+                break
+        
+        if matched_gift:
+            gift = matched_gift
+            
+            # Find which alias matched
+            matched_alias = None
+            if gift.gift_alias:
+                for alias in gift.gift_alias:
+                    if alias.lower() == gift_name.lower():
+                        matched_alias = alias
+                        break
+            
+            if matched_alias:
+                # Store the original input name as the alias_used before it gets changed
+                self.alias_used = matched_alias  # Use the exact alias from the database
+                
+                # Customize message based on character type for staff feedback
+                self.caller.msg(f"|y'{matched_alias}' is an alias for the gift '{gift.name}'. Setting '{gift.name}' to {self.value_change}.|n")
+            
+            return True, gift.name
+            
+        return False, None
 
 class CmdFixStats(MuxCommand):
     """

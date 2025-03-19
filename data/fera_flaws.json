@@ -31,5 +31,81 @@
         "splat": "Shifter",
         "shifter_type": "Rokea",
         "source": "W20 Changing Breeds, pg. 240"
+    },
+    {
+        "name": "Unkempt",
+        "description": "You are a slob, both in your physical appearance, and in the manner that you keep your residence. This is not only annoying to most humans, it is almost intolerable to other Ananasi. They look at you as a lesser cousin, despite your actions, and will always hesitate to come to you for help or information; few would want to be associated with you.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "flaws",
+        "stat_type": "social",
+        "values": [1],
+        "splat": "Various",
+        "source": "Breedbook: Ananasi, pg 83"
+    },
+    {
+        "name": "Vampire-phile",
+        "description": "Well, it's just embarrassing, but you've become obsessed with knowing everything you can about vampires and their society, to the point where it's becoming an obsession. You've started dressing like them, acting like them — up to and including avoiding sunlight for fear it will hurt you — and generally making yourself as much apart of their society as you can. While the vampires might think you're okay, the rest of the Ananasi are starting to worry, and that is not a good thing. In order to 'break out of character' and act like you're supposed to among your own kind, you must spend one Willpower point per scene. Even then, the Storyteller might require extra rolls if you are in a bad situation, such as up against the Inquisition.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "flaws",
+        "stat_type": "social",
+        "values": [1],
+        "splat": "Shifter",
+        "shifter_type": "Ananasi",
+        "source": "Breedbook: Ananasi, pg 84"
+    },
+    {
+        "name": "Emotional Attachment",
+        "description": "You have managed to come through the Metamorphosis with more of your human emotions intact than most of the Ananasi possess, and you suffer for it. There's a part of you that longs for human companionship and wantsto have a 'normal' life, which may not be possible in the world of the Ananasi. Family and friends aren't just tools to you, they are necessary companionship, and a potential bargaining chip against you. In order to resist the emotional pulls of those closest to you (for instance, if a friend is endangered or you're forced to leave him for a while), you must make a Willpower roll, difficulty 8, to resist your emotionalties. Other Ananasi look upon this trait as a weakness, and you suffer a +1 difficulty to all social rolls when dealing with any of the Damhan that know about your soft spot.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "flaws",
+        "stat_type": "social",
+        "values": [3],
+        "splat": "Shifter",
+        "shifter_type": "Ananasi",
+        "source": "Breedbook: Ananasi, pg 83"
+    },
+    {
+        "name": "Empathy Flaw",
+        "description": "You aren't like other Ananasi. You actually feel for others. Most Ananasi don't care what happens to their prey, or any other being for that matter, but you care. It isn't just the people that you feed upon on a regular basis, but the homeless man on the street, or the single mother that just lost her job. You actually want to help them out. Whenever a situation arises that puts you in a position where you might be able to help out someone else, you must make a Willpower roll (difficulty 6) or your guilt will get the better of you, and you will do something to help them out. Sometimes this can be as simple as giving a small monetary donation, while other times it will get you into deep trouble.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "flaws",
+        "stat_type": "social",
+        "values": [3],
+        "splat": "Shifter",
+        "shifter_type": "Ananasi",
+        "source": "Breedbook: Ananasi, pg 84"
+    },
+    {
+        "name": "No Fangs",
+        "description": "Unlike most Ananasi, you do not grow fangs in any form. In any form that would normally allow you to inject venom, you can still transfer it through your saliva, you simply have to bite down on your target and hold on until the venom can take effect. In Homid form, you cannot bite into someone to drain their blood, but instead must create an open wound from which to drink. In any case, you can ingest only liquid food through normal drinking or eating.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "flaws",
+        "stat_type": "physical",
+        "values": [3],
+        "splat": "Shifter",
+        "shifter_type": "Ananasi",
+        "source": "Breed Book: Ananasi, pg 84"
+    },
+    {
+        "name": "Limited Diet",
+        "description": "You are, perhaps just a bit too much of a spider for your own good. Even in Homid form, you are limited to thesoftest foods when eating. Of course, you can still eat — you can vomit out the digestive fluids to liquefy anything you might be interested in eating — but it's not very socially acceptable in polite (or even impolite) society. Any attempts to eat foods more solid than pudding or gelatin will result in painful stomach cramps, and could even cause serious injury to your delicate digestive system.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "flaws",
+        "stat_type": "physical",
+        "values": [4],
+        "splat": "Shifter",
+        "shifter_type": "Ananasi",
+        "source": "Breed Book: Ananasi, pg 84"
+    },
+    {
+        "name": "Unstable Features",
+        "description": "Just as there are some Ananasi who can manage a more perfected human body, there are some whosimply can't hold it together quite as well as others. You suffer from a shifting in your body weight and mass that is virtually unnoticeable from minute to minute, but can radically alter your features over the course of afewhours.While the changes are subtle, they are constant, and in a span of a day or so you look different enough to make you unrecognizable as the same person, at least visually.Your scent doesn't change, but your body, shape and face will alter continuously. The only respite from this is to change into one of your other forms, and then change back into your human form. Inevitably you start off with the same face and body after a transformation, but the instability sets in again each time, and leaves most of the people you meet unsettled around you for reasons they don't necessarily understand. You suffer a +2 difficulty on all Social rolls beyond making a first impression.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "flaws",
+        "stat_type": "social",
+        "values": [4],
+        "splat": "Shifter",
+        "shifter_type": "Ananasi",
+        "source": "Breed Book: Ananasi, pg 84"
     }
-] 
+]

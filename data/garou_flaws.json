@@ -56,7 +56,6 @@
       "stat_type": "physical",
       "values": [3],
       "splat": "Shifter",
-      "shifter_type": ["Garou", "Ajaba", "Bastet", "Ratkin"],
       "source": "W20 p. 474"
   },
   {

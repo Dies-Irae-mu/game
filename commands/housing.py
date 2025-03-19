@@ -223,7 +223,7 @@ class CmdRent(MuxCommand):
                 return
 
             # Check if location allows this splat
-            allowed_splats = location.db.housing_data.allowed_splats or []
+            allowed_splats = location.db.housing_data.get('allowed_splats', set())
             if not allowed_splats:
                 self.caller.msg("This location is not set up for any splat types.")
                 return

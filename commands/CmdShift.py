@@ -456,13 +456,22 @@ class CmdShift(default_cmds.MuxCommand):
 
     def _apply_form_changes(self, character, form):
         """Apply form changes and preserve abilities."""
-        # If it's Homid form, reset everything to base stats
+        # Initialize attribute_boosts if it doesn't exist
+        if not hasattr(character.db, 'attribute_boosts'):
+            character.db.attribute_boosts = {}
+        elif character.db.attribute_boosts is None:
+            character.db.attribute_boosts = {}
+
+        # If it's Homid form, reset everything to base stats but preserve boosts
         if form.name.lower() == 'homid':
             print(f"DEBUG: Setting Homid form for {character.name}")
             character.attributes.add('current_form', 'Homid')
             character.db.current_form = 'Homid'
             character.db.display_name = character.key
             
+            # Get existing boosts
+            attribute_boosts = character.db.attribute_boosts or {}
+
             # Reset all attributes to their permanent values
             for category in ['physical', 'social', 'mental']:
                 if category in character.db.stats.get('attributes', {}):
@@ -474,11 +483,17 @@ class CmdShift(default_cmds.MuxCommand):
                                 perm_value = int(perm_value)
                             except (ValueError, TypeError):
                                 perm_value = 0
+                        
+                        # Apply any existing boosts
+                        boost_amount = 0
+                        if stat in attribute_boosts:
+                            boost_amount = attribute_boosts[stat].get('amount', 0)
+                        
                         character.db.stats['attributes'][category][stat] = {
                             'perm': perm_value,
-                            'temp': perm_value
+                            'temp': perm_value + boost_amount
                         }
-                        print(f"DEBUG: Reset {category}.{stat} to perm={perm_value}, temp={perm_value}")
+                        print(f"DEBUG: Reset {category}.{stat} to perm={perm_value}, temp={perm_value + boost_amount}")
             return
 
         # For non-Homid forms
@@ -509,7 +524,10 @@ class CmdShift(default_cmds.MuxCommand):
         # Get the appropriate stat modifiers based on breed/tribe
         stat_modifiers = self._get_form_modifiers(form, shifter_type, breed, tribe)
 
-        # Apply form modifiers while preserving permanent values
+        # Get existing boosts (with proper initialization)
+        attribute_boosts = character.db.attribute_boosts or {}
+
+        # Apply form modifiers while preserving permanent values and considering boosts
         for stat, mod in stat_modifiers.items():
             try:
                 stat_obj = Stat.objects.get(name__iexact=stat, category='attributes')
@@ -517,8 +535,13 @@ class CmdShift(default_cmds.MuxCommand):
                     # Get permanent value from our saved values
                     perm_value = permanent_values.get(stat_obj.stat_type, {}).get(stat_obj.name, 0)
                     
-                    # Calculate temporary value based on permanent value and modifier
-                    temp_value = max(0, perm_value + mod)  # Ensure non-negative
+                    # Get any existing boost (with safe access)
+                    boost_amount = 0
+                    if stat_obj.name in attribute_boosts:
+                        boost_amount = attribute_boosts[stat_obj.name].get('amount', 0)
+                    
+                    # Calculate temporary value based on permanent value, form modifier, and boost
+                    temp_value = max(0, perm_value + mod + boost_amount)
                     
                     # Ensure the category and subcategory exist
                     if stat_obj.category not in character.db.stats:
@@ -551,20 +574,29 @@ class CmdShift(default_cmds.MuxCommand):
             
             # Handle Manipulation in Crinos form
             manip_perm = permanent_values.get('social', {}).get('Manipulation', 0)
+            manip_boost = 0
+            if 'Manipulation' in attribute_boosts:
+                manip_boost = attribute_boosts['Manipulation'].get('amount', 0)
+            
             character.db.stats['attributes']['social']['Manipulation'] = {
                 'perm': manip_perm,
-                'temp': max(0, manip_perm - 2)  # -2 penalty in Crinos
+                'temp': max(0, manip_perm - 2 + manip_boost)  # -2 penalty in Crinos plus any boost
             }
         elif form.name.lower() == 'crawlerling':
             # Handle Crawlerling form's special stats
             # Set Strength, Stamina, and Manipulation to 0
             # Set Dexterity to base + 5
             
-            # Get permanent values
+            # Get permanent values and boosts
             str_perm = permanent_values.get('physical', {}).get('Strength', 0)
             dex_perm = permanent_values.get('physical', {}).get('Dexterity', 0)
             sta_perm = permanent_values.get('physical', {}).get('Stamina', 0)
             man_perm = permanent_values.get('social', {}).get('Manipulation', 0)
+            
+            str_boost = attribute_boosts.get('Strength', {}).get('amount', 0)
+            dex_boost = attribute_boosts.get('Dexterity', {}).get('amount', 0)
+            sta_boost = attribute_boosts.get('Stamina', {}).get('amount', 0)
+            man_boost = attribute_boosts.get('Manipulation', {}).get('amount', 0)
             
             # Ensure categories exist
             if 'physical' not in character.db.stats['attributes']:
@@ -575,19 +607,19 @@ class CmdShift(default_cmds.MuxCommand):
             # Set the stats
             character.db.stats['attributes']['physical']['Strength'] = {
                 'perm': str_perm,
-                'temp': 0  # Always 0 in Crawlerling
+                'temp': 0 + str_boost  # Allow boosts to still apply
             }
             character.db.stats['attributes']['physical']['Dexterity'] = {
                 'perm': dex_perm,
-                'temp': dex_perm + 5  # Add 5 to base Dexterity
+                'temp': dex_perm + 5 + dex_boost  # Add 5 to base Dexterity plus any boost
             }
             character.db.stats['attributes']['physical']['Stamina'] = {
                 'perm': sta_perm,
-                'temp': 0  # Always 0 in Crawlerling
+                'temp': 0 + sta_boost  # Allow boosts to still apply
             }
             character.db.stats['attributes']['social']['Manipulation'] = {
                 'perm': man_perm,
-                'temp': 0  # Always 0 in Crawlerling
+                'temp': 0 + man_boost  # Allow boosts to still apply
             }
 
         # Handle Mokolé Archid traits if applicable
