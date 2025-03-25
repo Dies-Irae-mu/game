@@ -2,10 +2,13 @@ from evennia.commands.default.muxcommand import MuxCommand
 from evennia.utils.ansi import ANSIString
 from evennia.utils.utils import crop, time_format
 from world.wod20th.utils.formatting import header, footer, divider
+from world.wod20th.utils.time_utils import TIME_MANAGER
 from evennia.utils.search import search_object
 from time import time
 import datetime
+import re
 from typeclasses.characters import Character
+import pytz
 
 class CmdFinger(MuxCommand):
     """
@@ -33,6 +36,18 @@ class CmdFinger(MuxCommand):
       +finger/set alias=Nic
       +finger/set rumors=Apparently has connections to the Prince
       +finger/set ic_job=Owner of The Lost and Found
+      
+    Timezone Settings:
+      You can set your timezone using common abbreviations or location codes:
+      +finger/set timezone=PST     (Pacific Standard Time)
+      +finger/set timezone=EST     (Eastern Standard Time)
+      +finger/set timezone=GMT     (Greenwich Mean Time)
+      +finger/set timezone=UTC     (Coordinated Universal Time)
+      
+      Or use location codes:
+      +finger/set timezone=US-East
+      +finger/set timezone=EU-Central
+      +finger/set timezone=Japan
     
     You can create any custom field by using +finger/set <fieldname>=<value>.
     Set a field to @@ to hide it.
@@ -46,6 +61,64 @@ class CmdFinger(MuxCommand):
     aliases = ["finger", "&finger_*"]
     locks = "cmd:all()"
     help_category = "Chargen & Character Info"
+
+    def format_soundtrack(self, text):
+        """
+        Format soundtrack entries to preserve links and text.
+        
+        Args:
+            text (str): Text containing HTML links
+            
+        Returns:
+            str: Formatted text with URLs and their descriptions
+        """
+        if not text:
+            return ""
+            
+        # Split into lines to handle multiple entries
+        lines = text.split('\n')
+        formatted_lines = []
+        
+        for line in lines:
+            # Extract URL and text from <a> tags
+            link_match = re.search(r'<a href="([^"]+)"[^>]*>(.*?)</a>', line)
+            if link_match:
+                url = link_match.group(1)
+                # Extract text and clean any remaining HTML tags
+                content = re.sub(r'<[^>]+>', '', link_match.group(2))
+                formatted_lines.append(f"{url} {content}")
+            else:
+                # If no link found, just clean the HTML
+                cleaned = re.sub(r'<[^>]+>', '', line)
+                if cleaned.strip():
+                    formatted_lines.append(cleaned)
+        
+        return '\n'.join(formatted_lines)
+
+    def strip_html(self, text):
+        """
+        Strip HTML tags from text while preserving line breaks and meaningful content.
+        
+        Args:
+            text (str): Text to clean
+            
+        Returns:
+            str: Cleaned text
+        """
+        if not text:
+            return ""
+            
+        # Convert <br> and </p> to newlines
+        text = re.sub(r'<br\s*/?>|</p>', '\n', text)
+        
+        # Remove all HTML tags but preserve their content
+        text = re.sub(r'<[^>]+>', '', text)
+        
+        # Fix any excessive newlines
+        text = re.sub(r'\n{3,}', '\n\n', text)
+        
+        # Strip leading/trailing whitespace
+        return text.strip()
 
     def get_idle_time(self, target):
         """
@@ -94,16 +167,33 @@ class CmdFinger(MuxCommand):
         else:
             return f"{seconds}s"
 
-    def format_last_online(self, timestamp):
-        """Format last online time into a readable string."""
+    def format_last_online(self, timestamp, target):
+        """Format last online time into a readable string.
+        
+        Args:
+            timestamp (float): The timestamp to format
+            target (Character): The character being fingered (not used for timezone)
+        """
         if timestamp is None:
             return "OFFLINE"
             
-        # Convert timestamp to datetime
-        dt = datetime.datetime.fromtimestamp(timestamp)
+        # Create datetime in UTC
+        utc_dt = datetime.datetime.fromtimestamp(timestamp, datetime.timezone.utc)
         
-        # Format the date and time - use short format for better display in the narrow field
-        return f"OFFLINE (Last: {dt.strftime('%Y-%m-%d %H:%M')})"
+        # Get the caller's timezone
+        caller_tz_name = self.caller.attributes.get("timezone", "UTC")
+        try:
+            # Try to get the timezone from pytz
+            tz = pytz.timezone(TIME_MANAGER.normalize_timezone_name(caller_tz_name))
+            # Convert to the caller's timezone
+            local_dt = utc_dt.astimezone(tz)
+            # Format without timezone indicator
+            time_str = local_dt.strftime("%Y-%m-%d %H:%M")
+        except (pytz.exceptions.UnknownTimeZoneError, AttributeError, ValueError):
+            # Fallback to UTC if there's any error
+            time_str = utc_dt.strftime("%Y-%m-%d %H:%M")
+            
+        return f"OFFLINE (Last: {time_str})"
 
     def func(self):
         if not self.args:
@@ -119,6 +209,24 @@ class CmdFinger(MuxCommand):
             field, value = self.args.split("=", 1)
             field = field.strip().lower()
             value = value.strip()
+            
+            # Special handling for timezone setting
+            if field == "timezone":
+                # Try to validate the timezone
+                normalized_tz = TIME_MANAGER.normalize_timezone_name(value)
+                if not normalized_tz:
+                    self.caller.msg(f"Invalid timezone: {value}. Please use a valid timezone abbreviation (PST, EST, GMT, etc.) or location code (US-East, EU-Central, etc.)")
+                    return
+                try:
+                    # Test if it's a valid timezone
+                    pytz.timezone(normalized_tz)
+                    # Store both the user's input and the normalized version
+                    self.caller.attributes.add("timezone", value.upper())  # Store original input
+                    self.caller.msg(f"Set timezone to: {value.upper()}")
+                    return
+                except pytz.exceptions.UnknownTimeZoneError:
+                    self.caller.msg(f"Invalid timezone: {value}. Please use a valid timezone abbreviation (PST, EST, GMT, etc.) or location code (US-East, EU-Central, etc.)")
+                    return
             
             # If value is empty or @@, remove the attribute
             if not value or value == "@@":
@@ -189,7 +297,7 @@ class CmdFinger(MuxCommand):
             idle_str = self.format_idle_time(idle_seconds)
         else:
             last_online = self.get_last_online(target)
-            idle_str = self.format_last_online(last_online)
+            idle_str = self.format_last_online(last_online, target)
         
         # Start building the display with blue dashes
         string = ANSIString("|b=|n" * 78 + "\n")
@@ -202,15 +310,14 @@ class CmdFinger(MuxCommand):
         string += f"|wFull Name|n: {full_name:<20} | |wActivity|n: {idle_str}\n"
         
         # Red divider line
-        string += ANSIString("|r=|n" * 78 + "\n")
+        string += ANSIString("|b=|n" * 78 + "\n")
         
         # Status and Alias line
         status = "Approved Player" if target.db.approved else "Unapproved Player"
         alias = target.attributes.get("alias", "")
         string += f"|wStatus|n: {status:<23} | |wAlias|n: {alias}\n"
         
-        # Red divider line
-        string += ANSIString("|r=|n" * 78 + "\n")
+        string += ANSIString("|b=|n" * 78 + "\n")
         
         # Standard fields
         fields = [
@@ -220,8 +327,8 @@ class CmdFinger(MuxCommand):
             # Character page attributes
             ('Played By', target.attributes.get("appears_as", "")),
             ('Apparent Age', target.attributes.get("apparent_age", "")),
-            ('RP Hooks', target.attributes.get("rp_hooks", "")),
-            ('Soundtrack', target.attributes.get("soundtrack", "")),
+            ('RP Hooks', self.strip_html(target.attributes.get("rp_hooks", ""))),
+            ('Soundtrack', self.format_soundtrack(target.attributes.get("soundtrack", ""))),
             # Wiki URL
             ('Wiki', f"https://diesiraemu.com/characters/detail/{target.id}/{target.id}/"),
         ]
@@ -240,7 +347,7 @@ class CmdFinger(MuxCommand):
             if (attr.key.startswith("finger_") and 
                 attr.key[7:] not in ['alias', 'online_times', 'pronouns', 'rp_preferences'] and 
                 attr.value != "@@"):
-                custom_fields[attr.key[7:]] = attr.value
+                custom_fields[attr.key[7:]] = self.strip_html(attr.value)
         
         # Add custom fields if they exist
         if custom_fields:

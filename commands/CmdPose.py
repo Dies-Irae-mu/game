@@ -163,7 +163,5 @@ class CmdPose(PoseBreakMixin, default_cmds.MuxCommand):
                 # No language-tagged speech, send normal pose
                 receiver.msg(f"{poser_name} {processed_args}")
 
-        # Record scene activity, initializing if needed
-        if not hasattr(caller.db, 'scene_data') or not isinstance(caller.db.scene_data, dict):
-            caller.init_scene_data()
+        # Record scene activity
         caller.record_scene_activity()

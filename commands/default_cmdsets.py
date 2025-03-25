@@ -54,7 +54,7 @@ from commands.groups_commands import CmdGroups
 
 from commands.bbs.bbs_all_commands import CmdBBS
 from commands.bbs.bbs_admin_commands import CmdResetBBS
-from commands.oss.oss_cmdset import OssCmdSet
+#from commands.oss.oss_cmdset import OssCmdSet
 
 from commands.CmdWeather import CmdWeather
 from commands.CmdFaeDesc import CmdFaeDesc
@@ -103,7 +103,7 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         # Add all our custom commands
         self.add(CmdGradientName())
         self.add(CmdBBS())
-        self.add(OssCmdSet)
+        #self.add(OssCmdSet)
         self.add(CmdFaeDesc())
         self.add(CmdPST())
         self.add(CmdSheet())

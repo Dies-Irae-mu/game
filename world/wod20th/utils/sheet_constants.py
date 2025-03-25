@@ -476,6 +476,12 @@ POWERS = {
     }
 }
 
+# Extract BLESSINGS from POWERS
+BLESSINGS = POWERS["Blessings"]
+
+# Extract CHARMS from POWERS
+CHARMS = POWERS["Charms"]
+
 BACKGROUNDS = {
     "Allies": 0,
     "Contacts": 0,

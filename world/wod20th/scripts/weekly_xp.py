@@ -267,20 +267,31 @@ class WeeklyXPScript(DefaultScript):
         Award weekly XP to a character if they qualify.
         """
         try:
-            if not char or not char.db.xp:
+            if not char:
                 return False
-                
+            
             # Skip staff characters
             if char.check_permstring("builders"):
                 return False
-                
+            
+            # Initialize XP data if it doesn't exist
+            if not hasattr(char.db, 'xp') or not char.db.xp:
+                char.db.xp = {
+                    'total': Decimal('0.00'),
+                    'current': Decimal('0.00'),
+                    'spent': Decimal('0.00'),
+                    'ic_xp': Decimal('0.00'),
+                    'monthly_spent': Decimal('0.00'),
+                    'last_reset': datetime.now(),
+                    'spends': [],
+                    'last_scene': None,
+                    'scenes_this_week': 0
+                }
+            
             # Check if they had any scenes this week
             scenes_this_week = char.db.xp.get('scenes_this_week', 0)
             if scenes_this_week > 0:
                 # Award XP and reset scene counter
-                log.info(f"Awarding {WEEKLY_XP_AMOUNT} XP to {char.key} for {scenes_this_week} scenes this week")
-                
-                # Store previous values for logging
                 prev_total = char.db.xp.get('total', Decimal('0.00'))
                 prev_current = char.db.xp.get('current', Decimal('0.00'))
                 prev_ic_xp = char.db.xp.get('ic_xp', Decimal('0.00'))
@@ -292,19 +303,13 @@ class WeeklyXPScript(DefaultScript):
                     char.db.xp['ic_xp'] = prev_ic_xp + Decimal(str(WEEKLY_XP_AMOUNT))
                     # Reset scene counter
                     char.db.xp['scenes_this_week'] = 0
-                    
-                    # Log the changes
-                    log.info(f"XP Award successful for {char.key}:")
-                    log.info(f"Previous - Total: {prev_total}, Current: {prev_current}, IC XP: {prev_ic_xp}")
-                    log.info(f"New - Total: {char.db.xp['total']}, Current: {char.db.xp['current']}, IC XP: {char.db.xp['ic_xp']}")
-                    
+                    # Notify the character if they're online
+                    if hasattr(char, 'msg'):
+                        char.msg(f"|gYou received {WEEKLY_XP_AMOUNT} XP for Weekly Activity.|n")
                     return True
                 else:
-                    log.error(f"Failed to award XP to {char.key}")
                     return False
                     
-            else:
-                log.info(f"No scenes this week for {char.key}, skipping XP award")
             return False
             
         except Exception as e:
@@ -317,13 +322,10 @@ class WeeklyXPScript(DefaultScript):
         """
         try:
             current_time = gametime.gametime(absolute=True)
-            log.info(f"WeeklyXP script running at {current_time}")
-
             # Store last run time
             self.db.last_run = current_time
 
             characters = Character.objects.filter(db_typeclass_path__contains='characters.Character')
-            log.info(f"Found {len(characters)} characters to process")
 
             awarded_count = 0
             for char in characters:
@@ -334,8 +336,6 @@ class WeeklyXPScript(DefaultScript):
                 except Exception as e:
                     log.error(f"Error processing XP for {char.key}: {str(e)}")
                     continue
-
-            log.info(f"Weekly XP distribution completed. Awarded XP to {awarded_count} active characters.")
 
         except Exception as e:
             log.error(f"Critical error during XP distribution: {str(e)}")
@@ -417,11 +417,7 @@ class XPMonitor(DefaultScript):
                         break
                 
                 if changed:
-                    log.info(f"XP change detected for {char.key}:")
-                    log.info(f"Previous state: {last_state}")
-                    log.info(f"Current state: {current_xp}")
-                    
-                    # Update stored state
+                    # Update stored state without logging
                     new_state = {
                         'total': current_xp.get('total', Decimal('0.00')),
                         'current': current_xp.get('current', Decimal('0.00')),

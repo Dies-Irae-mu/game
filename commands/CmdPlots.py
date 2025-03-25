@@ -3,6 +3,8 @@ from world.plots.models import Plot, Session, STATUS_CHOICES, RISK_LEVEL_CHOICES
 from evennia.utils.utils import crop, list_to_string
 from django.utils import timezone
 from datetime import datetime, timedelta
+import pytz
+from world.wod20th.utils.time_utils import TIME_MANAGER
 
 class CmdPlots(MuxCommand):
     """
@@ -65,6 +67,24 @@ class CmdPlots(MuxCommand):
                             subcmd = cmd_parts[i+1].split()[0]  # Get the part after session/ up to first space
                             self.switches = [f"session/{subcmd}"]
                         break
+
+    def format_datetime(self, dt, target_char=None):
+        """Format datetime in the user's timezone."""
+        if not target_char:
+            target_char = self.caller
+            
+        # Get the caller's timezone
+        tz_name = target_char.attributes.get("timezone", "UTC")
+        try:
+            # Try to get the timezone from pytz
+            tz = pytz.timezone(TIME_MANAGER.normalize_timezone_name(tz_name))
+            # Convert to the caller's timezone
+            local_dt = dt.astimezone(tz)
+            # Format without timezone indicator
+            return local_dt.strftime("%Y-%m-%d %H:%M")
+        except (pytz.exceptions.UnknownTimeZoneError, AttributeError, ValueError):
+            # Fallback to UTC if there's any error
+            return dt.strftime("%Y-%m-%d %H:%M")
 
     def list_plots(self):
         """Display all active plots"""
@@ -313,8 +333,7 @@ class CmdPlots(MuxCommand):
             participants = ", ".join([char.key for char in session.participants.all()])
             self.caller.msg(f"|b=================================>|n |ySession Info|n |b<=================================|n")
             self.caller.msg(f"|wSession:|n             {session.id}")
-            self.caller.msg(f"|wDate:|n                {session.date.strftime('%Y-%m-%d')}")
-            self.caller.msg(f"|wTime:|n                {session.date.strftime('%H:%M')}")
+            self.caller.msg(f"|wDate:|n                {self.format_datetime(session.date)}")
             self.caller.msg(f"|wDuration:|n            {session.duration}")
             self.caller.msg(f"|wLocation:|n            {session.location}")
             self.caller.msg(f"|wParticipants:|n        {participants}")
@@ -359,7 +378,10 @@ class CmdPlots(MuxCommand):
 
         try:
             _, date_str, time_str, duration_str, location = self.lhs.split('/')
+            # Create datetime in UTC
             date_time = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+            date_time = date_time.replace(tzinfo=timezone.utc)
+            
             # Parse duration string (e.g., "2 hours" -> timedelta)
             duration_val = int(duration_str.split()[0])
             duration = timedelta(hours=duration_val)

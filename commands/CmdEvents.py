@@ -6,6 +6,8 @@ from datetime import datetime, timezone
 from evennia import default_cmds
 from evennia.utils.evtable import EvTable
 from evennia.utils.ansi import ANSIString
+import pytz
+from world.wod20th.utils.time_utils import TIME_MANAGER
 
 class CmdEvents(default_cmds.MuxCommand):
     """
@@ -69,12 +71,30 @@ class CmdEvents(default_cmds.MuxCommand):
             events_board = bbs_controller.create_board("Events", "A board for game events", public=True)
         return events_board
 
+    def format_datetime(self, dt, target_char=None):
+        """Format datetime in the user's timezone."""
+        if not target_char:
+            target_char = self.caller
+            
+        # Get the caller's timezone
+        tz_name = target_char.attributes.get("timezone", "UTC")
+        try:
+            # Try to get the timezone from pytz
+            tz = pytz.timezone(TIME_MANAGER.normalize_timezone_name(tz_name))
+            # Convert to the caller's timezone
+            local_dt = dt.astimezone(tz)
+            # Format without timezone indicator
+            return local_dt.strftime("%Y-%m-%d %H:%M")
+        except (pytz.exceptions.UnknownTimeZoneError, AttributeError, ValueError):
+            # Fallback to UTC if there's any error
+            return dt.strftime("%Y-%m-%d %H:%M")
+
     def post_event_to_bbs(self, event, action):
         events_board = self.get_or_create_events_board()
         title = f"{action.capitalize()}: {event.db.title}"
         content = f"Event: {event.db.title}\n"
         content += f"Organizer: {event.db.organizer}\n"
-        content += f"Date/Time: {event.db.date_time.strftime('%Y-%m-%d %H:%M:%S')}\n"
+        content += f"Date/Time: {self.format_datetime(event.db.date_time)}\n"
         content += f"Status: {event.db.status}\n"
         content += f"Description: {event.db.description}\n"
         content += f"Participants: {', '.join([str(p) for p in event.db.participants])}\n"
@@ -109,7 +129,7 @@ class CmdEvents(default_cmds.MuxCommand):
             table.add_row(
                 event.id,
                 event.db.title,
-                event.db.date_time.strftime('%Y-%m-%d %H:%M:%S'),
+                self.format_datetime(event.db.date_time),
                 event.db.status
             )
 
@@ -175,7 +195,7 @@ class CmdEvents(default_cmds.MuxCommand):
         info = "|wEvent Information:|n\n"
         info += f"|wTitle:|n {event.db.title}\n"
         info += f"|wOrganizer:|n {event.db.organizer}\n"
-        info += f"|wDate/Time:|n {event.db.date_time.strftime('%Y-%m-%d %H:%M:%S')}\n"
+        info += f"|wDate/Time:|n {self.format_datetime(event.db.date_time)}\n"
         info += f"|wStatus:|n {event.db.status}\n"
         info += f"|wDescription:|n {event.db.description}\n"
         info += f"|wParticipants:|n {', '.join([str(p) for p in event.db.participants]) if event.db.participants else 'None'}\n"

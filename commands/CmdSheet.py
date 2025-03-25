@@ -381,25 +381,37 @@ class CmdSheet(MuxCommand):
         if current_form:
             try:
                 from world.wod20th.models import ShapeshifterForm
-                form = ShapeshifterForm.objects.get(name=current_form)
                 
-                # Special handling for Bastet forms
+                # Get the character's shifter type
                 splat = character.get_stat('other', 'splat', 'Splat', temp=False)
+                shifter_type = None
+                
                 if splat == 'Shifter':
                     shifter_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
-                    if shifter_type == 'Bastet':
-                        tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
-                        if tribe and form.shifter_type == 'bastet':
-                            # Get the full form data to access tribe modifiers
-                            from world.wod20th.forms import forms_data
-                            form_data = forms_data['bastet'].get(current_form, {})
-                            if 'tribe_modifiers' in form_data:
-                                tribe_mods = form_data['tribe_modifiers'].get(tribe.lower(), {})
-                                if tribe_mods:
-                                    form_modifiers = tribe_mods
-                                    
-                if not form_modifiers:  # If no tribe-specific modifiers were found, use default
-                    form_modifiers = form.stat_modifiers
+                    if shifter_type:
+                        shifter_type = shifter_type.lower()
+                        
+                        # Query form by both name and shifter type
+                        form = ShapeshifterForm.objects.get(
+                            name__iexact=current_form,
+                            shifter_type=shifter_type
+                        )
+                        
+                        # Special handling for Bastet forms
+                        if shifter_type == 'bastet':
+                            tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
+                            if tribe and form.shifter_type == 'bastet':
+                                # Get the full form data to access tribe modifiers
+                                from world.wod20th.forms import forms_data
+                                form_data = forms_data['bastet'].get(current_form, {})
+                                if 'tribe_modifiers' in form_data:
+                                    tribe_mods = form_data['tribe_modifiers'].get(tribe.lower(), {})
+                                    if tribe_mods:
+                                        form_modifiers = tribe_mods
+                        
+                        if not form_modifiers:  # If no tribe-specific modifiers were found, use default
+                            form_modifiers = form.stat_modifiers
+                
             except Exception as e:
                 print(f"Error getting form modifiers: {e}")  # Debug line
                 form_modifiers = {}
@@ -614,8 +626,8 @@ class CmdSheet(MuxCommand):
             # Format the stat string with wider spacing
             stat_str = f" {talent}"
             dots = "." * (20 - len(stat_str))  # Increased from 15 to 20
-            value_str = str(perm_value)
-            if temp_value > perm_value:
+            value_str = str(perm_value or 0)  # Convert None to 0
+            if temp_value is not None and perm_value is not None and temp_value > perm_value:
                 value_str += f"({temp_value})"
             formatted_secondary_talents.append(f"{stat_str}{dots} {value_str}".ljust(25))
 
@@ -629,8 +641,8 @@ class CmdSheet(MuxCommand):
             # Format the stat string with wider spacing
             stat_str = f" {skill}"
             dots = "." * (20 - len(stat_str))  # Increased from 15 to 20
-            value_str = str(perm_value)
-            if temp_value > perm_value:
+            value_str = str(perm_value or 0)  # Convert None to 0
+            if temp_value is not None and perm_value is not None and temp_value > perm_value:
                 value_str += f"({temp_value})"
             formatted_secondary_skills.append(f"{stat_str}{dots} {value_str}".ljust(25))
 
@@ -644,8 +656,8 @@ class CmdSheet(MuxCommand):
             # Format the stat string with wider spacing
             stat_str = f" {knowledge}"
             dots = "." * (20 - len(stat_str))  # Increased from 15 to 20
-            value_str = str(perm_value)
-            if temp_value > perm_value:
+            value_str = str(perm_value or 0)  # Convert None to 0
+            if temp_value is not None and perm_value is not None and temp_value > perm_value:
                 value_str += f"({temp_value})"
             formatted_secondary_knowledges.append(f"{stat_str}{dots} {value_str}".ljust(25))
 

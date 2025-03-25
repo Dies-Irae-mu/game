@@ -83,8 +83,6 @@ class CmdSay(PoseBreakMixin, MuxCommand):
                 msg_self, _, _, _ = caller.prepare_say(speech, viewer=receiver, skip_english=True)
                 receiver.msg(msg_self)
 
-        # Record scene activity, initializing if needed
-        if not hasattr(caller.db, 'scene_data') or not isinstance(caller.db.scene_data, dict):
-            caller.init_scene_data()
+        # Record scene activity
         caller.record_scene_activity()
 

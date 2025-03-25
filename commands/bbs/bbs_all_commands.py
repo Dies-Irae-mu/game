@@ -15,6 +15,8 @@ from evennia.server.sessionhandler import SESSION_HANDLER
 from typeclasses.bbs_controller import BBSController
 from world.wod20th.utils.bbs_utils import get_or_create_bbs_controller
 from world.wod20th.models import Roster
+import pytz
+from world.wod20th.utils.time_utils import TIME_MANAGER
 
 class CmdBBS(default_cmds.MuxCommand):
     """
@@ -128,6 +130,32 @@ class CmdBBS(default_cmds.MuxCommand):
                 continue
             if controller.has_access(board['id'], puppet.key):
                 puppet.msg(f"|w{message}|n")
+
+    def format_datetime(self, dt_str, target_char=None):
+        """Format datetime string in the user's timezone."""
+        if not target_char:
+            target_char = self.caller
+            
+        try:
+            # Parse the datetime string to a datetime object
+            dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M:%S")
+            dt = dt.replace(tzinfo=timezone.utc)
+            
+            # Get the caller's timezone
+            tz_name = target_char.attributes.get("timezone", "UTC")
+            try:
+                # Try to get the timezone from pytz
+                tz = pytz.timezone(TIME_MANAGER.normalize_timezone_name(tz_name))
+                # Convert to the caller's timezone
+                local_dt = dt.astimezone(tz)
+                # Format without timezone indicator
+                return local_dt.strftime("%Y-%m-%d %H:%M")
+            except (pytz.exceptions.UnknownTimeZoneError, AttributeError, ValueError):
+                # Fallback to UTC if there's any error
+                return dt.strftime("%Y-%m-%d %H:%M")
+        except ValueError:
+            # If we can't parse the datetime string, return it as is
+            return dt_str
 
     def func(self):
         if not self.args and not self.switches:
@@ -651,8 +679,8 @@ class CmdBBS(default_cmds.MuxCommand):
             last_post = "No posts"
             if board['posts']:
                 last_post = max((post['created_at'] for post in board['posts']), default="No posts")
-                if last_post == "No posts":
-                    last_post = "Unknown"
+                if last_post != "No posts":
+                    last_post = self.format_datetime(last_post)
             
             num_posts = len(board['posts'])
             output.append(f"{board_id:<5} {access_type:<10} {read_only} {board['name']:<40} {last_post:<20} {num_posts:<15}")
@@ -701,12 +729,14 @@ class CmdBBS(default_cmds.MuxCommand):
         # List pinned posts first with correct IDs
         for i, post in enumerate(pinned_posts):
             post_id = posts.index(post) + 1
-            output.append(f"{board['id']}/{post_id:<5} [Pinned] {post['title']:<40} {post['created_at']:<20} {post['author']}")
+            formatted_time = self.format_datetime(post['created_at'])
+            output.append(f"{board['id']}/{post_id:<5} [Pinned] {post['title']:<40} {formatted_time:<20} {post['author']}")
 
         # List unpinned posts with correct IDs
         for post in unpinned_posts:
             post_id = posts.index(post) + 1
-            output.append(f"{board['id']}/{post_id:<5} {post['title']:<40} {post['created_at']:<20} {post['author']}")
+            formatted_time = self.format_datetime(post['created_at'])
+            output.append(f"{board['id']}/{post_id:<5} {post['title']:<40} {formatted_time:<20} {post['author']}")
 
         # Table Footer
         output.append("=" * 78)
@@ -727,7 +757,7 @@ class CmdBBS(default_cmds.MuxCommand):
             self.caller.msg(f"Invalid post number. Board '{board['name']}' has {len(posts)} posts.")
             return
         post = posts[post_number - 1]
-        edit_info = f"(edited on {post['edited_at']})" if post['edited_at'] else ""
+        edit_info = f"(edited on {self.format_datetime(post['edited_at'])})" if post['edited_at'] else ""
 
         # Mark the post as read
         controller.mark_post_read(board_ref, post_number - 1, self.caller.key)
@@ -736,7 +766,7 @@ class CmdBBS(default_cmds.MuxCommand):
         self.caller.msg(f"{'*' * 20} {board['name']} {'*' * 20}")
         self.caller.msg(f"Title: {post['title']}")
         self.caller.msg(f"Author: {post['author']}")
-        self.caller.msg(f"Date: {post['created_at']} {edit_info}")
+        self.caller.msg(f"Date: {self.format_datetime(post['created_at'])} {edit_info}")
         self.caller.msg(f"{'-'*40}")
         self.caller.msg(f"{post['content']}")
         self.caller.msg(f"{'-'*40}")

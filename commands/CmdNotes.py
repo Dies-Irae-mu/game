@@ -99,6 +99,29 @@ class CmdNotes(MuxCommand):
                 self.unapprove_note()
             elif switch in ["delete", "del"]:
                 self.delete_note()
+            elif switch == "debug":
+                # Debug note data
+                target_name = self.args.strip()
+                if not target_name:
+                    target = self.caller
+                else:
+                    target = self.search_for_character(target_name)
+                    if not target:
+                        self.caller.msg(f"Could not find character '{target_name}'.")
+                        return
+                
+                # Get raw note data
+                notes_data = target.attributes.get('notes', {})
+                self.caller.msg(f"Raw notes data type: {type(notes_data)}")
+                self.caller.msg(f"Raw notes data: {notes_data}")
+                
+                # Try conversion
+                try:
+                    converted = self._convert_notes_to_dict(notes_data)
+                    self.caller.msg(f"Converted data type: {type(converted)}")
+                    self.caller.msg(f"Converted data: {converted}")
+                except Exception as e:
+                    self.caller.msg(f"Conversion error: {e}")
             elif switch == "fix":
                 # Handle fixing notes
                 target_name = self.args.strip()
@@ -163,118 +186,61 @@ class CmdNotes(MuxCommand):
         try:
             # Get the raw attribute data
             raw_notes = target.attributes.get('notes', {})
+            logger.log_info(f"Fixing notes for {target.name}, data type: {type(raw_notes)}")
             
-            # If it's already a dictionary or _SaverDict, no need to fix
-            if isinstance(raw_notes, (dict, utils.dbserialize._SaverDict)):
-                self.caller.msg("Notes are already in correct format.")
-                return True
+            # Convert notes to dictionary format
+            notes_dict = self._convert_notes_to_dict(raw_notes)
+            
+            # If we got a valid dictionary with notes, process and clean it
+            if notes_dict:
+                logger.log_info(f"Successfully converted notes for {target.name}, found {len(notes_dict)} notes")
+                cleaned_notes = {}
                 
-            # If it's a string, try to fix it
-            if isinstance(raw_notes, str):
-                # Store the original raw notes in case conversion fails
-                original_notes = raw_notes
-                notes_dict = None
-                recovered_notes = {}
-                
-                # Try to deserialize using Evennia's utilities first
-                try:
-                    from evennia.utils.dbserialize import deserialize
-                    deserialized = deserialize(raw_notes)
-                    if isinstance(deserialized, (dict, utils.dbserialize._SaverDict)):
-                        notes_dict = dict(deserialized)
-                        self.caller.msg("Successfully converted notes using Evennia's deserializer.")
-                except Exception as e:
-                    logger.log_trace(f"Evennia deserialize failed: {e}")
-                    
-                # If Evennia's deserializer failed, try ast.literal_eval
-                if not notes_dict:
+                # Process each note
+                for note_id, note_data in notes_dict.items():
                     try:
-                        import ast
-                        # Clean the string and try to extract dictionary-like structures
-                        cleaned_str = original_notes.strip()
-                        if "'" in cleaned_str:  # Look for dictionary-like structures
-                            # Try to find and parse nested dictionaries
-                            try:
-                                # First, try to parse the entire string
-                                parsed_dict = ast.literal_eval(cleaned_str)
-                                if isinstance(parsed_dict, dict):
-                                    notes_dict = parsed_dict
-                                    self.caller.msg("Successfully converted notes using ast.literal_eval.")
-                            except:
-                                # If that fails, try to extract individual note dictionaries
-                                import re
-                                # Look for dictionary patterns
-                                dict_pattern = r"'(\d+)':\s*({[^}]+})"
-                                matches = re.finditer(dict_pattern, cleaned_str)
-                                
-                                for match in matches:
-                                    note_id, note_data_str = match.groups()
-                                    try:
-                                        note_data = ast.literal_eval(note_data_str)
-                                        if isinstance(note_data, dict):
-                                            recovered_notes[note_id] = note_data
-                                    except:
-                                        continue
-                                
-                                if recovered_notes:
-                                    notes_dict = recovered_notes
-                                    self.caller.msg(f"Successfully recovered {len(recovered_notes)} notes from corrupted data.")
+                        # Ensure all required fields are present with proper types
+                        cleaned_note = {
+                            'name': str(note_data.get('name', 'Unnamed Note')),
+                            'text': str(note_data.get('text', '')),
+                            'category': str(note_data.get('category', 'General')),
+                            'is_public': bool(note_data.get('is_public', False)),
+                            'is_approved': bool(note_data.get('is_approved', False)),
+                            'approved_by': note_data.get('approved_by'),
+                            'created_at': self.parse_date(note_data.get('created_at')) or datetime.now(),
+                            'updated_at': self.parse_date(note_data.get('updated_at')) or datetime.now(),
+                            'approved_at': self.parse_date(note_data.get('approved_at'))
+                        }
+                        
+                        # Convert datetime objects to ISO format strings
+                        for key in ['created_at', 'updated_at', 'approved_at']:
+                            if isinstance(cleaned_note[key], datetime):
+                                cleaned_note[key] = cleaned_note[key].isoformat()
+                        
+                        # Store the cleaned note
+                        cleaned_notes[str(note_id)] = cleaned_note
+                        logger.log_info(f"Successfully cleaned note {note_id} for {target.name}")
+                        
                     except Exception as e:
-                        logger.log_trace(f"ast.literal_eval failed: {e}")
+                        logger.log_err(f"Error cleaning note {note_id} for {target.name}: {e}")
+                        continue
                 
-                # If both conversion attempts failed, try to parse as a formatted string
-                if not notes_dict:
-                    try:
-                        notes_dict = self.parse_note_format(original_notes)
-                        if notes_dict:
-                            self.caller.msg("Successfully parsed notes from formatted string.")
-                    except Exception as e:
-                        logger.log_trace(f"Format parsing failed: {e}")
-                
-                # If we have recovered notes, try to reconstruct them properly
-                if notes_dict:
-                    reconstructed_notes = {}
-                    note_id = 1
-                    
-                    for old_id, note_data in notes_dict.items():
-                        try:
-                            # Ensure all required fields are present
-                            clean_note = {
-                                'name': note_data.get('name', 'Unnamed Note'),
-                                'text': note_data.get('text', ''),
-                                'category': note_data.get('category', 'General'),
-                                'is_public': note_data.get('is_public', False),
-                                'is_approved': note_data.get('is_approved', False),
-                                'approved_by': note_data.get('approved_by'),
-                                'created_at': self.parse_date(note_data.get('created_at')) or datetime.now(),
-                                'updated_at': self.parse_date(note_data.get('updated_at')) or datetime.now(),
-                                'approved_at': self.parse_date(note_data.get('approved_at'))
-                            }
-                            
-                            # Convert datetime objects to ISO format strings
-                            for key in ['created_at', 'updated_at', 'approved_at']:
-                                if isinstance(clean_note[key], datetime):
-                                    clean_note[key] = clean_note[key].isoformat()
-                            
-                            reconstructed_notes[str(note_id)] = clean_note
-                            note_id += 1
-                            
-                        except Exception as e:
-                            logger.log_trace(f"Error reconstructing note {old_id}: {e}")
-                            continue
-                    
-                    if reconstructed_notes:
-                        target.attributes.add('notes', reconstructed_notes)
-                        self.caller.msg(f"Successfully reconstructed {len(reconstructed_notes)} notes.")
-                        return True
-                
-                # If all attempts fail, create a recovery note
-                if not notes_dict:
-                    self.caller.msg("All conversion attempts failed. Creating recovery note.")
+                if cleaned_notes:
+                    # Store the cleaned notes back to the character
+                    target.attributes.add('notes', cleaned_notes)
+                    logger.log_info(f"Successfully stored {len(cleaned_notes)} cleaned notes for {target.name}")
+                    return True
+                else:
+                    logger.log_err(f"No valid notes could be cleaned for {target.name}")
+                    return False
+            else:
+                # If conversion failed but we have raw notes, create a recovery note
+                if raw_notes:
+                    logger.log_info(f"Creating recovery note for {target.name}")
                     recovery_notes = {
                         '1': {
                             'name': 'Recovered Data',
-                            'text': original_notes,
+                            'text': str(raw_notes),
                             'category': 'System',
                             'is_public': False,
                             'is_approved': False,
@@ -284,9 +250,12 @@ class CmdNotes(MuxCommand):
                     }
                     target.attributes.add('notes', recovery_notes)
                     return True
+                else:
+                    logger.log_info(f"No notes data to fix for {target.name}")
+                    return True  # No data to fix is still a successful operation
                     
         except Exception as e:
-            logger.log_trace(f"Error fixing notes: {e}")
+            logger.log_err(f"Error fixing notes for {target.name}: {e}")
             return False
 
     def parse_note_format(self, text):
@@ -336,32 +305,64 @@ class CmdNotes(MuxCommand):
         if not notes_data:
             return {}
             
+        # Add debug logging
+        logger.log_info(f"Converting notes data of type: {type(notes_data)}")
+        
         # If it's already a dictionary or _SaverDict, return it as a dict
         if isinstance(notes_data, dict):
+            logger.log_info("Notes data is already a dictionary")
             return notes_data
         elif isinstance(notes_data, utils.dbserialize._SaverDict):
+            logger.log_info("Notes data is a _SaverDict")
             return dict(notes_data)
             
         # If it's a string, try multiple conversion methods
         if isinstance(notes_data, str):
+            logger.log_info("Notes data is a string, attempting conversion")
+            
             # Try Evennia's deserializer first
             try:
                 from evennia.utils.dbserialize import deserialize
                 deserialized = deserialize(notes_data)
                 if isinstance(deserialized, (dict, utils.dbserialize._SaverDict)):
+                    logger.log_info("Successfully converted using Evennia deserializer")
                     return dict(deserialized)
             except Exception as e:
                 logger.log_trace(f"Evennia deserialize failed: {e}")
 
-            # Try ast.literal_eval with error handling
+            # Try custom dictionary parsing for datetime objects
+            try:
+                import re
+                from datetime import datetime
+                
+                # Clean the string and ensure it's a valid dictionary format
+                cleaned_str = notes_data.strip()
+                if cleaned_str.startswith('{') and cleaned_str.endswith('}'):
+                    # Replace datetime objects with ISO format strings
+                    cleaned_str = re.sub(
+                        r'datetime\.datetime\((\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*\d+)?\)',
+                        lambda m: f"'{datetime(*map(int, m.groups())).isoformat()}'",
+                        cleaned_str
+                    )
+                    
+                    # Now try to evaluate the cleaned string
+                    import ast
+                    result = ast.literal_eval(cleaned_str)
+                    if isinstance(result, dict):
+                        logger.log_info("Successfully converted using custom datetime parsing")
+                        return result
+            except Exception as e:
+                logger.log_trace(f"Custom datetime parsing failed: {e}")
+
+            # Try ast.literal_eval with basic cleaning
             try:
                 import ast
                 # Clean the string before evaluation
                 cleaned_str = notes_data.strip()
-                # Only attempt literal_eval if it looks like a dictionary
                 if cleaned_str.startswith('{') and cleaned_str.endswith('}'):
                     result = ast.literal_eval(cleaned_str)
                     if isinstance(result, dict):
+                        logger.log_info("Successfully converted using ast.literal_eval")
                         return result
             except Exception as e:
                 logger.log_trace(f"ast.literal_eval failed: {e}")
@@ -371,6 +372,7 @@ class CmdNotes(MuxCommand):
                 import json
                 result = json.loads(notes_data)
                 if isinstance(result, dict):
+                    logger.log_info("Successfully converted using JSON")
                     return result
             except Exception as e:
                 logger.log_trace(f"JSON parsing failed: {e}")
@@ -380,6 +382,8 @@ class CmdNotes(MuxCommand):
             # Split on note markers (can be customized based on your format)
             notes_dict = {}
             note_id = 1
+            
+            logger.log_info("Attempting to parse as formatted string")
             
             # Try to parse any structured format we can find
             if "note/set" in notes_data:
@@ -403,16 +407,55 @@ class CmdNotes(MuxCommand):
                                 'updated_at': datetime.now().isoformat()
                             }
                             note_id += 1
+                            logger.log_info(f"Successfully parsed note {note_id}")
                     except Exception as e:
                         logger.log_trace(f"Error parsing note part: {e}")
                         continue
             
             if notes_dict:
+                logger.log_info("Successfully created notes dictionary from formatted string")
                 return notes_dict
         except Exception as e:
             logger.log_trace(f"Format parsing failed: {e}")
 
-        # If all conversion attempts fail, log the error and return empty dict
+        # If all conversion attempts fail, try to recover what we can
+        try:
+            logger.log_info("Attempting last-resort recovery of notes")
+            import re
+            
+            # Try to extract any valid note-like structures
+            notes_dict = {}
+            note_pattern = r"'(\d+)':\s*({[^}]+})"
+            matches = re.finditer(note_pattern, str(notes_data))
+            
+            for match in matches:
+                try:
+                    note_id, note_data_str = match.groups()
+                    # Clean up the note data string
+                    note_data_str = re.sub(
+                        r'datetime\.datetime\((\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*\d+)?\)',
+                        lambda m: f"'{datetime(*map(int, m.groups())).isoformat()}'",
+                        note_data_str
+                    )
+                    
+                    # Try to parse the cleaned note data
+                    import ast
+                    note_data = ast.literal_eval(note_data_str)
+                    if isinstance(note_data, dict):
+                        notes_dict[note_id] = note_data
+                        logger.log_info(f"Recovered note {note_id}")
+                except Exception as e:
+                    logger.log_trace(f"Failed to recover note: {e}")
+                    continue
+            
+            if notes_dict:
+                logger.log_info(f"Successfully recovered {len(notes_dict)} notes")
+                return notes_dict
+                
+        except Exception as e:
+            logger.log_trace(f"Recovery attempt failed: {e}")
+
+        # If all attempts fail, log the error and return empty dict
         logger.log_err(f"All note conversion attempts failed for data: {notes_data}")
         return {}
 

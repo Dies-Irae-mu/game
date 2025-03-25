@@ -25,7 +25,7 @@ SHIFTER_TYPE_CHOICES: List[Tuple[str, str]] = [
 # Valid Garou tribes
 GAROU_TRIBE_CHOICES: List[Tuple[str, str]] = [
     ('none', 'None'),
-    ('black_furies', 'Black Fury'),
+    ('black_furies', 'Black Furies'),
     ('bone_gnawers', 'Bone Gnawers'),
     ('children_of_gaia', 'Children of Gaia'),
     ('fianna', 'Fianna'),

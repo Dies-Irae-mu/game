@@ -47,6 +47,7 @@ class CmdJobs(MuxCommand):
       +jobs/archive <#>
       +jobs/complete <#>=<reason>
       +jobs/cancel <#>=<reason>
+      +jobs/clear_archive        - Clear all archived jobs and reset job numbers (Admin only)
 
     Categories:
       REQ    - General requests
@@ -134,6 +135,8 @@ class CmdJobs(MuxCommand):
             self.complete_job()
         elif "cancel" in self.switches:
             self.cancel_job()
+        elif "clear_archive" in self.switches:
+            self.clear_archive()
         else:
             self.caller.msg("Invalid switch. See help +jobs for usage.")
 
@@ -731,58 +734,106 @@ class CmdJobs(MuxCommand):
                 job_id = int(self.args.strip())
                 comment = ""
 
+            # Debug: Log the job we're trying to approve
+            logger.log_info(f"Attempting to approve job #{job_id}")
+            
             job = Job.objects.get(id=job_id)
+            logger.log_info(f"Found job: #{job.id} - {job.title} (archive_id: {job.archive_id})")
             
             if job.status in ['closed', 'rejected', 'completed', 'cancelled']:
                 self.caller.msg(f"Job #{job_id} is already {job.status}.")
                 return
 
-            job.status = 'completed'
-            job.closed_at = timezone.now()
+            # Use transaction to ensure consistency
+            with transaction.atomic():
+                # Get the maximum archive_id from both tables
+                max_archived = ArchivedJob.objects.aggregate(models.Max('archive_id'))['archive_id__max'] or 0
+                max_job = Job.objects.exclude(archive_id__isnull=True).aggregate(models.Max('archive_id'))['archive_id__max'] or 0
+                next_archive_id = max(max_archived, max_job) + 1
+                
+                logger.log_info(f"Max archive_id from ArchivedJob: {max_archived}")
+                logger.log_info(f"Max archive_id from Job: {max_job}")
+                logger.log_info(f"Calculated next_archive_id: {next_archive_id}")
 
-            # Add the approval comment if provided
-            if comment:
-                job.comments.append({
-                    'author': self.caller.name,
-                    'text': f"Approved: {comment}",
-                    'created_at': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
-                })
+                # Verify the archive_id is truly unique
+                while (ArchivedJob.objects.filter(archive_id=next_archive_id).exists() or 
+                       Job.objects.filter(archive_id=next_archive_id).exists()):
+                    next_archive_id += 1
+                    logger.log_info(f"Archive ID {next_archive_id-1} was taken, trying {next_archive_id}")
 
-            # Send mail notification before archiving
-            notification_message = f"Your job '#{job_id}: {job.title}' has been approved."
-            if comment:
-                notification_message += f"\n\nComment: {comment}"
-            
-            if job.requester and job.requester != self.caller.account:
-                mail_cmd = f"@mail {job.requester.username}=Job #{job_id} Approved/{notification_message}"
-                self.caller.execute_cmd(mail_cmd)
+                # Create comments text
+                comments_text = "\n\n".join([f"{comment['author']} [{comment['created_at']}]: {comment['text']}" 
+                                           for comment in job.comments])
+                
+                # Add the approval comment if provided
+                if comment:
+                    comments_text += f"\n\nApproval Comment [{timezone.now().strftime('%Y-%m-%d %H:%M:%S')}]: {comment}"
 
-            # Archive the job
-            comments_text = "\n\n".join([f"{comment['author']} [{comment['created_at']}]: {comment['text']}" 
-                                       for comment in job.comments])
-            archived_job = ArchivedJob.objects.create(
-                original_id=job.id,
-                title=job.title,
-                description=job.description,
-                requester=job.requester,
-                assignee=job.assignee,
-                queue=job.queue,
-                created_at=job.created_at,
-                closed_at=job.closed_at,
-                status=job.status,
-                comments=comments_text
-            )
+                # Debug: Log archive job creation attempt
+                logger.log_info(f"Creating archived job with archive_id: {next_archive_id}")
 
-            job.archive_id = archived_job.archive_id
-            job.save()
+                # Create the archived job
+                archived_job = ArchivedJob.objects.create(
+                    archive_id=next_archive_id,
+                    original_id=job.id,
+                    title=job.title,
+                    description=job.description,
+                    requester=job.requester,
+                    assignee=job.assignee,
+                    queue=job.queue,
+                    created_at=job.created_at,
+                    closed_at=timezone.now(),
+                    status='completed',
+                    comments=comments_text
+                )
+                
+                logger.log_info(f"Successfully created archived job with archive_id: {archived_job.archive_id}")
 
+                # Double-check for conflicts one last time
+                conflicts = Job.objects.filter(archive_id=next_archive_id)
+                if conflicts.exists():
+                    logger.log_err(f"WARNING: Found {conflicts.count()} jobs with archive_id {next_archive_id}")
+                    for j in conflicts:
+                        logger.log_err(f"Conflicting job: #{j.id} - {j.title}")
+                    raise Exception(f"Archive ID {next_archive_id} is already in use")
+
+                # Now update and save the original job
+                job.status = 'completed'
+                job.closed_at = timezone.now()
+                job.archive_id = next_archive_id
+
+                # Add the approval comment if provided
+                if comment:
+                    job.comments.append({
+                        'author': self.caller.name,
+                        'text': f"Approved: {comment}",
+                        'created_at': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+                    })
+
+                logger.log_info(f"Attempting to save job #{job.id} with archive_id: {job.archive_id}")
+                job.save()
+                logger.log_info(f"Successfully saved job #{job.id}")
+
+            # Send notifications
             self.caller.msg(f"Job #{job_id} has been approved and archived.")
+            
+            # Notify the requester
+            if job.requester and job.requester != self.caller.account:
+                notification_message = f"Your job '#{job_id}: {job.title}' has been approved."
+                if comment:
+                    notification_message += f"\n\nComment: {comment}"
+                self.send_mail_notification(job, notification_message)
+            
             self.post_to_jobs_channel(self.caller.name, job.id, "approved")
 
         except ValueError:
             self.caller.msg("Usage: +job/approve <#>[=<comment>]")
         except Job.DoesNotExist:
             self.caller.msg(f"Job #{job_id} not found.")
+        except Exception as e:
+            logger.log_err(f"Error in approve_job: {str(e)}")
+            logger.log_err(f"Full error details:", exc_info=True)
+            self.caller.msg(f"Error approving job: {str(e)}")
 
     def reject_job(self):
         """Handle job rejection with optional comment."""
@@ -806,34 +857,49 @@ class CmdJobs(MuxCommand):
                 self.caller.msg("This job cannot be rejected.")
                 return
 
-            job.status = 'rejected'
-            job.closed_at = timezone.now()
+            # Use transaction to ensure consistency
+            with transaction.atomic():
+                # Get the next archive_id
+                max_archive_id = ArchivedJob.objects.aggregate(models.Max('archive_id'))['archive_id__max'] or 0
+                next_archive_id = max_archive_id + 1
 
-            # Add the rejection comment if provided
-            if comment:
-                job.comments.append({
-                    'author': self.caller.name,
-                    'text': f"Rejected: {comment}",
-                    'created_at': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
-                })
+                # Create comments text
+                comments_text = "\n\n".join([f"{comment['author']} [{comment['created_at']}]: {comment['text']}" 
+                                           for comment in job.comments])
 
-            # Archive the job
-            comments_text = "\n\n".join([f"{comment['author']} [{comment['created_at']}]: {comment['text']}" for comment in job.comments])
-            archived_job = ArchivedJob.objects.create(
-                original_id=job.id,
-                title=job.title,
-                description=job.description,
-                requester=job.requester,
-                assignee=job.assignee,
-                queue=job.queue,
-                created_at=job.created_at,
-                closed_at=job.closed_at,
-                status=job.status,
-                comments=comments_text
-            )
+                # Add the rejection comment if provided
+                if comment:
+                    comments_text += f"\n\nRejection Comment [{timezone.now().strftime('%Y-%m-%d %H:%M:%S')}]: {comment}"
 
-            job.archive_id = archived_job.archive_id
-            job.save()
+                # Create the archived job
+                archived_job = ArchivedJob.objects.create(
+                    archive_id=next_archive_id,
+                    original_id=job.id,
+                    title=job.title,
+                    description=job.description,
+                    requester=job.requester,
+                    assignee=job.assignee,
+                    queue=job.queue,
+                    created_at=job.created_at,
+                    closed_at=timezone.now(),
+                    status='rejected',
+                    comments=comments_text
+                )
+
+                # Update the original job
+                job.status = 'rejected'
+                job.closed_at = timezone.now()
+                job.archive_id = next_archive_id
+
+                # Add the rejection comment if provided
+                if comment:
+                    job.comments.append({
+                        'author': self.caller.name,
+                        'text': f"Rejected: {comment}",
+                        'created_at': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+                    })
+
+                job.save()
 
             self.caller.msg(f"Job #{job_id} has been rejected and archived.")
             
@@ -849,6 +915,9 @@ class CmdJobs(MuxCommand):
             self.caller.msg("Usage: +job/reject <#>[=<reason>]")
         except Job.DoesNotExist:
             self.caller.msg(f"Job #{job_id} not found.")
+        except Exception as e:
+            self.caller.msg(f"Error rejecting job: {str(e)}")
+            logger.log_err(f"Error in reject_job: {str(e)}")
 
     def attach_object(self):
         if not self.args or "=" not in self.args:
@@ -1025,14 +1094,17 @@ class CmdJobs(MuxCommand):
 
             # Add each job as a row
             for job in archived_jobs:
-                assignee = job.assignee.username if job.assignee else "-----"
+                # Handle potentially deleted users
+                assignee_name = job.assignee.username if job.assignee else "-----"
+                requester_name = job.requester.username if job.requester else "[Deleted User]"
+                
                 row = (
                     f"{job.original_id:<6}"
                     f"{crop(job.queue.name, width=10):<11}"
                     f"{crop(job.title, width=25):<25}"
                     f"{job.closed_at.strftime('%m/%d/%y'):<9}"
-                    f"{crop(assignee, width=17):<18}"
-                    f"{job.requester.username}"
+                    f"{crop(assignee_name, width=17):<18}"
+                    f"{requester_name}"
                 )
                 output += row + "\n"
 
@@ -1050,11 +1122,15 @@ class CmdJobs(MuxCommand):
                     self.caller.msg("You don't have permission to view this archived job.")
                     return
                 
+                # Handle potentially deleted users
+                requester_name = archived_job.requester.username if archived_job.requester else "[Deleted User]"
+                assignee_name = archived_job.assignee.username if archived_job.assignee else "-----"
+                
                 output = header(f"Archived Job {archived_job.original_id}", width=78, fillchar="|r-|n") + "\n"
                 output += f"|cTitle:|n {archived_job.title}\n"
                 output += f"|cStatus:|n {archived_job.status}\n"
-                output += f"|cRequester:|n {archived_job.requester.username}\n"
-                output += f"|cAssignee:|n {archived_job.assignee.username if archived_job.assignee else '-----'}\n"
+                output += f"|cRequester:|n {requester_name}\n"
+                output += f"|cAssignee:|n {assignee_name}\n"
                 output += f"|cQueue:|n {archived_job.queue.name}\n"
                 output += f"|cCreated At:|n {archived_job.created_at.strftime('%Y-%m-%d %H:%M:%S')}\n"
                 output += f"|cClosed At:|n {archived_job.closed_at.strftime('%Y-%m-%d %H:%M:%S')}\n"
@@ -1143,26 +1219,47 @@ class CmdJobs(MuxCommand):
                 self.caller.msg(f"Job #{job_id} is already {job.status}.")
                 return
 
-            job.status = new_status
-            job.closed_at = timezone.now()
+            # Use transaction to ensure consistency
+            with transaction.atomic():
+                # Get the next archive_id
+                max_archive_id = ArchivedJob.objects.aggregate(models.Max('archive_id'))['archive_id__max'] or 0
+                next_archive_id = max_archive_id + 1
 
-            # Archive the job
-            comments_text = "\n\n".join([f"{comment['author']} [{comment['created_at']}]: {comment['text']}" for comment in job.comments])
-            archived_job = ArchivedJob.objects.create(
-                original_id=job.id,
-                title=job.title,
-                description=job.description,
-                requester=job.requester,
-                assignee=job.assignee,
-                queue=job.queue,
-                created_at=job.created_at,
-                closed_at=job.closed_at,
-                status=job.status,
-                comments=comments_text
-            )
+                # Create comments text
+                comments_text = "\n\n".join([f"{comment['author']} [{comment['created_at']}]: {comment['text']}" 
+                                           for comment in job.comments])
 
-            job.archive_id = archived_job.archive_id
-            job.save()
+                # Add the status change comment
+                comments_text += f"\n\nStatus Change [{timezone.now().strftime('%Y-%m-%d %H:%M:%S')}]: {reason}"
+
+                # Create the archived job
+                archived_job = ArchivedJob.objects.create(
+                    archive_id=next_archive_id,
+                    original_id=job.id,
+                    title=job.title,
+                    description=job.description,
+                    requester=job.requester,
+                    assignee=job.assignee,
+                    queue=job.queue,
+                    created_at=job.created_at,
+                    closed_at=timezone.now(),
+                    status=new_status,
+                    comments=comments_text
+                )
+
+                # Update the original job
+                job.status = new_status
+                job.closed_at = timezone.now()
+                job.archive_id = next_archive_id
+
+                # Add the status change comment
+                job.comments.append({
+                    'author': self.caller.name,
+                    'text': f"{new_status.title()}: {reason}",
+                    'created_at': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+                })
+
+                job.save()
 
             self.caller.msg(f"Job #{job_id} has been {new_status} and archived.")
             
@@ -1174,6 +1271,9 @@ class CmdJobs(MuxCommand):
 
         except Job.DoesNotExist:
             self.caller.msg(f"Job #{job_id} not found.")
+        except Exception as e:
+            self.caller.msg(f"Error changing job status: {str(e)}")
+            logger.log_err(f"Error in _change_job_status: {str(e)}")
 
     def display_note(self, note):
         """Display a note with formatting."""
@@ -1371,6 +1471,123 @@ class CmdJobs(MuxCommand):
 
         output += footer(width=78, fillchar="|r-|n")
         self.caller.msg(output)
+
+    def clear_archive(self):
+        """Clear all archived jobs and reset job numbers."""
+        if not self.caller.check_permstring("Admin"):
+            self.caller.msg("You don't have permission to clear the job archive.")
+            return
+
+        try:
+            # Get all archived jobs
+            archived_jobs = ArchivedJob.objects.all().order_by('archive_id')
+            
+            if not archived_jobs:
+                self.caller.msg("No archived jobs to clear.")
+                return
+
+            # Create a log file with timestamp
+            from datetime import datetime
+            import os
+            
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            log_dir = os.path.join('server', 'logs', 'jobs')
+            
+            # Create the jobs log directory if it doesn't exist
+            if not os.path.exists(log_dir):
+                os.makedirs(log_dir)
+            
+            log_file = os.path.join(log_dir, f'jobs_archive_{timestamp}.log')
+
+            # Write archived jobs to the log file
+            with open(log_file, 'w', encoding='utf-8') as f:
+                f.write(f"Dies Irae Jobs Archive - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                f.write("=" * 80 + "\n\n")
+                
+                for job in archived_jobs:
+                    f.write(f"Job #{job.original_id}\n")
+                    f.write("-" * 40 + "\n")
+                    f.write(f"Title: {job.title}\n")
+                    f.write(f"Status: {job.status}\n")
+                    f.write(f"Queue: {job.queue.name}\n")
+                    # Handle potentially deleted users
+                    requester_name = job.requester.username if job.requester else "[Deleted User]"
+                    assignee_name = job.assignee.username if job.assignee else "None"
+                    f.write(f"Requester: {requester_name}\n")
+                    f.write(f"Assignee: {assignee_name}\n")
+                    f.write(f"Created: {job.created_at}\n")
+                    f.write(f"Closed: {job.closed_at}\n")
+                    f.write("\nDescription:\n")
+                    f.write(job.description + "\n")
+                    if job.comments:
+                        f.write("\nComments:\n")
+                        f.write(job.comments + "\n")
+                    f.write("\n" + "=" * 80 + "\n\n")
+
+            # Get the count before clearing
+            job_count = archived_jobs.count()
+
+            # Get all active jobs before starting transaction
+            active_jobs = list(Job.objects.filter(archive_id__isnull=True).order_by('id'))
+
+            # Start a transaction for the main operations
+            with transaction.atomic():
+                # First, clear all job attachments
+                JobAttachment.objects.all().delete()
+                
+                # Clear all participants (many-to-many relationships)
+                for job in Job.objects.all():
+                    job.participants.clear()
+
+                # Clear all archive_id references from jobs table
+                Job.objects.all().update(archive_id=None)
+                
+                # Delete all archived jobs
+                archived_jobs.delete()
+
+                # Delete all jobs but keep their data
+                Job.objects.all().delete()
+
+                # Reset sequences based on database engine
+                with connection.cursor() as cursor:
+                    db_engine = connection.settings_dict['ENGINE']
+                    
+                    if 'postgresql' in db_engine:
+                        # PostgreSQL
+                        cursor.execute("SELECT setval(pg_get_serial_sequence('jobs_job', 'id'), 1, false);")
+                        cursor.execute("SELECT setval(pg_get_serial_sequence('jobs_archivedjob', 'archive_id'), 1, false);")
+                    elif 'mysql' in db_engine:
+                        # MySQL/MariaDB
+                        cursor.execute("ALTER TABLE jobs_job AUTO_INCREMENT = 1;")
+                        cursor.execute("ALTER TABLE jobs_archivedjob AUTO_INCREMENT = 1;")
+                    elif 'sqlite' in db_engine:
+                        # SQLite - just delete from sqlite_sequence
+                        cursor.execute("DELETE FROM sqlite_sequence WHERE name IN ('jobs_job', 'jobs_archivedjob');")
+
+                # Reinsert active jobs with new IDs, handling deleted users
+                for job in active_jobs:
+                    # Skip jobs with deleted requesters
+                    if not job.requester:
+                        continue
+                    job.pk = None  # This will force a new ID
+                    job.archive_id = None  # Ensure archive_id is cleared
+                    job.save()
+
+            # After transaction, handle SQLite VACUUM separately
+            if 'sqlite' in connection.settings_dict['ENGINE']:
+                with connection.cursor() as cursor:
+                    cursor.execute("VACUUM")
+
+            self.caller.msg(f"{job_count} archived jobs have been cleared and saved to {log_file}")
+            self.caller.msg("Job numbering has been reset.")
+            
+            # Post to jobs channel
+            self.post_to_jobs_channel(self.caller.name, "ALL", "cleared the jobs archive")
+
+        except Exception as e:
+            self.caller.msg(f"Error clearing archive: {str(e)}")
+            logger.log_err(f"Error in clear_archive: {str(e)}")
+            logger.log_err("Full error details:", exc_info=True)
 
 class JobSystemCmdSet(CmdSet):
     """
