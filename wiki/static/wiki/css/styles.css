@@ -50,6 +50,14 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'analog_typewriter';
+    src: url('/static/wiki/fonts/analog_typewriter.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* Global styles */
 * {
     margin: 0;
@@ -91,11 +99,12 @@ h2 {
 }
 
 h3 {
-    font-family: 'true_lies', Arial, sans-serif;
+    font-family: 'analog_typewriter', Arial, sans-serif;
     font-size: 23px;
     padding: 10px;
     font-weight: normal;
     letter-spacing: 5px;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 table {
@@ -151,8 +160,14 @@ blockquote {
     border-left: 1px solid #fff;
 }
 
-a, a:hover, a:visited, a:active {
-    color: #fff;
+a, a:visited, a:active {
+    color: rgba(213, 96, 91, 1);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    color: rgba(201, 201, 201, 1);
     text-decoration: none;
     font-weight: bold;
 }
@@ -196,7 +211,7 @@ ul {
     left: 0;
     width: 100%;
     height: 90px;
-    color: #fff;
+    color: rgba(220, 220, 220, 1);
     transition: background-color 0.5s ease;
     background-color: rgba(0, 0, 0, 0);
     display: flex;
@@ -255,7 +270,7 @@ ul {
 
 .nav-menu a {
     text-decoration: none;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(213, 96, 91, 1);
     transition: color 0.3s ease;
     padding: 10px;
     display: block;
@@ -265,7 +280,7 @@ ul {
 
 .nav-menu a:hover,
 .nav-menu .active a {
-    color: rgba(255, 255, 255, 1);
+    color: rgba(201, 201, 201, 1);
 }
 
 .nav-menu .active a {
@@ -407,13 +422,13 @@ ul {
 
 .left_content {
     position: relative;
-    flex: 0 0 calc(65% - 20px);
+    flex: 0 0 calc(75% - 10px);
     width: calc(65% - 20px);
     max-width: 100%;
 }
 
 .right_content {
-    flex: 0 0 30%;
+    flex: 0 0 18%;
     width: 30%;
     max-width: 100%;
 }
@@ -558,6 +573,7 @@ ul {
     flex-direction: column;
     align-items: center;
     padding: 0 40px;
+    background: rgba(0, 0, 0, 0.24);
 }
 
 .content {
@@ -585,14 +601,14 @@ ul {
     position: absolute;
     top: 600px;
     left: 0;
-    width: 300px;
+    width: 275px;
     line-height: 1.6;
     z-index: 900;
     max-width: 100%;
-    max-height: calc(100vh - 450px);
+    max-height: calc(200vh - 400px);
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    scrollbar-color: rgba(100, 92, 92, 0.3) transparent;
 }
 
 .context_menu::-webkit-scrollbar {
@@ -632,7 +648,12 @@ ul {
 
 .context_menu ul li a {
     text-decoration: none;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(213, 96, 91, 1);
+}
+
+.context_menu ul li a:hover {
+    text-decoration: none;
+    color: rgba(201, 201, 201, 1);
 }
 
 .context_menu.sticky {
@@ -663,7 +684,7 @@ footer a {
 }
 
 footer a:hover {
-    color: rgba(255, 255, 255, 1);
+    color: rgba(201, 201, 201, 1);
 }
 
 /* Mobile Menu */
@@ -816,7 +837,7 @@ footer a:hover {
     }
 
     .sliding-menu a:hover {
-        color: rgba(255, 255, 255, 1);
+        color: rgba(201, 201, 201, 1);
         background-color: rgba(255, 255, 255, 0.1);
     }
 
@@ -878,7 +899,7 @@ footer a:hover {
     font-family: 'Roboto Mono', monospace;
     width: 100%;
     max-width: 1040px;
-    color: #fff;
+    color: rgba(201, 201, 201);
     font-size: 16px;
     line-height: 1.6;
     display: flex;

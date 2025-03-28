@@ -200,6 +200,16 @@
     "splat": "Shifter"
   },
   {
+    "name": "Hydraulic Strength",
+    "description": "The Ananasi can metabolize the blood she drinks to dramatically increase her strength. For each blood point the werespider spends, her Strength increases by 1 for the rest of the scene. She may spend up to (her Rank) blood points in this fashion.",
+    "game_line": "Werewolf: The Apocalypse",
+    "category": "powers",
+    "stat_type": "gift",
+    "values": [2, 4],
+    "shifter_type": "Ananasi",
+    "splat": "Shifter"
+  },
+  {
     "name": "Minor Unweaving",
     "description": "The Viskr may negate a spell, Gift, or other actively-used supernatural power by Unweaving the effect. Usable only on Level One or Two Gifts, Disciplines, Sphere effects, or other notably minor magical abilities (such as weak spirit Charms). The player spends one Gnosis point and rolls Dexterity + Occult (difficulty 6). One success negates the effect.",
     "game_line": "Werewolf: The Apocalypse",
@@ -219,6 +229,18 @@
     "shifter_type": "Ananasi",
     "splat": "Shifter"
   },
+  {
+    "name": "Camouflage Ananasi",
+    "description": "Through the use of this Gift, the Ananasi is able to blend any one object or small group of objects into the surrounding area, coating them in a weblike substance that takes on the color and texture of the things around it. Any character not actively searching the area overlooks the item as a natural part of the surroundings.",
+	"system": "The character must expend one Gnosis point, and make a successful Manipulation + Subterfuge roll (difficulty 6). The number of successes equals the number of successes that an active searcher must exceed to notice the item.",
+	"source": "Ananasi Breedbook, p. 90",
+    "game_line": "Werewolf: The Apocalypse",
+    "category": "powers",
+    "stat_type": "gift",
+    "values": [2],
+    "shifter_type": "Ananasi",
+    "splat": "Shifter"
+  },  
   {
     "name": "Morphean Bite",
     "description": "The Ananasi by and large already have venom, identical in every way to that of their most common spiders. Some are toxic and some are merely irritating. But with this Gift, the Damhàn can also attack supernatural enemies who might have defenses against their natural venom. Anyone bitten by the werespider is knocked unconscious immediately. The character must inflict at least one health level of damage on his target after soak rolls; he then makes a Gnosis roll against a difficulty equal to the target's Stamina (never higher than 9). If successful, the target immediately succumbs, falling into a deep sleep for 12 hours per success. Any attacks on the target wake him, but loud noise or strong smells aren't sufficient.",
@@ -341,7 +363,8 @@
   },
   {
     "name": "Calcify",
-    "description": "The Viskr may cause an area of the Great Web that he can see to become resistant to change of any sort. The player rolls Gnosis (difficulty 7) and gives the targeted location or object three extra soak dice per success. The area cannot be greater than one acre and the effect lasts for (Obedience) days.",
+    "description": "The Viskr may cause an area of the Great Web that he can see to become resistant to change of any sort.",
+	"system": "The player rolls Gnosis (difficulty 7) and gives the targeted location or object three extra soak dice per success. The area cannot be greater than one acre and the effect lasts for (Obedience) days.",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "gift",
@@ -489,149 +512,10 @@
     "shifter_type": "Ananasi",
     "splat": "Shifter"
   },
-    {
-        "name": "Entropic Bite",
-        "description": "After a successful bite, the player may spend two Gnosis points and roll Gnosis (difficulty 3 + victim's Stamina, maximum 9). The victim takes one level of unsoakable aggravated damage per turn for (successes) turns. Humans killed by this toxin are especially easy to 'drink,' and offer half again as many blood points as they would otherwise. Vampires must spend five blood points to expel the poison.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Ananasi",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Hydraulic Strength",
-        "description": "For each blood point the werespider spends, her Strength increases by 1 for the rest of the scene. She may spend up to (her Rank) blood points in this fashion.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Ananasi",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Understanding the Tapestry",
-        "description": "The character permanently adds three dice to Enigmas rolls.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Ananasi",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Web Sheet",
-        "description": "The player spends two blood points, allowing the character to cover a football field-sized area with a sticky web with an effective Strength rating of 9.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Ananasi",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Ill Winds",
-        "description": "The werespider cuts her arm and spends three blood points; the player rolls Intelligence + Occult (difficulty 5). Each success reduces the Gauntlet in the immediate area by 1 for one hour per success.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Ananasi",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Still Blood",
-        "description": "A victim splashed by the werespider's fresh blood loses three points of Strength. The victim's Strength returns at a rate of one point per hour.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Ananasi",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Brethren Call",
-        "description": "The player spends one blood point and rolls Willpower (difficulty 7 to contact normal spiders, 8 for Ananasi). 50 spiders respond per success.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Ananasi",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Greater Unweaving",
-        "description": "The player spends two Gnosis points. This Gift unravels powers of level 3 or lower.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Ananasi",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Iron Web",
-        "description": "The character must spend one Gnosis and make a Gnosis roll, difficulty 7 to activate the Gift before spending blood points as usual to spin the webbing. The Iron Web made by this Gift is extremely tough and can last for months, even years as long as the Ananasi keeps it properly groomed. The webbing is highly resistant to fire and soaks damage as if it had the Ananasi's Homid-form Stamina. Each cubic foot of the webbing can resist five health levels (after soak) of damage before breaking. Ananasi can consume this webbing and use it again after digesting it properly, thus avoiding the need to spend more blood points on it.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Ananasi",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Preserve",
-        "description": "The character must expend one blood point and roll Wits + Rituals (difficulty 8) to create this weave. The Ananasi can cover a single object of up to his Gnosis rating in square feet. The coating keeps the enclosed object in stasis, keeping meat and other items fresh, and even maintaining living things in a coma like slumber. The effect lasts until the cocoon is broken; the exact means of cracking the cocoon are up to the Storyteller, but only supernatural power has a chance of success.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Ananasi",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Web Blanket",
-        "description": "The werespider spends one Gnosis and one blood point and rolls Dexterity + Medicine (difficulty of the target's Willpower). Success means the target spontaneously begins generating the thick webs that completely cover the target's body. Attempts to tear the webbing away are resisted by an effective Strength of 9. Burning the webs is a possible solution, but the target covered by the webs takes the same damage as the webs themselves.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Ananasi",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Web Tremors",
-        "description": "The player spends a Gnosis point. For the rest of the night, she gains three automatic successes on all Perception rolls to spot anyone attempting to hide from her.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Ananasi",
-        "splat": "Shifter"
-    },
   {
     "name": "Entropic Bite",
-    "description": "The Ananasi injects a powerful necrotic toxin with her bite, similar to that of a brown recluse. After a successful bite, the player may spend two Gnosis points and roll Gnosis (difficulty 3 + victim's Stamina, maximum 9). The victim takes one level of unsoakable aggravated damage per turn for (successes) turns. Humans killed by this toxin are especially easy to 'drink,' and offer half again as many blood points as they would otherwise. Vampires must spend five blood points to expel the poison.",
-    "game_line": "Werewolf: The Apocalypse",
-    "category": "powers",
-    "stat_type": "gift",
-    "values": [4],
-    "shifter_type": "Ananasi",
-    "splat": "Shifter"
-  },
-  {
-    "name": "Hydraulic Strength",
-    "description": "The Ananasi can metabolize the blood she drinks to dramatically increase her strength. For each blood point the werespider spends, her Strength increases by 1 for the rest of the scene. She may spend up to (her Rank) blood points in this fashion.",
-    "game_line": "Werewolf: The Apocalypse",
-    "category": "powers",
-    "stat_type": "gift",
-    "values": [4],
-    "shifter_type": "Ananasi",
-    "splat": "Shifter"
-  },
-  {
-    "name": "Understanding the Tapestry",
-    "description": "The Tenere may glimpse hidden connections between apparently unrelated objects. The character permanently adds three dice to Enigmas rolls.",
+    "description": "The Ananasi injects a powerful necrotic toxin with her bite, similar to that of a brown recluse.",
+    "system": "After a successful bite, the player may spend two Gnosis points and roll Gnosis (difficulty 3 + victim's Stamina, maximum 9). The victim takes one level of unsoakable aggravated damage per turn for (successes) turns. Humans killed by this toxin are especially easy to 'drink,' and offer half again as many blood points as they would otherwise. Vampires must spend five blood points to expel the poison.",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "gift",
@@ -641,7 +525,7 @@
   },
   {
     "name": "Web Sheet",
-    "description": "The Tenere can create a large web very quickly. The player spends two blood points, allowing the character to cover a football field-sized area with a sticky web with an effective Strength rating of 9.",
+    "description": "The player spends two blood points, allowing the character to cover a football field-sized area with a sticky web with an effective Strength rating of 9.",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "gift",
@@ -651,7 +535,7 @@
   },
   {
     "name": "Ill Winds",
-    "description": "The Hatar weakens the barrier between worlds, allowing Banes to materialize in a location more easily. The werespider cuts her arm and spends three blood points; the player rolls Intelligence + Occult (difficulty 5). Each success reduces the Gauntlet in the immediate area by 1 for one hour per success.",
+    "description": "The werespider cuts her arm and spends three blood points; the player rolls Intelligence + Occult (difficulty 5). Each success reduces the Gauntlet in the immediate area by 1 for one hour per success.",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "gift",
@@ -661,7 +545,7 @@
   },
   {
     "name": "Still Blood",
-    "description": "The Ananasi's blood can paralyze a victim through contact. A victim splashed by the werespider's fresh blood loses three points of Strength. The victim's Strength returns at a rate of one point per hour.",
+    "description": "A victim splashed by the werespider's fresh blood loses three points of Strength. The victim's Strength returns at a rate of one point per hour.",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "gift",
@@ -671,7 +555,7 @@
   },
   {
     "name": "Brethren Call",
-    "description": "The Ananasi may contact the two werespiders closest to her physically, or may summon many natural spiders to her aid. The Ananasi she contacts don't appear immediately, but are notified that their presence is needed; normal spiders appear all at once and are ready to aid the Ananasi. The player spends one blood point and rolls Willpower (difficulty 7 to contact normal spiders, 8 for Ananasi). 50 spiders respond per success.",
+    "description": "The player spends one blood point and rolls Willpower (difficulty 7 to contact normal spiders, 8 for Ananasi). 50 spiders respond per success.",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "gift",
@@ -681,7 +565,8 @@
   },
   {
     "name": "Greater Unweaving",
-    "description": "As the Rank Two Gift: Minor Unweaving, but this Gift unravels any single Gift or power of Level 3 or lower. The Viskr may negate a spell, Gift, or other actively-used supernatural power by Unweaving the effect. Usable only on Level 3 or lower Gifts, Disciplines, Sphere effects, or other notably minor magical abilities (such as weak spirit Charms). The player spends one Gnosis point and rolls Dexterity + Occult (difficulty 6). One success negates the effect. The player spends two Gnosis points. This Gift unravels powers of level 3 or lower.",
+    "description": "As the Rank Two Gift: Minor Unweaving, but this Gift unravels any single Gift or power of Level 3 or lower. The Viskr may negate a spell, Gift, or other actively-used supernatural power by Unweaving the effect.",
+	"system": "Usable only on Level 3 or lower Gifts, Disciplines, Sphere effects, or other notably minor magical abilities (such as weak spirit Charms). The player spends two Gnosis points and rolls Dexterity + Occult (difficulty 6). One success negates the effect. The player spends two Gnosis points. This Gift unravels powers of level 3 or lower.",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "gift",
@@ -691,7 +576,7 @@
   },
   {
     "name": "Iron Web",
-    "description": "The Ananasi can spin a web that is nearly transparent and remarkably durable. Many Ananasi use this webbing to create their permanent lairs and Sylies. The character must spend one Gnosis and make a Gnosis roll, difficulty 7 to activate the Gift before spending blood points as usual to spin the webbing. The Iron Web made by this Gift is extremely tough and can last for months, even years as long as the Ananasi keeps it properly groomed. The webbing is highly resistant to fire and soaks damage as if it had the Ananasi's Homid-form Stamina. Each cubic foot of the webbing can resist five health levels (after soak) of damage before breaking. Ananasi can consume this webbing and use it again after digesting it properly, thus avoiding the need to spend more blood points on it.",
+    "description": "The character must spend one Gnosis and make a Gnosis roll, difficulty 7 to activate the Gift before spending blood points as usual to spin the webbing. The Iron Web made by this Gift is extremely tough and can last for months, even years as long as the Ananasi keeps it properly groomed. The webbing is highly resistant to fire and soaks damage as if it had the Ananasi's Homid-form Stamina. Each cubic foot of the webbing can resist five health levels (after soak) of damage before breaking. Ananasi can consume this webbing and use it again after digesting it properly, thus avoiding the need to spend more blood points on it.",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "gift",
@@ -701,7 +586,7 @@
   },
   {
     "name": "Preserve",
-    "description": "This Gift lets the Ananasi create a special coating that keeps objects in a form of stasis until the character needs them again. The object appears to have a soft, silky cocoon around it, preventing it from being damaged by outside forces. Fire, physical force, even the ravages of time are kept out by this delicate weave. Only the Ananasi who wove the cocoon can open it without special occult knowledge. The character must expend one blood point and roll Wits + Rituals (difficulty 8) to create this weave. The Ananasi can cover a single object of up to his Gnosis rating in square feet. The coating keeps the enclosed object in stasis, keeping meat and other items fresh, and even maintaining living things in a coma like slumber. The effect lasts until the cocoon is broken; the exact means of cracking the cocoon are up to the Storyteller, but only supernatural power has a chance of success.",
+    "description": "The character must expend one blood point and roll Wits + Rituals (difficulty 8) to create this weave. The Ananasi can cover a single object of up to his Gnosis rating in square feet. The coating keeps the enclosed object in stasis, keeping meat and other items fresh, and even maintaining living things in a coma like slumber. The effect lasts until the cocoon is broken; the exact means of cracking the cocoon are up to the Storyteller, but only supernatural power has a chance of success.",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "gift",
@@ -711,7 +596,7 @@
   },
   {
     "name": "Web Blanket",
-    "description": "Ananasi using this Gift create a covering of webs over a target. These webs are thick and sticky, actually springing from the body of the target itself, and covering the target in an airtight blanket of webbing that prevents breathing and obscures all senses. It is a very unpleasant way to die. The werespider spends one Gnosis and one blood point and rolls Dexterity + Medicine (difficulty of the target's Willpower). Success means the target spontaneously begins generating the thick webs that completely cover the target's body. Attempts to tear the webbing away are resisted by an effective Strength of 9. Burning the webs is a possible solution, but the target covered by the webs takes the same damage as the webs themselves.",
+    "description": "The werespider spends one Gnosis and one blood point and rolls Dexterity + Medicine (difficulty of the target's Willpower). Success means the target spontaneously begins generating the thick webs that completely cover the target's body. Attempts to tear the webbing away are resisted by an effective Strength of 9. Burning the webs is a possible solution, but the target covered by the webs takes the same damage as the webs themselves.",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "gift",
@@ -721,12 +606,281 @@
   },
   {
     "name": "Web Tremors",
-    "description": "Faint vibrations in the world of spirits warn the Kumo when she is being watched or stalked. A spirit-servant of Marawa grants this Gift. The player spends a Gnosis point. For the rest of the night, she gains three automatic successes on all Perception rolls to spot anyone attempting to hide from her.",
+    "description": "The player spends a Gnosis point. For the rest of the night, she gains three automatic successes on all Perception rolls to spot anyone attempting to hide from her.",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "gift",
     "values": [4],
     "shifter_type": "Ananasi",
     "splat": "Shifter"
+  },
+  {
+	"name": "Understanding the Tapestry",
+	"description": "The Tenere may glimpse hidden connections between apparently unrelated objects.",
+	"system": "The character permanently adds three dice to Enigmas rolls.",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [4],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Web Sheet",
+	"description": "The Tenere can create a large web very quickly. The player spends two blood points, allowing the character to cover a football field-sized area with a sticky web with an effective Strength rating of 9.",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [4],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Ill Winds",
+	"description": "The Hatar weakens the barrier between worlds, allowing Banes to materialize in a location more easily. The werespider cuts her arm and spends three blood points; the player rolls Intelligence + Occult (difficulty 5). Each success reduces the Gauntlet in the immediate area by 1 for one hour per success.",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [4],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Still Blood",
+	"description": "The Ananasi's blood can paralyze a victim through contact. A victim splashed by the werespider's fresh blood loses three points of Strength. The victim's Strength returns at a rate of one point per hour.",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [4],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Brethren Call",
+	"description": "The Ananasi may contact the two werespiders closest to her physically, or may summon many natural spiders to her aid. The Ananasi she contacts don't appear immediately, but are notified that their presence is needed; normal spiders appear all at once and are ready to aid the Ananasi. The player spends one blood point and rolls Willpower (difficulty 7 to contact normal spiders, 8 for Ananasi). 50 spiders respond per success.",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [4],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Greater Unweaving",
+	"description": "As the Rank Two Gift: Minor Unweaving, but this Gift unravels any single Gift or power of Level 3 or lower. The Viskr may negate a spell, Gift, or other actively-used supernatural power by Unweaving the effect. Usable only on Level 3 or lower Gifts, Disciplines, Sphere effects, or other notably minor magical abilities (such as weak spirit Charms). The player spends one Gnosis point and rolls Dexterity + Occult (difficulty 6). One success negates the effect. The player spends two Gnosis points. This Gift unravels powers of level 3 or lower.",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [4],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Iron Web",
+	"description": "The Ananasi can spin a web that is nearly transparent and remarkably durable. Many Ananasi use this webbing to create their permanent lairs and Sylies. The character must spend one Gnosis and make a Gnosis roll, difficulty 7 to activate the Gift before spending blood points as usual to spin the webbing. The Iron Web made by this Gift is extremely tough and can last for months, even years as long as the Ananasi keeps it properly groomed. The webbing is highly resistant to fire and soaks damage as if it had the Ananasi's Homid-form Stamina. Each cubic foot of the webbing can resist five health levels (after soak) of damage before breaking. Ananasi can consume this webbing and use it again after digesting it properly, thus avoiding the need to spend more blood points on it.",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [4],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Preserve",
+	"description": "This Gift lets the Ananasi create a special coating that keeps objects in a form of stasis until the character needs them again. The object appears to have a soft, silky cocoon around it, preventing it from being damaged by outside forces. Fire, physical force, even the ravages of time are kept out by this delicate weave. Only the Ananasi who wove the cocoon can open it without special occult knowledge. The character must expend one blood point and roll Wits + Rituals (difficulty 8) to create this weave. The Ananasi can cover a single object of up to his Gnosis rating in square feet. The coating keeps the enclosed object in stasis, keeping meat and other items fresh, and even maintaining living things in a coma like slumber. The effect lasts until the cocoon is broken; the exact means of cracking the cocoon are up to the Storyteller, but only supernatural power has a chance of success.",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [4],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Web Blanket",
+	"description": "Ananasi using this Gift create a covering of webs over a target. These webs are thick and sticky, actually springing from the body of the target itself, and covering the target in an airtight blanket of webbing that prevents breathing and obscures all senses. It is a very unpleasant way to die. The werespider spends one Gnosis and one blood point and rolls Dexterity + Medicine (difficulty of the target's Willpower). Success means the target spontaneously begins generating the thick webs that completely cover the target's body. Attempts to tear the webbing away are resisted by an effective Strength of 9. Burning the webs is a possible solution, but the target covered by the webs takes the same damage as the webs themselves.",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [4],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Web Tremors",
+	"description": "Faint vibrations in the world of spirits warn the Kumo when she is being watched or stalked. A spirit-servant of Marawa grants this Gift. The player spends a Gnosis point. For the rest of the night, she gains three automatic successes on all Perception rolls to spot anyone attempting to hide from her.",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [4],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Carapace",
+	"description": "The Ananasi acquires an armored carapace over her exoskeleton that provides additional protection and can regenerate damage.",
+	"system": "The player spends one Gnosis point to gain +4 dice to soak rolls and regeneration like a Garou. This Gift lasts for one scene.",
+	"source": "Changing Breeds 20th Anniversary Edition",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [5],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Burning Blood",
+	"description": "The Ananasi turns her blood to acid.",
+	"system": "The Ananasi may activate this Gift at will. Contact with acidic blood inflicts (permanent Gnosis) dice of aggravated damage.",
+	"source": "Changing Breeds 20th Anniversary Edition",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [5],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Image of the Great Mother",
+	"description": "For a short time, the Ananasi assumes the form of a massive creature with four spider-like legs, four human-like arms, eight glowing red eyes, and enormous fangs, covered over in thick, chitinous armor. The Myrmidon must remain in Crawlerling form for one week after donning the Great Mother's aspect.",
+	"system": "The player spends two Gnosis points and rolls Charisma + Rituals (difficulty 9). If successful, the Great Mother form has the following Attributes: Strength + 5, Stamina + 6, Perception +2 and Appearance 0. Each arm inflicts Strength + 2 aggravated damage with its terrible claws. All that view the Great Mother form — even other shapechangers and werespiders — must roll Willpower (difficulty 7) or suffer the Delirium (reduced Delirium for shapeshifters). The transformation lasts for one scene.",
+	"source": "Changing Breeds 20th Anniversary Edition",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [5],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Shattering",
+	"description": "This powerful Gift unweaves even mighty magical effects.",
+	"system": "As the Gift: Minor Unweaving, but costing three points of Gnosis and able to affect strong magic, including Disciplines/Spheres/Gifts/etc. of up to Level Five. The player spends 3 Gnosis points and rolls Dexterity + Occult (difficulty 6). One success negates the effect.",
+	"source": "Changing Breeds 20th Anniversary Edition",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [5],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Razor Webs",
+	"description": "If she desires, the Ananasi can spin barbed, razor-sharp webbing.",
+	"system": "The werespider can choose whether she spins normal webs or razor webbing. She can spin enough razor webs with one blood point to cover a Crinos-form Garou. Razor webbing inflicts one automatic level of unsoakable aggravated damage to anything that comes into contact with it each turn, unless the victim holds perfectly still.",
+	"source": "Changing Breeds 20th Anniversary Edition",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [5],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Web of Illusion",
+	"description": "This powerful Gift enables the Ananasi to create an artificial reality in a secured area. The appearance, sounds, and smells are all dictated by the character's will; everyone that enters the area sees, smells, and hears the same things for the duration of the illusion. The Ananasi that creates the illusion can either remain to control the confines, or pre-program the area to react in a particular way upon a particular event; there can never be more than one pre-programmed action for any illusion.",
+	"system": "The character must expend two Gnosis points, the first to create the structure of the illusion, and a second to animate anything inside it. The player must then make a Manipulation + Primal Urge roll (difficulty 7), with each success adding to the difficulty to detect the illusion. Characters attempting to see through the illusion must make a Perception + Subterfuge roll (difficulty 5 + the Ananasi's successes, maximum difficulty of 10). Characters automatically see the illusion as it was prepared unless they have valid reason to believe otherwise. The illusion lasts a number of days equal to the Ananasi's permanent Gnosis rating.",
+	"source": "PGttCB, p. 51; Ananasi Breedbook, p. 94",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [5],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Summon Paradox Spirit",
+	"description": "This powerful Gift not only brings a Paradox-spirit into the area, it also suggests a target for the Paradox-spirit to punish. This Gift only works against targets that are suffering from Paradox as it is, such as mages and those the Viskr has already marked via the rite: Summon Paradox.",
+	"system": "The Viskr rolls Wits + Occult, difficulty 8 and spends 1 Gnosis Point. The number of successes indicates the speed with which the spirit responds. Paradox-spirits are generally not offended by the use of this Gift, unless the target is clearly no threat to the orderly progression of the universe. The punishments meted out by Paradox-spirits range from merely annoying to instantly fatal, depending upon the severity of the offense. Occasionally the Paradox-spirit may abduct its target to a pocket Umbral realm to be punished for an indeterminate space of time (or until he escapes or is rescued). What the Paradox-spirit actually does when it arrives is up to the Storyteller to decide. More on the nature of Paradox-spirits can be found in Book of the Weaver and Mage: The Ascension.",
+	"source": "Ananasi Breedbook, p. 94",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [5],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Umbral Barrier",
+	"description": "The Ananasi spins her web into the Great Web, strengthening the Gauntlet in the designated area and making it far more difficult for any non-Ananasi to pass into or out of the Umbra in that location. The webs generated by this Gift are intangible and invisible from the Gaia Realm, and merely look like another piece of the Great Web from the Umbra.",
+	"system": "The character must spend the appropriate number of blood points for the web she wants to build; in addition, an expenditure of two Gnosis and a Wits + Occult roll (difficulty 8) is required. Each success increases the Gauntlet rating between the Gaia Realm and the Low, Middle and High Umbras by one. These barriers are often used as protection from invasion, and also as revenge against those who've slighted the werespider. This Gift's effects are permanent, although from the Penumbra the added webbing can be torn away from the Gauntlet — an involved and diffi cult task.",
+	"source": "Ananasi Breedbook, p. 89",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [5],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Spider on the Mirror",
+	"description": "The Ananasi with this Gift is able to create exact duplicates of herself to act as drones, suddenly turning into a one-woman army. The created drones are mindless, powerless entities, possessing only the physical abilities of the Tenere that created them. Each of the duplicates will act only as directed by their creator, following those directions to the letter. Once their instructed task has been completed, the created duplicates stop all actions, awaiting further direction.",
+	"system": "The Ananasi must make a Gnosis roll (difficulty 8). For every success, the character may create one physical duplicate of herself. For each created duplicate, the Tenere must also pay one blood point. The character must give verbal instruction to all the duplicates, who will immediately begin to carry out their assigned duty. Each duplicate possesses the physical Attributes, Gifts, Talents and Skills of its creator, but its Mental Attributes are no higher than 1, and Knowledges do not transfer. Once created, the duplicates will begin to disappear at an alarming rate. Beginning the fourth turn after they are created, one duplicate will disappear every other turn, until only the original Ananasi is left.",
+	"source": "PGttCB, p. 48; Ananasi Breedbook, p. 90",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [5],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Touch of the Unweaver",
+	"description": "The Hatar can prevent another creature from regenerating or healing diseases with a touch.",
+	"system": "The character rolls Intelligence + Medicine, difficulty equal to the target's Gnosis (or Willpower -2 for creatures with no Gnosis) and spends two Gnosis points. Success halts the target's healing processes cold, and the victim also suffers a +5 difficulty (with a maximum of 10) to resist diseases. Each success stops regeneration and other healing for one day, or until the Gift is somehow nullified.",
+	"source": "PGttCB, p. 49; Ananasi Breedbook, p. 91",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [5],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Mass Confusion",
+	"description": "This powerful Gift changes the perception of the individuals in the Kumoti's immediate area. The Ananasi is able to confuse the participants, causing them lose track of where they are, who surrounds them, and which direction they were facing. Friends can appear to be foes, physical objects can appear meters away from their actual locations, and none of the senses can be trusted.",
+	"system": "The Ananasi must expend two Gnosis points. For the duration of the scene, any individuals in the area — whether they be Damhàn, Ovid, vampire, or other — must then make a Wits roll (difficulty 8) to take an action against any selected target. If they make their roll, the action occurs as intended. If they miss their roll, the Storyteller must randomly determine another target in the same area — excluding the Kumoti using the Gift — to which the action is redirected. This Gift fouls attacks, speeches, Gift use, even dodges — all actions that focus on a specific target. The Ananasi that uses this Gift is immune to its effects, but cannot take any other actions for the duration of the Gift; if he takes any action, the effects of the Gift are canceled.",
+	"source": "PGttCB, p. 50; Ananasi Breedbook, p. 92",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [5],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Thousand Hands",
+	"description": "Although Ananasi cannot usually use all their arms to the same effect, this Gift allows Myrmidons to multitask with great efficiency. The Myrmidon may wield multiple weapons or make multiple attacks with each one landing at full effect.",
+	"system": "The Myrmidon need only spend a Gnosis point; for the remainder of the scene, he gains fifteen dice to his dice pools only for the purpose of splitting actions. Thus, if the Ananasi had an attack pool of eight dice, he could not attack with more than eight dice in his pool — but he could make three attacks: two with eight dice in each attack pool and one with seven dice.",
+	"source": "PGttCB, p. 50; Ananasi Breedbook, p. 93",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [5],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Elder Wisdom",
+	"description": "This Gift enables the Kumo to commune directly with her family's patron. If Marawa, Nareau, or Rati are in a bad mood, they may take out their displeasure at being summoned on the Kumo. Otherwise, they may offer advice or information useful to the user of the Gift. A servant of any of the three patrons teaches this Gift.",
+	"system": "The Kumo must make appropriate ceremonial actions and proffer chiminage of some sort before spending one point each of Gnosis and Willpower. The player rolls Charisma + Primal Urge (difficulty 7) and must attain three successes for the Gift to succeed. A botch means that the summoner has aroused the ire of the desired patron.",
+	"source": "PGttCB Pg 191-2",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [5],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
+  },
+  {
+	"name": "Megarachnid",
+	"description": "Gathering the blessings of the Destroyer, the Kumo's Pithus form swells to truly nightmarish proportions, growing as large as a truck. A scorpion-spirit teaches this Gift.",
+	"system": "The character's Pithus form gains an additional +2 Strength, +1 Dexterity, and +2 Stamina. It inflicts the Delirium as though the victim's Willpower were one point lower than it truly is. The player must pay one point of Gnosis when assuming the Pithus form to gain these benefits.",
+	"source": "W20 Pg. 275",
+	"game_line": "Werewolf: The Apocalypse",
+	"category": "powers",
+	"stat_type": "gift",
+	"values": [5],
+	"shifter_type": "Ananasi",
+	"splat": "Shifter"
   }
 ]

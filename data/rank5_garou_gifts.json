@@ -10,7 +10,7 @@
         "values": [5], 
         "splat": "Shifter",
         "tribe": "Glass Walkers",
-		"shifter_type":  ["Garou"]
+		"shifter_type":  ["Garou", "Ananasi"]
     },
     {
         "name": "Walk With Hades",
@@ -189,7 +189,7 @@
     {
         "name": "Havgan's Healing",
         "description": "Named after the foe Pwyll dueled with in the Otherworld, this powerful Gift lets wounds alternately harm and heal the Garou, giving the Fianna a critical edge in a sustained battle. A death-spirit teaches this Gift.",
-        "system": "To activate this Gift, the Fianna must spend two Gnosis points and concentrate for one turn. For the duration of the scene, any health levels that are not soaked alternately harm or heal the Garou. The first blow to strike the Garou injures him as normal; with the second blow, any damage that is not soaked (and the player must roll soak as normal) instead is treated as healing. Bashing wounds heal bashing damage, lethal wounds can heal bashing or lethal damage, and aggravated wounds heal all forms of damage. The third blow injures, the fourth heals, and so on. Wounds suffered from silver can never heal, however; they inflict damage as normal, and “use up” that blow - for instance, a Fianna wounded by silver by the fourth blow after activating this Gift takes unsoakable aggravated damage as normal, and the fifth blow will injure, not heal. (However, any aggravated damage taken on the sixth blow and every other attack after that could heal the silver damage.) Any wounds left unhealed by the end of the scene must be healed as usual.",
+        "system": "To activate this Gift, the Fianna must spend two Gnosis points and concentrate for one turn. For the duration of the scene, any health levels that are not soaked alternately harm or heal the Garou. The first blow to strike the Garou injures him as normal; with the second blow, any damage that is not soaked (and the player must roll soak as normal) instead is treated as healing. Bashing wounds heal bashing damage, lethal wounds can heal bashing or lethal damage, and aggravated wounds heal all forms of damage. The third blow injures, the fourth heals, and so on. Wounds suffered from silver can never heal, however; they inflict damage as normal, and “use up” that blow — for instance, a Fianna wounded by silver by the fourth blow after activating this Gift takes unsoakable aggravated damage as normal, and the fifth blow will injure, not heal. (However, any aggravated damage taken on the sixth blow and every other attack after that could heal the silver damage.) Any wounds left unhealed by the end of the scene must be healed as usual.",
         "source": "Fianna Tribebook (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -276,12 +276,13 @@
         "values": [4, 5], 
         "splat": "Shifter",
         "breed": "Lupus",
+		"tribe": "Get of Fenris",
 		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin", "Rokea"],
         "gift_alias": ["Kun's Maw", "Bone Cracker"]
     },
     {
         "name": "Horde of Valhalla",
-        "description": "The Garou who uses this Gift must be in good standing with his tribe's totem, and he must have a great need for aid, for he is asking help of Fenris himself. This Gift - taught by an avatar of Fenris - summons great wolves to come to the Garou's aid.",
+        "description": "The Garou who uses this Gift must be in good standing with his tribe's totem, and he must have a great need for aid, for he is asking help of Fenris himself. This Gift — taught by an avatar of Fenris — summons great wolves to come to the Garou's aid.",
         "system": "The player spends as much Rage and/or Gnosis as he wishes and rolls Charisma + Animal Ken. If successful, a number of spirit wolves appear from the Umbra to do battle with the Garou foes. The number of wolves is equal to the number of points spent by the player. The wolves are functionally identical to the wolves of the Great Hunt. They remain for the entire scene.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
@@ -302,7 +303,7 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Glass Walkers",
+        "tribe": ["Glass Walkers", "Boli Zouhisze"],
 		"shifter_type":  ["Garou"]
     },
     {
@@ -369,7 +370,7 @@
         "values": [5], 
         "splat": "Shifter",
         "tribe": "Glass Walkers",
-        "camp": "Wise Guys",
+        "camp": ["Wise Guys", "Central House"],
 		"shifter_type":  ["Garou"]
     },
     {
@@ -536,8 +537,8 @@
     },
     {
         "name": "New Moon Legerdemain",
-        "description": "Camp: Moon Lodge (Waning Cycle.) This Gift allows the werewolf to summon and command a group of small trickster spirits. This last step in the Cycle brings the werewolf to an understanding of Luna's need for the tricksters and the madness that she welcomes. The spirits, once summoned, dance around the Garou in the Penumbra, protecting her from harm but disturbing and unsettling all those around her. They play tricks on everyone in the vicinity; harmless and amusing ones on the werewolf's allies and destructive ones on her enemies. An avatar of Luna herself teaches this Gift, which puts the Garou in her debt - and service - forever. To learn the Gift, the Garou must undertake a great quest in Luna's name, one that may take several game sessions to play out. Once the werewolf succeeds, Luna gifts her loyal subject an understanding of the true nature of madness. Thus, the werewolf makes the New Moon's twisted wisdom part of herself.",
-        "system": "The Gift costs a point of permanent Gnosis to learn. Once the spirits are summoned, strangelings, chimera and Wyldlings usually, they never leave their werewolf. At time, they may rest quietly, semi dormant in the Penumbra near the Garou, although they may occasionally play tricks on her or those around her. They are always dormant during the day. They awaken into full life during the New Moon or at the call of the Garou. To awaken the spirits, the player rolls Gnosis (difficulty 6, 5 if the character is a Ragabash) and spends a point of Gnosis. The pack of spirits becomes active for one night per success. If the werewolf wishes them to go back to sleep, the player must roll Gnosis as above, spending another point of Gnosis and get at least two successes. Once they are active, the spirits play games and vicious tricks on all the werewolf's enemies within a 25-foot radius, pinching, tripping and interfering with them in all manner of ways. This creates a +2 difficulty to all the enemies' rolls and removes two dice from their dice pools to boot. The spirits may steal an object from an enemy in the Umbra once per day. It will only be a minor item of little worth or power, as defined by the Storyteller. The spirits might show their werewolf their prize, or they may not, depending on their whims. If no enemies are at hand, the spirits may turn their attentions to whomever is at hand (save the Gift's master) - even allies are not quite safe, although the spirits harass them somewhat more infrequently. It is the wise Garou who sings the spirits back to slumber when the battle is done. A powerful spirit of Jaggling level or higher, may disperse the spirits for a scene by spending a point of Gnosis.",
+        "description": "Camp: Moon Lodge (Waning Cycle.) This Gift allows the werewolf to summon and command a group of small trickster spirits. This last step in the Cycle brings the werewolf to an understanding of Luna's need for the tricksters and the madness that she welcomes. The spirits, once summoned, dance around the Garou in the Penumbra, protecting her from harm but disturbing and unsettling all those around her. They play tricks on everyone in the vicinity; harmless and amusing ones on the werewolf's allies and destructive ones on her enemies. An avatar of Luna herself teaches this Gift, which puts the Garou in her debt — and service — forever. To learn the Gift, the Garou must undertake a great quest in Luna's name, one that may take several game sessions to play out. Once the werewolf succeeds, Luna gifts her loyal subject an understanding of the true nature of madness. Thus, the werewolf makes the New Moon's twisted wisdom part of herself.",
+        "system": "The Gift costs a point of permanent Gnosis to learn. Once the spirits are summoned, strangelings, chimera and Wyldlings usually, they never leave their werewolf. At time, they may rest quietly, semi dormant in the Penumbra near the Garou, although they may occasionally play tricks on her or those around her. They are always dormant during the day. They awaken into full life during the New Moon or at the call of the Garou. To awaken the spirits, the player rolls Gnosis (difficulty 6, 5 if the character is a Ragabash) and spends a point of Gnosis. The pack of spirits becomes active for one night per success. If the werewolf wishes them to go back to sleep, the player must roll Gnosis as above, spending another point of Gnosis and get at least two successes. Once they are active, the spirits play games and vicious tricks on all the werewolf's enemies within a 25-foot radius, pinching, tripping and interfering with them in all manner of ways. This creates a +2 difficulty to all the enemies' rolls and removes two dice from their dice pools to boot. The spirits may steal an object from an enemy in the Umbra once per day. It will only be a minor item of little worth or power, as defined by the Storyteller. The spirits might show their werewolf their prize, or they may not, depending on their whims. If no enemies are at hand, the spirits may turn their attentions to whomever is at hand (save the Gift's master) — even allies are not quite safe, although the spirits harass them somewhat more infrequently. It is the wise Garou who sings the spirits back to slumber when the battle is done. A powerful spirit of Jaggling level or higher, may disperse the spirits for a scene by spending a point of Gnosis.",
         "source": "Tribebook: Silver Fangs (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -545,6 +546,7 @@
         "values": [5],
 		"splat": "Shifter",
         "tribe": "Silver Fangs",
+		"camp": "Moon",
         "shifter_type": ["Garou"]
     },
     {
@@ -558,6 +560,7 @@
         "values": [5],
 		"splat": "Shifter",
         "tribe": "Silver Fangs",
+		"camp": "Moon",
         "shifter_type": ["Garou"]
     },
     {
@@ -743,6 +746,7 @@
         "values": [5], 
         "splat": "Shifter",
         "auspice": "Galliard",
+		"tribe": "Uktena",
 		"shifter_type":  ["Garou", "Ajaba", "Kitsune"]
     },
     {
@@ -826,15 +830,16 @@
     },
     {
         "name": "Thousand Forms",
-        "description": "Most trickster archetypes are shapeshifters, and the Ragabash is no different. The Garou with this Gift may change herself into any animal between the sizes of a small bird and a bison. The Garou gains all the special powers (flight, gills, poison, sensory abilities, etc.) of the animal she mimics. She may not take the form of Wyrm-beasts (not that she would wish to!), but she may take the form of mythical beasts with some extra effort.",
-        "system": "The player spends a Gnosis point and rolls Intelligence + Animal Ken. The difficulty varies, rising higher the farther removed from the Garou's natural form the desired animal is. For example, an ape or panther (mammals of roughly equal mass) might be difficulty 5, while an alligator (a reptile of slightly larger size) would be difficulty 7, and a frog (a much smaller amphibian) would be difficulty 0. Mimicking mythical animals is always difficulty 10.",
-        "source": "Core book revised",
+        "description": "The werewolf with this Gift may change herself into any animal between the sizes of a small bird and a bison. The Garou gains all the special capabilities (flight, gills, poison, sensory abilities, etc.) of the animal she mimics. She may not take the form of Wyrm-beasts (not that she would wish to!), but with some extra effort she may take the form of mystical beasts (such as a griffon or unicorn), provided the beast remains within the usual size limitations of the Gift. Wyld-spirits teach this Gift.",
+        "system": "The player spends a point of Gnosis and rolls Intelligence + Animal Ken (difficulty 6). One success allows the character to assume the shape of any normal animal. For the duration of the scene, he may make additional transformation rolls without spending additional Gnosis, provided he only takes the shape of normal animals. To allow the character to take on a mythical form, the player must spend an additional point of Gnosis and succeed against a difficulty of 9.",
+        "source": "W20 Core",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [4, 5], 
         "splat": "Shifter",
         "auspice": "Ragabash",
+		"tribe": "Black Furies",
 		"shifter_type":  ["Garou", "Bastet", "Mokole", "Kitsune"],
         "gift_alias": ["The Thousand Forms", "All Beasts Under the Sun", "Beast Shape"]
     },
@@ -1035,7 +1040,7 @@
         "stat_type": "gift",
         "values": [4, 5], 
         "splat": "Shifter",
-        "tribe": "All",
+        "auspice": "Ahroun",
 		"shifter_type":  ["Garou", "Corax", "Kitsune"],
         "gift_alias": ["Fire Immunity"]
     },
@@ -1077,7 +1082,7 @@
         "values": [5], 
         "splat": "Shifter",
         "breed": "Homid",
-		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
+		"shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
         "name": "Boon of the Animal Fathers",
@@ -1235,7 +1240,7 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": "Bone Gnawers",
+        "tribe": ["Bone Gnawers", "Croatan"],
 		"shifter_type":  ["Garou", "Ajaba", "Ananasi", "Ratkin"]
     },
     {
@@ -1248,8 +1253,8 @@
         "stat_type": "gift",
         "values": [5],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Drown",
@@ -1261,21 +1266,21 @@
         "stat_type": "gift",
         "values": [5],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Diplomatic Immunity",
         "description": "This Gift enables the Garou to walk about in the middle of a hostile group without provoking the outbreak of hostilities. The Garou can enter a caern belonging to a rival or walk openly into the middle of a group of Black Spiral Dancers in order to retrieve something or deliver a message. The Garou surrounds herself with an aura of “neutrality” that negates her enemies' or rivals' animosity long enough to accomplish her task and leave without incident. The Gift only lasts for one scene, after which all bets are off.",
-        "system": "The player spends a point of Willpower and rolls Manipulation + Subterfuge (difficulty 8). A successful roll allows the character to interact with a group of potential enemies for the purpose of delivering a message, retrieving an item or delivering an ultimatum. A failure means that the Gift does not take effect (in which case the character would be wise to avoid confronting the intended group). A Botch means that the character believes the Gift is in effect - a belief which will more than likely disappear as soon as she encounters the opposing group.",
+        "system": "The player spends a point of Willpower and rolls Manipulation + Subterfuge (difficulty 8). A successful roll allows the character to interact with a group of potential enemies for the purpose of delivering a message, retrieving an item or delivering an ultimatum. A failure means that the Gift does not take effect (in which case the character would be wise to avoid confronting the intended group). A Botch means that the character believes the Gift is in effect — a belief which will more than likely disappear as soon as she encounters the opposing group.",
         "source": "Rage Across the Heavens",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Burden of Knowledge",
@@ -1287,8 +1292,8 @@
         "stat_type": "gift",
         "values": [5],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Grand Gesture",
@@ -1300,8 +1305,8 @@
         "stat_type": "gift",
         "values": [5],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Essential Transformation",
@@ -1312,9 +1317,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
+		"tribe": "Planetary",
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Bring Forth the Future",
@@ -1326,21 +1331,21 @@
         "stat_type": "gift",
         "values": [5],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Ebon Binding",
         "description": "This Gift allows the Garou to take her knowledge of someone's fault, practice or secret vice and bind a fitting punishment to that person. Most often, a target suffers crippling pains when he thinks of indulging in the forbidden action. The Garou may use this Gift to prevent rapists, child molesters, murderers or traitors from repeat offenses (assuming the Garou allows these individuals to live in the first place.",
-        "system": "The player must sacrifice a point of permanent Gnosis and roll her Willpower (difficulty of the target's Willpower). Only one success is necessary to make the binding permanent. A failed roll means that the binding is unsuccessful while a botch causes the character to undergo the mental or physical pain she intended to bind to her target - a one-time-only occurrence.",
+        "system": "The player must sacrifice a point of permanent Gnosis and roll her Willpower (difficulty of the target's Willpower). Only one success is necessary to make the binding permanent. A failed roll means that the binding is unsuccessful while a botch causes the character to undergo the mental or physical pain she intended to bind to her target — a one-time-only occurrence.",
         "source": "Rage Across the Heavens",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Cleansing Flame",
@@ -1352,8 +1357,8 @@
         "stat_type": "gift",
         "values": [5],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Moondream",
@@ -1365,21 +1370,21 @@
         "stat_type": "gift",
         "values": [5],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Madthought",
         "description": "This trick literally makes the werewolf's foes too clever for their own good. The Garou can cause her enemies' thought processes to speed up so radically that they literally think too rapidly to put any one plan into motion. The victim of the Gift can only stand still as his thoughts run away with him, rushing madly from one brilliant plan to another or considering all the multiple alternatives for their “next” action.",
-        "system": "The player spends a point of Willpower and rolls Wits + Subterfuge (difficulty of the victim's Willpower). The number of successes determines how many turns the victim stands “lost in thought”. When the victim recovers from the Gift, he is most likely highly disoriented, and may need to regain focus and otherwise discover what's been happening while he “was out”. A failure simply means that the Gift does not work, while a botch gives the victim not only rapid thought but the ability to translate those thoughts into immediate action - usually to the detriment of the character.",
+        "system": "The player spends a point of Willpower and rolls Wits + Subterfuge (difficulty of the victim's Willpower). The number of successes determines how many turns the victim stands “lost in thought”. When the victim recovers from the Gift, he is most likely highly disoriented, and may need to regain focus and otherwise discover what's been happening while he “was out”. A failure simply means that the Gift does not work, while a botch gives the victim not only rapid thought but the ability to translate those thoughts into immediate action — usually to the detriment of the character.",
         "source": "Rage Across the Heavens",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Earth Heal",
@@ -1391,21 +1396,21 @@
         "stat_type": "gift",
         "values": [5],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Heart of the Ice Warrior",
         "description": "Usually used only in the most dire circumstance, this Gift renders the Garou impervious to damage long enough to deliver a final blow to her opponent. The exertion causes the Garou to collapse, mortally wounded. Unless healed immediately, the Garou dies, having given her all in battle.",
-        "system": "No roll is necessary to invoke the Gift, but the player must spend a point of Rage. The character may not dodge when invoking this Gift, but no damage levied against the Garou will impair her in any way until her attack lands - lightning strikes won't blow her back, and blades can't sever her limbs. The character makes her next attack at +4 to her attack dice pool. The player may reroll any 1s rolled on this attack - they simply to not count. In addition, any damage rolls gain four extra dice. After delivering her attack, the character falls to Incapacitated. Unless somehow mystically healed by another using Mother's Touch or a similar Gift or fetish (regeneration isn't an option) within the same turn, the character dies at the end of the turn.",
+        "system": "No roll is necessary to invoke the Gift, but the player must spend a point of Rage. The character may not dodge when invoking this Gift, but no damage levied against the Garou will impair her in any way until her attack lands — lightning strikes won't blow her back, and blades can't sever her limbs. The character makes her next attack at +4 to her attack dice pool. The player may reroll any 1s rolled on this attack - they simply to not count. In addition, any damage rolls gain four extra dice. After delivering her attack, the character falls to Incapacitated. Unless somehow mystically healed by another using Mother's Touch or a similar Gift or fetish (regeneration isn't an option) within the same turn, the character dies at the end of the turn.",
         "source": "Rage Across the Heavens",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Invoke the Spirits of the Storm",
@@ -1582,14 +1587,14 @@
         "name": "Endurance of Heimdall",
         "description": "This powerful Gift grants the Garou great endurance and hardiness for a time. This Gift is taught by a Boar-spirit.",
         "system": "The Garou spends one Gnosis point and rolls Willpower (difficulty 6). If successful, the Garou's Stamina rating is doubled for the duration of the scene. This will aid Stamina and Soak rolls.",
-        "source": "Get of Fenris Tribebook",
+        "source": "Get of Fenris Tribebook/W20 Core",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "breed": "Lupus",
-		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
+		"tribe": "Get of Fenris",
+		"shifter_type":  ["Garou", "Ajaba"],
         "gift_alias": ["Strength of Kilimanjaro"]
     }
 ]

@@ -46,7 +46,7 @@ class CmdStaffStat(CmdSelfStat):
     key = "+staffstat"
     aliases = ["staffstat"]
     locks = "cmd:perm(Admin) or perm(Builder)"
-    help_category = "Staff"
+    help_category = "Admin Commands"
 
     def parse(self):
         """Parse the command arguments for staff usage."""
@@ -639,7 +639,7 @@ class CmdFixStats(MuxCommand):
     key = "+fixstats"
     aliases = ["fixstats"]
     locks = "cmd:perm(Admin) or perm(Builder)"
-    help_category = "Staff"
+    help_category = "Admin Commands"
 
     def func(self):
         """Execute the command."""
@@ -664,7 +664,7 @@ class CmdSetWyrmTaint(MuxCommand):
     key = "+wyrm"
     aliases = ["+wyrmtaint"]
     locks = "cmd:perm(Admin)"
-    help_category = "Staff"
+    help_category = "Admin Commands"
 
     def func(self):
         """Execute command."""

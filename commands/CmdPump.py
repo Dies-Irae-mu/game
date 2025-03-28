@@ -38,7 +38,7 @@ class CmdPump(default_cmds.MuxCommand):
     key = "+boost"
     aliases = ["pump", "+boosts", "boosts"]
     locks = "cmd:all()"
-    help_category = "Powers"
+    help_category = "RP Commands"
 
     # Define valid stats per splat
     VAMPIRE_STATS = ["strength", "dexterity", "stamina"]

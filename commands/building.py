@@ -489,7 +489,7 @@ class CmdPlaces(MuxCommand):
     key = "+place"
     aliases = ["place"]
     locks = "cmd:all()"
-    help_category = "Building"
+    help_category = "Building and Housing"
     
     def _leave_place(self, quiet=False):
         """Leave current place."""

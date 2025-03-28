@@ -15,7 +15,7 @@ class CmdUnfindable(default_cmds.MuxCommand):
     key = "+unfindable"
     aliases = ["unfindable"]
     locks = "cmd:all()"
-    help_category = "General"
+    help_category = "Utility Commands"
 
     def func(self):
         if not self.args:

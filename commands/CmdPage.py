@@ -19,10 +19,12 @@ class CmdPage(DefaultCmdPage):
       page[/switches] [<account/character>,<account/character>,... = <message>]
       tell        ''
       page <number>
+      page/idle [<message>]        - Set or remove an idle message
 
     Switch:
       last - shows who you last messaged
       list - show your last <number> of tells/pages (default)
+      idle - set or remove an idle message
 
     Send a message to target user (if online). If no
     argument is given, you will get a list of your latest messages.
@@ -30,11 +32,30 @@ class CmdPage(DefaultCmdPage):
     """
     key = "page"
     aliases = ["tell", "p"]
-    help_category = "Communications"
+    help_category = "Comms"
+    # Add idle to the allowed switches
+    switch_options = ("last", "list", "idle")
 
     def func(self):
         """Implement function using the parent"""
         caller = self.caller
+
+        # Handle idle message setting/removal
+        if "idle" in self.switches:
+            # Remove any = signs from the args as they're not needed for idle messages
+            idle_message = self.args.split("=", 1)[0] if self.args else ""
+            if not idle_message.strip():
+                # Remove idle message if it exists
+                if caller.attributes.has("idle_message"):
+                    caller.attributes.remove("idle_message")
+                    self.msg("Idle message removed.")
+                else:
+                    self.msg("You don't have an idle message set.")
+                return
+            # Set new idle message
+            caller.attributes.add("idle_message", idle_message.strip())
+            self.msg(f"Idle message set to: {idle_message.strip()}")
+            return
 
         # Get the messages we've sent (not to channels)
         pages_we_sent = Msg.objects.get_messages_by_sender(caller).exclude(
@@ -145,6 +166,13 @@ class CmdPage(DefaultCmdPage):
                 if not account.sessions.count():
                     offline_recipients.append(target.name)
                     continue
+
+                # Check for idle message
+                if account.attributes.has("idle_message"):
+                    idle_msg = account.attributes.get("idle_message")
+                    self.msg(f"Idle response from {account.puppet.name if account.puppet else account.name}: {idle_msg}")
+                    # Notify the idle user that their message was sent
+                    account.msg(f"Idle message sent to {caller.name}: {idle_msg}")
                     
                 # If we get here, the character has a valid, connected account
                 account_recipients.append(account)

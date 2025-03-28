@@ -1,5 +1,6 @@
 {% extends "wiki/base_wiki.html" %}
 {% load static %}
+{% load wiki_filters %}
 
 {% block titleblock %}Search Results{% endblock %}
 
@@ -28,7 +29,7 @@
                         {% if result.result_type == 'wiki' %}
                             <h2><a href="{% url 'wiki:page_detail' result.slug %}">{{ result.title }}</a></h2>
                             <div class="meta">
-                                Last edited by {{ result.last_editor|default:"Unknown" }} 
+                                Last edited by {{ result.last_editor|display_username|default:"Unknown" }} 
                                 on {{ result.updated_at|date:"F j, Y" }}
                             </div>
                             <div class="excerpt">

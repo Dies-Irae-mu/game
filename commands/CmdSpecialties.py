@@ -9,6 +9,10 @@ two slots at 5 dots.
 from evennia.commands.default.muxcommand import MuxCommand
 from evennia.utils.utils import list_to_string
 from commands.CmdSelfStat import REQUIRED_SPECIALTIES
+from decimal import Decimal
+from evennia import logger
+import datetime
+from evennia.utils.search import search_object
 
 class CmdSpecialties(MuxCommand):
     """
@@ -18,6 +22,7 @@ class CmdSpecialties(MuxCommand):
       +specialties                     - View your specialties and available options
       +specialties/add <stat>=<spec>   - Add a specialty to a stat
       +specialties/add <stat>=<spec>/yes - Confirm adding a specialty (cannot be removed)
+      +specialties/buy <stat>=<spec>   - Buy a specialty with freebie points or XP
       
     Staff Usage:
       +specialties <name>              - View another character's specialties
@@ -28,13 +33,16 @@ class CmdSpecialties(MuxCommand):
     put any dots in them. Other abilities allow specialties when you reach higher
     levels (one specialty at 4 dots, two at 5 dots).
     
+    Buying specialties costs 1 freebie point during character generation, or 4 XP
+    after approval. Specialties purchased this way do not require the skill to be 4+.
+
     |r+specialty is also an alias for +specialties.|n
     """
 
     key = "+specialties"
     aliases = ["+specialty"]
     locks = "cmd:all()"
-    help_category = "Character"
+    help_category = "Chargen & Character Info"
 
     def _get_char(self, name=None):
         """Helper method to get character, either caller or named character for staff."""
@@ -44,8 +52,12 @@ class CmdSpecialties(MuxCommand):
         if not self.caller.check_permstring("builder"):
             self.caller.msg("You don't have permission to view other characters' specialties.")
             return None
-        char = self.caller.search(name)
-        return char
+        # Use global search for staff
+        char = search_object(name, typeclass='typeclasses.characters.Character')
+        if not char:
+            self.caller.msg(f"Could not find character '{name}'.")
+            return None
+        return char[0]  # search_object returns a list, get the first match
 
     def _get_stat_level(self, char, stat_name):
         """Helper method to get the level of a stat."""
@@ -119,7 +131,22 @@ class CmdSpecialties(MuxCommand):
 
         # Format the output
         output = []
-        output.append("|b--------------------------------< |ySpecialties|n |b>--------------------------------|n")
+        # Calculate padding needed for 78 characters total
+        # Each color code (|b, |y, |n) actually becomes an ANSI sequence that's longer
+        # We need to account for just the visible characters, not the color codes
+        name_space = len(char.name)
+        visible_text = f"< Specialties for {char.name} >"  # The text without any color codes
+        visible_length = len(visible_text)
+        total_dashes = 78 - visible_length
+        left_dashes = "-" * (total_dashes // 2)
+        right_dashes = "-" * (total_dashes - (total_dashes // 2))  # Handle odd number if needed
+        
+        header = f"|b{left_dashes}< |ySpecialties for {char.name}|n |b>{right_dashes}|n"
+        # Debug check - remove color codes to verify actual length
+        debug_length = len(visible_text) + len(left_dashes) + len(right_dashes)
+        if debug_length != 78:
+            logger.log_err(f"Header length incorrect: {debug_length} chars (should be 78)")
+        output.append(header)
         
         # Show required specialties first if any are missing
         if required_stats_without_specialty:
@@ -196,6 +223,11 @@ class CmdSpecialties(MuxCommand):
         else:
             if not required_stats_without_specialty and not high_stats:
                 output.append("No stats are available for specialties")
+        
+        # Add info about buying specialties
+        output.append("\n|yYou can buy additional specialties with:|n")
+        output.append("   - 1 freebie point during character generation (+specialties/buy)")
+        output.append("   - 4 XP after approval (+specialties/buy)")
             
         output.append("|b--------------------------------------------------------------------------------|n")
         
@@ -290,6 +322,103 @@ class CmdSpecialties(MuxCommand):
             self.caller.msg(f"Added specialty '{specialty}' to {stat} for {char.name}.")
             if char != self.caller:
                 char.msg(f"A specialty '{specialty}' has been added to your {stat} by {self.caller.name}.")
+
+        elif switch == "buy":
+            # Player buying a specialty with freebie points or XP
+            char = self.caller
+            stat = self.lhs.lower()
+            specialty = self.rhs
+
+            # Validate the stat exists
+            stat_level = self._get_stat_level(char, stat)
+            if stat_level is None:
+                self.caller.msg(f"Stat '{stat}' not found.")
+                return
+                
+            # Make sure the specialty is not empty
+            if not specialty:
+                self.caller.msg("You must specify a specialty.")
+                return
+
+            # Get current specialties
+            specialties = self._get_specialties(char)
+            current_specs = specialties.get(stat, [])
+            
+            # Check if specialty already exists
+            if specialty in current_specs:
+                self.caller.msg(f"Specialty '{specialty}' already exists for {stat}.")
+                return
+
+            # Determine if character is approved or in chargen
+            is_approved = char.db.approved
+            
+            if is_approved:
+                # Character is approved, use XP
+                xp_cost = 4  # 4 XP for specialties
+                
+                # Check if character has enough XP
+                if not hasattr(char.db, 'xp') or not char.db.xp:
+                    self.caller.msg("You don't have any XP set up on your character.")
+                    return
+                
+                current_xp = char.db.xp.get('current', 0)
+                if current_xp < xp_cost:
+                    self.caller.msg(f"You don't have enough XP to buy this specialty. Cost: {xp_cost} XP, Available: {current_xp} XP.")
+                    return
+                
+                # Deduct XP and log the spend
+                try:
+                    # Convert to Decimal for precise calculation
+                    current_xp = Decimal(str(current_xp))
+                    spent_xp = Decimal(str(char.db.xp.get('spent', 0)))
+                    
+                    # Update character's XP values
+                    char.db.xp['current'] = current_xp - xp_cost
+                    char.db.xp['spent'] = spent_xp + xp_cost
+                    
+                    # Log the spend
+                    spend_entry = {
+                        'type': 'spend',
+                        'amount': float(xp_cost),
+                        'stat_name': f"Specialty: {stat} - {specialty}",
+                        'previous_rating': 0,
+                        'new_rating': 1,
+                        'reason': f"Purchased specialty '{specialty}' for {stat}",
+                        'timestamp': datetime.datetime.now().isoformat()
+                    }
+                    
+                    if 'spends' not in char.db.xp:
+                        char.db.xp['spends'] = []
+                    char.db.xp['spends'].insert(0, spend_entry)
+                    
+                    # Add the specialty
+                    if stat not in specialties:
+                        specialties[stat] = []
+                    specialties[stat].append(specialty)
+                    char.db.specialties = specialties
+                    
+                    self.caller.msg(f"You've purchased the specialty '{specialty}' for {stat} for {xp_cost} XP.")
+                    
+                except Exception as e:
+                    logger.log_err(f"Error processing specialty XP purchase: {str(e)}")
+                    self.caller.msg(f"Error processing purchase: {str(e)}")
+                
+            else:
+                # Character is in chargen, use freebie points
+                freebie_cost = 1  # 1 freebie point per specialty
+                
+                # For characters in chargen, we don't track freebies directly
+                # Just add the specialty and inform the player it will count during approval
+                
+                # Add the specialty
+                if stat not in specialties:
+                    specialties[stat] = []
+                specialties[stat].append(specialty)
+                char.db.specialties = specialties
+                
+                self.caller.msg(f"You've added the specialty '{specialty}' for {stat}.")
+                self.caller.msg(f"This will cost {freebie_cost} freebie points during character approval.")
+                self.caller.msg("Use the +check command to see your total freebie point allocation.")
 
         elif switch == "del":
             # Staff only - remove a specialty

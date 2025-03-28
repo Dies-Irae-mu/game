@@ -375,7 +375,7 @@ POWERS = {
         "Human Speech": 0,
         "Human Guise": 0,
         "Flexible": 0,
-        "Telepathy": 0,
+        "Companion Telepathy": 0,
         "Telekinesis": 0,
         "Tides of Fortune": 0,
         "Speed": 0        

@@ -921,7 +921,7 @@ SPECIAL_ADVANTAGES = {
         'speed': {'valid_values': [2, 4, 6, 8, 10], 'desc': "Increased movement speed"},
         'spirit travel': {'valid_values': [8, 10, 15], 'desc': "Ability to cross into Umbral realms"},
         'spirit vision': {'valid_values': [3], 'desc': "Ability to perceive the Penumbra"},
-        'telepathy': {'valid_values': [2, 4, 6], 'desc': "Ability to communicate with others telepathically"},
+        'companion telepathy': {'valid_values': [2, 4, 6], 'desc': "Ability to communicate with others telepathically"},
         'tides of fortune': {'valid_values': [5], 'desc': "Ability to alter the flow of fate"},
         'tunneling': {'valid_values': [3], 'desc': "Can create tunnels through earth"},
         'unaging': {'valid_values': [5], 'desc': "Immunity to natural aging process"},

@@ -1,5 +1,6 @@
 {% extends "wiki/base_wiki.html" %}
 {% load static %}
+{% load wiki_filters %}
 
 {% block titleblock %}History - {{ page.title }}{% endblock %}
 
@@ -16,7 +17,7 @@
                 {% for revision in revisions %}
                     <div class="list-group-item">
                         <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">Revision by {{ revision.editor }}</h5>
+                            <h5 class="mb-1">Revision by {{ revision.editor|display_username }}</h5>
                             <small>{{ revision.edited_at|date:"Y-m-d H:i" }}</small>
                         </div>
                         {% if revision.comment %}

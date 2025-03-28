@@ -25,7 +25,7 @@ class CmdWeather(default_cmds.MuxCommand):
     key = "+weather"
     aliases = ["+time"]
     locks = "cmd:all()"
-    help_category = "General"
+    help_category = "Game Info"
 
     def get_moon_phase(self):
         moon = ephem.Moon()

@@ -127,7 +127,7 @@ class CmdSelfStat(MuxCommand):
     key = "+selfstat"
     aliases = ["selfstat"]
     locks = "cmd:all()"  # All players can use this command
-    help_category = "Character"
+    help_category = "Chargen & Character Info"
     def __init__(self):
         """Initialize the command."""
         super().__init__()
@@ -562,6 +562,17 @@ class CmdSelfStat(MuxCommand):
 
         # Special handling for merits
         if category == 'merits':
+            # Get character's splat type if needed for restriction checks
+            char_type = None
+            if splat == 'Shifter':
+                char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+            elif splat == 'Mortal+':
+                char_type = self.caller.get_stat('identity', 'lineage', 'MortalPlus Type', temp=False)
+            elif splat == 'Companion':
+                char_type = self.caller.get_stat('identity', 'lineage', 'Companion Type', temp=False)
+            elif splat == 'Possessed':
+                char_type = self.caller.get_stat('identity', 'lineage', 'Possessed Type', temp=False)
+                
             # Get the merit from the database
             from world.wod20th.models import Stat
             merit = Stat.objects.filter(
@@ -644,8 +655,17 @@ class CmdSelfStat(MuxCommand):
             if not proper_name:
                 return False, f"'{stat_name}' is not a valid special advantage", None
 
+            # Check if this advantage requires an instance
+            if self._requires_instance(proper_name):
+                if not self.instance:
+                    # This will be handled earlier in the command flow
+                    return False, f"'{proper_name}' requires an instance", None
+                # When we have an instance, use it as part of the stat name
+                proper_name = f"{proper_name}({self.instance})"
+
             # Get the advantage info
-            advantage_info = SPECIAL_ADVANTAGES[proper_name]
+            advantage_key = next((key for key in SPECIAL_ADVANTAGES.keys() if key.lower() == stat_name.lower()), None)
+            advantage_info = SPECIAL_ADVANTAGES[advantage_key]
             try:
                 advantage_value = int(value)
                 if 'valid_values' not in advantage_info:
@@ -2918,18 +2938,30 @@ class CmdSelfStat(MuxCommand):
             companion_type = self.caller.get_stat('identity', 'lineage', 'Companion Type', temp=False)
             
             if splat and splat.lower() == 'companion' and companion_type:
-                # Get the proper case name from SPECIAL_ADVANTAGES
+                # Check if this advantage requires an instance
                 proper_name = next((name for name in SPECIAL_ADVANTAGES.keys() if name.lower() == self.stat_name.lower()), None)
                 if not proper_name:
                     self.caller.msg(f"|rInvalid special advantage: {self.stat_name}|n")
                     return
-
-                # Get the advantage info
-                advantage_info = SPECIAL_ADVANTAGES[proper_name]
+                
+                # Check if this advantage requires an instance
+                if self._requires_instance(proper_name):
+                    if not self.instance:
+                        self.caller.msg(f"|rThe special advantage '{proper_name}' requires an instance. Use format: {proper_name}(instance)/special_advantage=value|n")
+                        self.caller.msg(f"|yFor example: {proper_name}(poison)/special_advantage=5|n")
+                        self.caller.msg(f"|yUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
+                        return
+                    # When we have an instance, use it as part of the stat name
+                    proper_name = f"{proper_name}({self.instance})"
+                
+                # Get the advantage info - this is now a lowercase key
+                advantage_key = next((key for key in SPECIAL_ADVANTAGES.keys() if key.lower() == self.stat_name.lower()), None)
+                advantage_info = SPECIAL_ADVANTAGES[advantage_key]
+                
                 try:
                     value = int(self.value_change)
-                    if value not in advantage_info['values']:
-                        valid_values_str = ', '.join(map(str, advantage_info['values']))
+                    if value not in advantage_info['valid_values']:
+                        valid_values_str = ', '.join(map(str, advantage_info['valid_values']))
                         self.caller.msg(f"|rInvalid value for {proper_name}. Valid values are: {valid_values_str}|n")
                         return
                     
@@ -3051,6 +3083,14 @@ class CmdSelfStat(MuxCommand):
                         del self.caller.db.stats['powers']['special_advantage'][advantage_name]
                         self.caller.msg(f"|gRemoved special advantage '{advantage_name}'.|n")
                         return
+                    # Additionally, check if the advantage with instance matches just the base name
+                    # This allows +selfstat Immunity= to remove Immunity(fire)
+                    elif '(' in advantage_name and ')' in advantage_name:
+                        base_name = advantage_name.split('(')[0].lower()
+                        if base_name == self.stat_name.lower():
+                            del self.caller.db.stats['powers']['special_advantage'][advantage_name]
+                            self.caller.msg(f"|gRemoved special advantage '{advantage_name}'.|n")
+                            return
 
             # Regular stat removal handling
             if stat and stat.category in self.caller.db.stats:
@@ -3252,6 +3292,10 @@ class CmdSelfStat(MuxCommand):
         # Clear gift_aliases when changing splat
         if hasattr(self.caller.db, 'gift_aliases'):
             self.caller.db.gift_aliases = {}
+            
+        # Clear specialties when changing splat
+        if hasattr(self.caller.db, 'specialties'):
+            self.caller.db.specialties = {}
             
         # Initialize basic stats structure
         # Convert input splat to title case for display but lowercase for comparison
@@ -3668,6 +3712,17 @@ class CmdSelfStat(MuxCommand):
         if stat_name.title() in MERIT_VALUES:
             # Skip merit validation if we've already determined this is a blessing for Possessed
             if not (splat == 'Possessed' and category == 'powers' and stat_type == 'blessing'):
+                # Get character's splat type if needed for restriction checks
+                char_type = None
+                if splat == 'Shifter':
+                    char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+                elif splat == 'Mortal+':
+                    char_type = self.caller.get_stat('identity', 'lineage', 'MortalPlus Type', temp=False)
+                elif splat == 'Companion':
+                    char_type = self.caller.get_stat('identity', 'lineage', 'Companion Type', temp=False)
+                elif splat == 'Possessed':
+                    char_type = self.caller.get_stat('identity', 'lineage', 'Possessed Type', temp=False)
+                
                 try:
                     merit_value = int(value)
                     valid_values = MERIT_VALUES[stat_name.title()]
@@ -3680,10 +3735,10 @@ class CmdSelfStat(MuxCommand):
                         restriction = MERIT_SPLAT_RESTRICTIONS[stat_name.title()]
                         if restriction['splat']:
                             allowed_splats = restriction['splat'] if isinstance(restriction['splat'], list) else [restriction['splat']]
-                            if splat not in allowed_splats:
+                            if splat.lower() not in [s.lower() for s in allowed_splats]:
                                 self.caller.msg(f"|rThe merit '{stat_name}' is only available to {', '.join(allowed_splats)} characters.|n")
                                 return
-                        if restriction['splat_type'] and restriction['splat_type'] != char_type:
+                        if restriction['splat_type'] and char_type and restriction['splat_type'].lower() != char_type.lower():
                             self.caller.msg(f"|rThe merit '{stat_name}' is only available to {restriction['splat_type']} characters.|n")
                             return
 
@@ -3706,44 +3761,56 @@ class CmdSelfStat(MuxCommand):
 
         # Special handling for flaws
         if stat_name.title() in FLAW_VALUES:
-            try:
-                flaw_value = int(value)
-                valid_values = FLAW_VALUES[stat_name.title()]
-                if flaw_value not in valid_values:
-                    self.caller.msg(f"|rInvalid value for flaw {stat_name}. Valid values are: {', '.join(map(str, valid_values))}|n")
-                    return
+            # Skip flaw validation if we've already determined this is a specific type
+            if not ((splat == 'Possessed' and category == 'powers' and stat_type == 'curse') or
+                    (splat == 'Shifter' and category == 'flaws' and stat_type == 'spiritual')):
+                
+                # Get character's splat type if needed for restriction checks
+                char_type = None
+                if splat == 'Shifter':
+                    char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+                elif splat == 'Mortal+':
+                    char_type = self.caller.get_stat('identity', 'lineage', 'MortalPlus Type', temp=False)
+                elif splat == 'Companion':
+                    char_type = self.caller.get_stat('identity', 'lineage', 'Companion Type', temp=False)
+                elif splat == 'Possessed':
+                    char_type = self.caller.get_stat('identity', 'lineage', 'Possessed Type', temp=False)
+                    
+                try:
+                    flaw_value = int(value)
+                    valid_values = FLAW_VALUES[stat_name.title()]
+                    if flaw_value not in valid_values:
+                        self.caller.msg(f"|rInvalid value for flaw {stat_name}. Valid values are: {', '.join(map(str, valid_values))}|n")
+                        return
 
-                # Get character's type before checking restrictions
-                char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-
-                # Check splat restrictions
-                if stat_name.title() in FLAW_SPLAT_RESTRICTIONS:
-                    restriction = FLAW_SPLAT_RESTRICTIONS[stat_name.title()]
-                    if restriction['splat']:
-                        allowed_splats = restriction['splat'] if isinstance(restriction['splat'], list) else [restriction['splat']]
-                        if splat not in allowed_splats:
-                            self.caller.msg(f"|rThe flaw '{stat_name}' is only available to {', '.join(allowed_splats)} characters.|n")
+                    # Check splat restrictions
+                    if stat_name.title() in FLAW_SPLAT_RESTRICTIONS:
+                        restriction = FLAW_SPLAT_RESTRICTIONS[stat_name.title()]
+                        if restriction['splat']:
+                            allowed_splats = restriction['splat'] if isinstance(restriction['splat'], list) else [restriction['splat']]
+                            if splat.lower() not in [s.lower() for s in allowed_splats]:
+                                self.caller.msg(f"|rThe flaw '{stat_name}' is only available to {', '.join(allowed_splats)} characters.|n")
+                                return
+                        if restriction['splat_type'] and char_type and restriction['splat_type'].lower() != char_type.lower():
+                            self.caller.msg(f"|rThe flaw '{stat_name}' is only available to {restriction['splat_type']} characters.|n")
                             return
-                    if restriction['splat_type'] and restriction['splat_type'] != char_type:
-                        self.caller.msg(f"|rThe flaw '{stat_name}' is only available to {restriction['splat_type']} characters.|n")
-                        return
 
-                # Find the flaw type and store the flaw
-                for flaw_type, flaws in FLAW_CATEGORIES.items():
-                    if stat_name.title() in flaws:
-                        if 'flaws' not in self.caller.db.stats:
-                            self.caller.db.stats['flaws'] = {}
-                        if flaw_type not in self.caller.db.stats['flaws']:
-                            self.caller.db.stats['flaws'][flaw_type] = {}
-                        self.caller.db.stats['flaws'][flaw_type][stat_name.title()] = {
-                            'perm': flaw_value,
-                            'temp': flaw_value
-                        }
-                        self.caller.msg(f"|gSet flaw {stat_name} to {flaw_value}.|n")
-                        return
-            except ValueError:
-                self.caller.msg(f"|rFlaw value must be a number.|n")
-                return
+                    # Find the flaw type and store the flaw
+                    for flaw_type, flaws in FLAW_CATEGORIES.items():
+                        if stat_name.title() in flaws:
+                            if 'flaws' not in self.caller.db.stats:
+                                self.caller.db.stats['flaws'] = {}
+                            if flaw_type not in self.caller.db.stats['flaws']:
+                                self.caller.db.stats['flaws'][flaw_type] = {}
+                            self.caller.db.stats['flaws'][flaw_type][stat_name.title()] = {
+                                'perm': flaw_value,
+                                'temp': flaw_value
+                            }
+                            self.caller.msg(f"|gSet flaw {stat_name} to {flaw_value}.|n")
+                            return
+                except ValueError:
+                    self.caller.msg(f"|rInvalid value for flaw {stat_name}. Valid values are: {', '.join(map(str, FLAW_VALUES[stat_name.title()]))}|n")
+                    return
 
         # Special handling for identity stats
         if category == 'identity':

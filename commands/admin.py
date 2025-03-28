@@ -31,7 +31,7 @@ class CmdApprove(AdminCommand):
     key = "approve"
     aliases = ["+approve"]
     locks = "cmd:perm(Admin)"
-    help_category = "Staff"
+    help_category = "Admin Commands"
 
     def func(self):
         if not self.args:
@@ -102,7 +102,7 @@ class CmdUnapprove(AdminCommand):
     key = "unapprove"
     aliases = ["+unapprove"]
     locks = "cmd:perm(Admin)"
-    help_category = "Staff"
+    help_category = "Admin Commands"
 
     def func(self):
         if not self.args:
@@ -152,7 +152,7 @@ class CmdMassUnapprove(AdminCommand):
 
     key = "+massunapprove"
     locks = "cmd:perm(Admin)"
-    help_category = "Admin"
+    help_category = "Admin Commands"
 
     def func(self):
         """Execute command."""
@@ -212,7 +212,7 @@ class CmdAdminLook(CmdLook, AdminCommand):
     key = "look"
     aliases = ["l", "ls"]
     locks = "cmd:all()"
-    help_category = "Staff"
+    help_category = "Admin Commands"
 
     def func(self):
         """Handle the looking."""
@@ -249,7 +249,7 @@ class CmdTestLock(MuxCommand):
     
     key = "@testlock"
     locks = "cmd:perm(Admin)"
-    help_category = "Staff"
+    help_category = "Admin Commands"
     
     def extract_value(self, data, *path):
         """Safely extract a nested value from a dictionary."""
@@ -375,7 +375,7 @@ class CmdPuppetFreeze(MuxCommand):
     key = "+freeze"
     aliases = ["freeze"]
     locks = "cmd:perm(Admin)"
-    help_category = "Staff"
+    help_category = "Admin Commands"
     switch_options = ("unfreeze",)
 
     def freeze_character(self, char, reason, admin):
@@ -522,7 +522,7 @@ class CmdSTTeleport(MuxCommand):
     key = "+tel"
     aliases = ["+teleport"]
     locks = "cmd:perm(storyteller)"
-    help_category = "Storyteller"
+    help_category = "Player Storyteller"
     switch_options = ("quiet", "intoexit", "tonone", "loc")
     rhs_split = ("=", " to ")
 
@@ -591,7 +591,7 @@ class CmdSummon(MuxCommand):
 
     key = "+summon"
     locks = "cmd:perm(storyteller)"
-    help_category = "Storyteller"
+    help_category = "Player Storyteller"
     switch_options = ("quiet", "debug")
 
     def func(self):
@@ -666,7 +666,7 @@ class CmdReturn(MuxCommand):
 
     key = "+return"
     locks = "cmd:perm(storyteller)"
-    help_category = "Storyteller"
+    help_category = "Player Storyteller"
     switch_options = ("quiet", "all", "force", "set")
     rhs_split = ("=",)
 
@@ -784,7 +784,7 @@ class CmdSTExamine(MuxCommand):
     key = "+examine"
     aliases = ["+ex", "+exam"]
     locks = "cmd:perm(storyteller)"
-    help_category = "Storyteller"
+    help_category = "Player Storyteller"
 
     def func(self):
         """Handle command"""
@@ -850,7 +850,7 @@ class CmdSTFind(MuxCommand):
     key = "+find"
     aliases = ["+search", "+locate"]
     locks = "cmd:perm(storyteller)"
-    help_category = "Storyteller"
+    help_category = "Player Storyteller"
     switch_options = ("room", "exit", "char", "exact", "loc")
 
     def func(self):

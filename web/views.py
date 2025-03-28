@@ -180,20 +180,44 @@ def format_attributes(stats):
 @login_required
 def character_list(request):
     """View for displaying list of characters."""
-    characters = ObjectDB.objects.filter(db_typeclass_path__contains='character').exclude(db_typeclass_path__contains='npc').order_by('db_key')
+    # Get base character queryset
+    characters = ObjectDB.objects.filter(
+        db_typeclass_path__contains='character'
+    ).exclude(
+        db_typeclass_path__contains='npc'
+    )
+    
+    # Filter for approved characters only, excluding staff and storytellers
+    # A character is included if:
+    # 1. They have the approved attribute set to True AND
+    # 2. They are not staff AND
+    # 3. They are not storytellers
+    approved_characters = []
+    for character in characters:
+        # Check for staff/storyteller permissions
+        permission_tags = [tag.db_key for tag in character.db_tags.filter(db_tagtype="permission")]
+        is_staff = any(perm in permission_tags for perm in ["developer", "admin", "builder"])
+        is_storyteller = "storyteller" in permission_tags
+        
+        # Only include approved characters that are not staff/storyteller
+        if character.db.approved and not is_staff and not is_storyteller:
+            approved_characters.append(character)
+    
+    # Sort the approved characters by name
+    approved_characters.sort(key=lambda x: x.key)
     
     # Set up pagination
-    paginator = Paginator(characters, 20)  # Show 20 characters per page
+    paginator = Paginator(approved_characters, 75)  # Show 75 characters per page/25 per column
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
-    # Calculate half count for two-column layout based on current page
+    # Calculate third count for three-column layout based on current page
     current_page_count = len(page_obj.object_list)
-    half_count = (current_page_count + 1) // 2  # Using ceiling division to handle odd numbers
+    third_count = (current_page_count + 2) // 3  # Using ceiling division to handle numbers not divisible by 3
     
     context = {
         'characters': page_obj.object_list,
-        'half_count': half_count,
+        'third_count': third_count,
         'is_paginated': paginator.num_pages > 1,
         'page_obj': page_obj
     }

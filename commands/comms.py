@@ -58,7 +58,7 @@ class CustomCmdChannel(MuxCommand):
                      "history", "mute", "unmute", "create", "destroy", "desc", 
                      "lock", "unlock", "ban", "unban", "boot", "purge", "view")
     channel_class = ChannelDB
-    help_category = "Communications"
+    help_category = "Comms"
 
     def add_channel_alias(self, caller, channel, aliases):
         """Helper method to add channel aliases."""
@@ -909,7 +909,7 @@ class CmdNotifications(MuxCommand):
     key = "@notifications"
     aliases = ["@notify"]
     locks = "cmd:all()"
-    help_category = "Settings"
+    help_category = "Comms"
     
     def func(self):
         """Handle the command."""

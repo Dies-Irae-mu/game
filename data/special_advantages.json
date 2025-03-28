@@ -523,7 +523,7 @@
     },
     {
         "name": "Human Guise",
-        "description": "You have a human form you can wear when required. For the two-point version of this Advantage you present a few tells. These could be semi-visible gills, cat eyes, or hints of your reptile scales poking out from under that neat human skin you’ve thrown on. The two-point version of this Advantage comes with one dot in Appearance. Your tells can be covered up with makeup and or the right type of clothing, but it’s fairly clear that you are not quite what you appear to be. The four-point version of this Advantage gives you a completely normal human guise with no obvious tells. Powers and abilities that can uncover a being’s true form are the only way to discern that you are something other than a mild-mannered reporter (or whatever).",
+        "description": "You have a human form you can wear when required. For the two-point version of this Advantage you present a few tells. These could be semi-visible gills, cat eyes, or hints of your reptile scales poking out from under that neat human skin you've thrown on. The two-point version of this Advantage comes with one dot in Appearance. Your tells can be covered up with makeup and or the right type of clothing, but it's fairly clear that you are not quite what you appear to be. The four-point version of this Advantage gives you a completely normal human guise with no obvious tells. Powers and abilities that can uncover a being's true form are the only way to discern that you are something other than a mild-mannered reporter (or whatever).",
         "game_line": "Mage: The Ascension",
         "category": "powers",
         "stat_type": "special_advantage",
@@ -540,7 +540,7 @@
         "values": [1]
     },
     {
-        "name": "Telepathy",
+        "name": "Companion Telepathy",
         "description": "You might not be able to speak with your mouth, but you can speak with your mind. This Advantage allows, for example, a sword, a horse, or a quivering pool of sentient goo to hold conversations with anyone who understands what that character is trying to say. The recipient of the telepathy must be able to comprehend your conversation, of course, though certain phrases or empathic bursts may transcend a language barrier. (Roll Intelligence + Empathy, Etiquette, Intimidation or other appropriate Traits as needed.) That party may also, with a successful resisted Willpower roll, block out what you're trying to say. You can talk, but they aren't compelled to listen. Assuming both parties want to talk, and can understand what the other one is saying, you're able to silently converse with one other character within an unobstructed range of sight (2 pts.); with one other character for each point of Willpower you possess (4 pts.); and perhaps transcend obstacles and talk to characters you already know and have bonded with, even when you cannot see each other, across distances of roughly a mile or so (6 pts.). For organic and spirit-beings, this Advantage reflects a psychic or spiritual communion; tech-oriented characters may be using communication devices instead. However the telepathy is defined, outside parties cannot hear it unless they employ a suitable method (psychic power, the Mind Sphere, radio transmissions, etc.) to tap into it and spend a point of Willpower in order to do so. You might be using transmission technology, but if so, it's not the sort of tech the average listener can access or employ.",
         "game_line": "Mage: The Ascension",
         "category": "powers",

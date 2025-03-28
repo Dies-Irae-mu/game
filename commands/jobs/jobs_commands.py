@@ -69,7 +69,7 @@ class CmdJobs(MuxCommand):
     key = "+jobs"
     aliases = ["+requests", "+request", "myjobs", "myjob", "+job", "+myjobs"]
     locks = "cmd:all()"
-    help_category = "General"
+    help_category = "Utility Commands"
     
     # Add these properties to help with help system registration
     auto_help = True

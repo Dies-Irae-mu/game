@@ -12,8 +12,12 @@ from world.wod20th.utils.stat_mappings import (
     MAGE_SPHERES, ARTS, REALMS, VALID_MORTALPLUS_TYPES,
     VALID_POSSESSED_TYPES, VALID_SHIFTER_TYPES, VALID_SPLATS,
     REQUIRED_INSTANCES, KINFOLK_BREED_CHOICES, SPECIAL_ADVANTAGES, COMBAT_SPECIAL_ADVANTAGES,
-    MERIT_CATEGORIES, FLAW_CATEGORIES, MERIT_VALUES, FLAW_VALUES
+    MERIT_CATEGORIES, FLAW_CATEGORIES, MERIT_VALUES, FLAW_VALUES, UNIVERSAL_BACKGROUNDS, VAMPIRE_BACKGROUNDS, CHANGELING_BACKGROUNDS, MAGE_BACKGROUNDS,
+    TECHNOCRACY_BACKGROUNDS, TRADITIONS_BACKGROUNDS, NEPHANDI_BACKGROUNDS, SHIFTER_BACKGROUNDS,
+    SORCERER_BACKGROUNDS, KINAIN_BACKGROUNDS
 )
+from world.wod20th.utils.ritual_data import THAUMATURGY_RITUALS, NECROMANCY_RITUALS
+
 from evennia.objects.models import ObjectDB
 from evennia.utils import logger
 from decimal import Decimal
@@ -21,6 +25,7 @@ from datetime import datetime, timedelta
 import ast
 from world.wod20th.models import Stat
 from django.db.models import Q
+from commands.CmdSelfStat import REQUIRED_SPECIALTIES
 
 # Constants
 PURCHASABLE_DISCIPLINES = ['Potence', 'Celerity', 'Fortitude', 'Obfuscate', 'Auspex']
@@ -51,6 +56,10 @@ AUTO_APPROVE = {
         'pools': {
             'max': 5,
             'types': ['Willpower', 'Rage', 'Gnosis', 'Glamour']
+        },
+        'advantages': {
+            'max': 1,
+            'types': ['Arete', 'Enlightenment']
         }
     },
     'Vampire': {
@@ -85,16 +94,87 @@ AUTO_APPROVE = {
     }
 }
 
-# Clan-specific disciplines mapping
-def _is_discipline_in_clan(self, discipline, clan):
-    """Helper method to check if a discipline is in-clan."""
-    # Define allowed disciplines that can be purchased
-    PURCHASABLE_DISCIPLINES = ['Potence', 'Celerity', 'Fortitude', 'Obfuscate', 'Auspex']
+def _get_primary_thaumaturgy_path(character):
+    """Get the primary thaumaturgy path for a character. This is the first path purchased and the one that is the highest rating. 
+    if there are multiple paths at the same rating, use 'Path of Blood'."""
+    paths = character.db.stats.get('powers', {}).get('thaumaturgy', {})
+    highest_rating = 0
+    primary_path = 'Path of Blood'  # Default to Path of Blood if multiple at same rating
     
-    # If it's not in the allowed list, it can't be purchased at all
-    if discipline not in PURCHASABLE_DISCIPLINES:
+    # Go through all paths to find highest rating
+    for path_name, path_data in paths.items():
+        rating = path_data.get('perm', 0)
+        if rating > highest_rating:
+            highest_rating = rating
+            primary_path = path_name
+        elif rating == highest_rating and path_name == 'Path of Blood':
+            # If same rating and it's Path of Blood, prefer it
+            primary_path = path_name
+            
+    return primary_path
+
+def _get_primary_necromancy_path(character):
+    """Get the primary necromancy path for a character. This is the first path purchased and the one that is the highest rating. 
+    if there are multiple paths at the same rating, use 'Sepulchre Path'."""
+    paths = character.db.stats.get('powers', {}).get('necromancy', {})
+    highest_rating = 0
+    primary_path = 'Sepulchre Path'  # Default to Sepulchre Path if multiple at same rating
+    
+    # Go through all paths to find highest rating
+    for path_name, path_data in paths.items():
+        rating = path_data.get('perm', 0)
+        if rating > highest_rating:
+            highest_rating = rating
+            primary_path = path_name
+        elif rating == highest_rating and path_name == 'Sepulchre Path':
+            # If same rating and it's Sepulchre Path, prefer it
+            primary_path = path_name
+            
+    return primary_path
+
+def free_specialty_check(character):
+    """Check if the character has free specialty slots."""
+    # Check if the character is in chargen
+    if character.db.is_approved:
         return False
-        
+    
+    # Check for high-level abilities and attributes (4+)
+    # Check abilities
+    for category in ['talent', 'skill', 'knowledge']:
+        abilities = character.db.stats.get('abilities', {}).get(category, {})
+        for ability_name, ability_data in abilities.items():
+            if ability_data.get('perm', 0) >= 4:
+                return True
+                
+            # Check for required specialties (case-insensitive matching)
+            for req_ability in REQUIRED_SPECIALTIES:
+                if ability_name.lower() == req_ability.lower() and ability_data.get('perm', 0) > 0:
+                    return True
+    
+    # Check secondary abilities
+    for category in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+        abilities = character.db.stats.get('secondary_abilities', {}).get(category, {})
+        for ability_name, ability_data in abilities.items():
+            if ability_data.get('perm', 0) >= 4:
+                return True
+                
+            # Check for required specialties (case-insensitive matching)
+            for req_ability in REQUIRED_SPECIALTIES:
+                if ability_name.lower() == req_ability.lower() and ability_data.get('perm', 0) > 0:
+                    return True
+    
+    # Check attributes
+    for category in ['physical', 'social', 'mental']:
+        attributes = character.db.stats.get('attributes', {}).get(category, {})
+        for attribute_name, attribute_data in attributes.items():
+            if attribute_data.get('perm', 0) >= 4:
+                return True
+    
+    return False
+
+# Clan-specific disciplines mapping
+def _is_discipline_in_clan(discipline, clan):
+    """Helper method to check if a discipline is in-clan."""
     # clan-specific disciplines
     clan_disciplines = {
     'Ahrimanes': ['Animalism', 'Presence', 'Spiritus'],
@@ -180,10 +260,13 @@ def calculate_xp_cost(character, stat_name, new_rating, category=None, subcatego
     
     # Get current rating if not provided
     if current_rating is None:
-        if category == 'powers' and subcategory == 'discipline':
-            current_rating = character.db.stats.get('powers', {}).get('discipline', {}).get(stat_name, {}).get('perm', 0)
-        elif category == 'powers':
-            current_rating = character.db.stats.get('powers', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
+        if category == 'powers':
+            if subcategory == 'discipline':
+                current_rating = character.db.stats.get('powers', {}).get('discipline', {}).get(stat_name, {}).get('perm', 0)
+            elif subcategory in ['thaumaturgy', 'necromancy']:
+                current_rating = character.db.stats.get('powers', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
+            else:
+                current_rating = character.db.stats.get('powers', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
         elif category == 'backgrounds' and '(' in stat_name and ')' in stat_name:
             # Look up the specific instanced background
             current_rating = character.db.stats.get(category, {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
@@ -193,17 +276,64 @@ def calculate_xp_cost(character, stat_name, new_rating, category=None, subcatego
         else:
             current_rating = character.get_stat(category, subcategory, stat_name) or 0
 
-    # Define allowed disciplines that can be purchased
-    PURCHASABLE_DISCIPLINES = ['Potence', 'Celerity', 'Fortitude', 'Obfuscate', 'Auspex']
-    
-    # If it's a discipline, check if it's in the allowed list
-    if category == 'powers' and subcategory == 'discipline' and stat_name not in PURCHASABLE_DISCIPLINES:
-        character.msg(f"Discipline {stat_name} is not in the allowed purchase list")
-        return (0, False)
-
     # Initialize cost and requires_approval
     total_cost = 0
     requires_approval = False
+
+    # Special handling for Thaumaturgy and Necromancy paths
+    if category == 'powers' and subcategory in ['thaumaturgy', 'necromancy']:
+        # Get primary path
+        if subcategory == 'thaumaturgy':
+            primary_path = _get_primary_thaumaturgy_path(character)
+        else:  # necromancy
+            primary_path = _get_primary_necromancy_path(character)
+
+        # Check discipline rating
+        discipline_name = 'Thaumaturgy' if subcategory == 'thaumaturgy' else 'Necromancy'
+        discipline_rating = character.db.stats.get('powers', {}).get('discipline', {}).get(discipline_name, {}).get('perm', 0)
+        
+        # Cannot exceed discipline rating
+        if new_rating > discipline_rating:
+            return (0, False)
+            
+        # Calculate cost based on whether this is primary or secondary path
+        if stat_name == primary_path:
+            # Primary path costs 5 XP per level
+            total_cost = sum(5 for i in range(current_rating + 1, new_rating + 1))
+        else:
+            # Secondary path costs 7 for first level, then current rating × 4
+            if current_rating == 0:
+                total_cost = 7  # First dot always costs 7
+                if new_rating > 1:  # If buying multiple levels
+                    # For each additional level, cost is previous rating × 4
+                    for i in range(1, new_rating):
+                        total_cost += i * 4
+            else:
+                # Cost is current rating × 4
+                total_cost = current_rating * 4
+                
+        requires_approval = True  # Always require staff approval
+        return (total_cost, requires_approval)
+
+    # Special handling for Thaumaturgy and Necromancy disciplines
+    if category == 'powers' and subcategory == 'discipline' and stat_name in ['Thaumaturgy', 'Necromancy']:
+        # Check if it's an in-clan discipline
+        clan = character.db.stats.get('identity', {}).get('lineage', {}).get('Clan', {}).get('perm', '')
+        is_in_clan = _is_discipline_in_clan(stat_name, clan)
+        
+        # Calculate discipline cost
+        total_cost = 0
+        for rating in range(current_rating + 1, new_rating + 1):
+            if rating == 1:
+                total_cost += 10  # First dot always costs 10
+            else:
+                if is_in_clan:
+                    total_cost += (rating - 1) * 5  # Previous rating × 5
+                else:
+                    total_cost += (rating - 1) * 7  # Previous rating × 7
+        
+        requires_approval = True  # Always require staff approval
+        return (total_cost, requires_approval)
 
     # Special handling for blessings and charms
     if category == 'powers':
@@ -255,6 +385,46 @@ def calculate_xp_cost(character, stat_name, new_rating, category=None, subcatego
             # Glamour costs Current Rating * 3 XP
             total_cost = sum(i * 3 for i in range(current_rating + 1, new_rating + 1))
             requires_approval = new_rating > 5
+        elif stat_name in ['Arete', 'Enlightenment']:
+            # Arete and Enlightenment cost Current Rating * 8 XP
+            total_cost = sum(i * 8 for i in range(current_rating + 1, new_rating + 1))
+            requires_approval = new_rating > 1 # Arete and Enlightenment are always 1 or higher and always require staff approval for raising.
+        return (total_cost, requires_approval)
+
+    # Special handling for Thaumaturgy and Necromancy rituals
+    if category == 'powers' and subcategory in ['thaum_ritual', 'necromancy_ritual']:
+        # Check if the corresponding discipline is in-clan
+        clan = character.db.stats.get('identity', {}).get('lineage', {}).get('Clan', {}).get('perm', '')
+        discipline_name = 'Thaumaturgy' if subcategory == 'thaum_ritual' else 'Necromancy'
+        is_in_clan = _is_discipline_in_clan(discipline_name, clan)
+        
+        # Check if character has the required discipline rating
+        discipline_rating = character.db.stats.get('powers', {}).get('discipline', {}).get(discipline_name, {}).get('perm', 0)
+        
+        # Get ritual level from the appropriate dictionary
+        ritual_dict = THAUMATURGY_RITUALS if subcategory == 'thaum_ritual' else NECROMANCY_RITUALS
+        ritual_level = None
+        
+        # Case-insensitive lookup
+        for ritual_name, level in ritual_dict.items():
+            if ritual_name.lower() == stat_name.lower():
+                ritual_level = level
+                break
+                
+        if ritual_level is None:
+            return (0, False)  # Invalid ritual
+        
+        # Cannot learn rituals higher than discipline rating
+        if ritual_level > discipline_rating:
+            return (0, False)
+            
+        # Calculate cost based on in-clan status
+        if is_in_clan:
+            total_cost = ritual_level * 2  # Level x 2 XP for in-clan
+        else:
+            total_cost = ritual_level * 3  # Level x 3 XP for out-of-clan
+            
+        requires_approval = True  # Always require staff approval for rituals
         return (total_cost, requires_approval)
 
     # Calculate cost for each dot being purchased
@@ -283,6 +453,9 @@ def calculate_xp_cost(character, stat_name, new_rating, category=None, subcatego
         elif category == 'backgrounds':
             dot_cost = 5  # Each dot costs 5 XP
             requires_approval = rating > 3
+
+        elif category == 'specialties':
+            dot_cost = 2  # Each dot costs 2 XP
 
         # Calculate costs for Changeling/Kinain arts and realms
         elif category == 'powers' and (splat == 'Changeling' or (splat == 'Mortal+' and mortal_type == 'Kinain')):
@@ -320,7 +493,7 @@ def calculate_xp_cost(character, stat_name, new_rating, category=None, subcatego
                 if subcategory == 'discipline':
                     # Check if it's an in-clan discipline
                     clan = character.db.stats.get('identity', {}).get('lineage', {}).get('Clan', {}).get('perm', '')
-                    is_in_clan = character._is_discipline_in_clan(stat_name, clan)
+                    is_in_clan = _is_discipline_in_clan(stat_name, clan)
                     
                     if rating == 1:
                         dot_cost = 10  # First dot always costs 10
@@ -425,6 +598,53 @@ def validate_xp_purchase(character, stat_name, new_rating, category=None, subcat
     if not splat:
         return False, "Character splat not set"
 
+    # If it's a discipline, check if it's in the allowed list for player purchases
+    if category == 'powers' and subcategory == 'discipline':
+        if stat_name in ['Thaumaturgy', 'Necromancy']:
+            return False, f"{stat_name} requires staff approval to purchase"
+        elif stat_name not in PURCHASABLE_DISCIPLINES:
+            return False, f"Discipline {stat_name} requires staff approval to purchase"
+
+    # Special handling for Thaumaturgy and Necromancy paths
+    if category == 'powers' and subcategory in ['thaumaturgy', 'necromancy']:
+        # Check if character has the required discipline
+        discipline_name = 'Thaumaturgy' if subcategory == 'thaumaturgy' else 'Necromancy'
+        discipline_rating = character.db.stats.get('powers', {}).get('discipline', {}).get(discipline_name, {}).get('perm', 0)
+        
+        if discipline_rating == 0:
+            return False, f"Must have {discipline_name} discipline to purchase {subcategory.title()} paths"
+
+        # Get primary path
+        if subcategory == 'thaumaturgy':
+            primary_path = _get_primary_thaumaturgy_path(character)
+        else:  # necromancy
+            primary_path = _get_primary_necromancy_path(character)
+
+        # If this is not the primary path, check level restriction
+        if stat_name != primary_path:
+            primary_path_rating = character.db.stats.get('powers', {}).get(subcategory, {}).get(primary_path, {}).get('perm', 0)
+            if new_rating > primary_path_rating:
+                return False, f"Secondary {subcategory.title()} paths cannot exceed primary path rating ({primary_path_rating})"
+
+        # These paths always require staff approval
+        return False, f"{subcategory.title()} paths require staff approval"
+
+    # Special handling for Thaumaturgy and Necromancy rituals
+    if category == 'powers' and subcategory in ['thaum_ritual', 'necromancy_ritual']:
+        # Check if character has the required discipline
+        discipline_name = 'Thaumaturgy' if subcategory == 'thaum_ritual' else 'Necromancy'
+        discipline_rating = character.db.stats.get('powers', {}).get('discipline', {}).get(discipline_name, {}).get('perm', 0)
+        
+        if discipline_rating == 0:
+            return False, f"Must have {discipline_name} discipline to purchase rituals"
+            
+        # Cannot learn rituals higher than discipline rating
+        if new_rating > discipline_rating:
+            return False, f"Cannot learn level {new_rating} rituals without {discipline_name} {new_rating}"
+            
+        # Rituals always require staff approval
+        return False, f"{discipline_name} rituals require staff approval"
+
     # Handle pools (Willpower, Rage, Gnosis, Glamour)
     if category == 'pools' and subcategory == 'dual':
         # Get current rating
@@ -458,6 +678,10 @@ def validate_xp_purchase(character, stat_name, new_rating, category=None, subcat
             # Gnosis above 5 requires staff approval for Shifters
             if new_rating > 5:
                 return False, "Gnosis above 5 requires staff approval"
+        elif stat_name in ['Arete', 'Enlightenment']:
+            # Arete/Enlightenment above 1 requires staff approval
+            if new_rating > 1:
+                return False, f"{stat_name} above 1 requires staff approval"
                 
         return True, ""
 
@@ -583,6 +807,11 @@ def validate_xp_purchase(character, stat_name, new_rating, category=None, subcat
             if stat_name not in PURCHASABLE_DISCIPLINES:
                 return False, f"{stat_name} cannot be purchased with XP"
 
+        if splat == 'Vampire' and subcategory == 'necromancy':
+            return False, f"Necromancy paths require staff approval."
+            
+        if splat == 'Vampire' and subcategory == 'thaumaturgy':
+            return False, f"Thaumaturgical paths require staff approval."
     return True, ""
 
 def process_xp_purchase(character, stat_name, new_rating, category, subcategory, reason="", current_rating=None, pre_calculated_cost=None):
@@ -658,11 +887,91 @@ def process_xp_purchase(character, stat_name, new_rating, category, subcategory,
         logger.log_err(f"Error processing XP purchase: {str(e)}")
         return False, f"Error: {str(e)}"
 
-def process_xp_spend(character, stat_name, new_rating, category, subcategory, reason="", is_staff_spend=False):
+def process_xp_spend(character, stat_name, new_rating, category=None, subcategory=None, reason="", is_staff_spend=False):
     """
     Process an XP spend request from start to finish.
     """
     try:
+        # Special handling for Thaumaturgy and Necromancy discipline increases
+        if category == 'powers' and subcategory == 'discipline' and stat_name in ['Thaumaturgy', 'Necromancy']:
+            # Get current discipline rating
+            current_rating = character.db.stats.get('powers', {}).get('discipline', {}).get(stat_name, {}).get('perm', 0)
+            
+            # Calculate discipline cost first
+            clan = character.db.stats.get('identity', {}).get('lineage', {}).get('Clan', {}).get('perm', '')
+            is_in_clan = _is_discipline_in_clan(stat_name, clan)
+            
+            # Calculate base discipline cost
+            discipline_cost = 0
+            for rating in range(current_rating + 1, new_rating + 1):
+                if rating == 1:
+                    discipline_cost += 10  # First dot always costs 10
+                else:
+                    if is_in_clan:
+                        discipline_cost += (rating - 1) * 5  # Previous rating × 5
+                    else:
+                        discipline_cost += (rating - 1) * 7  # Previous rating × 7
+            
+            # Check if character has enough XP
+            if character.db.xp['current'] < discipline_cost:
+                return False, f"Not enough XP. Cost: {discipline_cost}, Available: {character.db.xp['current']}", discipline_cost
+            
+            # Process the discipline increase
+            success, message = process_xp_purchase(character, stat_name, new_rating, category, subcategory, reason, current_rating, discipline_cost)
+            if not success:
+                return False, message, discipline_cost
+            
+            # If this is the first dot AND they have no existing paths, set up the primary path
+            path_subcategory = stat_name.lower()
+            existing_paths = character.db.stats.get('powers', {}).get(path_subcategory, {})
+            
+            if current_rating == 0 and not existing_paths:
+                # Initialize path structure if needed
+                if 'powers' not in character.db.stats:
+                    character.db.stats['powers'] = {}
+                if path_subcategory not in character.db.stats['powers']:
+                    character.db.stats['powers'][path_subcategory] = {}
+                
+                # Calculate path cost
+                path_cost = 5  # First dot in primary path costs 5
+                total_cost = discipline_cost + path_cost
+                
+                # Check if character has enough XP
+                if character.db.xp['current'] < total_cost:
+                    return False, f"Not enough XP. Cost: {total_cost} (Discipline: {discipline_cost}, Path: {path_cost}), Available: {character.db.xp['current']}", total_cost
+                
+                # Process the discipline increase
+                success, message = process_xp_purchase(character, stat_name, new_rating, category, subcategory, reason, current_rating, discipline_cost)
+                if not success:
+                    return False, message, total_cost
+                
+                # Set up default primary path at rating 1
+                default_path = 'Path of Blood' if stat_name == 'Thaumaturgy' else 'Sepulchre Path'
+                character.db.stats['powers'][path_subcategory][default_path] = {
+                    'perm': 1,
+                    'temp': 1
+                }
+                
+                # Process the path increase separately
+                success, message = process_xp_purchase(character, default_path, 1, 'powers', path_subcategory, f"Initial {default_path}", 0, path_cost)
+                if not success:
+                    return False, message, total_cost
+                
+                return True, f"Successfully increased {stat_name} to {new_rating} and set up {default_path} at 1", total_cost
+            
+            # For subsequent increases, just process the discipline increase
+            else:
+                # Check if character has enough XP
+                if character.db.xp['current'] < discipline_cost:
+                    return False, f"Not enough XP. Cost: {discipline_cost}, Available: {character.db.xp['current']}", discipline_cost
+                
+                # Process the discipline increase
+                success, message = process_xp_purchase(character, stat_name, new_rating, category, subcategory, reason, current_rating, discipline_cost)
+                if not success:
+                    return False, message, discipline_cost
+                
+                return True, f"Successfully increased {stat_name} to {new_rating}", discipline_cost
+                       
         # Special handling for Gnosis - differentiate between Kinfolk (merit) and Shifters (pool)
         if stat_name.lower() == 'gnosis':
             splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
@@ -691,7 +1000,17 @@ def process_xp_spend(character, stat_name, new_rating, category, subcategory, re
         elif category == 'powers':
             if subcategory == 'discipline':
                 current_rating = character.db.stats.get('powers', {}).get('discipline', {}).get(stat_name, {}).get('perm', 0)
-                logger.log_info(f"Getting discipline rating: {current_rating}")
+                logger.log_info(f"Getting discipline rating: {current_rating} for {stat_name}")
+                
+                # Initialize discipline if it doesn't exist
+                if 'powers' not in character.db.stats:
+                    character.db.stats['powers'] = {}
+                if 'discipline' not in character.db.stats['powers']:
+                    character.db.stats['powers']['discipline'] = {}
+                if stat_name not in character.db.stats['powers']['discipline']:
+                    character.db.stats['powers']['discipline'][stat_name] = {'perm': 0, 'temp': 0}
+                    current_rating = 0
+                    logger.log_info(f"Initialized discipline {stat_name} with rating 0")
             else:
                 current_rating = character.db.stats.get('powers', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
                 logger.log_info(f"Getting other power rating: {current_rating}")
@@ -874,6 +1193,34 @@ def process_xp_spend(character, stat_name, new_rating, category, subcategory, re
                 if 'discipline' not in character.db.stats['powers']:
                     character.db.stats['powers']['discipline'] = {}
                 character.db.stats['powers']['discipline'][stat_name] = {
+                    'perm': new_rating,
+                    'temp': new_rating
+                }
+            elif subcategory == 'thaumaturgy':
+                if 'thaumaturgy' not in character.db.stats['powers']:
+                    character.db.stats['powers']['thaumaturgy'] = {}
+                # Normalize path name to title case with 'of' lowercase
+                normalized_name = ' '.join(word.title() if word.lower() != 'of' else 'of' 
+                                        for word in stat_name.split())
+                # Remove any existing path with different case
+                for existing_path in list(character.db.stats['powers']['thaumaturgy'].keys()):
+                    if existing_path.lower() == normalized_name.lower():
+                        if existing_path != normalized_name:
+                            # Transfer the existing rating to the normalized name
+                            existing_rating = character.db.stats['powers']['thaumaturgy'][existing_path]
+                            del character.db.stats['powers']['thaumaturgy'][existing_path]
+                            character.db.stats['powers']['thaumaturgy'][normalized_name] = existing_rating
+                            logger.log_info(f"Normalized path name from {existing_path} to {normalized_name}")
+                # Set the new rating
+                character.db.stats['powers']['thaumaturgy'][normalized_name] = {
+                    'perm': new_rating,
+                    'temp': new_rating
+                }
+                logger.log_info(f"Updated thaumaturgy path {normalized_name} to {new_rating}")
+            elif subcategory == 'necromancy':
+                if 'necromancy' not in character.db.stats['powers']:
+                    character.db.stats['powers']['necromancy'] = {}
+                character.db.stats['powers']['necromancy'][stat_name] = {
                     'perm': new_rating,
                     'temp': new_rating
                 }
@@ -1168,7 +1515,7 @@ def can_buy_stat(self, stat_name, new_rating, category=None):
         'Vampire': {
             'powers': {        # Disciplines up to 2
                 'max': 2,
-                'types': ['discipline']
+                'types': ['discipline', 'thaumaturgy', 'necromancy', 'thaum_ritual', 'necromancy_ritual']
             }
         },
         'Mage': {
@@ -1257,7 +1604,7 @@ def buy_stat(self, stat_name, new_rating, category=None, subcategory=None, reaso
         if category == 'powers':
             self.fix_powers()
             # After fixing, ensure we're using the correct subcategory
-            if subcategory in ['spheres', 'arts', 'realms', 'disciplines', 'gifts', 'charms', 'blessings', 'rituals', 'sorceries', 'advantages']:
+            if subcategory in ['sphere', 'art', 'realm', 'discipline', 'gift', 'charm', 'blessing', 'rite', 'sorcery', 'thaumaturgy', 'necromancy', 'necromancy_ritual', 'thaum_ritual', 'hedge_ritual', 'numina', 'faith']:
                 # Convert to singular form
                 subcategory = subcategory.rstrip('s')
                 if subcategory == 'advantage':
@@ -1415,12 +1762,64 @@ def _determine_stat_category(stat_name):
     """
     Determine the category and type of a stat based on its name.
     """
+    logger.log_info(f"Determining category for stat: {stat_name}")
+
+    # Check for rituals first - case insensitive
+    stat_name_lower = stat_name.lower()
+    
+    # Check Thaumaturgy rituals
+    for ritual_name in THAUMATURGY_RITUALS:
+        if ritual_name.lower() == stat_name_lower:
+            logger.log_info(f"Found thaumaturgy ritual match: {ritual_name}")
+            return ('powers', 'thaum_ritual')
+            
+    # Check Necromancy rituals
+    for ritual_name in NECROMANCY_RITUALS:
+        if ritual_name.lower() == stat_name_lower:
+            logger.log_info(f"Found necromancy ritual match: {ritual_name}")
+            return ('powers', 'necromancy_ritual')
+
+    # Handle instanced stats - extract base name
+    base_name = stat_name
+    if '(' in stat_name and ')' in stat_name:
+        base_name = stat_name[:stat_name.find('(')].strip()
+        instance = stat_name[stat_name.find('(')+1:stat_name.find(')')].strip()
+        logger.log_info(f"Extracted base name from instanced stat: {base_name}")
+
+    # Check if it's a background (case-insensitive)
+    all_backgrounds = (UNIVERSAL_BACKGROUNDS + VAMPIRE_BACKGROUNDS + 
+                      CHANGELING_BACKGROUNDS + MAGE_BACKGROUNDS + 
+                      TECHNOCRACY_BACKGROUNDS + TRADITIONS_BACKGROUNDS + 
+                      NEPHANDI_BACKGROUNDS + SHIFTER_BACKGROUNDS + 
+                      SORCERER_BACKGROUNDS + KINAIN_BACKGROUNDS)
+
+    # Debug log all backgrounds
+    logger.log_info(f"Available backgrounds: {all_backgrounds}")
+    
+    # Check for exact match first
+    if base_name in all_backgrounds:
+        logger.log_info(f"Found exact background match: {base_name}")
+        return ('backgrounds', 'background')
+        
+    # Then try case-insensitive match
+    base_name_lower = base_name.lower()
+    for bg in all_backgrounds:
+        if isinstance(bg, str) and bg.lower() == base_name_lower:
+            logger.log_info(f"Found case-insensitive background match: {bg}")
+            return ('backgrounds', 'background')
+
+    logger.log_info(f"No background match found for: {base_name}")
+
     # Convert to title case for comparison
     stat_name = stat_name.title()
-    
+
     # Special case for pool stats (Willpower, Rage, Gnosis, Glamour)
     if stat_name in ['Willpower', 'Rage', 'Gnosis', 'Glamour']:
         return ('pools', 'dual')
+
+    # Special case for pool stats (Arete, Enlightenment)
+    if stat_name in ['Arete', 'Enlightenment']:
+        return ('pools', 'advantage')
 
     # Check if it's a merit
     for merit_type, merits in MERIT_CATEGORIES.items():
@@ -1464,6 +1863,38 @@ def _determine_stat_category(stat_name):
         'Vicissitude', 'Mortis', 'Thanatosis', 'Melpominee', 'Mytherceria',
         'Visceratika', 'Daimoinon', 'Spiritus', 'Sanguinus', 'Kai', 'Bardo',
         'Deimos', 'Temporis', 'Ogham', 'Obeah', 'Abombwe', 'Valeren'
+    ]
+
+    ALL_THAUMATURGY = [
+        'Path of Blood',
+        'Elemental Mastery',
+        'Movement of the Mind',
+        'Lure of Flames',
+        'Weather Control',
+        'The Green Path',
+        'The Path of Conjuring',
+        'Hands of Destruction',
+        'Neptune\'s Might',
+        'Path of Mars',
+        'Technomancy',
+        'Path of Corruption',
+        'Path of the Father\'s Vengeance'
+    ]
+
+    ALL_NECROMANCY = [
+        'Sepulchre Path',
+        'Bone Path',
+        'Ash Path',
+        'Vitreous Path',
+        'Cenotaph Path',
+        'Path of Abombo',
+        'Path of Woe',
+        'Nightshade Path',
+        'Path of Haunting',
+        'Grave\'s Decay',
+        'Path of Skulls',
+        'Twilight Garden',
+        'Corpse in the Monster',
     ]
 
     # Check if it's a sphere
@@ -1520,16 +1951,37 @@ def _determine_stat_category(stat_name):
     for disc in ALL_DISCIPLINES:
         if disc.lower() == base_name_lower:
             return ('powers', 'discipline')
-        
-    # Check if it's a Gift - this needs to happen before other checks
+
+    # Check if it's a thaumaturgy path
+    if base_name in ALL_THAUMATURGY:
+        return ('powers', 'thaumaturgy')
+    base_name_lower = base_name.lower()
+    for thaum in ALL_THAUMATURGY:
+        if thaum.lower() == base_name_lower:
+            return ('powers', 'thaumaturgy')
+
+    # Check if it's a necromancy path
+    if base_name in ALL_NECROMANCY:
+        return ('powers', 'necromancy')
+    base_name_lower = base_name.lower()
+    for necromancy in ALL_NECROMANCY:
+        if necromancy.lower() == base_name_lower:
+            return ('powers', 'necromancy')
+    # Check if it's a sphere
+    if stat_name in MAGE_SPHERES:
+        return ('powers', 'sphere')
+    
     # Check the database for a gift with this name
     from world.wod20th.models import Stat
     from django.db.models import Q
     
-    # Look for the stat in the database as a gift, improving the matching to avoid false positives
-    # First try exact name match
+    # Special handling for Mother's Touch - it's always a gift
+    if stat_name.lower() == "mother's touch":
+        return ('powers', 'gift')
+        
+    # Check for gifts in database
     gift = Stat.objects.filter(
-        name__iexact=stat_name,
+        (Q(name__iexact=stat_name) | Q(gift_alias__icontains=stat_name)),
         category='powers',
         stat_type='gift'
     ).first()
@@ -1567,18 +2019,15 @@ def _determine_stat_category(stat_name):
     if gift:
         return ('powers', 'gift')
         
-    # Also check if this is an Art (for Changeling)
+    # Check if this is an Art (for Changeling)
     try:
-        # Special case handling for 'primal' to match 'Primal' in ARTS
         if stat_name.lower() == 'primal':
             return ('powers', 'art')
             
-        # Check exact match or case-insensitive match
         if isinstance(ARTS, set):
             if stat_name in ARTS:
                 return ('powers', 'art')
                 
-            # Case-insensitive match
             stat_lower = stat_name.lower()
             for art in ARTS:
                 if isinstance(art, str) and art.lower() == stat_lower:
@@ -1592,12 +2041,10 @@ def _determine_stat_category(stat_name):
         if stat_name.lower() == 'nature':
             return ('powers', 'realm')
             
-        # Check exact match or case-insensitive match
         if isinstance(REALMS, set):
             if stat_name in REALMS:
                 return ('powers', 'realm')
                 
-            # Case-insensitive match
             stat_lower = stat_name.lower()
             for realm in REALMS:
                 if isinstance(realm, str) and realm.lower() == stat_lower:
@@ -1607,7 +2054,6 @@ def _determine_stat_category(stat_name):
 
     # Special handling for Time and Nature
     if base_name.lower() in ['time', 'nature']:
-        # Since this is a static method, we need to get the caller from the current command
         from evennia import search_object
         from typeclasses.characters import Character
         from evennia.commands.default.muxcommand import MuxCommand
@@ -1621,14 +2067,12 @@ def _determine_stat_category(stat_name):
                 cmd_instance = frame.f_locals['self']
                 if isinstance(cmd_instance, (Command, MuxCommand)):
                     break
-                frame = frame.f_back
+            frame = frame.f_back
         
         if frame and 'self' in frame.f_locals:
             cmd = frame.f_locals['self']
-            # Get the target character
             if hasattr(cmd, 'caller'):
                 char = cmd.caller
-                # For staffspend, check if there's a target character
                 if cmd.switches and 'staffspend' in cmd.switches and cmd.args:
                     target_name = cmd.args.split('/')[0].strip()
                     target = search_object(target_name, typeclass=Character)

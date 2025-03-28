@@ -15,7 +15,7 @@ class CmdUnpuppet(MuxAccountLookCommand):
 
     key = "unpuppet"
     locks = "cmd:pperm(Player)"
-    help_category = "General"
+    help_category = "Utility Commands"
 
     # this is used by the parent
     account_caller = True

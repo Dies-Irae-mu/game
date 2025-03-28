@@ -95,7 +95,7 @@ class CmdRoster(default_cmds.MuxCommand):
     key = "+roster"
     aliases = ["roster"]
     locks = "cmd:all()"
-    help_category = "General"
+    help_category = "Game Info"
 
     def get_roster_list(self):
         """Show list of rosters the character belongs to."""

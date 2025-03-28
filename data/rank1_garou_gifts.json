@@ -37,10 +37,10 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1, 3],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin", "Rokea"],
-        "splat": "Shifter",
-        "breed": "Metis",
-        "gift_alias": ["Bones as Coils", "Shark Bones", "Rathead"]
+		"splat": "Shifter",
+		"breed": "Metis",
+		"shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin", "Rokea"],
+		"gift_alias": ["Bones as Coils", "Shark Bones", "Rathead"]
     },
     {
         "name": "Wyld Resurgence",
@@ -92,7 +92,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
 		"camp": "Moon-Daughter",
         "tribe": "Black Furies"
@@ -106,7 +106,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Black Furies"
     },
@@ -119,7 +119,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
+        "shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
         "splat": "Shifter",
         "tribe": "Black Furies",
         "auspice": "Theurge",
@@ -134,7 +134,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Black Furies",
         "camp": "Sisterhood"
@@ -148,7 +148,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Black Furies",
         "camp": "Amazons of Diana"
@@ -162,7 +162,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Black Furies"
     },
@@ -175,7 +175,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1, 4],
-        "shifter_type":  ["Garou", "Ananasi", "Gurahl"],
+        "shifter_type": ["Garou", "Ananasi", "Gurahl"],
         "splat": "Shifter",
         "tribe": "Black Furies",
         "gift_alias": ["Inspire", "Rejuvenate"]
@@ -196,13 +196,13 @@
 	{
         "name": "Scent of Sweet Honey",
         "description": "A target the Garou touched at some point during the last hour begins to exude a wonderfully sweet aroma, and becomes slightly sticky to the touch. All manner of vermin quickly appear and coat the victim. The resulting coat of gnats, flies, bees and beetles crawls, stings, and generally impairs vision and hearing. Insect-spirits teach this Gift.",
-        "system": "The player spends one Gnosis point and rolls Wits + Subterfuge (difficulty 7). The target suffers a –1 penalty to all actions for one hour per success; the smell will not wash off during this time.",
+        "system": "The player spends one Gnosis point and rolls Wits + Subterfuge (difficulty 7). The target suffers a -1 penalty to all actions for one hour per success; the smell will not wash off during this time.",
         "source": "20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1, 4],
-        "shifter_type":  ["Garou", "Ananasi", "Bastet", "Gurahl", "Mokole", "Nuwisha"],
+        "shifter_type": ["Garou", "Ananasi", "Bastet", "Gurahl", "Mokole", "Nuwisha"],
         "splat": "Shifter",
         "tribe": "Bone Gnawers",
         "gift_alias": ["Storm of Pests", "Scent of Sweet Nectar", "Sweet Swarm of Vengeance"]
@@ -216,7 +216,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
+        "shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
         "splat": "Shifter",
         "tribe": "Bone Gnawers",
         "breed": "Homid"
@@ -230,7 +230,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Bone Gnawers"
     },
@@ -245,7 +245,7 @@
         "values": [1],
         "splat": "Shifter",
         "tribe": "Bone Gnawers",
-        "shifter_type":  ["Garou"]
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Desperate Strength",
@@ -269,7 +269,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Bone Gnawers",
         "camp": ["Rat Finks", "Frankweilers"]
@@ -283,7 +283,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Bone Gnawers"
     },
@@ -296,7 +296,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Bone Gnawers"
     },
@@ -348,7 +348,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1, 3],
-        "shifter_type":  ["Garou", "Ananasi", "Gurahl", "Ratkin", "Rokea"],
+        "shifter_type": ["Garou", "Ananasi", "Gurahl", "Ratkin", "Rokea"],
         "splat": "Shifter",
         "tribe": ["Bone Gnawers", "Black Spiral Dancer", "Fianna", "Bunyip"],
         "gift_alias": ["Ursa's Cleansing", "Consume Taint"]
@@ -356,7 +356,7 @@
     {
         "name": "Cookfire",
         "description": "The Garou can turn raw, unprocessed food into a cooked meal without need of fire. In addition, the meal tastes first class. This Gift is taught by earth-spirits allied to Corn Maiden.",
-        "system": "The player must make a Gnosis roll, difficulty 7; the more successes, the more elaborate the final meal. This Gift cannot add any food that isn't already present – it cannot spice food if the Garou has no spices handy, for instance – but it can turn unripe corn on the cob into cakes, or a fish that hasn't been cleaned into a neatly scaled, gutted, boned, and cooked meal.",
+        "system": "The player must make a Gnosis roll, difficulty 7; the more successes, the more elaborate the final meal. This Gift cannot add any food that isn't already present - it cannot spice food if the Garou has no spices handy, for instance - but it can turn unripe corn on the cob into cakes, or a fish that hasn't been cleaned into a neatly scaled, gutted, boned, and cooked meal.",
 		"source": "Croatan Song",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -388,7 +388,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Mokole", "Nagah", "Mokole", "Nagah"],
+        "shifter_type": ["Garou", "Mokole", "Nagah", "Mokole", "Nagah"],
         "splat": "Shifter",
         "tribe": "Children of Gaia",
         "gift_alias": ["Welcome Assassin"]
@@ -402,7 +402,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Children of Gaia"
     },
@@ -415,7 +415,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Children of Gaia"
     },
@@ -428,7 +428,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Children of Gaia"
     },
@@ -455,7 +455,7 @@
         "stat_type": "gift",
         "values": [1],
 		"tribe": ["Children of Gaia", "Wendigo", "Get of Fenris"],
-        "shifter_type":  ["Garou", "Ajaba", "Ananasi", "Gurahl", "Mokole", "Nagah", "Kitsune", "Ratkin", "Rokea"],
+        "shifter_type": ["Garou", "Ajaba", "Ananasi", "Gurahl", "Mokole", "Nagah", "Kitsune", "Ratkin", "Rokea"],
 		"splat": "Shifter",
         "auspice": "Philodox",
         "gift_alias": ["Ignore Wounds"]
@@ -469,7 +469,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Mokole", "Nagah", "Kitsune", "Ratkin"],
+        "shifter_type": ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Mokole", "Nagah", "Kitsune", "Ratkin"],
         "splat": "Shifter",
 		"tribe": ["Children of Gaia", "Glass Walkers", "Black Furies"],
         "auspice": "Theurge",
@@ -486,8 +486,8 @@
         "stat_type": "gift",
         "values": [1],
 		"splat": "Shifter",
-        "tribe": "Fianna",
-        "shifter_type": ["Garou", "Nuwisha"]
+		"tribe": "Fianna",
+		"shifter_type": ["Garou", "Nuwisha"]
     },
     {
         "name": "Faerie Light",
@@ -499,8 +499,8 @@
         "stat_type": "gift",
         "values": [1],
 		"splat": "Shifter",
-        "tribe": "Fianna",
-        "shifter_type": ["Garou", "Bastet"]
+		"tribe": "Fianna",
+		"shifter_type": ["Garou", "Bastet"]
     },
     {
         "name": "Persuasion",
@@ -514,7 +514,7 @@
 		"tribe": ["Fianna", "Glass Walkers"],
 		"auspice": "Philodox",
 		"breed": "Homid",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"],
+        "shifter_type": ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"],
         "splat": "Shifter",
         "gift_alias": ["Sweet Hunter's Smile", "Sweet Words"]
     },
@@ -528,7 +528,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Ajaba", "Nagah", "Rokea"],
+        "shifter_type": ["Garou", "Ajaba", "Nagah", "Rokea"],
         "splat": "Shifter",
         "tribe": "Get of Fenris",
         "gift_alias": ["Sudden Surge"]
@@ -542,7 +542,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Get of Fenris"
     },
@@ -555,7 +555,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Croatan"
     },
@@ -568,7 +568,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Bunyip"
     },
@@ -581,7 +581,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Bunyip"
     },
@@ -594,7 +594,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Get of Fenris"
     },
@@ -607,7 +607,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Get of Fenris"
     },
@@ -620,7 +620,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Get of Fenris"
     },
@@ -634,7 +634,7 @@
         "stat_type": "gift",
         "values": [1],
 		"tribe": "Get of Fenris",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Mokole", "Kitsune", "Ratkin"],
+        "shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Mokole", "Kitsune", "Ratkin"],
         "splat": "Shifter",
         "auspice": "Ahroun",
         "gift_alias": ["Slash of the Death Bear", "Slicing Teeth", "Diamond Claws"]
@@ -648,9 +648,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1, 2],
-        "shifter_type":  ["Garou", "Bastet", "Gurahl", "Mokole"],
+        "shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"],
         "splat": "Shifter",
-        "auspice": "Homid",
+        "breed": "Homid",
         "tribe": ["Get of Fenris", "Croatan"],
         "gift_alias": ["Banish Burning"]
     },
@@ -663,7 +663,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin", "Rokea"],
+        "shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin", "Rokea"],
         "splat": "Shifter",
         "tribe": ["Fianna", "Bunyip"],
         "breed": "Lupus",
@@ -678,7 +678,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": ["Glass Walkers", "Boli Zousizhe"]
     },
@@ -691,7 +691,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Glass Walkers",
         "camp": "Wise Guys"
@@ -705,7 +705,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Glass Walkers",
         "camp": "Random Interrupts"
@@ -719,20 +719,20 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Glass Walkers"
     },
     {
         "name": "Weaver's Eyes",
         "description": "Garou with this Gift gain an insight into the Weaver's deep and subtle patterns for hiding information inside of other information and to the invisible patterns buried in large prime numbers. Encryption algorithms mean nothing to these Glass Walkers; using Weaver's Eyes, they can even pierce magical shrouding of data. The Garou must have the data to be decrypted in some form — generally, residing on a local computer. Weaver's Eyes cannot be directly used to break open the encryption on a live connection between two computers, but it will help the Garou use his own abilities to break through that encryption.",
-        "system": "The player spends one Willpower and rolls Perception + Computer (difficulty of 10 – the local Gauntlet). The number of successes necessary depends on the encryption used on the message or connection that the character is trying to pierce. Encryption created by ordinary mortal programmers requires one success to pierce; mundane encryption created by the top echelon of mortal programmers requires two successes to pierce. Magical encryption, such as that created by the Gift: Encrypt or similar magical abilities performed by non-Garou, requires three or more successes — generally speaking, the character must achieve more successes on the Weaver's Eyes roll than his opposite number got on an Encrypt roll. If the character comes across an encrypted connection between two computers, Weaver's Eyes can help him break the connection in a hurry, but since the data traffic is far from him, the Gift cannot pierce the encryption directly. However, it will provide one extra success on the Perception + Computer roll used to break the encryption, and it will allow the character to attempt to break through magical encryption. This Gift is taught by a raccoon-spirit.",
+        "system": "The player spends one Willpower and rolls Perception + Computer (difficulty of 10 - the local Gauntlet). The number of successes necessary depends on the encryption used on the message or connection that the character is trying to pierce. Encryption created by ordinary mortal programmers requires one success to pierce; mundane encryption created by the top echelon of mortal programmers requires two successes to pierce. Magical encryption, such as that created by the Gift: Encrypt or similar magical abilities performed by non-Garou, requires three or more successes — generally speaking, the character must achieve more successes on the Weaver's Eyes roll than his opposite number got on an Encrypt roll. If the character comes across an encrypted connection between two computers, Weaver's Eyes can help him break the connection in a hurry, but since the data traffic is far from him, the Gift cannot pierce the encryption directly. However, it will provide one extra success on the Perception + Computer roll used to break the encryption, and it will allow the character to attempt to break through magical encryption. This Gift is taught by a raccoon-spirit.",
         "source": "Book of the City",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Glass Walkers"
     },
@@ -745,7 +745,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Glass Walkers",
 		"camp": "City Farmer"
@@ -759,7 +759,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Glass Walkers",
 		"camp": "Dies Ultimae"
@@ -773,7 +773,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Glass Walkers",
 		"camp": "Dies Ultimae"
@@ -787,7 +787,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Glass Walkers",
 		"camp": "Cyberdogs"
@@ -801,7 +801,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Glass Walkers",
 		"camp": "Coprorate Wolves"
@@ -815,7 +815,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Glass Walkers"
     },
@@ -828,7 +828,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Glass Walkers"
     },
@@ -841,7 +841,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Glass Walkers"
     },
@@ -867,7 +867,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Glass Walkers",
 		"camp": "Lord of Summit"
@@ -881,7 +881,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Shadow Lords",
 		"camp": "Children of Bat"
@@ -895,7 +895,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Hakken"
     },
@@ -908,7 +908,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Hakken"
     },
@@ -921,7 +921,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Shadow Lords"
     },
@@ -934,7 +934,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Shadow Lords"
     },
@@ -947,7 +947,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Shadow Lords",
 		"camp": "Bringers of Light"
@@ -961,7 +961,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Shadow Lords",
 		"camp": "Children of Crow"
@@ -975,7 +975,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1, 2],
-        "shifter_type":  ["Garou", "Bastet", "Camazotz", "Corax"],
+        "shifter_type": ["Garou", "Bastet", "Camazotz", "Corax"],
         "splat": "Shifter",
         "tribe": "Shadow Lords",
         "gift_alias": ["Eavesdropper's Ear"]
@@ -989,7 +989,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Nagah"],
+        "shifter_type": ["Garou", "Nagah"],
 		"splat": "Shifter",
         "auspice": "Shadow Lords",
         "gift_alias": ["Executioner's Edge"]
@@ -1003,7 +1003,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1, 3],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Mokole", "Nagah", "Ratkin"],
+        "shifter_type": ["Garou", "Ajaba", "Bastet", "Mokole", "Nagah", "Ratkin"],
         "splat": "Shifter",
         "tribe": "Shadow Lords",
         "gift_alias": ["Slayer's Eye", "Underbelly"]
@@ -1017,7 +1017,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Mokole"],
+        "shifter_type": ["Garou", "Mokole"],
         "splat": "Shifter",
         "tribe": "Shadow Lords"
     },
@@ -1030,7 +1030,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Silent Striders"
     },
@@ -1043,7 +1043,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Silent Striders"
     },
@@ -1092,7 +1092,7 @@
     },
     {
         "name": "Full Moon Cleansing",
-        "description": "This Gift allows a Garou to turn her own Rage against her Harano, thereby defeating it like any other enemy. The werewolf learns this Gift in ritual combat with a blood-warrior spirit, who must be defeated and burnt in an Umbral fire. The Garou then marks himself with the glyph for her own auspice and the Ahroun glyph. Thus, she learns how the anger of the Full Moon may be made part of herself.",
+        "description": "Waning Cycle. This Gift allows a Garou to turn her own Rage against her Harano, thereby defeating it like any other enemy. The werewolf learns this Gift in ritual combat with a blood-warrior spirit, who must be defeated and burnt in an Umbral fire. The Garou then marks himself with the glyph for her own auspice and the Ahroun glyph. Thus, she learns how the anger of the Full Moon may be made part of herself.",
         "system": "The player must spend one point of Rage and make a Rage roll (difficulty 7, difficulty 6 for Ahroun) to activate the Gift. The character may then ignore the effects of Harano for one scene per success rolled.",
         "source": "Tribebook: Silver Fangs (revised)",
         "game_line": "Werewolf: The Apocalypse",
@@ -1101,12 +1101,12 @@
         "values": [1],
 		"splat": "Shifter",
         "tribe": ["Silver Fangs"],
-		"camp": "Moon Lodge: Waning Cycle",
+		"lodge": "Moon",
         "shifter_type": ["Garou"]
     },
     {
         "name": "New Moon's Laughter",
-        "description": "This Gift allows a werewolf to make others around her more receptive to criticism and less obsessed with their own pride, thus showing them the wisdom of the New Moon. To learn this Gift, the werewolf must trick a Lune into revealing the Gift.",
+        "description": "Waxing Cycle. This Gift allows a werewolf to make others around her more receptive to criticism and less obsessed with their own pride, thus showing them the wisdom of the New Moon. To learn this Gift, the werewolf must trick a Lune into revealing the Gift.",
         "system": "The player must spend a point of Gnosis and roll Gnosis (difficulty 6). For one hour per success scored, the gathering that the character attended takes on a lighter mood. All Social rolls with a positive intent are at -1 difficulty, while all Social rolls intended to provoke argument, insult or misery are at +1 difficulty. If the character using the Gift is a Ragabash, the bonus and penalty are doubled.",
         "source": "Tribebook: Silver Fangs (revised)",
         "game_line": "Werewolf: The Apocalypse",
@@ -1115,7 +1115,7 @@
         "values": [1],
 		"splat": "Shifter",
         "tribe": ["Silver Fangs"],
-		"camp": ["Moon Lodge: Waxing Cycle"],
+		"lodge": "Moon",
         "shifter_type": ["Garou"]
     },
     {
@@ -1176,27 +1176,29 @@
         "name": "Call the Breeze",
         "description": "The Garou calls up a strong (20 mpg), cold breeze and directs it at whim. This breeze chills anyone not prepared for it, and it disperses (or redirects) clouds of vapor (including tear gas or airborne toxins) or swarms of insects. A wind-spirit teaches this Gift. Silver Fang Crescent Moon version is called Wind of Buzzard's Wings.",
         "system": "The Garou whistles to summon a breeze, reducing Perception rolls by one die for affected targets.",
-        "source": "Core book revised",
+        "source": "Core book revised / Tribebook: Silver Fangs (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
 		"splat": "Shifter",
         "tribe": ["Wendigo", "Silver Fangs"],
-        "shifter_type": ["Garou"]
+		"gift_alias": ["Wind of Buzzard's Wings"],
+        "shifter_type": ["Garou"],
+		"camp": "Crescent Moon"
     },
     {
         "name": "Wind of Buzzard's Wings",
         "description": "The Garou calls up a strong (20 mpg), cold breeze and directs it at whim. This breeze chills anyone not prepared for it, and it disperses (or redirects) clouds of vapor (including tear gas or airborne toxins) or swarms of insects. A wind-spirit teaches this Gift. Wendigo version is called Call the Breeze.",
         "system": "The Garou whistles to summon a breeze, reducing Perception rolls by one die for affected targets.",
-        "source": "Tribebook: Silver Fangs (revised)",
+        "source": "Core book revised / Tribebook: Silver Fangs (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
 		"splat": "Shifter",
-        "tribe": ["Silver Fangs"],
-        "shifter_type": ["Garou"]
+		"tribe": "Silver Fangs",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Lambent Flame",
@@ -1220,7 +1222,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Nagah"],
+        "shifter_type": ["Garou", "Nagah"],
         "splat": "Shifter",
         "auspice": "Philodox",
         "tribe": ["Silver Fangs", "Uktena"],
@@ -1235,37 +1237,37 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "tribe": "Stargazers"
+		"splat": "Shifter",
+		"tribe": "Stargazers",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Muladhara",
-        "description": "Awakening the Serpent Fire Gift: The Serpent Fire gifts must be learned in order, from 1 – 5. The base chakra is awakened and the energy stirs. The character can call on this energy to help himself root or center for meditation, or summon energy to stave off fatigue. This also includes the Svadhisthana or sacral chakra, governing the sex organs.",
+        "description": "Awakening the Serpent Fire Gift: The Serpent Fire gifts must be learned in order, from 1 - 5. The base chakra is awakened and the energy stirs. The character can call on this energy to help himself root or center for meditation, or summon energy to stave off fatigue. This also includes the Svadhisthana or sacral chakra, governing the sex organs.",
         "system": "The player must declare which effect he is trying to achieve before he rolls. He then rolls Stamina + Rituals and spends one Gnosis point. Each success lowers the difficulty of any roll involving meditation by one; or, when resisting frenzy, each success raises the difficulty of the roll by one — although the character must perform no other action that turn or the next. In all cases, Stamina roll difficulties related to fatigue are lowered by one for the rest of the scene.",
         "source": "Stargazers Tribebook (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"], 
-        "splat": "Shifter",
-        "tribe": "Stargazers"
+		"splat": "Shifter",
+		"tribe": "Stargazers",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Sense the Demonic",
-        "description": "The difference between a servitor of the Wyrm and a demon-possessed mortal is subtle. While most demons emanate perceptible Wyrm-taint, strangely some seem able to mask themselves and escape such notice. Plus, Sense Wyrm doesn't identify the nature of the taint, so the nature of the creature (that it's a demon) goes unknown until it's potentially too late. This Gift helps circumvent that problem. It doesn't provide a literal sense so much as a spiritual one – the eye in the Demon Eater's mind registers the disruption in the fabric of reality, and senses the demonic source. This Gift is taught by a chimerling.",
+        "description": "The difference between a servitor of the Wyrm and a demon-possessed mortal is subtle. While most demons emanate perceptible Wyrm-taint, strangely some seem able to mask themselves and escape such notice. Plus, Sense Wyrm doesn't identify the nature of the taint, so the nature of the creature (that it's a demon) goes unknown until it's potentially too late. This Gift helps circumvent that problem. It doesn't provide a literal sense so much as a spiritual one - the eye in the Demon Eater's mind registers the disruption in the fabric of reality, and senses the demonic source. This Gift is taught by a chimerling.",
         "system": "The player rolls Perception + occult. The difficulty is dependent upon the proximity and intensity of the demon (or demon-possessed victim). Sensing a single demon in the same room would be difficulty 6, sensing a demon across a busy city street would be 7, and detecting a demon's infernal influence after the creature has already left would be a difficulty 8.",
         "source": "Stargazers Tribebook (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "tribe": "Stargazers",
-		"camp": "Demon Eaters"
-    },	
+		"splat": "Shifter",
+		"tribe": "Stargazers",
+		"camp": "Demon Eaters",
+		"shifter_type": ["Garou"]
+    },
     {
         "name": "Seed of Speech",
         "description": "The spoke mantra for this Gift is Aum-Vak-Bija. It represents the primal nature of speech and gives the Stargazer using this Gift a preternatural understanding of the underlying force behind all words and names. Merely by intoning the mantra and activating this Gift, the Garou is capable of harmonizing with the very fundamental nature of spoken sound and the knowledge that comes with it. This Gift is taught by an avatar of Cuckoo.",
@@ -1275,10 +1277,10 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "tribe": "Stargazers"
-    },	
+		"splat": "Shifter",
+		"tribe": "Stargazers",
+		"shifter_type": ["Garou"]
+    },
     {
         "name": "Channeling",
         "description": "Rage is both a boon and a bane to the Garou, and the Stargazers feel this doubly so. Rage, while certainly a vital resource, is also a dangerous element. Many Stargazers seek new ways to harness and direct their Rage, and those with this Gift have at least one more option. A Garou using this Gift can channel her Rage into a single action, helping her perform that one action as best as she is able. This Gift is taught by a fire-spirit.",
@@ -1288,9 +1290,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "tribe": "Stargazers"
+		"splat": "Shifter",
+		"tribe": "Stargazers",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Imbalance",
@@ -1301,9 +1303,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "tribe": "Stargazers"
+		"splat": "Shifter",
+		"tribe": "Stargazers",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Paper Butterfly",
@@ -1314,9 +1316,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "tribe": "Stargazers"
+		"splat": "Shifter",
+		"tribe": "Stargazers",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Balance",
@@ -1327,10 +1329,10 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Ananasi", "Bastet", "Ratkin"],
-        "splat": "Shifter",
-        "gift_alias": ["Absolute Balance", "Treeclimber"],
-        "tribe": "Stargazers"
+		"splat": "Shifter",
+		"tribe": "Stargazers",
+		"gift_alias": ["Absolute Balance", "Treeclimber"],
+		"shifter_type": ["Garou", "Ananasi", "Bastet", "Ratkin"]
     },
     {
         "name": "Falling Touch",
@@ -1343,10 +1345,10 @@
         "values": [1],
 		"splat": "Shifter",
 		"auspice": "Ahroun",
-        "tribe": "Stargazers",
-        "shifter_type": ["Garou", "Mokole", "Kitsune"]
+		"tribe": "Stargazers",
+		"shifter_type": ["Garou", "Mokole", "Kitsune"]
     },
-	{
+    {
         "name": "Spirit of the Lizard",
         "description": "The werewolf's hands and feet spout hundreds of tiny hooks, allowing her to climb across or cling to any surface — even sheer horizontal surfaces and ceilings. A gecko-spirit teaches this Gift.",
         "system": "The player spends one Gnosis. For the rest of the scene, the character can move across any solid surface at her normal walking speed. Staying attached to a vertical surface or ceiling while taking any more strenuous movement (fighting, moving faster than walking speed, attempting to dislodge a steam grate) requires a reflexive Stamina + Athletics roll, difficulty 7).",
@@ -1355,12 +1357,12 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1, 2],
-        "shifter_type":  ["Garou", "Ananasi", "Ratkin"],
-        "splat": "Shifter",
-        "tribe": "Uktena",
-        "gift_alias": ["Cling", "Crawling Chaos"]
+		"splat": "Shifter",
+		"tribe": "Uktena",
+		"gift_alias": ["Cling", "Crawling Chaos"],
+		"shifter_type": ["Garou", "Ananasi", "Ratkin"]
     },
-	{
+    {
         "name": "Pull Water",
         "description": "Using a forked stick or a smooth stone, a Garou can locate water hidden underground or within a succulent plant and pull it to the surface to be used. This Gift may tap into underground wells, water locked within loamy ground, moisture held within cacti or deep streams far beneath the desert floor. Some Uktena have used this Gift to help their Kinfolk in desert nations irrigate their fields, while others have kept a pack from dying of thirst when crossing badlands and open desert. Spirit servants of Uktena teach this Gift.",
         "system": "The player rolls Perception + Enigmas (difficulty 6). For each success, he may call upon enough water to sustain a single person for one day.",
@@ -1369,11 +1371,11 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "tribe": "Uktena"
+		"splat": "Shifter",
+		"tribe": "Uktena",
+		"shifter_type": ["Garou"]
     },
-	{
+    {
         "name": "Moonstruck Path",
         "description": "Garou are well versed in hunting and tracking prey, yet there are times when they have no idea where such a trail starts or which journey to undertake first when a choice presents itself. The Gift of the Moonstruck Path allows the Garou to perceive the beginning of the path he must take in a given situation, even if she herself is not sure of its ultimate purpose. When the Gift is utilized, a ghostly pale blue-white beam of moonlight points to the correct direction for one scene. Sometimes, as when the Garou doesn't know why she needs to move in a certain direction or what to do once she reaches her destination, it becomes a leap of faith, with the werewolf starting on an unknown path and only later discovering why. This Gift is taught by one of Uktena's spirit brood.",
         "system": "The Gift must be utilized after dark, though there need not be a moon in the sky. It can even be used underground or in windowless structures so long as it is dark outside. The player makes a Perception + Survival roll (difficulty 8). Only one success is needed.",
@@ -1382,11 +1384,11 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "tribe": "Uktena"
+		"splat": "Shifter",
+		"tribe": "Uktena",
+		"shifter_type": ["Garou"]
     },
-	{
+    {
         "name": "Fast Track",
         "description": "This Gift strengthens the Garou's stamina and allows her to travel much more quickly than would normally be possible. Using the Gift allows the Garou to determine the path of least resistance, so she can move from one place to another with great speed and less interference. While not a replacement for a Moon Bridge, Fast Track lets the Garou continue traveling long past the time she would normally become exhausted. She can effectively make a forced march that covers three times the distance she would normally cover in the same amount of time and arrive no more tired than usual. This Gift is taught by a bear-spirit.",
         "system": "The player must roll Stamina + Athletics (difficulty 7) and spend a point of Gnosis. A single success allows the Garou to make a forced quick-march by trotting at a ground-covering pace that does not exhaust her. This Gift is not meant to make the Garou a speed-demon, and cannot be used to escape pursuit or pursue fleeing foes by running faster. It can be used for those purposes if it is a matter of outlasting pursuers or pursued.",
@@ -1395,12 +1397,12 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "tribe": "Uktena",
-		"camp": "Scouts"
+		"splat": "Shifter",
+		"tribe": "Uktena",
+		"camp": "Scouts",
+		"shifter_type": ["Garou"]
     },
-	{
+    {
         "name": "Strut",
         "description": "This Gift, taught by a crane- or turkey-spirit, allows a Garou to appear physically grander and more impressive than he truly is.",
         "system": "By taking a turn to strike a pose (puff up the chest, brandish a weapon while sounding a war-whoop, and so on) while the player makes a Manipulation + Intimidation roll (difficulty 6), the werewolf appears to be bigger, better and more impressive. This can be used to throw an advancing Black Spiral Dancer off his stride or convince the biker he should find another chick to flirt with. The effects last for a scene, or until the Garou's impressive appearance is in some way belied (like getting knocked on his tail for instance).",
@@ -1409,23 +1411,23 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "tribe": "Uktena"
+		"splat": "Shifter",
+		"tribe": "Uktena",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Shroud",
-        "description": "The Uktena can hide herself from both physical and spiritual detection. A chameleon-spirit teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Wits + Stealth (difficulty 7). Success renders the character invisible to both physical and spiritual detection for one scene, or until she attacks or otherwise reveals herself. The character may still be detected by mundane senses (sound, scent, etc.).",
+        "description": "The Garou can create a field of inky blackness through which only she can see. A night-spirit teaches this Gift.",
+        "system": "The player spends on Gnosis point and rolls Gnosis (difficulty varies: 3 for twilight, 6 for indoors, 9 for bright sunlight). Each success blacks out a 10′ by 10′ by 10′ area. The Garou can choose any area within his line of sight. The metis Gift: Eyes of the Cat can see through the conjured darkness.",
         "source": "20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Ananasi", "Kitsune", "Rokea"],
-        "splat": "Shifter",
-        "tribe": "Uktena",
-        "gift_alias": ["Qyrl's Blood"]
+		"splat": "Shifter",
+		"tribe": "Uktena",
+		"gift_alias": "Qyrl's Blood",
+		"shifter_type": ["Garou", "Ananasi", "Kitsune", "Rokea"]
     },
     {
         "name": "Sense Magic",
@@ -1463,9 +1465,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1, 2],
+		"splat": "Shifter",
 		"tribe": "Wendigo",
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter"
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Beat of the Heart-Drum",
@@ -1477,8 +1479,8 @@
         "stat_type": "gift",
         "values": [1],
 		"splat": "Shifter",
-        "tribe": "Wendigo",
-        "shifter_type": ["Garou", "Ajaba"]
+		"tribe": "Wendigo",
+		"shifter_type": ["Garou", "Ajaba"]
     },
     {
         "name": "Dead Stick",
@@ -1489,9 +1491,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-		"tribe": "Wendigo"
+		"splat": "Shifter",
+		"tribe": "Wendigo",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Ice Echo",
@@ -1502,9 +1504,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-		"tribe": "Wendigo"
+		"splat": "Shifter",
+		"tribe": "Wendigo",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Lift-Your-Leg",
@@ -1515,9 +1517,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-		"tribe": "Wendigo"
+		"splat": "Shifter",
+		"tribe": "Wendigo",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Nose-to-Tail",
@@ -1528,9 +1530,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-		"tribe": "Wendigo"
+		"splat": "Shifter",
+		"tribe": "Wendigo",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Camouflage",
@@ -1542,9 +1544,9 @@
         "stat_type": "gift",
         "values": [1],
 		"splat": "Shifter",
-        "tribe": "Wendigo",
-        "shifter_type": ["Garou", "Bastet", "Nuwisha"],
-        "gift_alias": ["Turned Fur"]
+		"tribe": "Wendigo",
+		"gift_alias": "Turned Fur",
+		"shifter_type": ["Garou", "Bastet", "Nuwisha"]
     },
     {
         "name": "Claw-to-Thumb",
@@ -1555,10 +1557,10 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
+		"splat": "Shifter",
 		"tribe": "Wendigo",
-		"camp": "Sacred Hoop"
+		"camp": "Sacred Hoop",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Apecraft's Blessings",
@@ -1569,9 +1571,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
-        "splat": "Shifter",
-        "breed": "Homid"
+		"splat": "Shifter",
+		"breed": "Homid",
+		"shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
         "name": "City Running",
@@ -1582,10 +1584,10 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
-        "splat": "Shifter",
-        "breed": "Homid",
-        "gift_alias": ["Urban Hunter", "Spider Scurry"]
+		"splat": "Shifter",
+		"breed": "Homid",
+		"gift_alias": ["Urban Hunter", "Spider Scurry"],
+		"shifter_type": ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
         "name": "Smell of Man",
@@ -1596,9 +1598,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
-        "splat": "Shifter",
-        "breed": "Homid"
+		"splat": "Shifter",
+		"breed": "Homid",
+		"shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
         "name": "Predator's Arsenal",
@@ -1609,9 +1611,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
-        "splat": "Shifter",
-        "breed": "Lupus"
+		"splat": "Shifter",
+		"breed": "Lupus",
+		"shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
         "name": "Prey Mind",
@@ -1622,9 +1624,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
-        "splat": "Shifter",
-        "breed": "Lupus"
+		"splat": "Shifter",
+		"breed": "Lupus",
+		"shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
         "name": "Find Water",
@@ -1635,9 +1637,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
-        "splat": "Shifter",
-        "breed": "Lupus"
+		"splat": "Shifter",
+		"breed": "Lupus",
+		"shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin", "Mokole"]
     },
     {
         "name": "Sense Prey",
@@ -1651,7 +1653,7 @@
 		"splat": "Shifter",
 		"breed": "Lupus",
 		"tribe": "Bunyip",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"]
+        "shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
         "name": "Heightened Senses",
@@ -1677,10 +1679,10 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Bastet", "Mokole", "Nagah", "Nuwisha"],
-        "splat": "Shifter",
-        "breed": "Metis",
-        "gift_alias": ["Snake's Skin"]
+		"splat": "Shifter",
+		"breed": "Metis",
+		"gift_alias": "Snake's Skin",
+		"shifter_type": ["Garou", "Bastet", "Mokole", "Nagah", "Nuwisha"]
     },
     {
         "name": "Primal Anger",
@@ -1691,10 +1693,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"],
-        "splat": "Shifter",
-        "breed": "Metis",
-        "gift_alias": ["Toxic Hate"]
+		"splat": "Shifter",
+		"breed": "Metis",
+		"shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
     },
     {
         "name": "Create Element",
@@ -1707,7 +1708,7 @@
         "values": [1],
 		"splat": "Shifter",
 		"breed": "Metis",
-        "shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
+		"shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
     },
     {
         "name": "Disguise Fetish",
@@ -1718,9 +1719,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "auspice": "Ragabash"
+		"splat": "Shifter",
+		"auspice": "Ragabash",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Liar's Face",
@@ -1731,9 +1732,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "auspice": "Ragabash"
+		"splat": "Shifter",
+		"auspice": "Ragabash",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Infectious Laughter",
@@ -1746,7 +1747,7 @@
         "values": [1],
 		"splat": "Shifter",
 		"auspice": "Ragabash",
-        "shifter_type": ["Garou", "Ajaba"]
+		"shifter_type": ["Garou", "Ajaba"]
     },
     {
         "name": "Hush",
@@ -1757,9 +1758,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "auspice": "Ragabash"
+		"splat": "Shifter",
+		"auspice": "Ragabash",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Blur of the Milky Eye",
@@ -1772,7 +1773,7 @@
         "values": [1],
 		"splat": "Shifter",
 		"auspice": "Ragabash",
-        "shifter_type": ["Garou", "Ajaba", "Kitsune"]
+		"shifter_type": ["Garou", "Ajaba", "Kitsune"]
     },
     {
         "name": "Hear the Silence",
@@ -1783,9 +1784,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "auspice": "Theurge"
+		"splat": "Shifter",
+		"auspice": "Theurge",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Spirit Snare",
@@ -1798,7 +1799,7 @@
         "values": [1, 2],
 		"splat": "Shifter",
 		"auspice": "Theurge",
-        "shifter_type": ["Garou", "Ajaba", "Kitsune", "Ratkin"]
+		"shifter_type": ["Garou", "Ajaba", "Kitsune", "Ratkin"]
     },
     {
         "name": "Sense Weaver",
@@ -1809,9 +1810,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "auspice": "Theurge"
+		"splat": "Shifter",
+		"auspice": "Theurge",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Sense Chiminage",
@@ -1822,22 +1823,22 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "auspice": "Theurge"
+		"splat": "Shifter",
+		"auspice": "Theurge",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Airt Perception",
         "description": "Using this Gift, a Theurge can roughly identify a spirit by its airt - the trail left in the wake of a spirit's passing. This works essentially like tracking in the corporeal world, and is no more informative - a hunter can tell deer tracks from bison tracks, but can't learn anything meaningful about an unknown creature. Also, powerful and subtle spirits are often able to disguise their airts. Any ancestor-spirit renowned as a great hunter can teach this Gift.",
-        "system": "Treat this exactly as a Garou identifying and tracking animals (by scent or by looking for tracks, at the Theurge's discretion), but apply it to spirits instead. Note that Garou may not be able to go everywhere spirits do to follow the trail - remember, spirits can fly.",
+        "system": "Treat this exactly as a Garou identifying and tracking animals (by scent or by looking for tracks, at the Theurge's discretion), but apply it to spirits instead. Note that Garou may not be able to go everywhere spirits do to follow the trail - remember, spirits can fly",
         "source": "Book of Auspices",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "auspice": "Theurge"
+		"splat": "Shifter",
+		"auspice": "Theurge",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Umbral Tether",
@@ -1848,9 +1849,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "auspice": "Theurge"
+		"splat": "Shifter",
+		"auspice": "Theurge",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Sense Trauma",
@@ -1861,9 +1862,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"], 
 		"splat": "Shifter",
-        "auspice": "Philodox"
+		"auspice": "Philodox",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Perfect Recall",
@@ -1887,25 +1888,25 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1, 2, 3],
-        "shifter_type":  ["Garou", "Ajaba", "Ananasi", "Gurahl", "Nagah", "Kitsune"],
+        "shifter_type": ["Garou", "Ajaba", "Ananasi", "Gurahl", "Nagah", "Kitsune"],
         "splat": "Shifter",
 		"tribe": "Croatan",
         "auspice": "Galliard",
         "gift_alias": ["Night Whispers", "Mind to Mind", "Ishin Deshin"]
     },
-	{
-		"name": "Rhythm of War",
-		"description": "So long as the Ahroun keeps fighting to the rhythm of his inner war drum, he can't be stopped. Blows that would fell a lesser combatant are as mere wasp stings to the Garou's mightiest warriors. A bear-spirit teaches this Gift.",
-		"system": "The player spends one Rage point. For the rest of the scene, as long as the werewolf makes an attack on every turn, he's immune to stunning via massive damage and knockdown. The Gift's effects end if a turn goes by in which he doesn't attack.",
-		"source": "Changing Ways W20",
-		"game_line": "Werewolf: The Apocalypse",
-		"category": "powers",
-		"stat_type": "gift",
-		"values": [1],
-		"shifter_type": ["Garou"],
+    {
+        "name": "Rhythm of War",
+        "description": "So long as the Ahroun keeps fighting to the rhythm of his inner war drum, he can't be stopped. Blows that would fell a lesser combatant are as mere wasp stings to the Garou's mightiest warriors. A bear-spirit teaches this Gift.",
+        "system": "The player spends one Rage point. For the rest of the scene, as long as the werewolf makes an attack on every turn, he's immune to stunning via massive damage and knockdown. The Gift's effects end if a turn goes by in which he doesn't attack.",
+        "source": "Changing Ways W20",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [1],
 		"splat": "Shifter",
-		"auspice": "Ahroun"
-	},	
+		"auspice": "Ahroun",
+		"shifter_type": ["Garou"]
+    },
     {
         "name": "Scent of Running Water",
         "description": "The Garou can mask her scent completely, making herself virtually impossible to track. A fox-spirit teaches this Gift.",
@@ -1930,7 +1931,7 @@
         "stat_type": "gift",
         "values": [1],
 		"tribe": "Red Talons",
-        "shifter_type":  ["Garou", "Ajaba", "Gurahl", "Kitsune", "Rokea"],
+        "shifter_type": ["Garou", "Ajaba", "Gurahl", "Kitsune", "Rokea"],
 		"splat": "Shifter",
         "auspice": "Galliard",
         "gift_alias": ["Sea's Voice"]
@@ -1944,7 +1945,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Red Talons",
 		"camp": "Winter Packs"
@@ -1958,7 +1959,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Red Talons",
 		"camp": "Whelp's Compromise"
@@ -1972,7 +1973,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Red Talons",
 		"camp": "Lodge of the Predator Kings"
@@ -1986,7 +1987,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Red Talons"
     },
@@ -1999,7 +2000,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Red Talons"
     },
@@ -2012,7 +2013,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": "Red Talons"
     },
@@ -2038,7 +2039,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Bastet", "Mokole", "Nuwisha"],
+        "shifter_type": ["Garou", "Bastet", "Mokole", "Nuwisha"],
         "splat": "Shifter",
         "tribe": ["Red Talons", "Kucha Ekundu", "Silent Striders"],
         "gift_alias": ["Rabbit Run"]
@@ -2052,7 +2053,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1, 2],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin", "Rokea"],
+        "shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin", "Rokea"],
         "splat": "Shifter",
         "breed": "Lupus",
         "tribe": "Red Talons",
@@ -2069,7 +2070,7 @@
         "values": [1],
 		"splat": "Shifter",
 		"auspice": "Ahroun",
-        "shifter_type": ["Garou", "Ajaba", "Mokole"]
+		"shifter_type": ["Garou", "Ajaba", "Mokole"]
     },
     {
         "name": "Empathy of Hatred",
@@ -2080,9 +2081,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "auspice": "Ahroun"
+		"splat": "Shifter",
+		"auspice": "Ahroun",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Spur Claws",
@@ -2093,7 +2094,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Rokea"],
+        "shifter_type": ["Garou", "Rokea"],
         "splat": "Shifter",
         "auspice": "Ahroun",
         "tribe": "Black Furies",
@@ -2108,10 +2109,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Mokole", "Ratkin"],
-        "splat": "Shifter",
-        "auspice": "Philodox",
-        "gift_alias": ["Rat's Judgment"]
+		"splat": "Shifter",
+		"auspice": "Philodox",
+		"shifter_type": ["Garou, Mokole, Ratkin"]
     },
     {
         "name": "Ma'at's Feather",
@@ -2122,9 +2122,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "auspice": "Philodox"
+		"splat": "Shifter",
+		"auspice": "Philodox",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Moon Lore",
@@ -2135,9 +2135,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
 		"splat": "Shifter",
-        "auspice": "Philodox"
+		"auspice": "Philodox",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Truth of Gaia",
@@ -2148,10 +2148,10 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou", "Bastet", "Corax", "Gurahl", "Mokole", "Kitsune", "Ratkin"],
-        "splat": "Shifter",
-        "auspice": "Philodox",
-        "gift_alias": ["True Intentions", "Truth of Olodumare", "Sense the Truth", "Crane's Wisdom"]
+		"splat": "Shifter",
+		"auspice": "Philodox",
+		"gift_alias": ["True Intentions", "Truth of Olodumare", "Sense the Truth", "Crane's Wisdom"],
+		"shifter_type": ["Garou", "Bastet", "Corax", "Gurahl", "Mokole", "Kitsune", "Ratkin"]
     },
     {
         "name": "Scent of the True Form",
@@ -2162,7 +2162,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1, 2],
-        "shifter_type":  ["Garou", "Camazotz", "Gurahl", "Mokole", "Nagah"],
+        "shifter_type": ["Garou", "Camazotz", "Gurahl", "Mokole", "Nagah"],
 		"splat": "Shifter",
         "auspice": "Philodox",
         "gift_alias": ["Sight of the True Form", "Eyes of the Soul"]
@@ -2176,35 +2176,35 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "auspice": "Galliard"
+		"splat": "Shifter",
+		"auspice": "Galliard",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Call of the Wyld",
         "description": "The werewolf may send her howl far beyond the normal range of hearing and imbue it with great emotion, stirring the hearts of fellow Garou and chilling the bones of all others. A wolf-spirit teaches this Gift.",
         "system": "The player rolls Stamina + Empathy; the number of successes determines how far away the Call can be heard (double the normal range for each success) and how stirring it is to those who hear it. This Gift should be used in conjunction with one of the Garou howls (see p. 58). The Storyteller determines the effects as appropriate to the purpose to which it is put, perhaps awarding a bonus die to revel participants for each two successes, or granting a point of Rage to all listeners for an exceptional battlefield howl.",
-        "source": "Core book revised / 20th Anniversary Edition",
+        "source": "Garou",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "auspice": "Galliard"
+		"splat": "Shifter",
+		"auspice": "Galliard",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Memory Circle",
-        "description": "The Galliards are the Garou's historians, charged with committing the legends and tales of their people to memory, perfect memory. Not all of them are particularly good at it. Thankfully, this Gift gives those Galliards a chance to make up for their weakness by planting Umbral \"reminders\" on their person. This Gift is taught by an elephant-spirit.",
-        "system": "This Gift is performed in two parts. When hearing words the Galliard wants to remember perfectly, he spends one point of Gnosis. As this happens, the Storyteller should write down exactly what he's committing to Umbral memory. Later, when he wishes to retrieve the memory, he may spend one point of Willpower and ask the Storyteller to read it back verbatim. The use of this Gift leaves tiny clear spheres matted within the Garou's fur that can be seen within the Umbra, the so-called \"memory circles\". Should the Garou wish to remove a memory circle, they may do so simply by pulling it out of their fur while in the Umbra. Also, it is possible that a combat within the Umbra might break some of the circles (at the Storyteller's option).",
+        "description": "The Galliards are the Garou's historians, charged with committing the legends and tales of their people to memory, perfect memory. Not all of them are particularly good at it. Thankfully, this Gift gives those Galliards a chance to make up for their weakness by planting Umbral 'reminders' on their person. This Gift is taught by an elephant-spirit.",
+        "system": "This Gift is performed in two parts. When hearing words the Galliard wants to remember perfectly, he spends one point of Gnosis. As this happens, the Storyteller should write down exactly what he's committing to Umbral memory. Later, when he wishes to retrieve the memory, he may spend one point of Willpower and ask the Storyteller to read it back verbatim. The use of this Gift leaves tiny clear spheres matted within the Garou's fur that can be seen within the Umbra, the so-called 'memory circles'. Should the Garou wish to remove a memory circle, they may do so simply by pulling it out of their fur while in the Umbra. Also, it is possible that a combat within the Umbra might break some of the circles (at the Storyteller's option).",
         "source": "Tribebook: Galliards",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
-        "splat": "Shifter",
-        "auspice": "Galliard"
+		"splat": "Shifter",
+		"auspice": "Galliard",
+		"shifter_type": ["Garou"]
     },
     {
         "name": "Rouse to Anger",
@@ -2215,7 +2215,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
 		"tribe": "Planetary",
         "splat": "Shifter"
     },
@@ -2229,7 +2229,7 @@
         "stat_type": "gift",
         "values": [1],
 		"tribe": "Planetary",
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter"
     },
     {
@@ -2242,7 +2242,7 @@
         "stat_type": "gift",
         "values": [1],
 		"tribe": "Planetary",
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter"
     },
     {
@@ -2255,7 +2255,7 @@
         "stat_type": "gift",
         "values": [1],
 		"tribe": "Planetary",
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "splat": "Shifter"
     },
     {
@@ -2269,7 +2269,7 @@
         "values": [1],
 		"tribe": "Planetary",
 		"splat": "Shifter",
-        "shifter_type":  ["Garou"]
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Sense of the Transformation",
@@ -2282,24 +2282,24 @@
         "values": [1],
 		"tribe": "Planetary",
 		"splat": "Shifter",
-        "shifter_type":  ["Garou"]
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Find the Child Within",
         "description": "With this Gift, a Garou can play upon an individual's instinctive response to parental authority or affection and convince that person to follow a command (“Don't leave without me”) or respond favorably to a suggestions (“Let me take you somewhere safe”) that they might otherwise rebuff. The target of the Gift cannot already be engaged in battle with the Gift's user or with another opponent. The Garou can, however, use this Gift to forestall an impending battle or elude a situation that might turn dangerous.",
-        "system": "The player makes a resisted Charisma + Empathy roll vs. the target's Willpower. One success allows the character to make as simple suggestion to the victim; the suggestion must be one that a young child would find reasonable. Additional successes either extend the duration of the effect or else enables the character to convince her victim to do something he might not be otherwise inclined to do – such as coercing a Get Ahroun to back down from a fight he would certainly lose. Failure means that the suggestion has no effect, while a botch angers the victim and makes him impervious to further attempts to use this Gift for 24 hours.",
+        "system": "The player makes a resisted Charisma + Empathy roll vs. the target's Willpower. One success allows the character to make as simple suggestion to the victim; the suggestion must be one that a young child would find reasonable. Additional successes either extend the duration of the effect or else enables the character to convince her victim to do something he might not be otherwise inclined to do - such as coercing a Get Ahroun to back down from a fight he would certainly lose. Failure means that the suggestion has no effect, while a botch angers the victim and makes him impervious to further attempts to use this Gift for 24 hours.",
         "source": "Rage Across the Heavens",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
 		"tribe": "Planetary",
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
 		"splat": "Shifter"
     },
     {
         "name": "Uncloak the Hidden",
-        "description": "By concentrating on a person, object or area, the Garou can determine whether or not her target is hiding anything. The Garou can spot disguises, concealed weapons and wires; determine if a room contains trapdoors, hidden cameras, microphones and wire taps; or if someone lurks in a hidden passage. The Gift does not, however, allow the Garou to seek beneath the disguise, determine the nature of a concealed weapon or tell what lies within a hidden wall safe – this trick reveals only that a deception is present. The Garou must concentrate on the target in order to invoke this Gift.",
+        "description": "By concentrating on a person, object or area, the Garou can determine whether or not her target is hiding anything. The Garou can spot disguises, concealed weapons and wires; determine if a room contains trapdoors, hidden cameras, microphones and wire taps; or if someone lurks in a hidden passage. The Gift does not, however, allow the Garou to seek beneath the disguise, determine the nature of a concealed weapon or tell what lies within a hidden wall safe - this trick reveals only that a deception is present. The Garou must concentrate on the target in order to invoke this Gift.",
         "system": "The player rolls Perception + Investigation (difficulty 8). Extra successes might reveal more facts about the subject, if multiple secrets exist to be sought out. The Storyteller should inform the player of her characters' knowledge in general terms (“That man has some sort of disguise”; “The floor contains a hollow beneath the floorboards”).",
         "source": "Rage Across the Heavens",
         "game_line": "Werewolf: The Apocalypse",
@@ -2307,7 +2307,7 @@
         "stat_type": "gift",
         "values": [1],
 		"tribe": "Planetary",
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
 		"splat": "Shifter"
     },
     {
@@ -2320,7 +2320,7 @@
         "stat_type": "gift",
         "values": [1],
 		"tribe": "Planetary",
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
 		"splat": "Shifter"
     },
     {
@@ -2333,7 +2333,7 @@
         "stat_type": "gift",
         "values": [1],
 		"tribe": "Planetary",
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
 		"splat": "Shifter"
     },
     {
@@ -2346,7 +2346,7 @@
         "stat_type": "gift",
         "values": [1],
 		"tribe": "Planetary",
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
 		"splat": "Shifter"
     },
     {
@@ -2357,7 +2357,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
         "values": [1],
 		"tribe": "Planetary",
 		"splat": "Shifter"
@@ -2372,13 +2372,13 @@
         "stat_type": "gift",
         "values": [1],
 		"tribe": "Planetary",
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
 		"splat": "Shifter"
     },
     {
         "name": "Open Seal",
         "description": "With this Gift, the Garou can open nearly any sort of closed or locked physical device. A raccoon-spirit teaches this Gift.",
-        "system": "The player rolls Gnosis (difficulty of the local Gauntlet rating).",
+        "system": "With this Gift, the Garou can open nearly any sort of closed or locked physical device. A raccoon-spirit teaches this Gift.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -2386,7 +2386,7 @@
         "values": [1],
 		"splat": "Shifter",
 		"auspice": "Ragabash",
-        "shifter_type": ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Ratkin"]
+		"shifter_type": ["Garou", "Ajaba", "Ananasi", "Bastet", "Corax", "Gurahl", "Ratkin"]
     },
     {
         "name": "Free Flowing",
@@ -2398,7 +2398,7 @@
         "stat_type": "gift",
         "values": [1],
 		"tribe": ["Singing Dogs"],
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
 		"splat": "Shifter"
     },
     {
@@ -2411,7 +2411,7 @@
         "stat_type": "gift",
         "values": [1],
 		"tribe": "Ronin",
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
 		"splat": "Shifter"
     },
     {
@@ -2424,7 +2424,7 @@
         "stat_type": "gift",
         "values": [1],
 		"splat": "Shifter",
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
 		"tribe": "Croatan"
     },
     {
@@ -2438,7 +2438,7 @@
         "values": [1],
 		"splat": "Shifter",
 		"tribe": "Shadow Lords",
-        "shifter_type":  ["Garou"],
+        "shifter_type": ["Garou"],
 		"camp": ["Lords of the Summit", "Judges of Doom"]
     }
 ]

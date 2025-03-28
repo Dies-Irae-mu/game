@@ -14,23 +14,33 @@ class CmdStaff(default_cmds.MuxCommand):
       +staff/position <account> = <position>
       +staff/add <account>
       +staff/remove <account>
+      +staff/duty          - Toggle your duty status
+      +staff/duty on|off   - Explicitly set duty status
+      +staff/dark          - Toggle your visibility
+      +staff/dark on|off   - Explicitly set visibility
 
     Switches:
       /position - Set the position of a staff member
       /add      - Add an account to staff
       /remove   - Remove an account from staff
+      /duty     - Toggle or set duty status
+      /dark     - Toggle or set visibility status
 
     Examples:
       +staff
       +staff/position Wizard = Head Admin
       +staff/add NewStaff
       +staff/remove FormerStaff
+      +staff/duty
+      +staff/duty on
+      +staff/dark
+      +staff/dark on
     """
 
     key = "+staff"
     aliases = ["staff"]
     locks = "cmd:all()"
-    help_category = "General"
+    help_category = "Game Info"
 
     def func(self):
         if not self.args and not self.switches:
@@ -54,6 +64,12 @@ class CmdStaff(default_cmds.MuxCommand):
                 self.remove_staff()
             else:
                 self.caller.msg("You don't have permission to remove staff.")
+        elif "duty" in self.switches:
+            # Toggle duty status (staff only)
+            self.toggle_duty()
+        elif "dark" in self.switches:
+            # Toggle dark mode (staff only)
+            self.toggle_dark()
         else:
             self.caller.msg("Invalid switch. See help +staff for usage.")
 
@@ -68,6 +84,11 @@ class CmdStaff(default_cmds.MuxCommand):
             is_staff = (account.tags.get("staff", category="role") or 
                        (character and character.tags.get("staff", category="role")))
             
+            # Check if the staff member is in dark mode
+            is_dark = (account.tags.get("dark_mode", category="staff_status") or 
+                      (character and character.tags.get("dark_mode", category="staff_status")))
+            
+            # Add to list if staff
             if is_staff:
                 staff.append((account, character))
 
@@ -88,7 +109,23 @@ class CmdStaff(default_cmds.MuxCommand):
                     name = account.key.strip()
 
                 position = self.get_position(account, character)
-                status = "|gOnline|n" if account.is_connected else "|rOffline|n"
+                
+                # Check duty and dark status
+                is_online = account.is_connected
+                is_on_duty = (account.tags.get("on_duty", category="staff_status") or 
+                             (character and character.tags.get("on_duty", category="staff_status")))
+                is_dark = (account.tags.get("dark_mode", category="staff_status") or 
+                          (character and character.tags.get("dark_mode", category="staff_status")))
+                
+                if not is_online:
+                    status = "|rOffline|n"
+                elif is_dark:
+                    status = "|M[DARK]|n"
+                elif is_on_duty:
+                    status = "|gOn Duty|n"
+                else:
+                    status = "|yOff Duty|n"
+                
                 string += self.format_staff_row(name, position, status)
         else:
             string += "No staff members found.\n"
@@ -188,6 +225,87 @@ class CmdStaff(default_cmds.MuxCommand):
             if char:
                 char.tags.remove("staff", category="role")
             self.caller.msg(f"Removed {account.key} from staff.")
+        self.list_staff()
+
+    def toggle_duty(self):
+        """Toggle or set staff duty status."""
+        # Check if the caller is staff
+        account = self.caller
+        char = account.db._playable_characters[0] if account.db._playable_characters else None
+        is_staff = (account.tags.get("staff", category="role") or 
+                   (char and char.tags.get("staff", category="role")))
+        
+        if not is_staff:
+            self.caller.msg("You must be staff to use this command.")
+            return
+
+        # Parse the argument if provided
+        if self.args:
+            arg = self.args.strip().lower()
+            if arg not in ["on", "off"]:
+                self.caller.msg("Usage: +staff/duty [on|off]")
+                return
+            new_status = arg == "on"
+        else:
+            # Toggle current status - check both account and character
+            current_status = (account.tags.get("on_duty", category="staff_status") or 
+                            (char and char.tags.get("on_duty", category="staff_status")))
+            new_status = not current_status
+
+        # Set the status - first remove from both to ensure clean state
+        account.tags.remove("on_duty", category="staff_status")
+        if char:
+            char.tags.remove("on_duty", category="staff_status")
+
+        # Then add if needed
+        if new_status:
+            account.tags.add("on_duty", category="staff_status")
+            if char:
+                char.tags.add("on_duty", category="staff_status")
+            self.caller.msg("You are now on duty.")
+        else:
+            self.caller.msg("You are now off duty.")
+
+        # Force a refresh of the staff list
+        self.list_staff()
+
+    def toggle_dark(self):
+        """Toggle or set staff dark mode status."""
+        # Check if the caller is staff
+        account = self.caller
+        char = account.db._playable_characters[0] if account.db._playable_characters else None
+        is_staff = (account.tags.get("staff", category="role") or 
+                   (char and char.tags.get("staff", category="role")))
+        
+        if not is_staff:
+            self.caller.msg("You must be staff to use this command.")
+            return
+
+        # Parse the argument if provided
+        if self.args:
+            arg = self.args.strip().lower()
+            if arg not in ["on", "off"]:
+                self.caller.msg("Usage: +staff/dark [on|off]")
+                return
+            new_status = arg == "on"
+        else:
+            # Toggle current status
+            current_status = (account.tags.get("dark_mode", category="staff_status") or 
+                            (char and char.tags.get("dark_mode", category="staff_status")))
+            new_status = not current_status
+
+        # Set the status
+        if new_status:
+            account.tags.add("dark_mode", category="staff_status")
+            if char:
+                char.tags.add("dark_mode", category="staff_status")
+            self.caller.msg("You are now in dark mode (hidden from +staff, who, and +where).")
+        else:
+            account.tags.remove("dark_mode", category="staff_status")
+            if char:
+                char.tags.remove("dark_mode", category="staff_status")
+            self.caller.msg("You are now visible on +staff, who, and +where.")
+
         self.list_staff()
 
 

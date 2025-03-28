@@ -41,7 +41,7 @@ class CmdGroups(MuxCommand):
     key = "+group"
     aliases = ["+groups"]
     locks = "cmd:all()"
-    help_category = "Social"
+    help_category = "Game Info"
 
     def list_groups(self):
         """List all public groups."""

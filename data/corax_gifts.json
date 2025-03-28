@@ -1,41 +1,510 @@
 [
     {
-        "name": "Carrion's Price",
-        "description": "The Corax can determine the cause of death of any corpse they examine. A raven-spirit teaches this Gift.",
+        "name": "Enemy Ways",
+        "description": "The Corax gains an acute and accurate danger sense. This Gift is taught by one of Grandfather Thunder's Stormcrows.",
+        "system": "The player rolls Perception + Primal-Urge, difficulty 7. Success grants knowledge of the number and nature of hostile entities within (Wisdom x 20) yards, with more successes granting clearer information.",
         "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
         "category": "powers",
         "stat_type": "gift",
-        "values": [1],
+        "values": [
+            1
+        ],
         "shifter_type": "Corax",
         "splat": "Shifter"
     },
     {
-        "name": "Detect the Broken",
-        "description": "The Corax can sense when something is damaged, broken, or otherwise not functioning properly. A raven-spirit teaches this Gift.",
+        "name": "Morse",
+        "description": "By tapping out his message onto a nearby hard surface, a Corax can make sure that someone out there gets his message. This Gift is taught by a machine-spirit.",
+        "system": "The player spends a Gnosis point, ensuring that the nearest Corax will hear (and understand) the message clearly. With a difficulty 8 Wits + Expression roll, the message can instead be directed to the nearest Gaian shapeshifter of any breed.",
         "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
         "category": "powers",
         "stat_type": "gift",
-        "values": [1],
+        "values": [
+            1
+        ],
         "shifter_type": "Corax",
         "splat": "Shifter"
     },
     {
         "name": "Raven's Gleaning",
-        "description": "The Corax can quickly scan an area for anything unusual or out of place. A raven-spirit teaches this Gift.",
+        "description": "The Corax may tell, at a glance, whether or not a shiny object is worth obtaining. A raven-spirit teaches this Gift.",
+        "system": "The player spends a point of Gnosis, bestowing instinctive knowledge of whether or not a specific object the Corax can perceive is of value (this may indicate financial or practical value, or that it will be in some way useful in the future — the Corax doesn't know which).",
         "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
         "category": "powers",
         "stat_type": "gift",
-        "values": [1],
+        "values": [
+            1
+        ],
         "shifter_type": "Corax",
         "splat": "Shifter"
     },
     {
-        "name": "Shadow's Caress",
-        "description": "The Corax can blend into shadows, becoming nearly invisible. A shadow-spirit teaches this Gift.",
+        "name": "Word Beyond",
+        "description": "This Gift allows the Corax to create a message out of any available materials while in the Umbra, which can be instinctively understood by other wereravens. One of Coyote's brood teaches this Gift.",
+        "system": "The player rolls Wits + Expression (difficulty 6) to create a marker out of nearby Umbral materials. The number of successes indicates the complexity of the message that can be encrypted into the marker; one success would suffice for simple concepts such as “danger” or “safe haven,” while five successes could convey complex concepts equivalent to a short essay. Non-Corax cannot read these markers.",
         "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
         "category": "powers",
         "stat_type": "gift",
-        "values": [1],
+        "values": [
+            1,
+            2
+        ],
+        "shifter_type": [
+            "Corax",
+            "Ratkin"
+        ],
+        "gift_alias": "Sigil",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Targeted Heave",
+        "description": "A trick swiped from real buzzards, Targeted Heave may well be the most disgusting weapon in the Scabs' arsenal. When cornered or just feeling ornery, a Buzzard can call upon this Gift and heave up the contents of his stomach — digestive juices and all — at a target up to 10 feet away.",
+        "system": "The results of this Gift are very similar to the fomori power: Stomach Pumper. The attack does two dice of damage if it hits (Dexterity + Athletics to hit, difficulty 7), but any victim struck must expend a point of Willpower to keep from stopping whatever they are doing and start gagging.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Buzzard/Wyrm. BotW, p138",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            1
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Voice of the Mimic",
+        "description": "The Corax may perfectly mimic any voice or sound she has ever heard. A mynah-spirit teaches this Gift.",
+        "system": "This Gift's effects are permanent.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            1,
+            2
+        ],
+        "shifter_type": [
+            "Corax",
+            "Bastet",
+            "Nagah"
+        ],
+        "gift_alias": [
+            "Mockingbird's Mirror",
+            "Serpent's Voice"
+        ],
+        "splat": "Shifter"
+    },
+    {
+        "name": "Carrion's Call",
+        "description": "This Gift helps Corax execute their duties with regard to the slain, leading them to fresh corpses. It is taught by a vulture-spirit.",
+        "system": "The player may roll Perception + Empathy (difficulty 6). The Corax becomes aware of all cadavers within (successes rolled) miles.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            2
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Omens and Signs",
+        "description": "Corax can find symbolic portents in their surroundings without even trying — but this Gift helps. The world is full of omens, after all, but a Corax with this Gift knows where to look for them. This Gift is taught by a Stormcrow.",
+        "system": "To find an omen in her surroundings, the Corax rolls Wits + Occult (difficulty 6). However, Corax have to be careful not to abuse this Gift. Otherwise, they start to mistake false omens for true — proof positive that the universe doesn't like to give away all of its secrets.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Corax BB, p76",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            2
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Razor Feathers",
+        "description": "The Corax's wing-feathers become hard and sharp as steel. This Gift is taught by a steel-spirit, and only functions when the wereraven is in Crinos.",
+        "system": "The player spends a point of Gnosis, enabling Wing Swipe maneuvers for the rest of the scene.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            2
+        ],
+        "shifter_type": [
+            "Corax",
+            "Camazotz"
+        ],
+        "gift_alias": "Razor Wings",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Sky's Beneficence",
+        "description": "The Corax can accurately drop a package of any sort onto a target from any altitude she can reach. Whether the package is a letter, hand grenade, or a more… natural... offering is up to the wereraven. Any aerial spirit can teach this Gift.",
+        "system": "The Corax aims the dropped package with Perception + Melee (difficulty 7), regardless of inclement conditions, crosswinds, etc. The Corax must be able to see her target.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            2
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Sky's Shadow",
+        "description": "There's little that is more frustrating than a creeping sensation that you're being watched. This Gift allows a Corax to bestow that feeling on the target of her choice without necessitating that the Corax herself tail her victim. Sometimes the Gift creates the shadow of a large bird that follows the target everywhere; other times, it just imbues a sense of pure paranoia. At first glance, Sky's Shadow might not seem like a terribly effective Gift, but nervous men make mistakes — and this Gift can make even the strongest-willed man nervous. Any bird spirit can teach this gift.",
+        "system": "The Gift implants in the target the certainty that he is being watched, with the feeling lasting a day for each success on a Manipulation + Intimidation roll (difficulty 7). The Gift costs a point of Rage to activate. While under the Gift's influence, the victim is constantly aware of the shadowy eyes of unknown figures upon him. This takes away from his ability to concentrate, and he's at +1 difficulty on all Willpower- and Mental-related rolls as long as the Gift's effect lasts.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Corax BB, p77",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            2
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Swallow's Return",
+        "description": "This Gift will safely carry a Corax home, even when she doesn't know where 'home' is. A swallow-spirit teaches it.",
+        "system": "The player spends a point of Gnosis. The Corax flies to the place she truly considers 'home' on autopilot, without any conscious awareness of the path she takes; she may even do so while healing or sleeping.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            2
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Shoulder Cracker",
+        "description": "Named after the Chinese method of fortunetelling called scapulimancy, this Gift enables the Tengu to predict the future through reading portents of various kinds. Using this Gift too often, however, leads to misinterpretation and paranoia. A Stormcrow teaches this Gift.",
+        "system": "The Tengu focuses for a minute; the player rolls Wits + Occult to notice and interpret an omen in her surroundings. The omen is usually cryptic.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "PGttCB Pg. 198 Tengu",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            2
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Poisoned Flesh",
+        "description": "By calling upon Poisoned Flesh, a Buzzard can taint the meat of a corpse — anything from a roadkill squirrel to a human body — so that it is poisonous. Even a Corax' legendarily tough digestive tract can't do anything with the garbage this gift leaves behind; it's sheer poison.",
+        "system": "The Buzzard invests a point of Willpower and spits on the target corpse. With a successful Manipulation + Occult roll (difficulty 7), the corpse is poisoned, and it will remain poisoned until the last bits of flesh are flensed away by the elements. Shapeshangers indulging in any portion of a cadaver tainted with this Gift get violently ill for a period of 24 hours unless she succeeds on a Stamina roll (difficulty 9, two successes needed); mortals take three Health Levels of damage. The symptoms include vomiting, dizziness (so flying is out), and occasionally hallucinations. Plus, if she botches the Stamina roll, the unfortunate gourmand smells of the Wyrm for the duration of her sickness.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Buzzard/Wyrm. BotW, p139",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            2
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Dark Truths",
+        "description": "This Gift allows the Corax to uncover a secret truth or character flaw of an observed subject. As you might expect; Corax love to use this Gift. There's even a game related to Dark Truths that some wereravens play: One Corax uses the Gift on a mortal (in, say, a bar); the other contestants then have to try to wheedle that same secret out of the mark without using Dark Truths. A Fly-spirit teaches this Gift.",
+        "system": "To utilize Dark Truths, the Corax spends a Gnosis point and rolls Perception + Enigmas (difficulty 7). With a success, the Corax acquires knowledge of one of his target's deep dark secrets. While this Gift doesn't turn loose the sort of secrets that are useful in combat, it does pry loose all sorts of interesting blackmail material.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Corax BB p78",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            3
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Dead Talk",
+        "description": "Sometimes a dead man's last vision just isn't enough. This Gift allows the Corax to interrogate a recently-deceased (no more than 24 hours dead) corpse. It is taught by a vulture-spirit.",
+        "system": "The player spends a Gnosis point and rolls Perception + Occult (difficulty 8). The number of successes determines how talkative the corpse is willing to be.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            3
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Eyes of the Eagle",
+        "description": "The Corax's keen eyes easily pierce fog, smoke, clouds, darkness — anything short of a solid object. Eagle-spirits teach this Gift.",
+        "system": "The player spends one Gnosis point to enjoy this Gift's benefits for a scene. Adding a Willpower point extends the duration until the sun next rises.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            3
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Flight of the Swift",
+        "description": "Ravens aren't the fastest fliers out there. Trfey admit this, and don't have a problem with it under most cirrcumstances. However, on those rare occasions when a Corax finds himself chased by something both airborne, faster and pastier than he is, the Corax gets a little envious of his faster, smaller cousins. That's where Flight of the Swift comes in. In essence, it's a set of afterburners that a Corax can hide under her feathers, giving her the wherewithal for an extremely speedy escape. A Swift-spirit teaches this Gift.",
+        "system": "All this Gift does is allow a Corax to double his rate of speed. Corax normally fly at up to 35 mph, so a Corax calling upon Flight of the Swift can reach up to 70 mph. Using Flight of the Swift requires the sacrifice of a point of Rage and a Dexterity + Flying roll (difficulty 5). Multiple successes can allow a Corax to go even faster than he is supposed to go by the Gift's parameters.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Corax BB, p78",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            3
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Hummingbird Dart",
+        "description": "The Corax plucks one of her own feathers and hurls it like a dart. A hummingbird-spirit teaches this Gift.",
+        "system": "The player spends one point of Rage. For the rest of the scene, she may make Dexterity + Melee (difficulty 5) attacks out to 50 feet away, with (Dexterity + 3) base lethal damage. With Razor Feathers active, this damage is aggravated. This Gift can only be used in Corvid and Crinos form.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            3
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter",
+        "gift_alias": "Bloody Feather"
+    },
+    {
+        "name": "Larder of the Shrike",
+        "description": "Shrikes are notorious for killing more than they need, then storing the corpses for later use. Shrike-spirits can share the knowledge of the benefits that can accrue from such behavior. Essentially, this Gift allows the Corax to store food — and anything else, like, say, a corpse—in perfect condition for up to a year, so long as the stored item is allowed to hang free in the Corax' 'larder.'",
+        "system": "By spending a Gnosis and succeeding on a Willpower roll (difficulty 6), a Corax can use this Gift on a hunk of meat (or vegetables, though few Corax have deigned to do so) to preserve it nearly ad infinitum for future use. For as long as the Gift's effect lasts, neither rot nor bloat affects the stored items — including dead bodies.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Corax BB, p79",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            3
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Mynah's Touch",
+        "description": "The Corax “borrows” knowledge of a single Garou Gift. Mynah-spirits teach this Gift.",
+        "system": "The player spends two Gnosis points, gaining knowledge of any Garou Gift of lower rank than the Corax. The Gift may then be used at any point afterward — once. Mynah's Touch can only 'store' one Gift at a time. In the case of permanent Gifts, the Corax may enjoy the Gift's benefits for one scene before it vanishes.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            3
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Sun's Guard",
+        "description": "Given to his children by Raven after their great misadventure with Helios, this Gift protects Corax from heat and flames. An avatar of Raven teaches it.",
+        "system": "The player spends two points of Rage and rolls Stamina + Primal-Urge (difficulty 6). The Corax is completely immune to flames and heat, no matter their source or intensity, for one turn per success. She remains vulnerable to balefire.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            3
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Plague Feather",
+        "description": "Calling upon Plague Feather allows the Buzzard to distill sickness into a single one of his pinfeathers, pluck it, and leave it behind as a trap for the unwary. The first three people to have skin contact with the feather then run the risk of falling terribly ill. Children in particular are vulnerable to Plague Feathers, as they're the most likely to find a big, black shiny feather on the ground an irresistible plaything.",
+        "system": "Using Plague Feather involves the expenditure of a point of Gnosis and a point of Willpower, as well as a successful Manipulation + Occult roll (difficulty 8). At that point, the feather is imbued with the power of sickness, and will transfer that contagion to the next three people to touch it. Resisting the disease the feather spreads requires the same roll as does fighting off the effects of Poisoned Flesh.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "BotW p139",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            3
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Yoshitsune's Sword",
+        "description": "The Tengu may use this Gift to increase dramatically a companion's or sentai mate's skill with a melee weapon. An ancestor-spirit teaches this Gift.",
+        "system": "The Tengu touches the target's fighting arm and rolls Wits + Melee (difficulty 5). Success allows the wereraven to spend Gnosis points to increase the target's Melee dice pool by one die per point spent for one scene.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "General Hengeyokai CB20 Pg. 284, Tengu",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            3
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Airt Sense",
+        "description": "As the spirit Charm. The spirit has a natural sense of the “airts” (directions) of the spirit world, and can travel about without much difficulty. The spirit can create or find spirit tracks at will.",
+        "system": "The Storyteller rolls the spirit's Gnosis if it has to locate a particular place or individual in the Umbra. Even spirits aren't infallible, and a botch can lead them to an unforgiving Realm.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            4
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Deceptive Demise",
+        "description": "The Corax uses this Gift to fake her death and distract her enemies. She disappears in a feathery cloud, leaving behind only a bit of blood and ash — but no body. This Gift is taught by a fox-spirit.",
+        "system": "The player spends one Gnosis point and one lethal health level. The character immediately steps sideways when this Gift is used.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition, Tengu",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            4
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Flight of Separation",
+        "description": "When the Corax can't outrun an enemy, confusion is the best stratagem. The Corax explodes into an entire murder of ravens, which take off in all directions — but only one is the true wereraven. An avatar of Raven teaches this Gift.",
+        "system": "The player spends two Gnosis points. Enemies must make a Perception + Enigmas roll (difficulty 3 + wereraven's Honor, maximum 9) to determine which bird is the original. The fake Ravens created by this Gift vanish when the sun next rises; until then, they continue to fly as far and as fast as the Corax could.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            4
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Bloody Feather Storm",
+        "description": "Particularly favored by the Tengu of Asia, this Gift causes the wereraven's feathers to rain down on everyone beneath him in a deadly razor-storm. This Gift is taught by a monsoon- or hurricane-spirit.",
+        "system": "The Tengu must be in the air when using this Gift. The player spends three Gnosis and two Rage as his action for the turn. The feather storm causes Dexterity + 4 dice of lethal damage to everything beneath the Tengu within a 15 foot radius. Those caught in the storm must roll three successes on a Dexterity + Athletics roll (difficulty 8) to avoid this damage. If Razor Feathers is active, this damage is aggravated.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition, Tengu",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            4
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Gauntlet Runner",
+        "description": "The Corax may pass quickly and easily through the Gauntlet. Any Wyld-spirit can teach this Gift.",
+        "system": "A roll of Wits + Enigmas (difficulty 8) lowers the Gauntlet within 20 yards by one point for every 2 successes for the rest of the scene.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            4
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Vulture's Feast",
+        "description": "One of the great advantages of being a carrion eater is that your dinner plate is rarely empty. There's roadkill everywhere just waiting for you to dig in. What happens, however, if you want something a little fresher? After all, who knows how long that hunk of exsquirrel has been hanging out in the passing lane? Vulture's Feast allows a Corax to rot flesh with a touch, regardless of whether the target meat is dead or alive. Obviously, this is not a Gift to be used lightly, but there are times when even the most peaceable Corax has no recourse but to turn someone's face into a mass of decaying suppuration. A Vulture-spirit teaches this Gift.",
+        "system": "The exercise of Vulture's Feast requires the expenditure of a Willpower point and two Gnosis. The Corax must then make a successful Dexterity + Brawl roll (difficulty 5) in order to touch his victim, then he must succeed on a contested Stamina roll. If he wins, the flesh he's currently touching becomes withered, dead and rotted; the victim takes one Health Level of aggravated damage for each success the Corax has left. Only Corax in Homid can make use of this Gift. Corax who become too fond of using Vulture's Feast are often easily turned to the Wyrm, so anyone who gets a reputation for using Vulture's Feast frequently will find himself watched carefully by his fellow wereravens.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Corax BB, p79",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            4
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Gift of Eyes",
+        "description": "The Corax' duty of drinking the eyes of the slain can inflict a montage of supremely horrific images upon those who tend to their duties. In many cases, those images are the Corax' burden, to suffer with in silence. That's not always the case, however. With Gift of Eyes, a Corax can pass along a vision from an eye he's drunk to any non-Corax he chooses. The image is transferred in all its glory and gore, just as the Corax himself first saw it. Unprepared viewers may faint or scream; prepared ones may find clues or details they need in this glimpse of a dead man's last seconds. Raven or one of his spirits teaches this Gift.",
+        "system": "The expenditure of a pair of Gnosis points and a contested Willpower roll against the intended victim are what's needed to effect a Gift of Eyes. The Corax can transfer any memory he's devoured with no distortion or dilution of the image.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "PGttCB p82, Corax BB p80",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            5
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Moments of Eclipse",
+        "description": "There are times when a Corax must make a near-supreme sacrifice, voluntarily severing his connection to the Sun. The reasons for doing so are few, but always drastic. Perhaps the Corax has been chained with gold, and needs a few minutes in which to work an escape (or else he'll die a horrible, agonizing death), or maybe he needs to prove his 'worth' to a gang of vampires he's trying to infiltrate. Regardless, this is not an action that any Corax should ever take lightly, and Helios himself notices if a wereraven abuses this Gift. After all, he's the one who teaches it.",
+        "system": "Given by Helios reluctantly (and some say, at the last minute) to his new acquisitions, this Gift allows a Corax to sever his connection to the Sun temporarily — 10 minutes for every success on a Willpower roll (difficulty 7) after the expenditure of 2 points of Gnosis. If the roll is a success, the Corax is suddenly cut off from Helios. This has both positive and negative effects. On the plus side, the Corax is no longer vulnerable to the pernicious effects of gold for the duration of the Gift's effects. On the other hand, for so long as the Corax is cut off from Helios, she cannot use Rage.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Corax BB p80",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            5
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Portents",
+        "description": "The wereraven may look into the future. A wind-spirit teaches this Gift.",
+        "system": "The player spends two Gnosis points and rolls Intelligence + Enigmas (difficulty 8), then asks for a vision of the future with regard to a certain subject. More successes grant greater clarity.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            5
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Theft of Stars",
+        "description": "This Gift renders its target completely unable to see any light derived from a natural source (the sun, moon, or stars, as well as any manner of bioluminescence). Victims are reduced to stumbling about in a bizarre twilight, if not absolute darkness. Helios's avatar teaches this Gift.",
+        "system": "The player spends a point of Willpower and Rage, then makes a contested Willpower roll against the victim. If the Corax wins the roll, her victim is immediately plunged into darkness, capable of seeing only artificial light. The effects of Theft of Stars last for the Corax's Glory in hours.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            5
+        ],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Thieving Talons of the Magpie",
+        "description": "As the Ragabash Gift, which the Corax originally taught to the Garou. The Garou can steal the powers of others and use them herself. These powers can be Garou Gifts, spirit Charms, vampiric Disciplines, True Magic or any other such power. Naturally, a magpie-spirit teaches this Gift.",
+        "system": "The player must gain three successes on a Wits + Stealth roll (difficulty of the target's Willpower). If successful, the Ragabash can use the specified power (and the victim cannot) for each successive turn she is willing to spend a Gnosis point. The werewolf's Gnosis is substituted for any Traits exclusive to the victim that might be necessary to work the power, such as a vampire's blood pool or a mage's Arete. The Ragabash must know something about his target's powers, and he must target a power in the terms by which he would understand it.",
+        "game_line": "Werewolf: The Apocalypse",
+        "source": "Changing Breeds 20th Anniversary Edition, Tengu",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            5
+        ],
         "shifter_type": "Corax",
         "splat": "Shifter"
     }

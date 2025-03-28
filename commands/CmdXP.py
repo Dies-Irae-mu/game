@@ -41,7 +41,7 @@ class CmdXP(default_cmds.MuxCommand):
     key = "+xp"
     aliases = ["xp"]
     locks = "cmd:all()"
-    help_category = "General"
+    help_category = "XP Commands"
     
     def func(self):
         """Execute command"""

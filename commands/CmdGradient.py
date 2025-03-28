@@ -127,7 +127,7 @@ class CmdGradientName(Command):
     key = "gradientname"
     # Builder+ only
     locks = "cmd:perm(Builder)"
-    help_category = "Staff"
+    help_category = "Admin Commands"
 
     def func(self):
         if not self.args:

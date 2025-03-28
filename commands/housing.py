@@ -28,7 +28,7 @@ class CmdRent(MuxCommand):
     
     key = "+rent"
     locks = "cmd:all()"
-    help_category = "Housing"
+    help_category = "Building and Housing"
     
     # Define residence types (moved to class level for easy reference)
     APARTMENT_TYPES = {
@@ -618,7 +618,7 @@ class CmdVacate(MuxCommand):
     
     key = "+vacate"
     locks = "cmd:all()"
-    help_category = "Housing"
+    help_category = "Building and Housing"
     
     def find_residence(self, residence_number=None):
         """Helper method to find building containing player's residence."""
@@ -815,7 +815,7 @@ class CmdManageHome(MuxCommand):
     key = "+home"
     aliases = ["home"]
     locks = "cmd:all()"
-    help_category = "Housing"
+    help_category = "Building and Housing"
     
     def init_home_data(self, location):
         """Initialize home data if it doesn't exist"""
@@ -2100,7 +2100,7 @@ class CmdSetApartmentDesc(MuxCommand):
     key = "+adesc"
     aliases = ["+rdesc"]  # Added alias for residences
     locks = "cmd:all()"
-    help_category = "Housing"
+    help_category = "Building and Housing"
     
     def func(self):
         location = self.caller.location

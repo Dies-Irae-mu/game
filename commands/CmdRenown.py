@@ -30,7 +30,7 @@ class CmdRenown(MuxCommand):
     key = "+renown"
     aliases = ["renown"]
     locks = "cmd:all()"
-    help_category = "Character Generation"
+    help_category = "Shifter"
 
     def func(self):
         """Execute the renown command."""

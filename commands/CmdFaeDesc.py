@@ -21,7 +21,7 @@ class CmdFaeDesc(MuxCommand):
     key = "+faedesc"
     aliases = ["+fdesc"]
     locks = "cmd:all()"
-    help_category = "Social"
+    help_category = "Changeling"
 
     def can_perceive_fae(self, character):
         """

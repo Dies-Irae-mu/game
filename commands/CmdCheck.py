@@ -80,7 +80,8 @@ class CmdCheck(MuxCommand):
         'numina': 7,
         'sorcery': 7,
         'hedge_ritual': 3,
-        'faith': 7
+        'faith': 7,
+        'specialty': 1  # Specialty costs 1 freebie point
     }
 
     XP_COSTS = {
@@ -780,6 +781,7 @@ class CmdCheck(MuxCommand):
                 results['errors'].append("Kinain should have at least 1 realm dot")
 
         elif splat == 'shifter':
+            # Check required Shifter attributes
             required_lineage = ['Deed Name', 'Type', 'Rank', 'Breed']
             optional_lineage = ['Aspect', 'Auspice', 'Tribe', 'Crown', 'Varna', 'Cabal', 'Kitsune Path', 'Stream', 'Plague']
             
@@ -798,6 +800,48 @@ class CmdCheck(MuxCommand):
             gifts = character.db.stats.get('powers', {}).get('gift', {})
             total_gifts = len(gifts) if gifts else 0
 
+            # Check Renown based on shifter type
+            renown = character.db.stats.get('advantages', {}).get('renown', {})
+            total_renown = 0
+
+            # Handle special case for Garou
+            if shifter_type == 'garou':
+                tribe = character.db.stats.get('identity', {}).get('lineage', {}).get('Tribe', {}).get('perm', '')
+                if tribe == 'Black Spiral Dancers':
+                    required_renown = ['Power', 'Infamy', 'Cunning']
+                else:
+                    required_renown = ['Glory', 'Honor', 'Wisdom']
+            else:
+                # Get renown types from SHIFTER_RENOWN dictionary
+                required_renown = {
+                    "ajaba": ["Cunning", "Ferocity", "Obligation"],
+                    "ananasi": ["Cunning", "Obedience", "Wisdom"],
+                    "bastet": ["Cunning", "Ferocity", "Honor"],
+                    "corax": ["Glory", "Honor", "Wisdom"],
+                    "gurahl": ["Honor", "Succor", "Wisdom"],
+                    "kitsune": ["Cunning", "Honor", "Glory"],
+                    "mokole": ["Glory", "Honor", "Wisdom"],
+                    "nagah": [],  # Nagah don't use Renown
+                    "nuwisha": ["Humor", "Glory", "Cunning"],
+                    "ratkin": ["Infamy", "Obligation", "Cunning"],
+                    "rokea": ["Valor", "Harmony", "Innovation"]
+                }.get(shifter_type, [])
+
+            if required_renown:  # Skip check for Nagah
+                missing_renown = []
+                for renown_type in required_renown:
+                    value = renown.get(renown_type, {}).get('perm', 0)
+                    total_renown += value
+                    if value == 0:
+                        missing_renown.append(renown_type)
+
+                if missing_renown:
+                    results['errors'].append(f"Missing required Renown types for {shifter_type}: {', '.join(missing_renown)}")
+                
+                if total_renown < 3:
+                    results['errors'].append(f"Shifter must have at least 3 dots of Renown at character creation (currently has {total_renown})")
+
+            # Check gift requirements
             gift_requirements = {
                 'ajaba': {'count': 3, 'msg': "one breed Gift, one aspect Gift, and one Level One general Ajaba Gift"},
                 'bastet': {'count': 3, 'msg': "one Level One general Gift, one Level One breed Gift, and one Level One tribe Gift"},
@@ -886,7 +930,7 @@ class CmdCheck(MuxCommand):
         # Mortal, Mortal+, and Possessed get 21 freebies, others get 15
         base_freebies = 21 if splat in ['mortal', 'mortal+', 'possessed', 'companion'] else 15
         spent_freebies = 0
-
+        self.caller.msg("DEBUG: Starting calculate_freebies")
         # Calculate total flaw points first
         total_flaw_points = 0
         for flaw_type in ['flaw', 'physical', 'social', 'mental', 'supernatural']:
@@ -1260,34 +1304,166 @@ class CmdCheck(MuxCommand):
             if glamour > base_glamour:
                 spent_freebies += (glamour - base_glamour) * self.FREEBIE_COSTS['glamour']
 
-        elif splat == 'mage':
+        # Calculate willpower costs
+        willpower = character.db.stats.get('pools', {}).get('dual', {}).get('Willpower', {}).get('perm', 0)
+        if willpower > 3:  # Starting willpower is 3
+            spent_freebies += (willpower - 3) * self.FREEBIE_COSTS['willpower']
+        if splat == 'mage':
+            # Calculate Synergy virtue costs
+            virtues = character.db.stats.get('virtues', {})
+            synergy = virtues.get('synergy', {})
+
+            if synergy and isinstance(synergy, dict):
+                remaining_free_dots = 1  # Mages get 1 dot of synergy in either Dynamic, Entropic, or Static
+                total_synergy_dots = 0
+                for virtue in ['Dynamic', 'Entropic', 'Static']:
+                    virtue_data = synergy.get(virtue, {})
+                    if not isinstance(virtue_data, dict):
+                        continue
+                    value = virtue_data.get('perm', 0)
+                    if value > 0:
+                        total_synergy_dots += value
+                        if total_synergy_dots > remaining_free_dots:
+                            extra_dots = value - (remaining_free_dots - (total_synergy_dots - value))
+                            spent_freebies += extra_dots * self.FREEBIE_COSTS['virtue']
+                            remaining_free_dots = 0
+                        else:
+                            remaining_free_dots -= value
+
             # Calculate Sphere costs
-            spheres = character.db.stats.get('powers', {}).get('sphere', {})
-            sphere_dots = sum(values.get('perm', 0) for values in spheres.values())
-            if sphere_dots > 6:  # 5 free dots + 1 affinity
-                spent_freebies += (sphere_dots - 6) * self.FREEBIE_COSTS['sphere']
+            powers = character.db.stats.get('powers', {})
+            spheres = powers.get('sphere', {})
+            
+            if spheres and isinstance(spheres, dict):
+                sphere_dots = 0
+                for sphere, values in spheres.items():
+                    if not isinstance(values, dict):
+                        continue
+                    sphere_dots += values.get('perm', 0)
+                if sphere_dots > 6:  # 5 free dots + 1 affinity
+                    spent_freebies += (sphere_dots - 6) * self.FREEBIE_COSTS['sphere']
 
             # Calculate Arete costs
-            arete = character.db.stats.get('pools', {}).get('advantage', {}).get('Arete', {}).get('perm', 0)
-            if arete > 1:
-                spent_freebies += (arete - 1) * self.FREEBIE_COSTS['arete']
+            pools = character.db.stats.get('pools', {})
+            advantage = pools.get('advantage', {})
+            arete_data = advantage.get('Arete', {})
+            if isinstance(arete_data, dict):
+                arete = arete_data.get('perm', 0)
+                if arete > 1:
+                    spent_freebies += (arete - 1) * self.FREEBIE_COSTS['arete']
 
             # Calculate Enlightenment costs for Technocracy
-            affiliation_data = character.db.stats.get('identity', {}).get('lineage', {}).get('Affiliation', {})
+            identity = character.db.stats.get('identity', {})
+            lineage = identity.get('lineage', {})
+            affiliation_data = lineage.get('Affiliation', {})
             affiliation = affiliation_data.get('perm') if isinstance(affiliation_data, dict) else None
+            
             if affiliation == 'Technocracy':
-                enlightenment = character.db.stats.get('pools', {}).get('advantage', {}).get('Enlightenment', {}).get('perm', 0)
-                if enlightenment > 1:
-                    spent_freebies += (enlightenment - 1) * self.FREEBIE_COSTS['enlightenment']
+                enlightenment_data = advantage.get('Enlightenment', {})
+                if isinstance(enlightenment_data, dict):
+                    enlightenment = enlightenment_data.get('perm', 0)
+                    if enlightenment > 1:
+                        spent_freebies += (enlightenment - 1) * self.FREEBIE_COSTS['enlightenment']
 
             # Calculate Quintessence costs
-            quintessence = character.db.stats.get('pools', {}).get('dual', {}).get('Quintessence', {}).get('perm', 0)
-            avatar = character.db.stats.get('backgrounds', {}).get('background', {}).get('Avatar', {}).get('perm', 0)
-            if quintessence > avatar:
-                # Each point of quintessence over Avatar costs 0.25 freebies
-                # For every 4 points of quintessence over Avatar, that's 1 freebie point
-                extra_points = quintessence - avatar
+            dual_pools = pools.get('dual', {})
+            quintessence_data = dual_pools.get('Quintessence', {})
+            quintessence = quintessence_data.get('perm', 0) if isinstance(quintessence_data, dict) else 0
+            
+            backgrounds = character.db.stats.get('backgrounds', {}).get('background', {})
+            avatar_data = backgrounds.get('Avatar', {})
+            genius_data = backgrounds.get('Genius', {})
+            avatar = avatar_data.get('perm', 0) if isinstance(avatar_data, dict) else 0
+            genius = genius_data.get('perm', 0) if isinstance(genius_data, dict) else 0
+            
+            effective_avatar = avatar if affiliation != 'Technocracy' else genius
+            if quintessence > effective_avatar:
+                extra_points = quintessence - effective_avatar
                 spent_freebies += (extra_points * self.FREEBIE_COSTS['quintessence'])
+
+            # Check for specialties purchased with freebie points
+            specialties = getattr(character.db, 'specialties', {}) or {}
+            total_specialties = sum(len(specs) for specs in specialties.values() if isinstance(specs, (list, dict, set)))
+            
+            # Track which abilities grant free specialties for debugging
+            granted_specialty_slots = []
+            
+            # 1. Count required specialties (for abilities like Crafts, Artistry, etc.)
+            required_specialty_abilities = []
+            for category in ['talent', 'skill', 'knowledge']:
+                abilities = character.db.stats.get('abilities', {}).get(category, {})
+                for ability_name, ability_data in abilities.items():
+                    ability_value = ability_data.get('perm', 0)
+                    
+                    # Skip abilities that already grant required specialties (we counted them above)
+                    is_required = False
+                    for req_ability in REQUIRED_SPECIALTIES:
+                        if ability_name.lower() == req_ability.lower():
+                            is_required = True
+                            break
+                        
+                    if is_required and ability_value > 0:
+                        required_specialty_abilities.append(ability_name.lower())
+                        granted_specialty_slots.append(f"{ability_name} (required)")
+            
+            # 2. Count high-level abilities that grant specialty slots
+            high_level_slots = 0
+            
+            # Check attributes (attributes don't actually grant specialty slots in WoD, but we'll leave the code here in case a house rule is added)
+            for category in ['physical', 'social', 'mental']:
+                attributes = character.db.stats.get('attributes', {}).get(category, {})
+                for attr_name, attr_data in attributes.items():
+                    attr_value = attr_data.get('perm', 0)
+                    if attr_value >= 5:
+                        high_level_slots += 2
+                        granted_specialty_slots.append(f"{attr_name}: 2 slots (level 5)")
+                    elif attr_value >= 4:
+                        high_level_slots += 1
+                        granted_specialty_slots.append(f"{attr_name}: 1 slot (level 4)")
+            
+            # Check abilities and secondary abilities
+            for main_category in ['abilities', 'secondary_abilities']:
+                for subcategory in ['talent', 'skill', 'knowledge', 'secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+                    abilities = character.db.stats.get(main_category, {}).get(subcategory, {})
+                    for ability_name, ability_data in abilities.items():
+                        ability_value = ability_data.get('perm', 0)
+                        
+                        # Skip abilities that already grant required specialties (we counted them above)
+                        is_required = False
+                        for req_ability in REQUIRED_SPECIALTIES:
+                            if ability_name.lower() == req_ability.lower():
+                                is_required = True
+                                break
+                            
+                        if is_required:
+                            continue
+                            
+                        # Non-required abilities get free specialties at levels 4 and 5
+                        if ability_value >= 5:
+                            high_level_slots += 2
+                            granted_specialty_slots.append(f"{ability_name}: 2 slots (level 5)")
+                        elif ability_value >= 4:
+                            high_level_slots += 1
+                            granted_specialty_slots.append(f"{ability_name}: 1 slot (level 4)")
+            
+            # Total free specialties = required specialties + high level slots
+            free_specialty_slots = len(required_specialty_abilities) + high_level_slots
+            
+            # Calculate extra specialties that cost freebie points
+            extra_specialties = max(0, total_specialties - free_specialty_slots)
+            if extra_specialties > 0:
+                specialty_freebie_cost = extra_specialties * self.FREEBIE_COSTS['specialty']
+                spent_freebies += specialty_freebie_cost
+                
+                # Add explanation to results
+                results.setdefault('specialty_details', {})
+                results['specialty_details'] = {
+                    'total_specialties': total_specialties,
+                    'free_specialties': free_specialty_slots,
+                    'extra_specialties': extra_specialties,
+                    'freebie_cost': specialty_freebie_cost,
+                    'granted_slots': granted_specialty_slots
+                }
 
         results['freebies_spent'] = int(spent_freebies)
         results['total_freebies'] = total_freebies
@@ -1618,6 +1794,35 @@ class CmdCheck(MuxCommand):
         # Willpower for all splats that use it
         if splat in ['changeling', 'mortal+', 'possessed', 'companion', 'vampire', 'mage', 'shifter', 'mortal']:
             string += f"|yWillpower:|n {willpower}\n\n"
+            
+        # Specialties Section
+        if hasattr(character.db, 'specialties') and character.db.specialties:
+            string += "|ySpecialties:|n\n"
+            specialties = character.db.specialties
+            total_specialties = sum(len(specs) for specs in specialties.values())
+            
+            # Display all current specialties
+            for stat, specs in sorted(specialties.items()):
+                for spec in specs:
+                    string += f"- {stat.title()}: {spec}\n"
+            
+            # Show specialty allocation details if available
+            if 'specialty_details' in results:
+                details = results['specialty_details']
+                string += f"\nTotal specialties: {details['total_specialties']}\n"
+                string += f"Free specialty slots: {details['free_specialties']}\n"
+                
+                # Show which abilities grant free specialties
+                if details.get('granted_slots'):
+                    string += "\nFree specialty slots granted by:\n"
+                    for slot in details['granted_slots']:
+                        string += f"- {slot}\n"
+                
+                if details['extra_specialties'] > 0:
+                    string += f"\nExtra specialties (costing freebies): {details['extra_specialties']}\n"
+                    string += f"Freebie cost for extra specialties: {details['freebie_cost']}\n"
+            
+            string += "\n"
 
         # Freebie Points
         # Determine base freebies based on splat
@@ -1643,15 +1848,15 @@ class CmdCheck(MuxCommand):
 
         # Errors
         if results['errors']:
-            string += "|rWarnings:|n\n"
+            string += "|yNote!:|n\n"
             for error in results['errors']:
                 string += f"- {error}\n"
+            string += "\nPlease note that the warnings listed above are meant to point out issues in base chargen points. If you have received permission or are spending freebies to raise stats, please ignore the warnings.\n"
         else:
             string += "|gNo errors found. Character creation points are properly allocated.|n\n"
 
         return string
-"""
-    def calculate_xp(self, character, results):
+"""    def calculate_xp(self, character, results):
         # Calculate XP expenditure if character has starting XP.
         # Get XP from the character's xp attribute
         xp_data = character.db.xp if hasattr(character.db, 'xp') else None

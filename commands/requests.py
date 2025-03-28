@@ -39,7 +39,7 @@ class CmdRequests(MuxCommand):
     """
     key = "+request"
     aliases = ["+requests", "+myjob", "+myjobs"]
-    help_category = "General"
+    help_category = "Utility Commands"
 
     def func(self):
         if not self.args and not self.switches:

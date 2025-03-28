@@ -221,6 +221,7 @@
         "values": [4], 
         "splat": "Shifter",
         "breed": "Lupus",
+		"tribe": ["Silent Striders", "Glass Walkers", "Uktena"],
         "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin", "Ananasi", "Corax", "Mokole"],
         "gift_alias": ["Lay of the Land"]
     },
@@ -316,8 +317,7 @@
         "stat_type": "gift",
         "values": [4],
         "splat": "Shifter",
-        "tribe": ["Get of Fenris", "Glass Walkers"],
-        "camp": "Boli Zouhisze",
+        "tribe": ["Get of Fenris", "Glass Walkers", "Boli Zouhisze"],
 		"shifter_type":  ["Garou", "Gurahl"],
 		"gift_alias": "Yu's Endurance"
     },
@@ -388,6 +388,7 @@
         "values": [4], 
         "splat": "Shifter",
         "breed": "Lupus",
+		"tribe": "Red Talons",
         "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin", "Rokea"],
         "gift_alias": ["Inundate"]
     },  
@@ -470,6 +471,7 @@
         "splat": "Shifter",
         "auspice": "Ahroun",
 		"camp": "Mjolnir's Thunder",
+		"tribe": ["Get of Fenris", "Red Talons", "Kucha Ekundu"],
         "shifter_type":  ["Garou", "Ajaba", "Mokole", "Rokea"],
 		"gift_alias": "Iron Jaws"
     },
@@ -683,7 +685,7 @@
         "stat_type": "gift",
         "values": [4],
 		"splat": "Shifter",
-        "tribe": "Silent Strider Tribe",
+        "tribe": "Silent Striders",
         "shifter_type": ["Garou"]
     },
     {
@@ -702,7 +704,7 @@
     {
         "name": "Touch of Death",
         "description": "The Garou can inflict visions of death upon an unsuspecting opponent. Worse, these visions are highly personal premonitions of the opponent's untimely demise, as if someone “had walked over his grave.” The fear this creates is paralyzing; in the worst cases, the victim falls catatonic and cannot be revived for days. On recovery, the stricken individual cannot remember details of what so terrified him, simply that involved his death. Victims who survive the encounter with the Eater of the Dead are forever marked with a white lock or patch of hair. This Gift is taught by a death-spirit.",
-        "system": "The Garou must touch her victim; the player rolls Dexterity + Brawl if in combat, Dexterity + Stealth if sneaking up unnoticed, or Manipulation + Subterfuge if casually touching him in the course of conversation. On success, the player spends two points of Gnosis and rolls Manipulation + Occult (difficulty of the victim's Willpower). If the Eater of the Dead achieves more successes than the target has Willpower, the victim becomes catatonic with fear. if the successes are fewer than the target's Willpower, the target suffers a -1 penalty to all dice pools for each success due to the debilitating fear. In both cases, the successes are eliminated at a rate of one per day - a catatonic victim does not awaken until all of the initial successes are eliminated.",
+        "system": "The Garou must touch her victim; the player rolls Dexterity + Brawl if in combat, Dexterity + Stealth if sneaking up unnoticed, or Manipulation + Subterfuge if casually touching him in the course of conversation. On success, the player spends two points of Gnosis and rolls Manipulation + Occult (difficulty of the victim's Willpower). If the Eater of the Dead achieves more successes than the target has Willpower, the victim becomes catatonic with fear. if the successes are fewer than the target's Willpower, the target suffers a -1 penalty to all dice pools for each success due to the debilitating fear. In both cases, the successes are eliminated at a rate of one per day — a catatonic victim does not awaken until all of the initial successes are eliminated.",
         "source": "Tribebook: Silent Striders (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -736,8 +738,9 @@
         "stat_type": "gift",
         "values": [4], 
         "splat": "Shifter",
-        "tribe": "Silver Fangs",
-        "shifter_type":  ["Garou", "Nagah"]
+		"camp": "Swords of Night",
+        "tribe": ["Silent Striders", "Silver Fangs", "Stargazers"],
+        "shifter_type":  ["Garou", "Nagah", "Ananasi", "Nagah"]
     },
     {
         "name": "Speed Beyond Thought",
@@ -763,6 +766,7 @@
         "values": [4],
 		"splat": "Shifter",
         "tribe": "Silver Fangs",
+		"camp": "Moon",
         "shifter_type": ["Garou"]
     },
     {
@@ -776,6 +780,7 @@
         "values": [4],
 		"splat": "Shifter",
         "tribe": "Silver Fangs",
+		"camp": "Moon",
         "shifter_type": ["Garou"]
     },
     {
@@ -821,7 +826,7 @@
     },
     {
         "name": "Imaginal Mantra",
-        "description": "The Stargazer can chant a mantra to banish Banality from the area and awaken Glamour. During the chanting, he must imagine the area as being inherently magical, seeing the rocks, stones and buildings as living things - he must pretend to dream while awake. This Gift is taught by a Chimerling.",
+        "description": "The Stargazer can chant a mantra to banish Banality from the area and awaken Glamour. During the chanting, he must imagine the area as being inherently magical, seeing the rocks, stones and buildings as living things — he must pretend to dream while awake. This Gift is taught by a Chimerling.",
         "system": "The player rolls Wits + Rituals and spends one Gnosis point. If successful, any Banality is banished for one scene. In addition, any fae are revealed in their true forms.",
         "source": "Stargazer Tribebook 2nd Edition",
         "game_line": "Werewolf: The Apocalypse",
@@ -922,11 +927,12 @@
         "values": [4], 
         "splat": "Shifter",
         "tribe": "Uktena",
+		"camp": "Bane Tender",
         "shifter_type":  ["Garou"]
     },
     {
         "name": "Bare the Heart",
-        "description": "This Gift utilizes the Uktena's noted penchant for delving into the deepest secrets. The Earth Guides use this Gift to examine Bane Tenders for signs of Wyrm-taint. Using the clear sight granted him by this Gift, an Uktena can look beyond outward manifestations, internal manipulations and even magical disguises that might mask Wyrm-taint, corruption or evil intent and pierce straight to the heart of the truth. Thus, the Garou might note that an otherwise normal-looking person is really a fomor or a Black Spiral Dancer by use of this Gift. Garou using the Gift could also determine that someone is disguised (via cosmetic means or magical change), but only if that person has evil intent (i.e., intends to commit some evil - as defined by the Garou's concept of evil - while so disguised. Thus, if a bank-robbery was in the offing, the Garou might not see through the mask unless he cares about that bank, but he would unmask someone intending to clear-cut a virgin forest.) This Gift is taught by an Incarna avatar.",
+        "description": "This Gift utilizes the Uktena's noted penchant for delving into the deepest secrets. The Earth Guides use this Gift to examine Bane Tenders for signs of Wyrm-taint. Using the clear sight granted him by this Gift, an Uktena can look beyond outward manifestations, internal manipulations and even magical disguises that might mask Wyrm-taint, corruption or evil intent and pierce straight to the heart of the truth. Thus, the Garou might note that an otherwise normal-looking person is really a fomor or a Black Spiral Dancer by use of this Gift. Garou using the Gift could also determine that someone is disguised (via cosmetic means or magical change), but only if that person has evil intent (i.e., intends to commit some evil — as defined by the Garou's concept of evil — while so disguised. Thus, if a bank-robbery was in the offing, the Garou might not see through the mask unless he cares about that bank, but he would unmask someone intending to clear-cut a virgin forest.) This Gift is taught by an Incarna avatar.",
         "system": "The Garou using this Gift must spend at least one turn intently observing the person he wishes to examine. While doing so, he attunes himself to the person's innermost core, the truth of the heart, and spends two points of Gnosis. The player then rolls Perception + Empathy (difficulty 6). Even one success uncovers a falsehood if any exists and the nature of the mask (cosmetic, magical, etc.). Two successes pinpoint how deeply the taint runs and the exact nature of the hidden heart (i.e., if the target is Wyrm-corrupted, a Bane, a vampire, etc.), while three or more successes allows the Garou to discover such a creature's immediate intent (i.e., what its plans are for the remainder of the scene.",
         "source": "Uktena Tribebook",
         "game_line": "Werewolf: The Apocalypse",
@@ -1013,6 +1019,7 @@
         "stat_type": "gift",
         "values": [3, 4], 
         "splat": "Shifter",
+        "tribe": "Uktena",
         "shifter_type":  ["Garou", "Bastet", "Nagah"],
         "gift_alias": ["Command Water Spirit"]
     },
@@ -1148,7 +1155,7 @@
     },
     {
         "name": "Curse of Harano",
-        "description": "Called Harano in the Player's Guide Second Edition. The Wendigo can inflict a state of Harano on a single victim. The target feels the tragic history of all the world's oppressed peoples, including the Garou themselves. Rumors that this power would not affect Native Americans have been dispelled by a Shadow Lord who swindled the Gift out of a native Wendigo - who found himself the victim of a Gift he'd just taught. The Shadow Lord has not been heard from in recent days. A wind-spirit teaches this Gift.",
+        "description": "Called Harano in the Player's Guide Second Edition. The Wendigo can inflict a state of Harano on a single victim. The target feels the tragic history of all the world's oppressed peoples, including the Garou themselves. Rumors that this power would not affect Native Americans have been dispelled by a Shadow Lord who swindled the Gift out of a native Wendigo — who found himself the victim of a Gift he'd just taught. The Shadow Lord has not been heard from in recent days. A wind-spirit teaches this Gift.",
         "system": "The player spends one point of Rage and rolls Manipulation + Expression (difficulty 8). More than five successes inflicts permanent Harano upon the victim; otherwise, the suffering lasts for the rest of the scene.",
         "source": "Player's Guide Second Edition / Players' Guide to Garou (revised)",
         "game_line": "Werewolf: The Apocalypse",
@@ -1169,7 +1176,8 @@
         "stat_type": "gift",
         "values": [4], 
         "splat": "Shifter",
-        "tribe": "Wendigo",
+        "tribe": ["Wendigo", "Get of Fenris"],
+		"camp": "Ymir's Sweat",
         "shifter_type":  ["Garou", "Bastet", "Nagah"],
         "gift_alias": ["Cooling System", "Song of Winter"]
     },
@@ -1383,6 +1391,8 @@
         "stat_type": "gift",
         "values": [4], 
         "splat": "Shifter",
+		"tribe": "Shadow Lords",
+		"camp": "Lords of the Summit",
         "auspice": "Philodox",
         "shifter_type":  ["Garou", "Kitsune"]
     },
@@ -1409,6 +1419,7 @@
         "stat_type": "gift",
         "values": [4],
         "splat": "Shifter",
+		"auspice": "Theurge", 
         "shifter_type":  ["Garou", "Nuwisha"],
         "gift_alias": ["Locked Door"]
     },
@@ -1427,7 +1438,7 @@
     },
     {
         "name": "Placation",
-        "description": "Shamans from many diverse cultures are said to know secrets for placating angry ghosts and ancestors - this Gift is one of them. A Theurge with this Gift always knows exactly what kind of sacrifice is necessary to make atonement for an offense against the spirit world, and is skilled in the secret methods of offering it. A spirit from the realm of Erebus teaches this Gift.",
+        "description": "Shamans from many diverse cultures are said to know secrets for placating angry ghosts and ancestors — this Gift is one of them. A Theurge with this Gift always knows exactly what kind of sacrifice is necessary to make atonement for an offense against the spirit world, and is skilled in the secret methods of offering it. A spirit from the realm of Erebus teaches this Gift.",
         "system": "With a Perception + Occult roll (difficulty 7), the Theurge learns what she must offer to placate and offended spirit. Usually, as long as both offender and Theurge are sincere, a few points of Gnosis spent is sufficient to restore harmony; if the offender is dead or absent, or the offense is truly great, the spirit courts may require the Theurge take on a geas as chiminage, offer a fetish or undertake a quest. In legendary cases, Theurges have even been known to surrender their lives to restore the Garou Nation's ties to a wronged Incarna or totem spirit.",
         "source": "Book of Auspices",
         "game_line": "Werewolf: The Apocalypse",
@@ -1453,28 +1464,29 @@
     },
     {
         "name": "Spirit Drain",
-        "description": "The Garou can drain power from spirits, weakening them while strengthening herself. A Leech-spirit teaches this Gift.",
-        "system": "The player rolls Gnosis against a difficulty of the spirit's Willpower. Each success drains one point of the spirit's Essence, which the character gains as temporary Gnosis. These points fade at the end of the scene if unused.",
+        "description": "The Garou may drain power from a spirit to feed his own resolve. A spirit servant of the Uktena totem teaches this Gift.",
+        "system": "The player makes a resisted Gnosis roll against the spirit. If the player succeeds, the spirit loses one Essence point per success for the rest of the scene. For every two points drained, the Garou gains a temporary Willpower point, but she loses any points exceeding her maximum at the end of the scene..",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [4], 
         "splat": "Shifter",
-        "tribe": "Uktena",
+        "auspice": "Theurge",
         "shifter_type":  ["Garou", "Kitsune"]
     },
     {
         "name": "Grasp the Beyond",
-        "description": "The Garou may take things to and from the Umbra without having to dedicate them to herself (see the Rite of Talisman Dedication). This Gift affects humans and animals, both willing and unwilling. Garou often use this power to take loyal Kinfolk with them on Umbral quests or to heal injured Kinfolk - both body and soul - in mystic Glens.",
+        "description": "The Garou may take things to and from the Umbra without having to dedicate them to herself (see the Rite of Talisman Dedication). This Gift affects humans and animals, both willing and unwilling. Garou often use this power to take loyal Kinfolk with them on Umbral quests or to heal injured Kinfolk — both body and soul — in mystic Glens.",
         "system": "The Garou must grasp the object or person he wishes to take to the spirit world. He must then spend a number of Willpower points: one for small items (a pocket-watch or knife), two for larger items (a backpack or bow) and three for huge items (including people). The player makes the usual Gnosis roll to pierce the Gauntlet and step sideways; if successful, both he and the desired object or person pass into the Umbra. An unwilling target may resist with a Willpower roll; each success subtracts one from the Garou's successes. A Garou attempting to abduct an unwilling victim must achieve at least three successes on his Gnosis roll.",
         "source": "Core book revised.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [4, 5], 
         "splat": "Shifter",
-        "shifter_type":  ["Garou", "Ajaba", "Nuwisha", "Kitsune"]
+        "auspice": "Theurge",
+        "shifter_type":  ["Garou", "Ajaba", "Nuwisha", "Kitsune", "Mokole"]
     },
     {
         "name": "Web of Knowledge",
@@ -1647,7 +1659,7 @@
         "values": [4], 
         "splat": "Shifter",
         "breed": "Metis",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
+        "shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
     },
     {
         "name": "Gift of the Porcupine",
@@ -1660,12 +1672,13 @@
         "values": [1, 2, 4],
 		"splat": "Shifter",
 		"breed": "Metis",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
+        "shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin", "Rokea"],
+		"gift_alias": ["Teeth of the Skin", "Spines", "Spirit of the Spiny Rat"]
     },
     {
         "name": "Underearth",
-        "description": "Since Turtle went into his coma-like sleep, many secrets of earth powers once known are now forgotten - such as the Umbral tunnels beneath the Umbrascape. The Croatan did not always rely on Luna's moon paths when traveling the Umbra. This Gift allowed them to use the secret tunnels under the earth, known to many earth-burrowing spirits and totems, such as Mole, Badger and Groundhog (who taught them the Gift). In such a way, the Croatan could travel long distances in the safety of the Umbral underground. This Gift is all but lost to werewolves in the 20th century, but this is almost a blessing; in the modern era, Ratkin occupy many of these tunnels, making them hostile territory for any Garou",
-        "system": "The player spends one Gnosis point; the Garou is made aware of the nearest entrance into one of these tunnels. Such an entrance may not be close at hand; the werewolf might have to go on a day's journey just to reach the nearest opening, depending on the local population of burrowing spirits. Once inside the tunnel, he can reach his destination safely. When he gets to a multiple branching tunnel, he'll know the proper way - otherwise one could get lost for years! In all other respects, this Gift is much like traveling a moon path, save that the potentially hostile encounters that may be found along the way take the form of Ratkin and other subterranean denizens, rather than spirits.",
+        "description": "Since Turtle went into his coma-like sleep, many secrets of earth powers once known are now forgotten — such as the Umbral tunnels beneath the Umbrascape. The Croatan did not always rely on Luna's moon paths when traveling the Umbra. This Gift allowed them to use the secret tunnels under the earth, known to many earth-burrowing spirits and totems, such as Mole, Badger and Groundhog (who taught them the Gift). In such a way, the Croatan could travel long distances in the safety of the Umbral underground. This Gift is all but lost to werewolves in the 20th century, but this is almost a blessing; in the modern era, Ratkin occupy many of these tunnels, making them hostile territory for any Garou",
+        "system": "The player spends one Gnosis point; the Garou is made aware of the nearest entrance into one of these tunnels. Such an entrance may not be close at hand; the werewolf might have to go on a day's journey just to reach the nearest opening, depending on the local population of burrowing spirits. Once inside the tunnel, he can reach his destination safely. When he gets to a multiple branching tunnel, he'll know the proper way — otherwise one could get lost for years! In all other respects, this Gift is much like traveling a moon path, save that the potentially hostile encounters that may be found along the way take the form of Ratkin and other subterranean denizens, rather than spirits.",
         "source": "Past Lives",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -1677,7 +1690,7 @@
     },
     {
         "name": "Stronger on Stone",
-        "description": "Just as the Uktena were mighty in the waters and the Wendigo drew power from the winds, the Croatan were at their strongest when standing on the earth itself. This Gift allows a werewolf to mimic that strength - the closer the Garou's tie to earth, the stronger he gets.",
+        "description": "Just as the Uktena were mighty in the waters and the Wendigo drew power from the winds, the Croatan were at their strongest when standing on the earth itself. This Gift allows a werewolf to mimic that strength — the closer the Garou's tie to earth, the stronger he gets.",
         "system": "The player spends a Gnosis point and one Rage point. The character receives a number of bonus dice that he can add to strength or Stamina (or divide between them) for the remainder of the scene, depending on where he stands. On dead wood, concrete or other artificial flooring, the bonus is one die. On living plant matter (such as thick grass or a tree root), the bonus is two dice. On bare earth, the bonus is three dice; on naked stone, four dice. If the character is separated from the ground (such as in an airplane or on a bridge over water), the Gift has no effect.",
         "source": "Past Lives",
         "game_line": "Werewolf: The Apocalypse",
@@ -1698,21 +1711,21 @@
         "stat_type": "gift",
         "values": [4],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Shantar's Loom",
         "description": "The use of this Gift allows the Garou to craft some item from the energy provided by either Gnosis, Rage or Willpower. The item may not involve multiple parts or have an overly complex make-up. For example, a Garou cannot make a gun using this Gift, but she can craft a dagger or hunting knife. Although this Gift can't produce radioactive materials, it can produce such metals as silver.",
-        "system": "The Garou spends either a Gnosis, Rage or Willpower point and rolls Dexterity + Repair (difficulty 8 for simple items, 9 for more sophisticated ones). (The Storyteller may allow the player to substitute a more appropriate secondary skill possessed by the character for the Repair Ability.) One success produces the item desired, while additional successes refine its quality and durability. The Storyteller may require additional successes to make an item from a less appropriate quality - such as making a child's blanket from a Rage point, or using anything other than Gnosis to craft a silver knife. No successes means that the Gift fails to produce anything useful and allows the expended point to revert to the character. A botch uses up the expended point and produces an unusable or defective item. The item lasts a day per success.",
+        "system": "The Garou spends either a Gnosis, Rage or Willpower point and rolls Dexterity + Repair (difficulty 8 for simple items, 9 for more sophisticated ones). (The Storyteller may allow the player to substitute a more appropriate secondary skill possessed by the character for the Repair Ability.) One success produces the item desired, while additional successes refine its quality and durability. The Storyteller may require additional successes to make an item from a less appropriate quality — such as making a child's blanket from a Rage point, or using anything other than Gnosis to craft a silver knife. No successes means that the Gift fails to produce anything useful and allows the expended point to revert to the character. A botch uses up the expended point and produces an unusable or defective item. The item lasts a day per success.",
         "source": "Rage Across the Heavens",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Blank Slate",
@@ -1724,8 +1737,8 @@
         "stat_type": "gift",
         "values": [4],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Harmonious Slumber",
@@ -1737,8 +1750,8 @@
         "stat_type": "gift",
         "values": [4],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Enthronement",
@@ -1750,8 +1763,8 @@
         "stat_type": "gift",
         "values": [4],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Sleep's Travels",
@@ -1763,8 +1776,8 @@
         "stat_type": "gift",
         "values": [4],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Motherly Guardian",
@@ -1776,8 +1789,8 @@
         "stat_type": "gift",
         "values": [4],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Whisper in the Dark",
@@ -1789,8 +1802,8 @@
         "stat_type": "gift",
         "values": [4],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Hand of the Sun",
@@ -1802,8 +1815,8 @@
         "stat_type": "gift",
         "values": [4],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Mooncat",
@@ -1815,8 +1828,8 @@
         "stat_type": "gift",
         "values": [4],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Mercurial Messenger",
@@ -1828,8 +1841,8 @@
         "stat_type": "gift",
         "values": [4],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Lore of the Land",
@@ -1841,21 +1854,21 @@
         "stat_type": "gift",
         "values": [4],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Challenge of Single Combat",
         "description": "By invoking the name of the Ice Warrior and issuing a direct challenge to an enemy, the Garou can force her opponent to fight one-on-one according to the tacit rules of fair play. The opponent can launch no surprise attacks, employ dirty tricks or accept extra help from comrades or pack mates. However, the Garou using this Gift accepts the same restrictions - neither combatant can break off from the fight until one participant either concedes victory to the other or dies.",
-        "system": "After the character has issued the challenge, the player spends a point of Rage and rolls Manipulation + Leadership (difficulty of the target's Willpower). A single success forces the target to forego any unfair tactics and meet the Garou in single combat as described above. No successes means the Gift fails while a botch inspires the target to launch an immediate attack - usually with the help of the opponent's friends.",
+        "system": "After the character has issued the challenge, the player spends a point of Rage and rolls Manipulation + Leadership (difficulty of the target's Willpower). A single success forces the target to forego any unfair tactics and meet the Garou in single combat as described above. No successes means the Gift fails while a botch inspires the target to launch an immediate attack — usually with the help of the opponent's friends.",
         "source": "Rage Across the Heavens",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Living Treasure",
@@ -1898,8 +1911,8 @@
     },
     {
         "name": "Dance of the Lightning Snakes",
-        "description": "The Penumbra of Australia is inhabited by, among other things, the lightning snakes - spirits that leap to the earth and rebound to the heavens during Umbral storms, bringing lightning and rain. This Gift allows a Garou to call on the lightning snakes to evoke a powerful storm in the Umbra, washing away spirits and lashing foes with bolts of spirit-lightning.",
-        "system": "This Gift works only in the Umbra. The player spends one Gnosis point and rolls Willpower, with the difficulty based on the spirit world's existing weather (if any) - 5 if an Umbral storm is already brewing, to 9 if the spirit world's skies are clear. The difficulty is reduced by 1 if the character is in Australia or New Zealand's Penumbra, where lightning snakes are more plentiful. The storm gathers in three turns; it covers the equivalent of 5 miles per success, and increases the difficulty or Essence cost of any fire, perception or travel-related Charms by 1. The Garou may direct the lightning snakes to strike opponents (Charisma + Occult, difficulty 7 to hit; 10 dice of aggravated damage). The storm cannot bleed over into the physical world, although a sympathetic, uncontrolled rainstorm may gather in the material world.",
+        "description": "The Penumbra of Australia is inhabited by, among other things, the lightning snakes — spirits that leap to the earth and rebound to the heavens during Umbral storms, bringing lightning and rain. This Gift allows a Garou to call on the lightning snakes to evoke a powerful storm in the Umbra, washing away spirits and lashing foes with bolts of spirit-lightning.",
+        "system": "This Gift works only in the Umbra. The player spends one Gnosis point and rolls Willpower, with the difficulty based on the spirit world's existing weather (if any) — 5 if an Umbral storm is already brewing, to 9 if the spirit world's skies are clear. The difficulty is reduced by 1 if the character is in Australia or New Zealand's Penumbra, where lightning snakes are more plentiful. The storm gathers in three turns; it covers the equivalent of 5 miles per success, and increases the difficulty or Essence cost of any fire, perception or travel-related Charms by 1. The Garou may direct the lightning snakes to strike opponents (Charisma + Occult, difficulty 7 to hit; 10 dice of aggravated damage). The storm cannot bleed over into the physical world, although a sympathetic, uncontrolled rainstorm may gather in the material world.",
         "source": "Past Lives",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -1930,9 +1943,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [3, 4], 
         "splat": "Shifter",
         "auspice": "Galliard",
+		"tribe": ["Black Furies", "Fianna"],
         "shifter_type":  ["Garou"]
     },
 	{

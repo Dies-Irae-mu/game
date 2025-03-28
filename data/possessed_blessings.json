@@ -40,7 +40,7 @@
 	  "possessed_type": "Kami"
 	},
 	{
-	  "name": "Addictive Personality",
+	  "name": "Addictive Presence",
 	  "description": "The Fomor's presence becomes near addicting.",
 	  "system":  "Adictive Presence requires the Enticer to spend a scene interacting with a target. After this interaction, the Enticer must spend a point of Willpower and roll Manipulation + Subterfuge against the target's Wits + Primal Urge (difficulty 6 for both rolls). If the Enticer wins, the subject becomes addicted to their presence and will go to great lengths to be with the Enticer again. Once per week, the target may make another roll to attempt to break this addiction.",
 	  "game_line": "Werewolf: The Apocalypse",
@@ -947,6 +947,16 @@
     "category": "powers",
     "stat_type": "blessing",
     "values": [1],
+    "possessed_type": "Fomori"
+  },
+  {
+    "name": "Siren's Veil",
+    "description": "The fomor can roll Appearance + Empathy against a difficulty equal to the target's Willpower to appear as their ideal mate. This effect can radically alter the fomor's perceived age or even make them appear as a different gender. If successful, the fomor gains a +2 bonus to social rolls against their target. If the roll fails, the fomor instead appears as a generically attractive individual.",
+    "system": "The fomor rolls Appearance + Empathy against a difficulty equal to the target's Willpower to appear as their ideal mate. This effect can radically alter the fomor's perceived age or even make them appear as a different gender. If successful, the fomor gains a +2 bonus to social rolls against their target. If the roll fails, the fomor instead appears as a generically attractive individual.",
+    "game_line": "Werewolf: The Apocalypse",
+    "category": "powers",
+    "stat_type": "blessing",
+    "values": [2],
     "possessed_type": "Fomori"
   }
 ]

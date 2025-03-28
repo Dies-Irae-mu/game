@@ -44,7 +44,7 @@ class CmdMultidesc(MuxCommand):
     key = "+mdesc"
     aliases = ["mdesc"]
     locks = "cmd:all()"
-    help_category = "Description"
+    help_category = "RP Commands"
     switch_options = ("list", "view", "get", "store", "kill", "save", "edit")
 
     def _get_descs(self):

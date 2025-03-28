@@ -40,7 +40,7 @@ class CmdOOC(MuxCommand):
     """
     key = "ooc"
     locks = "cmd:all()"
-    help_category = "Communications"
+    help_category = "Comms"
 
     def func(self):
         if not self.args:
@@ -91,7 +91,7 @@ class CmdPlusIc(MuxCommand):
 
     key = "+ic"
     locks = "cmd:all()"
-    help_category = "General"
+    help_category = "Utility Commands"
 
     def func(self):
         caller = self.caller
@@ -139,7 +139,7 @@ class CmdPlusOoc(MuxCommand):
 
     key = "+ooc"
     locks = "cmd:all()"
-    help_category = "General"
+    help_category = "Utility Commands"
 
     def func(self):
         caller = self.caller
@@ -175,7 +175,7 @@ class CmdMeet(MuxCommand):
 
     key = "+meet"
     locks = "cmd:all()"
-    help_category = "General"
+    help_category = "Utility Commands"
 
     def search_for_character(self, search_string):
         # First, try to find by exact name match
@@ -253,7 +253,7 @@ class CmdSummon(AdminCommand):
 
     key = "+summon"
     locks = "cmd:perm(builders) or perm(storyteller)"
-    help_category = "Staff"
+    help_category = "Admin Commands"
 
     def func(self):
         caller = self.caller
@@ -328,7 +328,7 @@ class CmdJoin(AdminCommand):
 
     key = "+join"
     locks = "cmd:perm(builders) or perm(storyteller)"
-    help_category = "Staff"
+    help_category = "Admin Commands"
 
     def func(self):
         caller = self.caller

@@ -51,6 +51,7 @@ from commands.unfindable import CmdUnfindable
 from commands.CmdChangelingInteraction import CmdChangelingInteraction
 from commands.CmdBanality import CmdBanality
 from commands.groups_commands import CmdGroups
+from commands.CmdHelp import CmdHelp
 
 from commands.bbs.bbs_all_commands import CmdBBS
 from commands.bbs.bbs_admin_commands import CmdResetBBS
@@ -68,7 +69,7 @@ from commands.CmdLFRP import CmdLFRP
 from evennia.commands.default import cmdset_character, cmdset_account
 from commands.CmdXP import CmdXP
 from commands.CmdXPCost import CmdXPCost
-from commands.CmdWho import CmdWho
+from commands.CmdWho import CmdWho, CmdCensus
 from commands.housing import CmdRent, CmdManageHome
 from commands.comms import CustomCmdChannel, CmdNotifications
 from commands.CmdCheck import CmdCheck
@@ -101,6 +102,7 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CustomCmdChannel())
         
         # Add all our custom commands
+        self.add(CmdHelp())
         self.add(CmdGradientName())
         self.add(CmdBBS())
         #self.add(OssCmdSet)
@@ -146,6 +148,7 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdXP())
         self.add(CmdXPCost())
         self.add(CmdWho())
+        self.add(CmdCensus())
         self.add(CmdRent())
         self.add(CmdManageHome())
         self.add(CmdSetLock())
@@ -183,6 +186,9 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         
         # Add our custom channel command
         self.add(CustomCmdChannel())
+        
+        # Add our custom help command
+        self.add(CmdHelp())
         
         self.add(CmdNotes())
         self.add(CmdSummon())
@@ -246,7 +252,7 @@ class CmdTab(default_cmds.MuxCommand):
     key = "|-"
     aliases = ["^t"]
     locks = "cmd:all()"
-    help_category = "General"
+    help_category = "Utility Commands"
 
     def func(self):
         caller = self.caller
@@ -267,7 +273,7 @@ class CmdRet(default_cmds.MuxCommand):
     key = "|/"
     aliases = ["^r"]
     locks = "cmd:all()"
-    help_category = "General"
+    help_category = "Utility Commands"
 
     def func(self):
         caller = self.caller

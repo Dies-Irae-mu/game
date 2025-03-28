@@ -101,7 +101,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [3],
+        "values": [3, 4],
         "shifter_type": ["Garou"],
         "splat": "Shifter",
         "tribe": ["Black Furies", "Fianna"],
@@ -212,7 +212,7 @@
         "values": [1, 3],
         "shifter_type": ["Garou", "Ajaba", "Nuwisha"],
         "splat": "Shifter",
-        "tribe": ["Bone Gnawers", "Black Furies", "Silent Striders", "Silver Fangs", "Stargazers", "Uktena"],
+        "tribe": ["Bone Gnawers"],
         "auspice": "Theurge",
         "gift_alias": ["Laugh of the Vagabond"]
     },
@@ -321,7 +321,8 @@
         "values": [3],
         "shifter_type": ["Garou", "Gurahl", "Ajaba", "Bastet", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
         "splat": "Shifter",
-        "breed": "Homid"
+        "breed": "Homid",
+		"tribe": "Children of Gaia"
     },
     {
         "name": "Pain Chain",
@@ -379,7 +380,7 @@
     {
         "name": "Lover's Touch",
         "description": "The Garou can restore what another lacks: not only wounds healed, but also strength of will and even spiritual essence. Any spirit of love or avatar of Unicorn may teach this Gift.",
-        "system": "The Garou touches the afflicted individual kindly. The two need not be lovers, but the contact must convey affection and warmth - an embrace, a caress, or yet more intimate contact. The player spends a Gnosis point and rolls Intelligence + Medicine; each success heals one level of bashing or lethal damage, or restores one point of Willpower or Essence (if the target is a spirit). The difficulty is the Rage or Willpower of the target (whichever is higher). The player may choose to divide the successes among multiple results. Alternately, by neither healing wounds nor restoring Willpower or Essence, the Garou may suppress a Derangement for one day per success. This Gift cannot provide permanent relief from such afflictions, but it can act as a start on the road to recovery.",
+        "system": "The Garou touches the afflicted individual kindly. The two need not be lovers, but the contact must convey affection and warmth — an embrace, a caress, or yet more intimate contact. The player spends a Gnosis point and rolls Intelligence + Medicine; each success heals one level of bashing or lethal damage, or restores one point of Willpower or Essence (if the target is a spirit). The difficulty is the Rage or Willpower of the target (whichever is higher). The player may choose to divide the successes among multiple results. Alternately, by neither healing wounds nor restoring Willpower or Essence, the Garou may suppress a Derangement for one day per success. This Gift cannot provide permanent relief from such afflictions, but it can act as a start on the road to recovery.",
         "source": "Tribebook: Children of Gaia (Revised)/20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -484,8 +485,8 @@
     },
     {
         "name": "Pin the Eagle's Wing",
-        "description": "Known as Lleu's Spear by the Welsh Fianna (who claim to have discovered it), a Fianna with this Gift can throw a spear as far as an arrow and sink it deep into its target. Spirited Fianna can even pierce heavy doors or strike a foe on a high rooftop - or pierce a Leech's putrid heart. Ancestor-spirits teach this Gift.",
-        "system": "The Fianna must concentrate on the weapon for one full turn and make a Willpower roll (difficulty 8). She then spends a variable number of Gnosis points. Each Gnosis grants two additional dice, which can be split between the attack roll and damage roll. Dice may also be used to increase the spear's flight distance (20 yards per die allocated). The Gift doesn't work with any other weapon, even a thrust spear - only a thrown spear.",
+        "description": "Known as Lleu's Spear by the Welsh Fianna (who claim to have discovered it), a Fianna with this Gift can throw a spear as far as an arrow and sink it deep into its target. Spirited Fianna can even pierce heavy doors or strike a foe on a high rooftop — or pierce a Leech's putrid heart. Ancestor-spirits teach this Gift.",
+        "system": "The Fianna must concentrate on the weapon for one full turn and make a Willpower roll (difficulty 8). She then spends a variable number of Gnosis points. Each Gnosis grants two additional dice, which can be split between the attack roll and damage roll. Dice may also be used to increase the spear's flight distance (20 yards per die allocated). The Gift doesn't work with any other weapon, even a thrust spear — only a thrown spear.",
         "source": "Fianna Tribebook (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -498,7 +499,7 @@
     },
     {
         "name": "Woadling",
-        "description": "The ancient Celts would paint their skin with woad - the components of which caused a frenzy-like state - before marching off to battle. The Fianna carry on this tradition and take it even further. After painting the woad on their bodies, they can bring the paintings to life to harry an opponent. A stag-spirit can teach this Gift.",
+        "description": "The ancient Celts would paint their skin with woad — the components of which caused a frenzy-like state — before marching off to battle. The Fianna carry on this tradition and take it even further. After painting the woad on their bodies, they can bring the paintings to life to harry an opponent. A stag-spirit can teach this Gift.",
         "system": "Each painting can create one woadling that costs one Gnosis point to animate. The Fianna can release only one woadling per turn. Each time the player creates a woadling, she should roll Dexterity + Occult (difficulty 6). Every success subtracts one die from her opponent's pool as the woadling dances and prances about the target. The woadlings vanish (and must be repainted) after the Gift ends.",
         "source": "Player's Guide Second Edition",
         "game_line": "Werewolf: The Apocalypse",
@@ -547,13 +548,14 @@
         "values": [1, 2, 3], 
         "splat": "Shifter",
         "breed": "Lupus",
-        "tribe": "Fianna",
-        "shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
+        "tribe": ["Fianna", "Silent Striders"],
+        "shifter_type": ["Garou", "Ajaba", "Bastet", "Corax", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin", "Rokea"],
+		"camp": "Tuatha de Fionn",
         "gift_alias": ["Strange Blood"]
     },
     {
         "name": "Silence the Weaver",
-        "description": "The lupus releases a shattering howl, destroying all nearby delicate electronics - computers, laptops, smart phones, tablets and the like. Simpler machines such as land line phones, cars, and firearms are unaffected. A storm-spirit teaches this Gift.",
+        "description": "The lupus releases a shattering howl, destroying all nearby delicate electronics — computers, laptops, smart phones, tablets and the like. Simpler machines such as land line phones, cars, and firearms are unaffected. A storm-spirit teaches this Gift.",
         "system": "The lupus spends a turn howling. The player then spends one Rage point and rolls Manipulation + Primal-Urge. Delicate electronics are destroyed within a radius of (20 x successes) yards (or meters) in a flash of sparks.",
         "source": "W20 Pg. 160",
         "game_line": "Werewolf: The Apocalypse",
@@ -764,11 +766,12 @@
         "values": [2, 3],
         "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
         "splat": "Shifter",
+		"tribe": ["Glass Walkers", "Silent Striders"], 
         "breed": "Homid"
     },
     {
         "name": "Elemental Favor",
-        "description": "By begging, threatening or cajoling an urban elemental, a Garou can convince the spirit to do her a favor by manipulating or even destroying her earthly shell. Thus, a glass sheet might explode at the Garou's foes; a door might refuse to open, even if unlocked, or a car's brakes might fail. An urban elemental teaches this Gift. Red Talon: this version affects the four classic elements - fire, earth, water and air - and a natural elemental teaches it. Boli Zouhisze: When this Gift is taken, the Boli Zouhisze must choose to be able to command Eastern elementals (water, wood, fire, earth and metal) or urban elementals). The character may never command elementals of the other group.",
+        "description": "By begging, threatening or cajoling an urban elemental, a Garou can convince the spirit to do her a favor by manipulating or even destroying her earthly shell. Thus, a glass sheet might explode at the Garou's foes; a door might refuse to open, even if unlocked, or a car's brakes might fail. An urban elemental teaches this Gift. Red Talon: this version affects the four classic elements — fire, earth, water and air — and a natural elemental teaches it. Boli Zouhisze: When this Gift is taken, the Boli Zouhisze must choose to be able to command Eastern elementals (water, wood, fire, earth and metal) or urban elementals). The character may never command elementals of the other group.",
         "system": "The player rolls Charisma + Subterfuge (difficulty of the spirit's Gnosis). The Storyteller determines the precise effects. Boli Zouhisze (Glass Walker) Gift version is called Yao's Commands. Glass Walker Gift / Rank 3 Red Talon Gift version is called Elemental Favor.",
         "source": "Core book revised / Glass Walker Tribebook (revised)",
         "game_line": "Werewolf: The Apocalypse",
@@ -795,8 +798,8 @@
     },
     {
         "name": "Gaze of the Hunter",
-        "description": "The Garou stares into the eyes of an intended victim, and communicates to them the ancient bond between predator and prey - beginning the sacred hunt. This Gift is taught by the spirit of any predatory mammal - wolf, mountain lion, bear, etc.",
-        "system": "The Garou spends on Gnosis point and rolls Manipulation + Intimidation (difficulty 6 for animals or the human [or other sentient] target's Willpower - whichever is higher). If the Gaze is successful, the target (human or animal) understands the link and will act accordingly: Wild animals will run into the open, allowing the hunter to eventually catch and kill them. Humans and domesticated animals - for whom this is a terrifying experience - may run or cower, terrified. No victim will begin a fight, although if the Red Talon pursues and catches the prey, a battle might result. The Gift does not work on other Garou, but will be effective against most creatures the Garou sets out to hunt.",
+        "description": "The Garou stares into the eyes of an intended victim, and communicates to them the ancient bond between predator and prey — beginning the sacred hunt. This Gift is taught by the spirit of any predatory mammal — wolf, mountain lion, bear, etc.",
+        "system": "The Garou spends on Gnosis point and rolls Manipulation + Intimidation (difficulty 6 for animals or the human [or other sentient] target's Willpower — whichever is higher). If the Gaze is successful, the target (human or animal) understands the link and will act accordingly: Wild animals will run into the open, allowing the hunter to eventually catch and kill them. Humans and domesticated animals — for whom this is a terrifying experience — may run or cower, terrified. No victim will begin a fight, although if the Red Talon pursues and catches the prey, a battle might result. The Gift does not work on other Garou, but will be effective against most creatures the Garou sets out to hunt.",
         "source": "Tribebook: Red Talons",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -856,7 +859,7 @@
         "stat_type": "gift",
         "values": [3],
 		"splat": "Shifter",
-        "tribe": ["Red Talon", "White Howlers"],
+        "tribe": ["Red Talon", "White Howlers", "Kucha Ekundu"],
         "shifter_type": ["Garou"]
     },
     {
@@ -977,7 +980,7 @@
         "stat_type": "gift",
         "values": [3],
 		"splat": "Shifter",
-        "tribe": "Shadow Lords",
+        "tribe": ["Shadow Lords", "Ronin"],
         "shifter_type": ["Garou"]
     },
     {
@@ -1005,7 +1008,7 @@
         "values": [1, 3],
 		"splat": "Shifter",
         "tribe": "Shadow Lords",
-        "shifter_type": ["Garou"],
+        "shifter_type": ["Garou", "Ananasi", "Mokole"],
         "gift_alias": ["Dragon-King's Majesty"]
     },
     {
@@ -1062,7 +1065,7 @@
     },
     {
         "name": "Direct the Storm",
-        "description": "Having a packmate who is prone to frenzy isn't safe for anyone. With this Gift, the Shadow Lord can direct the primal instincts of a frenzied Garou - friend or foe - causing him to attack targets of the Lord's choice. A Stormcrow teaches this Gift.",
+        "description": "Having a packmate who is prone to frenzy isn't safe for anyone. With this Gift, the Shadow Lord can direct the primal instincts of a frenzied Garou — friend or foe — causing him to attack targets of the Lord's choice. A Stormcrow teaches this Gift.",
         "system": "The player spends a point of Gnosis and rolls Willpower (difficulty of the target's Rage). Success indicates that the Shadow Lord controls the target's frenzy and can set him on anyone she chooses. Using this Gift on a Garou in the Thrall of the Wyrm is possible, but doing so requires the player to roll Rage (difficulty 7) to check for frenzy for her own character.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
@@ -1102,7 +1105,7 @@
     },
     {
         "name": "Ghost Touched",
-        "description": "Once a Garou steps into the Dark Umbra, he carries an aura of death and decay with him always. The aura is difficult to see, but it is there nonetheless - the perceptive might smell a faint must in his fur, or catch strange reflections in the pupils of his eyes. This Gift harnesses that deathly aura, weaving it into a protective shield against the attacks or special abilities of ghosts. This Gift is taught by the denizens of the Dark Umbra, and is not easily come by.",
+        "description": "Once a Garou steps into the Dark Umbra, he carries an aura of death and decay with him always. The aura is difficult to see, but it is there nonetheless — the perceptive might smell a faint must in his fur, or catch strange reflections in the pupils of his eyes. This Gift harnesses that deathly aura, weaving it into a protective shield against the attacks or special abilities of ghosts. This Gift is taught by the denizens of the Dark Umbra, and is not easily come by.",
         "system": "Once learned, this Gift is always in effect; no roll need be made. The difficulties of all rolls made by ghosts (wraiths or specters, if you're also using Wraith: The Oblivion) to affect the character are made at +2 difficulty (maximum 10). This includes effects that would be beneficial. Using the energies of the Dark Umbra in this way reinforces the impression of death that others may feel, which will increase the difficulty on Social rolls when the Storyteller feels it to be appropriate.",
         "source": "Tribebook: Silent Strider (revised)",
         "game_line": "Werewolf: The Apocalypse",
@@ -1117,7 +1120,7 @@
     {
         "name": "Scale of Ma'at",
         "description": "The Halls of Ma'at are where the dead go to be judged; the liars, cheaters and murders are denied eternal life. The Silent Striders can invoke the judgement of Ma'at on the living, seeing through lies to find the ugly truth beneath. This Gift is taught by an ibis-spirit, the symbol of Thoth.",
-        "system": "The player rolls Intelligence + Empathy (difficulty of the subject's Manipulation + Subterfuge). Success indicates that the character knows which of the subject's statements are true, and which are false. If the character chooses to delve more deeply into any statement, true or false, the player must first succeed at a Perception + Empathy roll against the same difficulty. Success unveils the complete truth to the Garou; a botch ends this use of the Gift, and closes this topic to the Strider forever - at least when questioning this individual.",
+        "system": "The player rolls Intelligence + Empathy (difficulty of the subject's Manipulation + Subterfuge). Success indicates that the character knows which of the subject's statements are true, and which are false. If the character chooses to delve more deeply into any statement, true or false, the player must first succeed at a Perception + Empathy roll against the same difficulty. Success unveils the complete truth to the Garou; a botch ends this use of the Gift, and closes this topic to the Strider forever — at least when questioning this individual.",
         "source": "Tribebook: Silent Striders (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -1165,6 +1168,7 @@
         "values": [3],
         "shifter_type": ["Garou", "Gurahl"],
         "splat": "Shifter",
+		"tribe": "Silent Striders",
         "gift_alias": ["Survival of the Bear"]
     },
     {
@@ -1204,6 +1208,7 @@
         "values": [3],
 		"splat": "Shifter",
         "tribe": "Silver Fangs",
+		"camp": "Moon",
         "shifter_type": ["Garou"]
     },
     {
@@ -1217,6 +1222,7 @@
         "values": [3],
 		"splat": "Shifter",
         "tribe": "Silver Fangs",
+		"camp": "Moon",
         "shifter_type": ["Garou"]
     },
     {
@@ -1230,7 +1236,7 @@
         "values": [3],
 		"splat": "Shifter",
         "tribe": "Silver Fangs",
-		"camp": "Sun Lodge",
+		"camp": "Sun",
         "shifter_type": ["Garou"]
     },
     {
@@ -1304,7 +1310,7 @@
     {
         "name": "Cunning Koan",
         "description": "The character can cut through any falsity, illusion or bullshit with a few choice words. The words cannot be profane and must come in the form of a short haiku poem or koan. This Gift is taught by a crow-spirit or a Chimerling.",
-        "system": "The player rolls Wits + Expression and spends one Gnosis point. Any illusion designed to fool others is revealed as such - even Bastet Den-Realms can be discovered with this Gift. In addition, anyone attempting to He at that moment is revealed as a liar - his words instead speak his true intent.",
+        "system": "The player rolls Wits + Expression and spends one Gnosis point. Any illusion designed to fool others is revealed as such — even Bastet Den-Realms can be discovered with this Gift. In addition, anyone attempting to He at that moment is revealed as a liar — his words instead speak his true intent.",
         "source": "Stargazers Tribebook",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -1337,7 +1343,7 @@
         "stat_type": "gift",
         "values": [3],
 		"splat": "Shifter",
-        "tribe": "Stargazers ",
+        "tribe": "Stargazers",
 		"camp": "Trance Runners",
         "shifter_type": ["Garou"]
     },
@@ -1397,7 +1403,7 @@
     {
         "name": "Sense Balance",
         "description": "As the arbitrators of the Garou Nation, the Philodox have developed an attunement with the precarious forces that balance the world and the individual alike. This Gift allows the user to detect an overabundance of any of the prime forces of the universe, whether Wyrm, Wyld or Weaver. It can point out a Bane manifestation at an industrial plant or mental instability in a packmate. A cat-spirit teaches a friendly Garou this Gift in exchange for a warm fire and promise not to chase her kin.",
-        "system": "The Gift requires the expenditure of one Gnosis point. With a successful Perception + Enigmas roll (difficulty 8) the Garou can feel the balance, or lack thereof, within an area, person or inanimate object. Wyrm manifestation feels dense and oily, Weaver presence feels cold and unyielding and Wyld energies feel warm and trembling. Such manifestations are more subtle than ones detectable through Gifts such as Sense Wyrm. The Philodox must focus and be at peace for this Gift to work properly. Distractions, such as combat or exhaustion, disrupt any benefits of the Gift - the Garou can find only her own imbalance in such instances.",
+        "system": "The Gift requires the expenditure of one Gnosis point. With a successful Perception + Enigmas roll (difficulty 8) the Garou can feel the balance, or lack thereof, within an area, person or inanimate object. Wyrm manifestation feels dense and oily, Weaver presence feels cold and unyielding and Wyld energies feel warm and trembling. Such manifestations are more subtle than ones detectable through Gifts such as Sense Wyrm. The Philodox must focus and be at peace for this Gift to work properly. Distractions, such as combat or exhaustion, disrupt any benefits of the Gift — the Garou can find only her own imbalance in such instances.",
         "source": "Player's Guide Second Edition / 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -1418,7 +1424,7 @@
         "stat_type": "gift",
         "values": [3],
 		"splat": "Shifter",
-        "tribe": "Stargazer",
+        "tribe": "Stargazers",
         "shifter_type": ["Garou"]
     },
     {
@@ -1462,9 +1468,9 @@
     },
     {
         "name": "Chains of Mist",
-        "description": "The Uktena summons spirit-chains of cold mist to bind her foes. A spirit of the dead teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Manipulation + Occult (difficulty of the target's Willpower). Each success binds the target for one turn, preventing any physical action. The chains are partially in the Umbra, so they can bind spirits as well as physical beings.",
-        "source": "Players Guide Second Edition",
+        "description": "Silvery filaments spin out from the Garou's claws, becoming streamers of mist that enwrap and confound nearby spirits, sapping their strength. A fog-spirit teaches this Gift.",
+        "system": "The Uktena concentrates for a turn; and the player spends one Gnosis point and rolls Dexterity + Enigmas (difficulty 7). One spirit of the player's choice within 200 feet (60 m) is affected per success. Spirits struck by this Gift treat their Rage, Gnosis, and Willpower ratings as though they were one lower than they truly are for the purpose of all dice rolls for the rest of the scene.",
+        "source": "20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -1484,7 +1490,7 @@
         "values": [3],
 		"splat": "Shifter",
         "tribe": "Uktena",
-		"camp": "Bane Tender",
+		"camp": "Bane Tenders",
         "shifter_type": ["Garou"]
     },
     {
@@ -1529,7 +1535,7 @@
     },
     {
         "name": "Secrets",
-        "description": "Uktena are said to possess more hidden knowledge than any other tribe. This Gift may be one reason it is so. With Secrets, an Uktena can have one specific question answered simply by touching somebody who knows the answer. The answer to any question - such as “Where is the vampire's lair?” - leaps into the Garou's mind if, in fact, the target knows the answer in the first place. A dream-spirit can teach this Gift after being caught.",
+        "description": "Uktena are said to possess more hidden knowledge than any other tribe. This Gift may be one reason it is so. With Secrets, an Uktena can have one specific question answered simply by touching somebody who knows the answer. The answer to any question — such as “Where is the vampire's lair?” — leaps into the Garou's mind if, in fact, the target knows the answer in the first place. A dream-spirit can teach this Gift after being caught.",
         "system": "After formulating a mental question, the Garou must touch the target. She must also roll Perception + Enigmas (difficulty 8) and spend one Gnosis point. The deeper the secret, the more successes are required. Learning a target's favorite color requires only one success, whereas uncovering his secret lair might be four or more. If the target is aware of the mental intrusion, she may resist with a Willpower roll (difficulty 9).",
         "source": "Player's Guide Second Edition",
         "game_line": "Werewolf: The Apocalypse",
@@ -1662,7 +1668,7 @@
     {
         "name": "Bloody Feast",
         "description": "Great Wendigo, as a hungry cannibalistic spirit, can teach his favored children the ability to gain added strength from an enemy's flesh and blood. An avatar of Great Wendigo teaches this Gift.",
-        "system": "To activate this Gift, the Garou must first bite his opponent and be able to taste blood - meaning he must inflict at least one health level of damage, and his victim must be something that bleeds. If his opponent has toxic blood or none at all, this Gift will not work. The player then rolls Gnosis at a difficulty of the opponent's Stamina + 3 (maximum of 10). The Wendigo gains one extra dot in Strength for every two health levels of damage inflicted by the bite (maximum of + 5 to Strength). The extra Strength bonus lasts for one turn per success on the Gnosis roll. However, flesh and blood can be addictive. The Wendigo's player must make an immediate frenzy roll the turn after activating the Gift.",
+        "system": "To activate this Gift, the Garou must first bite his opponent and be able to taste blood — meaning he must inflict at least one health level of damage, and his victim must be something that bleeds. If his opponent has toxic blood or none at all, this Gift will not work. The player then rolls Gnosis at a difficulty of the opponent's Stamina + 3 (maximum of 10). The Wendigo gains one extra dot in Strength for every two health levels of damage inflicted by the bite (maximum of + 5 to Strength). The extra Strength bonus lasts for one turn per success on the Gnosis roll. However, flesh and blood can be addictive. The Wendigo's player must make an immediate frenzy roll the turn after activating the Gift.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -1684,7 +1690,7 @@
 		"splat": "Shifter",
 		"auspice": "Philodox",
         "tribe": ["Wendigo", "Uktena"],
-        "shifter_type": ["Garou"],
+        "shifter_type": ["Garou", "Mokole", "Kitsune", "Ajaba", "Bastet"],
         "gift_alias": ["Shou"]
     },
     {
@@ -1790,6 +1796,7 @@
         "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
         "splat": "Shifter",
         "breed": "Lupus",
+		"auspice": "Ragabash",
         "gift_alias": ["Prehensile Tail"]
     },
     {
@@ -1817,7 +1824,7 @@
         "values": [1, 2, 3],
 		"splat": "Shifter",
 		"breed": "Lupus",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
+        "shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
         "gift_alias": ["Spider's Grace", "Fluid Grace", "Possum's Feet"]
     },
     {
@@ -1857,6 +1864,7 @@
         "values": [3],
         "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"],
         "splat": "Shifter",
+		"tribe": "Croatan",
         "breed": "Metis"
     },
     {
@@ -1897,6 +1905,7 @@
         "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin", "Mokole"],
         "splat": "Shifter",
         "breed": "Metis",
+		"auspice": "Philodox",
         "gift_alias": ["Send the Dream", "Touch the Mind", "Distant Whispers"]
     },
     {
@@ -1910,7 +1919,7 @@
         "values": [1, 2, 3],
 		"splat": "Shifter",
 		"breed": "Metis",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"],
+        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin", "Rokea"],
         "gift_alias": ["Eyes of the Wound", "Cat Sight"]
     },
 	{
@@ -1941,7 +1950,7 @@
     },
     {
         "name": "Liar's Craft",
-        "description": "The Ragabash can tell the most outrageous of lies and have them accepted as truth - for a while, at least. This Gift is taught by a fox-spirit.",
+        "description": "The Ragabash can tell the most outrageous of lies and have them accepted as truth — for a while, at least. This Gift is taught by a fox-spirit.",
         "system": "The character first tells his lie, then the player rolls Wits + Subterfuge (difficulty of the target's Wits + Subterfuge, or the highest rating in a group of listeners). One success convinces a single individual, while three successes are needed to dupe a crowd. Since the roll is made after the lie is told, this Gift always carries some element of risk.",
         "source": "20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
@@ -1950,7 +1959,8 @@
         "values": [1, 2, 3],
 		"splat": "Shifter",
 		"auspice": "Ragabash",
-        "shifter_type": ["Garou"]
+		"gift_alias": ["Tale Spinning", "Forked Tongue"],
+        "shifter_type": ["Garou", "Ratkin", "Nagah", "Kitsune"]
     },
     {
         "name": "Riddle",
@@ -1981,7 +1991,7 @@
     {
         "name": "Impunity",
         "description": "One of the Ragabash's jobs is to voice uncomfortable truths. Unfortunately, not all tolerate that role, and those who most need to hear the truth are often least willing to listen. No Moons must be quick on their feet to avoid a furious elder who's been called on the carpet by a subordinate. With this Gift, the Garou may tell a respected leader he screwed up without becoming the dead messenger. The Gift is taught by a cat-spirit.",
-        "system": "By succeeding in a Charisma + Subterfuge roll (difficulty 6), the Ragabash can avoid the worst reprecussions of his statements. The target(s) must make a Willpower roll (difficulty 6 plus the No Moon's successes) to punish or attack the speaker for the rest of the scene. Each attempted use of this Gift in the span of a lunar month adds an additonal +1 to the No Moon's difficulty. Note that whatever the Ragabash says must be clearly and completely true from the user's point of view - no prevarication or double entendres are possible. For example, “Your nephew broke the Litany” would work if said Garou ate a policeman, but not if he failed to respect a Black Spiral's territory. (Though a simple opinion, such as “You're being an idiot,” is acceptable if heartfelt). The Storyteller is the final arbiter. If the Ragabash attempts to misuse this impressive Gift, not only will he not realize it didn't work until after he speaks, but Cat will make her displeasure evident.",
+        "system": "By succeeding in a Charisma + Subterfuge roll (difficulty 6), the Ragabash can avoid the worst reprecussions of his statements. The target(s) must make a Willpower roll (difficulty 6 plus the No Moon's successes) to punish or attack the speaker for the rest of the scene. Each attempted use of this Gift in the span of a lunar month adds an additonal +1 to the No Moon's difficulty. Note that whatever the Ragabash says must be clearly and completely true from the user's point of view — no prevarication or double entendres are possible. For example, “Your nephew broke the Litany” would work if said Garou ate a policeman, but not if he failed to respect a Black Spiral's territory. (Though a simple opinion, such as “You're being an idiot,” is acceptable if heartfelt). The Storyteller is the final arbiter. If the Ragabash attempts to misuse this impressive Gift, not only will he not realize it didn't work until after he speaks, but Cat will make her displeasure evident.",
         "source": "Book of Auspices",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -2099,7 +2109,7 @@
     },
     {
         "name": "Evocation of the Ceremony",
-        "description": "Rituals are not used only to evoke supernatural effects; they also have an inherent value to Theurges in and of themselves. Using this Gift, the Garou evokes a sense of awe, reverence and holy mystery through ritualistic behavior - anything from a Garou rite to a Catholic sacrament. Along with any normal mystical effect, the ceremony produces a sense of reaffirmation and cosmological belonging in everybody who participates. While Theurges usually use this effect to strengthen sincere spiritual devotions or build community among Garou, it's just as easily abused to keep participants in a rite in ignorant, dogmatic fear of the supernatural world - the Theurge's intent, not the nature of the Gift, determines which is the case. An enigmatic spirit teaches this Gift.",
+        "description": "Rituals are not used only to evoke supernatural effects; they also have an inherent value to Theurges in and of themselves. Using this Gift, the Garou evokes a sense of awe, reverence and holy mystery through ritualistic behavior — anything from a Garou rite to a Catholic sacrament. Along with any normal mystical effect, the ceremony produces a sense of reaffirmation and cosmological belonging in everybody who participates. While Theurges usually use this effect to strengthen sincere spiritual devotions or build community among Garou, it's just as easily abused to keep participants in a rite in ignorant, dogmatic fear of the supernatural world — the Theurge's intent, not the nature of the Gift, determines which is the case. An enigmatic spirit teaches this Gift.",
         "system": "Any being can attempt to inspire, unify or cow an audience through ritualism with a Charisma + Rituals, Occult, Performance or Subterfuge roll as appropriate to the exact situation. Possession of this Gift increases the Charisma of the Theurge by four dots, only for the purposes of such attempts (to a maximum of nine).",
         "source": "Book of Auspices",
         "game_line": "Werewolf: The Apocalypse",
@@ -2179,7 +2189,7 @@
     {
         "name": "Divided Heart",
         "description": "The heart of the werewolf is filled with rage, and quite often, this internal fire can overcome a werewolf's strength of will. With this Gift, taught by any tree spirit, a Philodox can briefly allow another to “hold back” the fury inside, lest a poorly made decision cause irreparable damage.",
-        "system": "The purpose of this Gift is to help alleviate the difficulties a werewolf encounters when his Rage exceeds his Willpower (Werewolf, p. 126). For every success on a Manipulation + Primal Urge roll by the Philodox player, one penalty die is negated for the target character. The effects last for five minutes per success - a Philodox can temporarily alleviate the Curse, but never negate it.",
+        "system": "The purpose of this Gift is to help alleviate the difficulties a werewolf encounters when his Rage exceeds his Willpower (Werewolf, p. 126). For every success on a Manipulation + Primal Urge roll by the Philodox player, one penalty die is negated for the target character. The effects last for five minutes per success — a Philodox can temporarily alleviate the Curse, but never negate it.",
         "source": "Book of Auspices",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -2423,8 +2433,8 @@
         "stat_type": "gift",
         "values": [3],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Tangling the Skein",
@@ -2436,8 +2446,8 @@
         "stat_type": "gift",
         "values": [3],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Unravel",
@@ -2449,8 +2459,8 @@
         "stat_type": "gift",
         "values": [3],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Pall of Despair",
@@ -2462,8 +2472,8 @@
         "stat_type": "gift",
         "values": [3],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Undisputed Ruler",
@@ -2475,8 +2485,8 @@
         "stat_type": "gift",
         "values": [3],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Wyld Spirits",
@@ -2488,8 +2498,8 @@
         "stat_type": "gift",
         "values": [3],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Veil of the Mother",
@@ -2501,12 +2511,12 @@
         "stat_type": "gift",
         "values": [3],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Hidden Heart",
-        "description": "This Gift allows the Garou to take a dangerous piece of knowledge she possesses and lock it away in her mind so that it becomes inaccessible without a key. The concealed information cannot be taken from her through mental powers or coercion; she can neither access the information nor remember that she has something hidden away in her mind. Until someone speaks the trigger word, performs the appropriate gesture or enacts the conditions set forth in the activation of the Gift, the Garou remains blissfully unaware of the information she has hidden from everyone - including herself.",
+        "description": "This Gift allows the Garou to take a dangerous piece of knowledge she possesses and lock it away in her mind so that it becomes inaccessible without a key. The concealed information cannot be taken from her through mental powers or coercion; she can neither access the information nor remember that she has something hidden away in her mind. Until someone speaks the trigger word, performs the appropriate gesture or enacts the conditions set forth in the activation of the Gift, the Garou remains blissfully unaware of the information she has hidden from everyone — including herself.",
         "system": "Before using this Gift, the Garou must set the conditions which will cause the information to become available to her. This information should be given a trusted ally — after all, the Garou herself won't even remember that she has a key word, much less a secret. After describing the trigger, the player spends a point of Gnosis and rolls the character's Willpower (difficulty 8). Only one success is necessary for the Gift to take effect. The effect of the Gift lasts until the hidden information is triggered.",
         "source": "Rage Across the Heavens",
         "game_line": "Werewolf: The Apocalypse",
@@ -2514,8 +2524,8 @@
         "stat_type": "gift",
         "values": [3],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Ride the Solar Winds",
@@ -2527,8 +2537,8 @@
         "stat_type": "gift",
         "values": [3],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Moonriver",
@@ -2540,8 +2550,8 @@
         "stat_type": "gift",
         "values": [3],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Deliberate Misinformation",
@@ -2553,8 +2563,8 @@
         "stat_type": "gift",
         "values": [3],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Oaksong",
@@ -2566,8 +2576,8 @@
         "stat_type": "gift",
         "values": [3],
 		"splat": "Shifter",
-        "shifter_type": ["Garou"],
-        "tribe": "Planetary"
+		"tribe": "Planetary",
+        "shifter_type": ["Garou"]
     },
     {
         "name": "Nerigal's Call to Arms",

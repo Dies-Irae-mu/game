@@ -21,7 +21,7 @@ class CmdWhere(default_cmds.MuxCommand):
     key = "+where"
     aliases = ["where"]
     locks = "cmd:all()"
-    help_category = "General"
+    help_category = "Game Info"
 
     def format_idle_time(self, idle_seconds):
         """Format idle time into a compact string."""
@@ -71,27 +71,25 @@ class CmdWhere(default_cmds.MuxCommand):
 
     def format_name(self, puppet, session):
         """Helper function to consistently format names"""
-        name_prefix = "^" if puppet.db.afk else " "
-        name_suffix = "*" if puppet.check_permstring("builders") else ""
+        name = puppet.name
         
-        # Add state indicators to suffix
+        # Add state indicators
         if puppet.tags.has("in_umbra", category="state"):
-            name_suffix = f"@{name_suffix}"
+            name = f"@{name}"
         if puppet.db.lfrp:
-            name_suffix = f"${name_suffix}"
+            name = f"${name}"
+        if puppet.check_permstring("builders"):
+            name = f"*{name}"
+        if puppet.db.afk:
+            name = f"^{name}"
             
-        base_name = f"{name_prefix}{puppet.name}{name_suffix}"
-        
-        # Create padded version before adding colors
-        padded_name = ANSIString(base_name).ljust(20)
-        
-        # Apply color codes after padding
+        # Apply colors
         if puppet.tags.has("in_umbra", category="state"):
-            padded_name = f"|b{padded_name}|n"
+            name = f"|b{name}|n"
         if puppet.db.lfrp:
-            padded_name = f"|y{padded_name}|n"
+            name = f"|y{name}|n"
             
-        return padded_name
+        return name
 
     def func(self):
         """Implement the command"""
@@ -101,11 +99,11 @@ class CmdWhere(default_cmds.MuxCommand):
         
         # Group characters by area
         areas = defaultdict(list)
-        unfindable_chars = []  # New list for unfindable characters
+        unfindable_chars = []
         
         # Build the output
         string = header("Player Locations", width=78) + "\n"
-        string += "|wPlayer                 Type   Idle  Location|n\n"
+        string += "Parentheses indicate idle time.\n"
         string += "|r" + "-" * 78 + "|n\n"
 
         # Sort sessions by account name
@@ -120,16 +118,21 @@ class CmdWhere(default_cmds.MuxCommand):
             if not puppet:
                 continue
 
+            # Skip if in dark mode (unless it's the viewer or both are staff)
+            if puppet != caller:
+                account = session.get_account()
+                is_dark = (account.tags.get("dark_mode", category="staff_status") or 
+                          puppet.tags.get("dark_mode", category="staff_status"))
+                target_is_staff = (account.tags.get("staff", category="role") or 
+                                 puppet.tags.get("staff", category="role"))
+                if is_dark and not (is_staff and target_is_staff):
+                    continue
+
             # Handle unfindable characters for everyone
             if puppet.db.unfindable:
                 formatted_name = self.format_name(puppet, session)
                 idle_str = self.format_idle_time(self.get_idle_time(session))
-                unfindable_chars.append((
-                    formatted_name,
-                    f"{puppet.db.char_type if puppet.db.char_type else ''}      ",  # Fixed 6 spaces
-                    f"{idle_str:5}",  # Fixed 5 spaces
-                    puppet.location.get_display_name(caller) if is_staff else "Unknown"
-                ))
+                unfindable_chars.append((formatted_name, idle_str))
                 continue
 
             location = puppet.location
@@ -137,32 +140,25 @@ class CmdWhere(default_cmds.MuxCommand):
                 continue
 
             area = self.get_area_name(location)
-            char_type = puppet.db.char_type if puppet.db.char_type else ""
             idle_str = self.format_idle_time(self.get_idle_time(session))
-            
             formatted_name = self.format_name(puppet, session)
-            areas[area].append((
-                formatted_name,
-                f"{char_type}      ",  # Fixed 6 spaces
-                f"{idle_str:5}",  # Fixed 5 spaces
-                location.get_display_name(caller)
-            ))
+            areas[area].append((formatted_name, idle_str))
 
-        # characters by area
+        # Output characters by area
         for area in sorted(areas.keys()):
             if areas[area]:  # Only show areas with characters in them
-                string += "\n"  # Empty line for spacing
                 string += f"|c---< {area} >{'-' * (70 - len(area))}|n\n"
-                for name, char_type, idle, loc in sorted(areas[area]):
-                    string += f" {name} {char_type} {idle}   {loc}\n"  # Added 3 spaces before location
+                # Format all players in this area as a comma-separated list
+                players = [f"{name} ({idle})" for name, idle in sorted(areas[area])]
+                string += "  " + ", ".join(players) + "\n"
 
-        # unfindable characters section
+        # Output unfindable characters section
         if unfindable_chars:
             string += f"\n|c---< Unfindable Characters >{'-' * (70 - len('Unfindable Characters'))}|n\n"
-            for name, char_type, idle, loc in sorted(unfindable_chars):
-                string += f" {name} {char_type} {idle}   {loc}\n"  # Added 3 spaces before location
+            players = [f"{name} ({idle})" for name, idle in sorted(unfindable_chars)]
+            string += "  " + ", ".join(players) + "\n"
 
-        # legend
+        # Legend
         string += "\n|r" + "-" * 78 + "|n"
         string += "\n|yLegend: ^ = AFK, * = Staff, |yYellow/$ = Looking for RP|n, |bBlue/@ = In Umbra|n"
         string += "\n|r" + "-" * 78 + "|n\n"

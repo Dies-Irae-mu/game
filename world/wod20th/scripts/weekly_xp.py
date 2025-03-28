@@ -42,7 +42,7 @@ class CmdDebugXP(MuxCommand):
     
     key = "+debugxp"
     locks = "cmd:perm(Wizards)"
-    help_category = "Admin"
+    help_category = "Admin Commands"
     aliases = ["+xpdebug"]
     
     def _find_character(self, search_string):

@@ -55,7 +55,7 @@ class CmdSheet(MuxCommand):
     """
     key = "+sheet"
     aliases = ["sh"]
-    help_category = "Character Info"
+    help_category = "Chargen & Character Info"
     locks = "cmd:all()"  # Everyone can use this command
 
     POWERS_WIDTH = 35  # Reduced from 35 to ensure proper spacing

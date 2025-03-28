@@ -19,7 +19,7 @@ class CmdCreateBoard(default_cmds.MuxCommand):
     """
     key = "+bbs/create"
     locks = "cmd:perm(Builder)"
-    help_category = "BBS"
+    help_category = "Event & Bulletin Board"
 
     def func(self):
         if not self.args or "=" not in self.args:
@@ -81,7 +81,7 @@ class CmdDeleteBoard(default_cmds.MuxCommand):
     """
     key = "+bbs/deleteboard"
     locks = "cmd:perm(Builder)"
-    help_category = "BBS"
+    help_category = "Event & Bulletin Board"
 
     def func(self):
         if not self.args:
@@ -111,7 +111,7 @@ class CmdRevokeAccess(default_cmds.MuxCommand):
     """
     key = "+bbs/revokeaccess"
     locks = "cmd:perm(Builder)"
-    help_category = "BBS"
+    help_category = "Event & Bulletin Board"
 
     def func(self):
         if not self.args or "=" not in self.args:
@@ -146,7 +146,7 @@ class CmdListAccess(default_cmds.MuxCommand):
     """
     key = "+bbs/listaccess"
     locks = "cmd:perm(Builder)"
-    help_category = "BBS"
+    help_category = "Event & Bulletin Board"
 
     def func(self):
         if not self.args:
@@ -209,7 +209,7 @@ class CmdLockBoard(default_cmds.MuxCommand):
     """
     key = "+bbs/lockboard"
     locks = "cmd:perm(Builder)"
-    help_category = "BBS"
+    help_category = "Event & Bulletin Board"
 
     def func(self):
         if not self.args:
@@ -243,7 +243,7 @@ class CmdPinPost(default_cmds.MuxCommand):
     """
     key = "+bbs/pinpost"
     locks = "cmd:perm(Builder)"
-    help_category = "BBS"
+    help_category = "Event & Bulletin Board"
 
     def func(self):
         if not self.args or "/" not in self.args:
@@ -290,7 +290,7 @@ class CmdUnpinPost(default_cmds.MuxCommand):
     """
     key = "+bbs/unpinpost"
     locks = "cmd:perm(Builder)"
-    help_category = "BBS"
+    help_category = "Event & Bulletin Board"
 
     def func(self):
         if not self.args or "/" not in self.args:
@@ -345,7 +345,7 @@ class CmdEditBoard(default_cmds.MuxCommand):
     """
     key = "+bbs/editboard"
     locks = "cmd:perm(Builder)"
-    help_category = "BBS"
+    help_category = "Event & Bulletin Board"
 
     def func(self):
         if not self.args or "=" not in self.args:
@@ -392,7 +392,7 @@ class CmdEditBoardRosters(default_cmds.MuxCommand):
     """
     key = "+bbs/editboard/rosters"
     locks = "cmd:perm(Builder)"
-    help_category = "BBS"
+    help_category = "Event & Bulletin Board"
 
     def func(self):
         if not self.args or "=" not in self.args:
@@ -450,7 +450,7 @@ class CmdGrantAccess(default_cmds.MuxCommand):
     """
     key = "+bbs/grantaccess"
     locks = "cmd:perm(Builder)"
-    help_category = "BBS"
+    help_category = "Event & Bulletin Board"
 
     def func(self):
         if not self.args or "=" not in self.args:
@@ -485,7 +485,7 @@ class CmdAddRoster(default_cmds.MuxCommand):
     """
     key = "+bbs/addroster"
     locks = "cmd:perm(Builder)"
-    help_category = "BBS"
+    help_category = "Event & Bulletin Board"
 
     def func(self):
         if not self.args or "=" not in self.args:
@@ -511,7 +511,7 @@ class CmdRemoveRoster(default_cmds.MuxCommand):
     """
     key = "+bbs/removeroster"
     locks = "cmd:perm(Builder)"
-    help_category = "BBS"
+    help_category = "Event & Bulletin Board"
 
     def func(self):
         if not self.args or "=" not in self.args:
@@ -537,7 +537,7 @@ class CmdListRosters(default_cmds.MuxCommand):
     """
     key = "+bbs/listrosters"
     locks = "cmd:perm(Builder)"
-    help_category = "BBS"
+    help_category = "Event & Bulletin Board"
 
     def func(self):
         if not self.args:

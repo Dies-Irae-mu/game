@@ -50,7 +50,7 @@
     {
         "name": "Gift of the Ray",
         "description": "The Rokea may deliver a venomous sting with her tail or fingertip. Stingray-spirits teach this Gift.",
-        "system": "The player spends one Gnosis point to manifest the stinger. Stinging is a Dexterity + Brawl attack (difficulty 7). The victim must roll Stamina (difficulty 9) or take lethal damage equal to the Rokea's Innovation, as well as suffer a –2 wound penalty for the remainder of the scene.",
+        "system": "The player spends one Gnosis point to manifest the stinger. Stinging is a Dexterity + Brawl attack (difficulty 7). The victim must roll Stamina (difficulty 9) or take lethal damage equal to the Rokea's Innovation, as well as suffer a -2 wound penalty for the remainder of the scene.",
         "source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -110,7 +110,7 @@
     {
         "name": "Gift of the Ray",
         "description": "The Rokea may deliver a venomous sting with her tail or fingertip. Stingray-spirits teach this Gift.",
-        "system": "The player spends one Gnosis point to manifest the stinger. Stinging is a Dexterity + Brawl attack (difficulty 7). The victim must roll Stamina (difficulty 9) or take lethal damage equal to the Rokea's Innovation, as well as suffer a –2 wound penalty for the remainder of the scene.",
+        "system": "The player spends one Gnosis point to manifest the stinger. Stinging is a Dexterity + Brawl attack (difficulty 7). The victim must roll Stamina (difficulty 9) or take lethal damage equal to the Rokea's Innovation, as well as suffer a -2 wound penalty for the remainder of the scene.",
         "source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",

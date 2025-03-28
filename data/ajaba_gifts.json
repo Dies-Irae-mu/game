@@ -2,193 +2,302 @@
     {
         "name": "Feral Grin",
         "description": "With a snarl or glare, the Ajaba forces her opponent to back down, unnerved. A hyena-spirit teaches this Gift.",
+        "system": "The Ajaba adds two dice to all attempts to intimidate others of equal or higher Willpower. When attempting to intimidate lower-Willpower individuals, the Ajaba adds the two dice or her Primal-Urge rating, whichever is higher. This Gift's effects are permanent.",
+        "source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [
             1
         ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-	    {
-        "name": "Whispers in the Grass",
-        "description": "The werehyena may move soundlessly through any natural environment; grass bends without making any noise, and dry twigs break silently beneath her tread. A mouse-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Finishing Blow",
-        "description": "A merely wounded enemy is an enemy that can still fight; dead, they can do no more harm. This Gift, taught by a lion-spirit, helps the Ajaba finish their kills.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Burning the Vision",
-        "description": "The Midnight can etch a moment into another's memory, ensuring that they can never forget so much as a single detail of what they see or hear. This Gift, taught by a servant of Helios, is often used at the scenes of terrible atrocities against Gaia.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Tears of the Heavens",
-        "description": "Raising their arms and reciting a spontaneous poem, the Ajaba calls down the rain. A sky-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Laughter in the Night",
-        "description": "Like any good hyena, the Ajaba is much more dangerous once the sun goes down  and far bolder in taking prey. A night-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "ajaba",
+        "shifter_type": "Ajaba",
         "splat": "Shifter"
     },
     {
         "name": "Crushing Jaws",
         "description": "Only death can loose the Ajaba's jaws. By using this Gift together as a group, several Ajaba can pull apart even the mightiest opponent. A hyena-spirit teaches this Gift.",
+        "system": "The player spends one Willpower point after executing a successful bite attack to lock her jaws. Each turn thereafter, the Ajaba automatically inflicts one health level of unsoakable aggravated damage as her jaws crush bone and rend flesh. She may take no other action, save to voluntarily let go of her prey. While she is locked in, all close-range attacks against her are made at -2 difficulty due to her relative immobility. Only death can pry her loose against her will.",
+        "source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [
             2
         ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Bless the Rains",
-        "description": "The Ajaba composes words of thanks to the rain falling around them, complimenting it for sharing its bounty with the dry Earth. The rains respond with generosity. An ancestor-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            2
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Scavenge",
-        "description": "The Ajaba may safely consume and digest any physical object they can get into their mouth, from carrion to pistols to toxic waste: their jaws can chew it, and their stomach can process it. A goat-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            2
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Shadows of the Serengeti",
-        "description": "As the Ajaba sings a song of their fallen Kin, their shadows rise from the dust of the earth to lend their strength to their cause. A night-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            2
-        ],
-        "shifter_type": "ajaba",
+        "shifter_type": "Ajaba",
         "splat": "Shifter"
     },
     {
         "name": "Laughter of the Soul",
         "description": "The Ajaba's barking chuckle worms into enemies' minds, becoming a harbinger of terror and madness. Fear-spirits teach this Gift.",
+        "system": "The Ajaba laughs, and the player rolls Manipulation + Intimidation (difficulty of the victim's Willpower). One success makes the target uneasy, three induces shivering paranoia and anxiety attacks, and five send him fleeing into the night screaming. Rolling three or more successes drives creatures capable of fear frenzy into that state, unless they spend two Willpower to resist for the rest of the scene. Even then, they remain unnerved and jumpy.",
+        "source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [
             3
         ],
-        "shifter_type": "ajaba",
+        "shifter_type": "Ajaba",
         "splat": "Shifter"
     },
     {
         "name": "Culling the Weak",
         "description": "The Ajaba use the strength Gaia granted them to mark the weak  and then allow their enemies' very weakness to prepare them for the slaughter. This Gift is taught by a vulture-spirit.",
+        "system": "Whenever an opponent who has not yet managed to injure the Ajaba during the scene attempts to attack the werehyena, but fails to inflict any health levels of damage with that attack, they automatically lose one point of Willpower and one point of Rage (if applicable).",
+        "source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [
             4
         ],
-        "shifter_type": "ajaba",
+        "shifter_type": "Ajaba",
         "splat": "Shifter"
     },
     {
-        "name": "Bitter Tears",
-        "description": "Standing in the pouring rain, the Ajaba composes a spontaneous poem expressing their sorrow at Gaia's fallen state; the intensity of the rain redoubles, and it carries some measure of their sadness. An ancestor-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            4
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Becoming the Night Jester",
-        "description": "Though this Gift offers no power during the day, by night the Dusk's Crocas form takes on an aspect of ancient nocturnal terror  a primal, red-eyed, and black-furred hyena the size of a polar bear. Hyena herself teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            4
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Echoes of the Asamando",
-        "description": "Powerful Ajaba of the Dusk learn dark roads to victory, gleaning wisdom from voices most would quail to hear. This Gift, taught by an ancestor-spirit, allows the Ajaba to speak and be heard by the dead  and to hear their voices in return.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            4
-        ],
-        "shifter_type": "ajaba",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Rain of Doom",
-        "description": "Standing in the rain, the Ajaba points to a man-made object or building and spits insults and curses at it, expressing their rage and disdain. The rain acts as acid when it strikes the structure. A pain-spirit teaches this Gift.",
+        "name": "Withering Stare",
+        "description": "This Gift lets a werecat kill with a glance, causing victims to die in agonized convulsions.",
+        "system": "The player spends a Gnosis point and rolls Rage. The difficulty is the victim's Willpower, and each success inflicts one level of aggravated damage.",
+        "source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [
             5
         ],
-        "shifter_type": "ajaba",
+        "shifter_type": [
+            "Ajaba",
+            "Bastet"
+        ],
+        "splat": "Shifter"
+    },
+    {
+        "name": "Finishing Blow",
+        "description": "A merely wounded enemy is an enemy that can still fight; dead, they can do no more harm. This Gift, taught by a lion-spirit, helps the Ajaba finish their kills.",
+        "system": "When attacking an enemy already suffering a wound penalty of at least -2, the player may spend one Rage point (before rolling the attack) to double the Ajaba's Strength for the purpose of determining damage.",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            1
+        ],
+        "shifter_type": "Ajaba",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Teeth at Dawn",
+        "description": "To act first is a sign of confidence and power; a hyena who has seized the initiative in battle is nearly unstoppable. A jaguar spirit teaches this Gift.",
+        "system": "Whenever the Ajaba has the highest initiative in a combat turn, she adds two dice to each of her attacks that turn. This Gift's effects are permanent.",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            2
+        ],
+        "shifter_type": "Ajaba",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Battle Fury Focus",
+        "description": "The Ajaba enters a battle trance, minimizing the openings she leaves for opponents. A mongoose-spirit teaches this Gift.",
+        "system": "The player spends one Gnosis point and rolls Dexterity + Athletics (difficulty 7). The Ajaba can reflexively dodge all attacks directed at her for the rest of the scene with a pool of three dice.",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            4
+        ],
+        "shifter_type": "Ajaba",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Burning the Vision",
+        "description": "The Midnight can etch a moment into another's memory, ensuring that they can never forget so much as a single detail of what they see or hear. This Gift, taught by a servant of Helios, is often used at the scenes of terrible atrocities against Gaia.",
+        "system": "The Ajaba touches the one he wishes to force remembrance on and spends one Willpower point. The target gains perfect recall of everything that happens during the scene until his dying day.",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            1
+        ],
+        "shifter_type": "Ajaba",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Tears of the Heavens",
+        "description": "Raising their arms and reciting a spontaneous poem, the Ajaba calls down the rain. A sky-spirit teaches this Gift.",
+        "system": "The player spends one Gnosis point and rolls Wits + Expression (difficulty 8). Success causes rain to fall across an area (Obligation) miles in diameter around the Ajaba for ten minutes per success.",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            1
+        ],
+        "shifter_type": [
+            "Ajaba",
+            "Mokole"
+        ],
+        "gift_alias": "Call the Rain",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Bless the Rains",
+        "description": "The Ajaba composes words of thanks to the rain falling around them, complimenting it for sharing its bounty with the dry Earth. The rains respond with generosity. An ancestor-spirit teaches this Gift.",
+        "system": "The player spends one Gnosis point and rolls Wits + Expression (difficulty 7). The rain subsequently restores one level of bashing or lethal damage to all non-Wyrm-tainted beings it touches, and renders the ground it falls on unusually fertile. This Gift may only be used while standing in the rain, and the Ajaba can only empower a rainstorm once — though the effects of the Gift strike everywhere that the same rains fall.",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            2
+        ],
+        "shifter_type": "Ajaba",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Scavenge",
+        "description": "The Ajaba may safely consume and digest any physical object they can get into their mouth, from carrion to pistols to toxic waste: their jaws can chew it, and their stomach can process it. A goat-spirit teaches this Gift.",
+        "system": "This Gift's effects are permanent, though it costs a Gnosis point to eat anything that is actively poisonous (such as toxic waste) rather than merely noxious or inedible. The Ajaba's digestion destroys fetishes and other empowered items, though supernaturally indestructible items may survive their transit. The Ajaba can even destroy an opponent's armor in combat, one bite at a time.",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            2
+        ],
+        "shifter_type": "Ajaba",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Shadows of the Serengeti",
+        "description": "As the Ajaba sings a song of their fallen Kin, their shadows rise from the dust of the earth to lend their strength to their cause. A night-spirit teaches this Gift.",
+        "system": "The player spends one Gnosis point and rolls Obligation (difficulty 8). For each success, one unearthly shadow-hyena rises from the earth around the Ajaba, and aids him until the end of the scene. These shadows have the traits of a normal hyena, save that they possess only three health levels. The shadow hyenas have physical presence, but they are neither truly ghosts or spirits.",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            2
+        ],
+        "shifter_type": "Ajaba",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Bitter Tears",
+        "description": "Standing in the pouring rain, the Ajaba composes a spontaneous poem expressing their sorrow at Gaia's fallen state; the intensity of the rain redoubles, and it carries some measure of their sadness. An ancestor-spirit teaches this Gift.",
+        "system": "The player spends one Gnosis point and rolls Manipulation + Expression (difficulty 7). All humans touched by the rain whose main dwelling is in a place with a Gauntlet of 7 or higher are seized with a great listless melancholy so long as the rain lasts, suffering a -3 penalty to all dice pools. This Gift may only be used while standing in the rain.",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            4
+        ],
+        "shifter_type": "Ajaba",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rain of Doom",
+        "description": "Standing in the rain, the Ajaba points to a man-made object or building and spits insults and curses at it, expressing their rage and disdain. The rain acts as acid when it strikes the structure. A pain-spirit teaches this Gift.",
+        "system": "The player spends three Rage points and rolls Wits + Primal-Urge (difficulty 8). The successes gained dictate how large a structure may be destroyed. Only one success would be necessary to tear down a cabin, three for three-story house, or five for an office complex. This Gift may only be used when standing in the rain.",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            5
+        ],
+        "shifter_type": "Ajaba",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Laughter in the Night",
+        "description": "Like any good hyena, the Ajaba is much more dangerous once the sun goes down  and far bolder in taking prey. A night-spirit teaches this Gift.",
+        "system": "The character permanently adds one die to all Stealth rolls at night.",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            1
+        ],
+        "shifter_type": "Ajaba",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Whispers in the Grass",
+        "description": "The werehyena may move soundlessly through any natural environment; grass bends without making any noise, and dry twigs break silently beneath her tread. A mouse-spirit teaches this Gift.",
+        "system": "The player rolls Wits + Stealth, difficulty 6. Success reduces the difficulty of moving quietly in natural environments by 3 (to a minimum of 2). This Gift has no effect in man-made environments.",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            1
+        ],
+        "shifter_type": "Ajaba",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Ambush",
+        "description": "When the Ajaba strikes from concealment, her blow burns with Rage, felling her opponent in a single strike. A jaguar-spirit teaches this Gift.",
+        "system": "The player may spend one Rage point when making a surprise attack, after rolling damage, to double the amount of damage inflicted before soak.",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            2
+        ],
+        "shifter_type": "Ajaba",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Smoky Passage",
+        "description": "Having struck her blow for Gaia, the Dusk may easily escape before the carnage she's unleashed catches her in its jaws. This Gift allows her to leap through a wall as though it were made of smoke, leaving behind only an unearthly ripple to mark her passage. A smoke-spirit teaches it.",
+        "system": "The player spends one Gnosis point. The Ajaba may spring through any wall during that turn at her full movement speed, so long as it is no thicker than (Ferocity) feet.",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            3
+        ],
+        "shifter_type": "Ajaba",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Becoming the Night Jester",
+        "description": "Though this Gift offers no power during the day, by night the Dusk's Crocas form takes on an aspect of ancient nocturnal terror  a primal, red-eyed, and black-furred hyena the size of a polar bear. Hyena herself teaches this Gift.",
+        "system": "At night, the character's Crocas form adds one to its Strength, Dexterity, and Stamina. This Gift's effects are permanent.",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            4
+        ],
+        "shifter_type": "Ajaba",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Echoes of the Asamando",
+        "description": "Powerful Ajaba of the Dusk learn dark roads to victory, gleaning wisdom from voices most would quail to hear. This Gift, taught by an ancestor-spirit, allows the Ajaba to speak and be heard by the dead  and to hear their voices in return.",
+        "system": "The character must kill to use this Gift — whether it is beast, or man, or monster that she slays is irrelevant, but she must end a life to hear the Echoes of Asamando. Additionally, within a minute of enacting the kill, the player must spend a point of Gnosis. For the rest of the scene, the Ajaba's voice may be heard unmistakably across the Shroud, and she can hear anything that nearby ghosts might say as clearly as though she stood in the Underworld herself.",
+        "source": "Changing Breeds 20th Anniversary Edition",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            4
+        ],
+        "shifter_type": "Ajaba",
         "splat": "Shifter"
     }
 ]

@@ -1,5 +1,6 @@
 {% extends "wiki/base_wiki.html" %}
 {% load static %}
+{% load wiki_filters %}
 
 {% block titleblock %}Wiki Pages{% endblock %}
 
@@ -10,7 +11,7 @@
     {% for page in pages %}
         <a href="{% url 'wiki:page_detail' page.slug %}" class="list-group-item list-group-item-action">
             <h5 class="mb-1">{{ page.title }}</h5>
-            <small>Last edited by {{ page.last_editor }} on {{ page.updated_at|date }}</small>
+            <small>Last edited by {{ page.last_editor|display_username }} on {{ page.updated_at|date }}</small>
         </a>
     {% endfor %}
     </div>
