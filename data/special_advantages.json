@@ -574,5 +574,23 @@
         "stat_type": "special_advantage",
         "splat": "Companion",
         "values": [2, 4, 6, 8, 10]
+    },
+    {
+        "name": "Hazardous Breath",
+        "description": "With a gust of breath, a ripple of quills, or some other minor exertion, you can hurt and perhaps kill your prey at a distance. Epitomized by the deadly halitosis of dragonkind, this Advantage allows a character to fire off some nasty surprises. The attack itself isn’t based upon the Trait — it can take whatever form you desire. Demon-bound servitors can spit flames, while woodland elementals could spray clouds of thorns or poison gas. For every five points spent on this Advantage, you inflict one health level of lethal damage with your attack on a successful roll of Dexterity + Brawl (difficulty 7). For seven points per level, that damage can be caustic (acid, Greek fire, toxic gas), dealing out an additional level of damage per turn until it’s washed off, scraped away, or otherwise neutralized. For double the cost (either 10 points for most attacks or 14 points for caustic ones), it can be aggravated. Any target that can soak the appropriate type of attack can try to soak your “breath weapon.” You can employ this attack once per scene for every point of Stamina your character possesses. An attack that affects several targets at once (like a cone of flames or a toxic storm) hits one additional target for every success above the first — two targets at two successes, four targets at four successes, and so forth. The range of those attacks depends upon the nature of that assault; a “pinpointed” lightning strike generally reaches further than a localized cloud of gas.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "splat": "Companion",
+        "values": [5, 7, 10, 14]
+    },  
+    {
+        "name": "Homing Instinct",
+        "description": "You know where you’re going even if you don’t consciously think about it. An inner GPS (which, if you’re a cyborg or robot, may be an actual GPS) guides you toward your destination. This Advantage won’t cover the distance for you — you still need to do that part yourself. Despite confusing circumstances and tangled paths, however, you’ll eventually make it home. This Special Advantage directs you to the destination of your choice. As with the fast-travel ability in video games, this must be a destination you’ve bonded with before that trip — a place or person you can sense across the intervening time and space. For two points, you can home in on that location from anywhere in the mortal side of Earth; for four points, you can home in on it from anywhere.",
+        "game_line": "Mage: The Ascension",
+        "category": "powers",
+        "stat_type": "special_advantage",
+        "splat": "Companion",
+        "values": [2, 4]
     }
 ]

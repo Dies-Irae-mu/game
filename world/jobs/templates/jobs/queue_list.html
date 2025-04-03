@@ -1,0 +1,178 @@
+{% extends "jobs/base.html" %}
+
+{% block title %}Job Queues - Dies Irae{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Job Queues</h1>
+    <a href="{% url 'jobs:queue_create' %}" class="btn btn-primary">Create New Queue</a>
+</div>
+
+<div class="queues-list">
+    {% if queues %}
+    <div class="queues-grid">
+        {% for queue in queues %}
+        <div class="queue-card">
+            <div class="queue-header">
+                <h2>{{ queue.name }}</h2>
+                <div class="queue-actions">
+                    <a href="{% url 'jobs:queue_edit' queue.id %}" class="btn btn-secondary btn-sm">Edit</a>
+                    {% if queue.jobs.exists %}
+                    <a href="{% url 'jobs:job_list' %}?queue={{ queue.id }}" class="btn btn-primary btn-sm">View Jobs</a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="queue-info">
+                <div class="info-item">
+                    <label>Description:</label>
+                    <p>{{ queue.description|default:"No description provided." }}</p>
+                </div>
+                
+                <div class="info-item">
+                    <label>Status:</label>
+                    <span class="badge badge-{{ queue.status }}">{{ queue.get_status_display }}</span>
+                </div>
+                
+                <div class="info-item">
+                    <label>Jobs:</label>
+                    <div class="job-stats">
+                        <span class="stat-item">
+                            <span class="stat-label">Open:</span>
+                            <span class="stat-value">{{ queue.jobs.filter.status='open'|length }}</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-label">Claimed:</span>
+                            <span class="stat-value">{{ queue.jobs.filter.status='claimed'|length }}</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-label">Closed:</span>
+                            <span class="stat-value">{{ queue.jobs.filter.status='closed'|length }}</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-label">Total:</span>
+                            <span class="stat-value">{{ queue.jobs.count }}</span>
+                        </span>
+                    </div>
+                </div>
+                
+                {% if queue.managers.exists %}
+                <div class="info-item">
+                    <label>Managers:</label>
+                    <div class="managers-list">
+                        {% for manager in queue.managers.all %}
+                        <span class="manager">{{ manager }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No job queues found.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .queues-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    .queue-card {
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .queue-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .queue-header h2 {
+        margin: 0;
+        font-size: 1.25rem;
+    }
+    .queue-actions {
+        display: flex;
+        gap: 8px;
+    }
+    .queue-info {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    .info-item label {
+        font-weight: bold;
+        color: #495057;
+    }
+    .info-item p {
+        margin: 0;
+        color: #6c757d;
+    }
+    .job-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background-color: #fff;
+        padding: 4px 8px;
+        border-radius: 3px;
+    }
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+    .stat-value {
+        font-weight: bold;
+        color: #212529;
+    }
+    .managers-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    .manager {
+        background-color: #e9ecef;
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 0.875rem;
+    }
+    .badge {
+        display: inline-block;
+        padding: 3px 6px;
+        border-radius: 3px;
+        font-size: 0.8em;
+        font-weight: bold;
+    }
+    .badge-active {
+        background-color: #28a745;
+        color: white;
+    }
+    .badge-inactive {
+        background-color: #6c757d;
+        color: white;
+    }
+</style>
+{% endblock %} 

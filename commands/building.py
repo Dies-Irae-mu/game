@@ -516,7 +516,8 @@ class CmdPlaces(MuxCommand):
         switch = self.switches[0]
         location = self.caller.location
         
-        if not hasattr(location.db, 'places'):
+        # Initialize places dictionary if it doesn't exist
+        if not hasattr(location.db, 'places') or location.db.places is None:
             location.db.places = {}
             
         if switch == "create":

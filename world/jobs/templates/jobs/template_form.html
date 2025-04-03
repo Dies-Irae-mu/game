@@ -1,0 +1,196 @@
+{% extends "jobs/base.html" %}
+
+{% block title %}{% if form.instance.pk %}Edit Template{% else %}Create Template{% endif %} - Dies Irae{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>{% if form.instance.pk %}Edit Template{% else %}Create Template{% endif %}</h1>
+    <a href="{% url 'jobs:template_list' %}" class="btn btn-secondary">Back to Templates</a>
+</div>
+
+<form method="post" class="template-form">
+    {% csrf_token %}
+    
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="form-section">
+        <h2>Basic Information</h2>
+        
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Name:</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+            <div class="field-error">{{ form.name.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Description:</label>
+            {{ form.description }}
+            {% if form.description.errors %}
+            <div class="field-error">{{ form.description.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.status.id_for_label }}">Status:</label>
+            {{ form.status }}
+            {% if form.status.errors %}
+            <div class="field-error">{{ form.status.errors }}</div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <h2>Template Arguments</h2>
+        
+        <div class="form-group">
+            <label for="{{ form.required_args.id_for_label }}">Required Arguments:</label>
+            {{ form.required_args }}
+            {% if form.required_args.errors %}
+            <div class="field-error">{{ form.required_args.errors }}</div>
+            {% endif %}
+            <small class="form-text text-muted">Enter comma-separated list of required argument names.</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.optional_args.id_for_label }}">Optional Arguments:</label>
+            {{ form.optional_args }}
+            {% if form.optional_args.errors %}
+            <div class="field-error">{{ form.optional_args.errors }}</div>
+            {% endif %}
+            <small class="form-text text-muted">Enter comma-separated list of optional argument names.</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.default_args.id_for_label }}">Default Arguments (JSON):</label>
+            {{ form.default_args }}
+            {% if form.default_args.errors %}
+            <div class="field-error">{{ form.default_args.errors }}</div>
+            {% endif %}
+            <small class="form-text text-muted">Enter valid JSON format for default argument values. Example: {"key": "value"}</small>
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <h2>Template Script</h2>
+        
+        <div class="form-group">
+            <label for="{{ form.script.id_for_label }}">Script:</label>
+            {{ form.script }}
+            {% if form.script.errors %}
+            <div class="field-error">{{ form.script.errors }}</div>
+            {% endif %}
+            <small class="form-text text-muted">Enter the Python script that will be executed when this template is used.</small>
+        </div>
+    </div>
+    
+    {% if form.instance.pk %}
+    <div class="form-section">
+        <h2>Template Statistics</h2>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ form.instance.jobs.count }}</div>
+                <div class="stat-label">Total Jobs</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value">{{ form.instance.jobs.filter.status='open'|length }}</div>
+                <div class="stat-label">Open Jobs</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value">{{ form.instance.jobs.filter.status='claimed'|length }}</div>
+                <div class="stat-label">Claimed Jobs</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value">{{ form.instance.jobs.filter.status='closed'|length }}</div>
+                <div class="stat-label">Closed Jobs</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Save Changes{% else %}Create Template{% endif %}</button>
+        {% if form.instance.pk %}
+        <a href="{% url 'jobs:template_list' %}" class="btn btn-secondary">Cancel</a>
+        {% else %}
+        <a href="{% url 'jobs:template_list' %}" class="btn btn-secondary">Cancel</a>
+        {% endif %}
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .form-section {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+    .form-section h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .field-error {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 5px;
+    }
+    .form-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+    .stat-card {
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 4px;
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #212529;
+        margin-bottom: 5px;
+    }
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+    textarea[name="script"] {
+        font-family: monospace;
+        height: 200px;
+        resize: vertical;
+    }
+</style>
+{% endblock %} 

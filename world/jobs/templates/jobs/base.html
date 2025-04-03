@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Dies Irae Jobs{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .navbar {
+            background-color: #333;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            margin-right: 10px;
+        }
+        .navbar a:hover {
+            background-color: #555;
+            border-radius: 3px;
+        }
+        .content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .messages {
+            margin-bottom: 20px;
+        }
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+        }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            margin-right: 10px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        .btn-success {
+            background-color: #28a745;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .table th,
+        .table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .table th {
+            background-color: #f8f9fa;
+        }
+        .table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .table tr:hover {
+            background-color: #f5f5f5;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .badge-open {
+            background-color: #28a745;
+            color: white;
+        }
+        .badge-claimed {
+            background-color: #ffc107;
+            color: black;
+        }
+        .badge-closed {
+            background-color: #6c757d;
+            color: white;
+        }
+        .badge-rejected {
+            background-color: #dc3545;
+            color: white;
+        }
+        .badge-completed {
+            background-color: #17a2b8;
+            color: white;
+        }
+        .badge-cancelled {
+            background-color: #6c757d;
+            color: white;
+        }
+        .comments-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        .comment {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .comment-header {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .comment-meta {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        .comment-text {
+            white-space: pre-wrap;
+        }
+        .attachments-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        .attachment {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #e9ecef;
+            border-radius: 3px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .search-results {
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 100%;
+            z-index: 1000;
+            display: none;
+        }
+        .search-result-item {
+            padding: 8px;
+            cursor: pointer;
+        }
+        .search-result-item:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="navbar">
+        <a href="{% url 'jobs:job_list' %}">Jobs</a>
+        {% if user.check_permstring("Admin") %}
+        <a href="{% url 'jobs:queue_list' %}">Queues</a>
+        <a href="{% url 'jobs:template_list' %}">Templates</a>
+        <a href="{% url 'jobs:job_archive' %}">Archive</a>
+        {% endif %}
+    </div>
+
+    <div class="content">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        // Object search functionality
+        function setupObjectSearch() {
+            const searchInput = document.querySelector('.object-search');
+            const resultsDiv = document.querySelector('.search-results');
+            
+            if (!searchInput || !resultsDiv) return;
+            
+            let timeoutId;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(timeoutId);
+                const query = this.value.trim();
+                
+                if (query.length < 2) {
+                    resultsDiv.style.display = 'none';
+                    return;
+                }
+                
+                timeoutId = setTimeout(() => {
+                    fetch(`{% url 'jobs:search_objects' %}?q=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            resultsDiv.innerHTML = '';
+                            data.results.forEach(result => {
+                                const div = document.createElement('div');
+                                div.className = 'search-result-item';
+                                div.textContent = result.name;
+                                div.onclick = () => {
+                                    searchInput.value = result.name;
+                                    resultsDiv.style.display = 'none';
+                                    // You might want to store the selected object ID in a hidden input
+                                    const hiddenInput = document.querySelector('input[name="object_id"]');
+                                    if (hiddenInput) {
+                                        hiddenInput.value = result.id;
+                                    }
+                                };
+                                resultsDiv.appendChild(div);
+                            });
+                            resultsDiv.style.display = data.results.length ? 'block' : 'none';
+                        });
+                }, 300);
+            });
+            
+            // Hide results when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !resultsDiv.contains(e.target)) {
+                    resultsDiv.style.display = 'none';
+                }
+            });
+        }
+        
+        // Initialize object search when the page loads
+        document.addEventListener('DOMContentLoaded', setupObjectSearch);
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

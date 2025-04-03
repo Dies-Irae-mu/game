@@ -1,0 +1,204 @@
+{% extends "jobs/base.html" %}
+
+{% block title %}Job Templates - Dies Irae{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Job Templates</h1>
+    <a href="{% url 'jobs:template_create' %}" class="btn btn-primary">Create New Template</a>
+</div>
+
+<div class="templates-list">
+    {% if templates %}
+    <div class="templates-grid">
+        {% for template in templates %}
+        <div class="template-card">
+            <div class="template-header">
+                <h2>{{ template.name }}</h2>
+                <div class="template-actions">
+                    <a href="{% url 'jobs:template_edit' template.id %}" class="btn btn-secondary btn-sm">Edit</a>
+                    {% if template.jobs.exists %}
+                    <a href="{% url 'jobs:job_list' %}?template={{ template.id }}" class="btn btn-primary btn-sm">View Jobs</a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="template-info">
+                <div class="info-item">
+                    <label>Description:</label>
+                    <p>{{ template.description|default:"No description provided." }}</p>
+                </div>
+                
+                <div class="info-item">
+                    <label>Status:</label>
+                    <span class="badge badge-{{ template.status }}">{{ template.get_status_display }}</span>
+                </div>
+                
+                <div class="info-item">
+                    <label>Jobs:</label>
+                    <div class="job-stats">
+                        <span class="stat-item">
+                            <span class="stat-label">Open:</span>
+                            <span class="stat-value">{{ template.jobs.filter.status='open'|length }}</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-label">Claimed:</span>
+                            <span class="stat-value">{{ template.jobs.filter.status='claimed'|length }}</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-label">Closed:</span>
+                            <span class="stat-value">{{ template.jobs.filter.status='closed'|length }}</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-label">Total:</span>
+                            <span class="stat-value">{{ template.jobs.count }}</span>
+                        </span>
+                    </div>
+                </div>
+                
+                {% if template.required_args %}
+                <div class="info-item">
+                    <label>Required Arguments:</label>
+                    <div class="args-list">
+                        {% for arg in template.required_args %}
+                        <span class="arg">{{ arg }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if template.optional_args %}
+                <div class="info-item">
+                    <label>Optional Arguments:</label>
+                    <div class="args-list">
+                        {% for arg in template.optional_args %}
+                        <span class="arg">{{ arg }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if template.default_args %}
+                <div class="info-item">
+                    <label>Default Arguments:</label>
+                    <pre class="default-args">{{ template.default_args|pprint }}</pre>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No job templates found.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .templates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    .template-card {
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .template-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .template-header h2 {
+        margin: 0;
+        font-size: 1.25rem;
+    }
+    .template-actions {
+        display: flex;
+        gap: 8px;
+    }
+    .template-info {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    .info-item label {
+        font-weight: bold;
+        color: #495057;
+    }
+    .info-item p {
+        margin: 0;
+        color: #6c757d;
+    }
+    .job-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background-color: #fff;
+        padding: 4px 8px;
+        border-radius: 3px;
+    }
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+    .stat-value {
+        font-weight: bold;
+        color: #212529;
+    }
+    .args-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    .arg {
+        background-color: #e9ecef;
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 0.875rem;
+    }
+    .default-args {
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 4px;
+        overflow-x: auto;
+        font-size: 0.875rem;
+        margin: 0;
+    }
+    .badge {
+        display: inline-block;
+        padding: 3px 6px;
+        border-radius: 3px;
+        font-size: 0.8em;
+        font-weight: bold;
+    }
+    .badge-active {
+        background-color: #28a745;
+        color: white;
+    }
+    .badge-inactive {
+        background-color: #6c757d;
+        color: white;
+    }
+</style>
+{% endblock %} 

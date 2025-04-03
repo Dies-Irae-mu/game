@@ -844,10 +844,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [3],
+        "values": [2, 3],
 		"splat": "Shifter",
         "tribe": ["Red Talons", "White Howlers"],
-        "shifter_type": ["Garou"]
+        "shifter_type": ["Garou", "Gurahl"]
     },
     {
         "name": "Predator's Many Eyes",
@@ -2302,8 +2302,10 @@
         "stat_type": "gift",
         "values": [3],
         "shifter_type": ["Garou", "Ananasi", "Bastet", "Mokole", "Nagah"],
+        "tribe": ["Bagheera", "Tenere"],
         "splat": "Shifter",
-        "auspice": "Galliard",
+        "auspice": ["Galliard", "Eclipsed Sun", "Kamsa"],
+        "breed": ["Vasuki", "Feline"],
         "gift_alias": ["Mother's Look"]
     },
     {

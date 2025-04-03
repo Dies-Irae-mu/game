@@ -1,0 +1,197 @@
+{% extends "jobs/base.html" %}
+
+{% block title %}{{ job.title }} - Dies Irae{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>{{ job.title }}</h1>
+    <div class="actions">
+        {% if job.status == 'open' %}
+        <a href="{% url 'jobs:job_claim' job.id %}" class="btn btn-success">Claim Job</a>
+        {% endif %}
+        {% if job.status == 'claimed' and job.assignee == user %}
+        <a href="{% url 'jobs:job_close' job.id %}" class="btn btn-primary">Close Job</a>
+        {% endif %}
+        {% if user.check_permstring("Admin") %}
+        <a href="{% url 'jobs:job_edit' job.id %}" class="btn btn-secondary">Edit Job</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="job-info">
+    <div class="info-grid">
+        <div class="info-item">
+            <label>Status:</label>
+            <span class="badge badge-{{ job.status }}">{{ job.get_status_display }}</span>
+        </div>
+        <div class="info-item">
+            <label>Queue:</label>
+            <span>{{ job.queue.name }}</span>
+        </div>
+        <div class="info-item">
+            <label>Requester:</label>
+            <span>{{ job.requester }}</span>
+        </div>
+        <div class="info-item">
+            <label>Assignee:</label>
+            <span>{{ job.assignee|default:"-" }}</span>
+        </div>
+        <div class="info-item">
+            <label>Created:</label>
+            <span>{{ job.created|date:"Y-m-d H:i" }}</span>
+        </div>
+        <div class="info-item">
+            <label>Due Date:</label>
+            <span>{{ job.due_date|date:"Y-m-d H:i"|default:"-" }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="job-description">
+    <h2>Description</h2>
+    <div class="description-content">
+        {{ job.description|linebreaks }}
+    </div>
+</div>
+
+{% if job.template %}
+<div class="job-template">
+    <h2>Template</h2>
+    <div class="template-info">
+        <p><strong>Name:</strong> {{ job.template.name }}</p>
+        {% if job.template_args %}
+        <p><strong>Arguments:</strong></p>
+        <pre class="template-args">{{ job.template_args|pprint }}</pre>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% if job.attachments.exists %}
+<div class="attachments-section">
+    <h2>Attachments</h2>
+    <div class="attachments-list">
+        {% for attachment in job.attachments.all %}
+        <div class="attachment">
+            {{ attachment.object }}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="comments-section">
+    <h2>Comments</h2>
+    
+    <form method="post" action="{% url 'jobs:job_detail' job.id %}" class="comment-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="comment_text">Add a comment:</label>
+            <textarea name="comment_text" id="comment_text" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Post Comment</button>
+    </form>
+    
+    <div class="comments-list">
+        {% for comment in job.comments.all %}
+        <div class="comment">
+            <div class="comment-header">
+                {{ comment.author }}
+            </div>
+            <div class="comment-meta">
+                {{ comment.created|date:"Y-m-d H:i" }}
+            </div>
+            <div class="comment-text">
+                {{ comment.text|linebreaks }}
+            </div>
+        </div>
+        {% empty %}
+        <p>No comments yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="attachments-section">
+    <h2>Attach Object</h2>
+    <form method="post" action="{% url 'jobs:job_detail' job.id %}" class="attachment-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="object_search">Search for an object:</label>
+            <input type="text" id="object_search" class="object-search" placeholder="Start typing to search...">
+            <input type="hidden" name="object_id" id="object_id">
+            <div class="search-results"></div>
+        </div>
+        <button type="submit" name="attach_object" class="btn btn-primary">Attach Object</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .actions {
+        display: flex;
+        gap: 10px;
+    }
+    .job-info {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+    .info-item {
+        display: flex;
+        flex-direction: column;
+    }
+    .info-item label {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .job-description {
+        margin-bottom: 20px;
+    }
+    .description-content {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+        white-space: pre-wrap;
+    }
+    .job-template {
+        margin-bottom: 20px;
+    }
+    .template-info {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+    }
+    .template-args {
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 4px;
+        overflow-x: auto;
+        margin-top: 10px;
+    }
+    .comment-form {
+        margin-bottom: 20px;
+    }
+    .comment-form textarea {
+        height: 100px;
+    }
+    .attachment-form {
+        margin-top: 10px;
+    }
+    .object-search {
+        position: relative;
+    }
+</style>
+{% endblock %} 

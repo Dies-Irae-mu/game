@@ -77,6 +77,11 @@ class CmdStaff(default_cmds.MuxCommand):
         all_accounts = AccountDB.objects.all()
         staff = []
         
+        # Check if caller is staff
+        caller_char = self.caller.db._playable_characters[0] if self.caller.db._playable_characters else None
+        caller_is_staff = (self.caller.tags.get("staff", category="role") or 
+                          (caller_char and caller_char.tags.get("staff", category="role")))
+        
         for account in all_accounts:
             character = account.db._playable_characters[0] if account.db._playable_characters else None
             
@@ -84,7 +89,7 @@ class CmdStaff(default_cmds.MuxCommand):
             is_staff = (account.tags.get("staff", category="role") or 
                        (character and character.tags.get("staff", category="role")))
             
-            # Check if the staff member is in dark mode
+            # Check if the staff member is in dark mode - only visible to staff
             is_dark = (account.tags.get("dark_mode", category="staff_status") or 
                       (character and character.tags.get("dark_mode", category="staff_status")))
             
@@ -110,16 +115,16 @@ class CmdStaff(default_cmds.MuxCommand):
 
                 position = self.get_position(account, character)
                 
-                # Check duty and dark status
+                # Check duty and dark status - dark mode only visible to staff
                 is_online = account.is_connected
                 is_on_duty = (account.tags.get("on_duty", category="staff_status") or 
                              (character and character.tags.get("on_duty", category="staff_status")))
                 is_dark = (account.tags.get("dark_mode", category="staff_status") or 
                           (character and character.tags.get("dark_mode", category="staff_status")))
                 
-                if not is_online:
+                if not is_online or (is_dark and not caller_is_staff):
                     status = "|rOffline|n"
-                elif is_dark:
+                elif is_dark and caller_is_staff:
                     status = "|M[DARK]|n"
                 elif is_on_duty:
                     status = "|gOn Duty|n"

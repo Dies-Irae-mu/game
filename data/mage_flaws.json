@@ -19,7 +19,7 @@
         "source": "M20 p. 646, C20 p. 188"
     },
     {
-        "name": "Construct",
+        "name": "Construct Flaw",
         "description": "You came from a lab, not from a womb. Perhaps you were grown in a Progenitor facility, woven from plants, shaped from the elements, or crafted from parts of dead bodies in some flesh-tinkerer's workshop. Whatever your origins, you don't truly fit in with natural-born humans. A combination of self-doubt and social alienation - or perhaps a sense that you're far better than your so-called peers - keeps you at arm's length from the human social realm. In game terms, this Flaw inflicts penalties on social rolls in many situations; the specifics depend upon your origins, attitude, and company, but they'll impede your character in significant ways. You don't need to take this Flaw, incidentally, if your character is a construct. Those penalties reflect an artificial person who stands out in a crowd, not one who fits in comfortably with her world.",
         "game_line": "Mage: The Ascension",
         "category": "flaws",
@@ -569,7 +569,7 @@
     },
     {
         "name": "Ward",
-        "description": "Mages rarely move through life alone. And when certain companions - lovers, children, partners, parents, close friends, even employers - depend upon you, that lack of loneliness can become a liability. This Flaw represents a character, or a group of characters, who require constant attention on your part. Your life is a hazard to them, and their needs often provide hazards for you as well. Wards tend to get in trouble, require rescuing, and go digging into aspects of your life you'd prefer they left alone.",
+        "description": "Characters rarely move through life alone. And when certain companions - lovers, children, partners, parents, close friends, even employers - depend upon you, that lack of loneliness can become a liability. This Flaw represents a character, or a group of characters, who require constant attention on your part. Your life is a hazard to them, and their needs often provide hazards for you as well. Wards tend to get in trouble, require rescuing, and go digging into aspects of your life you'd prefer they left alone.",
         "game_line": "Mage: The Ascension",
         "category": "flaws",
         "stat_type": "social",
@@ -1106,15 +1106,6 @@
         "stat_type": "supernatural",
         "values": [2, 3, 4, 5],        
         "source": "M20 Book of Secrets, p. 87"        
-    },
-    {
-        "name": "Ward",
-        "description": "Mages rarely move through life alone. And when certain companions - lovers, children, partners, parents, close friends, even employers - depend upon you, that lack of loneliness can become a liability. This Flaw represents a character, or a group of characters, who require constant attention on your part. Your life is a hazard to them, and their needs often provide hazards for you as well. Wards tend to get in trouble, require rescuing, and go digging into aspects of your life you'd prefer they left alone. Is it love that binds you to your ward? Duty? An oath? Family obligations? A job like bodyguarding, teaching or medicine? Regardless of the reason, each ward is an essential part of your life. Their life is your priority. Although Ward characters may have a useful skill or two, such folks are unAwakened people, not mages, Night-Folk, familiars, or other powerful entities. That said, you could take a Ward Flaw to reflect a special bond with a Retainer, a Cult member, or one of your Spies. Merits like Supportive Family or True Love (and Flaws like Family Issues) go well with the Ward Trait. Wards don't have to be human, either - your dog, your cat, your horse... an animal who depends upon you could be a ward as well. You can take this Flaw more than once, to reflect several dependent characters. Yeah, there are reasons that mages tend to avoid having big families! Obviously, each ward is a Storyteller character, with all the agendas and complications that situation entails. This person might not count as a Sleeper witness with regards to your magick... but if you've been keeping that person in the dark with regards to your true life and nature, they could still count as a witness for at least their first experience with your sort of 'reality.'",
-        "game_line": "Mage: The Ascension",
-        "category": "flaws",
-        "stat_type": "social",
-        "values": [3],        
-        "source": "M20 Book of Secrets, p. 66"        
     },
     {
         "name": "Discredited",

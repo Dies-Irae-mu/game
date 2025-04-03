@@ -1790,8 +1790,15 @@ class CmdXP(default_cmds.MuxCommand):
                 proper_name = find_proper_name(stat_name, SECONDARY_KNOWLEDGES)
             if proper_name:
                 return proper_name
-            # If not found in predefined lists, use title case for each word
-            return ' '.join(word.title() for word in stat_name.split())
+            # If not found in predefined lists, use title case for each word except 'of'
+            words = stat_name.split()
+            capitalized_words = []
+            for word in words:
+                if word.lower() == 'of':
+                    capitalized_words.append('of')
+                else:
+                    capitalized_words.append(word.title())
+            return ' '.join(capitalized_words)
 
         # Check powers
         if category == 'powers':

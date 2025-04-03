@@ -347,5 +347,14 @@
         "stat_type": "supernatural",
         "values": [5],
         "source": "Sorcerer: Revised"
+    },
+    {
+        "name": "Supporter",
+        "description": "You inspire all around you to greater efforts. Whether by speaking, writing, or leading by example, you give anyone who works with you reason to go on and hope of success. You have a -2 difficulty on Social rolls, and you give any group effort +1 to its total dice pool.",
+        "game_line": "Various",
+        "category": "merits",
+        "stat_type": "social",
+        "values": [2],
+        "source": "Werewolf 20th Anniversary, pg. 480"
     }
 ]

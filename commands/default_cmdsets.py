@@ -52,6 +52,7 @@ from commands.CmdChangelingInteraction import CmdChangelingInteraction
 from commands.CmdBanality import CmdBanality
 from commands.groups_commands import CmdGroups
 from commands.CmdHelp import CmdHelp
+from commands.CmdEquip import CmdEquip, CmdInventory
 
 from commands.bbs.bbs_all_commands import CmdBBS
 from commands.bbs.bbs_admin_commands import CmdResetBBS
@@ -167,6 +168,8 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdMultidesc())
         self.add(CmdUmbraInfo())
         self.add(CmdGroups())
+        self.add(CmdEquip())
+        self.add(CmdInventory()) 
 
 class AccountCmdSet(cmdset_account.AccountCmdSet):
     """
@@ -208,6 +211,11 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdSetWyrmTaint())
         self.add(CmdRoom())
         self.add(CmdDebugXP())
+        
+        # Add equipment commands to account cmdset to make them globally available
+        # This allows using these commands even when not in the same room as the target
+        self.add(CmdEquip())
+        self.add(CmdInventory())
 
 class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):
     """

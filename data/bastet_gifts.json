@@ -12,34 +12,10 @@
         "splat": "Shifter"
     },
     {
-        "name": "Catfeet",
-        "description": "As the lupus Gift. Cats are known for their agility and their Bastet cousins are no less skilled at landing on their feet. This gift makes the Bastet immune to falls under 100 feet (they always land just right). They also have perfect balance on even the most slippery surfaces, the difficulties of all combat actions involving bodyslams and grappling decrease by two.",
-        "system": "This ability becomes innate to those who learn the gift",
-        "source": "W20 Changing Breeds p. 85",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1, 2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
         "name": "Command Attention",
         "description": "A werecat can call on his feline presence to draw attention the instant he steps into a room. Everyone in a given space (a room, a clearing, whatever) will immediately stop what they're doing to notice the Bastet's entrance. Their reaction from that point on will depend on what the character does, and upon their feelings about him; an attractive Homid will get a different reaction than an angry Crinos panther would.",
         "system": "The player rolls Manipulation + Expression (difficulty 7) to get everyone's attention for one turn. This gift also reduces the difficulty of his next Social roll by 1 for every success he rolls for the Gift. This bonus only applies once, upon entering the space.",
         "source": "Revised - BB Bastet p.96",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Diamond Claws",
-        "description": "As the Ahroun Gift: Razor Claws. By raking his claws over stone, steel, or another hard surface, the Bastet hones them to razor sharpness.",
-        "system": "The player spends one Rage point, and the Bastet takes a full turn sharpening her claws. All claw attacks do two additional dice of damage and are made at -1 difficulty for the rest of the scene.",
-        "source": "W20 Changing Breeds p. 85",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -60,70 +36,10 @@
         "splat": "Shifter"
     },
     {
-        "name": "Lick Wounds",
-        "description": "As the Theurge Gift: Mother's Touch. The Bastet is able to heal the wounds of any living creature, aggravated or otherwise, simply by laying hands over the afflicted area. The Bastet may not heal herself, spirits or the undead with this Gift.",
-        "system": "The player spends on Gnosis point and rolls Intelligence + Medicine (difficulty of the wounded individual's Rage, or 6 for non-Fera). Each success heals one health level. The Bastet may heal even Battle Scars in this manner if they use the Gift in the same scene in which the scar was obtained and she spends a second Gnosis point. There is no limit to how many times this Gift may be used on a person, but each use requires the expenditure of one Gnosis.",
-        "source": "W20 Changing Breeds p. 85",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Open Seal",
-        "description": "As the Ragabash Gift. With this Gift, the Bastet can open nearly any sort of closed or locked physical device.",
-        "system": "The player rolls Gnosis (difficulty of the local Gauntlet rating).",
-        "source": "W20 Changing Breeds p. 85",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
         "name": "Pathfinder's Pride",
         "description": "Cats have a remarkably good sense of direction. With this Gift, a Bastet may improve that knack to find his way out of most kinds of mazes, deserts or woodlands. Worthy folk may learn this Gift from Bird spirits, but no werecat willingly admits to it in public.",
         "system": "Invoking this Gift requires a Perception + Subterfuge roll. The difficulty depends on the area's complexity: a large flat desert or a small forest would be 5 or 6, a vast expanse or complicated maze might be 7 or 8, and a primordial rain forest would be 8 or 9. Magical confusion spells, like the Garou Gift: Trackless Waste, can be undone with difficulties 9 or 10. Pathfinder's Pride does not provide any kind of travel; the werecat merely discovers the way out - getting to the exit is her problem.",
         "source": "Revised - BB Bastet p.96",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Sense Magic",
-        "description": "As the Uktena Gift. The Bastet can discern magical energies, whether they emanate from Fera Gifts, vampiric wizardry or even human magic.",
-        "system": "The player rolls Perception + Enigmas. The difficulty is based on the strength and subtlety of the magic. The Bastet cannot tell the exact nature of the magic, although vague clues such as “Gaian” or “blood magic” might be granted with sufficient successes. The radius is 10 feet per success.",
-        "source": "W20 Changing Breeds p. 85",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Sense the Truth",
-        "description": "As the Philodox Gift: Truth of Gaia. Excellent judges of character at the best of times, this grants the ability to sense whether others have spoken truth or falsehood.",
-        "system": "The player rolls Intelligence + Empathy (difficulty of the subject's Manipulation + Subterfuge). This Gift reveals only whether the target speaks the truth or lies.",
-        "source": "W20 Changing Breeds p. 85",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Sense Unmaker's Hand",
-        "description": "As the metis Gift: Sense Wyrm. The Bastet can sense manifestations of the Wyrm in the nearby area. This Gift involves a mystical sense, not a visual or olfactory image, although werecats using the Gift sometimes say things like, “This place stinks of the Wyrm” (with a few more colorful adjectives). Bastet should remember that the Wyrm's taint can cling to relatively blameless souls they may sense an innocent person who happens to work in a Wyrm-controlled factory or who has eated tainted food. This power requires active concentration.",
-        "system": "The player rolls Perception + Occult. The difficulty depends on the concentration and strength of the Wyrm's influence. Sensing a single fomor in the next room would be difficulty 6, while detecting the stench of a Bane that was in the room an hour ago would be difficulty 8. Vampires register as Wyrm-tainted, save those with Humanity Traits of 7 or higher.",
-        "source": "W20 Changing Breeds p. 85",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -1297,18 +1213,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Eye of the Cobra",
-        "description": "As the Galliard Gift. With but a look, the Garou can attract anyone to his side. A snake-spirit teaches this Gift.",
-        "system": "The player rolls Appearance + Enigmas (difficulty of the target's Willpower). The Garou needs three successes to bring the target to his side; fewer at least start the victim moving in the right direction. Once there, the target can do as he pleases, but he must try his best to get to the Galliard until then.",
-        "source": "CB20 Pg. 87",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
         "name": "Weak Arm",
         "description": "As the philodox Gift. Philodox are masters of judgment, and this trait extends even into the field of battle. By watching an opponent's fighting style, the werewolf can evaluate his strengths and weaknesses. Snake- and wind-spirits teach this Gift.",
         "system": "The player rolls Perception + Brawl (difficulty 8). Each success gives her one bonus die to add to her attack or damage rolls against this opponent. For instance, a Philodox who gets four successes on this roll could add two dice to her attack rolls and two to her damage pool. This Gift can be used against a given foe only once per scene, and the benefits are lost at the end of the scene. The Garou must concentrate for a full turn to use this Gift.",
@@ -1525,18 +1429,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Wisdom of the Ancient Ways",
-        "description": "As the Philodox Gift. All werewolves have an innate connection to their ancestors, a form of racial unconscious accessible through intense meditation. The Philodox can tap into these deep memories to remember ancient facts and lore. An ancestor-spirit teaches this Gift.",
-        "system": "The character must meditate for a short time, concentrating on the past. The player then rolls Gnosis (difficulty 9, -1 for each point of Ancestors the Garou possesses). The number of successes determines how detailed and exact the answer he receives will be.",
-        "source": "CB20 Pg. 89",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
         "name": "Drop of Sea",
         "description": "Qualmi are renowned shapeshifters; this Gift, which allows them to take a veriety of forms, demonstrates why.",
         "system": "This Gift combines the powers of the Rank Four Homid Gift: Monkey's Uncle and the Rank Five Swara Gift: All the Beasts Under the Sun, with the following differences: The roll is Manipulation + Subterfuge (difficulty 7); the animal shapes run from hare-sized to bear-sized, and an observer who makes a Perception + Enigmas roll (difficulty 9) may see the werecat for what she is. If he wants to undo the magic, he may ask the transformed werecat a riddle (see 'Gamecraft'); if she cant answer it, she changes back to her old form immediately.",
@@ -1653,18 +1545,6 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Attunement",
-        "description": "Bastet who've set up Den-Realms use this secret to view their holdings from where they stand. By going into a light trance, the werecat in question communes with the spirits in her territory and learns what's going on throughout the Den-Realm. Visitors, intruders or crises can be discovered long before they get too close to the cat herself.",
-        "system": "The player spends a Gnosis point and rolls Perception + Survival (difficulty 6). The more successes she wins, the more she learns. On a botch, the spirits lie.",
-        "source": "Revised - BB Bastet p.99",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -2189,18 +2069,6 @@
         "description": "By meditating upon a pool of moonlit water, a Bastet may see anything that transpires beneath Seline's glow. Although it's difficult to see distant or hidden locations, a rigorous search can see anywhere on Earth.",
         "system": "The player rolls Perception + Enigmas and spends a Gnosis point. The Bastet must be staring into outside water. Any place touched by moonlight (even near windows, in-doors, and within the Penumbra) may be sensed with all six senses, as if the Bastet were standing in the moonlight itself. The water's surface must be calm; raging waves will reveal nothing. The search's difficulty depends on the distance scanned and the Bastet's familiarity with it. If she observes for more than a minute (or requires more than three rolls) another Gnosis point must be spent. A person with mystical senses might realize he's being spied upon with a successful Perception + Occult or Enigmas roll (difficulty 6). He would, if he discovered this, see a giant moonlit cat slowly fading away. Naturally, discovery terminates the Gift. Subject - Difficulty - Succs Needed / Near and familiar - 6 - 2 Distant and familiar - 7 - 3 Unfamiliar - 8 - 3 Seen Pictures - 8 - 5 Never Been - 9 - 5 Distant and Alien - 10 - 5",
         "source": "Bastet BB p103",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Revolt of the Land",
-        "description": "As the Red Talon Gift: Gaia's Vengeance. The Garou calls to the spirits of the surrounding forest to attack intruders. The terrain responds as best it can: Rocks roll and smash, vines trip, and water sucks victims under. An avatar of Gaia herself teaches this Gift.",
-        "system": "The player spends one Gnosis point and one Rage point then rolls Charisma + Primal-Urge (difficulty of the local Gauntlet). The exact effects depend on the terrain and are left to the Storyteller.",
-        "source": "CB20 Pg. 87",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",

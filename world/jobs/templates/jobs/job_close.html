@@ -1,0 +1,105 @@
+{% extends "jobs/base.html" %}
+
+{% block title %}Close Job - {{ job.title }} - Dies Irae{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Close Job</h1>
+    <a href="{% url 'jobs:job_detail' job.id %}" class="btn btn-secondary">Back to Job</a>
+</div>
+
+<div class="job-info">
+    <h2>{{ job.title }}</h2>
+    <p class="job-description">{{ job.description }}</p>
+</div>
+
+<form method="post" class="close-form">
+    {% csrf_token %}
+    
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="form-section">
+        <h3>Close Status</h3>
+        
+        <div class="form-group">
+            <label for="{{ form.status.id_for_label }}">Status:</label>
+            {{ form.status }}
+            {% if form.status.errors %}
+            <div class="field-error">{{ form.status.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.reason.id_for_label }}">Reason:</label>
+            {{ form.reason }}
+            {% if form.reason.errors %}
+            <div class="field-error">{{ form.reason.errors }}</div>
+            {% endif %}
+            <small class="form-text text-muted">Please provide a brief explanation of why this job is being closed.</small>
+        </div>
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Close Job</button>
+        <a href="{% url 'jobs:job_detail' job.id %}" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .job-info {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+    .job-info h2 {
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+    .job-description {
+        color: #6c757d;
+        margin-bottom: 0;
+    }
+    .form-section {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+    .form-section h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .field-error {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 5px;
+    }
+    .form-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+</style>
+{% endblock %} 

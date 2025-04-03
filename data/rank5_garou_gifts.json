@@ -676,10 +676,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [5],
+        "values": [4, 5],
 		"splat": "Shifter",
         "tribe": "Stargazers",
-        "shifter_type": ["Garou"]
+        "shifter_type": ["Garou", "Gurahl"]
     },
     {
         "name": "Directing the Soul",
@@ -1489,7 +1489,7 @@
         "values": [5], 
         "splat": "Shifter",
         "tribe": "Red Talons",
-		"shifter_type":  ["Garou", "Bastet"],
+		"shifter_type":  ["Garou", "Bastet", "Gurahl"],
         "gift_alias": ["Revolt of the Land"]
     },
     {

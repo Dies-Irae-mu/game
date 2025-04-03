@@ -1,0 +1,155 @@
+{% extends "jobs/base.html" %}
+
+{% block title %}Archived Jobs - Dies Irae{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Archived Jobs</h1>
+    <a href="{% url 'jobs:job_list' %}" class="btn btn-secondary">Back to Active Jobs</a>
+</div>
+
+<div class="filters">
+    <form method="get" class="filter-form">
+        <div class="form-group">
+            <label for="status">Status:</label>
+            <select name="status" id="status" onchange="this.form.submit()">
+                <option value="">All</option>
+                <option value="closed" {% if status == 'closed' %}selected{% endif %}>Closed</option>
+                <option value="rejected" {% if status == 'rejected' %}selected{% endif %}>Rejected</option>
+                <option value="completed" {% if status == 'completed' %}selected{% endif %}>Completed</option>
+                <option value="cancelled" {% if status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="queue">Queue:</label>
+            <select name="queue" id="queue" onchange="this.form.submit()">
+                <option value="">All</option>
+                {% for q in queues %}
+                <option value="{{ q.id }}" {% if queue_id == q.id %}selected{% endif %}>{{ q.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="sort">Sort by:</label>
+            <select name="sort" id="sort" onchange="this.form.submit()">
+                <option value="closed" {% if sort == 'closed' %}selected{% endif %}>Closed Date</option>
+                <option value="created" {% if sort == 'created' %}selected{% endif %}>Created Date</option>
+                <option value="title" {% if sort == 'title' %}selected{% endif %}>Title</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="order">Order:</label>
+            <select name="order" id="order" onchange="this.form.submit()">
+                <option value="desc" {% if order == 'desc' %}selected{% endif %}>Descending</option>
+                <option value="asc" {% if order == 'asc' %}selected{% endif %}>Ascending</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="btn btn-secondary">Apply Filters</button>
+    </form>
+</div>
+
+<div class="jobs-list">
+    {% if jobs %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Queue</th>
+                <th>Requester</th>
+                <th>Assignee</th>
+                <th>Closed Date</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in jobs %}
+            <tr>
+                <td>
+                    <a href="{% url 'jobs:job_archive_detail' job.id %}">{{ job.title }}</a>
+                </td>
+                <td>
+                    <span class="badge badge-{{ job.status }}">{{ job.get_status_display }}</span>
+                </td>
+                <td>{{ job.queue.name }}</td>
+                <td>{{ job.requester }}</td>
+                <td>{{ job.assignee|default:"-" }}</td>
+                <td>{{ job.closed_at|date:"Y-m-d H:i" }}</td>
+                <td>{{ job.created|date:"Y-m-d H:i" }}</td>
+                <td>
+                    <a href="{% url 'jobs:job_archive_detail' job.id %}" class="btn btn-secondary btn-sm">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    {% if is_paginated %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if status %}&status={{ status }}{% endif %}{% if queue_id %}&queue={{ queue_id }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}{% if order %}&order={{ order }}{% endif %}" class="btn btn-secondary">Previous</a>
+        {% endif %}
+        
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+        
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if status %}&status={{ status }}{% endif %}{% if queue_id %}&queue={{ queue_id }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}{% if order %}&order={{ order }}{% endif %}" class="btn btn-secondary">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+    {% else %}
+    <p>No archived jobs found matching your criteria.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .filters {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+    .filter-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: flex-end;
+    }
+    .filter-form .form-group {
+        margin-bottom: 0;
+        flex: 1;
+        min-width: 200px;
+    }
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.875rem;
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    .current {
+        padding: 8px 16px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %} 

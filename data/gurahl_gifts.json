@@ -1,67 +1,7 @@
 [
     {
-        "name": "Desperate Strength",
-        "description": "In times of great trauma, desperate people have displayed amazing feats of strength and endurance. With a burst of adrenaline, a mother can lift a truck off a pinned child, or a father may smash through a wall to save his family. Through strength of will, a werebear may channel that same desperate energy. A bear-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "Gurahl",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Healing Tongue",
-        "description": "The Gurahl is able to heal the wounds of any living creature, aggravated or otherwise, simply by licking the afflicted area. The Gurahl may not heal herself, spirits or the undead with this Gift. A bear- or unicorn-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "Gurahl",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Herb Call",
-        "description": "The Gurahl can call nearby herbs to her aid, causing them to grow rapidly and move toward her. A plant-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "Gurahl",
-        "splat": "Shifter"
-    },
-    {
         "name": "Mask of the Bear Spirit",
         "description": "The Gurahl can take on certain ursine features while in homid form, becoming more intimidating. An ancestor-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "Gurahl",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Salmon Leap",
-        "description": "Like the mighty salmon swimming upstream, the Gurahl can leap great distances. A salmon-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "Gurahl",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Strength of Purpose",
-        "description": "The Gurahl's determination becomes unshakeable, allowing her to resist attempts to control her mind or change her course of action. An ancestor-spirit teaches this Gift.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -84,30 +24,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Burning Blood",
-        "description": "The Gurahl's blood becomes caustic to her enemies, burning them when they draw it. A fire-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            2
-        ],
-        "shifter_type": "Gurahl",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Hibernation",
-        "description": "The Gurahl can enter a deep sleep that allows rapid healing and requires little sustenance. A bear-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            2
-        ],
-        "shifter_type": "Gurahl",
-        "splat": "Shifter"
-    },
-    {
         "name": "Slumber",
         "description": "The Gurahl can cause others to fall into a deep sleep. A bear-spirit teaches this Gift.",
         "game_line": "Werewolf: The Apocalypse",
@@ -115,30 +31,6 @@
         "stat_type": "gift",
         "values": [
             2
-        ],
-        "shifter_type": "Gurahl",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Territory",
-        "description": "The Gurahl can claim an area as their territory, gaining various benefits within it. An ancestor-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            2
-        ],
-        "shifter_type": "Gurahl",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Attunement",
-        "description": "The Gurahl can commune with the spirits of an area to gain information about it. Any nature spirit can teach this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            3
         ],
         "shifter_type": "Gurahl",
         "splat": "Shifter"
@@ -192,18 +84,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Ancestral Incarnation",
-        "description": "The Gurahl can channel the power and wisdom of their ancestors. An ancestor-spirit teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            4
-        ],
-        "shifter_type": "Gurahl",
-        "splat": "Shifter"
-    },
-    {
         "name": "Gift of the Bear Mother",
         "description": "The Gurahl gains tremendous healing abilities, able to cure almost any ailment. The Bear Mother herself teaches this Gift.",
         "game_line": "Werewolf: The Apocalypse",
@@ -223,18 +103,6 @@
         "stat_type": "gift",
         "values": [
             4
-        ],
-        "shifter_type": "Gurahl",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Gaia's Vengeance",
-        "description": "The Gurahl becomes an avatar of Gaia's wrath, gaining tremendous power to punish those who harm the Earth. Gaia herself teaches this Gift.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            5
         ],
         "shifter_type": "Gurahl",
         "splat": "Shifter"

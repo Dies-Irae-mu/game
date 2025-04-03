@@ -1,4 +1,4 @@
-from evennia import default_cmds
+from evennia import default_cmds, search_channel
 
 class CmdLFRP(default_cmds.MuxCommand):
     """
@@ -16,6 +16,15 @@ class CmdLFRP(default_cmds.MuxCommand):
     help_category = "RP Commands"
     
     def func(self):
+        # Get the LookingForRP channel with ANSI codes
+        channels = search_channel("|035LookingForRP|n")
+        if not channels:
+            self.caller.msg("Error: LookingForRP channel not found.")
+            return
+            
+        # Get the first channel from the QuerySet
+        rp_channel = channels[0]
+            
         if not self.args:
             # Toggle current status
             self.caller.db.lfrp = not self.caller.db.lfrp
@@ -28,6 +37,16 @@ class CmdLFRP(default_cmds.MuxCommand):
             return
             
         if self.caller.db.lfrp:
-            self.caller.msg("You are now marked as looking for RP.")
+            # Add to channel if not already subscribed
+            if not rp_channel.subscriptions.has(self.caller):
+                rp_channel.connect(self.caller)
+                # Set up the 'rp' alias for the channel
+                self.caller.execute_cmd('channel/alias |035LookingForRP|n = rp')
+            self.caller.msg("You are now marked as looking for RP and have joined the LookingForRP channel (use 'rp' to chat).")
         else:
-            self.caller.msg("You are no longer marked as looking for RP.") 
+            # Remove from channel if subscribed
+            if rp_channel.subscriptions.has(self.caller):
+                # Remove the 'rp' alias
+                self.caller.execute_cmd('channel/unalias rp')
+                rp_channel.disconnect(self.caller)
+            self.caller.msg("You are no longer marked as looking for RP and have left the LookingForRP channel.") 

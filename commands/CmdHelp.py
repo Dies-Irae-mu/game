@@ -61,8 +61,14 @@ class CmdHelp(DefaultCmdHelp):
                 match.key if hasattr(match, 'key') else match.db_key,
                 key_and_aliases
             )
-            category = match.help_category if hasattr(match, 'help_category') else match.db_help_category
-            entry_type = "Command" if hasattr(match, 'func') else "Help Entry"
+            
+            # Handle different types of help entries
+            if isinstance(match, HelpCategory):
+                category = str(match)
+                entry_type = "Category"
+            else:
+                category = match.help_category if hasattr(match, 'help_category') else match.db_help_category
+                entry_type = "Command" if hasattr(match, 'func') else "Help Entry"
             
             table.add_row(
                 f"|w{str(i)}|n",
@@ -152,8 +158,10 @@ class CmdHelp(DefaultCmdHelp):
         """Format the help index with custom colors."""
         total_width = 78
         help_index = ""
+        cmd_grid = ""
+        db_grid = ""
 
-        if any(cmd_help_dict.values()):
+        if cmd_help_dict and any(cmd_help_dict.values()):
             # Commands section header
             cmd_title = " Commands "
             title_len = len(cmd_title)
@@ -182,9 +190,11 @@ class CmdHelp(DefaultCmdHelp):
                     
                     cmd_sections.append(f"{cat_header}\n{formatted_entries}")
             
-            cmd_grid = "\n".join(cmd_sections)
+            if cmd_sections:
+                sections_text = "\n".join(cmd_sections)
+                cmd_grid = sep1 + sections_text
 
-        if any(db_help_dict.values()):
+        if db_help_dict and any(db_help_dict.values()):
             # Game & World section header
             db_title = " Game & World "
             title_len = len(db_title)
@@ -205,16 +215,20 @@ class CmdHelp(DefaultCmdHelp):
                     formatted_entries = "\n".join("  " + line for line in entry_lines)
                     db_sections.append(formatted_entries)
             
-            db_grid = "\n".join(db_sections)
+            if db_sections:
+                sections_text = "\n".join(db_sections)
+                db_grid = sep2 + sections_text
 
         # Combine sections
         if cmd_grid and db_grid:
-            help_index = f"{sep1}{cmd_grid}{sep2}{db_grid}"
+            help_index = cmd_grid + db_grid
         else:
-            help_index = f"{cmd_grid}{db_grid}"
+            help_index = cmd_grid or db_grid
 
-        # Add footer
-        help_index += f"\n{'|b-|n' * total_width}"
+        # Add footer if there's any content
+        if help_index:
+            help_index += f"\n{'|b-|n' * total_width}"
+        
         return help_index
 
     def _group_by_category(self, help_dict, click_topics=True):
@@ -277,13 +291,13 @@ class CmdHelp(DefaultCmdHelp):
         file_db_help_topics = {**file_help_topics, **db_help_topics}
         all_topics = {**file_db_help_topics, **cmd_help_topics}
 
-        # Get all categories
-        all_categories = list(
-            set(HelpCategory(topic.help_category) for topic in all_topics.values())
-        )
+        # Get all categories (using a set to prevent duplicates)
+        all_categories = {
+            HelpCategory(topic.help_category) for topic in all_topics.values()
+        }
 
         # Get all available help entries
-        entries = list(all_topics.values()) + all_categories
+        entries = list(all_topics.values()) + list(all_categories)
 
         # First try exact match by key
         exact_matches = []

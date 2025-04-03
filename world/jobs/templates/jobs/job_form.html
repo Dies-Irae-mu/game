@@ -1,0 +1,212 @@
+{% extends "jobs/base.html" %}
+
+{% block title %}{% if form.instance.pk %}Edit Job{% else %}Create Job{% endif %} - Dies Irae{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>{% if form.instance.pk %}Edit Job{% else %}Create Job{% endif %}</h1>
+    <a href="{% url 'jobs:job_list' %}" class="btn btn-secondary">Back to Jobs</a>
+</div>
+
+<form method="post" class="job-form">
+    {% csrf_token %}
+    
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="form-section">
+        <h2>Basic Information</h2>
+        
+        <div class="form-group">
+            <label for="{{ form.title.id_for_label }}">Title:</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+            <div class="field-error">{{ form.title.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Description:</label>
+            {{ form.description }}
+            {% if form.description.errors %}
+            <div class="field-error">{{ form.description.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.queue.id_for_label }}">Queue:</label>
+            {{ form.queue }}
+            {% if form.queue.errors %}
+            <div class="field-error">{{ form.queue.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.assignee.id_for_label }}">Assignee:</label>
+            {{ form.assignee }}
+            {% if form.assignee.errors %}
+            <div class="field-error">{{ form.assignee.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.due_date.id_for_label }}">Due Date:</label>
+            {{ form.due_date }}
+            {% if form.due_date.errors %}
+            <div class="field-error">{{ form.due_date.errors }}</div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <h2>Template Information</h2>
+        
+        <div class="form-group">
+            <label for="{{ form.template.id_for_label }}">Template:</label>
+            {{ form.template }}
+            {% if form.template.errors %}
+            <div class="field-error">{{ form.template.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.template_args.id_for_label }}">Template Arguments (JSON):</label>
+            {{ form.template_args }}
+            {% if form.template_args.errors %}
+            <div class="field-error">{{ form.template_args.errors }}</div>
+            {% endif %}
+            <small class="form-text text-muted">Enter valid JSON format. Example: {"key": "value"}</small>
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <h2>Attachments</h2>
+        
+        <div class="form-group">
+            <label for="object_search">Search for objects to attach:</label>
+            <input type="text" id="object_search" class="object-search" placeholder="Start typing to search...">
+            <input type="hidden" name="object_id" id="object_id">
+            <div class="search-results"></div>
+        </div>
+        
+        {% if form.instance.pk and form.instance.attachments.exists %}
+        <div class="current-attachments">
+            <h3>Current Attachments</h3>
+            <div class="attachments-list">
+                {% for attachment in form.instance.attachments.all %}
+                <div class="attachment">
+                    {{ attachment.object }}
+                    <button type="button" class="btn btn-danger btn-sm remove-attachment" data-attachment-id="{{ attachment.id }}">Remove</button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Save Changes{% else %}Create Job{% endif %}</button>
+        {% if form.instance.pk %}
+        <a href="{% url 'jobs:job_detail' form.instance.pk %}" class="btn btn-secondary">Cancel</a>
+        {% else %}
+        <a href="{% url 'jobs:job_list' %}" class="btn btn-secondary">Cancel</a>
+        {% endif %}
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .form-section {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+    .form-section h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .field-error {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 5px;
+    }
+    .form-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    .current-attachments {
+        margin-top: 15px;
+    }
+    .current-attachments h3 {
+        margin-bottom: 10px;
+    }
+    .attachment {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #fff;
+        padding: 8px 12px;
+        border-radius: 4px;
+        margin-bottom: 8px;
+    }
+    .remove-attachment {
+        padding: 2px 6px;
+        font-size: 0.75rem;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle attachment removal
+    const removeButtons = document.querySelectorAll('.remove-attachment');
+    removeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const attachmentId = this.dataset.attachmentId;
+            if (confirm('Are you sure you want to remove this attachment?')) {
+                fetch(`/jobs/attachment/${attachmentId}/remove/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.closest('.attachment').remove();
+                    } else {
+                        alert('Failed to remove attachment: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while removing the attachment.');
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %} 

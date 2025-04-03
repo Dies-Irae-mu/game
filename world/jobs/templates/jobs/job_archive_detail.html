@@ -1,0 +1,209 @@
+{% extends "jobs/base.html" %}
+
+{% block title %}{{ job.title }} - Archived Job - Dies Irae{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>{{ job.title }}</h1>
+    <div class="header-actions">
+        <a href="{% url 'jobs:job_archive' %}" class="btn btn-secondary">Back to Archive</a>
+    </div>
+</div>
+
+<div class="job-info">
+    <div class="info-grid">
+        <div class="info-item">
+            <label>Status:</label>
+            <span class="badge badge-{{ job.status }}">{{ job.get_status_display }}</span>
+        </div>
+        <div class="info-item">
+            <label>Queue:</label>
+            <span>{{ job.queue.name }}</span>
+        </div>
+        <div class="info-item">
+            <label>Requester:</label>
+            <span>{{ job.requester }}</span>
+        </div>
+        <div class="info-item">
+            <label>Assignee:</label>
+            <span>{{ job.assignee|default:"-" }}</span>
+        </div>
+        <div class="info-item">
+            <label>Created:</label>
+            <span>{{ job.created|date:"Y-m-d H:i" }}</span>
+        </div>
+        <div class="info-item">
+            <label>Closed:</label>
+            <span>{{ job.closed_at|date:"Y-m-d H:i" }}</span>
+        </div>
+        {% if job.due_date %}
+        <div class="info-item">
+            <label>Due Date:</label>
+            <span>{{ job.due_date|date:"Y-m-d H:i" }}</span>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="job-description">
+    <h2>Description</h2>
+    <div class="description-content">
+        {{ job.description|linebreaks }}
+    </div>
+</div>
+
+{% if job.template %}
+<div class="template-info">
+    <h2>Template Information</h2>
+    <div class="template-content">
+        <div class="info-item">
+            <label>Template:</label>
+            <span>{{ job.template.name }}</span>
+        </div>
+        {% if job.template_args %}
+        <div class="info-item">
+            <label>Arguments:</label>
+            <pre class="json-content">{{ job.template_args|pprint }}</pre>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% if job.attachments.exists %}
+<div class="attachments">
+    <h2>Attachments</h2>
+    <div class="attachments-list">
+        {% for attachment in job.attachments.all %}
+        <div class="attachment-item">
+            <span class="attachment-name">{{ attachment.object }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="comments">
+    <h2>Comments</h2>
+    {% if job.comments.exists %}
+    <div class="comments-list">
+        {% for comment in job.comments.all %}
+        <div class="comment">
+            <div class="comment-header">
+                <span class="comment-author">{{ comment.author }}</span>
+                <span class="comment-date">{{ comment.created|date:"Y-m-d H:i" }}</span>
+            </div>
+            <div class="comment-content">
+                {{ comment.text|linebreaks }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No comments on this job.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .job-info {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+    .info-item {
+        display: flex;
+        flex-direction: column;
+    }
+    .info-item label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #495057;
+    }
+    .job-description {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .description-content {
+        white-space: pre-wrap;
+    }
+    .template-info {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+    .json-content {
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 4px;
+        overflow-x: auto;
+        font-family: monospace;
+    }
+    .attachments {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .attachments-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .attachment-item {
+        background-color: #e9ecef;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 0.9em;
+    }
+    .comments {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .comments-list {
+        margin-top: 15px;
+    }
+    .comment {
+        border-bottom: 1px solid #dee2e6;
+        padding: 15px 0;
+    }
+    .comment:last-child {
+        border-bottom: none;
+    }
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+    .comment-content {
+        white-space: pre-wrap;
+    }
+    h2 {
+        color: #212529;
+        margin-bottom: 15px;
+        font-size: 1.5em;
+    }
+</style>
+{% endblock %}

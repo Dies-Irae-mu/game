@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Equipment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background-color: #007bff;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .category-fields {
+            display: none;
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .category-heading {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            color: #333;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+        }
+        .help-text {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Equipment</h1>
+    
+    {% if not form.instance.pk %}
+    <div style="margin-bottom: 20px; padding: 10px; background-color: #f8f9fa; border-left: 4px solid #6c757d; border-radius: 3px;">
+        <p style="margin: 0;"><strong>Note:</strong> The equipment ID will be automatically assigned as the next sequential number.</p>
+    </div>
+    {% else %}
+    <div style="margin-bottom: 20px; padding: 10px; background-color: #f8f9fa; border-left: 4px solid #6c757d; border-radius: 3px;">
+        <p style="margin: 0;"><strong>Equipment ID:</strong> #{{ form.instance.sequential_id }} (cannot be changed)</p>
+    </div>
+    {% endif %}
+    
+    {% if category %}
+    <form method="post" data-category="{{ category|escapejs }}">
+    {% else %}
+    <form method="post">
+    {% endif %}
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Name:</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+            <div class="error-message">{{ form.name.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Description:</label>
+            {{ form.description }}
+            {% if form.description.errors %}
+            <div class="error-message">{{ form.description.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.equipment_type.id_for_label }}">Equipment Type:</label>
+            {{ form.equipment_type }}
+            {% if form.equipment_type.errors %}
+            <div class="error-message">{{ form.equipment_type.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.category.id_for_label }}">Category:</label>
+            {{ form.category }}
+            {% if form.category.errors %}
+            <div class="error-message">{{ form.category.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.resources.id_for_label }}">Resources:</label>
+            {{ form.resources }}
+            {% if form.resources.errors %}
+            <div class="error-message">{{ form.resources.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.quantity.id_for_label }}">Quantity:</label>
+            {{ form.quantity }}
+            {% if form.quantity.errors %}
+            <div class="error-message">{{ form.quantity.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.conceal.id_for_label }}">Conceal:</label>
+            {{ form.conceal }}
+            {% if form.conceal.errors %}
+            <div class="error-message">{{ form.conceal.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <div class="checkbox-group">
+                {{ form.is_unique }}
+                <label for="{{ form.is_unique.id_for_label }}">Is Unique</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="checkbox-group">
+                {{ form.requires_approval }}
+                <label for="{{ form.requires_approval.id_for_label }}">Requires Approval</label>
+            </div>
+        </div>
+
+        <!-- Category-specific fields -->
+        <div id="ranged-fields" class="category-fields">
+            <div class="category-heading">Ranged Weapon Details</div>
+            
+            <div class="form-group">
+                <label for="{{ form.damage.id_for_label }}">Damage:</label>
+                {{ form.damage }}
+                <div class="help-text">{{ form.damage.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.damage_type.id_for_label }}">Damage Type:</label>
+                {{ form.damage_type }}
+                <div class="help-text">{{ form.damage_type.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.range.id_for_label }}">Range:</label>
+                {{ form.range }}
+                <div class="help-text">{{ form.range.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.rate.id_for_label }}">Rate:</label>
+                {{ form.rate }}
+                <div class="help-text">{{ form.rate.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.clip.id_for_label }}">Clip:</label>
+                {{ form.clip }}
+                <div class="help-text">{{ form.clip.help_text }}</div>
+            </div>
+        </div>
+        
+        <div id="melee-fields" class="category-fields">
+            <div class="category-heading">Melee Weapon Details</div>
+            
+            <div class="form-group">
+                <label for="{{ form.damage.id_for_label }}">Damage:</label>
+                {{ form.damage }}
+                <div class="help-text">{{ form.damage.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.damage_type.id_for_label }}">Damage Type:</label>
+                {{ form.damage_type }}
+                <div class="help-text">{{ form.damage_type.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.difficulty.id_for_label }}">Difficulty:</label>
+                {{ form.difficulty }}
+                <div class="help-text">{{ form.difficulty.help_text }}</div>
+            </div>
+        </div>
+        
+        <div id="thrown-fields" class="category-fields">
+            <div class="category-heading">Thrown Weapon Details</div>
+            
+            <div class="form-group">
+                <label for="{{ form.damage.id_for_label }}">Damage:</label>
+                {{ form.damage }}
+                <div class="help-text">{{ form.damage.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.damage_type.id_for_label }}">Damage Type:</label>
+                {{ form.damage_type }}
+                <div class="help-text">{{ form.damage_type.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.range.id_for_label }}">Range:</label>
+                {{ form.range }}
+                <div class="help-text">{{ form.range.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.difficulty.id_for_label }}">Difficulty:</label>
+                {{ form.difficulty }}
+                <div class="help-text">{{ form.difficulty.help_text }}</div>
+            </div>
+        </div>
+        
+        <div id="improvised-fields" class="category-fields">
+            <div class="category-heading">Improvised Weapon Details</div>
+            
+            <div class="form-group">
+                <label for="{{ form.damage.id_for_label }}">Damage:</label>
+                {{ form.damage }}
+                <div class="help-text">{{ form.damage.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.damage_type.id_for_label }}">Damage Type:</label>
+                {{ form.damage_type }}
+                <div class="help-text">{{ form.damage_type.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.difficulty.id_for_label }}">Difficulty:</label>
+                {{ form.difficulty }}
+                <div class="help-text">{{ form.difficulty.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.break_chance.id_for_label }}">Break Chance (%):</label>
+                {{ form.break_chance }}
+                <div class="help-text">{{ form.break_chance.help_text }}</div>
+            </div>
+        </div>
+        
+        <div id="explosives-fields" class="category-fields">
+            <div class="category-heading">Explosive Details</div>
+            
+            <div class="form-group">
+                <label for="{{ form.blast_area.id_for_label }}">Blast Area:</label>
+                {{ form.blast_area }}
+                <div class="help-text">{{ form.blast_area.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.blast_power.id_for_label }}">Blast Power:</label>
+                {{ form.blast_power }}
+                <div class="help-text">{{ form.blast_power.help_text }}</div>
+            </div>
+            
+            <div class="form-group checkbox-group">
+                {{ form.burn }}
+                <label for="{{ form.burn.id_for_label }}">Causes Burning</label>
+                <div class="help-text">{{ form.burn.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.notes.id_for_label }}">Notes:</label>
+                {{ form.notes }}
+                <div class="help-text">{{ form.notes.help_text }}</div>
+            </div>
+        </div>
+        
+        <div id="armor-fields" class="category-fields">
+            <div class="category-heading">Armor Details</div>
+            
+            <div class="form-group">
+                <label for="{{ form.rating.id_for_label }}">Rating:</label>
+                {{ form.rating }}
+                <div class="help-text">{{ form.rating.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.dexterity_penalty.id_for_label }}">Dexterity Penalty:</label>
+                {{ form.dexterity_penalty }}
+                <div class="help-text">{{ form.dexterity_penalty.help_text }}</div>
+            </div>
+            
+            <div class="form-group checkbox-group">
+                {{ form.is_shield }}
+                <label for="{{ form.is_shield.id_for_label }}">Is Shield</label>
+                <div class="help-text">{{ form.is_shield.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.shield_bonus.id_for_label }}">Shield Bonus:</label>
+                {{ form.shield_bonus }}
+                <div class="help-text">{{ form.shield_bonus.help_text }}</div>
+            </div>
+        </div>
+        
+        <div id="ammunition-fields" class="category-fields">
+            <div class="category-heading">Ammunition Details</div>
+            
+            <div class="form-group">
+                <label for="{{ form.caliber.id_for_label }}">Caliber:</label>
+                {{ form.caliber }}
+                <div class="help-text">{{ form.caliber.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.damage_modifier.id_for_label }}">Damage Modifier:</label>
+                {{ form.damage_modifier }}
+                <div class="help-text">{{ form.damage_modifier.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.special_effects.id_for_label }}">Special Effects:</label>
+                {{ form.special_effects }}
+                <div class="help-text">{{ form.special_effects.help_text }}</div>
+            </div>
+        </div>
+        
+        <div id="special-ammunition-fields" class="category-fields">
+            <div class="category-heading">Special Ammunition Details</div>
+            
+            <div class="form-group">
+                <label for="{{ form.damage.id_for_label }}">Damage:</label>
+                {{ form.damage }}
+                <div class="help-text">{{ form.damage.help_text }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.effects.id_for_label }}">Effects:</label>
+                {{ form.effects }}
+                <div class="help-text">{{ form.effects.help_text }}</div>
+            </div>
+        </div>
+        
+        <!-- Add more category-specific field sections as needed -->
+
+        <div class="actions">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{% url 'equipment_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+    
+    <script>
+        // Function to show fields based on selected category
+        function showCategoryFields() {
+            // Hide all category fields first
+            const categoryFields = document.querySelectorAll('.category-fields');
+            categoryFields.forEach(field => {
+                field.style.display = 'none';
+            });
+            
+            // Get the selected category
+            const category = document.getElementById('id_category').value;
+            
+            // Show the appropriate fields for the selected category
+            if (category) {
+                const fieldId = `${category.replace('_', '-')}-fields`;
+                const categoryField = document.getElementById(fieldId);
+                if (categoryField) {
+                    categoryField.style.display = 'block';
+                }
+            }
+            
+            // Set required fields based on category
+            if (category === 'ranged') {
+                document.getElementById('id_damage').required = true;
+                document.getElementById('id_damage_type').required = true;
+                document.getElementById('id_range').required = true;
+                document.getElementById('id_rate').required = true;
+                document.getElementById('id_clip').required = true;
+            } else if (category === 'melee') {
+                document.getElementById('id_damage').required = true;
+                document.getElementById('id_damage_type').required = true;
+                document.getElementById('id_difficulty').required = true;
+            }
+            // Add required field settings for other categories
+        }
+        
+        // Add event listener to the category select field
+        document.addEventListener('DOMContentLoaded', function() {
+            const categorySelect = document.getElementById('id_category');
+            
+            // Show fields on page load if a category is already selected
+            showCategoryFields();
+            
+            // Show/hide fields when the category changes
+            categorySelect.addEventListener('change', showCategoryFields);
+            
+            // If there's a pre-selected category, check for data attribute on form
+            const form = document.querySelector('form');
+            const preselectedCategory = form.dataset.category;
+            
+            if (preselectedCategory) {
+                document.getElementById('id_category').value = preselectedCategory;
+                showCategoryFields();
+            }
+        });
+    </script>
+</body>
+</html> 

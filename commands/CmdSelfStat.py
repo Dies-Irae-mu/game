@@ -9,7 +9,7 @@ from world.wod20th.utils.stat_mappings import (
     ALL_RITES, CATEGORIES, KINAIN_BACKGROUNDS, STAT_TYPES, STAT_TYPE_TO_CATEGORY,
     IDENTITY_STATS, SPLAT_STAT_OVERRIDES, ALL_RITES,
     POOL_TYPES, POWER_CATEGORIES, ABILITY_TYPES,
-    ATTRIBUTE_CATEGORIES, SPECIAL_ADVANTAGES,
+    ATTRIBUTE_CATEGORIES, SPECIAL_ADVANTAGES, COMBAT_SPECIAL_ADVANTAGES,
     STAT_VALIDATION, VALID_SPLATS, GENERATION_MAP,
     GENERATION_FLAWS, BLOOD_POOL_MAP, get_identity_stats,
     UNIVERSAL_BACKGROUNDS, VAMPIRE_BACKGROUNDS,
@@ -168,7 +168,7 @@ class CmdSelfStat(MuxCommand):
         
         # Add usage information
         self.caller.msg(f"|yUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
-
+		
     def _validate_breed(self, shifter_type: str, value: str) -> tuple[bool, str, str]:
         """
         Validate breed value for a given shifter type.
@@ -494,8 +494,14 @@ class CmdSelfStat(MuxCommand):
                         self.caller.msg(f"|y'{matched_alias}' is the {char_type} name for the Garou gift '{gift.name}'. Setting '{gift.name}' to {self.value_change}.|n")
                 else:
                     self.caller.msg(f"|y'{matched_alias}' is also known as '{gift.name}'. Setting '{gift.name}' to {self.value_change}.|n")
+                
+                # Return after setting the message
+                return True, gift.name
+                
+            # If we found a match but no matching alias (unusual case), still return the gift name
             return True, gift.name
             
+        # If no match was found at all
         return False, None
 
     def validate_stat_value(self, stat_name: str, value: str, category: str = None, stat_type: str = None) -> tuple:
@@ -503,6 +509,28 @@ class CmdSelfStat(MuxCommand):
         Validate a stat value based on its type and category.
         Returns (is_valid, error_message, corrected_value)
         """
+        # Check for None values in all parameters
+        if stat_name is None:
+            return False, "Stat name cannot be None", None
+        if value is None:
+            return False, f"Value cannot be None for {stat_name}", None
+        if category is None:
+            # This is expected in some cases when auto-detecting the category
+            pass
+        if stat_type is None:
+            # This is expected in some cases when auto-detecting the stat_type
+            pass
+            
+        # Special handling for hedge rituals
+        if category == 'powers' and stat_type == 'hedge_ritual':
+            try:
+                ritual_value = int(value)
+                if ritual_value < 0 or ritual_value > 5:
+                    return False, f"Hedge ritual level must be between 0 and 5", None
+                return True, "", str(ritual_value)
+            except ValueError:
+                return False, "Hedge ritual level must be a number", None
+            
         # Get character's splat and type - try direct access first
         splat = None
         if (hasattr(self.caller, 'db') and 
@@ -651,7 +679,8 @@ class CmdSelfStat(MuxCommand):
         # Special handling for Companions' special advantages
         if splat == 'Companion' and (category == 'powers' and stat_type == 'special_advantage'):
             # Get proper case name from SPECIAL_ADVANTAGES
-            proper_name = next((name for name in SPECIAL_ADVANTAGES.keys() if name.lower() == stat_name.lower()), None)
+            proper_name = next((name for name in SPECIAL_ADVANTAGES.keys() if name.lower() == stat_name.lower()), 
+                              next((name for name in COMBAT_SPECIAL_ADVANTAGES.keys() if name.lower() == stat_name.lower()), None))
             if not proper_name:
                 return False, f"'{stat_name}' is not a valid special advantage", None
 
@@ -664,8 +693,11 @@ class CmdSelfStat(MuxCommand):
                 proper_name = f"{proper_name}({self.instance})"
 
             # Get the advantage info
-            advantage_key = next((key for key in SPECIAL_ADVANTAGES.keys() if key.lower() == stat_name.lower()), None)
-            advantage_info = SPECIAL_ADVANTAGES[advantage_key]
+            advantage_key = proper_name
+            advantage_info = SPECIAL_ADVANTAGES.get(advantage_key, COMBAT_SPECIAL_ADVANTAGES.get(advantage_key))
+            if not advantage_info:
+                return False, f"No information found for {proper_name}", None
+                
             try:
                 advantage_value = int(value)
                 if 'valid_values' not in advantage_info:
@@ -1461,6 +1493,16 @@ class CmdSelfStat(MuxCommand):
                         return True
             return True
 
+        # First check if this stat exists in multiple categories (including the provided one)
+        from world.wod20th.models import Stat
+        possible_stats = Stat.objects.filter(name__iexact=stat_name)
+        
+        if possible_stats.count() > 1:
+            # Check if the provided category/type is one of the valid ones
+            valid_pairs = [(stat.category, stat.stat_type) for stat in possible_stats]
+            if (category, stat_type) in valid_pairs:
+                return True
+        
         # Special handling for Ferocity stat
         if stat_lower == 'ferocity':
             splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
@@ -1572,74 +1614,7 @@ class CmdSelfStat(MuxCommand):
                             self.stat_type = 'personal'
                             self.caller.msg(f"|yAutomatically redirecting to correct category. Setting 'Nature' as a identity.personal instead.|n")
                             return True
-                
-                # Special handling for secondary abilities
-                if stat.category == 'secondary_abilities' and category == 'abilities' and stat.stat_type.startswith('secondary_'):
-                    # Redirect from 'abilities' to 'secondary_abilities'
-                    self.caller.msg(f"|rError: Stat '{stat_name}' belongs in category 'secondary_abilities' with type '{stat.stat_type}', not '{category}.{stat_type}'.|n")
-                    self.category = 'secondary_abilities'
-                    self.stat_type = stat.stat_type
-                    self.caller.msg(f"|yAutomatically redirecting to correct category. Setting '{stat_name}' as a secondary_abilities.{stat.stat_type} instead.|n")
-                    return True
-                elif stat.category == 'abilities' and category == 'secondary_abilities' and stat.stat_type.startswith('secondary_'):
-                    # Database has old format, but we're using new format - allow it
-                    return True
-                else:
-                    # Special case for special advantages
-                    if (stat_name.lower() == 'telepathy' and 
-                        ((category == 'powers' and stat_type == 'special_advantage') or 
-                         (category == 'powers' and stat_type == 'numina'))):
-                        # Allow telepathy to be set as either numina or special_advantage
-                        return True
-                    
-                    # Check for other special advantages that can be set in different categories
-                    if stat_name.lower() in ['telepathy', 'clairvoyance', 'medium', 'precognition', 'psychometry', 'psychokinesis'] and 'special_advantage' in stat_type:
-                        return True
-                    
-                    # For all other stats, don't allow arbitrary categorization
-                    self.caller.msg(f"|rError: Stat '{stat_name}' belongs in category '{stat.category}' with type '{stat.stat_type}', not '{category}.{stat_type}'.|n")
-                    self.caller.msg(f"|yTo set this stat correctly, use: +selfstat {stat_name}/{stat.category}.{stat.stat_type}=<value>|n")
-                    return False  # Don't allow the stat to be set with incorrect category
-        
-        # Check common problem stats
-        common_problem_stats = {
-            'lucid dreaming': ('secondary_abilities', 'secondary_talent'),
-            'mother\'s touch': ('powers', 'gift'),
-            'outsider': ('flaws', 'mental'),
-            'calm heart': ('merits', 'mental'),
-            'herbalism': ('secondary_abilities', 'secondary_knowledge'),
-            'mimicry': ('secondary_abilities', 'secondary_talent'),
-            'scrounging': ('secondary_abilities', 'secondary_talent'),
-            'archery': ('secondary_abilities', 'secondary_skill'),
-            'jury-rigging': ('secondary_abilities', 'secondary_skill'),
-            'intrigue': ('secondary_abilities', 'secondary_talent'),
-            'seduction': ('secondary_abilities', 'secondary_talent'),
-            'style': ('secondary_abilities', 'secondary_talent'),
-            'fortune-telling': ('secondary_abilities', 'secondary_skill'),
-            'fencing': ('secondary_abilities', 'secondary_skill'),
-            'gambling': ('secondary_abilities', 'secondary_skill'),
-            'martial arts': ('secondary_abilities', 'secondary_skill'),
-            'pilot': ('secondary_abilities', 'secondary_skill'),
-            'torture': ('secondary_abilities', 'secondary_skill'),
-            'area knowledge': ('secondary_abilities', 'secondary_knowledge'),
-            'cultural savvy': ('secondary_abilities', 'secondary_knowledge'),
-            'demolitions': ('secondary_abilities', 'secondary_knowledge')
-            # Add any other problematic stats here as needed
-        }
-        
-        if stat_lower in common_problem_stats:
-            correct_cat, correct_type = common_problem_stats[stat_lower]
-            if category == correct_cat and stat_type == correct_type:
-                return True
-            else:
-                self.caller.msg(f"|rError: Stat '{stat_name}' belongs in category '{correct_cat}' with type '{correct_type}', not '{category}.{stat_type}'.|n")
-                
-                # Auto-correct the category and type
-                self.category = correct_cat
-                self.stat_type = correct_type
-                self.caller.msg(f"|yAutomatically redirecting to correct category. Setting '{stat_name}' as a {correct_cat}.{correct_type} instead.|n")
-                return True  # Return True to allow the stat to be set in the correct category
-        
+
         # Check specific categories
         if category == 'attributes':
             # Check if it's a valid attribute for the specified type
@@ -2362,6 +2337,69 @@ class CmdSelfStat(MuxCommand):
 
     def func(self):
         """Execute the command."""
+        if not self.args:
+            self.caller.msg("|rUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
+            return
+
+        # Normalize the stat name case before proceeding
+        self.stat_name = self._get_canonical_stat_name(self.stat_name)
+
+        # Get character's splat type and character type 
+        splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+        char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+
+        # If no category/type specified, try to determine it from the stat name
+        if not self.category or not self.stat_type:
+            # Check secondary abilities first - these are high priority matches
+            if self.stat_name in SECONDARY_TALENTS:
+                self.category = 'abilities'
+                self.stat_type = 'secondary_talent'
+            elif self.stat_name in SECONDARY_SKILLS:
+                self.category = 'abilities'
+                self.stat_type = 'secondary_skill'
+            elif self.stat_name in SECONDARY_KNOWLEDGES:
+                self.category = 'abilities'
+                self.stat_type = 'secondary_knowledge'
+            else:
+                # try identity stats
+                self.category, self.stat_type = self._detect_identity_category(self.stat_name)
+                
+                # If not an identity stat, try abilities and other categories
+                if not self.category or not self.stat_type:
+                    self.category, self.stat_type = self.detect_ability_category(self.stat_name)
+
+        # Always check for multiple categories that match the stat name
+        from world.wod20th.models import Stat
+        
+        # First try exact case-insensitive match
+        possible_matches = Stat.objects.filter(name__iexact=self.stat_name)
+        
+        # If no exact matches, try partial matches
+        if not possible_matches.exists():
+            possible_matches = Stat.objects.filter(name__icontains=self.stat_name)
+
+        # Handle multiple matches
+        if possible_matches.count() > 1:
+            # If we have a category/type, filter by those
+            if self.category and self.stat_type:
+                possible_matches = possible_matches.filter(
+                    category=self.category,
+                    stat_type=self.stat_type
+                )
+            
+            # If still multiple matches after filtering
+            if possible_matches.count() > 1:
+                stat_options = [f"{s.name}/{s.stat_type}" for s in possible_matches]
+                options_str = ", or ".join([", ".join(stat_options[:-1]), stat_options[-1]] if len(stat_options) > 2 else stat_options)
+                self.caller.msg(f"|rMultiple versions of this stat exist. Did you mean {options_str}?|n")
+                return
+            elif possible_matches.count() == 0:
+                self.caller.msg(f"|rNo stat '{self.stat_name}' found with category '{self.category}'.|n")
+                return
+
+        # Get the single match if we have one
+        stat = possible_matches.first() if possible_matches.exists() else None
+
         # Check if character is approved
         if self.caller.db.approved:
             self.caller.msg("|rError: Approved characters cannot use chargen commands. Please contact staff for any needed changes.|n")
@@ -2394,34 +2432,6 @@ class CmdSelfStat(MuxCommand):
                     # Remove from powers.special_advantage
                     del self.caller.db.stats['powers']['special_advantage']['Ferocity']
                     self.caller.msg("|yFixed: Moved Ferocity from powers.special_advantage to advantages.renown.|n")
-
-        if not self.stat_name:
-            self.caller.msg("|rUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
-            return
-
-        # Get character's splat type and character type 
-        splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
-        char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-
-        # If no category/type specified, try to determine it from the stat name
-        if not self.category or not self.stat_type:
-            # Check secondary abilities first - these are high priority matches
-            if self.stat_name in SECONDARY_TALENTS:
-                self.category = 'abilities'
-                self.stat_type = 'secondary_talent'
-            elif self.stat_name in SECONDARY_SKILLS:
-                self.category = 'abilities'
-                self.stat_type = 'secondary_skill'
-            elif self.stat_name in SECONDARY_KNOWLEDGES:
-                self.category = 'abilities'
-                self.stat_type = 'secondary_knowledge'
-            else:
-                # try identity stats
-                self.category, self.stat_type = self._detect_identity_category(self.stat_name)
-                
-                # If not an identity stat, try abilities and other categories
-                if not self.category or not self.stat_type:
-                    self.category, self.stat_type = self.detect_ability_category(self.stat_name)
 
         # Special handling for Generation
         if self.stat_name.lower() == 'generation':
@@ -2933,13 +2943,14 @@ class CmdSelfStat(MuxCommand):
                 return ('identity', 'lineage')
 
         # When setting Companion special advantages
-        elif self.stat_name.lower() in [adv.lower() for adv in SPECIAL_ADVANTAGES.keys()]:
+        elif self.stat_name.lower() in [adv.lower() for adv in SPECIAL_ADVANTAGES.keys()] or self.stat_name.lower() in [adv.lower() for adv in COMBAT_SPECIAL_ADVANTAGES.keys()]:
             splat = self.caller.get_stat('identity', 'personal', 'Splat', temp=False)
             companion_type = self.caller.get_stat('identity', 'lineage', 'Companion Type', temp=False)
             
             if splat and splat.lower() == 'companion' and companion_type:
                 # Check if this advantage requires an instance
-                proper_name = next((name for name in SPECIAL_ADVANTAGES.keys() if name.lower() == self.stat_name.lower()), None)
+                proper_name = next((name for name in SPECIAL_ADVANTAGES.keys() if name.lower() == self.stat_name.lower()),
+                                  next((name for name in COMBAT_SPECIAL_ADVANTAGES.keys() if name.lower() == self.stat_name.lower()), None))
                 if not proper_name:
                     self.caller.msg(f"|rInvalid special advantage: {self.stat_name}|n")
                     return
@@ -2955,8 +2966,16 @@ class CmdSelfStat(MuxCommand):
                     proper_name = f"{proper_name}({self.instance})"
                 
                 # Get the advantage info - this is now a lowercase key
-                advantage_key = next((key for key in SPECIAL_ADVANTAGES.keys() if key.lower() == self.stat_name.lower()), None)
-                advantage_info = SPECIAL_ADVANTAGES[advantage_key]
+                advantage_key = next((key for key in SPECIAL_ADVANTAGES.keys() if key.lower() == self.stat_name.lower()), 
+                                   next((key for key in COMBAT_SPECIAL_ADVANTAGES.keys() if key.lower() == self.stat_name.lower()), None))
+                if not advantage_key:
+                    self.caller.msg(f"|rInvalid special advantage key: {self.stat_name}|n")
+                    return
+                    
+                advantage_info = SPECIAL_ADVANTAGES.get(advantage_key, COMBAT_SPECIAL_ADVANTAGES.get(advantage_key))
+                if not advantage_info:
+                    self.caller.msg(f"|rNo information found for {proper_name}|n")
+                    return
                 
                 try:
                     value = int(self.value_change)
@@ -3033,20 +3052,39 @@ class CmdSelfStat(MuxCommand):
                     self.caller.msg(f"|gSet Path of Enlightenment to {proper_path}.|n")
                     return
             
-            # If not Path of Enlightenment, try case-insensitive contains search
-            matching_stats = Stat.objects.filter(name__icontains=self.stat_name)
-            if matching_stats.count() > 1:
-                stat_names = [s.name for s in matching_stats]
-                self.caller.msg(f"Multiple stats match '{self.stat_name}': {', '.join(stat_names)}. Please be more specific.")
-                return
-            stat = matching_stats.first()
-            if not stat:
-                self.caller.msg(f"Stat '{self.stat_name}' not found.")
-                return
+            # Try partial name matching for ambiguous stat names
+            partial_matches = Stat.objects.filter(name__icontains=self.stat_name)
+            if partial_matches.exists():
+                # Build a list of possible stats
+                valid_categories = []
+                for stat in partial_matches:
+                    valid_categories.append((stat.category, stat.stat_type, stat.name))
+                
+                # Create header with dashes
+                header = f" Multiple matches found for '{self.stat_name}' "
+                total_width = 78
+                dash_count = (total_width - len(header)) // 2
+                self.caller.msg("\n" + "|b-|n" * dash_count + header + "|b-|n" * (total_width - len(header) - dash_count))
+                
+                # Column headers
+                self.caller.msg("|wNumber    Category          Type              Stat Name|n")
+                self.caller.msg("|b" + "-" * total_width + "|n")
+                
+                # Sort categories for consistent display
+                sorted_categories = sorted(valid_categories)
+                
+                # Show each valid category with example usage
+                for i, (cat, type_, name) in enumerate(sorted_categories, 1):
+                    example = f"{name}"
+                    # Format each column to specific widths
+                    self.caller.msg(f"|w{i:<9}|n {cat:<18}{type_:<18}{example}")
 
-        # Use the canonical name from the database
-        self.stat_name = stat.name
-        
+                self.caller.msg(f"\n|rPlease specify a complete stat name or provide more specific search criteria.|n")
+                return
+            
+            self.caller.msg(f"|rStat '{self.stat_name}' not found.|n")
+            return
+            
         # Handle instances for background stats
         if self._should_support_instance(self.stat_name, stat.category):
             if not self.instance:
@@ -3068,7 +3106,26 @@ class CmdSelfStat(MuxCommand):
                 if is_restricted and splat != required_splat:
                     self.caller.msg(error_msg)
                     return
-
+            # Get the canonical name for the stat
+            canonical_name = self._get_canonical_stat_name(self.stat_name)
+            
+            # Try to find and remove the stat using the canonical name
+            if self.category and canonical_name in self.caller.db.stats.get(self.category, {}).get(self.stat_type, {}):
+                del self.caller.db.stats[self.category][self.stat_type][canonical_name]
+                self.caller.msg(f"Removed stat '{canonical_name}'.")
+                return
+            
+            # If not found with explicit category/type, try to find it in all categories
+            for category in self.caller.db.stats:
+                for stat_type in self.caller.db.stats[category]:
+                    if canonical_name in self.caller.db.stats[category][stat_type]:
+                        del self.caller.db.stats[category][stat_type][canonical_name]
+                        self.caller.msg(f"Removed stat '{canonical_name}'.")
+                        return
+            
+            # If we get here, the stat wasn't found
+            self.caller.msg(f"Stat '{canonical_name}' not found.")
+            
             # Special handling for special advantages during removal
             if 'powers' in self.caller.db.stats and 'special_advantage' in self.caller.db.stats['powers']:
                 # Case-insensitive search for special advantages, using full_stat_name to include instances
@@ -3349,6 +3406,10 @@ class CmdSelfStat(MuxCommand):
         for power_type in POWER_CATEGORIES:
             base_stats['powers'][power_type] = {}
         
+        # Initialize hedge_ritual
+        if 'hedge_ritual' not in base_stats['powers']:
+            base_stats['powers']['hedge_ritual'] = {}
+        
         # Initialize merits and flaws with their categories
         base_stats['merits'] = {
             'physical': {},
@@ -3564,8 +3625,32 @@ class CmdSelfStat(MuxCommand):
 
     def set_stat(self, stat_name: str, value: str, category: str = None, stat_type: str = None) -> None:
         """Set a stat value."""
-        # Debug output at start of method
-        
+        # Capitalize the stat name properly
+        if stat_name:
+            # Special handling for multi-word stats
+            if '(' in stat_name:
+                # Handle stats with instances
+                base_name, instance = stat_name.split('(', 1)
+                # Special handling for 'of' in base name
+                words = base_name.split()
+                capitalized_words = []
+                for word in words:
+                    if word.lower() == 'of':
+                        capitalized_words.append('of')
+                    else:
+                        capitalized_words.append(word.title())
+                stat_name = ' '.join(capitalized_words) + '(' + instance
+            else:
+                # Regular stats - capitalize each word except 'of'
+                words = stat_name.split()
+                capitalized_words = []
+                for word in words:
+                    if word.lower() == 'of':
+                        capitalized_words.append('of')
+                    else:
+                        capitalized_words.append(word.title())
+                stat_name = ' '.join(capitalized_words)
+
         # Get character's splat
         splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
 
@@ -3582,20 +3667,47 @@ class CmdSelfStat(MuxCommand):
                 
                 if possible_stats.exists():
                     # Build a list of possible categories
-                    categories = []
+                    valid_categories = []
                     for stat in possible_stats:
-                        categories.append(f"{stat.category}.{stat.stat_type}")
+                        valid_categories.append((stat.category, stat.stat_type))
                     
                     # Special case for psychic abilities
                     if stat_name.lower() in ['telepathy', 'clairvoyance', 'medium', 'precognition', 'psychometry', 'psychokinesis']:
-                        if 'powers.numina' not in categories:
-                            categories.append('powers.numina')
-                        if 'powers.special_advantage' not in categories:
-                            categories.append('powers.special_advantage')
+                        if ('powers', 'numina') not in valid_categories:
+                            valid_categories.append(('powers', 'numina'))
+                        if ('powers', 'special_advantage') not in valid_categories:
+                            valid_categories.append(('powers', 'special_advantage'))
                     
-                    # Format the error message with available categories
-                    categories_str = ', '.join(categories)
-                    self.caller.msg(f"|rError: '{stat_name}' exists in the following categories: {categories_str}. Please set this stat using the following syntax: +selfstat {stat_name}/<category>=<value>|n")
+                    # If we found multiple valid categories and no specific category/type provided
+                    # or if the provided category/type isn't in the valid ones
+                    if len(valid_categories) > 1 and ((not category or not stat_type) or (category, stat_type) not in valid_categories):
+                        # Create header with dashes
+                        header = f" Multiple categories found for '{stat_name}' "
+                        total_width = 78
+                        dash_count = (total_width - len(header)) // 2
+                        self.caller.msg("\n" + "|b-|n" * dash_count + header + "|b-|n" * (total_width - len(header) - dash_count))
+                        
+                        # Column headers
+                        self.caller.msg("|w#    Category    Type           Example Usage|n")
+                        self.caller.msg("|b" + "-" * total_width + "|n")
+                        
+                        # Sort categories for consistent display
+                        sorted_categories = sorted(valid_categories)
+                        
+                        # Show each valid category with example usage
+                        for i, (cat, type_) in enumerate(sorted_categories, 1):
+                            example = f"+selfstat {stat_name}/{cat}.{type_}="
+                            # Format each column to specific widths
+                            self.caller.msg(f"|w{i:<5}|n {cat:<10}{type_:<14}{example}")
+
+                        # Format all categories as a string for the error message too
+                        categories_str = ', '.join([f"{cat}.{type_}" for cat, type_ in valid_categories])
+                        self.caller.msg(f"\n|rPlease specify which category to use for '{stat_name}'.|n")
+                        return
+                    else:
+                        # Format the error message with available categories
+                        categories_str = ', '.join([f"{cat}.{type_}" for cat, type_ in valid_categories])
+                        self.caller.msg(f"|rError: '{stat_name}' exists in the following categories: {categories_str}. Please set this stat using the following syntax: +selfstat {stat_name}/<category>=<value>|n")
                 else:
                     self.caller.msg(f"|rError: Could not determine where to store stat '{stat_name}'.|n")
                 return
@@ -3615,20 +3727,21 @@ class CmdSelfStat(MuxCommand):
         
         found_duplicates = []
         
-        for cat in categories_to_check:
-            if cat == category:  # Skip the category we're setting
-                continue
-                
-            if cat in self.caller.db.stats:
-                for type_key, type_dict in self.caller.db.stats[cat].items():
-                    if stat_name in type_dict:
-                        found_duplicates.append((cat, type_key))
+        # Only look for duplicates within the SAME category but different types
+        if category in self.caller.db.stats:
+            for type_key, type_dict in self.caller.db.stats[category].items():
+                if type_key != stat_type and stat_name in type_dict:
+                    found_duplicates.append((category, type_key))
         
-        # If we found duplicates, warn the user and remove them
+        # If we found duplicates within the same category, warn the user and remove them
         if found_duplicates:
             for cat, type_key in found_duplicates:
                 self.caller.msg(f"|rFound duplicate stat '{stat_name}' in {cat}.{type_key} - removing.|n")
                 del self.caller.db.stats[cat][type_key][stat_name]
+        
+        # We no longer check for or remove duplicates across different categories
+        # This allows the same stat name to exist in different categories
+        # which is needed for stats like "ward" that can legitimately exist in multiple categories
 
         # If this is a stat with an instance, combine them for storage
         if self.instance and self._should_support_instance(stat_name, category):
@@ -3776,11 +3889,17 @@ class CmdSelfStat(MuxCommand):
                 elif splat == 'Possessed':
                     char_type = self.caller.get_stat('identity', 'lineage', 'Possessed Type', temp=False)
                     
-                try:
-                    flaw_value = int(value)
-                    valid_values = FLAW_VALUES[stat_name.title()]
-                    if flaw_value not in valid_values:
-                        self.caller.msg(f"|rInvalid value for flaw {stat_name}. Valid values are: {', '.join(map(str, valid_values))}|n")
+                # Only validate flaw values if this is actually being set as a flaw
+                if category == 'flaws':
+                    try:
+                        flaw_value = int(value)
+                        valid_values = FLAW_VALUES[stat_name.title()]
+                        
+                        if flaw_value not in valid_values:
+                            self.caller.msg(f"|rInvalid value for flaw {stat_name}. Valid values are: {', '.join(map(str, valid_values))}|n")
+                            return
+                    except ValueError:
+                        self.caller.msg(f"|rInvalid value for flaw {stat_name}. Valid values are: {', '.join(map(str, FLAW_VALUES[stat_name.title()]))}|n")
                         return
 
                     # Check splat restrictions
@@ -3808,9 +3927,6 @@ class CmdSelfStat(MuxCommand):
                             }
                             self.caller.msg(f"|gSet flaw {stat_name} to {flaw_value}.|n")
                             return
-                except ValueError:
-                    self.caller.msg(f"|rInvalid value for flaw {stat_name}. Valid values are: {', '.join(map(str, FLAW_VALUES[stat_name.title()]))}|n")
-                    return
 
         # Special handling for identity stats
         if category == 'identity':
@@ -4105,12 +4221,6 @@ class CmdSelfStat(MuxCommand):
             if category_type_tuple:
                 self.category, self.stat_type = category_type_tuple
 
-        # Special handling for Mother's Touch - it's a gift, not a secondary ability
-        if self.stat_name.lower() == 'mother\'s touch':
-            self.category = 'powers'
-            self.stat_type = 'gift'
-            return
-
     def _requires_instance(self, stat_name: str, category: str = None) -> bool:
         """
         Check if a stat MUST have an instance.
@@ -4144,3 +4254,84 @@ class CmdSelfStat(MuxCommand):
             return True
             
         return False
+
+    def _get_canonical_stat_name(self, stat_name: str) -> str:
+        """
+        Get the canonical (proper case) version of a stat name.
+        
+        Args:
+            stat_name: The stat name to normalize
+            
+        Returns:
+            The canonical stat name with proper case, or the original if no match found
+        """
+        from world.wod20th.models import Stat
+        
+        # First try exact case-insensitive match
+        stat = Stat.objects.filter(name__iexact=stat_name).first()
+        if stat:
+            return stat.name
+            
+        # Try special case mappings (like those in CmdPump)
+        STAT_CASES = {
+            'primal-urge': 'Primal-Urge',
+            'animal ken': 'Animal Ken',
+            'privacy obsession': 'Privacy Obsession',
+            'resources': 'Resources',
+            'strength': 'Strength',
+            'dexterity': 'Dexterity',
+            'stamina': 'Stamina',
+            'charisma': 'Charisma',
+            'manipulation': 'Manipulation',
+            'appearance': 'Appearance',
+            'intelligence': 'Intelligence',
+            'wits': 'Wits',
+            'perception': 'Perception',
+            'athletics': 'Athletics',
+            'brawl': 'Brawl',
+            'dodge': 'Dodge',
+            'intimidation': 'Intimidation',
+            'leadership': 'Leadership',
+            'streetwise': 'Streetwise',
+            'subterfuge': 'Subterfuge',
+            'crafts': 'Crafts',
+            'drive': 'Drive',
+            'etiquette': 'Etiquette',
+            'firearms': 'Firearms',
+            'melee': 'Melee',
+            'performance': 'Performance',
+            'security': 'Security',
+            'stealth': 'Stealth',
+            'survival': 'Survival',
+            'academics': 'Academics',
+            'computer': 'Computer',
+            'enigmas': 'Enigmas',
+            'investigation': 'Investigation',
+            'law': 'Law',
+            'medicine': 'Medicine',
+            'occult': 'Occult',
+            'politics': 'Politics',
+            'rituals': 'Rituals',
+            'science': 'Science',
+            'technology': 'Technology',
+            'rage': 'Rage',
+            'gnosis': 'Gnosis',
+            'willpower': 'Willpower',
+            'path of enlightenment': 'Path of Enlightenment',
+            'organizational rank': 'Organizational Rank',
+            'date of birth': 'Date of Birth',
+            'date of embrace': 'Date of Embrace',
+            'date of chrysalis': 'Date of Chrysalis',
+            'date of awakening': 'Date of Awakening',
+            'first change date': 'First Change Date',
+            'date of possession': 'Date of Possession'
+        }
+        if stat_name.lower() in STAT_CASES:
+            return STAT_CASES[stat_name.lower()]
+            
+        # For compound words (e.g., "Animal Ken"), preserve existing case
+        if ' ' in stat_name:
+            return ' '.join(word.capitalize() for word in stat_name.split())
+            
+        # Default to simple title case
+        return stat_name.title()

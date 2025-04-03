@@ -218,7 +218,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [3, 4], 
         "splat": "Shifter",
         "breed": "Lupus",
 		"tribe": ["Silent Striders", "Glass Walkers", "Uktena"],
@@ -1552,7 +1552,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [2, 4], 
         "splat": "Shifter",
         "breed": "Lupus",
         "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]

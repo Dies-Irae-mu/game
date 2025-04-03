@@ -16,6 +16,7 @@ from django.db.models import Max, F
 import json
 import copy
 from evennia.help.models import HelpEntry
+from world.equipment.models import Equipment, PlayerInventory, InventoryItem
 
 class CmdJobs(MuxCommand):
     """
@@ -64,6 +65,7 @@ class CmdJobs(MuxCommand):
       COMP   - Companion requests
       LING   - Changeling requests
       MAGE   - Mage requests
+      EQUIP  - Equipment requests
     """
 
     key = "+jobs"
@@ -406,7 +408,7 @@ class CmdJobs(MuxCommand):
         # Validate category - make case-insensitive comparison
         valid_categories = ["REQ", "BUG", "PLOT", "BUILD", "MISC", "XP", 
                           "PRP", "VAMP", "SHIFT", "MORT", "POSS", "COMP", 
-                          "LING", "MAGE"]
+                          "LING", "MAGE", "EQUIP"]
         
         if category not in valid_categories:
             self.caller.msg(f"Invalid category. Valid categories are: {', '.join(valid_categories)}")
@@ -744,6 +746,66 @@ class CmdJobs(MuxCommand):
                 self.caller.msg(f"Job #{job_id} is already {job.status}.")
                 return
 
+            # Handle equipment requests
+            if job.queue.name == "EQUIP" and job.title.startswith("Equipment Request:"):
+                try:
+                    # Extract equipment name from title
+                    equipment_name = job.title.replace("Equipment Request:", "").strip()
+                    
+                    # Find the equipment
+                    equipment = Equipment.objects.get(name=equipment_name)
+                    
+                    # Get or create inventory for the requester
+                    account = job.requester
+                    inventory, created = PlayerInventory.objects.get_or_create(player=account)
+                    
+                    # Check if item already exists in inventory
+                    existing_item = InventoryItem.objects.filter(
+                        inventory=inventory,
+                        equipment=equipment
+                    ).first()
+                    
+                    if existing_item:
+                        if equipment.is_unique:
+                            self.caller.msg("Player already has this unique item.")
+                            # Still continue with job approval, but add a note
+                            if not comment:
+                                comment = "Note: Player already has this unique item. Request approved anyway."
+                            else:
+                                comment += " Note: Player already has this unique item. Request approved anyway."
+                        else:
+                            existing_item.quantity += 1
+                            existing_item.is_proven = True
+                            existing_item.approval_date = timezone.now()
+                            existing_item.approved_by = self.caller.account
+                            existing_item.save()
+                            
+                            if not comment:
+                                comment = f"Equipment {equipment.name} added to {account.username}'s inventory. Quantity increased to {existing_item.quantity}."
+                            
+                    else:
+                        # Create new inventory item (approved)
+                        inventory_item = InventoryItem.objects.create(
+                            inventory=inventory,
+                            equipment=equipment,
+                            quantity=1,
+                            is_proven=True,
+                            approval_date=timezone.now(),
+                            approved_by=self.caller.account
+                        )
+                        
+                        if not comment:
+                            comment = f"Equipment {equipment.name} added to {account.username}'s inventory."
+                    
+                    self.caller.msg(f"Equipment {equipment.name} approved for {account.username}.")
+                    
+                except Equipment.DoesNotExist:
+                    self.caller.msg("Equipment not found.")
+                    return
+                except Exception as e:
+                    self.caller.msg(f"Error processing equipment request: {str(e)}")
+                    return
+
             # Use transaction to ensure consistency
             with transaction.atomic():
                 # Get the maximum archive_id from both tables
@@ -783,10 +845,9 @@ class CmdJobs(MuxCommand):
                     queue=job.queue,
                     created_at=job.created_at,
                     closed_at=timezone.now(),
-                    status='completed',
+                    status='closed',
                     comments=comments_text
                 )
-                
                 logger.log_info(f"Successfully created archived job with archive_id: {archived_job.archive_id}")
 
                 # Double-check for conflicts one last time
@@ -798,8 +859,10 @@ class CmdJobs(MuxCommand):
                     raise Exception(f"Archive ID {next_archive_id} is already in use")
 
                 # Now update and save the original job
-                job.status = 'completed'
+                job.status = 'closed'
+                job.approved = True
                 job.closed_at = timezone.now()
+                job.closed_by = self.caller.account
                 job.archive_id = next_archive_id
 
                 # Add the approval comment if provided
@@ -814,9 +877,6 @@ class CmdJobs(MuxCommand):
                 job.save()
                 logger.log_info(f"Successfully saved job #{job.id}")
 
-            # Send notifications
-            self.caller.msg(f"Job #{job_id} has been approved and archived.")
-            
             # Notify the requester
             if job.requester and job.requester != self.caller.account:
                 notification_message = f"Your job '#{job_id}: {job.title}' has been approved."
@@ -825,7 +885,8 @@ class CmdJobs(MuxCommand):
                 self.send_mail_notification(job, notification_message)
             
             self.post_to_jobs_channel(self.caller.name, job.id, "approved")
-
+            self.caller.msg(f"Job #{job_id} has been approved and archived.")
+            
         except ValueError:
             self.caller.msg("Usage: +job/approve <#>[=<comment>]")
         except Job.DoesNotExist:

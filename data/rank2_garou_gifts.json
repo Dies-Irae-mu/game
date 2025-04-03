@@ -797,7 +797,7 @@
 		"auspice": "Philodox",
         "tribe": ["Croatan", "Get of Fenris"],
         "camp": ["Fangs of Garm"],
-        "shifter_type": ["Garou", "Mokole"]
+        "shifter_type": ["Garou", "Mokole", "Gurahl"]
     },
     {
         "name": "Pennies From Heaven",
@@ -2979,10 +2979,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [2],
+        "values": [1, 2],
 		"splat": "Shifter",
 		"tribe": "Planetary",
-        "shifter_type": ["Garou"]
+        "shifter_type": ["Garou", "Gurahl"]
     },
     {
         "name": "Berserker's Song",
