@@ -618,7 +618,7 @@
    {
        "name": "Paranoid",
        "stat_type": "social",
-       "values": [1],
+       "values": [2],
        "category": "flaws",
        "description": "You've spent years embedded in the conspiracist community exploring different theories and unexplained activity. You are suspicious of everything and everyone. You pick up on innocuous details, each one providing more evidence for the conspiracy against you. Add one to the difficulty of all Social interaction rolls.",
        "source": "Ghost Hunters p. 103",

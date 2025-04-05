@@ -638,6 +638,7 @@ class CmdManageBuilding(MuxCommand):
         +manage/sethousing/apartment <resources> [max_units] - Apartment building
         +manage/sethousing/motel <resources> [max_units]    - Motel
         +manage/sethousing/residential <resources> [max_units] - Residential area
+        +manage/sethousing/encampment <resources> [max_units] - Encampment area
         +manage/sethousing/splat [max_units]  - Splat-specific housing (free)
         +manage/sethousing/clear              - Clear housing settings
         
@@ -1149,7 +1150,7 @@ class CmdManageBuilding(MuxCommand):
         elif switch == "sethousing":
             # Handle sethousing functionality
             if not self.switches[1:]:  # No sub-switch provided
-                self.caller.msg("Please specify the type: /apartment, /motel, /residential, /splat, or /clear")
+                self.caller.msg("Please specify the type: /apartment, /motel, /residential, /encampment, /splat, or /clear")
                 return
 
             sub_switch = self.switches[1]
@@ -1307,8 +1308,28 @@ class CmdManageBuilding(MuxCommand):
                 })
                 
                 self.caller.msg(f"Set up room as residential area with {resources} resources and {max_units} maximum units.")
+
+            elif sub_switch == "encampment":
+                location.db.roomtype = "Encampment"
+                location.db.resources = resources
+                
+                # Set up housing data
+                housing_data.update({
+                    'is_housing': True,
+                    'max_apartments': max_units,
+                    'current_tenants': {},
+                    'apartment_numbers': set(),
+                    'required_resources': resources,
+                    'building_zone': location.dbref,
+                    'connected_rooms': {location.dbref},
+                    'is_lobby': True,
+                    'available_types': ["Encampment"]
+                })
+                
+                self.caller.msg(f"Set up room as encampment with {resources} resources and {max_units} maximum tents.")
+                
             else:
-                self.caller.msg("Invalid housing type. Use /apartment, /motel, /residential, /splat, or /clear")
+                self.caller.msg("Invalid housing type. Use /apartment, /motel, /residential, /encampment, /splat, or /clear")
 
     def is_owner(self, room, player):
         """

@@ -44,6 +44,13 @@ class CmdWhere(default_cmds.MuxCommand):
             return 0
         return time.time() - session.cmd_last_visible
 
+    def clean_area_name(self, name):
+        """Clean up area name for display."""
+        # Remove dbref if present
+        if '(#' in name:
+            name = name.split('(#')[0].strip()
+        return name
+
     def get_area_name(self, location):
         """Extract area name from location."""
         if not location:
@@ -52,19 +59,19 @@ class CmdWhere(default_cmds.MuxCommand):
         # First try to get the area from the room's attributes
         area = location.db.area
         if area:
-            return area
+            return self.clean_area_name(area)
             
         # If no area is set, try to get it from the room's zone
         if hasattr(location, 'zone') and location.zone:
-            return location.zone
+            return self.clean_area_name(location.zone)
             
         # If it's Limbo, return Limbo
         if location.key == "Limbo":
             return "Limbo"
             
-        # If no area/zone is set, use the room's key or name
+        # If no area/zone is set, use the room's full name
         if hasattr(location, 'key'):
-            return location.key.split(' - ')[0]  # Take first part before any dash
+            return self.clean_area_name(location.key)
             
         # Last resort
         return "Unknown"

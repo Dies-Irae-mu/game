@@ -302,6 +302,29 @@ def has_clan(accessing_obj, accessed_obj, *args, **kwargs):
     except Exception:
         return False
 
+def has_sect(accessing_obj, accessed_obj, *args, **kwargs):
+    """Check if character has a specific sect."""
+    if not args:
+        return False
+        
+    if hasattr(accessing_obj, 'character'):
+        accessing_obj = accessing_obj.character
+    
+    try:
+        stats = accessing_obj.db.stats
+        if not stats:
+            return False
+            
+        sect = stats.get('identity', {}) \
+                    .get('lineage', {}) \
+                    .get('Sect', {}) \
+                    .get('perm')
+
+        required_sect = ' '.join(args) if len(args) > 1 else args[0]
+        return str(sect).strip().lower() == str(required_sect).strip().lower()
+    except Exception:
+        return False
+
 def has_tribe(accessing_obj, accessed_obj, *args, **kwargs):
     """Check if character has a specific tribe."""
     if not args:
@@ -418,7 +441,7 @@ def has_tradition(accessing_obj, accessed_obj, *args, **kwargs):
         return False
 
 def has_affiliation(accessing_obj, accessed_obj, *args, **kwargs):
-    """Check if character has a specific mage faction."""
+    """Check if character has a specific affiliation (Traditions, Technocracy, Nephandi)."""
     if not args:
         return False
         
@@ -430,16 +453,14 @@ def has_affiliation(accessing_obj, accessed_obj, *args, **kwargs):
         if not stats:
             return False
             
-        faction = stats.get('identity', {}) \
-                      .get('lineage', {}) \
-                      .get('Mage Faction', {}) \
-                      .get('temp', stats.get('identity', {}) \
-                                     .get('lineage', {}) \
-                                     .get('Mage Faction', {}) \
-                                     .get('perm'))
+        # Check Affiliation field
+        affiliation = stats.get('identity', {}) \
+                          .get('lineage', {}) \
+                          .get('Affiliation', {}) \
+                          .get('perm')
                     
-        required_faction = ' '.join(args) if len(args) > 1 else args[0]
-        return str(faction).strip().lower() == str(required_faction).strip().lower()
+        required_affiliation = ' '.join(args) if len(args) > 1 else args[0]
+        return str(affiliation).strip().lower() == str(required_affiliation).strip().lower()
     except Exception:
         return False
 
@@ -612,7 +633,8 @@ LOCK_FUNCS.update({
     "has_nephandi_faction": has_nephandi_faction,
     "subscribed": subscribed,
     "tenant": tenant,
-    "has_wyrm_taint": has_wyrm_taint
+    "has_wyrm_taint": has_wyrm_taint,
+    "has_sect": has_sect
 })
 
 def is_in_group(accessing_obj, accessed_obj, *args, **kwargs):

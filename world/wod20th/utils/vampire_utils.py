@@ -2,7 +2,7 @@
 Utility functions for handling Vampire-specific character initialization and updates.
 """
 from world.wod20th.utils.banality import get_default_banality
-from world.wod20th.utils.stat_mappings import BLOOD_POOL_MAP, UNIVERSAL_BACKGROUNDS, VAMPIRE_BACKGROUNDS
+from world.wod20th.utils.stat_mappings import BLOOD_POOL_MAP, UNIVERSAL_BACKGROUNDS, VAMPIRE_BACKGROUNDS, SECT_CHOICES
 from world.wod20th.utils.virtue_utils import PATH_VIRTUES, calculate_willpower, calculate_path
 from world.wod20th.utils.sheet_constants import PATHS_OF_ENLIGHTENMENT
 from typing import Dict, List, Optional, Tuple, Set
@@ -65,7 +65,8 @@ __all__ = [
     'get_path_virtues',
     'initialize_vampire_stats',
     'update_vampire_virtues_on_path_change',
-    'update_vampire_pools_on_stat_change'
+    'update_vampire_pools_on_stat_change',
+    'SECT_CHOICES'
 ]
 
 def get_clan_disciplines(clan):
@@ -131,6 +132,7 @@ def get_vampire_identity_stats() -> List[str]:
         'Generation',
         'Clan',
         'Sire',
+        'Sect',
         'Path of Enlightenment'
     ]
 
@@ -479,33 +481,57 @@ def validate_vampire_gift(character, gift_name: str, value: str) -> tuple[bool, 
 
 def validate_vampire_path(value: str) -> tuple[bool, str]:
     """Validate a vampire's path of enlightenment."""
-    # Convert value to title case for comparison
-    value = value.title() if value else ''  # Convert empty string to empty string
-    print(f"\nValidating vampire path: {value}")
-    print(f"PATH_VIRTUES keys: {sorted(PATH_VIRTUES.keys())}")
-    print(f"PATHS_OF_ENLIGHTENMENT values: {sorted(PATHS_OF_ENLIGHTENMENT.values())}")
-    
     # Empty path is invalid
     if not value:
         return False, "Path cannot be empty"
     
     # Special case for Humanity
-    if value == 'Humanity':
+    if value.title() == 'Humanity':
         return True, ""
     
-    # Check both formats - with and without "Path of" prefix
-    full_path = f"Path of {value}" if not value.startswith('Path of') else value
-    short_path = value.replace('Path of ', '') if value.startswith('Path of') else value
+    # Normalize the value by:
+    # 1. Converting to title case
+    # 2. Preserving "and", "the", "of" in lowercase
+    # 3. Handling both with and without "Path of" prefix
+    words = value.split()
+    normalized = []
+    for i, word in enumerate(words):
+        if word.lower() in ['and', 'the', 'of']:
+            normalized.append(word.lower())
+        else:
+            normalized.append(word.title())
+    normalized_value = ' '.join(normalized)
     
-    # Check against both PATH_VIRTUES and PATHS_OF_ENLIGHTENMENT
-    if (short_path in PATH_VIRTUES or 
-        full_path in PATHS_OF_ENLIGHTENMENT.values() or 
-        short_path in PATHS_OF_ENLIGHTENMENT.values()):
-        print(f"Path {value} is valid")
-        return True, ""
+    # If it doesn't start with "Path of", add it
+    if not normalized_value.startswith('Path of'):
+        full_path = f"Path of {normalized_value}"
+    else:
+        full_path = normalized_value
     
-    # Get all valid paths
+    # Get the short version (without "Path of")
+    short_path = normalized_value.replace('Path of ', '') if normalized_value.startswith('Path of') else normalized_value
+    
+    # Get all valid paths and normalize them the same way
     valid_paths = set(PATH_VIRTUES.keys()) | set(PATHS_OF_ENLIGHTENMENT.values())
+    normalized_valid_paths = set()
+    for path in valid_paths:
+        words = path.split()
+        norm = []
+        for word in words:
+            if word.lower() in ['and', 'the', 'of']:
+                norm.append(word.lower())
+            else:
+                norm.append(word.title())
+        normalized_valid_paths.add(' '.join(norm))
+    
+    # Check both formats against normalized paths
+    if short_path in normalized_valid_paths or full_path in normalized_valid_paths:
+        # Return the matched path in its proper form
+        for path in valid_paths:
+            norm_path = ' '.join(w.lower() if w.lower() in ['and', 'the', 'of'] else w.title() for w in path.split())
+            if norm_path == short_path or norm_path == full_path:
+                return True, path
+    
+    # If not found, return error with all valid paths
     error_msg = f"Invalid path. Valid paths are: {', '.join(sorted(valid_paths))}"
-    print(f"Path {value} is invalid. {error_msg}")
     return False, error_msg 

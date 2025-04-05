@@ -24,6 +24,7 @@ class CmdRent(MuxCommand):
         +rent Studio
         +rent Apartment
         +rent House
+        +rent Encampment
     """
     
     key = "+rent"
@@ -59,6 +60,11 @@ class CmdRent(MuxCommand):
             "desc": "A modest single-family home with a small yard.",
             "rooms": 4,
             "resource_modifier": 0
+        },
+        "Encampment": {
+            "desc": "A temporary shelter in a tent or similar structure.",
+            "rooms": 1,
+            "resource_modifier": -2
         }
     }
 
@@ -256,6 +262,9 @@ class CmdRent(MuxCommand):
         elif apt_type == "Motel Room":
             residence_name = f"Room {residence_num}"  # residence_num for motels goes like: "1A", "2B", etc.
             room_type = "motel_room"
+        elif apt_type == "Encampment":
+            residence_name = str(residence_num)  # residence_num is already "Tent X"
+            room_type = "encampment"
         elif is_apartment:
             residence_name = f"Apartment {residence_num}"
             if apt_type == "Studio":
@@ -428,6 +437,16 @@ class CmdRent(MuxCommand):
                 destination=residence,
                 aliases=[initials.lower()]
             )
+        elif location.db.roomtype == "Encampment":
+            # For encampments, use the tent number as both key and just the number as alias
+            tent_number = residence_name.split()[-1]  # Get just the number from "Tent X"
+            entrance = create_object(
+                exit_typeclass,
+                key=residence_name,  # "Tent X"
+                location=location,
+                destination=residence,
+                aliases=[tent_number]  # Just the number as alias
+            )
         else:
             alias = str(residence_num) if is_apartment else str(residence_num).split()[0]
             entrance = create_object(
@@ -527,6 +546,15 @@ class CmdRent(MuxCommand):
                     if room_code not in used_numbers:
                         return room_code
                     attempts += 1
+            elif location.db.roomtype == "Encampment":
+                # For encampments, just generate a tent number
+                attempts = 0
+                while attempts < 100:  # Prevent infinite loop
+                    number = random.randint(1, 99)
+                    tent_number = f"Tent {number}"
+                    if tent_number not in used_numbers:
+                        return tent_number
+                    attempts += 1
             elif is_apartment:
                 # For apartments, generate a number between 101 and 999
                 attempts = 0
@@ -580,7 +608,7 @@ class CmdRent(MuxCommand):
         
         # Valid room types for residences
         valid_types = [
-            "apartment", "house", "splat_housing",
+            "apartment", "house", "splat_housing", "encampment",
             "mortal_room", "mortal_plus_room", "mortal+_room", "possessed_room",
             "mage_room", "vampire_room", "changeling_room", 
             "motel_room", "apartment_room", "house_room", "studio",
@@ -690,7 +718,7 @@ class CmdVacate(MuxCommand):
                 location = self.caller.location
                 if not (location.db.roomtype and 
                         any(rtype.lower() in location.db.roomtype.lower() 
-                            for rtype in ["apartment", "house", "splat_housing", "studio", "room"]) and 
+                            for rtype in ["apartment", "house", "splat_housing", "studio", "room", "encampment"]) and 
                         self.is_owner(location, self.caller)):
                     self.caller.msg("You must be in your residence to vacate it.")
                     return
@@ -887,7 +915,7 @@ class CmdManageHome(MuxCommand):
         
         # Valid room types for residences
         valid_types = [
-            "apartment", "house", "splat_housing",
+            "apartment", "house", "splat_housing", "encampment",
             "mortal_room", "mortal_plus_room", "mortal+_room", "possessed_room",
             "mage_room", "vampire_room", "changeling_room", 
             "motel_room", "apartment_room", "house_room", "studio",
@@ -1439,7 +1467,7 @@ class CmdManageHome(MuxCommand):
                 location = self.caller.location
                 if not (location.db.roomtype and 
                         any(rtype.lower() in location.db.roomtype.lower() 
-                            for rtype in ["apartment", "house", "splat_housing", "studio", "room"]) and 
+                            for rtype in ["apartment", "house", "splat_housing", "studio", "room", "encampment"]) and 
                         self.is_owner(location, self.caller)):
                     self.caller.msg("You must be in your residence to vacate it.")
                     return
@@ -1548,12 +1576,12 @@ class CmdManageHome(MuxCommand):
             # Check if this is a motel room, splat housing, or studio
             is_restricted = False
             # Check room type directly
-            if main_room.db.roomtype in ["Motel Room", "Splat Housing", "Studio", "Studio Apartment", "Mage Room", "Shifter Room", "Vampire Room", "Mortal+ Room", "Mortal Room", "Changeling Room", "Companion Room", "Possessed Room"]:
+            if main_room.db.roomtype in ["Motel Room", "Splat Housing", "Studio", "Studio Apartment", "Mage Room", "Shifter Room", "Vampire Room", "Mortal+ Room", "Mortal Room", "Changeling Room", "Companion Room", "Possessed Room", "Encampment"]:
                 is_restricted = True
             # Also check available types from housing data
             elif main_room.db.housing_data and main_room.db.housing_data.get('available_types'):
                 available_types = main_room.db.housing_data.get('available_types', [])
-                if "Splat Housing" in available_types or "Studio" in available_types:
+                if "Splat Housing" in available_types or "Studio" in available_types or "Encampment" in available_types:
                     is_restricted = True
 
             if is_restricted:
@@ -1658,7 +1686,9 @@ class CmdManageHome(MuxCommand):
                     'current_tenants': {},
                     'apartment_numbers': set(),
                     'required_resources': main_room.db.housing_data.get('required_resources', 0),
-                    'connected_rooms': main_room.db.housing_data.get('connected_rooms', set())
+                    'connected_rooms': main_room.db.housing_data.get('connected_rooms', set()),
+                    'allowed_splats': main_room.db.housing_data.get('allowed_splats', set()),
+                    'available_types': main_room.db.housing_data.get('available_types', [])
                 }
                 
                 # Set up home data
@@ -1959,7 +1989,13 @@ class CmdSetLock(MuxCommand):
         tribe:<name>      - Restrict to specific werewolf tribe
         auspice:<name>    - Restrict to specific werewolf auspice
         tradition:<name>  - Restrict to specific mage tradition
-        
+        sect:<name>       - Restrict to specific vampire sect
+        affiliation:<name> - Restrict to specific affiliation
+        convention:<name> - Restrict to specific convention
+        kith:<name>       - Restrict to specific kith
+        tradition:<name>  - Restrict to specific tradition
+        nephandi_faction:<name> - Restrict to specific nephandi faction
+
     Examples:
         +lock north=splat:Vampire
         +lock door=talent:Streetwise
@@ -2041,8 +2077,10 @@ class CmdSetLock(MuxCommand):
             'tradition': 'db.tradition',
             'affiliation': 'db.affiliation',
             'convention': 'db.convention',
-            'kith': 'db.kith'
-
+            'kith': 'db.kith',
+            'tradition': 'db.tradition',
+            'nephandi_faction': 'db.nephandi_faction',
+            'sect': 'db.sect'
         }
         
         if locktype not in valid_locktypes:

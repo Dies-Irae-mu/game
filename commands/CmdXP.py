@@ -1247,12 +1247,30 @@ class CmdXP(default_cmds.MuxCommand):
                 
                 logger.log_info(f"Character details - Breed: {breed}, Auspice: {auspice}, Tribe: {tribe}, Type: {shifter_type}")
                 
-                # For non-Garou shifter types, default to base cost
+                # For Ajaba and other non-Garou shifter types, use their specific cost structure
                 if shifter_type and shifter_type.lower() != 'garou':
+                    # Check if this is a gift available to their shifter type
+                    if gift.shifter_type:
+                        allowed_types = gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type]
+                        if shifter_type.lower() in [t.lower() for t in allowed_types]:
+                            # Base cost of 3 XP per level for gifts available to their type
+                            total_cost = 0
+                            for rating in range(current_rating + 1, new_rating + 1):
+                                total_cost += 3  # Base cost of 3 XP per level
+                            logger.log_info(f"Non-Garou shifter cost: {total_cost}")
+                            return total_cost, requires_approval
+                        else:
+                            # Higher cost (5 XP per level) for gifts not native to their type
+                            total_cost = 0
+                            for rating in range(current_rating + 1, new_rating + 1):
+                                total_cost += 5
+                            return total_cost, requires_approval
+                    
+                    # Default cost if shifter_type not specified in gift
                     total_cost = 0
                     for rating in range(current_rating + 1, new_rating + 1):
                         total_cost += 3  # Base cost of 3 XP per level
-                    logger.log_info(f"Non-Garou shifter cost: {total_cost}")
+                    logger.log_info(f"Default non-Garou shifter cost: {total_cost}")
                     return total_cost, requires_approval
                 
                 # For Garou, check if it's a breed, auspice, or tribe gift

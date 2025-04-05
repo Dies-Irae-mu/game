@@ -56,9 +56,23 @@ class CustomCmdChannel(MuxCommand):
     aliases = ["chan"]
     switch_options = ("list", "all", "sub", "unsub", "alias", "unalias", "who", 
                      "history", "mute", "unmute", "create", "destroy", "desc", 
-                     "lock", "unlock", "ban", "unban", "boot", "purge", "view")
+                     "lock", "unlock", "ban", "unban", "boot", "purge", "view", "last")
     channel_class = ChannelDB
     help_category = "Comms"
+
+    def check_channel_access(self, channel, access_type="listen"):
+        """
+        Check if the caller has access to the channel, allowing Admin to bypass all locks.
+        """
+        # Check if caller has Admin permission
+        if hasattr(self.caller, 'check_permstring'):
+            # Check each permission separately
+            for perm in ["Admin", "Builder", "Staff"]:
+                if self.caller.check_permstring(perm):
+                    return True
+            
+        # If not Admin, use default access check
+        return channel.access(self.caller, access_type)
 
     def add_channel_alias(self, caller, channel, aliases):
         """Helper method to add channel aliases."""
@@ -109,6 +123,10 @@ class CustomCmdChannel(MuxCommand):
                 
             if not channel:
                 raise RuntimeError(f"Failed to create channel '{channelname}'")
+            
+            # Initialize history attribute
+            if not hasattr(channel, 'db') or not channel.db.history:
+                channel.db.history = []
                 
             return channel, None
             
@@ -121,7 +139,11 @@ class CustomCmdChannel(MuxCommand):
     
     def handle_history(self, channel, index=None):
         """Show channel history."""
-        history = channel.db.history or []
+        # Initialize history if it doesn't exist
+        if not hasattr(channel, 'db') or not channel.db.history:
+            channel.db.history = []
+            
+        history = channel.db.history
         if not history:
             self.msg(f"No history available for channel {channel.key}.")
             return
@@ -143,7 +165,7 @@ class CustomCmdChannel(MuxCommand):
                 self.msg(f"{len(history)-20+i}: {msg}")
     
     def handle_mute(self, channels, mute=True):
-        """Mute or unmute channels."""
+        """Mute or unmute channels using Evennia's built-in system."""
         caller = self.caller
         result = []
         for channel in channels:
@@ -152,19 +174,15 @@ class CustomCmdChannel(MuxCommand):
                 continue
             
             if mute:
-                if channel.db.muted and caller in channel.db.muted:
-                    result.append(f"You have already muted {channel.key}.")
-                else:
-                    if not channel.db.muted:
-                        channel.db.muted = []
-                    channel.db.muted.append(caller)
+                if channel.mute(caller):
                     result.append(f"You have muted {channel.key}.")
-            else:
-                if not channel.db.muted or caller not in channel.db.muted:
-                    result.append(f"You haven't muted {channel.key}.")
                 else:
-                    channel.db.muted.remove(caller)
+                    result.append(f"Channel {channel.key} was already muted.")
+            else:
+                if channel.unmute(caller):
                     result.append(f"You have unmuted {channel.key}.")
+                else:
+                    result.append(f"Channel {channel.key} was already unmuted.")
         
         self.msg("\n".join(result))
     
@@ -478,7 +496,7 @@ class CustomCmdChannel(MuxCommand):
             channel = channels[0]
             
             # Check listen lock before allowing subscription
-            if not channel.access(caller, "listen"):
+            if not self.check_channel_access(channel, "listen"):
                 self.msg(f"You don't have permission to subscribe to {channel.key}.")
                 return
             
@@ -518,20 +536,26 @@ class CustomCmdChannel(MuxCommand):
                 return
                 
             # Check send lock
-            if not channel.access(caller, "send"):
+            if not self.check_channel_access(channel, "send"):
                 self.msg(f"You don't have permission to send messages to {channel.key}.")
                 return
             
             # Send the message
             message = self.rhs
             if message:
+                # Format the message with timestamp
+                from datetime import datetime
+                timestamp = datetime.now().strftime("[%Y-%m-%d(%H:%M)]")
+                formatted_message = f"{timestamp}: {caller.key}: {message}"
+                
+                # Send the message
                 channel.msg(message, senders=caller)
                 
-                # Store in history if enabled
-                if hasattr(channel, 'db') and channel.db.history is not None:
+                # Store in history
+                if not hasattr(channel, 'db') or not channel.db.history is None:
                     if not channel.db.history:
                         channel.db.history = []
-                    channel.db.history.append(f"[{channel.key}] {caller.key}: {message}")
+                    channel.db.history.append(formatted_message)
                     # Keep only last 50 messages
                     channel.db.history = channel.db.history[-50:]
             return
@@ -552,7 +576,7 @@ class CustomCmdChannel(MuxCommand):
                     return
                 channel = channels[0]
                 
-                if not channel.access(caller, "control"):
+                if not self.check_channel_access(channel, "control"):
                     self.msg("You don't have permission to destroy this channel.")
                     return
                 
@@ -571,7 +595,7 @@ class CustomCmdChannel(MuxCommand):
                     return
                 channel = channels[0]
                 
-                if not channel.access(caller, "control"):
+                if not self.check_channel_access(channel, "control"):
                     self.msg("You don't have permission to modify this channel.")
                     return
                 
@@ -588,7 +612,7 @@ class CustomCmdChannel(MuxCommand):
                     return
                 channel = channels[0]
                 
-                if not channel.access(caller, "control"):
+                if not self.check_channel_access(channel, "control"):
                     self.msg("You don't have permission to modify this channel.")
                     return
                 
@@ -620,7 +644,7 @@ class CustomCmdChannel(MuxCommand):
                     return
                 channel = channels[0]
                 
-                if not channel.access(caller, "listen"):
+                if not self.check_channel_access(channel, "listen"):
                     self.msg("You don't have permission to view this channel's history.")
                     return
                 
@@ -651,7 +675,7 @@ class CustomCmdChannel(MuxCommand):
                         if not channels:
                             return
                         channel = channels[0]
-                        if not channel.access(caller, "control"):
+                        if not self.check_channel_access(channel, "control"):
                             self.msg("You don't have permission to view bans.")
                             return
                         banlist = channel.banlist

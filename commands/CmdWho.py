@@ -69,6 +69,10 @@ class CmdWho(COMMAND_DEFAULT_CLASS):
         if not puppet or not puppet.location:
             return "None"
             
+        # Check if character is unfindable
+        if hasattr(puppet, 'db') and puppet.db.unfindable and not account.check_permstring("Builder"):
+            return "(Hidden)"
+            
         # Staff can always see room names
         if account.check_permstring("Builder"):
             return puppet.location.key

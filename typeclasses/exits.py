@@ -45,25 +45,16 @@ class ExitCommand(Command):
         # All good - try to traverse
         self.obj.at_traverse(self.caller, self.obj.destination)
     
-    def access(self, accessing_obj, access_type="cmd", default=True):
+    def access(self, accessing_obj, access_type="view", default=True):
         """
-        Override access check to include view lock and add debugging.
+        Override access check to allow Admin permission to bypass all locks.
         """
-        # Add detailed debugging
-        if access_type == "view":
-            # Log detailed information about the view access check
-            logger.log_info(f"View Access Check for {self.key}:")
-            logger.log_info(f"Accessing Object: {accessing_obj}")
-            logger.log_info(f"Current Locks: {self.locks}")
-            
-            # Check if the object can pass the view lock
-            view_result = super().access(accessing_obj, "view", default)
-            
-            logger.log_info(f"View Access Result: {view_result}")
-            
-            return view_result
-        
-        # For other access types, use default implementation
+        # Check if accessing_obj has Admin permission
+        if hasattr(accessing_obj, 'check_permstring'):
+            if accessing_obj.check_permstring("Admin"):
+                return True
+                
+        # If not Admin, use default access check
         return super().access(accessing_obj, access_type, default)
 
 class ExitCmdSet(CmdSet):
@@ -113,6 +104,27 @@ class Exit(DefaultExit):
         )
         cmdset.add(cmd)
         self.cmdset.add(cmdset, permanent=True)
+    
+    def access(self, accessing_obj, access_type="view", default=True, **kwargs):
+        """
+        Override access check to allow Admin permission to bypass all locks.
+        Handles all possible access method arguments.
+        
+        Args:
+            accessing_obj (Object): The object trying to access
+            access_type (str): The type of access being checked
+            default (bool): The default result if no lock is found
+            **kwargs: Additional arguments that might be passed
+        """
+        # Check if accessing_obj has Admin permission
+        if hasattr(accessing_obj, 'check_permstring'):
+            # Check each permission separately
+            for perm in ["Admin", "Builder", "Staff"]:
+                if accessing_obj.check_permstring(perm):
+                    return True
+                
+        # If not Admin, use default access check
+        return super().access(accessing_obj, access_type, default, **kwargs)
     
     def return_appearance(self, looker, **kwargs):
         """

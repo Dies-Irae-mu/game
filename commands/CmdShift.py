@@ -55,10 +55,9 @@ class CmdShift(default_cmds.MuxCommand):
       +shift/roll <form name>
       +shift/rage <form name>
       +shift/message <form name> = <your custom message>
-      +shift/setdeedname <deed name>
-      +shift/setformname <form name> = <form-specific name>
-      +shift/name <form name> = <new name>
       +shift/list
+      +shift/setdesc <form name> = <desc name>
+      +shift/cleardesc <form name>
 
     Switches:
       /roll - Roll to determine if the shift is successful
@@ -68,6 +67,8 @@ class CmdShift(default_cmds.MuxCommand):
       /setformname - Set a specific name for the character when in a particular form
       /name - Set a new name for the form you're shifting into
       /list - Display all available forms for your character
+      /setdesc - Link a stored description to a form
+      /cleardesc - Remove the description link from a form
 
     This command allows you to change your character's shapeshifter form.
     Without switches, it will attempt to shift using the default method.
@@ -78,6 +79,8 @@ class CmdShift(default_cmds.MuxCommand):
     The /setformname switch lets you set a specific name for your character when in a particular form.
     The /name switch allows you to set a new name for the form you're shifting into.
     The /list switch displays all available forms for your character.
+    The /setdesc switch links a stored description to a form, which will be applied when shifting.
+    The /cleardesc switch removes the description link from a form.
 
     In shift messages, use {truename} for the character's true name, {deedname} for the deed name,
     and {formname} for the form-specific name (if set).
@@ -148,6 +151,12 @@ class CmdShift(default_cmds.MuxCommand):
         elif "name" in self.switches:
             self._set_form_name_with_shift(character)
             return
+        elif "setdesc" in self.switches:
+            self._set_form_description(character)
+            return
+        elif "cleardesc" in self.switches:
+            self._clear_form_description(character)
+            return
 
         form_name = self.args.strip()
         try:
@@ -176,6 +185,7 @@ class CmdShift(default_cmds.MuxCommand):
         if success:
             self._apply_form_changes(character, form)
             self._display_shift_message(character, form)
+            self._apply_form_description(character, form)
 
     def is_valid_character(self, obj):
         """
@@ -349,11 +359,21 @@ class CmdShift(default_cmds.MuxCommand):
             self.caller.msg(f"Your Metamorph merit allows you to shift effortlessly into {form.name} form.")
             return True
 
-        # Get Primal-Urge value
-        primal_urge = character.get_stat('abilities', 'talent', 'Primal-Urge', temp=False) or 0
+        # Get Primal-Urge value, using temp if it differs from perm
+        primal_urge = character.get_stat('abilities', 'talent', 'Primal-Urge', temp=True)
+        primal_urge_perm = character.get_stat('abilities', 'talent', 'Primal-Urge', temp=False)
+        if primal_urge is None:
+            primal_urge = 0
+        if primal_urge_perm is None:
+            primal_urge_perm = 0
+        if primal_urge != primal_urge_perm:
+            self.caller.msg(f"Using temporary Primal-Urge value of {primal_urge} (permanent: {primal_urge_perm})")
         
         # Get Stamina value directly from stats dictionary
-        stamina = character.db.stats.get('attributes', {}).get('physical', {}).get('Stamina', {}).get('perm', 0)
+        stamina = character.db.stats.get('attributes', {}).get('physical', {}).get('Stamina', {}).get('temp', 0)
+        stamina_perm = character.db.stats.get('attributes', {}).get('physical', {}).get('Stamina', {}).get('perm', 0)
+        if stamina != stamina_perm:
+            self.caller.msg(f"Using temporary Stamina value of {stamina} (permanent: {stamina_perm})")
         
         dice_pool = primal_urge + stamina
         difficulty = form.difficulty
@@ -414,25 +434,25 @@ class CmdShift(default_cmds.MuxCommand):
         
         ANIMAL_BREEDS = {
             ('garou', 'lupus'): 'lupus',
-            ('ratkin', 'animal-born'): 'rodens',
-            ('ajaba', 'animal-born'): 'hyaenid',
-            ('ananasi', 'animal-born'): 'crawlerling',
-            ('rokea', 'animal-born'): 'squamus',
-            ('mokole', 'animal-born'): 'suchid',
-            ('gurahl', 'animal-born'): 'ursine',
-            ('bastet', 'animal-born'): 'feline',
-            ('corax', 'animal-born'): 'corvid',
-            ('kitsune', 'animal-born'): 'roko',
-            ('nuwisha', 'animal-born'): 'latrani',
+            ('ratkin', 'rodens'): 'rodens',
+            ('ajaba', 'hyaenid'): 'hyaenid',
+            ('ananasi', 'crawlerling'): 'crawlerling',
+            ('rokea', 'squamus'): 'squamus',
+            ('mokole', 'suchid'): 'suchid',
+            ('gurahl', 'ursine'): 'ursine',
+            ('bastet', 'feline'): 'feline',
+            ('corax', 'corvid'): 'corvid',
+            ('kitsune', 'roko'): 'kyubi',
+            ('nuwisha', 'latrani'): 'latrani',
             ('nagah', 'vasuki'): 'vasuki'
         }
         
         METIS_BREEDS = {
             ('garou', 'metis'): 'crinos',
-            ('ajaba', 'metis'): 'anthros',
+            ('ajaba', 'metis'): 'crinos',
             ('bastet', 'metis'): 'chatro',
-            ('kitsune', 'shinju'): 'kitsune',
-            ('nagah', 'ahi'): 'nagah',
+            ('kitsune', 'shinju'): 'koto',
+            ('nagah', 'ahi'): 'azhi',
             ('ratkin', 'metis'): 'crinos'
         }
         
@@ -462,9 +482,19 @@ class CmdShift(default_cmds.MuxCommand):
         elif character.db.attribute_boosts is None:
             character.db.attribute_boosts = {}
 
+        # Store the original description if we're shifting out of Homid form
+        current_form = getattr(character.db, 'current_form', None)
+        current_form = current_form.lower() if current_form else 'homid'
+        
+        if current_form == 'homid' and form.name.lower() != 'homid':
+            # Store the current description
+            current_desc = character.db.desc
+            character.db.original_description = str(current_desc) if current_desc is not None else ""
+            print(f"Storing original description from Homid form: '{character.db.original_description}'")
+
         # If it's Homid form, reset everything to base stats but preserve boosts
         if form.name.lower() == 'homid':
-            print(f"DEBUG: Setting Homid form for {character.name}")
+            print(f"Setting Homid form for {character.name}")
             character.attributes.add('current_form', 'Homid')
             character.db.current_form = 'Homid'
             character.db.display_name = character.key
@@ -898,3 +928,118 @@ class CmdShift(default_cmds.MuxCommand):
                 return form_data['stat_modifiers']
 
         return modifiers
+
+    def _set_form_description(self, character):
+        """Link a stored description to a form."""
+        if "=" not in self.args:
+            self.caller.msg("Usage: +shift/setdesc <form name> = <desc name(s)>")
+            return
+
+        form_name, desc_names = self.args.split("=", 1)
+        form_name = form_name.strip()
+        desc_names = desc_names.strip().split()  # Split on whitespace for multiple descriptions
+
+        # Get the character's shifter type
+        shifter_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '').lower()
+
+        # Verify the form exists for this shifter type
+        try:
+            form = ShapeshifterForm.objects.get(
+                name__iexact=form_name,
+                shifter_type=shifter_type
+            )
+        except ShapeshifterForm.DoesNotExist:
+            self.caller.msg(f"The form '{form_name}' does not exist for your shifter type.")
+            return
+        except ShapeshifterForm.MultipleObjectsReturned:
+            self.caller.msg(f"Error: Multiple forms found with name '{form_name}'. Please contact an admin.")
+            return
+
+        # Verify all descriptions exist
+        stored_descs = character.db.stored_descs or {}
+        for desc_name in desc_names:
+            if desc_name.lower() not in stored_descs:
+                self.caller.msg(f"No description named '{desc_name}' found. Use +mdesc/list to see available descriptions.")
+                return
+
+        # Initialize form_descriptions if it doesn't exist
+        if not hasattr(character.db, 'form_descriptions'):
+            character.db.form_descriptions = {}
+        elif character.db.form_descriptions is None:
+            character.db.form_descriptions = {}
+
+        # Store the form-description link as a space-separated string
+        character.db.form_descriptions[form_name.lower()] = " ".join(desc_name.lower() for desc_name in desc_names)
+        
+        self.caller.msg(f"Linked description(s) '{' '.join(desc_names)}' to form '{form_name}'.")
+
+    def _clear_form_description(self, character):
+        """Remove a description link from a form."""
+        if not self.args:
+            self.caller.msg("Usage: +shift/cleardesc <form name>")
+            return
+
+        form_name = self.args.strip()
+        
+        # Verify the form exists
+        try:
+            form = ShapeshifterForm.objects.get(name__iexact=form_name)
+        except ShapeshifterForm.DoesNotExist:
+            self.caller.msg(f"The form '{form_name}' does not exist.")
+            return
+
+        # Remove the form-description link
+        if hasattr(character.db, 'form_descriptions'):
+            if form_name.lower() in character.db.form_descriptions:
+                del character.db.form_descriptions[form_name.lower()]
+                self.caller.msg(f"Removed description link from form '{form_name}'.")
+            else:
+                self.caller.msg(f"No description was linked to form '{form_name}'.")
+
+    def _apply_form_description(self, character, form):
+        """Apply the linked description for a form if one exists."""
+        form_name = form.name.lower()
+        
+        # Special handling for Homid form
+        if form_name == 'homid':
+            if hasattr(character.db, 'original_description'):
+                # Restore the original description, ensuring it's a string
+                original_desc = character.db.original_description
+                print(f"DEBUG: Restoring original description: '{original_desc}'")
+                if original_desc == "":
+                    character.db.desc = None
+                    self.caller.msg("Restored your original description (which was empty).")
+                else:
+                    character.db.desc = original_desc
+                    self.caller.msg("Restored your original description.")
+            return
+        
+        stored_descs = character.db.stored_descs or {}
+        
+        # First check for an explicit form-description link
+        if hasattr(character.db, 'form_descriptions') and character.db.form_descriptions and form_name in character.db.form_descriptions:
+            desc_names = character.db.form_descriptions[form_name].split()
+            final_desc = []
+            for desc_name in desc_names:
+                if desc_name in stored_descs:
+                    final_desc.append(stored_descs[desc_name])
+            if final_desc:
+                # Join with double line break to ensure proper spacing
+                combined_desc = "%r%r".join(final_desc)
+                if hasattr(character, 'format_description'):
+                    combined_desc = character.format_description(combined_desc)
+                character.db.desc = combined_desc
+                self.caller.msg(f"Applied linked description(s) '{' '.join(desc_names)}' for {form.name} form.")
+                return
+        
+        # If no explicit link, check for a description matching the form name
+        if form_name in stored_descs:
+            desc = stored_descs[form_name]
+            if hasattr(character, 'format_description'):
+                desc = character.format_description(desc)
+            character.db.desc = desc
+            self.caller.msg(f"Applied matching description '{form_name}' for {form.name} form.")
+            return
+        
+        # If no matching description found, don't change the current description
+        self.caller.msg(f"No description found for {form.name} form. Keeping current description.")

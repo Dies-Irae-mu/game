@@ -98,15 +98,12 @@ class CmdPump(default_cmds.MuxCommand):
 
     def _ensure_attribute_boosts(self, caller):
         """Ensure the attribute_boosts dictionary exists on the caller."""
-        if not hasattr(caller.db, 'attribute_boosts'):
+        if not hasattr(caller.db, 'attribute_boosts') or caller.db.attribute_boosts is None:
             caller.db.attribute_boosts = {}
             caller.db.next_boost_id = 1
             caller.db.recycled_boost_ids = []
-        elif caller.db.attribute_boosts is None:
-            caller.db.attribute_boosts = {}
-            caller.db.next_boost_id = 1
-            caller.db.recycled_boost_ids = []
-        elif not hasattr(caller.db, 'next_boost_id'):
+        elif not hasattr(caller.db, 'next_boost_id') or caller.db.next_boost_id is None:
+            # Initialize next_boost_id if it doesn't exist or is None
             caller.db.next_boost_id = max([boost.get('id', 0) for boost in caller.db.attribute_boosts.values()], default=0) + 1
         
         # Always ensure recycled_boost_ids exists and is a list
@@ -458,8 +455,12 @@ class CmdPump(default_cmds.MuxCommand):
                 new_temp = min(current_perm + new_boost, cap)
                 actual_increase = amount
             else:
-                # If not boosted, add boost amount to permanent value
-                new_temp = min(current_perm + amount, cap)
+                # If not boosted, add boost amount to current value
+                # For vampires, use the current value as base to avoid double-boosting
+                if splat == 'Vampire':
+                    new_temp = min(current_temp + amount, cap)
+                else:
+                    new_temp = min(current_perm + amount, cap)
                 actual_increase = amount
 
             # Check if we're at the cap

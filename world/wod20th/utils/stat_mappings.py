@@ -475,6 +475,10 @@ SPECIAL_STATS = [
     'gnosis'
 ]
 
+SECT_CHOICES = [
+    'Camarilla', 'Sabbat', 'Anarch', 'Independent'
+]
+
 # Background Lists
 UNIVERSAL_BACKGROUNDS = [
     'Allies',
@@ -1237,6 +1241,7 @@ def get_identity_stats(splat: str, subtype: str = None, affiliation: str = None)
             'Generation',
             'Clan',
             'Sire',
+            'Sect',
             'Path of Enlightenment'  # Make sure this is included
         ]
     elif splat.lower() == 'shifter':

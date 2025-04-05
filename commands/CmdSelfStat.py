@@ -1089,7 +1089,7 @@ class CmdSelfStat(MuxCommand):
                           'Nephandi Faction', 'Possessed Type', 'Companion Type', 'Pryio', 'Lodge',
                           'Camp', 'Fang House', 'Crown', 'Plague', 'Ananasi Faction', 'Ananasi Cabal',
                           'Kitsune Path', 'Kitsune Faction', 'Ajaba Faction', 'Rokea Faction',
-                          'Stream', 'Varna', 'Deed Name', 'Aspect', 'Jamak Spirit', 'Rank', 'Elemental Affinity', 'Fuel']:
+                          'Stream', 'Varna', 'Deed Name', 'Aspect', 'Jamak Spirit', 'Rank', 'Elemental Affinity', 'Fuel', 'Sect']:
             return 'identity', 'lineage'
         elif stat_title in ['Full Name', 'Concept', 'Date of Birth', 'Date of Chrysalis', 'Date of Awakening',
                           'First Change Date', 'Date of Embrace', 'Date of Possession', 'Nature', 'Demeanor',
@@ -1234,6 +1234,12 @@ class CmdSelfStat(MuxCommand):
                     # No category specified, detect based on stat name
                     self.detect_category_and_type()
                 
+                # Check if this stat requires an instance
+                if self._requires_instance(self.stat_name, self.category):
+                    self._display_instance_requirement_message(self.stat_name)
+                    self.stat_name = None  # Set to None to indicate parsing failed
+                    return
+                
                 # Special handling for Gnosis
                 if self.stat_name.lower() == 'gnosis':
                     splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
@@ -1245,16 +1251,6 @@ class CmdSelfStat(MuxCommand):
                     elif splat and splat.lower() == 'mortal+' and char_type and char_type.lower() == 'kinfolk':
                         self.category = 'merits'
                         self.stat_type = 'supernatural'
-                
-                # Check if this stat requires an instance
-                if not self.category or not self.stat_type:
-                    self.detect_category_and_type()
-                    
-                # Now check if the stat requires an instance (not just supports it)
-                if self._requires_instance(self.stat_name, self.category):
-                    self._display_instance_requirement_message(self.stat_name)
-                    self.stat_name = None  # Set to None to indicate parsing failed
-                    return
             
             # Special handling for Nature and Time
             if not self.category:
@@ -2341,6 +2337,48 @@ class CmdSelfStat(MuxCommand):
             self.caller.msg("|rUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
             return
 
+        if not self.stat_name:
+            self.caller.msg("|rUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
+            return
+
+        # Check if character is approved
+        if self.caller.db.approved:
+            self.caller.msg("|rError: Approved characters cannot use chargen commands. Please contact staff for any needed changes.|n")
+            return
+
+        # Fix any incorrectly stored Necromancy paths
+        self._fix_necromancy_paths()
+
+        # Fix incorrectly stored Ferocity for Shifters
+        splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+        shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+        if splat == 'Shifter' and shifter_type:
+            valid_renown = SHIFTER_RENOWN.get(shifter_type, [])
+            if 'Ferocity' in valid_renown:
+                # Check if Ferocity is incorrectly stored in powers.special_advantage
+                if ('powers' in self.caller.db.stats and 
+                    'special_advantage' in self.caller.db.stats['powers'] and 
+                    'Ferocity' in self.caller.db.stats['powers']['special_advantage']):
+                    # Get the value
+                    ferocity_value = self.caller.db.stats['powers']['special_advantage']['Ferocity']['perm']
+                    # Move it to advantages.renown
+                    if 'advantages' not in self.caller.db.stats:
+                        self.caller.db.stats['advantages'] = {}
+                    if 'renown' not in self.caller.db.stats['advantages']:
+                        self.caller.db.stats['advantages']['renown'] = {}
+                    self.caller.db.stats['advantages']['renown']['Ferocity'] = {
+                        'perm': ferocity_value,
+                        'temp': ferocity_value
+                    }
+                    # Remove from powers.special_advantage
+                    del self.caller.db.stats['powers']['special_advantage']['Ferocity']
+                    self.caller.msg("|yFixed: Moved Ferocity from powers.special_advantage to advantages.renown.|n")
+
+        # Check if this stat requires an instance
+        if self._requires_instance(self.stat_name, self.category) and not self.instance:
+            self._display_instance_requirement_message(self.stat_name)
+            return
+
         # Normalize the stat name case before proceeding
         self.stat_name = self._get_canonical_stat_name(self.stat_name)
 
@@ -2400,19 +2438,9 @@ class CmdSelfStat(MuxCommand):
         # Get the single match if we have one
         stat = possible_matches.first() if possible_matches.exists() else None
 
-        # Check if character is approved
-        if self.caller.db.approved:
-            self.caller.msg("|rError: Approved characters cannot use chargen commands. Please contact staff for any needed changes.|n")
-            return
-
-        # Fix any incorrectly stored Necromancy paths
-        self._fix_necromancy_paths()
-
-        # Fix incorrectly stored Ferocity for Shifters
-        splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
-        shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-        if splat == 'Shifter' and shifter_type:
-            valid_renown = SHIFTER_RENOWN.get(shifter_type, [])
+        # Fix any incorrectly stored Ferocity for Shifters
+        if splat == 'Shifter' and char_type:
+            valid_renown = SHIFTER_RENOWN.get(char_type, [])
             if 'Ferocity' in valid_renown:
                 # Check if Ferocity is incorrectly stored in powers.special_advantage
                 if ('powers' in self.caller.db.stats and 
@@ -4225,6 +4253,10 @@ class CmdSelfStat(MuxCommand):
         """
         Check if a stat MUST have an instance.
         """
+        # Handle None or empty values
+        if not stat_name:
+            return False
+            
         # Stats in REQUIRED_INSTANCES must have instances (case-insensitive)
         if any(stat_name.lower() == required.lower() for required in REQUIRED_INSTANCES):
             return True
@@ -4265,6 +4297,10 @@ class CmdSelfStat(MuxCommand):
         Returns:
             The canonical stat name with proper case, or the original if no match found
         """
+        # Handle None or empty values
+        if not stat_name:
+            return ""
+            
         from world.wod20th.models import Stat
         
         # First try exact case-insensitive match
@@ -4278,6 +4314,7 @@ class CmdSelfStat(MuxCommand):
             'animal ken': 'Animal Ken',
             'privacy obsession': 'Privacy Obsession',
             'resources': 'Resources',
+            'professional certification': 'Professional Certification',
             'strength': 'Strength',
             'dexterity': 'Dexterity',
             'stamina': 'Stamina',
@@ -4335,3 +4372,19 @@ class CmdSelfStat(MuxCommand):
             
         # Default to simple title case
         return stat_name.title()
+
+    def _validate_path(self, path_name: str) -> tuple[bool, str, str]:
+        """
+        Validate a Path of Enlightenment name.
+        
+        Args:
+            path_name: The name of the path to validate
+            
+        Returns:
+            tuple: (is_valid, proper_path_name, error_message)
+        """
+        from world.wod20th.utils.vampire_utils import validate_vampire_path
+        is_valid, result = validate_vampire_path(path_name)
+        if is_valid:
+            return True, result, ""  # result contains the proper path name
+        return False, "", result  # result contains the error message

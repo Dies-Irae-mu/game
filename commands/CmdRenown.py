@@ -63,7 +63,16 @@ class CmdRenown(MuxCommand):
             self.caller.msg("You must set your Shifter Type before using this command.")
             return
 
-        valid_renown = SHIFTER_RENOWN.get(shifter_type, [])
+        # Get valid renown types based on shifter type and tribe (for Garou)
+        if shifter_type == 'Garou':
+            tribe = self.caller.get_stat('identity', 'lineage', 'Tribe', temp=False)
+            if tribe and tribe.lower() == 'black spiral dancers':
+                valid_renown = SHIFTER_RENOWN['Garou']['Black Spiral Dancers']
+            else:
+                valid_renown = SHIFTER_RENOWN['Garou']['default']
+        else:
+            valid_renown = SHIFTER_RENOWN.get(shifter_type, [])
+
         if not valid_renown:
             self.caller.msg(f"No Renown types defined for {shifter_type}.")
             return
@@ -167,6 +176,16 @@ class CmdRenown(MuxCommand):
             self.caller.msg("You must set your Shifter Type before using this command.")
             return
 
+        # Get valid renown types based on shifter type and tribe (for Garou)
+        if shifter_type == 'Garou':
+            tribe = self.caller.get_stat('identity', 'lineage', 'Tribe', temp=False)
+            if tribe and tribe.lower() == 'black spiral dancers':
+                valid_renown = SHIFTER_RENOWN['Garou']['Black Spiral Dancers']
+            else:
+                valid_renown = SHIFTER_RENOWN['Garou']['default']
+        else:
+            valid_renown = SHIFTER_RENOWN.get(shifter_type, [])
+
         # Get the log entries
         renown_type = self.args.strip() if self.args else None
         log_entries = self.get_renown_log(renown_type)
@@ -199,7 +218,6 @@ class CmdRenown(MuxCommand):
 
         # Display current values for each type
         output.append("|cCurrent Renown Values:|n")
-        valid_renown = SHIFTER_RENOWN.get(shifter_type, [])
         for r_type in valid_renown:
             if not renown_type or r_type.lower() == renown_type.lower():
                 perm = self.caller.get_stat('advantages', 'renown', r_type, temp=False) or 0

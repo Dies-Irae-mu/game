@@ -286,7 +286,7 @@ class CmdSheet(MuxCommand):
                          'Spirit Type', 'Spirit Name', 'Domitor', 'Society', 'Order', 'Coven', 'Cabal', 'Plague', 'Crown', 
                          'Stream', 'Kitsune Path', 'Varna', 'Deed Name', 'Motivation', 'Possessed Type', 'Date of Possession',
                          'Companion Type', 'Patron Totem', 'Pack', 'Affinity Realm', 'Fae Court', 'Fae Name', 'Camp', 'Lodge',
-                         'Fang House', 'Nephandi Faction', 'Fuel', 'Elemental Affinity', 'Anchor', 'Kinfolk Breed']:
+                         'Fang House', 'Nephandi Faction', 'Fuel', 'Elemental Affinity', 'Anchor', 'Kinfolk Breed', 'Sect']:
                 value_str = 'None'
             else:
                 value_str = ''

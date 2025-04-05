@@ -76,6 +76,16 @@
 
     },
     {
+        "name": "Sect",
+        "description": "The sect the character belongs to.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "identity",
+        "stat_type": "lineage",
+        "values": ["Camarilla", "Sabbat", "Anarch", "Independent"],
+        "splat": "Vampire"
+
+    },
+    {
         "name": "Path of Enlightenment",
         "description": "The character's path of enlightenment.",
         "game_line": "Vampire: The Masquerade",

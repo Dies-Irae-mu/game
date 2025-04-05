@@ -452,7 +452,7 @@ class RoomParent(DefaultRoom):
             return False, "Error: Character splat not found."
 
         splat = stats['other']['splat'].get('Splat', {}).get('perm', '')
-        shifter_type = stats['other'].get('type', {}).get('Type', {}).get('perm', '')
+        shifter_type = stats['identity']['lineage'].get('Type', {}).get('perm', '')
         
         # Check if character has Step Sideways merit
         has_step_sideways = (
@@ -962,7 +962,8 @@ class RoomParent(DefaultRoom):
                     "Apartment Building", "Apartments", 
                     "Condos", "Condominiums",
                     "Residential Area", "Residential Neighborhood", 
-                    "Neighborhood", "Splat Housing", "Motel"
+                    "Neighborhood", "Splat Housing", "Motel",
+                    "Encampment"  # Add Encampment to valid housing types
                 ])
 
     def is_apartment_building(self):
@@ -981,7 +982,7 @@ class RoomParent(DefaultRoom):
         return (hasattr(self.db, 'roomtype') and 
                 self.db.roomtype in [
                     "Residential Area", "Residential Neighborhood", 
-                    "Neighborhood"
+                    "Neighborhood", "Encampment"  # Add Encampment to residential areas
                 ])
 
     def update_splat_room(self, splat_type=None, lobby=None):
@@ -1111,6 +1112,8 @@ class RoomParent(DefaultRoom):
         from commands.housing import CmdRent
         if self.db.roomtype == "Motel":
             return {"Motel Room": CmdRent.APARTMENT_TYPES["Motel Room"]}
+        elif self.db.roomtype == "Encampment":
+            return {"Encampment": CmdRent.RESIDENTIAL_TYPES["Encampment"]}
         elif self.is_apartment_building():
             return CmdRent.APARTMENT_TYPES
         elif self.is_residential_area():
@@ -1215,7 +1218,7 @@ class RoomParent(DefaultRoom):
         
         # Valid room types for residences
         valid_types = [
-            "apartment", "house", "splat_housing",
+            "apartment", "house", "splat_housing", "encampment",
             "mortal_room", "mortal_plus_room", "possessed_room",
             "mage_room", "vampire_room", "changeling_room", 
             "motel_room", "apartment_room", "house_room", "studio",
