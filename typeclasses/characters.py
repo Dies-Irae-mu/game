@@ -1745,15 +1745,23 @@ class Character(DefaultCharacter):
         from world.wod20th.utils.xp_utils import get_power_type
         return get_power_type(stat_name)
 
-    def validate_xp_purchase(self, stat_name, new_rating, category=None, subcategory=None):
+    def validate_xp_purchase(self, stat_name, new_rating, category=None, subcategory=None, is_staff_spend=False):
         """Validate if a character can purchase a stat increase."""
         from world.wod20th.utils.xp_utils import validate_xp_purchase
-        return validate_xp_purchase(self, stat_name, new_rating, category, subcategory)
+        return validate_xp_purchase(self, stat_name, new_rating, category, subcategory, is_staff_spend=is_staff_spend)
 
     def buy_stat(self, stat_name, new_rating, category=None, subcategory=None, reason="", current_rating=None, pre_calculated_cost=None):
         """Buy or increase a stat with XP."""
         from world.wod20th.utils.xp_utils import process_xp_spend
-        return process_xp_spend(self, stat_name, new_rating, category, subcategory, reason, current_rating, pre_calculated_cost)
+        return process_xp_spend(
+            character=self,
+            stat_name=stat_name,
+            new_rating=new_rating,
+            category=category,
+            subcategory=subcategory,
+            reason=reason,
+            is_staff_spend=False
+        )
 
     def _display_xp(self, target):
         """Display XP information for a character."""

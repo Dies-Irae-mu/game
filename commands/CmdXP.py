@@ -8,7 +8,7 @@ from django.db import transaction
 from evennia.utils import logger
 from django.db.models import Q
 from world.wod20th.utils.stat_mappings import MERIT_VALUES, RITE_VALUES, FLAW_VALUES, MERIT_CATEGORIES, REQUIRED_INSTANCES, ARTS, REALMS
-from world.wod20th.utils.xp_utils import process_xp_spend, _determine_stat_category
+from world.wod20th.utils.xp_utils import process_xp_spend, _determine_stat_category, validate_xp_purchase
 
 class CmdXP(default_cmds.MuxCommand):
     """
@@ -260,7 +260,17 @@ class CmdXP(default_cmds.MuxCommand):
                     stat_name = " ".join(stat_parts[:-1])
                     logger.log_info(f"{self.caller.name}: Parsed stat - name: {stat_name}, rating: {new_rating}")
 
+                    # Early check for merits and flaws
+                    stat_name_lower = stat_name.lower()
+                    if stat_name_lower in [merit.lower() for merit in MERIT_VALUES.keys()]:
+                        self.caller.msg("Merits require staff approval. Please use +request to submit a request.")
+                        return
+                    if stat_name_lower in [flaw.lower() for flaw in FLAW_VALUES.keys()]:
+                        self.caller.msg("Flaws require staff approval. Please use +request to submit a request.")
+                        return
+
                     # Determine category and subcategory
+                    from world.wod20th.utils.xp_utils import _determine_stat_category
                     category, subcategory = _determine_stat_category(stat_name)
                     logger.log_info(f"{self.caller.name}: Determined category: {category}, subcategory: {subcategory}")
                     
@@ -498,42 +508,54 @@ class CmdXP(default_cmds.MuxCommand):
                     logger.log_info(f"Parsed stat - name: {stat_name}, rating: {new_rating}")
 
                     # Determine category and subcategory
+                    from world.wod20th.utils.xp_utils import _determine_stat_category
                     category, subcategory = _determine_stat_category(stat_name)
                     logger.log_info(f"Determined category: {category}, subcategory: {subcategory}")
                     
                     if not category or not subcategory:
-                        self.caller.msg(f"Invalid stat name: {stat_name}")
+                        self.caller.msg(f"Could not determine stat category for '{stat_name}'.")
                         return
 
-                    # Get proper case for the stat name based on category
-                    proper_stat_name = self._get_proper_stat_name(stat_name, category, subcategory)
-                    logger.log_info(f"Got proper stat name: {proper_stat_name}")
+                    # Get current rating
+                    if category == 'powers':
+                        if subcategory == 'discipline':
+                            current_rating = target.db.stats.get('powers', {}).get('discipline', {}).get(stat_name, {}).get('perm', 0)
+                        else:
+                            current_rating = target.db.stats.get('powers', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
+                    else:
+                        current_rating = target.get_stat(category, subcategory, stat_name) or 0
+                    logger.log_info(f"Current rating: {current_rating}")
+
+                    # Calculate cost using the same logic as regular XP spend
+                    from world.wod20th.utils.xp_utils import calculate_xp_cost
+                    cost, _ = calculate_xp_cost(
+                        target, stat_name, new_rating, category, subcategory, current_rating
+                    )
                     
-                    if not proper_stat_name:
-                        self.caller.msg(f"Invalid stat name: {stat_name}")
+                    if cost == 0:
+                        self.caller.msg("Invalid stat or no increase needed.")
                         return
 
-                    # Process the XP spend
-                    success, message, cost = process_xp_spend(
+                    # Check if we have enough XP
+                    if target.db.xp['current'] < cost:
+                        self.caller.msg(f"Not enough XP. Cost: {cost}, Available: {target.db.xp['current']}")
+                        return
+
+                    # Process the spend
+                    from world.wod20th.utils.xp_utils import process_xp_spend
+                    success, message, final_cost = process_xp_spend(
                         character=target,
-                        stat_name=proper_stat_name,
+                        stat_name=stat_name,
                         new_rating=new_rating,
                         category=category,
                         subcategory=subcategory,
                         reason=f"Staff Spend: {reason}",
                         is_staff_spend=True
                     )
-                    
+
                     if success:
-                        stat_display_name = stat_name if category == 'secondary_abilities' else proper_stat_name
-                        if category == 'flaws' and reason.lower() == 'flaw buyoff':
-                            self.caller.msg(f"Successfully bought off {proper_stat_name} flaw (Cost: {cost} XP)")
-                            target.msg(f"{self.caller.name} has spent {cost} XP to buy off your {proper_stat_name} flaw.")
-                        else:
-                            current_rating = target.get_stat(category, subcategory, proper_stat_name)
-                            # Modified message to be clearer about what happened
-                            self.caller.msg(f"Successfully processed XP spend for {stat_display_name} with rating {new_rating} (Cost: {cost} XP)")
-                            target.msg(f"{self.caller.name} has spent {cost} XP to set your {stat_display_name} to {new_rating}.")
+                        self.caller.msg(f"Successfully set {target.name}'s {stat_name} to {new_rating}. Cost: {final_cost} XP.")
+                        target.msg(f"{self.caller.name} has set your {stat_name} to {new_rating}. Cost: {final_cost} XP.")
                         self._display_xp(target)
                     else:
                         self.caller.msg(f"Failed to process XP spend: {message}")
@@ -1285,9 +1307,10 @@ class CmdXP(default_cmds.MuxCommand):
                     is_breed_gift = breed and breed.lower() in [t.lower() for t in allowed_types]
                 
                 # Check auspice gifts
-                if hasattr(gift, 'auspice') and gift.auspice:
+                if gift.auspice:
                     allowed_auspices = gift.auspice if isinstance(gift.auspice, list) else [gift.auspice]
                     is_auspice_gift = auspice and auspice.lower() in [a.lower() for a in allowed_auspices]
+                    logger.log_info(f"Checking auspice gift - Character auspice: {auspice}, Gift auspices: {allowed_auspices}, Is auspice gift: {is_auspice_gift}")
                 
                 # Check tribe gifts and special gifts
                 if gift.tribe:
@@ -1302,12 +1325,15 @@ class CmdXP(default_cmds.MuxCommand):
                 for rating in range(current_rating + 1, new_rating + 1):
                     if is_special:
                         total_cost += 7  # Croatan/Planetary gifts cost 7 XP per level
+                        logger.log_info(f"Adding special gift cost: 7 XP for level {rating}")
                     elif is_breed_gift or is_auspice_gift or is_tribe_gift:
                         total_cost += 3  # Breed/Auspice/Tribe gifts cost 3 XP per level
+                        logger.log_info(f"Adding breed/auspice/tribe gift cost: 3 XP for level {rating}")
                     else:
                         total_cost += 5  # Other gifts cost 5 XP per level
+                        logger.log_info(f"Adding other gift cost: 5 XP for level {rating}")
                 
-                logger.log_info(f"Calculated cost for Garou gift: {total_cost}")
+                logger.log_info(f"Final calculated cost for Garou gift: {total_cost}")
                 return total_cost, requires_approval
             
             # If gift not found in database, use base cost
@@ -1381,129 +1407,11 @@ class CmdXP(default_cmds.MuxCommand):
         return total_cost, requires_approval
 
     def validate_xp_purchase(self, stat_name, new_rating, category=None, subcategory=None):
-        """
-        Validate if a character can purchase a stat increase.
-        Returns (can_purchase, error_message)
-        """
-        # Get character's splat
-        splat = self.get_stat('other', 'splat', 'Splat', temp=False)
-        if not splat:
-            return False, "Character splat not set"
-
-        # Get current rating
-        current_rating = self.get_stat(category, subcategory, stat_name, temp=False) or 0
-
-        # Validate rating increase - special handling for initial purchases
-        if new_rating < current_rating:
-            return False, "New rating must be higher than current rating"
-        if new_rating == current_rating and current_rating > 0:
-            return False, "New rating must be higher than current rating"
-
-        # Check for gifts
-        if category == 'powers' and subcategory == 'gift':
-            import json
-            import os
-            
-            # Check if character can use gifts
-            char_type = self.get_stat('identity', 'lineage', 'Type', temp=False)
-            can_use_gifts = (
-                splat == 'Shifter' or 
-                splat == 'Possessed' or 
-                (splat == 'Mortal+' and char_type == 'Kinfolk')
-            )
-            
-            if not can_use_gifts:
-                return False, "Character cannot use gifts"
-
-            # Find the gift in JSON files
-            data_dir = os.path.join('diesirae', 'data')
-            gift_files = [
-                'rank1_garou_gifts.json',
-                'rank2_garou_gifts.json',
-                'rank3_garou_gifts.json',
-                'rank4_garou_gifts.json',
-                'rank5_garou_gifts.json',
-                'ajaba_gifts.json',
-                'bastet_gifts.json',
-                'corax_gifts.json',
-                'gurahl_gifts.json',
-                'kitsune_gifts.json',
-                'mokole_gifts.json',
-                'nagah_gifts.json',
-                'nuwisha_gifts.json',
-                'ratkin_gifts.json',
-                'rokea_gifts.json'
-            ]
-            
-            found_gift = None
-            for gift_file in gift_files:
-                try:
-                    file_path = os.path.join(data_dir, gift_file)
-                    if os.path.exists(file_path):
-                        with open(file_path, 'r') as f:
-                            gifts = json.load(f)
-                            # Check if the gift exists in this file
-                            for gift in gifts:
-                                if gift.get('name', '').lower() == stat_name.lower():
-                                    found_gift = gift
-                                    break
-                        if found_gift:
-                            break
-                except Exception as e:
-                    logger.log_err(f"Error reading gift file {gift_file}: {str(e)}")
-                    continue
-            
-            if not found_gift:
-                return False, f"Gift '{stat_name}' not found in any gift lists"
-
-            # Check if the gift is available to the character's shifter type
-            shifter_type = self.get_stat('identity', 'lineage', 'Type', temp=False)
-            if shifter_type and found_gift.get('shifter_type'):
-                allowed_types = found_gift['shifter_type'] if isinstance(found_gift['shifter_type'], list) else [found_gift['shifter_type']]
-                if shifter_type.lower() not in [t.lower() for t in allowed_types]:
-                    return False, f"The gift '{found_gift['name']}' is not available to {shifter_type}"
-
-            # Check for special gifts that require staff approval
-            if found_gift.get('tribe'):
-                tribes = found_gift['tribe'] if isinstance(found_gift['tribe'], list) else [found_gift['tribe']]
-                if any(t.lower() in ['croatan', 'planetary'] for t in tribes):
-                    return False, "Croatan and Planetary gifts can only be purchased through staff approval (+xp/staffspend)"
-
-            # For initial purchase (0 to 1), always allow if we got this far
-            if current_rating == 0 and new_rating == 1:
-                return True, ""
-
-        # Check if stat exists and is valid for character's splat
-        if category == 'powers':
-            # Validate power based on splat
-            if splat == 'Vampire':
-                from world.wod20th.utils.vampire_utils import validate_vampire_stats
-                is_valid, error_msg = validate_vampire_stats(self, stat_name, str(new_rating), category, subcategory)
-            elif splat == 'Mage':
-                from world.wod20th.utils.mage_utils import validate_mage_stats
-                is_valid, error_msg = validate_mage_stats(self, stat_name, str(new_rating), category, subcategory)
-            elif splat == 'Changeling':
-                from world.wod20th.utils.changeling_utils import validate_changeling_stats
-                is_valid, error_msg = validate_changeling_stats(self, stat_name, str(new_rating), category, subcategory)
-            elif splat == 'Shifter':
-                from world.wod20th.utils.shifter_utils import validate_shifter_stats
-                is_valid, error_msg = validate_shifter_stats(self, stat_name, str(new_rating), category, subcategory)
-            elif splat == 'Mortal+':
-                from world.wod20th.utils.mortalplus_utils import validate_mortalplus_stats
-                is_valid, error_msg = validate_mortalplus_stats(self, stat_name, str(new_rating), category, subcategory)
-            elif splat == 'Possessed':
-                from world.wod20th.utils.possessed_utils import validate_possessed_stats
-                is_valid, error_msg = validate_possessed_stats(self, stat_name, str(new_rating), category, subcategory)
-            elif splat == 'Companion':
-                from world.wod20th.utils.companion_utils import validate_companion_stats
-                is_valid, error_msg = validate_companion_stats(self, stat_name, str(new_rating), category, subcategory)
-            else:
-                is_valid, error_msg = False, "Invalid splat type"
-
-            if not is_valid:
-                return False, error_msg
-
-        return True, ""
+        """Validate if a character can purchase a stat increase."""
+        from world.wod20th.utils.xp_utils import validate_xp_purchase
+        # Pass is_staff_spend=True if this is a staff spend
+        is_staff_spend = 'staffspend' in self.switches
+        return validate_xp_purchase(self.caller, stat_name, new_rating, category, subcategory, is_staff_spend=is_staff_spend)
 
     def spend_xp(self, stat_name, new_rating, category, subcategory, reason):
         """

@@ -244,6 +244,13 @@ class Command(BaseCommand):
         elif not isinstance(shifter_type, list):
             shifter_type = []
 
+        # Handle tribe data similarly
+        tribe_data = gift_data.get('tribe', [])
+        if isinstance(tribe_data, str):
+            tribe_data = [tribe_data]
+        elif not isinstance(tribe_data, list):
+            tribe_data = []
+
         stat, created = Stat.objects.get_or_create(
             name=gift_data['name'],
             defaults={
@@ -256,7 +263,7 @@ class Command(BaseCommand):
                 'allowed_splats': gift_data.get('allowed_splats', {}),
                 'shifter_type': shifter_type,
                 'splat': gift_data.get('splat', ''),
-                'tribe': gift_data.get('tribe', ''),
+                'tribe': tribe_data,
                 'camp': gift_data.get('camp', ''),
                 'system': gift_data.get('system', ''),
                 'gift_alias': gift_data.get('gift_alias', [])
@@ -274,7 +281,7 @@ class Command(BaseCommand):
             stat.allowed_splats = gift_data.get('allowed_splats', {})
             stat.shifter_type = shifter_type
             stat.splat = gift_data.get('splat', '')
-            stat.tribe = gift_data.get('tribe', '')
+            stat.tribe = tribe_data
             stat.camp = gift_data.get('camp', '')
             stat.system = gift_data.get('system', '')
             stat.gift_alias = gift_data.get('gift_alias', [])

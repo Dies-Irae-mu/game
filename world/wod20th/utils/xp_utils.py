@@ -94,6 +94,181 @@ AUTO_APPROVE = {
     }
 }
 
+# Shifter type mappings for gifts
+SHIFTER_MAPPINGS = {
+    'Ajaba': {
+        'aspects_to_auspices': {
+            'Dawn': True,
+            'Midnight': True,
+            'Dusk': True
+        },
+        'breed_mappings': {
+            'Homid': 'homid',
+            'Metis': 'metis',
+            'Hyaenid': 'lupus'
+        }
+    },
+    'Ananasi': {
+        'aspects_to_tribes': {
+            'Tenere': True,
+            'Hatar': True,
+            'Kumoti': True,
+            'Kumo': True
+        },
+        'factions_to_auspices': {
+            'Myrmidon': True,
+            'Viskr': True,
+            'Wyrsta': True
+        },
+        'breed_mappings': {
+            'Homid': 'homid',
+            'Crawlerling': 'lupus'
+        }
+    },
+    'Bastet': {
+        'tribes': {
+            'bagheera': True,  # Add lowercase versions
+            'balam': True,
+            'bubasti': True,
+            'ceilican': True,
+            'khan': True,
+            'pumonca': True,
+            'qualmi': True,
+            'simba': True,
+            'swara': True,
+            'Bagheera': True,  # Keep original case versions
+            'Balam': True,
+            'Bubasti': True,
+            'Ceilican': True,
+            'Khan': True,
+            'Pumonca': True,
+            'Qualmi': True,
+            'Simba': True,
+            'Swara': True
+        },
+        'breed_mappings': {
+            'Homid': 'homid',
+            'Metis': 'metis',
+            'Feline': 'lupus'
+        }
+    },
+    'Corax': {
+        'all_gifts_in_tribe': True,
+        'breed_mappings': {
+            'Homid': 'homid',
+            'Corvid': 'lupus'
+        }
+    },
+    'Gurahl': {
+        'auspices': {
+            'Arcas': True,
+            'Uzami': True,
+            'Kojubat': True,
+            'Kieh': True,
+            'Rishi': True
+        },
+        'breed_mappings': {
+            'Homid': 'homid',
+            'Ursine': 'lupus'
+        }
+    },
+    'Kitsune': {
+        'paths_to_auspices': {
+            'Kataribe': True,
+            'Gukutsushi': True,
+            'Doshi': True,
+            'Eji': True
+        },
+        'breed_mappings': {
+            'Kojin': 'homid',
+            'Roko': 'lupus',
+            'Shinju': 'metis'
+        },
+        'special_gifts': {
+            'ju-fu': True
+        }
+    },
+    'Mokole': {
+        'auspices': {
+            'Rising Sun Striking': True,
+            'Noonday Sun Unshading': True,
+            'Setting Sun Warding': True,
+            'Shrouded Sun Concealing': True,
+            'Midnight Sun Shining': True,
+            'Decorated Suns Gathering': True,
+            'Solar Eclipse Crowning': True
+        },
+        'auspice_mappings': {
+            'Tung Chun': 'Setting Sun Warding',
+            'Nam Nsai': 'Noonday Sun Unshading',
+            'Sai Chau': 'Solar Eclipse Crowning',
+            'Pei Tung': 'Midnight Sun Shining'
+        },
+        'breed_mappings': {
+            'Homid': 'homid',
+            'Suchid': 'lupus'
+        }
+    },
+    'Nagah': {
+        'auspices': {
+            'Kamakshi': True,
+            'Kartikeya': True,
+            'Kamsa': True,
+            'Kali': True
+        },
+        'breed_mappings': {
+            'Balaram': 'homid',
+            'Ahi': 'metis',
+            'Vasuki': 'lupus'
+        },
+        'special_breed_gifts': {
+            'Balaram': True,
+            'Ahi': True,
+            'Vasuki': True
+        }
+    },
+    'Nuwisha': {
+        'all_gifts_in_tribe': True,
+        'breed_mappings': {
+            'Homid': 'homid',
+            'Latrani': 'lupus'
+        }
+    },
+    'Ratkin': {
+        'aspects_to_auspices': {
+            'Tunnel Runner': True,
+            'Shadow Seer': True,
+            'Knife Skulker': True,
+            'Warrior': True,
+            'Engineer': True,
+            'Plague Lord': True,
+            'Munchmausen': True,
+            'Twitcher': True
+        },
+        'breed_mappings': {
+            'Homid': 'homid',
+            'Metis': 'metis',
+            'Rodens': 'lupus'
+        },
+        'special_breed_gifts': {
+            'Homid': True,
+            'Metis': True,
+            'Rodens': True
+        }
+    },
+    'Rokea': {
+        'auspices': {
+            'Brightwater': True,
+            'Dimwater': True,
+            'Darkwater': True
+        },
+        'breed_mappings': {
+            'Homid': 'homid',
+            'Squamus': 'lupus'
+        }
+    }
+}
+
 def _get_primary_thaumaturgy_path(character):
     """Get the primary thaumaturgy path for a character. This is the first path purchased and the one that is the highest rating. 
     if there are multiple paths at the same rating, use 'Path of Blood'."""
@@ -239,6 +414,216 @@ def calculate_xp_cost(character, stat_name, new_rating, category=None, subcatego
     splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
     mortal_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
 
+    # Special handling for Shifter gifts
+    if category == 'powers' and subcategory == 'gift' and splat == 'Shifter':
+        logger.log_info("Processing Shifter gift")
+        
+        # Get character's breed, auspice, and tribe
+        breed = character.db.stats.get('identity', {}).get('lineage', {}).get('Breed', {}).get('perm', '')
+        auspice = character.db.stats.get('identity', {}).get('lineage', {}).get('Auspice', {}).get('perm', '')
+        tribe = character.db.stats.get('identity', {}).get('lineage', {}).get('Tribe', {}).get('perm', '')
+        shifter_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+        
+        logger.log_info(f"Character details - Breed: {breed}, Auspice: {auspice}, Tribe: {tribe}, Type: {shifter_type}")
+        
+        # Find the gift in JSON files
+        import os
+        import json
+        
+        data_dir = os.path.join('diesirae', 'data')
+        gift_files = [
+            'rank1_garou_gifts.json',
+            'rank2_garou_gifts.json',
+            'rank3_garou_gifts.json',
+            'rank4_garou_gifts.json',
+            'rank5_garou_gifts.json',
+            'ajaba_gifts.json',
+            'bastet_gifts.json',
+            'corax_gifts.json',
+            'gurahl_gifts.json',
+            'kitsune_gifts.json',
+            'mokole_gifts.json',
+            'nagah_gifts.json',
+            'nuwisha_gifts.json',
+            'ratkin_gifts.json',
+            'rokea_gifts.json'
+        ]
+        
+        found_gift = None
+        for gift_file in gift_files:
+            try:
+                file_path = os.path.join(data_dir, gift_file)
+                if os.path.exists(file_path):
+                    with open(file_path, 'r') as f:
+                        gifts = json.load(f)
+                        # Check if the gift exists in this file
+                        for gift in gifts:
+                            if gift.get('name', '').lower() == stat_name.lower():
+                                found_gift = gift
+                                break
+                    if found_gift:
+                        break
+            except Exception as e:
+                logger.log_err(f"Error reading gift file {gift_file}: {str(e)}")
+                continue
+        
+        if found_gift:
+            logger.log_info(f"Found gift in JSON: {found_gift['name']}")
+            
+            # For Ajaba and other non-Garou shifter types, use their specific cost structure
+            if shifter_type and shifter_type.lower() != 'garou':
+                is_breed_gift, is_auspice_gift, is_tribe_gift = _check_shifter_gift_match(character, found_gift, shifter_type)
+                
+                # Special case for Kitsune ju-fu gifts
+                if shifter_type == 'Kitsune' and found_gift.get('gift_type') == 'ju-fu':
+                    total_cost = 0
+                    for rating in range(current_rating + 1, new_rating + 1):
+                        total_cost += 7  # Ju-fu gifts cost 7 XP per level
+                    logger.log_info(f"Kitsune ju-fu gift cost: {total_cost}")
+                    return total_cost, False
+                
+                # Calculate cost based on gift type
+                if is_breed_gift or is_auspice_gift or is_tribe_gift:
+                    total_cost = 0
+                    for rating in range(current_rating + 1, new_rating + 1):
+                        total_cost += 3  # Base cost of 3 XP per level for matching gifts
+                    logger.log_info(f"Non-Garou matching gift cost: {total_cost}")
+                    return total_cost, False
+                else:
+                    total_cost = 0
+                    for rating in range(current_rating + 1, new_rating + 1):
+                        total_cost += 5  # Higher cost for non-matching gifts
+                    logger.log_info(f"Non-Garou non-matching gift cost: {total_cost}")
+                    return total_cost, False
+
+            # For Garou, check if it's a breed, auspice, or tribe gift
+            is_breed_gift = False
+            is_auspice_gift = False
+            is_tribe_gift = False
+            is_special = False
+            
+            # Check breed gifts
+            if found_gift.get('shifter_type'):
+                allowed_types = found_gift['shifter_type'] if isinstance(found_gift['shifter_type'], list) else [found_gift['shifter_type']]
+                is_breed_gift = breed and breed.lower() in [t.lower() for t in allowed_types]
+            
+            # Check auspice gifts
+            if found_gift.get('auspice'):
+                allowed_auspices = found_gift['auspice'] if isinstance(found_gift['auspice'], list) else [found_gift['auspice']]
+                is_auspice_gift = auspice and auspice.lower() in [a.lower() for a in allowed_auspices]
+                logger.log_info(f"Checking auspice gift - Character auspice: {auspice}, Gift auspices: {allowed_auspices}, Is auspice gift: {is_auspice_gift}")
+            
+            # Check tribe gifts and special gifts
+            if found_gift.get('tribe'):
+                # Handle both string and list cases for tribe
+                tribes = found_gift['tribe'] if isinstance(found_gift['tribe'], list) else [found_gift['tribe']]
+                # Convert everything to lowercase for comparison
+                tribes_lower = [t.lower() for t in tribes]
+                tribe_lower = tribe.lower() if tribe else None
+                is_tribe_gift = tribe_lower and tribe_lower in tribes_lower
+                is_special = any(t.lower() in ['croatan', 'planetary'] for t in tribes)
+            
+            logger.log_info(f"Gift type checks - Breed: {is_breed_gift}, Auspice: {is_auspice_gift}, Tribe: {is_tribe_gift}, Special: {is_special}")
+            logger.log_info(f"Tribe check details - Character tribe: {tribe}, Gift tribes: {tribes}")
+            
+            # Calculate cost for each level being purchased
+            total_cost = 0
+            for rating in range(current_rating + 1, new_rating + 1):
+                if is_special:
+                    total_cost += 7  # Croatan/Planetary gifts cost 7 XP per level
+                    logger.log_info(f"Adding special gift cost: 7 XP for level {rating}")
+                elif is_breed_gift or is_auspice_gift or is_tribe_gift:
+                    total_cost += 3  # Breed/Auspice/Tribe gifts cost 3 XP per level
+                    logger.log_info(f"Adding breed/auspice/tribe gift cost: 3 XP for level {rating}")
+                else:
+                    total_cost += 5  # Other gifts cost 5 XP per level
+                    logger.log_info(f"Adding other gift cost: 5 XP for level {rating}")
+            
+            logger.log_info(f"Final calculated cost for Garou gift: {total_cost}")
+            return total_cost, False
+        
+        # If gift not found in JSON files, try database as fallback
+        from world.wod20th.models import Stat
+        from django.db.models import Q
+        
+        gift = Stat.objects.filter(
+            Q(name__iexact=stat_name) | Q(gift_alias__icontains=stat_name),
+            category='powers',
+            stat_type='gift'
+        ).first()
+        
+        if gift:
+            logger.log_info(f"Found gift in database: {gift.name}")
+            # Initialize variables
+            is_breed_gift = False
+            is_auspice_gift = False
+            is_tribe_gift = False
+            is_special = False
+            tribes = []  # Initialize tribes list
+            
+            # Debug logging for gift data
+            logger.log_info(f"Gift data - tribe: {gift.tribe}, type: {type(gift.tribe)}")
+            
+            if gift.shifter_type:
+                allowed_types = gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type]
+                is_breed_gift = breed and breed.lower() in [t.lower() for t in allowed_types]
+            
+            if gift.auspice:
+                allowed_auspices = gift.auspice if isinstance(gift.auspice, list) else [gift.auspice]
+                is_auspice_gift = auspice and auspice.lower() in [a.lower() for a in allowed_auspices]
+                logger.log_info(f"Checking auspice gift - Character auspice: {auspice}, Gift auspices: {allowed_auspices}, Is auspice gift: {is_auspice_gift}")
+            
+            if gift.tribe:
+                # Handle both string and list cases for tribe
+                if isinstance(gift.tribe, str):
+                    tribes = [gift.tribe]
+                elif isinstance(gift.tribe, list):
+                    tribes = gift.tribe
+                else:
+                    # Try to convert from JSON string if needed
+                    try:
+                        import json
+                        tribes = json.loads(gift.tribe)
+                        if isinstance(tribes, str):
+                            tribes = [tribes]
+                    except (json.JSONDecodeError, TypeError):
+                        tribes = []
+                
+                # Convert everything to lowercase for comparison
+                tribes_lower = [t.lower() for t in tribes]
+                tribe_lower = tribe.lower() if tribe else None
+                is_tribe_gift = tribe_lower and tribe_lower in tribes_lower
+                is_special = any(t.lower() in ['croatan', 'planetary'] for t in tribes)
+                
+                logger.log_info(f"Tribe processing - Raw tribes: {tribes}")
+                logger.log_info(f"Tribe processing - Lowercase tribes: {tribes_lower}")
+                logger.log_info(f"Tribe processing - Character tribe: {tribe_lower}")
+            
+            logger.log_info(f"Gift type checks - Breed: {is_breed_gift}, Auspice: {is_auspice_gift}, Tribe: {is_tribe_gift}, Special: {is_special}")
+            logger.log_info(f"Tribe check details - Character tribe: {tribe}, Gift tribes: {tribes}")
+            
+            total_cost = 0
+            for rating in range(current_rating + 1, new_rating + 1):
+                if is_special:
+                    total_cost += 7
+                    logger.log_info(f"Adding special gift cost: 7 XP for level {rating}")
+                elif is_breed_gift or is_auspice_gift or is_tribe_gift:
+                    total_cost += 3
+                    logger.log_info(f"Adding breed/auspice/tribe gift cost: 3 XP for level {rating}")
+                else:
+                    total_cost += 5
+                    logger.log_info(f"Adding other gift cost: 5 XP for level {rating}")
+            
+            logger.log_info(f"Final calculated cost for Garou gift: {total_cost}")
+            return total_cost, False
+        
+        # If gift not found anywhere, use base cost
+        total_cost = 0
+        for rating in range(current_rating + 1, new_rating + 1):
+            total_cost += 3  # Base cost of 3 XP per level
+        logger.log_info(f"Using base cost for gift not found: {total_cost}")
+        return total_cost, False
+
     # Special handling for Time based on splat
     if stat_name == 'Time':
         if splat == 'Mage':
@@ -311,7 +696,6 @@ def calculate_xp_cost(character, stat_name, new_rating, category=None, subcatego
             else:
                 # Cost is current rating × 4
                 total_cost = current_rating * 4
-                
         requires_approval = True  # Always require staff approval
         return (total_cost, requires_approval)
 
@@ -417,13 +801,11 @@ def calculate_xp_cost(character, stat_name, new_rating, category=None, subcatego
         # Cannot learn rituals higher than discipline rating
         if ritual_level > discipline_rating:
             return (0, False)
-            
         # Calculate cost based on in-clan status
         if is_in_clan:
             total_cost = ritual_level * 2  # Level x 2 XP for in-clan
         else:
             total_cost = ritual_level * 3  # Level x 3 XP for out-of-clan
-            
         requires_approval = True  # Always require staff approval for rituals
         return (total_cost, requires_approval)
 
@@ -576,27 +958,125 @@ def calculate_xp_cost(character, stat_name, new_rating, category=None, subcatego
                     return (0, False)  # Gift not found in database
 
         total_cost += dot_cost
-
     return (total_cost, requires_approval)
 
-def validate_xp_purchase(character, stat_name, new_rating, category=None, subcategory=None):
+def validate_xp_purchase(character, stat_name, new_rating, category=None, subcategory=None, is_staff_spend=False):
     """
     Validate if a character can purchase a stat increase.
-    
-    Args:
-        character: The character object
-        stat_name (str): Name of the stat being increased
-        new_rating (int): Target rating
-        category (str): Stat category
-        subcategory (str): Stat subcategory
-        
-    Returns:
-        tuple: (can_purchase, error_message)
+    Returns (can_purchase, error_message)
     """
     # Get character's splat
     splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
     if not splat:
         return False, "Character splat not set"
+
+    # If category and subcategory aren't provided, try to determine them
+    if not category or not subcategory:
+        from world.wod20th.utils.xp_utils import _determine_stat_category
+        category, subcategory = _determine_stat_category(stat_name)
+        if not category or not subcategory:
+            return False, f"Could not determine category for {stat_name}"
+
+    # Early check for merits and flaws - these always require staff approval
+    if category in ['merits', 'flaws'] and not is_staff_spend:
+        return False, f"{category.title()} require staff approval"
+
+    # If not a staff spend, check auto-spend limits first
+    if not is_staff_spend:
+        # Define auto-spend limits
+        AUTO_SPEND_LIMITS = {
+            'attributes': 3,  # All attributes up to 3
+            'abilities': 3,   # All abilities up to 3
+            'backgrounds': {
+                'Resources': 2,
+                'Contacts': 2,
+                'Allies': 2,
+                'Backup': 2,
+                'Herd': 2,
+                'Library': 2,
+                'Kinfolk': 2,
+                'Spirit Heritage': 2,
+                'Paranormal Tools': 2,
+                'Servants': 2,
+                'Armory': 2,
+                'Retinue': 2,
+                'Spies': 2,
+                'Professional Certification': 1,
+                'Past Lives': 2,
+                'Dreamers': 2
+            },
+            'pools': {
+                'Willpower': 5
+            },
+            'powers': {
+                'discipline': {
+                    'max_level': 2,
+                    'allowed': ['Potence', 'Fortitude', 'Celerity', 'Auspex', 'Obfuscate']
+                },
+                'sphere': 2,  # All spheres up to 2
+                'art': 2,     # All arts up to 2
+                'realm': 2,   # All realms up to 2
+                'gift': 1     # All non-special gifts up to 1
+            }
+        }
+
+        # Check if the purchase is within auto-spend limits
+        if category == 'attributes' and new_rating > AUTO_SPEND_LIMITS['attributes']:
+            return False, f"Staff approval required for {stat_name} above {AUTO_SPEND_LIMITS['attributes']}"
+
+        elif category == 'abilities' and new_rating > AUTO_SPEND_LIMITS['abilities']:
+            return False, f"Staff approval required for {stat_name} above {AUTO_SPEND_LIMITS['abilities']}"
+
+        elif category == 'backgrounds':
+            max_level = AUTO_SPEND_LIMITS['backgrounds'].get(stat_name)
+            if max_level is None:
+                return False, f"Staff approval required for {stat_name} background"
+            if new_rating > max_level:
+                return False, f"Staff approval required for {stat_name} above {max_level}"
+
+        elif category == 'pools':
+            if stat_name == 'Willpower':
+                if new_rating > AUTO_SPEND_LIMITS['pools']['Willpower']:
+                    return False, f"Staff approval required for Willpower above {AUTO_SPEND_LIMITS['pools']['Willpower']}"
+
+        elif category == 'powers':
+            if subcategory == 'discipline':
+                power_limits = AUTO_SPEND_LIMITS['powers']['discipline']
+                if stat_name not in power_limits['allowed']:
+                    return False, f"Staff approval required for {stat_name}"
+                if new_rating > power_limits['max_level']:
+                    return False, f"Staff approval required for {stat_name} above {power_limits['max_level']}"
+
+            elif subcategory in ['sphere', 'art', 'realm']:
+                max_level = AUTO_SPEND_LIMITS['powers'].get(subcategory)
+                if new_rating > max_level:
+                    return False, f"Staff approval required for {stat_name} above {max_level}"
+
+            elif subcategory == 'gift':
+                # Check if it's a special gift (Planetary or Camp gift)
+                from world.wod20th.models import Stat
+                gift = Stat.objects.filter(
+                    name__iexact=stat_name,
+                    category='powers',
+                    stat_type='gift'
+                ).first()
+
+                if gift:
+                    # Check for special gifts that always require approval
+                    if gift.tribe:
+                        tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+                        if any(t.lower() in ['croatan', 'planetary'] for t in tribes):
+                            return False, "Staff approval required for Planetary gifts"
+
+                    if gift.camp:
+                        return False, "Staff approval required for Camp gifts"
+
+                if new_rating > AUTO_SPEND_LIMITS['powers']['gift']:
+                    return False, f"Staff approval required for gifts above level {AUTO_SPEND_LIMITS['powers']['gift']}"
+
+            # These subcategories always require staff approval for players
+            elif subcategory in ['thaumaturgy', 'necromancy', 'thaum_ritual', 'necromancy_ritual']:
+                return False, f"Staff approval required for {subcategory}"
 
     # If it's a discipline, check if it's in the allowed list for player purchases
     if category == 'powers' and subcategory == 'discipline':
@@ -604,7 +1084,7 @@ def validate_xp_purchase(character, stat_name, new_rating, category=None, subcat
             return False, f"{stat_name} requires staff approval to purchase"
         elif stat_name not in PURCHASABLE_DISCIPLINES:
             return False, f"Discipline {stat_name} requires staff approval to purchase"
-
+        
     # Special handling for Thaumaturgy and Necromancy paths
     if category == 'powers' and subcategory in ['thaumaturgy', 'necromancy']:
         # Check if character has the required discipline
@@ -626,9 +1106,6 @@ def validate_xp_purchase(character, stat_name, new_rating, category=None, subcat
             if new_rating > primary_path_rating:
                 return False, f"Secondary {subcategory.title()} paths cannot exceed primary path rating ({primary_path_rating})"
 
-        # These paths always require staff approval
-        return False, f"{subcategory.title()} paths require staff approval"
-
     # Special handling for Thaumaturgy and Necromancy rituals
     if category == 'powers' and subcategory in ['thaum_ritual', 'necromancy_ritual']:
         # Check if character has the required discipline
@@ -641,9 +1118,6 @@ def validate_xp_purchase(character, stat_name, new_rating, category=None, subcat
         # Cannot learn rituals higher than discipline rating
         if new_rating > discipline_rating:
             return False, f"Cannot learn level {new_rating} rituals without {discipline_name} {new_rating}"
-            
-        # Rituals always require staff approval
-        return False, f"{discipline_name} rituals require staff approval"
 
     # Handle pools (Willpower, Rage, Gnosis, Glamour)
     if category == 'pools' and subcategory == 'dual':
@@ -653,44 +1127,26 @@ def validate_xp_purchase(character, stat_name, new_rating, category=None, subcat
         # Check if new rating is actually an increase
         if new_rating <= current_rating:
             return False, "New rating must be higher than current rating"
-            
-        # Apply approval thresholds based on pool type
-        if stat_name == 'Willpower':
-            # Willpower above 5 requires staff approval
-            if new_rating > 5:
-                return False, "Willpower above 5 requires staff approval"
-        elif stat_name == 'Rage':
-            # Rage above 5 requires staff approval
-            if new_rating > 5:
+
+        if not is_staff_spend:  # Only apply these restrictions for non-staff spends
+            if stat_name == 'Rage' and new_rating > 5:
                 return False, "Rage above 5 requires staff approval"
-        elif stat_name == 'Glamour':
-            # Glamour above 5 requires staff approval
-            if new_rating > 5:
+            elif stat_name == 'Glamour' and new_rating > 5:
                 return False, "Glamour above 5 requires staff approval"
-        elif stat_name == 'Gnosis':
-            # For Shifters, Gnosis is a pool stat
-            char_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
-            
-            # Special check for Kinfolk (they should use the merit instead)
-            if splat == 'Mortal+' and char_type == 'Kinfolk':
-                return False, "Kinfolk must purchase the Gnosis merit instead of directly increasing Gnosis pool"
-                
-            # Gnosis above 5 requires staff approval for Shifters
-            if new_rating > 5:
-                return False, "Gnosis above 5 requires staff approval"
-        elif stat_name in ['Arete', 'Enlightenment']:
-            # Arete/Enlightenment above 1 requires staff approval
-            if new_rating > 1:
+            elif stat_name == 'Gnosis':
+                char_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+                if splat == 'Mortal+' and char_type == 'Kinfolk':
+                    return False, "Kinfolk must purchase the Gnosis merit instead of directly increasing Gnosis pool"
+                if new_rating > 5:
+                    return False, "Gnosis above 5 requires staff approval"
+            elif stat_name in ['Arete', 'Enlightenment'] and new_rating > 1:
                 return False, f"{stat_name} above 1 requires staff approval"
-                
-        return True, ""
 
     # Handle merits and flaws
     if category == 'merits':
         # Check if it's a valid merit
         merit_found = False
         for merit_type, merits in MERIT_CATEGORIES.items():
-            # Try exact match first
             if stat_name in merits:
                 merit_found = True
                 subcategory = merit_type
@@ -719,6 +1175,9 @@ def validate_xp_purchase(character, stat_name, new_rating, category=None, subcat
         if current_rating > 0:
             return False, f"Character already has the merit {stat_name}"
 
+        if not is_staff_spend:
+            return False, "Merits require staff approval"
+
     elif category == 'flaws':
         # Check if it's a valid flaw
         flaw_found = False
@@ -740,78 +1199,22 @@ def validate_xp_purchase(character, stat_name, new_rating, category=None, subcat
             return False, f"{stat_name} is not a valid flaw"
             
         # Flaws can only be bought off through staffspend
-        return False, "Flaws can only be bought off through staffspend"
+        if not is_staff_spend:
+            return False, "Flaws can only be bought off through staffspend"
 
-    # Validate blessings against the BLESSINGS list
-    if category == 'powers' and subcategory == 'blessing':
-        if stat_name not in BLESSINGS:
-            return False, f"{stat_name} is not a valid blessing"
-        # Blessings can be purchased up to rating 2 without approval
-        if new_rating > 2:
-            return False, "Blessings above rating 2 require staff approval"
+    # Validate blessings and charms
+    if category == 'powers':
+        if subcategory == 'blessing':
+            if stat_name not in BLESSINGS:
+                return False, f"{stat_name} is not a valid blessing"
+            if not is_staff_spend and new_rating > 2:
+                return False, "Blessings above rating 2 require staff approval"
+        elif subcategory == 'charm':
+            if stat_name not in CHARMS:
+                return False, f"{stat_name} is not a valid charm"
+            if not is_staff_spend and new_rating > 0:
+                return False, "Charms require staff approval"
 
-    # Validate charms against the CHARMS list
-    if category == 'powers' and subcategory == 'charm':
-        if stat_name not in CHARMS:
-            return False, f"{stat_name} is not a valid charm"
-        # Charms can be purchased up to rating 2 without approval
-        if new_rating > 0:
-            return False, "Charms require staff approval"
-
-    # Get current rating based on category
-    if category == 'powers' and subcategory == 'discipline':
-        current_rating = character.db.stats.get('powers', {}).get('discipline', {}).get(stat_name, {}).get('perm', 0)
-    elif category == 'powers':
-        current_rating = character.db.stats.get('powers', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
-    else:
-        current_rating = character.db.stats.get(category, {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
-
-    # Basic validation
-    if new_rating <= current_rating:
-        return False, "New rating must be higher than current rating"
-
-    # Check auto-approval rules
-    if category == 'attributes':
-        if new_rating > AUTO_APPROVE['all']['attributes']:
-            return False, "Attributes above 3 require staff approval"
-    elif category in ['abilities', 'secondary_abilities']:
-        if new_rating > AUTO_APPROVE['all']['abilities']:
-            return False, "Abilities above 3 require staff approval"
-    elif category == 'backgrounds':
-        max_rating = AUTO_APPROVE['all']['backgrounds'].get(stat_name, 2)
-        if new_rating > max_rating:
-            return False, f"Background {stat_name} above {max_rating} requires staff approval"
-    elif category == 'powers':
-        # Get splat-specific power rules
-        power_rules = AUTO_APPROVE.get(splat, {}).get('powers', {})
-        max_rating = power_rules.get('max', 2)
-        allowed_types = power_rules.get('types', [])
-        
-        # Special handling for Kinfolk characters and gifts
-        char_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
-        if splat == 'Mortal+' and char_type == 'Kinfolk' and subcategory == 'gift':
-            # Kinfolk can buy gifts up to level 1 without approval
-            if new_rating <= 1:
-                return True, ""
-            else:
-                return False, f"Kinfolk can only purchase gifts up to level 1 without staff approval"
-        
-        if subcategory not in allowed_types:
-            return False, f"{subcategory} cannot be purchased with XP"
-            
-        if new_rating > max_rating:
-            return False, f"{subcategory} above {max_rating} requires staff approval"
-            
-        # Special handling for vampire disciplines
-        if splat == 'Vampire' and subcategory == 'discipline':
-            if stat_name not in PURCHASABLE_DISCIPLINES:
-                return False, f"{stat_name} cannot be purchased with XP"
-
-        if splat == 'Vampire' and subcategory == 'necromancy':
-            return False, f"Necromancy paths require staff approval."
-            
-        if splat == 'Vampire' and subcategory == 'thaumaturgy':
-            return False, f"Thaumaturgical paths require staff approval."
     return True, ""
 
 def process_xp_purchase(character, stat_name, new_rating, category, subcategory, reason="", current_rating=None, pre_calculated_cost=None):
@@ -840,7 +1243,66 @@ def process_xp_purchase(character, stat_name, new_rating, category, subcategory,
         else:
             cost = pre_calculated_cost
             requires_approval = False
+        # Special handling for Thaumaturgy and Necromancy discipline increases
+        if category == 'powers' and subcategory == 'discipline' and stat_name in ['Thaumaturgy', 'Necromancy']:
+            # If this is the first dot AND they have no existing paths, set up the primary path
+            path_subcategory = stat_name.lower()
+            existing_paths = character.db.stats.get('powers', {}).get(path_subcategory, {})
+            
+            if current_rating == 0 and not existing_paths:
+                # Initialize path structure if needed
+                if 'powers' not in character.db.stats:
+                    character.db.stats['powers'] = {}
+                if path_subcategory not in character.db.stats['powers']:
+                    character.db.stats['powers'][path_subcategory] = {}
+                
+                # Set up default primary path at rating 1
+                default_path = 'Path of Blood' if stat_name == 'Thaumaturgy' else 'Sepulchre Path'
+                character.db.stats['powers'][path_subcategory][default_path] = {
+                    'perm': 1,
+                    'temp': 1
+                }
+                logger.log_info(f"Set up initial {default_path} at rating 1")
 
+        # Special handling for Gnosis
+        if stat_name.lower() == 'gnosis':
+            splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+            mortal_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+            
+            # For Kinfolk, Gnosis should be processed as a merit
+            if splat == 'Mortal+' and mortal_type == 'Kinfolk':
+                category = 'merits'
+                subcategory = 'supernatural'
+                logger.log_info(f"Processing Gnosis as a merit for Kinfolk character")
+                
+                # Set Gnosis pool based on merit level
+                if 'pools' not in character.db.stats:
+                    character.db.stats['pools'] = {}
+                if 'dual' not in character.db.stats['pools']:
+                    character.db.stats['pools']['dual'] = {}
+                
+                # Calculate Gnosis pool value based on merit rating
+                if new_rating == 5:
+                    gnosis_value = 1
+                elif new_rating == 6:
+                    gnosis_value = 2
+                elif new_rating == 7:
+                    gnosis_value = 3
+                else:
+                    gnosis_value = 0
+                
+                character.db.stats['pools']['dual']['Gnosis'] = {
+                    'perm': gnosis_value,
+                    'temp': gnosis_value
+                }
+                logger.log_info(f"Set Gnosis pool to {gnosis_value} based on merit rating {new_rating}")
+            
+            # For Shifters, Gnosis should be processed as a pool
+            elif splat == 'Shifter':
+                category = 'pools'
+                subcategory = 'dual'
+                logger.log_info(f"Processing Gnosis as a pool for Shifter character")
+                
         if cost == 0:
             return False, "Invalid stat or no increase needed"
 
@@ -888,9 +1350,7 @@ def process_xp_purchase(character, stat_name, new_rating, category, subcategory,
         return False, f"Error: {str(e)}"
 
 def process_xp_spend(character, stat_name, new_rating, category=None, subcategory=None, reason="", is_staff_spend=False):
-    """
-    Process an XP spend request from start to finish.
-    """
+    """Process an XP spend request."""
     try:
         # Special handling for Thaumaturgy and Necromancy discipline increases
         if category == 'powers' and subcategory == 'discipline' and stat_name in ['Thaumaturgy', 'Necromancy']:
@@ -2316,3 +2776,127 @@ def check_weekly_xp_eligibility():
     report_lines.append(f"- Total XP that would be awarded: {base_xp * eligible_count}")
     
     return eligible_count, base_xp * eligible_count, "\n".join(report_lines)
+
+def _check_shifter_gift_match(character, gift_data, shifter_type):
+    """Helper function to check if a gift matches a shifter's breed/auspice/tribe.
+    
+    Args:
+        character: The character object
+        gift_data: Dictionary containing gift data (name, shifter_type, tribe, auspice, breed, etc.)
+        shifter_type: The character's shifter type (Garou, Ananasi, etc.)
+        
+    Returns:
+        tuple: (is_breed_gift, is_auspice_gift, is_tribe_gift)
+    """
+    logger.log_info(f"Checking gift match for {shifter_type} - Gift data: {gift_data}")
+    
+    if not shifter_type or shifter_type not in SHIFTER_MAPPINGS:
+        return False, False, False
+
+    mapping = SHIFTER_MAPPINGS[shifter_type]
+    
+    # Get character's details
+    breed = character.db.stats.get('identity', {}).get('lineage', {}).get('Breed', {}).get('perm', '')
+    aspect = character.db.stats.get('identity', {}).get('lineage', {}).get('Aspect', {}).get('perm', '')
+    auspice = character.db.stats.get('identity', {}).get('lineage', {}).get('Auspice', {}).get('perm', '')
+    tribe = character.db.stats.get('identity', {}).get('lineage', {}).get('Tribe', {}).get('perm', '')
+    faction = character.db.stats.get('identity', {}).get('lineage', {}).get('Faction', {}).get('perm', '')
+    path = character.db.stats.get('identity', {}).get('lineage', {}).get('Path', {}).get('perm', '')
+    
+    logger.log_info(f"Character details - Breed: {breed}, Aspect: {aspect}, Auspice: {auspice}, Tribe: {tribe}, Faction: {faction}, Path: {path}")
+
+    # Special case for Corax and Nuwisha - all non-breed gifts are considered in-tribe
+    if mapping.get('all_gifts_in_tribe'):
+        is_breed_gift = False
+        if gift_data.get('breed'):
+            allowed_breeds = gift_data['breed'] if isinstance(gift_data['breed'], list) else [gift_data['breed']]
+            mapped_breed = mapping['breed_mappings'].get(breed)
+            is_breed_gift = mapped_breed and mapped_breed.lower() in [b.lower() for b in allowed_breeds]
+            # Also check if the actual breed name is in the allowed breeds
+            is_breed_gift = is_breed_gift or breed.lower() in [b.lower() for b in allowed_breeds]
+        return is_breed_gift, True, True
+
+    # Check breed gifts
+    is_breed_gift = False
+    if gift_data.get('breed') and breed:
+        allowed_breeds = gift_data['breed'] if isinstance(gift_data['breed'], list) else [gift_data['breed']]
+        mapped_breed = mapping['breed_mappings'].get(breed)
+        
+        # Check both mapped breed and actual breed name
+        is_breed_gift = mapped_breed and mapped_breed.lower() in [b.lower() for b in allowed_breeds]
+        is_breed_gift = is_breed_gift or breed.lower() in [b.lower() for b in allowed_breeds]
+        
+        # Check for special breed-specific gifts
+        if mapping.get('special_breed_gifts', {}).get(breed):
+            is_breed_gift = is_breed_gift or breed.lower() in [b.lower() for b in allowed_breeds]
+        
+        logger.log_info(f"Breed gift check - Mapped breed: {mapped_breed}, Is breed gift: {is_breed_gift}")
+
+    # Check auspice/aspect/path gifts
+    is_auspice_gift = False
+    if gift_data.get('auspice'):
+        allowed_auspices = gift_data['auspice'] if isinstance(gift_data['auspice'], list) else [gift_data['auspice']]
+        logger.log_info(f"Checking auspice gift - Allowed auspices: {allowed_auspices}")
+        
+        # Handle different auspice-like attributes based on shifter type
+        if mapping.get('aspects_to_auspices') and aspect:
+            is_auspice_gift = aspect in mapping['aspects_to_auspices']
+            logger.log_info(f"Checking aspect as auspice - Aspect: {aspect}, Is auspice gift: {is_auspice_gift}")
+            
+        elif mapping.get('factions_to_auspices') and faction:
+            is_auspice_gift = faction in mapping['factions_to_auspices']
+            logger.log_info(f"Checking faction as auspice - Faction: {faction}, Is auspice gift: {is_auspice_gift}")
+            
+        elif mapping.get('paths_to_auspices') and path:
+            is_auspice_gift = path in mapping['paths_to_auspices']
+            logger.log_info(f"Checking path as auspice - Path: {path}, Is auspice gift: {is_auspice_gift}")
+            
+        elif mapping.get('auspices') and auspice:
+            # Handle direct auspice matches and mappings
+            if auspice in mapping['auspices']:
+                is_auspice_gift = auspice.lower() in [a.lower() for a in allowed_auspices]
+            elif mapping.get('auspice_mappings', {}).get(auspice):
+                mapped_auspice = mapping['auspice_mappings'][auspice]
+                is_auspice_gift = mapped_auspice.lower() in [a.lower() for a in allowed_auspices]
+            logger.log_info(f"Checking direct auspice - Auspice: {auspice}, Mapped: {mapping.get('auspice_mappings', {}).get(auspice)}, Is auspice gift: {is_auspice_gift}")
+
+    # Check tribe/aspect gifts
+    is_tribe_gift = False
+    if gift_data.get('tribe') and tribe:
+        allowed_tribes = gift_data['tribe'] if isinstance(gift_data['tribe'], list) else [gift_data['tribe']]
+        logger.log_info(f"Checking tribe gift - Allowed tribes: {allowed_tribes}, Character tribe: {tribe}")
+        
+        # Special handling for Bastet tribes
+        if shifter_type == 'Bastet':
+            # Convert tribe names to lowercase for comparison
+            tribe_lower = tribe.lower()
+            allowed_tribes_lower = [t.lower() for t in allowed_tribes]
+            
+            # Check if the tribe is in the allowed tribes list
+            is_tribe_gift = tribe_lower in allowed_tribes_lower
+            
+            logger.log_info(f"Bastet tribe check - Tribe: {tribe_lower}, Allowed tribes: {allowed_tribes_lower}, Is tribe gift: {is_tribe_gift}")
+        else:
+            # Handle different tribe-like attributes
+            if mapping.get('aspects_to_tribes') and aspect:
+                is_tribe_gift = aspect in mapping['aspects_to_tribes'] and aspect.lower() in [t.lower() for t in allowed_tribes]
+                logger.log_info(f"Checking aspect as tribe - Aspect: {aspect}, Is tribe gift: {is_tribe_gift}")
+            elif mapping.get('tribes'):
+                # For other shifters with direct tribe matches
+                is_tribe_gift = tribe.lower() in [t.lower() for t in allowed_tribes]
+                logger.log_info(f"Checking direct tribe - Tribe: {tribe}, Allowed tribes: {allowed_tribes}, Is tribe gift: {is_tribe_gift}")
+
+    # Special case for Kitsune ju-fu gifts
+    if shifter_type == 'Kitsune' and mapping['special_gifts'].get('ju-fu'):
+        if gift_data.get('gift_type') == 'ju-fu':
+            logger.log_info("Found Kitsune ju-fu gift")
+            return False, False, True  # Return special flag for ju-fu gifts
+
+    logger.log_info(f"Final gift match results for {shifter_type}:")
+    logger.log_info(f"- Breed gift: {is_breed_gift}")
+    logger.log_info(f"- Auspice gift: {is_auspice_gift}")
+    logger.log_info(f"- Tribe gift: {is_tribe_gift}")
+    logger.log_info(f"- Gift data: {gift_data}")
+    logger.log_info(f"- Character tribe: {tribe}")
+
+    return is_breed_gift, is_auspice_gift, is_tribe_gift
