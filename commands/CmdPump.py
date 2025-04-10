@@ -1,6 +1,7 @@
 from evennia import default_cmds
 from evennia.utils import utils
 from world.wod20th.models import Stat
+from evennia import search_object
 
 class CmdPump(default_cmds.MuxCommand):
     """
@@ -11,6 +12,7 @@ class CmdPump(default_cmds.MuxCommand):
       +boost/end <id>
       +boost/endall
       +boosts - List active attribute boosts
+      +boosts <name> - Staff: View another character's boosts
 
     Examples:
       +boost strength=2
@@ -21,6 +23,7 @@ class CmdPump(default_cmds.MuxCommand):
       +boost/end 1
       +boost/endall
       +boosts
+      +boosts John - Staff: View John's boosts
 
     This command allows characters to temporarily boost their stats
     based on their supernatural type:
@@ -33,6 +36,7 @@ class CmdPump(default_cmds.MuxCommand):
     Use +boost/end <id> to end a specific boost early.
     Use +boost/endall to end all active boosts.
     Use +boosts to see active boosts and their IDs.
+    Staff can use +boosts <name> to view another character's boosts.
     """
 
     key = "+boost"
@@ -267,20 +271,57 @@ class CmdPump(default_cmds.MuxCommand):
         
         caller.msg(f"Ended boost #{boost_id} - Your {found_stat} returns to {new_value}.")
 
-    def _handle_boosts_command(self, caller):
-        """Handle the +boosts command to list active boosts."""
-        self._ensure_attribute_boosts(caller)
+    def _format_boosts_display(self, target, boosts):
+        """Format the boosts display with proper styling."""
+        total_width = 78
         
-        if not caller.db.attribute_boosts:
-            caller.msg("You have no active stat boosts.")
-            return
-
-        caller.msg("Active stat boosts:")
-        for stat, boost_info in caller.db.attribute_boosts.items():
+        # Header
+        title = f" {target.name}'s Boosts "
+        title_len = len(title)
+        dash_count = (total_width - title_len) // 2
+        msg = f"{'|b-|n' * dash_count}{title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
+        
+        if not boosts:
+            msg += "|wNo active boosts.|n\n"
+            return msg
+            
+        # Format boosts display
+        left_col_width = 20
+        right_col_width = 12
+        spacing = " " * 14
+        
+        for stat, boost_info in boosts.items():
             source = boost_info.get('source', 'Unknown')
             amount = boost_info.get('amount', 0)
             boost_id = boost_info.get('id', '?')
-            caller.msg(f"#{boost_id} {stat}: +{amount} from {source}")
+            
+            stat_display = f"{'|w' + stat + ':|n':<{left_col_width}}{'+' + str(amount):>{right_col_width}}"
+            source_display = f"{'|wSource:|n':<{left_col_width}}{source:>{right_col_width}}"
+            id_display = f"{'|wID:|n':<{left_col_width}}{'#' + str(boost_id):>{right_col_width}}"
+            
+            msg += f"{stat_display}{spacing}{source_display}\n"
+            msg += f"{id_display}\n"
+            msg += f"{'|b-|n' * total_width}\n"
+            
+        return msg
+
+    def _handle_boosts_command(self, caller, target=None):
+        """Handle the +boosts command to list active boosts."""
+        if not target:
+            target = caller
+            
+        self._ensure_attribute_boosts(target)
+        
+        if not target.db.attribute_boosts:
+            if target == caller:
+                caller.msg("You have no active stat boosts.")
+            else:
+                caller.msg(f"{target.name} has no active stat boosts.")
+            return
+
+        # Format and display the boosts
+        msg = self._format_boosts_display(target, target.db.attribute_boosts)
+        caller.msg(msg)
 
     def _handle_endall_boosts(self, caller):
         """Handle the /endall switch to end all active boosts."""
@@ -338,7 +379,26 @@ class CmdPump(default_cmds.MuxCommand):
     def func(self):
         caller = self.caller
 
-        # Handle +boosts command
+        # Handle +boosts command with target name (staff only)
+        if self.cmdstring in ['+boosts', 'boosts'] and self.args:
+            if not caller.check_permstring("Builders"):
+                caller.msg("You don't have permission to view other characters' boosts.")
+                return
+                
+            # Find the target character (works for both online and offline)
+            target = search_object(self.args, typeclass="typeclasses.characters.Character")
+            if not target:
+                caller.msg(f"Could not find character '{self.args}'.")
+                return
+            if len(target) > 1:
+                caller.msg(f"Multiple matches found for '{self.args}'. Please be more specific.")
+                return
+                
+            target = target[0]  # Get the first (and only) match
+            self._handle_boosts_command(caller, target)
+            return
+
+        # Handle regular +boosts command
         if self.cmdstring in ['+boosts', 'boosts']:
             self._handle_boosts_command(caller)
             return

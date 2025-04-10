@@ -54,7 +54,7 @@ class CmdSheet(MuxCommand):
     If no character is specified, shows your own sheet.
     """
     key = "+sheet"
-    aliases = ["sh"]
+    aliases = ["+stats"]
     help_category = "Chargen & Character Info"
     locks = "cmd:all()"  # Everyone can use this command
 
@@ -283,7 +283,7 @@ class CmdSheet(MuxCommand):
                          'Nunnehi Totem', 'Clan', 'Generation', 'Sire', 'Path of Enlightenment', 'Kith', 'Seeming', 'House', 
                          'Seelie Legacy', 'Unseelie Legacy', 'Type', 'Tribe', 'Breed', 'Auspice', 'Jamak Spirit',
                          'Tradition', 'Convention', 'Affiliation', 'Phyla', 'Traditions Subfaction', 'Methodology',
-                         'Spirit Type', 'Spirit Name', 'Domitor', 'Society', 'Order', 'Coven', 'Cabal', 'Plague', 'Crown', 
+                         'Spirit Type', 'Spirit Name', 'Domitor', 'Society', 'Fellowship', 'Coven', 'Cabal', 'Plague', 'Crown', 
                          'Stream', 'Kitsune Path', 'Varna', 'Deed Name', 'Motivation', 'Possessed Type', 'Date of Possession',
                          'Companion Type', 'Patron Totem', 'Pack', 'Affinity Realm', 'Fae Court', 'Fae Name', 'Camp', 'Lodge',
                          'Fang House', 'Nephandi Faction', 'Fuel', 'Elemental Affinity', 'Anchor', 'Kinfolk Breed', 'Sect']:
@@ -507,7 +507,7 @@ class CmdSheet(MuxCommand):
         elif splat == 'Changeling':
             base_abilities['Talents'].append('Kenning')
             base_abilities['Knowledges'].append('Gremayre')
-        elif splat == 'Companion':
+        elif splat == 'Companion' and character.get_stat('powers', 'special_advantage', 'Companion Wings', temp=False) > 0:
             base_abilities['Talents'].append('Flight')
 
         # Format each category
@@ -595,8 +595,38 @@ class CmdSheet(MuxCommand):
 
         # Get character's splat and add splat-specific abilities
         splat = character.get_stat('other', 'splat', 'Splat', temp=False)
+        type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+        fellowship = character.get_stat('identity', 'lineage', 'Fellowship', temp=False)
+        affiliation = character.get_stat('identity', 'lineage', 'Affiliation', temp=False)
+        tradition = character.get_stat('identity', 'lineage', 'Tradition', temp=False)
+        
+        # First handle basic abilities for each splat
         if splat and splat.lower() == 'mage':
-            base_secondary_talents.extend(['Blatancy', 'Do', 'Flying', 'High Ritual'])
+            base_secondary_talents.extend(['Blatancy', 'Flying', 'High Ritual'])
+        elif splat and splat.lower() == 'mortal+' and type and type.lower() in ['sorcerer', 'psychic', 'faithful']:
+            base_secondary_talents.extend(['Flying', 'High Ritual'])
+        
+        # Then add fellowship/tradition/affiliation specific abilities
+        if splat and splat.lower() == 'mage' and affiliation and affiliation.lower() in 'technocracy':
+            base_secondary_skills.extend(['Biotech', 'Energy Weapons', 'Helmsman', 'Microgravity Ops'])
+            base_secondary_knowledges.extend(['Cybernetics', 'Hypertech', 'Paraphysics', 'Xenobiology'])
+        
+        if splat and splat.lower() == 'mage' and tradition and tradition.lower() in ['akashayana', 'akashic brotherhood']:
+            base_secondary_talents.append('Do')
+        
+        if splat and splat.lower() == 'mage' and tradition and tradition.lower() in ['virtual adepts', 'sons of ether', 'society of ether', 'etherites']:
+            base_secondary_skills.extend(['Biotech', 'Energy Weapons', 'Helmsman', 'Microgravity Ops'])
+            base_secondary_knowledges.extend(['Cybernetics', 'Hypertech', 'Paraphysics', 'Xenobiology'])
+        
+        # Handle Mortal+ special fellowship abilities
+        if splat and splat.lower() == 'mortal+' and type and type.lower() in ['sorcerer', 'psychic', 'faithful']:
+            if fellowship and fellowship.lower() in ['sons of ether', 'virtual adepts', 'society of ether', 'etherites', 'new world order', 'iteration x', 'void engineers', 'syndicate', 'progenitors']:
+                base_secondary_skills.extend(['Biotech', 'Energy Weapons', 'Helmsman', 'Microgravity Ops'])
+                base_secondary_knowledges.extend(['Cybernetics', 'Hypertech', 'Paraphysics', 'Xenobiology'])
+            elif fellowship and fellowship.lower() in ['akashayana', 'akashic brotherhood']:
+                base_secondary_talents.append('Do')
+        
+        if splat and splat.lower() == 'companion' and affiliation and affiliation.lower() in 'technocracy':
             base_secondary_skills.extend(['Biotech', 'Energy Weapons', 'Helmsman', 'Microgravity Ops'])
             base_secondary_knowledges.extend(['Cybernetics', 'Hypertech', 'Paraphysics', 'Xenobiology'])
 

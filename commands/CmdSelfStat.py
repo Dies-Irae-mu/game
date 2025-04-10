@@ -22,7 +22,6 @@ from world.wod20th.utils.stat_mappings import (
     FLAW_SPLAT_RESTRICTIONS, ARTS, REALMS, ALL_MERITS, ALL_FLAWS,
     KINFOLK_BREED_CHOICES
 )
-from world.wod20th.models import Stat
 from world.wod20th.utils.vampire_utils import (
     calculate_blood_pool, initialize_vampire_stats, update_vampire_virtues_on_path_change, 
     CLAN_CHOICES, get_clan_disciplines, validate_vampire_stats, validate_vampire_path

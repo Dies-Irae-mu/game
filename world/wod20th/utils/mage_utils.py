@@ -1,14 +1,14 @@
 """
 Utility functions for handling Mage-specific character initialization and updates.
 """
-from world.wod20th.models import Stat
+from evennia.utils import logger
 from world.wod20th.utils.stat_mappings import (
     MAGE_SPHERES, TRADITION_SUBFACTION, METHODOLOGIES,
     MAGE_BACKGROUNDS, TECHNOCRACY_BACKGROUNDS,
     TRADITIONS_BACKGROUNDS, NEPHANDI_BACKGROUNDS
 )
 from world.wod20th.utils.banality import get_default_banality
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set, Tuple, Optional
 
 # Valid mage affiliations
 AFFILIATION = {'Traditions', 'Technocracy', 'Nephandi'}
@@ -123,6 +123,45 @@ SPHERE_MAPPINGS = {
     'Spirit': 'Dimensional Science',
     'Prime': 'Primal Utility'
 }
+
+# Valid mage traditions and their affinity spheres
+TRADITION_AFFINITY_SPHERES = {
+    'Akashic Brotherhood': ['Mind'],
+    'Celestial Chorus': ['Prime'],
+    'Cult of Ecstasy': ['Time'],
+    'Dreamspeakers': ['Spirit'],
+    'Euthanatos': ['Entropy'],
+    'Order of Hermes': ['Forces'],
+    'Sons of Ether': ['Matter'],
+    'Verbena': ['Life'],
+    'Virtual Adepts': ['Correspondence'],
+    'Hollow Ones': [],  # No affinity sphere
+}
+
+# Convention affinity spheres
+CONVENTION_AFFINITY_SPHERES = {
+    'Iteration X': ['Matter'],
+    'New World Order': ['Mind'],
+    'Progenitors': ['Life'],
+    'Syndicate': ['Entropy'],
+    'Void Engineers': ['Correspondence'],
+}
+
+# Valid spheres
+SPHERES = [
+    'Correspondence',
+    'Entropy',
+    'Forces',
+    'Life',
+    'Matter',
+    'Mind',
+    'Prime',
+    'Spirit',
+    'Time',
+    'Primal Utility',
+    'Dimensional Science',
+    'Data'
+]
 
 def initialize_mage_stats(character, affiliation, tradition=None, convention=None, nephandi_faction=None):
     """Initialize specific stats for a mage character."""
@@ -625,4 +664,148 @@ def fix_misplaced_secondary_abilities(character):
     
     if changes_made:
         return True, "Fixed the following:\n" + "\n".join(messages)
-    return False, "No misplaced secondary abilities found" 
+    return False, "No misplaced secondary abilities found"
+
+def is_affinity_sphere(character, sphere: str) -> bool:
+    """
+    Check if a sphere is an affinity sphere for the character.
+    Only checks explicitly set affinity sphere.
+    
+    Args:
+        character: The character object
+        sphere: The sphere name to check
+        
+    Returns:
+        bool: True if it's an affinity sphere, False otherwise
+    """
+    # Check explicitly set affinity sphere
+    affinity_sphere = character.db.stats.get('identity', {}).get('lineage', {}).get('Affinity Sphere', {}).get('perm', '')
+    if affinity_sphere and affinity_sphere.lower() == sphere.lower():
+        logger.log_trace(f"Sphere {sphere} matches explicit affinity sphere {affinity_sphere}")
+        return True
+    
+    return False
+
+def validate_sphere_purchase(character, sphere: str, new_rating: int, is_staff_spend: bool = False) -> tuple[bool, str]:
+    """
+    Validate if a character can purchase a sphere increase.
+    
+    Args:
+        character: The character object
+        sphere: The sphere name
+        new_rating: The desired new rating
+        is_staff_spend: Whether this is a staff-approved purchase
+        
+    Returns:
+        tuple[bool, str]: (can_purchase, error_message)
+    """
+    # Staff spends bypass validation
+    if is_staff_spend:
+        return True, None
+    
+    # Case-insensitive check for valid sphere
+    valid_sphere = False
+    proper_sphere_name = None
+    
+    for valid_sphere_name in SPHERES:
+        if sphere.lower() == valid_sphere_name.lower():
+            valid_sphere = True
+            proper_sphere_name = valid_sphere_name
+            break
+    
+    if not valid_sphere:
+        return False, f"Invalid sphere. Valid spheres are: {', '.join(SPHERES)}"
+    
+    # Use proper case for the sphere name
+    sphere = proper_sphere_name
+    
+    # Get character's affiliation
+    affiliation = character.db.stats.get('identity', {}).get('lineage', {}).get('Affiliation', {}).get('perm', '')
+    
+    # Check the appropriate pool based on affiliation
+    if affiliation == 'Technocracy':
+        # Technocrats use Enlightenment
+        enlightenment = character.db.stats.get('pools', {}).get('advantage', {}).get('Enlightenment', {}).get('perm', 0)
+        
+        # Check if new rating would exceed Enlightenment
+        if new_rating > enlightenment:
+            return False, f"Sphere rating cannot exceed Enlightenment rating ({enlightenment})"
+    else:
+        # Everyone else uses Arete
+        arete = character.db.stats.get('pools', {}).get('advantage', {}).get('Arete', {}).get('perm', 0)
+        
+        # Check if new rating would exceed Arete
+        if new_rating > arete:
+            return False, f"Sphere rating cannot exceed Arete rating ({arete})"
+    
+    # Check if rating requires staff approval
+    if new_rating > 1:
+        return False, "Spheres above level 1 require staff approval. Please use +request to submit a request."
+    
+    return True, None
+
+def calculate_sphere_cost(character, sphere: str, new_rating: int, current_rating: int = 0, is_staff_spend: bool = False) -> tuple[int, bool, str]:
+    """
+    Calculate the XP cost for increasing a sphere.
+    
+    Args:
+        character: The character object
+        sphere: The sphere name
+        new_rating: The desired new rating
+        current_rating: The current rating (default 0)
+        is_staff_spend: Whether this is a staff-approved purchase
+        
+    Returns:
+        tuple[int, bool, str]: (cost, requires_approval, error_message)
+    """
+    # Case-insensitive check for proper sphere name
+    proper_sphere_name = None
+    for valid_sphere_name in SPHERES:
+        if sphere.lower() == valid_sphere_name.lower():
+            proper_sphere_name = valid_sphere_name
+            break
+    
+    # Use the properly cased sphere name if found
+    if proper_sphere_name:
+        sphere = proper_sphere_name
+    
+    # Get character's affiliation
+    affiliation = character.db.stats.get('identity', {}).get('lineage', {}).get('Affiliation', {}).get('perm', '')
+    
+    # Check the appropriate pool based on affiliation
+    if affiliation == 'Technocracy':
+        # Technocrats use Enlightenment
+        enlightenment = character.db.stats.get('pools', {}).get('advantage', {}).get('Enlightenment', {}).get('perm', 0)
+        
+        # Check if new rating would exceed Enlightenment
+        if new_rating > enlightenment and not is_staff_spend:
+            return 0, True, f"Sphere rating cannot exceed Enlightenment rating ({enlightenment})"
+    else:
+        # Everyone else uses Arete
+        arete = character.db.stats.get('pools', {}).get('advantage', {}).get('Arete', {}).get('perm', 0)
+        
+        # Check if new rating would exceed Arete
+        if new_rating > arete and not is_staff_spend:
+            return 0, True, f"Sphere rating cannot exceed Arete rating ({arete})"
+    
+    # Check if it's an affinity sphere
+    is_affinity = is_affinity_sphere(character, sphere)
+    
+    total_cost = 0
+    requires_approval = False
+    
+    # Calculate cost for each dot
+    for rating in range(current_rating + 1, new_rating + 1):
+        if rating == 1:
+            # First dot always costs 10
+            total_cost += 10
+        else:
+            # Subsequent dots cost current rating * 7 for affinity, * 8 for non-affinity
+            multiplier = 7 if is_affinity else 8
+            total_cost += (rating - 1) * multiplier
+    
+    # Spheres above 1 require staff approval
+    if new_rating > 1 and not is_staff_spend:
+        requires_approval = True
+    
+    return total_cost, requires_approval, None 

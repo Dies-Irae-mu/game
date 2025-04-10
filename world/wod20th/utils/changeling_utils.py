@@ -4,7 +4,8 @@ Utility functions for handling Changeling-specific character initialization and 
 from world.wod20th.utils.banality import get_default_banality
 from world.wod20th.models import Stat
 from world.wod20th.utils.stat_mappings import ARTS, REALMS
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set, Tuple, Optional
+from evennia.utils import logger
 
 SEEMING = {'Childling', 'Wilder', 'Grump', 'Youngling', 'Brave', 'Elder'}
 
@@ -462,7 +463,7 @@ def validate_changeling_stats(character, stat_name: str, value: str, category: s
     Validate changeling-specific stats.
     Returns (is_valid, error_message)
     """
-    stat_name = stat_name.lower()
+    stat_name = stat_name.title()  # Convert to title case for consistency
     
     # Get kith for context-specific validation
     kith = character.get_stat('identity', 'lineage', 'Kith', temp=False)
@@ -481,6 +482,36 @@ def validate_changeling_stats(character, stat_name: str, value: str, category: s
             adjust_pools_for_seeming(character, old_seeming, value)
         return is_valid, error_msg
         
+    # Validate arts
+    if category == 'powers' and stat_type == 'art':
+        # Check if art exists
+        if stat_name not in ARTS:
+            return False, f"Invalid art. Valid arts are: {', '.join(sorted(ARTS))}"
+        
+        # Validate value
+        try:
+            art_value = int(value)
+            if art_value < 0 or art_value > 5:
+                return False, "Art values must be between 0 and 5"
+            return True, ""
+        except ValueError:
+            return False, "Art values must be numbers"
+            
+    # Validate realms
+    if category == 'powers' and stat_type == 'realm':
+        # Check if realm exists
+        if stat_name not in REALMS:
+            return False, f"Invalid realm. Valid realms are: {', '.join(sorted(REALMS))}"
+        
+        # Validate value
+        try:
+            realm_value = int(value)
+            if realm_value < 0 or realm_value > 5:
+                return False, "Realm values must be between 0 and 5"
+            return True, ""
+        except ValueError:
+            return False, "Realm values must be numbers"
+    
     # Validate phyla (for Inanimae)
     if stat_name == 'phyla':
         if kith != 'Inanimae':
@@ -530,18 +561,6 @@ def validate_changeling_stats(character, stat_name: str, value: str, category: s
                 return False, f"Invalid Unseelie Legacy. Valid legacies are: {', '.join(sorted(UNSEELIE_LEGACIES))}"
             return True, ""
         
-    # Validate arts
-    if category == 'powers' and stat_type == 'art':
-        return validate_changeling_art(character, stat_name, value)
-        
-    # Validate realms
-    if category == 'powers' and stat_type == 'realm':
-        return validate_changeling_realm(character, stat_name, value)
-        
-    # Validate slivers
-    if category == 'powers' and stat_type == 'sliver':
-        return validate_changeling_sliver(character, stat_name, value)
-        
     # Validate backgrounds
     if category == 'backgrounds' and stat_type == 'background':
         return validate_changeling_backgrounds(character, stat_name, value)
@@ -590,74 +609,6 @@ def validate_changeling_house(value: str) -> tuple[bool, str]:
     if value.title() not in valid_houses:
         return False, f"Invalid house. Valid houses are: {', '.join(sorted(valid_houses))}"
     return True, ""
-
-def validate_changeling_art(character, art_name: str, value: str) -> tuple[bool, str]:
-    """Validate a changeling's art."""
-    # Check if character is Inanimae
-    kith = character.get_stat('identity', 'lineage', 'Kith', temp=False)
-    if kith and kith.lower() == 'inanimae':
-        # Check if character is Mannikin phyla
-        phyla = character.get_stat('identity', 'lineage', 'Phyla', temp=False)
-        if not phyla or phyla.lower() != 'mannikin':
-            return False, "Only Mannikin Inanimae can use Arts."
-        
-        # Check 4-dot limit for Mannikins
-        try:
-            art_value = int(value)
-            if art_value < 0:
-                return False, "Art values must be positive numbers"
-            if art_value > 4:
-                return False, "Mannikin Inanimae can only have up to 4 dots in Arts"
-            return True, ""
-        except ValueError:
-            return False, "Art values must be numbers"
-    
-    # Check if the art exists
-    if art_name.title() not in ARTS:
-        return False, f"Invalid art. Valid arts are: {', '.join(sorted(ARTS))}"
-    
-    # Validate value for non-Mannikins
-    try:
-        art_value = int(value)
-        if art_value < 0 or art_value > 5:
-            return False, "Art values must be between 0 and 5"
-        return True, ""
-    except ValueError:
-        return False, "Art values must be numbers"
-
-def validate_changeling_realm(character, realm_name: str, value: str) -> tuple[bool, str]:
-    """Validate a changeling's realm."""
-    # Check if character is Inanimae
-    kith = character.get_stat('identity', 'lineage', 'Kith', temp=False)
-    if kith and kith.lower() == 'inanimae':
-        # Check if character is Mannikin phyla
-        phyla = character.get_stat('identity', 'lineage', 'Phyla', temp=False)
-        if not phyla or phyla.lower() != 'mannikin':
-            return False, "Only Mannikin Inanimae can use Realms."
-            
-        # Check 4-dot limit for Mannikins
-        try:
-            realm_value = int(value)
-            if realm_value < 0:
-                return False, "Realm values must be positive numbers"
-            if realm_value > 4:
-                return False, "Mannikin Inanimae can only have up to 4 dots in Realms"
-            return True, ""
-        except ValueError:
-            return False, "Realm values must be numbers"
-    
-    # Check if the realm exists
-    if realm_name.title() not in REALMS:
-        return False, f"Invalid realm. Valid realms are: {', '.join(sorted(REALMS))}"
-    
-    # Validate value for non-Mannikins
-    try:
-        realm_value = int(value)
-        if realm_value < 0 or realm_value > 5:
-            return False, "Realm values must be between 0 and 5"
-        return True, ""
-    except ValueError:
-        return False, "Realm values must be numbers"
 
 def validate_changeling_backgrounds(character, background_name: str, value: str) -> tuple[bool, str]:
     """Validate changeling backgrounds."""
@@ -767,3 +718,63 @@ def update_changeling_pools_on_stat_change(character, stat_name: str, new_value:
             character.set_stat('pools', 'dual', 'Glamour', 2, temp=False)
             character.set_stat('pools', 'dual', 'Glamour', 2, temp=True)
             character.msg("|gGlamour set to 2 for Kinain.|n")
+
+def calculate_art_cost(current_rating: int, new_rating: int) -> int:
+    """Calculate XP cost for Arts."""
+    total_cost = 0
+    if current_rating == 0:
+        total_cost = 7  # Initial cost
+        current_rating = 1
+    
+    for rating in range(current_rating + 1, new_rating + 1):
+        total_cost += (rating - 1) * 4  # Cost per additional dot
+    
+    return total_cost
+
+def calculate_realm_cost(current_rating: int, new_rating: int) -> int:
+    """Calculate XP cost for Realms."""
+    total_cost = 0
+    if current_rating == 0:
+        total_cost = 5  # Initial cost
+        current_rating = 1
+    
+    for rating in range(current_rating + 1, new_rating + 1):
+        total_cost += (rating - 1) * 3  # Cost per additional dot
+    
+    return total_cost
+
+def calculate_glamour_cost(current_rating: int, new_rating: int) -> int:
+    """Calculate XP cost for Glamour."""
+    total_cost = 0
+    for rating in range(current_rating + 1, new_rating + 1):
+        total_cost += rating * 3  # Current rating * 3 XP
+    return total_cost
+
+def validate_changeling_purchase(character, stat_name: str, new_rating: int, category: str, subcategory: str, is_staff_spend: bool = False) -> Tuple[bool, Optional[str]]:
+    """
+    Validate if a changeling can purchase a stat increase.
+    
+    Args:
+        character: The character object
+        stat_name: Name of the stat
+        new_rating: The new rating to increase to
+        category: The stat category
+        subcategory: The stat subcategory
+        is_staff_spend: Whether this is a staff-approved spend
+        
+    Returns:
+        tuple: (can_purchase, error_message)
+    """
+    # Staff spends bypass validation
+    if is_staff_spend:
+        return True, None
+        
+    # Arts above level 2 require staff approval
+    if subcategory == 'art' and new_rating > 2:
+        return False, "Arts above level 2 require staff approval. Please use +request to submit a request."
+        
+    # Realms above level 2 require staff approval
+    if subcategory == 'realm' and new_rating > 2:
+        return False, "Realms above level 2 require staff approval. Please use +request to submit a request."
+        
+    return True, None

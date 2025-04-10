@@ -1918,29 +1918,70 @@ class Character(DefaultCharacter):
         return self.account.at_post_channel_msg(message, channel, senders, **kwargs)
 
     def del_stat(self, stat_type, category, stat_name, temp=False):
-        """Delete a stat value."""
-        # Handle attributes by using their category as the stat_type
-        if stat_type == 'attributes':
-            stat_type = category  # Use physical/social/mental as the stat_type
-            category = 'attributes'  # Set category to 'attributes'
+        """Delete a stat."""
+        try:
+            # Handle secondary abilities similar to attributes
+            if stat_type == 'secondary_abilities':
+                if category in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+                    # Check if the stat exists
+                    if (category in self.db.stats.get('secondary_abilities', {}) and
+                        stat_name in self.db.stats['secondary_abilities'][category]):
+                        del self.db.stats['secondary_abilities'][category][stat_name]
+                        return True
+                    return False
+                else:
+                    # Try to find the stat in any secondary ability category
+                    for subcat in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
+                        if (subcat in self.db.stats.get('secondary_abilities', {}) and
+                            stat_name in self.db.stats['secondary_abilities'][subcat]):
+                            del self.db.stats['secondary_abilities'][subcat][stat_name]
+                            return True
+                    return False
 
-        # Check if the stat exists
-        if (stat_type in self.db.stats and 
-            category in self.db.stats[stat_type] and 
-            stat_name in self.db.stats[stat_type][category]):
-            if temp:
-                # Only delete the temporary value
-                if 'temp' in self.db.stats[stat_type][category][stat_name]:
-                    del self.db.stats[stat_type][category][stat_name]['temp']
-            else:
-                # Delete the entire stat entry
+            # Check if the stat exists
+            if stat_type in self.db.stats and category in self.db.stats[stat_type] and stat_name in self.db.stats[stat_type][category]:
                 del self.db.stats[stat_type][category][stat_name]
-            return True
+                return True
+        except Exception as e:
+            self.msg(f"|rError deleting stat: {str(e)}|n")
         return False
+        
+    def get_proper_stat_name(self, category, subcategory, stat_name):
+        """
+        Get the proper case-sensitive name for a stat.
+        Especially useful for case-insensitive lookup of powers like spheres.
+        
+        Args:
+            category (str): The stat category (powers, attributes, etc.)
+            subcategory (str): The stat subcategory (sphere, discipline, etc.)
+            stat_name (str): The name of the stat to look up
+            
+        Returns:
+            str: The proper case version of the stat name if found, or the original stat_name
+        """
+        # For powers like spheres, disciplines, arts, etc. do case-insensitive lookup
+        if category == 'powers' and subcategory in self.db.stats.get('powers', {}):
+            # Look for a case-insensitive match
+            stat_name_lower = stat_name.lower()
+            for existing_name in self.db.stats['powers'][subcategory]:
+                if existing_name.lower() == stat_name_lower:
+                    return existing_name
+                    
+        # Check secondary abilities
+        if category == 'secondary_abilities':
+            if subcategory in self.db.stats.get('secondary_abilities', {}):
+                # Look for a case-insensitive match
+                stat_name_lower = stat_name.lower()
+                for existing_name in self.db.stats['secondary_abilities'][subcategory]:
+                    if existing_name.lower() == stat_name_lower:
+                        return existing_name
+            
+        # No match found, return the original name
+        return stat_name
 
     def set_gift_alias(self, canonical_name: str, alias: str, value: int) -> None:
         """
-        Store a gift alias mapping.
+        Set a gift alias for a character.
         
         Args:
             canonical_name (str): The canonical (original) name of the gift

@@ -4,7 +4,8 @@ Utility functions for handling Mortal+-specific character initialization and upd
 from world.wod20th.utils.stat_mappings import ARTS, REALMS
 from world.wod20th.utils.vampire_utils import get_clan_disciplines
 from world.wod20th.utils.banality import get_default_banality
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
+from evennia.utils import logger
 
 def get_stat_model():
     """Get the Stat model lazily to avoid circular imports."""
@@ -221,6 +222,7 @@ def get_mortalplus_identity_stats(mortalplus_type: str) -> List[str]:
         return base_stats + [
             'Domitor',
             'Path of Enlightenment',
+            'Clan'
         ]
     elif mortalplus_type == 'Kinain':
         return base_stats + [
@@ -239,16 +241,19 @@ def get_mortalplus_identity_stats(mortalplus_type: str) -> List[str]:
     elif mortalplus_type == 'Sorcerer':
         return base_stats + [
             'Society',
-            'Order',
-            'Coven'
+            'Fellowship',
+            'Cabal'
         ]
     elif mortalplus_type == 'Psychic':
         return base_stats + [
-            'Society'
+            'Society',
+            'Fellowship',
+            'Cabal'
         ]
     elif mortalplus_type == 'Faithful':
         return base_stats + [
-            'Order'
+            'Society',
+            'Cabal'
         ]
     
     return base_stats
@@ -494,7 +499,7 @@ def validate_ghoul_disciplines(character, discipline_name: str, value: str) -> t
 
 def validate_kinfolk_gifts(character, gift_name: str, value: str) -> tuple[bool, str]:
     """Validate a kinfolk's gifts."""
-    from world.wod20th.models import Stat
+    Stat = get_stat_model()
     from django.db.models import Q
 
     # First try exact match
@@ -507,6 +512,23 @@ def validate_kinfolk_gifts(character, gift_name: str, value: str) -> tuple[bool,
     
     if not gift:
         return False, f"'{gift_name}' is not a valid gift"
+    
+    # Get character's tribe
+    tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
+    if not tribe:
+        return False, "Must set tribe before learning gifts"
+    
+    # Check if it's a special gift (Planetary, Ju-Fu, etc.)
+    is_special = False
+    if gift.tribe:
+        tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+        is_special = any(t.lower() in ['croatan', 'planetary', 'ju-fu'] for t in tribes)
+    
+    # Check if it's a tribe gift
+    is_tribe_gift = False
+    if gift.tribe and tribe:
+        tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+        is_tribe_gift = tribe.lower() in [t.lower() for t in tribes]
     
     # Validate value and level restriction
     try:
@@ -741,3 +763,287 @@ def update_mortalplus_pools_on_stat_change(character, stat_name: str, new_value:
         except (ValueError, TypeError):
             character.msg("|rError updating pools - invalid Faerie Blood value.|n")
             return 
+
+def calculate_ghoul_discipline_cost(current_rating: int, new_rating: int, is_clan_discipline: bool) -> int:
+    """
+    Calculate XP cost for Ghoul disciplines.
+    In-clan: 20 XP then Current Rating * 15 XP
+    Out-of-clan: 20 XP then Current Rating * 25 XP
+    """
+    total_cost = 0
+    if current_rating == 0:
+        total_cost = 20  # Initial cost
+        current_rating = 1
+    
+    for rating in range(current_rating + 1, new_rating + 1):
+        if is_clan_discipline:
+            total_cost += (rating - 1) * 15
+        else:
+            total_cost += (rating - 1) * 25
+    
+    return total_cost
+
+def calculate_kinain_art_cost(current_rating: int, new_rating: int) -> int:
+    """
+    Calculate XP cost for Kinain Arts.
+    Cost is 3 XP then Current Rating * 4 XP.
+    """
+    total_cost = 0
+    if current_rating == 0:
+        total_cost = 3  # Initial cost
+        current_rating = 1
+    
+    for rating in range(current_rating + 1, new_rating + 1):
+        total_cost += (rating - 1) * 4
+    
+    return total_cost
+
+def calculate_kinain_realm_cost(current_rating: int, new_rating: int) -> int:
+    """
+    Calculate XP cost for Kinain Realms.
+    Cost is 5 XP then Current Rating * 3 XP.
+    """
+    total_cost = 0
+    if current_rating == 0:
+        total_cost = 5  # Initial cost
+        current_rating = 1
+    
+    for rating in range(current_rating + 1, new_rating + 1):
+        total_cost += (rating - 1) * 3
+    
+    return total_cost
+
+def calculate_kinfolk_gift_cost(current_rating: int, new_rating: int, gift_type: str = 'normal') -> int:
+    """
+    Calculate XP cost for Kinfolk Gifts.
+    Breed/Tribe Gifts: Gift Level * 6 XP
+    Outside Breed/Tribe: Gift Level * 10 XP
+    Croatan/Planetary: Gift Level * 14 XP
+    
+    NOTE: This function can be called in two ways:
+    1. calculate_kinfolk_gift_cost(current_rating, new_rating, gift_type)
+    2. calculate_kinfolk_gift_cost(character, gift_name, new_rating, current_rating)
+    
+    If first argument is a character object, we're in pattern #2.
+    """
+    # Check if first parameter is a character object (has db attribute)
+    if hasattr(current_rating, 'db'):
+        # Function was called as (character, gift_name, new_rating, current_rating)
+        character = current_rating
+        gift_name = new_rating
+        new_rating = gift_type
+        current_rating = 0 if gift_type == 'normal' else gift_type  # Use provided current_rating or default to 0
+        
+        # Default to 'normal' gift type
+        gift_type = 'normal'
+        logger.log_info(f"Kinfolk gift cost called with character object. Using gift_name={gift_name}, new_rating={new_rating}, current_rating={current_rating}")
+    
+    # Determine multiplier based on gift type
+    multiplier = 6
+    if gift_type == 'outside':
+        multiplier = 10
+    elif gift_type == 'special':  # Croatan/Planetary
+        multiplier = 14
+    elif gift_type != 'breed_tribe':  # Default to outside cost for 'normal'
+        multiplier = 10
+    
+    # Gifts use flat costs based on new_rating
+    total_cost = new_rating * multiplier
+    
+    logger.log_info(f"Kinfolk gift cost calculation: {total_cost} XP")
+    return total_cost
+
+def calculate_sorcery_path_cost(current_rating: int, new_rating: int) -> int:
+    """
+    Calculate XP cost for Sorcerous Paths.
+    Cost is New Rating * 7 XP.
+    """
+    total_cost = 0
+    for rating in range(current_rating + 1, new_rating + 1):
+        total_cost += rating * 7
+    return total_cost
+
+def calculate_hedge_ritual_cost(current_rating: int, new_rating: int) -> int:
+    """
+    Calculate XP cost for Hedge Rituals.
+    Cost is Rating of Ritual (1 XP for level 1, then rating XP for each level).
+    """
+    total_cost = 0
+    for rating in range(current_rating + 1, new_rating + 1):
+        if rating == 1:
+            total_cost += 1
+        else:
+            total_cost += rating
+    return total_cost
+
+def calculate_numina_cost(current_rating: int, new_rating: int) -> int:
+    """
+    Calculate XP cost for Numina.
+    Cost is New Rating * 7 XP.
+    """
+    total_cost = 0
+    for rating in range(current_rating + 1, new_rating + 1):
+        total_cost += rating * 7
+    return total_cost
+
+def validate_mortalplus_purchase(character, stat_name: str, new_rating: int, category: str, subcategory: str, is_staff_spend: bool = False) -> Tuple[bool, Optional[str]]:
+    """
+    Validate if a Mortal+ character can purchase a stat increase.
+    
+    Args:
+        character: The character object
+        stat_name: Name of the stat
+        new_rating: The new rating to increase to
+        category: The stat category
+        subcategory: The stat subcategory
+        is_staff_spend: Whether this is a staff-approved spend
+        
+    Returns:
+        tuple: (can_purchase, error_message)
+    """
+    # Staff spends bypass validation
+    if is_staff_spend:
+        return True, None
+        
+    # Get character type
+    char_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+    
+    if char_type == 'Kinfolk':
+        # Only Kinfolk with Gnosis merit can get level 2 gifts
+        if subcategory == 'gift' and new_rating > 1:
+            has_gnosis = character.get_stat('merits', 'supernatural', 'Gnosis', temp=False)
+            if not has_gnosis:
+                return False, "Only Kinfolk with the Gnosis merit can learn level 2 gifts."
+                
+    elif char_type == 'Ghoul':
+        # Thaumaturgy is only for Tremere ghouls
+        if subcategory == 'thaumaturgy':
+            family = character.get_stat('identity', 'lineage', 'Family', temp=False)
+            if family != 'Tremere':
+                return False, "Only Tremere ghouls can learn Thaumaturgy."
+                
+    # General validation for all types
+    if subcategory in ['art', 'realm'] and new_rating > 2:
+        return False, f"{subcategory.title()}s above level 2 require staff approval. Please use +request to submit a request."
+        
+    if subcategory in ['sorcery', 'numina', 'faith'] and new_rating > 2:
+        return False, f"{subcategory.title()} above level 2 requires staff approval. Please use +request to submit a request."
+        
+    if subcategory in ['hedge_ritual', 'rite'] and new_rating > 1:
+        return False, f"{subcategory.replace('_', ' ').title()}s above level 1 require staff approval. Please use +request to submit a request."
+        
+    return True, None 
+
+def handle_kinfolk_gift_cost(character, stat_name, new_rating, current_rating):
+    """
+    Handle Kinfolk gift cost calculation.
+    This function is called directly from process_xp_spend when a Kinfolk attempts to buy a gift.
+    
+    Args:
+        character: The character object
+        stat_name: The gift name
+        new_rating: The desired new rating
+        current_rating: The current rating
+        
+    Returns:
+        tuple: (cost, message, requires_approval)
+    """
+    from evennia.utils import logger
+    from django.db.models import Q
+    from world.wod20th.models import Stat
+    
+    logger.log_info(f"Handling Kinfolk gift cost for {character.name}: {stat_name} {current_rating}->{new_rating}")
+    
+    # Find the gift in database
+    gift = Stat.objects.filter(
+        Q(name__iexact=stat_name) | Q(gift_alias__icontains=stat_name),
+        category='powers',
+        stat_type='gift'
+    ).first()
+    
+    if not gift:
+        logger.log_info(f"Gift '{stat_name}' not found in database")
+        return 0, f"Gift '{stat_name}' not found", True
+    
+    # Get breed and tribe for matching
+    breed = character.get_stat('identity', 'lineage', 'Kinfolk Breed', temp=False)
+    tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
+    logger.log_info(f"Kinfolk character breed: {breed}, tribe: {tribe}")
+    
+    # Check if it's a homid or tribe gift
+    is_homid_gift = False
+    is_tribe_gift = False
+    
+    # Check for homid gifts
+    if gift.breed:
+        breeds = gift.breed if isinstance(gift.breed, list) else [gift.breed]
+        is_homid_gift = any(b.lower() == 'homid' for b in breeds)
+    
+    # Check for tribe gift
+    if gift.tribe and tribe:
+        tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+        is_tribe_gift = tribe.lower() in [t.lower() for t in tribes]
+    
+    logger.log_info(f"Gift match: is_homid_gift={is_homid_gift}, is_tribe_gift={is_tribe_gift}")
+    
+    # Kinfolk can only purchase homid gifts or gifts from their tribe
+    if not (is_homid_gift or is_tribe_gift):
+        return 0, f"Kinfolk can only learn Homid gifts or gifts of their tribe ({tribe})", True
+    
+    # Determine gift type for cost calculation
+    gift_type = 'breed_tribe' if (is_homid_gift or is_tribe_gift) else 'outside'
+    
+    # Calculate cost
+    total_cost = calculate_kinfolk_gift_cost(
+        current_rating=current_rating,
+        new_rating=new_rating,
+        gift_type=gift_type
+    )
+    logger.log_info(f"Calculated Kinfolk gift cost: {total_cost} XP for gift_type={gift_type}")
+    
+    # Check if Kinfolk has Gnosis Merit for level 2 gifts
+    if new_rating > 1:
+        gnosis_merit = next((value.get('perm', 0) for merit, value in character.db.stats.get('merits', {}).get('supernatural', {}).items() 
+                          if merit.lower() == 'gnosis'), 0)
+        if not gnosis_merit:
+            return total_cost, "Must have the Gnosis Merit to learn level 2 gifts", True
+    
+    # Determine if this requires approval
+    requires_approval = new_rating > 2
+    
+    return total_cost, None, requires_approval 
+
+def handle_kinfolk_gnosis(character, new_rating):
+    """
+    Handle Kinfolk Gnosis merit updates.
+    This function updates the Gnosis pool based on the Merit rating.
+    
+    Args:
+        character: The character object
+        new_rating: The new Gnosis merit rating
+    """
+    from evennia.utils import logger
+    
+    logger.log_info(f"Handling Kinfolk Gnosis merit update: {new_rating}")
+    
+    # Merit ratings 5-7 correspond to Gnosis 1-3
+    # 5 -> 1, 6 -> 2, 7 -> 3
+    if new_rating >= 5:
+        gnosis_value = min(3, max(1, new_rating - 4))
+        
+        # Initialize pools if needed
+        if 'pools' not in character.db.stats:
+            character.db.stats['pools'] = {}
+        if 'dual' not in character.db.stats['pools']:
+            character.db.stats['pools']['dual'] = {}
+            
+        # Set the Gnosis pool
+        character.db.stats['pools']['dual']['Gnosis'] = {'perm': gnosis_value, 'temp': gnosis_value}
+        logger.log_info(f"Updated Gnosis pool to {gnosis_value} based on Merit rating {new_rating}")
+        return gnosis_value
+    else:
+        # If merit is less than 5, set Gnosis to 0
+        if 'pools' in character.db.stats and 'dual' in character.db.stats['pools'] and 'Gnosis' in character.db.stats['pools']['dual']:
+            character.db.stats['pools']['dual']['Gnosis'] = {'perm': 0, 'temp': 0}
+            logger.log_info(f"Reset Gnosis pool to 0 (Merit rating {new_rating} is below threshold)")
+        return 0 

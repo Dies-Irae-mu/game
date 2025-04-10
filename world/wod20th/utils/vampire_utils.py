@@ -59,6 +59,58 @@ CLAN_CHOICES: List[Tuple[str, str]] = [
 # Keep the set for easy lookups
 CLAN: Set[str] = {t[1] for t in CLAN_CHOICES if t[1] != 'None'}
 
+# Dictionary mapping clans to their in-clan disciplines
+CLAN_DISCIPLINES = {
+    'Ahrimanes': ['Animalism', 'Presence', 'Spiritus'],
+    'Assamite': ['Celerity', 'Obfuscate', 'Quietus'],
+    'Assamite Antitribu': ['Celerity', 'Obfuscate', 'Quietus'],
+    'Baali': ['Daimoinon', 'Obfuscate', 'Presence'],
+    'Blood Brothers': ['Celerity', 'Potence', 'Sanguinus'],
+    'Brujah': ['Celerity', 'Potence', 'Presence'],
+    'Brujah Antitribu': ['Celerity', 'Potence', 'Presence'],
+    'Bushi': ['Celerity', 'Kai', 'Presence'],
+    'Caitiff': [],
+    'Cappadocians': ['Auspex', 'Fortitude', 'Mortis'],
+    'Children of Osiris': ['Bardo'],
+    'Harbingers of Skulls': ['Auspex', 'Fortitude', 'Necromancy'],
+    'Daughters of Cacophony': ['Fortitude', 'Melpominee', 'Presence'],
+    'Followers of Set': ['Obfuscate', 'Presence', 'Serpentis'],
+    'Gangrel': ['Animalism', 'Fortitude', 'Protean'],
+    'City Gangrel': ['Celerity', 'Obfuscate', 'Protean'],
+    'Country Gangrel': ['Animalism', 'Fortitude', 'Protean'],
+    'Gargoyles': ['Fortitude', 'Potence', 'Visceratika'],
+    'Giovanni': ['Dominate', 'Necromancy', 'Potence'],
+    'Kiasyd': ['Mytherceria', 'Dominate', 'Obtenebration'],
+    'Laibon': ['Abombwe', 'Animalism', 'Fortitude'],
+    'Lamia': ['Deimos', 'Necromancy', 'Potence'],
+    'Lasombra': ['Dominate', 'Obtenebration', 'Potence'],
+    'Lasombra Antitribu': ['Dominate', 'Obtenebration', 'Potence'],
+    'Lhiannan': ['Animalism', 'Ogham', 'Presence'],
+    'Malkavian': ['Auspex', 'Dominate', 'Obfuscate'],
+    'Malkavian Antitribu': ['Auspex', 'Dementation', 'Obfuscate'],
+    'Nagaraja': ['Auspex', 'Necromancy', 'Dominate'],
+    'Nosferatu': ['Animalism', 'Obfuscate', 'Potence'],
+    'Nosferatu Antitribu': ['Animalism', 'Obfuscate', 'Potence'],
+    'Old Clan Tzimisce': ['Animalism', 'Auspex', 'Dominate'],
+    'Panders': [],
+    'Ravnos': ['Animalism', 'Chimerstry', 'Fortitude'],
+    'Ravnos Antitribu': ['Animalism', 'Chimerstry', 'Fortitude'],
+    'Salubri': ['Auspex', 'Fortitude', 'Obeah'],
+    'Samedi': ['Necromancy', 'Obfuscate', 'Thanatosis'],
+    'Serpents of the Light': ['Obfuscate', 'Presence', 'Serpentis'],
+    'Toreador': ['Auspex', 'Celerity', 'Presence'],
+    'Toreador Antitribu': ['Auspex', 'Celerity', 'Presence'],
+    'Tremere': ['Auspex', 'Dominate', 'Thaumaturgy'],
+    'Tremere Antitribu': ['Auspex', 'Dominate', 'Thaumaturgy'],
+    'True Brujah': ['Potence', 'Presence', 'Temporis'],
+    'Tzimisce': ['Animalism', 'Auspex', 'Vicissitude'],
+    'Ventrue': ['Dominate', 'Fortitude', 'Presence'],
+    'Ventrue Antitribu': ['Auspex', 'Dominate', 'Fortitude'],
+}
+
+# List of disciplines that can be purchased without staff approval
+PURCHASABLE_DISCIPLINES = ['Potence', 'Fortitude', 'Celerity', 'Auspex', 'Obfuscate']
+
 __all__ = [
     'CLAN_CHOICES',
     'get_clan_disciplines',
@@ -70,54 +122,7 @@ __all__ = [
 ]
 
 def get_clan_disciplines(clan):
-    """Helper function to do what it says on the tin."""
-    CLAN_DISCIPLINES = {
-        'Ahrimanes': ['Animalism', 'Presence', 'Spiritus'],
-        'Assamite': ['Celerity', 'Obfuscate', 'Quietus'],
-        'Assamite Antitribu': ['Celerity', 'Obfuscate', 'Quietus'],
-        'Baali': ['Daimoinon', 'Obfuscate', 'Presence'],
-        'Blood Brothers': ['Celerity', 'Potence', 'Sanguinus'],
-        'Brujah': ['Celerity', 'Potence', 'Presence'],
-        'Brujah Antitribu': ['Celerity', 'Potence', 'Presence'],
-        'Bushi': ['Celerity', 'Kai', 'Presence'],
-        'Caitiff': [],
-        'Cappadocians': ['Auspex', 'Fortitude', 'Mortis'],
-        'Children of Osiris': ['Bardo'],
-        'Harbingers of Skulls': ['Auspex', 'Fortitude', 'Necromancy'],
-        'Daughters of Cacophony': ['Fortitude', 'Melpominee', 'Presence'],
-        'Followers of Set': ['Obfuscate', 'Presence', 'Serpentis'],
-        'Gangrel': ['Animalism', 'Fortitude', 'Protean'],
-        'City Gangrel': ['Celerity', 'Obfuscate', 'Protean'],
-        'Country Gangrel': ['Animalism', 'Fortitude', 'Protean'],
-        'Gargoyles': ['Fortitude', 'Potence', 'Visceratika'],
-        'Giovanni': ['Dominate', 'Necromancy', 'Potence'],
-        'Kiasyd': ['Mytherceria', 'Dominate', 'Obtenebration'],
-        'Laibon': ['Abombwe', 'Animalism', 'Fortitude'],
-        'Lamia': ['Deimos', 'Necromancy', 'Potence'],
-        'Lasombra': ['Dominate', 'Obtenebration', 'Potence'],
-        'Lasombra Antitribu': ['Dominate', 'Obtenebration', 'Potence'],
-        'Lhiannan': ['Animalism', 'Ogham', 'Presence'],
-        'Malkavian': ['Auspex', 'Dominate', 'Obfuscate'],
-        'Malkavian Antitribu': ['Auspex', 'Dementation', 'Obfuscate'],
-        'Nagaraja': ['Auspex', 'Necromancy', 'Dominate'],
-        'Nosferatu': ['Animalism', 'Obfuscate', 'Potence'],
-        'Nosferatu Antitribu': ['Animalism', 'Obfuscate', 'Potence'],
-        'Old Clan Tzimisce': ['Animalism', 'Auspex', 'Dominate'],
-        'Panders': [],
-        'Ravnos': ['Animalism', 'Chimerstry', 'Fortitude'],
-        'Ravnos Antitribu': ['Animalism', 'Chimerstry', 'Fortitude'],
-        'Salubri': ['Auspex', 'Fortitude', 'Obeah'],
-        'Samedi': ['Necromancy', 'Obfuscate', 'Thanatosis'],
-        'Serpents of the Light': ['Obfuscate', 'Presence', 'Serpentis'],
-        'Toreador': ['Auspex', 'Celerity', 'Presence'],
-        'Toreador Antitribu': ['Auspex', 'Celerity', 'Presence'],
-        'Tremere': ['Auspex', 'Dominate', 'Thaumaturgy'],
-        'Tremere Antitribu': ['Auspex', 'Dominate', 'Thaumaturgy'],
-        'True Brujah': ['Potence', 'Presence', 'Temporis'],
-        'Tzimisce': ['Animalism', 'Auspex', 'Vicissitude'],
-        'Ventrue': ['Dominate', 'Fortitude', 'Presence'],
-        'Ventrue Antitribu': ['Auspex', 'Dominate', 'Fortitude']
-    }
+    """Get the in-clan disciplines for a given clan."""
     return CLAN_DISCIPLINES.get(clan, [])
 
 def get_vampire_identity_stats() -> List[str]:
@@ -535,3 +540,90 @@ def validate_vampire_path(value: str) -> tuple[bool, str]:
     # If not found, return error with all valid paths
     error_msg = f"Invalid path. Valid paths are: {', '.join(sorted(valid_paths))}"
     return False, error_msg 
+
+def is_discipline_in_clan(discipline, clan):
+    """Check if a discipline is in-clan for a given clan."""
+    clan_discs = get_clan_disciplines(clan)
+    return discipline in clan_discs
+
+def calculate_discipline_cost(current_rating: int, new_rating: int, is_in_clan: bool) -> int:
+    """
+    Calculate XP cost for disciplines.
+    Cost is 10 XP then Current Rating x 5 XP (in-clan) or x 7 XP (out-of-clan).
+    
+    Args:
+        current_rating: Current rating of the discipline
+        new_rating: Desired new rating
+        is_in_clan: Whether the discipline is in-clan
+        
+    Returns:
+        int: Total XP cost
+    """
+    total_cost = 0
+    for rating in range(current_rating + 1, new_rating + 1):
+        if rating == 1:
+            total_cost += 10  # First dot always costs 10
+        else:
+            if is_in_clan:
+                total_cost += (rating - 1) * 5  # Previous rating × 5
+            else:
+                total_cost += (rating - 1) * 7  # Previous rating × 7
+    return total_cost
+
+def get_primary_thaumaturgy_path(character):
+    """Get the character's primary path of Thaumaturgy."""
+    thaumaturgy_paths = character.db.stats.get('powers', {}).get('thaumaturgy', {})
+    if not thaumaturgy_paths:
+        return None
+    
+    # The primary path is typically Path of Blood
+    if 'Path of Blood' in thaumaturgy_paths:
+        return 'Path of Blood'
+    
+    # If no Path of Blood, return the first path found
+    return next(iter(thaumaturgy_paths), None)
+
+def get_primary_necromancy_path(character):
+    """Get the character's primary path of Necromancy."""
+    necromancy_paths = character.db.stats.get('powers', {}).get('necromancy', {})
+    if not necromancy_paths:
+        return None
+    
+    # The primary path is typically Sepulchre Path
+    if 'Sepulchre Path' in necromancy_paths:
+        return 'Sepulchre Path'
+    
+    # If no Sepulchre Path, return the first path found
+    return next(iter(necromancy_paths), None)
+
+def validate_discipline_purchase(character, discipline, new_rating, is_staff_spend=False):
+    """
+    Validate if a character can purchase a discipline increase.
+    
+    Args:
+        character: The character object
+        discipline (str): The discipline name
+        new_rating (int): The desired new rating
+        is_staff_spend (bool): Whether this is a staff-approved purchase
+        
+    Returns:
+        tuple: (bool, str) - (can_purchase, error_message)
+    """
+    # Staff spends bypass validation
+    if is_staff_spend:
+        return True, None
+        
+    # Get character's clan
+    clan = character.db.stats.get('identity', {}).get('lineage', {}).get('Clan', {}).get('perm', '')
+    
+    # First, normalize the discipline name to proper case by finding it in the PURCHASABLE_DISCIPLINES list
+    proper_discipline = next((d for d in PURCHASABLE_DISCIPLINES if d.lower() == discipline.lower()), None)
+    
+    if not proper_discipline:
+        return False, f"{discipline} requires staff approval. Please use +request to submit a request."
+        
+    # Check rating limit
+    if new_rating > 2:
+        return False, "Disciplines above level 2 require staff approval. Please use +request to submit a request."
+        
+    return True, None 

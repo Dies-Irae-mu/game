@@ -3,8 +3,9 @@ Utility functions for handling Companion-specific character initialization and u
 """
 from world.wod20th.utils.banality import get_default_banality
 from world.wod20th.models import Stat
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set, Tuple, Optional
 from world.wod20th.utils.stat_mappings import SPECIAL_ADVANTAGES
+from evennia.utils import logger
 
 # Valid companion types
 COMPANION_TYPE_CHOICES: List[Tuple[str, str]] = [
@@ -455,3 +456,48 @@ def update_companion_pools_on_stat_change(character, stat_name: str, new_value: 
         except (ValueError, TypeError):
             character.msg("|rError updating Rage pool - invalid Ferocity value.|n")
             return
+
+def calculate_special_advantage_cost(current_rating: int, new_rating: int) -> int:
+    """
+    Calculate XP cost for Special Advantages.
+    Cost is 1 XP per dot.
+    """
+    # For special advantages, use absolute difference (1 XP per dot)
+    return new_rating - current_rating
+
+def calculate_charm_cost(current_rating: int, new_rating: int) -> int:
+    """
+    Calculate XP cost for Charms.
+    Cost is 5 XP per level.
+    """
+    # For charms, use absolute difference cost (5 XP per dot)
+    return (new_rating - current_rating) * 5
+
+def validate_companion_purchase(character, stat_name: str, new_rating: int, category: str, subcategory: str, is_staff_spend: bool = False) -> Tuple[bool, Optional[str]]:
+    """
+    Validate if a companion can purchase a stat increase.
+    
+    Args:
+        character: The character object
+        stat_name: Name of the stat
+        new_rating: The new rating to increase to
+        category: The stat category
+        subcategory: The stat subcategory
+        is_staff_spend: Whether this is a staff-approved spend
+        
+    Returns:
+        tuple: (can_purchase, error_message)
+    """
+    # Staff spends bypass validation
+    if is_staff_spend:
+        return True, None
+        
+    # Special advantages require staff approval
+    if subcategory == 'special_advantage':
+        return False, "Special advantages require staff approval. Please use +request to submit a request."
+        
+    # Charms above level 2 require staff approval
+    if subcategory == 'charm' and new_rating > 2:
+        return False, "Charms above level 2 require staff approval. Please use +request to submit a request."
+        
+    return True, None

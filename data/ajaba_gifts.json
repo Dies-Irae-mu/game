@@ -77,12 +77,12 @@
         "source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
-		"auspice": "Dawn",
         "stat_type": "gift",
         "values": [
             2
         ],
         "shifter_type": "Ajaba",
+		"auspice": "Dawn",
         "splat": "Shifter"
     },
     {
@@ -93,11 +93,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-		"auspice": "Dawn",
         "values": [
             4
         ],
         "shifter_type": "Ajaba",
+		"auspice": "Dawn",
         "splat": "Shifter"
     },
     {
@@ -108,11 +108,11 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-		"auspice": "Midnight",
         "values": [
             1
         ],
         "shifter_type": "Ajaba",
+		"auspice": "Midnight",
         "splat": "Shifter"
     },
     {
@@ -137,7 +137,7 @@
     {
         "name": "Bless the Rains",
         "description": "The Ajaba composes words of thanks to the rain falling around them, complimenting it for sharing its bounty with the dry Earth. The rains respond with generosity. An ancestor-spirit teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Wits + Expression (difficulty 7). The rain subsequently restores one level of bashing or lethal damage to all non-Wyrm-tainted beings it touches, and renders the ground it falls on unusually fertile. This Gift may only be used while standing in the rain, and the Ajaba can only empower a rainstorm once -- though the effects of the Gift strike everywhere that the same rains fall.",
+        "system": "The player spends one Gnosis point and rolls Wits + Expression (difficulty 7). The rain subsequently restores one level of bashing or lethal damage to all non-Wyrm-tainted beings it touches, and renders the ground it falls on unusually fertile. This Gift may only be used while standing in the rain, and the Ajaba can only empower a rainstorm once — though the effects of the Gift strike everywhere that the same rains fall.",
         "source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -287,7 +287,7 @@
     {
         "name": "Echoes of the Asamando",
         "description": "Powerful Ajaba of the Dusk learn dark roads to victory, gleaning wisdom from voices most would quail to hear. This Gift, taught by an ancestor-spirit, allows the Ajaba to speak and be heard by the dead  and to hear their voices in return.",
-        "system": "The character must kill to use this Gift -- whether it is beast, or man, or monster that she slays is irrelevant, but she must end a life to hear the Echoes of Asamando. Additionally, within a minute of enacting the kill, the player must spend a point of Gnosis. For the rest of the scene, the Ajaba's voice may be heard unmistakably across the Shroud, and she can hear anything that nearby ghosts might say as clearly as though she stood in the Underworld herself.",
+        "system": "The character must kill to use this Gift — whether it is beast, or man, or monster that she slays is irrelevant, but she must end a life to hear the Echoes of Asamando. Additionally, within a minute of enacting the kill, the player must spend a point of Gnosis. For the rest of the scene, the Ajaba's voice may be heard unmistakably across the Shroud, and she can hear anything that nearby ghosts might say as clearly as though she stood in the Underworld herself.",
         "source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",

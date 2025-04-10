@@ -4,31 +4,109 @@ Utility functions for XP management.
 from world.wod20th.utils.sheet_constants import (
     TALENTS, SKILLS, KNOWLEDGES,
     SECONDARY_TALENTS, SECONDARY_SKILLS, SECONDARY_KNOWLEDGES,
-    POWERS, BACKGROUNDS, MERITS, FLAWS, HEALTH, RENOWN,
-    SHIFTER_TYPE, KITH, CLAN, BREED, GAROU_TRIBE,
-    ATTRIBUTES, ABILITIES, ADVANTAGES, BLESSINGS, CHARMS
+    BACKGROUNDS, BLESSINGS, CHARMS
 )
 from world.wod20th.utils.stat_mappings import (
-    MAGE_SPHERES, ARTS, REALMS, VALID_MORTALPLUS_TYPES,
-    VALID_POSSESSED_TYPES, VALID_SHIFTER_TYPES, VALID_SPLATS,
-    REQUIRED_INSTANCES, KINFOLK_BREED_CHOICES, SPECIAL_ADVANTAGES, COMBAT_SPECIAL_ADVANTAGES,
+    MAGE_SPHERES, ARTS, REALMS, SPECIAL_ADVANTAGES, COMBAT_SPECIAL_ADVANTAGES,
     MERIT_CATEGORIES, FLAW_CATEGORIES, MERIT_VALUES, FLAW_VALUES, UNIVERSAL_BACKGROUNDS, VAMPIRE_BACKGROUNDS, CHANGELING_BACKGROUNDS, MAGE_BACKGROUNDS,
     TECHNOCRACY_BACKGROUNDS, TRADITIONS_BACKGROUNDS, NEPHANDI_BACKGROUNDS, SHIFTER_BACKGROUNDS,
     SORCERER_BACKGROUNDS, KINAIN_BACKGROUNDS
 )
+
+from world.wod20th.utils.xp_costs import (
+    calculate_attribute_cost, calculate_ability_cost, calculate_discipline_cost,
+    calculate_background_cost, calculate_willpower_cost, calculate_virtue_cost,
+    calculate_thaumaturgy_path_cost, calculate_ritual_cost, calculate_path_cost,
+    calculate_rage_cost, calculate_gnosis_cost, calculate_rite_cost,
+    calculate_sphere_cost as base_sphere_cost, calculate_arete_cost, calculate_avatar_cost,
+    calculate_art_cost, calculate_realm_cost, calculate_glamour_cost,
+    calculate_special_advantage_cost, calculate_charm_cost, calculate_sorcerous_path_cost,
+    calculate_numina_cost, calculate_blessing_cost, calculate_arcanos_cost, 
+    calculate_faith_cost, calculate_sorcerous_ritual_cost
+)
+
+# Do not import shifter_utils functions here to avoid circular imports
+# They will be imported within the functions that need them
+
+from decimal import Decimal
+from django.db.models import Q
+from evennia.utils import logger
+
+from world.wod20th.utils.vampire_utils import validate_discipline_purchase, PURCHASABLE_DISCIPLINES, is_discipline_in_clan
+from world.wod20th.utils.mortalplus_utils import calculate_kinfolk_gift_cost
+from world.wod20th.utils.possessed_utils import calculate_possessed_gift_cost
+
 from world.wod20th.utils.ritual_data import THAUMATURGY_RITUALS, NECROMANCY_RITUALS
+
+from world.wod20th.utils.xp_costs import (
+    # General costs
+    calculate_arcanos_cost,
+    calculate_attribute_cost,
+    calculate_ability_cost,
+    calculate_faith_cost,
+    calculate_willpower_cost,
+    calculate_background_cost,
+    calculate_merit_cost,
+    calculate_flaw_cost,
+    
+    # Vampire costs
+    calculate_discipline_cost,
+    calculate_virtue_cost,
+    calculate_path_cost,
+    calculate_thaumaturgy_path_cost,
+    calculate_ritual_cost,
+    
+    # Werewolf costs
+    calculate_gift_cost,
+    calculate_rage_cost,
+    calculate_gnosis_cost,
+    calculate_rite_cost,
+    
+    # Mage costs
+    calculate_sphere_cost,
+    calculate_arete_cost,
+    calculate_avatar_cost,
+    
+    # Changeling costs
+    calculate_art_cost,
+    calculate_realm_cost,
+    calculate_glamour_cost,
+    
+    # Companion costs
+    calculate_special_advantage_cost,
+    calculate_charm_cost,
+    
+    # Sorcerer costs
+    calculate_sorcerous_path_cost,
+    calculate_sorcerous_ritual_cost,
+    
+    # Psychic costs
+    calculate_numina_cost,
+    
+    # Possessed costs
+    calculate_blessing_cost,
+    calculate_possessed_gift_cost,
+    
+    # Kinain costs
+    calculate_kinain_art_cost,
+    calculate_kinain_realm_cost,
+    
+    # Kinfolk costs
+    calculate_kinfolk_gift_cost,
+    
+    # Ghoul costs
+    calculate_ghoul_discipline_cost
+)
 
 from evennia.objects.models import ObjectDB
 from evennia.utils import logger
-from decimal import Decimal
 from datetime import datetime, timedelta
 import ast
-from world.wod20th.models import Stat
-from django.db.models import Q
-from commands.CmdSelfStat import REQUIRED_SPECIALTIES
+from typing import Dict, List, Tuple, Optional
+
 
 # Constants
-PURCHASABLE_DISCIPLINES = ['Potence', 'Celerity', 'Fortitude', 'Obfuscate', 'Auspex']
+# Removed duplicate PURCHASABLE_DISCIPLINES list since we're using the one from vampire_utils.py
 
 # Auto-approve rules
 AUTO_APPROVE = {
@@ -307,45 +385,6 @@ def _get_primary_necromancy_path(character):
             
     return primary_path
 
-def free_specialty_check(character):
-    """Check if the character has free specialty slots."""
-    # Check if the character is in chargen
-    if character.db.is_approved:
-        return False
-    
-    # Check for high-level abilities and attributes (4+)
-    # Check abilities
-    for category in ['talent', 'skill', 'knowledge']:
-        abilities = character.db.stats.get('abilities', {}).get(category, {})
-        for ability_name, ability_data in abilities.items():
-            if ability_data.get('perm', 0) >= 4:
-                return True
-                
-            # Check for required specialties (case-insensitive matching)
-            for req_ability in REQUIRED_SPECIALTIES:
-                if ability_name.lower() == req_ability.lower() and ability_data.get('perm', 0) > 0:
-                    return True
-    
-    # Check secondary abilities
-    for category in ['secondary_talent', 'secondary_skill', 'secondary_knowledge']:
-        abilities = character.db.stats.get('secondary_abilities', {}).get(category, {})
-        for ability_name, ability_data in abilities.items():
-            if ability_data.get('perm', 0) >= 4:
-                return True
-                
-            # Check for required specialties (case-insensitive matching)
-            for req_ability in REQUIRED_SPECIALTIES:
-                if ability_name.lower() == req_ability.lower() and ability_data.get('perm', 0) > 0:
-                    return True
-    
-    # Check attributes
-    for category in ['physical', 'social', 'mental']:
-        attributes = character.db.stats.get('attributes', {}).get(category, {})
-        for attribute_name, attribute_data in attributes.items():
-            if attribute_data.get('perm', 0) >= 4:
-                return True
-    
-    return False
 
 # Clan-specific disciplines mapping
 def _is_discipline_in_clan(discipline, clan):
@@ -402,563 +441,210 @@ def _is_discipline_in_clan(discipline, clan):
     # Check if discipline is in clan's discipline list
     return clan in clan_disciplines and discipline in clan_disciplines[clan]
 
-def calculate_xp_cost(character, stat_name, new_rating, category=None, subcategory=None, current_rating=None):
-    """Calculate XP cost for increasing a stat."""
+def get_stat_model():
+    """Get the Stat model lazily to avoid circular imports."""
+    from world.wod20th.models import Stat
+    return Stat
+
+def calculate_xp_cost(character, stat_name, new_rating, category=None, subcategory=None, current_rating=None, is_staff_spend=False):
+    """
+    Calculate XP cost for increasing a stat.
+    
+    Args:
+        character: The character object
+        stat_name: The name of the stat to increase
+        new_rating: The desired new rating
+        category: The stat category
+        subcategory: The stat subcategory
+        current_rating: The current rating of the stat
+        is_staff_spend: Whether this is a staff-approved purchase
+        
+    Returns:
+        tuple: (cost, requires_approval)
+    """
     try:
         # Convert new_rating to integer
-        new_rating = int(new_rating)
-    except (ValueError, TypeError):
-        return (0, False)
-    
-    # Get character's splat and type
-    splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
-    mortal_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+        try:
+            new_rating = int(new_rating)
+        except (ValueError, TypeError):
+            return (0, False)
+        
+        # Get character's splat and type
+        splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+        mortal_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
 
-    # Special handling for Shifter gifts
-    if category == 'powers' and subcategory == 'gift' and splat == 'Shifter':
-        logger.log_info("Processing Shifter gift")
-        
-        # Get character's breed, auspice, and tribe
-        breed = character.db.stats.get('identity', {}).get('lineage', {}).get('Breed', {}).get('perm', '')
-        auspice = character.db.stats.get('identity', {}).get('lineage', {}).get('Auspice', {}).get('perm', '')
-        tribe = character.db.stats.get('identity', {}).get('lineage', {}).get('Tribe', {}).get('perm', '')
-        shifter_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
-        
-        logger.log_info(f"Character details - Breed: {breed}, Auspice: {auspice}, Tribe: {tribe}, Type: {shifter_type}")
-        
-        # Find the gift in JSON files
-        import os
-        import json
-        
-        data_dir = os.path.join('diesirae', 'data')
-        gift_files = [
-            'rank1_garou_gifts.json',
-            'rank2_garou_gifts.json',
-            'rank3_garou_gifts.json',
-            'rank4_garou_gifts.json',
-            'rank5_garou_gifts.json',
-            'ajaba_gifts.json',
-            'bastet_gifts.json',
-            'corax_gifts.json',
-            'gurahl_gifts.json',
-            'kitsune_gifts.json',
-            'mokole_gifts.json',
-            'nagah_gifts.json',
-            'nuwisha_gifts.json',
-            'ratkin_gifts.json',
-            'rokea_gifts.json'
-        ]
-        
-        found_gift = None
-        for gift_file in gift_files:
-            try:
-                file_path = os.path.join(data_dir, gift_file)
-                if os.path.exists(file_path):
-                    with open(file_path, 'r') as f:
-                        gifts = json.load(f)
-                        # Check if the gift exists in this file
-                        for gift in gifts:
-                            if gift.get('name', '').lower() == stat_name.lower():
-                                found_gift = gift
-                                break
-                    if found_gift:
-                        break
-            except Exception as e:
-                logger.log_err(f"Error reading gift file {gift_file}: {str(e)}")
-                continue
-        
-        if found_gift:
-            logger.log_info(f"Found gift in JSON: {found_gift['name']}")
-            
-            # For Ajaba and other non-Garou shifter types, use their specific cost structure
-            if shifter_type and shifter_type.lower() != 'garou':
-                is_breed_gift, is_auspice_gift, is_tribe_gift = _check_shifter_gift_match(character, found_gift, shifter_type)
-                
-                # Special case for Kitsune ju-fu gifts
-                if shifter_type == 'Kitsune' and found_gift.get('gift_type') == 'ju-fu':
-                    total_cost = 0
-                    for rating in range(current_rating + 1, new_rating + 1):
-                        total_cost += 7  # Ju-fu gifts cost 7 XP per level
-                    logger.log_info(f"Kitsune ju-fu gift cost: {total_cost}")
-                    return total_cost, False
-                
-                # Calculate cost based on gift type
-                if is_breed_gift or is_auspice_gift or is_tribe_gift:
-                    total_cost = 0
-                    for rating in range(current_rating + 1, new_rating + 1):
-                        total_cost += 3  # Base cost of 3 XP per level for matching gifts
-                    logger.log_info(f"Non-Garou matching gift cost: {total_cost}")
-                    return total_cost, False
-                else:
-                    total_cost = 0
-                    for rating in range(current_rating + 1, new_rating + 1):
-                        total_cost += 5  # Higher cost for non-matching gifts
-                    logger.log_info(f"Non-Garou non-matching gift cost: {total_cost}")
-                    return total_cost, False
+        # Special handling for Time based on splat
+        if stat_name == 'Time':
+            if splat == 'Mage':
+                category = 'powers'
+                subcategory = 'sphere'
+            elif splat == 'Changeling' or (splat == 'Mortal+' and mortal_type == 'Kinain'):
+                category = 'powers'
+                subcategory = 'realm'
 
-            # For Garou, check if it's a breed, auspice, or tribe gift
-            is_breed_gift = False
-            is_auspice_gift = False
-            is_tribe_gift = False
-            is_special = False
-            
-            # Check breed gifts
-            if found_gift.get('shifter_type'):
-                allowed_types = found_gift['shifter_type'] if isinstance(found_gift['shifter_type'], list) else [found_gift['shifter_type']]
-                is_breed_gift = breed and breed.lower() in [t.lower() for t in allowed_types]
-            
-            # Check auspice gifts
-            if found_gift.get('auspice'):
-                allowed_auspices = found_gift['auspice'] if isinstance(found_gift['auspice'], list) else [found_gift['auspice']]
-                is_auspice_gift = auspice and auspice.lower() in [a.lower() for a in allowed_auspices]
-                logger.log_info(f"Checking auspice gift - Character auspice: {auspice}, Gift auspices: {allowed_auspices}, Is auspice gift: {is_auspice_gift}")
-            
-            # Check tribe gifts and special gifts
-            if found_gift.get('tribe'):
-                # Handle both string and list cases for tribe
-                tribes = found_gift['tribe'] if isinstance(found_gift['tribe'], list) else [found_gift['tribe']]
-                # Convert everything to lowercase for comparison
-                tribes_lower = [t.lower() for t in tribes]
-                tribe_lower = tribe.lower() if tribe else None
-                is_tribe_gift = tribe_lower and tribe_lower in tribes_lower
-                is_special = any(t.lower() in ['croatan', 'planetary'] for t in tribes)
-            
-            logger.log_info(f"Gift type checks - Breed: {is_breed_gift}, Auspice: {is_auspice_gift}, Tribe: {is_tribe_gift}, Special: {is_special}")
-            logger.log_info(f"Tribe check details - Character tribe: {tribe}, Gift tribes: {tribes}")
-            
-            # Calculate cost for each level being purchased
-            total_cost = 0
-            for rating in range(current_rating + 1, new_rating + 1):
-                if is_special:
-                    total_cost += 7  # Croatan/Planetary gifts cost 7 XP per level
-                    logger.log_info(f"Adding special gift cost: 7 XP for level {rating}")
-                elif is_breed_gift or is_auspice_gift or is_tribe_gift:
-                    total_cost += 3  # Breed/Auspice/Tribe gifts cost 3 XP per level
-                    logger.log_info(f"Adding breed/auspice/tribe gift cost: 3 XP for level {rating}")
-                else:
-                    total_cost += 5  # Other gifts cost 5 XP per level
-                    logger.log_info(f"Adding other gift cost: 5 XP for level {rating}")
-            
-            logger.log_info(f"Final calculated cost for Garou gift: {total_cost}")
-            return total_cost, False
-        
-        # If gift not found in JSON files, try database as fallback
-        from world.wod20th.models import Stat
-        from django.db.models import Q
-        
-        gift = Stat.objects.filter(
-            Q(name__iexact=stat_name) | Q(gift_alias__icontains=stat_name),
-            category='powers',
-            stat_type='gift'
-        ).first()
-        
-        if gift:
-            logger.log_info(f"Found gift in database: {gift.name}")
-            # Initialize variables
-            is_breed_gift = False
-            is_auspice_gift = False
-            is_tribe_gift = False
-            is_special = False
-            tribes = []  # Initialize tribes list
-            
-            # Debug logging for gift data
-            logger.log_info(f"Gift data - tribe: {gift.tribe}, type: {type(gift.tribe)}")
-            
-            if gift.shifter_type:
-                allowed_types = gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type]
-                is_breed_gift = breed and breed.lower() in [t.lower() for t in allowed_types]
-            
-            if gift.auspice:
-                allowed_auspices = gift.auspice if isinstance(gift.auspice, list) else [gift.auspice]
-                is_auspice_gift = auspice and auspice.lower() in [a.lower() for a in allowed_auspices]
-                logger.log_info(f"Checking auspice gift - Character auspice: {auspice}, Gift auspices: {allowed_auspices}, Is auspice gift: {is_auspice_gift}")
-            
-            if gift.tribe:
-                # Handle both string and list cases for tribe
-                if isinstance(gift.tribe, str):
-                    tribes = [gift.tribe]
-                elif isinstance(gift.tribe, list):
-                    tribes = gift.tribe
-                else:
-                    # Try to convert from JSON string if needed
-                    try:
-                        import json
-                        tribes = json.loads(gift.tribe)
-                        if isinstance(tribes, str):
-                            tribes = [tribes]
-                    except (json.JSONDecodeError, TypeError):
-                        tribes = []
-                
-                # Convert everything to lowercase for comparison
-                tribes_lower = [t.lower() for t in tribes]
-                tribe_lower = tribe.lower() if tribe else None
-                is_tribe_gift = tribe_lower and tribe_lower in tribes_lower
-                is_special = any(t.lower() in ['croatan', 'planetary'] for t in tribes)
-                
-                logger.log_info(f"Tribe processing - Raw tribes: {tribes}")
-                logger.log_info(f"Tribe processing - Lowercase tribes: {tribes_lower}")
-                logger.log_info(f"Tribe processing - Character tribe: {tribe_lower}")
-            
-            logger.log_info(f"Gift type checks - Breed: {is_breed_gift}, Auspice: {is_auspice_gift}, Tribe: {is_tribe_gift}, Special: {is_special}")
-            logger.log_info(f"Tribe check details - Character tribe: {tribe}, Gift tribes: {tribes}")
-            
-            total_cost = 0
-            for rating in range(current_rating + 1, new_rating + 1):
-                if is_special:
-                    total_cost += 7
-                    logger.log_info(f"Adding special gift cost: 7 XP for level {rating}")
-                elif is_breed_gift or is_auspice_gift or is_tribe_gift:
-                    total_cost += 3
-                    logger.log_info(f"Adding breed/auspice/tribe gift cost: 3 XP for level {rating}")
-                else:
-                    total_cost += 5
-                    logger.log_info(f"Adding other gift cost: 5 XP for level {rating}")
-            
-            logger.log_info(f"Final calculated cost for Garou gift: {total_cost}")
-            return total_cost, False
-        
-        # If gift not found anywhere, use base cost
-        total_cost = 0
-        for rating in range(current_rating + 1, new_rating + 1):
-            total_cost += 3  # Base cost of 3 XP per level
-        logger.log_info(f"Using base cost for gift not found: {total_cost}")
-        return total_cost, False
-
-    # Special handling for Time based on splat
-    if stat_name == 'Time':
-        if splat == 'Mage':
-            category = 'powers'
-            subcategory = 'sphere'
-        elif splat == 'Changeling' or (splat == 'Mortal+' and mortal_type == 'Kinain'):
-            category = 'powers'
-            subcategory = 'realm'
-
-    # Normalize subcategory for disciplines
-    if category == 'powers' and subcategory == 'disciplines':
-        subcategory = 'discipline'
-
-    # Handle instanced backgrounds
-    base_stat_name = stat_name
-    if '(' in stat_name and ')' in stat_name:
-        # Extract the base name without the instance
-        base_stat_name = stat_name[:stat_name.find('(')].strip()
-    
-    # Get current rating if not provided
-    if current_rating is None:
-        if category == 'powers':
-            if subcategory == 'discipline':
-                current_rating = character.db.stats.get('powers', {}).get('discipline', {}).get(stat_name, {}).get('perm', 0)
-            elif subcategory in ['thaumaturgy', 'necromancy']:
-                current_rating = character.db.stats.get('powers', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
-            else:
-                current_rating = character.db.stats.get('powers', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
-        elif category == 'backgrounds' and '(' in stat_name and ')' in stat_name:
-            # Look up the specific instanced background
-            current_rating = character.db.stats.get(category, {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
-        elif category == 'pools' and subcategory == 'dual':
-            # Get current pool rating
-            current_rating = character.db.stats.get('pools', {}).get('dual', {}).get(stat_name, {}).get('perm', 0)
-        else:
+        # Get current rating if not provided
+        if current_rating is None:
             current_rating = character.get_stat(category, subcategory, stat_name) or 0
 
-    # Initialize cost and requires_approval
-    total_cost = 0
-    requires_approval = False
-
-    # Special handling for Thaumaturgy and Necromancy paths
-    if category == 'powers' and subcategory in ['thaumaturgy', 'necromancy']:
-        # Get primary path
-        if subcategory == 'thaumaturgy':
-            primary_path = _get_primary_thaumaturgy_path(character)
-        else:  # necromancy
-            primary_path = _get_primary_necromancy_path(character)
-
-        # Check discipline rating
-        discipline_name = 'Thaumaturgy' if subcategory == 'thaumaturgy' else 'Necromancy'
-        discipline_rating = character.db.stats.get('powers', {}).get('discipline', {}).get(discipline_name, {}).get('perm', 0)
-        
-        # Cannot exceed discipline rating
-        if new_rating > discipline_rating:
-            return (0, False)
-            
-        # Calculate cost based on whether this is primary or secondary path
-        if stat_name == primary_path:
-            # Primary path costs 5 XP per level
-            total_cost = sum(5 for i in range(current_rating + 1, new_rating + 1))
-        else:
-            # Secondary path costs 7 for first level, then current rating × 4
-            if current_rating == 0:
-                total_cost = 7  # First dot always costs 7
-                if new_rating > 1:  # If buying multiple levels
-                    # For each additional level, cost is previous rating × 4
-                    for i in range(1, new_rating):
-                        total_cost += i * 4
-            else:
-                # Cost is current rating × 4
-                total_cost = current_rating * 4
-        requires_approval = True  # Always require staff approval
-        return (total_cost, requires_approval)
-
-    # Special handling for Thaumaturgy and Necromancy disciplines
-    if category == 'powers' and subcategory == 'discipline' and stat_name in ['Thaumaturgy', 'Necromancy']:
-        # Check if it's an in-clan discipline
-        clan = character.db.stats.get('identity', {}).get('lineage', {}).get('Clan', {}).get('perm', '')
-        is_in_clan = _is_discipline_in_clan(stat_name, clan)
-        
-        # Calculate discipline cost
+        # Initialize cost and requires_approval
         total_cost = 0
-        for rating in range(current_rating + 1, new_rating + 1):
-            if rating == 1:
-                total_cost += 10  # First dot always costs 10
-            else:
-                if is_in_clan:
-                    total_cost += (rating - 1) * 5  # Previous rating × 5
-                else:
-                    total_cost += (rating - 1) * 7  # Previous rating × 7
-        
-        requires_approval = True  # Always require staff approval
-        return (total_cost, requires_approval)
+        requires_approval = False
 
-    # Special handling for blessings and charms
-    if category == 'powers':
-        if subcategory == 'blessing':
-            # Validate against BLESSINGS list
-            if stat_name not in BLESSINGS:
-                return (0, False)
-            # Blessings cost New Rating x 4 XP
-            total_cost = new_rating * 4
-            requires_approval = new_rating > 3
-            return (total_cost, requires_approval)
-        elif subcategory == 'charm':
-            # Charms are flat 5 XP per purchase
-            total_cost = 5
-            requires_approval = False
-            return (total_cost, requires_approval)
-        elif subcategory == 'special_advantage':
-            # Check against SPECIAL_ADVANTAGES dictionary
-            if stat_name.lower() in SPECIAL_ADVANTAGES:
-                advantage_info = SPECIAL_ADVANTAGES[stat_name.lower()]
-                if new_rating in advantage_info['valid_values']:
-                    total_cost = new_rating * 1  # Cost is rating × 1
-                    requires_approval = new_rating > 5
-                    return (total_cost, requires_approval)
-            elif stat_name.lower() in COMBAT_SPECIAL_ADVANTAGES:
-                advantage_info = COMBAT_SPECIAL_ADVANTAGES[stat_name.lower()]
-                if new_rating in advantage_info['valid_values']:
-                    total_cost = new_rating * 2  # Cost is rating × 2
-                    requires_approval = new_rating > 5
-                    return (total_cost, requires_approval)
-            return (0, False)  # Invalid special advantage or rating
-    
-    # Handle pools (Willpower, Rage, Gnosis)
-    if category == 'pools' and subcategory == 'dual':
-        # Different costs based on pool type
-        if stat_name == 'Willpower':
-            # Willpower costs Current Rating * 2 XP
-            total_cost = sum(i * 2 for i in range(current_rating + 1, new_rating + 1))
-            requires_approval = new_rating > 5
-        elif stat_name == 'Rage':
-            # Rage costs Current Rating XP
-            total_cost = sum(i for i in range(current_rating + 1, new_rating + 1))
-            requires_approval = new_rating > 5
-        elif stat_name == 'Gnosis':
-            # Gnosis costs Current Rating * 2 XP
-            total_cost = sum(i * 2 for i in range(current_rating + 1, new_rating + 1))
-            requires_approval = new_rating > 5
-        elif stat_name == 'Glamour':
-            # Glamour costs Current Rating * 3 XP
-            total_cost = sum(i * 3 for i in range(current_rating + 1, new_rating + 1))
-            requires_approval = new_rating > 5
-        elif stat_name in ['Arete', 'Enlightenment']:
-            # Arete and Enlightenment cost Current Rating * 8 XP
-            total_cost = sum(i * 8 for i in range(current_rating + 1, new_rating + 1))
-            requires_approval = new_rating > 1 # Arete and Enlightenment are always 1 or higher and always require staff approval for raising.
-        return (total_cost, requires_approval)
-
-    # Special handling for Thaumaturgy and Necromancy rituals
-    if category == 'powers' and subcategory in ['thaum_ritual', 'necromancy_ritual']:
-        # Check if the corresponding discipline is in-clan
-        clan = character.db.stats.get('identity', {}).get('lineage', {}).get('Clan', {}).get('perm', '')
-        discipline_name = 'Thaumaturgy' if subcategory == 'thaum_ritual' else 'Necromancy'
-        is_in_clan = _is_discipline_in_clan(discipline_name, clan)
-        
-        # Check if character has the required discipline rating
-        discipline_rating = character.db.stats.get('powers', {}).get('discipline', {}).get(discipline_name, {}).get('perm', 0)
-        
-        # Get ritual level from the appropriate dictionary
-        ritual_dict = THAUMATURGY_RITUALS if subcategory == 'thaum_ritual' else NECROMANCY_RITUALS
-        ritual_level = None
-        
-        # Case-insensitive lookup
-        for ritual_name, level in ritual_dict.items():
-            if ritual_name.lower() == stat_name.lower():
-                ritual_level = level
-                break
-                
-        if ritual_level is None:
-            return (0, False)  # Invalid ritual
-        
-        # Cannot learn rituals higher than discipline rating
-        if ritual_level > discipline_rating:
-            return (0, False)
-        # Calculate cost based on in-clan status
-        if is_in_clan:
-            total_cost = ritual_level * 2  # Level x 2 XP for in-clan
-        else:
-            total_cost = ritual_level * 3  # Level x 3 XP for out-of-clan
-        requires_approval = True  # Always require staff approval for rituals
-        return (total_cost, requires_approval)
-
-    # Calculate cost for each dot being purchased
-    for rating in range(current_rating + 1, new_rating + 1):
-        dot_cost = 0
-        
-        # Calculate base cost based on stat type
+        # Handle attributes
         if category == 'attributes':
-            # First dot (0->1) should be free during character creation
-            # Second dot (1->2) costs 8
-            # Each subsequent dot costs current rating × 4
-            if rating == 2:
-                dot_cost = 8  # Going from 1 to 2 specifically costs 8
-            else:
-                dot_cost = (rating - 1) * 4  # For rating 3+, use previous rating × 4
-            requires_approval = rating > 3
+            total_cost = 0
+            for rating in range(current_rating + 1, new_rating + 1):
+                if rating == 2:
+                    total_cost += 8  # Going from 1 to 2 specifically costs 8
+                else:
+                    total_cost += rating * 4  # Current rating × 4
+            requires_approval = new_rating > 3
+            return total_cost, requires_approval
 
+        # Handle abilities
         elif category in ['abilities', 'secondary_abilities']:
             if subcategory in ['talent', 'skill', 'knowledge', 'secondary_talent', 'secondary_skill', 'secondary_knowledge']:
-                if rating == 1:
-                    dot_cost = 3  # First dot always costs 3
-                else:
-                    dot_cost = (rating - 1) * 2  # Each subsequent dot costs previous rating × 2
-                requires_approval = rating > 3
-
-        elif category == 'backgrounds':
-            dot_cost = 5  # Each dot costs 5 XP
-            requires_approval = rating > 3
-
-        elif category == 'specialties':
-            dot_cost = 2  # Each dot costs 2 XP
-
-        # Calculate costs for Changeling/Kinain arts and realms
-        elif category == 'powers' and (splat == 'Changeling' or (splat == 'Mortal+' and mortal_type == 'Kinain')):
-            # Handle arts
-            if subcategory == 'art':
-                if rating == 1:
-                    dot_cost = 7  # First dot costs 7
-                else:
-                    dot_cost = (rating - 1) * 4  # Each subsequent dot costs previous rating × 4
-                requires_approval = rating > 2
-            
-            # Handle realms
-            elif subcategory == 'realm':
-                if rating == 1:
-                    dot_cost = 5  # First dot costs 5
-                else:
-                    dot_cost = (rating - 1) * 3  # Each subsequent dot costs previous rating × 3
-                requires_approval = rating > 2
-
-        # Calculate costs for Mage spheres
-        elif category == 'powers' and splat == 'Mage' and subcategory == 'sphere':
-            is_affinity = character._is_affinity_sphere(stat_name)
-            if rating == 1:
-                dot_cost = 10  # First dot always costs 10
-            else:
-                if is_affinity:
-                    dot_cost = (rating - 1) * 7  # Previous rating × 7
-                else:
-                    dot_cost = (rating - 1) * 8  # Previous rating × 8
-            requires_approval = rating > 2
-
-        elif category == 'powers':
-            # Adjust costs based on splat and power type
-            if splat == 'Vampire':
-                if subcategory == 'discipline':
-                    # Check if it's an in-clan discipline
-                    clan = character.db.stats.get('identity', {}).get('lineage', {}).get('Clan', {}).get('perm', '')
-                    is_in_clan = _is_discipline_in_clan(stat_name, clan)
-                    
+                total_cost = 0
+                for rating in range(current_rating + 1, new_rating + 1):
                     if rating == 1:
-                        dot_cost = 10  # First dot always costs 10
+                        total_cost += 3  # First dot costs 3
+                    else:
+                        total_cost += rating * 2  # Current rating × 2
+                requires_approval = new_rating > 3
+                return total_cost, requires_approval
+
+        # Handle backgrounds
+        elif category == 'backgrounds':
+            total_cost = (new_rating - current_rating) * 5  # Each dot costs 5 XP
+            requires_approval = new_rating > 3
+            return total_cost, requires_approval
+
+        # Handle gifts for different character types
+        elif category == 'powers' and subcategory == 'gift':
+            if splat == 'Shifter':
+                from world.wod20th.utils.shifter_utils import calculate_gift_cost
+                total_cost = calculate_gift_cost(character, stat_name, new_rating, current_rating)
+                requires_approval = new_rating > 1
+            elif splat == 'Mortal+' and mortal_type == 'Kinfolk':
+                from world.wod20th.utils.mortalplus_utils import calculate_kinfolk_gift_cost
+                total_cost = calculate_kinfolk_gift_cost(current_rating, new_rating)
+                requires_approval = new_rating > 1
+            elif splat == 'Possessed':
+                from world.wod20th.utils.possessed_utils import calculate_possessed_gift_cost
+                total_cost = calculate_possessed_gift_cost(current_rating, new_rating)
+                requires_approval = new_rating > 2
+            return total_cost, requires_approval
+
+        # Handle disciplines
+        elif category == 'powers' and subcategory == 'discipline':
+            if splat == 'Vampire':
+                clan = character.db.stats.get('identity', {}).get('lineage', {}).get('Clan', {}).get('perm', '')
+                from world.wod20th.utils.vampire_utils import _is_discipline_in_clan
+                is_in_clan = _is_discipline_in_clan(stat_name, clan)
+                total_cost = 0
+                for rating in range(current_rating + 1, new_rating + 1):
+                    if rating == 1:
+                        total_cost += 10  # First dot always costs 10
                     else:
                         if is_in_clan:
-                            dot_cost = (rating - 1) * 5  # Previous rating × 5
+                            total_cost += rating * 5  # Current rating × 5
                         else:
-                            dot_cost = (rating - 1) * 7  # Previous rating × 7
-                    requires_approval = rating > 2
+                            total_cost += rating * 7  # Current rating × 7
+                requires_approval = new_rating > 2
+            elif splat == 'Mortal+' and mortal_type == 'Ghoul':
+                from world.wod20th.utils.mortalplus_utils import calculate_ghoul_discipline_cost
+                clan = character.db.stats.get('identity', {}).get('lineage', {}).get('Family', {}).get('perm', '')
+                from world.wod20th.utils.vampire_utils import _is_discipline_in_clan
+                is_in_clan = _is_discipline_in_clan(stat_name, clan)
+                total_cost = calculate_ghoul_discipline_cost(current_rating, new_rating, is_in_clan)
+                requires_approval = new_rating > 1
+            return total_cost, requires_approval
 
-            elif splat == 'Mage':
-                # Check if it's an affinity sphere
-                is_affinity = character._is_affinity_sphere(stat_name)
-                
-                if rating == 1:
-                    dot_cost = 10  # First dot always costs 10
-                else:
-                    if is_affinity:
-                        dot_cost = (rating - 1) * 7
-                    else:
-                        dot_cost = (rating - 1) * 8
-                
-                requires_approval = rating > 2
+        # Handle spheres
+        elif category == 'powers' and subcategory == 'sphere':
+            from world.wod20th.utils.mage_utils import calculate_sphere_cost
+            total_cost, requires_approval, _ = calculate_sphere_cost(character, stat_name, new_rating, current_rating, is_staff_spend)
+            return total_cost, requires_approval
 
-            # Handle Kinfolk gifts
-            elif splat == 'Mortal+' and mortal_type == 'Kinfolk' and subcategory == 'gift':
-                # Log information about the gift calculation
-                logger.log_info(f"Calculating XP cost for {stat_name} - Kinfolk gift")
-                
-                # Get the gift details from the database
-                gift = Stat.objects.filter(
-                    Q(name__iexact=stat_name) | Q(gift_alias__icontains=stat_name),
-                    category='powers',
-                    stat_type='gift'
-                ).first()
-                
-                if gift:
-                    # For Kinfolk, breed is always Homid
-                    is_homid = False
-                    if gift.shifter_type:
-                        allowed_types = gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type]
-                        is_homid = 'homid' in [t.lower() for t in allowed_types]
-                        logger.log_info(f"Gift {stat_name} is homid: {is_homid}")
-                        
-                    # Check if it's a tribal gift
-                    is_tribal = False
-                    kinfolk_tribe = character.db.stats.get('identity', {}).get('lineage', {}).get('Tribe', {}).get('perm', '')
-                    if gift.tribe and kinfolk_tribe:
-                        allowed_tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
-                        is_tribal = kinfolk_tribe.lower() in [t.lower() for t in allowed_tribes]
-                        logger.log_info(f"Gift {stat_name} is tribal ({kinfolk_tribe}): {is_tribal}")
-                        
-                    # Check if it's a Croatan or Planetary gift
-                    is_special = gift.tribe and any(tribe.lower() in ['croatan', 'planetary'] 
-                                                  for tribe in (gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]))
-                    logger.log_info(f"Gift {stat_name} is special (Croatan/Planetary): {is_special}")
-                    
-                    # Calculate cost based on gift type
-                    if is_homid or is_tribal:
-                        dot_cost = rating * 6  # Breed/tribe gifts cost 6 XP per level
-                        logger.log_info(f"Gift {stat_name} cost (breed/tribal): {dot_cost}")
-                    elif is_special:
-                        dot_cost = rating * 14  # Croatan/Planetary gifts cost 14 XP per level
-                        logger.log_info(f"Gift {stat_name} cost (special): {dot_cost}")
-                    else:
-                        dot_cost = rating * 10  # Other gifts cost 10 XP per level
-                        logger.log_info(f"Gift {stat_name} cost (other): {dot_cost}")
-                    
-                    # Level 2 gifts require the Gnosis merit and staff approval
-                    if rating > 1:
-                        # Check for Gnosis merit
-                        gnosis_merit = next((value.get('perm', 0) for merit, value in character.db.stats.get('merits', {}).get('merit', {}).items() 
-                                            if merit.lower() == 'gnosis'), 0)
-                        if not gnosis_merit:
-                            logger.log_info(f"Cannot buy level 2 gift without Gnosis merit")
-                            return (0, False)  # Can't buy level 2 gifts without Gnosis merit
-                        requires_approval = True  # Level 2 gifts always require staff approval
-                else:
-                    logger.log_info(f"Gift {stat_name} not found in database")
-                    return (0, False)  # Gift not found in database
+        # Handle arts and realms
+        elif category == 'powers' and subcategory in ['art', 'realm']:
+            if splat == 'Changeling':
+                from world.wod20th.utils.changeling_utils import calculate_art_cost, calculate_realm_cost
+                if subcategory == 'art':
+                    total_cost = calculate_art_cost(current_rating, new_rating)
+                else:  # realm
+                    total_cost = calculate_realm_cost(current_rating, new_rating)
+                requires_approval = new_rating > 2
+            elif splat == 'Mortal+' and mortal_type == 'Kinain':
+                from world.wod20th.utils.mortalplus_utils import calculate_kinain_art_cost, calculate_kinain_realm_cost
+                if subcategory == 'art':
+                    total_cost = calculate_kinain_art_cost(current_rating, new_rating)
+                else:  # realm
+                    total_cost = calculate_kinain_realm_cost(current_rating, new_rating)
+                requires_approval = new_rating > 2
+            return total_cost, requires_approval
 
-        total_cost += dot_cost
-    return (total_cost, requires_approval)
+        # Handle pools
+        elif category == 'pools' and subcategory == 'dual':
+            if stat_name == 'Willpower':
+                total_cost = sum(i * 2 for i in range(current_rating + 1, new_rating + 1))  # Current rating × 2
+                requires_approval = new_rating > 5
+            elif stat_name == 'Rage':
+                total_cost = sum(i for i in range(current_rating + 1, new_rating + 1))  # Current rating
+                requires_approval = new_rating > 5
+            elif stat_name == 'Gnosis':
+                total_cost = sum(i * 2 for i in range(current_rating + 1, new_rating + 1))  # Current rating × 2
+                requires_approval = new_rating > 5
+            elif stat_name == 'Glamour':
+                total_cost = sum(i * 3 for i in range(current_rating + 1, new_rating + 1))  # Current rating × 3
+                requires_approval = new_rating > 5
+            elif stat_name in ['Arete', 'Enlightenment']:
+                total_cost = sum(i * 8 for i in range(current_rating + 1, new_rating + 1))  # Current rating × 8
+                requires_approval = new_rating > 1
+            return total_cost, requires_approval
+
+        # Handle special advantages for companions
+        elif category == 'powers' and subcategory == 'special_advantage':
+            from world.wod20th.utils.companion_utils import calculate_special_advantage_cost
+            total_cost = calculate_special_advantage_cost(current_rating, new_rating)
+            requires_approval = True  # Special advantages always require approval
+            return total_cost, requires_approval
+
+        # Handle charms
+        elif category == 'powers' and subcategory == 'charm':
+            if splat in ['Companion', 'Possessed']:
+                from world.wod20th.utils.companion_utils import calculate_charm_cost
+                total_cost = calculate_charm_cost(current_rating, new_rating)
+                requires_approval = new_rating > 2
+                return total_cost, requires_approval
+
+        # Handle blessings
+        elif category == 'powers' and subcategory == 'blessing':
+            from world.wod20th.utils.possessed_utils import calculate_blessing_cost
+            total_cost = calculate_blessing_cost(current_rating, new_rating)
+            requires_approval = True  # Blessings always require approval
+            return total_cost, requires_approval
+
+        # Handle Mortal+ specific powers
+        elif splat == 'Mortal+':
+            if subcategory == 'sorcery':
+                from world.wod20th.utils.mortalplus_utils import calculate_sorcery_path_cost
+                total_cost = calculate_sorcery_path_cost(current_rating, new_rating)
+                requires_approval = new_rating > 2
+            elif subcategory == 'hedge_ritual':
+                from world.wod20th.utils.mortalplus_utils import calculate_hedge_ritual_cost
+                total_cost = calculate_hedge_ritual_cost(current_rating, new_rating)
+                requires_approval = new_rating > 1
+            elif subcategory == 'numina':
+                from world.wod20th.utils.mortalplus_utils import calculate_numina_cost
+                total_cost = calculate_numina_cost(current_rating, new_rating)
+                requires_approval = new_rating > 2
+            return total_cost, requires_approval
+
+        return total_cost, requires_approval
+
+    except Exception as e:
+        return 0, False
 
 def validate_xp_purchase(character, stat_name, new_rating, category=None, subcategory=None, is_staff_spend=False):
     """
@@ -1053,7 +739,7 @@ def validate_xp_purchase(character, stat_name, new_rating, category=None, subcat
                     return False, f"Staff approval required for {stat_name} above {max_level}"
 
             elif subcategory == 'gift':
-                # Check if it's a special gift (Planetary or Camp gift)
+                # Check if it's a special gift (Planetary, Ju-Fu, or Camp gift)
                 from world.wod20th.models import Stat
                 gift = Stat.objects.filter(
                     name__iexact=stat_name,
@@ -1065,7 +751,7 @@ def validate_xp_purchase(character, stat_name, new_rating, category=None, subcat
                     # Check for special gifts that always require approval
                     if gift.tribe:
                         tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
-                        if any(t.lower() in ['croatan', 'planetary'] for t in tribes):
+                        if any(t.lower() in ['croatan', 'planetary', 'ju-fu'] for t in tribes):
                             return False, "Staff approval required for Planetary gifts"
 
                     if gift.camp:
@@ -1219,647 +905,114 @@ def validate_xp_purchase(character, stat_name, new_rating, category=None, subcat
 
 def process_xp_purchase(character, stat_name, new_rating, category, subcategory, reason="", current_rating=None, pre_calculated_cost=None):
     """
-    Process an XP purchase for a character.
+    Process an XP purchase.
     
     Args:
         character: The character object
-        stat_name (str): Name of the stat being increased
-        new_rating (int): Target rating
-        category (str): Stat category
-        subcategory (str): Stat subcategory
-        reason (str): Reason for the purchase
-        current_rating (int, optional): Current rating of the stat
-        pre_calculated_cost (int, optional): Pre-calculated XP cost
+        stat_name: The name of the stat to increase
+        new_rating: The desired new rating
+        category: The stat category
+        subcategory: The stat subcategory
+        reason: The reason for the spend
+        current_rating: The current rating (if pre-determined)
+        pre_calculated_cost: The pre-calculated cost (if provided)
         
     Returns:
         tuple: (success, message)
     """
     try:
+        # If current_rating not provided, get it from the character
+        if current_rating is None:
+            current_rating = character.get_stat(category, subcategory, stat_name, temp=False) or 0
+        
         # Calculate cost if not provided
         if pre_calculated_cost is None:
-            cost, requires_approval = calculate_xp_cost(
-                character, stat_name, new_rating, category, subcategory, current_rating
+            from world.wod20th.utils.xp_costs import (
+                calculate_attribute_cost, calculate_ability_cost, 
+                calculate_background_cost, calculate_merit_cost,
+                calculate_flaw_cost, calculate_willpower_cost
             )
+            
+            if category == 'attributes':
+                cost = calculate_attribute_cost(current_rating, new_rating)
+            elif category == 'abilities' or category == 'secondary_abilities':
+                cost = calculate_ability_cost(current_rating, new_rating)
+            elif category == 'backgrounds':
+                cost = calculate_background_cost(current_rating, new_rating)
+            elif category == 'merits':
+                cost = calculate_merit_cost(current_rating, new_rating)
+            elif category == 'flaws':
+                cost = calculate_flaw_cost(current_rating, new_rating)
+            elif category == 'pools' and subcategory == 'dual' and stat_name.lower() == 'willpower':
+                cost = calculate_willpower_cost(current_rating, new_rating)
+            else:
+                # Default to standard ability cost if no specific handler
+                cost = calculate_ability_cost(current_rating, new_rating)
         else:
             cost = pre_calculated_cost
-            requires_approval = False
-        # Special handling for Thaumaturgy and Necromancy discipline increases
-        if category == 'powers' and subcategory == 'discipline' and stat_name in ['Thaumaturgy', 'Necromancy']:
-            # If this is the first dot AND they have no existing paths, set up the primary path
-            path_subcategory = stat_name.lower()
-            existing_paths = character.db.stats.get('powers', {}).get(path_subcategory, {})
             
-            if current_rating == 0 and not existing_paths:
-                # Initialize path structure if needed
-                if 'powers' not in character.db.stats:
-                    character.db.stats['powers'] = {}
-                if path_subcategory not in character.db.stats['powers']:
-                    character.db.stats['powers'][path_subcategory] = {}
-                
-                # Set up default primary path at rating 1
-                default_path = 'Path of Blood' if stat_name == 'Thaumaturgy' else 'Sepulchre Path'
-                character.db.stats['powers'][path_subcategory][default_path] = {
-                    'perm': 1,
-                    'temp': 1
-                }
-                logger.log_info(f"Set up initial {default_path} at rating 1")
-
-        # Special handling for Gnosis
-        if stat_name.lower() == 'gnosis':
-            splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
-            mortal_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+        # Ensure cost is not 0 (except for flaws, which can be 0 when removed)
+        if cost == 0 and category != 'flaws':
+            return False, "Cost calculation returned zero. This may indicate a stat category error."
             
-            # For Kinfolk, Gnosis should be processed as a merit
-            if splat == 'Mortal+' and mortal_type == 'Kinfolk':
-                category = 'merits'
-                subcategory = 'supernatural'
-                logger.log_info(f"Processing Gnosis as a merit for Kinfolk character")
-                
-                # Set Gnosis pool based on merit level
-                if 'pools' not in character.db.stats:
-                    character.db.stats['pools'] = {}
-                if 'dual' not in character.db.stats['pools']:
-                    character.db.stats['pools']['dual'] = {}
-                
-                # Calculate Gnosis pool value based on merit rating
-                if new_rating == 5:
-                    gnosis_value = 1
-                elif new_rating == 6:
-                    gnosis_value = 2
-                elif new_rating == 7:
-                    gnosis_value = 3
-                else:
-                    gnosis_value = 0
-                
-                character.db.stats['pools']['dual']['Gnosis'] = {
-                    'perm': gnosis_value,
-                    'temp': gnosis_value
-                }
-                logger.log_info(f"Set Gnosis pool to {gnosis_value} based on merit rating {new_rating}")
-            
-            # For Shifters, Gnosis should be processed as a pool
-            elif splat == 'Shifter':
-                category = 'pools'
-                subcategory = 'dual'
-                logger.log_info(f"Processing Gnosis as a pool for Shifter character")
-                
-        if cost == 0:
-            return False, "Invalid stat or no increase needed"
-
+        # Convert cost to Decimal for precise calculations
+        cost_decimal = Decimal(str(cost)).quantize(Decimal('0.01'))
+        
         # Check if character has enough XP
-        if character.db.xp['current'] < cost:
-            return False, f"Not enough XP. Cost: {cost}, Available: {character.db.xp['current']}"
-
-        # Update the stat
-        if category == 'secondary_abilities':
-            if 'secondary_abilities' not in character.db.stats:
-                character.db.stats['secondary_abilities'] = {}
-            if subcategory not in character.db.stats['secondary_abilities']:
-                character.db.stats['secondary_abilities'][subcategory] = {}
-            character.db.stats['secondary_abilities'][subcategory][stat_name] = {
-                'perm': new_rating,
-                'temp': new_rating
-            }
-        else:
-            character.set_stat(category, subcategory, stat_name, new_rating, temp=False)
-            character.set_stat(category, subcategory, stat_name, new_rating, temp=True)
-
-        # Deduct XP
-        character.db.xp['current'] -= Decimal(str(cost))
-        character.db.xp['spent'] += Decimal(str(cost))
-
-        # Log the spend
-        spend_entry = {
-            'type': 'spend',
-            'amount': float(cost),
-            'stat_name': stat_name,
-            'previous_rating': current_rating,
-            'new_rating': new_rating,
-            'reason': reason,
-            'timestamp': datetime.now().isoformat()
-        }
-
-        if 'spends' not in character.db.xp:
-            character.db.xp['spends'] = []
-        character.db.xp['spends'].insert(0, spend_entry)
-
-        return True, f"Successfully increased {stat_name} from {current_rating} to {new_rating} (Cost: {cost} XP)"
-
-    except Exception as e:
-        logger.log_err(f"Error processing XP purchase: {str(e)}")
-        return False, f"Error: {str(e)}"
-
-def process_xp_spend(character, stat_name, new_rating, category=None, subcategory=None, reason="", is_staff_spend=False):
-    """Process an XP spend request."""
-    try:
-        # Special handling for Thaumaturgy and Necromancy discipline increases
-        if category == 'powers' and subcategory == 'discipline' and stat_name in ['Thaumaturgy', 'Necromancy']:
-            # Get current discipline rating
-            current_rating = character.db.stats.get('powers', {}).get('discipline', {}).get(stat_name, {}).get('perm', 0)
-            
-            # Calculate discipline cost first
-            clan = character.db.stats.get('identity', {}).get('lineage', {}).get('Clan', {}).get('perm', '')
-            is_in_clan = _is_discipline_in_clan(stat_name, clan)
-            
-            # Calculate base discipline cost
-            discipline_cost = 0
-            for rating in range(current_rating + 1, new_rating + 1):
-                if rating == 1:
-                    discipline_cost += 10  # First dot always costs 10
-                else:
-                    if is_in_clan:
-                        discipline_cost += (rating - 1) * 5  # Previous rating × 5
-                    else:
-                        discipline_cost += (rating - 1) * 7  # Previous rating × 7
-            
-            # Check if character has enough XP
-            if character.db.xp['current'] < discipline_cost:
-                return False, f"Not enough XP. Cost: {discipline_cost}, Available: {character.db.xp['current']}", discipline_cost
-            
-            # Process the discipline increase
-            success, message = process_xp_purchase(character, stat_name, new_rating, category, subcategory, reason, current_rating, discipline_cost)
-            if not success:
-                return False, message, discipline_cost
-            
-            # If this is the first dot AND they have no existing paths, set up the primary path
-            path_subcategory = stat_name.lower()
-            existing_paths = character.db.stats.get('powers', {}).get(path_subcategory, {})
-            
-            if current_rating == 0 and not existing_paths:
-                # Initialize path structure if needed
-                if 'powers' not in character.db.stats:
-                    character.db.stats['powers'] = {}
-                if path_subcategory not in character.db.stats['powers']:
-                    character.db.stats['powers'][path_subcategory] = {}
-                
-                # Calculate path cost
-                path_cost = 5  # First dot in primary path costs 5
-                total_cost = discipline_cost + path_cost
-                
-                # Check if character has enough XP
-                if character.db.xp['current'] < total_cost:
-                    return False, f"Not enough XP. Cost: {total_cost} (Discipline: {discipline_cost}, Path: {path_cost}), Available: {character.db.xp['current']}", total_cost
-                
-                # Process the discipline increase
-                success, message = process_xp_purchase(character, stat_name, new_rating, category, subcategory, reason, current_rating, discipline_cost)
-                if not success:
-                    return False, message, total_cost
-                
-                # Set up default primary path at rating 1
-                default_path = 'Path of Blood' if stat_name == 'Thaumaturgy' else 'Sepulchre Path'
-                character.db.stats['powers'][path_subcategory][default_path] = {
-                    'perm': 1,
-                    'temp': 1
-                }
-                
-                # Process the path increase separately
-                success, message = process_xp_purchase(character, default_path, 1, 'powers', path_subcategory, f"Initial {default_path}", 0, path_cost)
-                if not success:
-                    return False, message, total_cost
-                
-                return True, f"Successfully increased {stat_name} to {new_rating} and set up {default_path} at 1", total_cost
-            
-            # For subsequent increases, just process the discipline increase
-            else:
-                # Check if character has enough XP
-                if character.db.xp['current'] < discipline_cost:
-                    return False, f"Not enough XP. Cost: {discipline_cost}, Available: {character.db.xp['current']}", discipline_cost
-                
-                # Process the discipline increase
-                success, message = process_xp_purchase(character, stat_name, new_rating, category, subcategory, reason, current_rating, discipline_cost)
-                if not success:
-                    return False, message, discipline_cost
-                
-                return True, f"Successfully increased {stat_name} to {new_rating}", discipline_cost
-                       
-        # Special handling for Gnosis - differentiate between Kinfolk (merit) and Shifters (pool)
-        if stat_name.lower() == 'gnosis':
-            splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
-            mortal_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
-            
-            # For Kinfolk, Gnosis should be processed as a merit
-            if splat == 'Mortal+' and mortal_type == 'Kinfolk':
-                category = 'merits'
-                subcategory = 'supernatural'
-                logger.log_info(f"Processing Gnosis as a merit for Kinfolk character")
-            # For Shifters, Gnosis should be processed as a pool
-            elif splat == 'Shifter':
-                category = 'pools'
-                subcategory = 'dual'
-                logger.log_info(f"Processing Gnosis as a pool for Shifter character")
-        
-        # Get current rating with better logging
-        logger.log_info(f"Getting current rating for {stat_name} ({category}/{subcategory})")
-        
-        # Special handling for secondary abilities - force title case
-        if category == 'secondary_abilities':
-            stat_name = ' '.join(word.title() for word in stat_name.split())
-            logger.log_info(f"Formatted secondary ability name to: {stat_name}")
-            current_rating = character.db.stats.get('secondary_abilities', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
-            logger.log_info(f"Getting secondary ability rating: {current_rating}")
-        elif category == 'powers':
-            if subcategory == 'discipline':
-                current_rating = character.db.stats.get('powers', {}).get('discipline', {}).get(stat_name, {}).get('perm', 0)
-                logger.log_info(f"Getting discipline rating: {current_rating} for {stat_name}")
-                
-                # Initialize discipline if it doesn't exist
-                if 'powers' not in character.db.stats:
-                    character.db.stats['powers'] = {}
-                if 'discipline' not in character.db.stats['powers']:
-                    character.db.stats['powers']['discipline'] = {}
-                if stat_name not in character.db.stats['powers']['discipline']:
-                    character.db.stats['powers']['discipline'][stat_name] = {'perm': 0, 'temp': 0}
-                    current_rating = 0
-                    logger.log_info(f"Initialized discipline {stat_name} with rating 0")
-            else:
-                current_rating = character.db.stats.get('powers', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
-                logger.log_info(f"Getting other power rating: {current_rating}")
-        elif category in ['merits', 'flaws']:
-            current_rating = character.db.stats.get(category, {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
-            logger.log_info(f"Getting {category} rating: {current_rating}")
-        else:
-            current_rating = character.db.stats.get(category, {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
-            logger.log_info(f"Getting general stat rating: {current_rating}")
-
-        # Check if new rating is actually an increase
-        if new_rating <= current_rating and not (category == 'flaws' and 'flaw buyoff' in reason.lower()):
-            return False, "New rating must be higher than current rating. Reach out to staff if this is in error.", 0
-
-        # Calculate cost
-        if category in ['merits', 'flaws']:
-            # For flaws being bought off, use current rating to calculate cost
-            if category == 'flaws' and 'flaw buyoff' in reason.lower():
-                cost = current_rating * 5
-            else:
-                cost = new_rating * 5
-            requires_approval = False
-            cost_decimal = Decimal(str(cost))
-            logger.log_info(f"Calculating {category} cost: {cost} XP for {stat_name}")
-            
-            # Validate against MERIT_VALUES/FLAW_VALUES
-            if category == 'merits' and stat_name in MERIT_VALUES:
-                if new_rating not in MERIT_VALUES[stat_name]:
-                    return False, f"Invalid rating for {stat_name}. Valid values are: {MERIT_VALUES[stat_name]}", 0
-            elif category == 'flaws' and stat_name in FLAW_VALUES:
-                if new_rating not in FLAW_VALUES[stat_name]:
-                    return False, f"Invalid rating for {stat_name}. Valid values are: {FLAW_VALUES[stat_name]}", 0
-        else:
-            # Normal cost calculation
-            cost, requires_approval = calculate_xp_cost(
-                character, stat_name, new_rating, category, subcategory, current_rating
-            )
-            cost_decimal = Decimal(str(cost))
-
-        # Check if we have enough XP
         if character.db.xp['current'] < cost_decimal:
-            return False, f"Not enough XP. Cost: {cost_decimal}, Available: {character.db.xp['current']}", cost_decimal
+            return False, f"Not enough XP. Cost: {cost_decimal}, Available: {character.db.xp['current']}"
 
-        # Log XP state before changes
-        logger.log_info(f"Before XP update - Current: {character.db.xp['current']}, Spent: {character.db.xp['spent']}")
-        logger.log_info(f"Cost to be deducted: {cost_decimal}")
-        # For staff spends on disciplines not in the purchasable list, calculate a cost manually
-        if is_staff_spend and category == 'powers' and subcategory == 'discipline' and stat_name not in PURCHASABLE_DISCIPLINES:
-            logger.log_info(f"Staff spend on non-purchasable discipline: {stat_name}")
-            
-            # Set a default cost based on standard discipline progression
-            splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
-            clan = character.db.stats.get('identity', {}).get('lineage', {}).get('Clan', {}).get('perm', '')
-            
-            # Check if it's an in-clan discipline by looking at clan disciplines
-            clan_disciplines = {
-                'Ahrimanes': ['Animalism', 'Presence', 'Spiritus'],
-                'Assamite': ['Celerity', 'Obfuscate', 'Quietus'],
-                'Assamite Antitribu': ['Celerity', 'Obfuscate', 'Quietus'],
-                'Baali': ['Daimoinon', 'Obfuscate', 'Presence'],
-                'Blood Brothers': ['Celerity', 'Potence', 'Sanguinus'],
-                'Brujah': ['Celerity', 'Potence', 'Presence'],
-                'Brujah Antitribu': ['Celerity', 'Potence', 'Presence'],
-                'Bushi': ['Celerity', 'Kai', 'Presence'],
-                'Caitiff': [],
-                'Cappadocians': ['Auspex', 'Fortitude', 'Mortis'],
-                'Children of Osiris': ['Bardo'],
-                'Harbingers of Skulls': ['Auspex', 'Fortitude', 'Necromancy'],
-                'Daughters of Cacophony': ['Fortitude', 'Melpominee', 'Presence'],
-                'Followers of Set': ['Obfuscate', 'Presence', 'Serpentis'],
-                'Gangrel': ['Animalism', 'Fortitude', 'Protean'],
-                'City Gangrel': ['Celerity', 'Obfuscate', 'Protean'],
-                'Country Gangrel': ['Animalism', 'Fortitude', 'Protean'],
-                'Gargoyles': ['Fortitude', 'Potence', 'Visceratika'],
-                'Giovanni': ['Dominate', 'Necromancy', 'Potence'],
-                'Kiasyd': ['Mytherceria', 'Dominate', 'Obtenebration'],
-                'Laibon': ['Abombwe', 'Animalism', 'Fortitude'],
-                'Lamia': ['Deimos', 'Necromancy', 'Potence'],
-                'Lasombra': ['Dominate', 'Obtenebration', 'Potence'],
-                'Lasombra Antitribu': ['Dominate', 'Obtenebration', 'Potence'],
-                'Lhiannan': ['Animalism', 'Ogham', 'Presence'],
-                'Malkavian': ['Auspex', 'Dominate', 'Obfuscate'],
-                'Malkavian Antitribu': ['Auspex', 'Dementation', 'Obfuscate'],
-                'Nagaraja': ['Auspex', 'Necromancy', 'Dominate'],
-                'Nosferatu': ['Animalism', 'Obfuscate', 'Potence'],
-                'Nosferatu Antitribu': ['Animalism', 'Obfuscate', 'Potence'],
-                'Old Clan Tzimisce': ['Animalism', 'Auspex', 'Dominate'],
-                'Panders': [],
-                'Ravnos': ['Animalism', 'Chimerstry', 'Fortitude'],
-                'Ravnos Antitribu': ['Animalism', 'Chimerstry', 'Fortitude'],
-                'Salubri': ['Auspex', 'Fortitude', 'Obeah'],
-                'Samedi': ['Necromancy', 'Obfuscate', 'Thanatosis'],
-                'Serpents of the Light': ['Obfuscate', 'Presence', 'Serpentis'],
-                'Toreador': ['Auspex', 'Celerity', 'Presence'],
-                'Toreador Antitribu': ['Auspex', 'Celerity', 'Presence'],
-                'Tremere': ['Auspex', 'Dominate', 'Thaumaturgy'],
-                'Tremere Antitribu': ['Auspex', 'Dominate', 'Thaumaturgy'],
-                'True Brujah': ['Potence', 'Presence', 'Temporis'],
-                'Tzimisce': ['Animalism', 'Auspex', 'Vicissitude'],
-                'Ventrue': ['Dominate', 'Fortitude', 'Presence'],
-                'Ventrue Antitribu': ['Auspex', 'Dominate', 'Fortitude'],
-            }
-            
-            if clan in clan_disciplines:
-                is_in_clan = stat_name in clan_disciplines[clan]
-            else:
-                is_in_clan = False
-            
-            # Calculate cost based on rating
-            total_cost = 0
-            for rating in range(current_rating + 1, new_rating + 1):
-                if rating == 1:
-                    dot_cost = 10  # First dot always costs 10
-                else:
-                    if is_in_clan:
-                        dot_cost = (rating - 1) * 5  # Previous rating × 5 for in-clan
-                    else:
-                        dot_cost = (rating - 1) * 7  # Previous rating × 7 for out-of-clan
-                total_cost += dot_cost
-            
-            cost_decimal = Decimal(str(total_cost))
-            requires_approval = False
-            logger.log_info(f"Staff spend: calculated cost for {stat_name} to rating {new_rating}: {cost_decimal} XP")
-
-        # Handle zero cost (invalid calculation)
-        if cost_decimal == 0 and category not in ['merits', 'flaws']:
-            if is_staff_spend and category == 'powers' and subcategory == 'discipline':
-                # For staff spends on disciplines, use a default cost formula
-                if new_rating == 1:
-                    cost = 10  # First dot costs 10
-                else:
-                    cost = (new_rating - 1) * 6  # Subsequent dots cost previous rating × 6 (average)
-                cost_decimal = Decimal(str(cost))
-                logger.log_info(f"Staff spend on discipline: Setting default cost to {cost_decimal} XP for {stat_name}")
-            elif category == 'powers' and subcategory == 'blessing':
-                # Special handling for Blessings
-                if stat_name not in BLESSINGS:
-                    return False, f"{stat_name} is not a valid blessing", 0
-                cost_decimal = Decimal(str(new_rating * 4))  # New Rating x 4 XP
-                logger.log_info(f"Blessing cost calculation: {cost_decimal} XP for {stat_name}")
-            elif category == 'powers' and subcategory == 'charm':
-                # Special handling for Charms
-                if stat_name not in CHARMS:
-                    return False, f"{stat_name} is not a valid charm", 0
-                cost_decimal = Decimal('5')  # Flat 5 XP per charm
-                logger.log_info(f"Charm cost calculation: {cost_decimal} XP for {stat_name}")
-            else:
-                return False, "Cost calculation returned zero. Reach out to staff if this is in error.", 0
-
-        # Staff spends bypass validation
-        if not is_staff_spend:
-            # Validate the purchase
-            can_purchase, error_msg = validate_xp_purchase(
-                character, stat_name, new_rating, category, subcategory
-            )
-            if not can_purchase:
-                return False, error_msg, cost_decimal
-
-            if requires_approval:
-                return False, "This purchase requires staff approval", cost_decimal
-
-        # Update the stat
-        if category == 'secondary_abilities':
-            if 'secondary_abilities' not in character.db.stats:
-                character.db.stats['secondary_abilities'] = {}
-            if subcategory not in character.db.stats['secondary_abilities']:
-                character.db.stats['secondary_abilities'][subcategory] = {}
-            # Store with title case
-            character.db.stats['secondary_abilities'][subcategory][stat_name] = {
-                'perm': new_rating,
-                'temp': new_rating
-            }
-        elif category == 'powers':
-            # Ensure powers category exists
+        # Update the stat based on category
+        if category == 'powers':
+            # Initialize powers category if needed
             if 'powers' not in character.db.stats:
                 character.db.stats['powers'] = {}
                 
             # Handle different power types
-            if subcategory == 'discipline':
-                if 'discipline' not in character.db.stats['powers']:
-                    character.db.stats['powers']['discipline'] = {}
-                character.db.stats['powers']['discipline'][stat_name] = {
-                    'perm': new_rating,
-                    'temp': new_rating
-                }
-            elif subcategory == 'thaumaturgy':
-                if 'thaumaturgy' not in character.db.stats['powers']:
-                    character.db.stats['powers']['thaumaturgy'] = {}
-                # Normalize path name to title case with 'of' lowercase
-                normalized_name = ' '.join(word.title() if word.lower() != 'of' else 'of' 
-                                        for word in stat_name.split())
-                # Remove any existing path with different case
-                for existing_path in list(character.db.stats['powers']['thaumaturgy'].keys()):
-                    if existing_path.lower() == normalized_name.lower():
-                        if existing_path != normalized_name:
-                            # Transfer the existing rating to the normalized name
-                            existing_rating = character.db.stats['powers']['thaumaturgy'][existing_path]
-                            del character.db.stats['powers']['thaumaturgy'][existing_path]
-                            character.db.stats['powers']['thaumaturgy'][normalized_name] = existing_rating
-                            logger.log_info(f"Normalized path name from {existing_path} to {normalized_name}")
-                # Set the new rating
-                character.db.stats['powers']['thaumaturgy'][normalized_name] = {
-                    'perm': new_rating,
-                    'temp': new_rating
-                }
-                logger.log_info(f"Updated thaumaturgy path {normalized_name} to {new_rating}")
-            elif subcategory == 'necromancy':
-                if 'necromancy' not in character.db.stats['powers']:
-                    character.db.stats['powers']['necromancy'] = {}
-                character.db.stats['powers']['necromancy'][stat_name] = {
-                    'perm': new_rating,
-                    'temp': new_rating
-                }
+            if subcategory in ['thaumaturgy', 'necromancy']:
+                success = _handle_path_disciplines(character, stat_name, new_rating, current_rating, subcategory)
+                if not success:
+                    return False, f"Failed to update {subcategory} path"
             elif subcategory == 'blessing':
-                if 'blessing' not in character.db.stats['powers']:
-                    character.db.stats['powers']['blessing'] = {}
-                # Validate against BLESSINGS list
-                if stat_name not in BLESSINGS:
-                    return False, f"{stat_name} is not a valid blessing", 0
-                character.db.stats['powers']['blessing'][stat_name] = {
-                    'perm': new_rating,
-                    'temp': new_rating
-                }
-                
-                # Handle special cases for blessings that modify other stats
-                splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
-                if splat == 'Possessed':
-                    if stat_name == 'Spirit Ties':
-                        # Spirit Ties adds to Gnosis pool
-                        gnosis_pool = character.db.stats.get('pools', {}).get('dual', {}).get('Gnosis', {})
-                        if gnosis_pool:
-                            base_gnosis = 1  # Base Gnosis for Possessed
-                            new_gnosis = base_gnosis + new_rating
-                            gnosis_pool['perm'] = new_gnosis
-                            gnosis_pool['temp'] = new_gnosis
-                            logger.log_info(f"Updated Gnosis to {new_gnosis} based on Spirit Ties rating {new_rating}")
-                    elif stat_name == 'Berserker':
-                        # Berserker sets Rage pool to 5
-                        rage_pool = character.db.stats.get('pools', {}).get('dual', {}).get('Rage', {})
-                        if rage_pool:
-                            rage_pool['perm'] = 5
-                            rage_pool['temp'] = 5
-                            logger.log_info("Set Rage pool to 5 based on Berserker blessing")
-            elif subcategory == 'charm':
-                if 'charm' not in character.db.stats['powers']:
-                    character.db.stats['powers']['charm'] = {}
-                # Validate against CHARMS list
-                if stat_name not in CHARMS:
-                    return False, f"{stat_name} is not a valid charm", 0
-                character.db.stats['powers']['charm'][stat_name] = {
-                    'perm': new_rating,
-                    'temp': new_rating
-                }
+                success, error = _handle_blessing_updates(character, stat_name, new_rating)
+                if not success:
+                    return False, error
             elif subcategory == 'special_advantage':
-                if 'special_advantage' not in character.db.stats['powers']:
-                    character.db.stats['powers']['special_advantage'] = {}
-
-                # Special handling for Ferocity by name
-                is_ferocity = stat_name.lower() == 'ferocity'
-                    
-                # Check if it's in SPECIAL_ADVANTAGES
-                if stat_name.lower() in SPECIAL_ADVANTAGES:
-                    advantage_info = SPECIAL_ADVANTAGES[stat_name.lower()]
-                    if new_rating in advantage_info['valid_values']:
-                        # Set the special advantage
-                        character.db.stats['powers']['special_advantage'][stat_name.lower()] = {
-                            'perm': new_rating,
-                            'temp': new_rating
-                        }
-                        logger.log_info(f"Updated special advantage {stat_name} to {new_rating}")
-                    else:
-                        return False, f"Invalid rating for {stat_name}. Valid values are: {advantage_info['valid_values']}", 0
-                # Check if it's in COMBAT_SPECIAL_ADVANTAGES
-                elif stat_name.lower() in COMBAT_SPECIAL_ADVANTAGES:
-                    advantage_info = COMBAT_SPECIAL_ADVANTAGES[stat_name.lower()]
-                    if new_rating in advantage_info['valid_values']:
-                        character.db.stats['powers']['special_advantage'][stat_name.lower()] = {
-                            'perm': new_rating,
-                            'temp': new_rating
-                        }
-                        logger.log_info(f"Updated combat special advantage {stat_name} to {new_rating}")
-                    else:
-                        return False, f"Invalid rating for {stat_name}. Valid values are: {advantage_info['valid_values']}", 0
-                else:
-                    return False, f"{stat_name} is not a valid special advantage", 0
-                    
-                # Handle Ferocity special case - update Rage regardless of which dictionary it's in
-                if is_ferocity:
-                    # Initialize pools structure if it doesn't exist
-                    if 'pools' not in character.db.stats:
-                        character.db.stats['pools'] = {}
-                    if 'dual' not in character.db.stats['pools']:
-                        character.db.stats['pools']['dual'] = {}
-                    
-                    # Calculate Rage based on Ferocity level
-                    rage_value = new_rating // 2
-                    
-                    # Create Rage pool if it doesn't exist
-                    if 'Rage' not in character.db.stats['pools']['dual']:
-                        character.db.stats['pools']['dual']['Rage'] = {}
-                        
-                    # Explicitly set both permanent and temporary values
-                    character.db.stats['pools']['dual']['Rage']['perm'] = rage_value
-                    character.db.stats['pools']['dual']['Rage']['temp'] = rage_value
-                    
-                    logger.log_info(f"Set Rage pool to {rage_value} based on Ferocity {new_rating}")
+                success, error = _handle_special_advantage_updates(character, stat_name, new_rating)
+                if not success:
+                    return False, error
             else:
+                # Handle other powers normally
                 if subcategory not in character.db.stats['powers']:
                     character.db.stats['powers'][subcategory] = {}
                 character.db.stats['powers'][subcategory][stat_name] = {
                     'perm': new_rating,
                     'temp': new_rating
                 }
-                logger.log_info(f"Updated power {stat_name} ({subcategory}) to {new_rating}")
-
+                logger.log_info(f"Updated power {stat_name} ({subcategory}) to {new_rating}")  
+        # Special handling for merits and flaws
         elif category in ['merits', 'flaws']:
-            # Ensure category exists
+            # Initialize category and subcategory structures if needed
             if category not in character.db.stats:
                 character.db.stats[category] = {}
             if subcategory not in character.db.stats[category]:
                 character.db.stats[category][subcategory] = {}
                 
-            # For flaws, check if this is a buyoff
-            if category == 'flaws' and 'flaw buyoff' in reason.lower():
-                # Remove the flaw
-                if stat_name in character.db.stats[category][subcategory]:
-                    del character.db.stats[category][subcategory][stat_name]
-                    logger.log_info(f"Removed flaw {stat_name} as part of buyoff")
-            else:
-                # Add or update the merit/flaw
-                character.db.stats[category][subcategory][stat_name] = {
-                    'perm': new_rating,
-                    'temp': new_rating
-                }
-                logger.log_info(f"Updated {category} {stat_name} to {new_rating}")
-                
-                # Special case for Kinfolk with Gnosis merit
-                splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
-                mortal_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
-                
-                if (category == 'merits' and 
-                    stat_name.lower() == 'gnosis' and 
-                    splat == 'Mortal+' and 
-                    mortal_type == 'Kinfolk'):
-                    
-                    # Initialize pools structure if it doesn't exist
-                    if 'pools' not in character.db.stats:
-                        character.db.stats['pools'] = {}
-                    if 'dual' not in character.db.stats['pools']:
-                        character.db.stats['pools']['dual'] = {}
-                    
-                    # Calculate Gnosis based on the merit level
-                    # The Gnosis merit at 7 = Gnosis 3, 6 = Gnosis 2, 5 = Gnosis 1
-                    if new_rating == 5:
-                        gnosis_value = 1
-                    elif new_rating == 6:
-                        gnosis_value = 2
-                    elif new_rating == 7:
-                        gnosis_value = 3
-                    else:
-                        gnosis_value = 0  # Invalid merit rating
-                    
-                    # Create or update Gnosis pool
-                    if 'Gnosis' not in character.db.stats['pools']['dual']:
-                        character.db.stats['pools']['dual']['Gnosis'] = {}
-                    
-                    # Set both permanent and temporary values
-                    character.db.stats['pools']['dual']['Gnosis']['perm'] = gnosis_value
-                    character.db.stats['pools']['dual']['Gnosis']['temp'] = gnosis_value
-                    
-                    logger.log_info(f"Set Gnosis pool to {gnosis_value} based on Gnosis merit level {new_rating} for Kinfolk character")
-
-        elif category == 'pools' and subcategory == 'dual':
-            # Handle pool stats (Willpower, Rage, Gnosis)
-            # Initialize pools structure if it doesn't exist
-            if 'pools' not in character.db.stats:
-                character.db.stats['pools'] = {}
-            if 'dual' not in character.db.stats['pools']:
-                character.db.stats['pools']['dual'] = {}
+            # Add or update the merit/flaw
+            character.db.stats[category][subcategory][stat_name] = {
+                'perm': new_rating,
+                'temp': new_rating
+            }
+            logger.log_info(f"Updated {category} {stat_name} to {new_rating}")
             
-            # Create stat if it doesn't exist
-            if stat_name not in character.db.stats['pools']['dual']:
-                character.db.stats['pools']['dual'][stat_name] = {}
-            
-            # Set both permanent and temporary values
-            character.db.stats['pools']['dual'][stat_name]['perm'] = new_rating
-            character.db.stats['pools']['dual'][stat_name]['temp'] = new_rating
-            
-            logger.log_info(f"Updated pool stat {stat_name} to {new_rating}")
+            # Special case for Kinfolk with Gnosis merit
+            if (category == 'merits' and subcategory == 'supernatural' and
+                stat_name.lower() == 'gnosis' and 
+                character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '') == 'Mortal+' and 
+                character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '') == 'Kinfolk'):
+                from world.wod20th.utils.mortalplus_utils import handle_kinfolk_gnosis
+                gnosis_value = handle_kinfolk_gnosis(character, new_rating)
+                logger.log_info(f"Updated Kinfolk Gnosis pool to {gnosis_value} based on merit rating {new_rating}")
         else:
             # For all other stats, use the character's set_stat method
             character.set_stat(category, subcategory, stat_name, new_rating, temp=False)
@@ -1893,7 +1046,7 @@ def process_xp_spend(character, stat_name, new_rating, category=None, subcategor
                 'previous_rating': current_rating,
                 'new_rating': new_rating,
                 'reason': reason,
-                'staff_name': reason.replace('Staff Spend: ', '') if is_staff_spend else None,
+                'staff_name': reason.replace('Staff Spend: ', '') if 'Staff Spend: ' in reason else None,
                 'timestamp': datetime.now().isoformat()
             }
 
@@ -1903,19 +1056,634 @@ def process_xp_spend(character, stat_name, new_rating, category=None, subcategor
 
             # Final verification
             logger.log_info(f"Final XP state - Current: {new_current}, Spent: {new_spent}")
-            return True, f"Successfully increased {stat_name} from {current_rating} to {new_rating} (Cost: {cost_decimal} XP)", cost_decimal
+            return True, f"Successfully increased {stat_name} from {current_rating} to {new_rating} (Cost: {cost_decimal} XP)"
 
         except Exception as e:
             logger.log_err(f"Error during XP deduction: {str(e)}")
-            return False, f"Error processing XP deduction: {str(e)}", cost_decimal
+            return False, f"Error processing XP deduction: {str(e)}"
 
     except Exception as e:
-        logger.log_err(f"Error processing XP spend: {str(e)}")
+        logger.log_err(f"Error in process_xp_purchase: {str(e)}")
+        return False, f"Error: {str(e)}"
+
+def process_xp_spend(character, stat_name, new_rating, category, subcategory, reason="", is_staff_spend=False):
+    """
+    Process an XP spend request.
+    
+    Args:
+        character: The character object
+        stat_name: The name of the stat to increase
+        new_rating: The desired new rating
+        category: The stat category
+        subcategory: The stat subcategory
+        reason: The reason for the spend
+        is_staff_spend: Whether this is a staff-approved purchase
+        
+    Returns:
+        tuple: (success, message, cost)
+    """
+    try:
+        # Get character's splat
+        splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+        shifter_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+        
+        # Fix case-sensitivity: Get proper case for the stat name if the character has the method
+        if hasattr(character, 'get_proper_stat_name'):
+            proper_name = character.get_proper_stat_name(category, subcategory, stat_name)
+            if proper_name != stat_name:
+                logger.log_info(f"Found proper stat name: {proper_name} (was: {stat_name})")
+                stat_name = proper_name
+        
+        # Get current rating with better logging
+        logger.log_info(f"Getting current rating for {stat_name} ({category}/{subcategory})")
+
+        # Check current rating based on category 
+        current_rating = None
+        
+        # Exception for abilities/secondary abilities
+        if category in ['abilities', 'secondary_abilities']:
+            # Find existing stat regardless of case
+            if subcategory in character.db.stats.get(category, {}):
+                for existing_stat, stat_values in character.db.stats[category][subcategory].items():
+                    if existing_stat.lower() == stat_name.lower():
+                        current_rating = stat_values.get('perm', 0)
+                        logger.log_info(f"Current rating for {existing_stat}: {current_rating}")
+                        break
+                        
+            # If not found, default to 0
+            if current_rating is None:
+                current_rating = 0
+        elif category == 'attributes':
+            current_rating = character.db.stats.get('attributes', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
+        elif category == 'backgrounds':
+            current_rating = character.db.stats.get('backgrounds', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
+        elif category == 'merits':
+            current_rating = character.db.stats.get('merits', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
+        elif category == 'flaws':
+            current_rating = character.db.stats.get('flaws', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
+        elif category == 'pools':
+            current_rating = character.db.stats.get('pools', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
+            # Also check advantages for some pool stats
+            if current_rating == 0 and subcategory == 'advantage':
+                current_rating = character.db.stats.get('advantages', {}).get(stat_name, {}).get('perm', 0)
+        elif category == 'powers':
+            if subcategory == 'discipline':
+                current_rating = character.db.stats.get('powers', {}).get('discipline', {}).get(stat_name, {}).get('perm', 0)
+            else:
+                current_rating = character.db.stats.get('powers', {}).get(subcategory, {}).get(stat_name, {}).get('perm', 0)
+        else:
+            current_rating = character.get_stat(category, subcategory, stat_name, temp=False) or 0
+            logger.log_info(f"Current rating for {stat_name}: {current_rating}")
+
+        # Validate that new rating is higher than current
+        if new_rating <= current_rating:
+            return False, "New rating must be higher than current rating", 0
+
+        # Handle attributes
+        if category == 'attributes':
+            # Calculate attribute cost
+            total_cost = calculate_attribute_cost(current_rating, new_rating)
+            
+            # Check if character has enough XP
+            cost_decimal = Decimal(str(total_cost)).quantize(Decimal('0.01'))
+            if character.db.xp['current'] < cost_decimal:
+                return False, f"Not enough XP. Cost: {cost_decimal}, Available: {character.db.xp['current']}", cost_decimal
+                
+            # Process the purchase with the pre-calculated cost
+            success, message = process_xp_purchase(
+                character, stat_name, new_rating, category, subcategory, 
+                reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+            )
+            
+            if success:
+                return True, message, total_cost
+            else:
+                return False, "Failed to process purchase", total_cost
+
+        # Handle abilities (both standard and secondary)
+        elif category == 'abilities' or category == 'secondary_abilities':
+            total_cost = calculate_ability_cost(current_rating, new_rating)
+            
+            # Check if character has enough XP
+            cost_decimal = Decimal(str(total_cost)).quantize(Decimal('0.01'))
+            if character.db.xp['current'] < cost_decimal:
+                return False, f"Not enough XP. Cost: {cost_decimal}, Available: {character.db.xp['current']}", cost_decimal
+                
+            # Process the purchase with the pre-calculated cost
+            success, message = process_xp_purchase(
+                character, stat_name, new_rating, category, subcategory, 
+                reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+            )
+            
+            if success:
+                return True, message, total_cost
+            else:
+                return False, "Failed to process purchase", total_cost
+
+        # Special handling for Changeling arts and realms
+        elif splat == 'Changeling':
+            if category == 'powers' and subcategory == 'art':
+                total_cost = calculate_art_cost(current_rating, new_rating)
+                
+                # Check if character has enough XP
+                cost_decimal = Decimal(str(total_cost)).quantize(Decimal('0.01'))
+                if character.db.xp['current'] < cost_decimal:
+                    return False, f"Not enough XP. Cost: {cost_decimal}, Available: {character.db.xp['current']}", cost_decimal
+                
+                # Process the purchase with the pre-calculated cost
+                success, message = process_xp_purchase(
+                    character, stat_name, new_rating, category, subcategory, 
+                    reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                )
+                
+                if success:
+                    return True, message, total_cost
+                else:
+                    return False, "Failed to process purchase", total_cost
+                    
+            elif category == 'powers' and subcategory == 'realm':
+                total_cost = calculate_realm_cost(current_rating, new_rating)
+                
+                # Check if character has enough XP
+                cost_decimal = Decimal(str(total_cost)).quantize(Decimal('0.01'))
+                if character.db.xp['current'] < cost_decimal:
+                    return False, f"Not enough XP. Cost: {cost_decimal}, Available: {character.db.xp['current']}", cost_decimal
+                
+                # Process the purchase with the pre-calculated cost
+                success, message = process_xp_purchase(
+                    character, stat_name, new_rating, category, subcategory, 
+                    reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                )
+                
+                if success:
+                    return True, message, total_cost
+                else:
+                    return False, "Failed to process purchase", total_cost
+
+        # Handle backgrounds
+        elif category == 'backgrounds':
+            total_cost = calculate_background_cost(current_rating, new_rating)
+            # Check auto-approve limits
+            if stat_name in AUTO_APPROVE['all']['backgrounds']:
+                max_auto = AUTO_APPROVE['all']['backgrounds'][stat_name]
+                requires_approval = new_rating > max_auto and not is_staff_spend
+            else:
+                requires_approval = True and not is_staff_spend
+            
+            # If staff spend or doesn't require approval, proceed with purchase
+            if is_staff_spend or not requires_approval:
+                success, message = process_xp_purchase(
+                    character, stat_name, new_rating, category, subcategory, 
+                    reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                )
+                return success, message, total_cost
+            else:
+                return False, f"Staff approval required for {stat_name} background", total_cost
+
+        # Handle willpower
+        elif category == 'pools' and subcategory == 'dual' and stat_name.lower() == 'willpower':
+            total_cost = calculate_willpower_cost(current_rating, new_rating)
+            requires_approval = new_rating > 5 and not is_staff_spend
+            
+            # If staff spend or doesn't require approval, proceed with purchase
+            if is_staff_spend or not requires_approval:
+                success, message = process_xp_purchase(
+                    character, stat_name, new_rating, category, subcategory, 
+                    reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                )
+                return success, message, total_cost
+            else:
+                return False, f"Staff approval required for Willpower above 5", total_cost
+
+        # Special handling for Vampire and Ghoul disciplines
+        elif category == 'powers' and subcategory == 'discipline':
+            # Check if character is a ghoul
+            is_ghoul = (splat == 'Mortal+' and shifter_type == 'Ghoul')
+            
+            # For vampires
+            if splat == 'Vampire':
+                clan = character.get_stat('identity', 'lineage', 'Clan', temp=False)
+                if clan and clan.lower() == 'caitiff':
+                    total_cost = calculate_discipline_cost(current_rating, new_rating, 'caitiff')
+                else:
+                    # Check if discipline is in-clan
+                    from world.wod20th.utils.vampire_utils import is_discipline_in_clan
+                    is_in_clan = is_discipline_in_clan(stat_name, clan)
+                    total_cost = calculate_discipline_cost(current_rating, new_rating, 'in_clan' if is_in_clan else 'out_clan')
+                
+                requires_approval = new_rating > 2 and not is_staff_spend
+                
+                # If staff spend or doesn't require approval, proceed with purchase
+                if is_staff_spend or not requires_approval:
+                    success, message = process_xp_purchase(
+                        character, stat_name, new_rating, category, subcategory, 
+                        reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                    )
+                    return success, message, total_cost
+                else:
+                    return False, f"Staff approval required for {stat_name} above level 2", total_cost
+            
+            # For ghouls
+            elif is_ghoul:
+                family = character.get_stat('identity', 'lineage', 'Family', temp=False)
+                # Determine if discipline is in-clan based on ghoul's family
+                is_clan = False
+                if family:
+                    from world.wod20th.utils.vampire_utils import get_clan_disciplines
+                    clan_disciplines = get_clan_disciplines(family)
+                    is_clan = stat_name in clan_disciplines
+                total_cost = calculate_ghoul_discipline_cost(current_rating, new_rating, is_clan)
+                
+                requires_approval = new_rating > 1 and not is_staff_spend
+                
+                # If staff spend or doesn't require approval, proceed with purchase
+                if is_staff_spend or not requires_approval:
+                    success, message = process_xp_purchase(
+                        character, stat_name, new_rating, category, subcategory, 
+                        reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                    )
+                    return success, message, total_cost
+                else:
+                    return False, f"Staff approval required for ghoul {stat_name} above level 1", total_cost
+
+        # Handle merits and flaws
+        elif category in ['merits', 'flaws']:
+            if category == 'merits':
+                total_cost = calculate_merit_cost(current_rating, new_rating)
+            else:  # flaws
+                total_cost = calculate_flaw_cost(current_rating, new_rating)
+            
+            # These always require approval unless staff spending
+            if is_staff_spend:
+                success, message = process_xp_purchase(
+                    character, stat_name, new_rating, category, subcategory, 
+                    reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                )
+                return success, message, total_cost
+            else:
+                return False, f"{category.title()} require staff approval", total_cost
+
+        # Special handling for Mage spheres
+        elif category == 'powers' and subcategory == 'sphere' and splat == 'Mage':
+            # Check if it's an affinity sphere
+            from world.wod20th.utils.mage_utils import is_affinity_sphere
+            is_affinity = is_affinity_sphere(character, stat_name)
+            
+            # Use the corrected function to calculate the cost
+            from world.wod20th.utils.xp_costs import calculate_sphere_cost
+            total_cost = calculate_sphere_cost(current_rating, new_rating, is_affinity)
+            
+            # Check if character has enough XP
+            cost_decimal = Decimal(str(total_cost)).quantize(Decimal('0.01'))
+            if character.db.xp['current'] < cost_decimal:
+                return False, f"Not enough XP. Cost: {cost_decimal}, Available: {character.db.xp['current']}", cost_decimal
+            
+            # Process the purchase with the pre-calculated cost
+            success, message = process_xp_purchase(
+                character, stat_name, new_rating, category, subcategory, 
+                reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+            )
+            
+            if success:
+                return True, message, total_cost
+            else:
+                return False, "Failed to process purchase", total_cost
+            
+        # Special handling for Arete
+        elif category == 'pools' and subcategory == 'advantage' and stat_name.lower() == 'arete':
+            total_cost = calculate_arete_cost(current_rating, new_rating)
+            # Arete increases always require approval unless staff spend
+            if is_staff_spend:
+                success, message = process_xp_purchase(
+                    character, stat_name, new_rating, category, subcategory, 
+                    reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                )
+                return success, message, total_cost
+            else:
+                return False, "Arete increases require staff approval", total_cost
+            
+        # Special handling for Avatar
+        elif category == 'pools' and subcategory == 'advantage' and stat_name.lower() == 'avatar':
+            total_cost = calculate_avatar_cost(current_rating, new_rating)
+            # Avatar increases always require approval unless staff spend
+            if is_staff_spend:
+                success, message = process_xp_purchase(
+                    character, stat_name, new_rating, category, subcategory, 
+                    reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                )
+                return success, message, total_cost
+            else:
+                return False, "Avatar increases require staff approval", total_cost
+            
+        # Special handling for Mortal+ types - Kinain arts and realms
+        elif splat == 'Mortal+':
+            # Kinain arts and realms
+            if shifter_type == 'Kinain':
+                if category == 'powers' and subcategory == 'art':
+                    total_cost = calculate_kinain_art_cost(current_rating, new_rating)
+                    requires_approval = new_rating > 2 and not is_staff_spend
+                    
+                    if is_staff_spend or not requires_approval:
+                        success, message = process_xp_purchase(
+                            character, stat_name, new_rating, category, subcategory, 
+                            reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                        )
+                        return success, message, total_cost
+                    else:
+                        return False, f"Staff approval required for Kinain Arts above level 2", total_cost
+                        
+                elif category == 'powers' and subcategory == 'realm':
+                    total_cost = calculate_kinain_realm_cost(current_rating, new_rating)
+                    requires_approval = new_rating > 2 and not is_staff_spend
+                    
+                    if is_staff_spend or not requires_approval:
+                        success, message = process_xp_purchase(
+                            character, stat_name, new_rating, category, subcategory, 
+                            reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                        )
+                        return success, message, total_cost
+                    else:
+                        return False, f"Staff approval required for Kinain Realms above level 2", total_cost
+
+        # Special handling for Companions
+        elif splat == 'Companion':
+            if category == 'powers' and subcategory == 'special_advantage':
+                total_cost = calculate_special_advantage_cost(current_rating, new_rating)
+                # Special advantages always require approval
+                if is_staff_spend:
+                    success, message = process_xp_purchase(
+                        character, stat_name, new_rating, category, subcategory, 
+                        reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                    )
+                    return success, message, total_cost
+                else:
+                    return False, "Special advantages require staff approval", total_cost
+            elif category == 'powers' and subcategory == 'charm':
+                total_cost = calculate_charm_cost(current_rating, new_rating)
+                requires_approval = new_rating > 2 and not is_staff_spend
+                
+                if is_staff_spend or not requires_approval:
+                    success, message = process_xp_purchase(
+                        character, stat_name, new_rating, category, subcategory, 
+                        reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                    )
+                    return success, message, total_cost
+                else:
+                    return False, f"Staff approval required for Charms above level 2", total_cost
+                
+        # Special handling for Possessed
+        elif splat == 'Possessed':
+            if category == 'powers' and subcategory == 'blessing':
+                total_cost = calculate_blessing_cost(current_rating, new_rating)
+                # Blessings always require approval
+                if is_staff_spend:
+                    success, message = process_xp_purchase(
+                        character, stat_name, new_rating, category, subcategory, 
+                        reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                    )
+                    return success, message, total_cost
+                else:
+                    return False, "Blessings require staff approval", total_cost
+            elif category == 'powers' and subcategory == 'gift':
+                total_cost = calculate_possessed_gift_cost(current_rating, new_rating)
+                requires_approval = new_rating > 2 and not is_staff_spend
+                
+                if is_staff_spend or not requires_approval:
+                    success, message = process_xp_purchase(
+                        character, stat_name, new_rating, category, subcategory, 
+                        reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                    )
+                    return success, message, total_cost
+                else:
+                    return False, f"Staff approval required for Possessed gifts above level 2", total_cost
+            elif category == 'powers' and subcategory == 'charm':
+                total_cost = calculate_charm_cost(current_rating, new_rating)
+                requires_approval = new_rating > 2 and not is_staff_spend
+                
+                if is_staff_spend or not requires_approval:
+                    success, message = process_xp_purchase(
+                        character, stat_name, new_rating, category, subcategory, 
+                        reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                    )
+                    return success, message, total_cost
+                else:
+                    return False, f"Staff approval required for Charms above level 2", total_cost
+
+        # Special handling for Kinfolk gifts (Mortal+ type = Kinfolk)
+        elif category == 'powers' and subcategory == 'gift' and splat == 'Mortal+' and shifter_type == 'Kinfolk':
+            # Find the gift in database
+            from world.wod20th.models import Stat
+            from django.db.models import Q
+            
+            gift = Stat.objects.filter(
+                Q(name__iexact=stat_name) | Q(gift_alias__icontains=stat_name),
+                category='powers',
+                stat_type='gift'
+            ).first()
+            
+            if gift:
+                # Get breed and tribe for matching
+                breed = character.get_stat('identity', 'lineage', 'Kinfolk Breed', temp=False)
+                tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
+                
+                # Check if it's a homid or tribe gift
+                is_homid_gift = False
+                is_tribe_gift = False
+                
+                # Check for homid gifts
+                if gift.breed:
+                    breeds = gift.breed if isinstance(gift.breed, list) else [gift.breed]
+                    is_homid_gift = any(b.lower() == 'homid' for b in breeds)
+                
+                # Check for tribe gift
+                if gift.tribe and tribe:
+                    tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+                    is_tribe_gift = tribe.lower() in [t.lower() for t in tribes]
+                
+                # Kinfolk can only purchase homid gifts or gifts from their tribe
+                if not (is_homid_gift or is_tribe_gift):
+                    return False, f"Kinfolk can only learn Homid gifts or gifts of their tribe ({tribe})", 0
+                
+                # Determine gift type for cost calculation
+                gift_type = 'breed_tribe' if (is_homid_gift or is_tribe_gift) else 'outside'
+                
+                # Import the Kinfolk gift cost calculator
+                from world.wod20th.utils.mortalplus_utils import calculate_kinfolk_gift_cost
+                total_cost = calculate_kinfolk_gift_cost(
+                    current_rating=current_rating,
+                    new_rating=new_rating,
+                    gift_type=gift_type
+                )
+                
+                # Check if Kinfolk has Gnosis Merit for level 2 gifts
+                if new_rating > 1:
+                    gnosis_merit = next((value.get('perm', 0) for merit, value in character.db.stats.get('merits', {}).get('supernatural', {}).items() 
+                                      if merit.lower() == 'gnosis'), 0)
+                    if not gnosis_merit:
+                        return False, "Must have the Gnosis Merit to learn level 2 gifts", total_cost
+                
+                # Process the purchase
+                requires_approval = new_rating > 2 and not is_staff_spend
+                if is_staff_spend or not requires_approval:
+                    success, message = process_xp_purchase(
+                        character, stat_name, new_rating, category, subcategory, 
+                        reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                    )
+                    return success, message, total_cost
+                else:
+                    return False, "Kinfolk cannot learn gifts above level 2", total_cost
+
+        # Handle Gifts for Shifters
+        if category == 'powers' and subcategory == 'gift':
+            # First check if this is a Kinfolk character
+            is_kinfolk = (splat == 'Mortal+' and 
+                         character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '') == 'Kinfolk')
+            
+            # Special handling for Kinfolk characters
+            if is_kinfolk:
+                logger.log_info(f"Character {character.name} is a Kinfolk, using special handler")
+                from world.wod20th.utils.mortalplus_utils import handle_kinfolk_gift_cost
+                total_cost, error_msg, requires_approval = handle_kinfolk_gift_cost(
+                    character=character,
+                    stat_name=stat_name,
+                    new_rating=new_rating,
+                    current_rating=current_rating
+                )
+                
+                if error_msg:
+                    return False, error_msg, total_cost
+                
+                if requires_approval and not is_staff_spend:
+                    return False, "Kinfolk gifts above level 2 require staff approval", total_cost
+                
+                # Process the purchase
+                success, message = process_xp_purchase(
+                    character, stat_name, new_rating, category, subcategory, 
+                    reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                )
+                return success, message, total_cost
+                
+            # Regular Shifter gift handling
+            elif splat == 'Shifter':
+                # Find the gift in database
+                from world.wod20th.models import Stat
+                from django.db.models import Q
+                
+                gift = Stat.objects.filter(
+                    Q(name__iexact=stat_name) | Q(gift_alias__icontains=stat_name),
+                    category='powers',
+                    stat_type='gift'
+                ).first()
+                
+                if gift:
+                    # Determine gift type
+                    shifter_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+                    breed = character.get_stat('identity', 'lineage', 'Breed', temp=False)
+                    auspice = character.get_stat('identity', 'lineage', 'Auspice', temp=False)
+                    tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
+                    aspect = character.get_stat('identity', 'lineage', 'Aspect', temp=False)
+                    
+                    # Check if it's a breed, auspice, or tribe gift
+                    from world.wod20th.utils.shifter_utils import _check_shifter_gift_match as shifter_check_gift_match
+                    is_breed_gift, is_auspice_gift, is_tribe_gift = shifter_check_gift_match(
+                        character=character, 
+                        gift_data={
+                            'name': gift.name,
+                            'breed': gift.breed,
+                            'auspice': gift.auspice,
+                            'tribe': gift.tribe
+                        }, 
+                        shifter_type=shifter_type
+                    )
+                    
+                    # Check for special gifts
+                    is_special = False
+                    if gift.tribe:
+                        tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+                        is_special = any(t.lower() in ['croatan', 'planetary', 'ju-fu'] for t in tribes)
+                    
+                    # Determine gift type for cost calculation
+                    if is_special:
+                        gift_type = 'special'
+                    elif is_breed_gift or is_auspice_gift or is_tribe_gift:
+                        gift_type = 'breed_tribe_auspice'
+                    else:
+                        gift_type = 'outside'
+                    
+                    # Calculate cost
+                    from world.wod20th.utils.shifter_utils import calculate_gift_cost as shifter_calculate_gift_cost
+                    total_cost = shifter_calculate_gift_cost(
+                        character=character,
+                        gift_name=gift.name,
+                        new_rating=new_rating,
+                        current_rating=current_rating
+                    )
+                    requires_approval = new_rating > (1 if gift_type != 'special' else 0) and not is_staff_spend
+                    
+                    if is_staff_spend or not requires_approval:
+                        success, message = process_xp_purchase(
+                            character, stat_name, new_rating, category, subcategory, 
+                            reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+                        )
+                        return success, message, total_cost
+                    else:
+                        approval_msg = "Special gifts always require staff approval" if is_special else f"Gifts above level 1 require staff approval"
+                        return False, approval_msg, total_cost
+
+        # Special handling for Kinfolk attempting to buy Gnosis directly
+        if (category == 'pools' and subcategory == 'dual' and 
+            stat_name.lower() == 'gnosis' and 
+            splat == 'Mortal+' and 
+            character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '') == 'Kinfolk'):
+            
+            logger.log_info(f"Character is a Kinfolk trying to buy Gnosis as a pool - redirecting to merit")
+            
+            # For Kinfolk, Gnosis is bought as a merit, so convert to proper category/subcategory
+            category = 'merits'
+            subcategory = 'supernatural'
+            
+            # Get current merit rating
+            current_rating = character.get_stat(category, subcategory, stat_name, temp=False) or 0
+            
+            # Calculate cost using merit cost formula: (new_rating - current_rating) * 5
+            total_cost = (new_rating - current_rating) * 5
+            
+            logger.log_info(f"Calculated Kinfolk Gnosis merit cost: {total_cost}")
+            
+            # Check if they can afford it
+            current_xp = character.db.xp.get('current', 0)
+            if current_xp < total_cost:
+                return False, f"Not enough XP. Kinfolk Gnosis costs {total_cost}XP ({new_rating - current_rating} dots at 5XP each), but you only have {current_xp}XP.", total_cost
+            
+            # Kinfolk can only have Gnosis up to 3
+            if new_rating > 3:
+                return False, "Kinfolk can only have up to 3 dots in Gnosis.", total_cost
+            
+            # Staff approval required for Gnosis
+            return False, "Buying Gnosis as a Kinfolk requires staff approval. Please use +request.", total_cost
+
+        # Default to basic ability cost if no other rules apply
+        logger.log_info(f"No specific cost rule found for {stat_name} ({category}/{subcategory}), using default ability cost")
+        total_cost = calculate_ability_cost(current_rating, new_rating)
+        requires_approval = new_rating > 3 and not is_staff_spend
+
+        if is_staff_spend or not requires_approval:
+            success, message = process_xp_purchase(
+                character, stat_name, new_rating, category, subcategory, 
+                reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+            )
+            return success, message, total_cost
+        else:
+            return False, f"Staff approval required for {stat_name} above level 3", total_cost
+
+    except Exception as e:
+        logger.log_err(f"Error in process_xp_spend: {str(e)}")
         return False, f"Error: {str(e)}", 0
 
 def get_power_type(stat_name):
     """Determine power type from name."""
-    # Get the stat from the database
+    # Get the stat from the database using lazy loading
+    from world.wod20th.models import Stat
     stat = Stat.objects.filter(name=stat_name).first()
     if stat:
         return stat.stat_type
@@ -2133,7 +1901,7 @@ def buy_stat(self, stat_name, new_rating, category=None, subcategory=None, reaso
         )
 
         if cost == 0:
-            return False, "Invalid stat or no increase needed"
+            return False, "Cost returned as 0. This usually indicates an error with the stat name, rating, or you already have the stat at that rating."
 
         if requires_approval:
             return False, "This purchase requires staff approval"
@@ -2270,8 +2038,8 @@ def _determine_stat_category(stat_name):
 
     logger.log_info(f"No background match found for: {base_name}")
 
-    # Convert to title case for comparison
-    stat_name = stat_name.title()
+    # Convert to proper title case for comparison
+    stat_name = proper_title_case(stat_name)
 
     # Special case for pool stats (Willpower, Rage, Gnosis, Glamour)
     if stat_name in ['Willpower', 'Rage', 'Gnosis', 'Glamour']:
@@ -2435,6 +2203,13 @@ def _determine_stat_category(stat_name):
     from world.wod20th.models import Stat
     from django.db.models import Q
     
+    # Check for Changeling Arts first (to take precedence over gifts with similar names)
+    CHANGELING_ARTS = ['Autumn', 'Chicanery', 'Chronos', 'Contract', "Dragon's Ire", 'Legerdemain', 'Metamorphosis', 'Naming', 
+                       'Oneiromancy', 'Primal', 'Pyretics', 'Skycraft', 'Soothsay', 'Sovereign', 'Spring', 'Summer', 'Wayfare', 'Winter',
+                       'Infusion', 'Kryos', 'Storm Craft']
+    if stat_name in CHANGELING_ARTS or stat_name.lower() in [art.lower() for art in CHANGELING_ARTS]:
+        return ('powers', 'art')
+    
     # Special handling for Mother's Touch - it's always a gift
     if stat_name.lower() == "mother's touch":
         return ('powers', 'gift')
@@ -2568,93 +2343,125 @@ def _is_affinity_sphere(self, sphere):
     
     return sphere == affinity_sphere
     
-def calculate_gift_cost(character, gift_name, new_rating, current_rating):
-    """Calculate the XP cost for a gift purchase."""
+def calculate_gift_cost(character, gift_name, new_rating, current_rating=None):
+    """Calculate the XP cost for a gift."""
     try:
-        logger.log_info(f"Calculating gift cost for {gift_name} {new_rating}")
+        # Get character's shifter type and aspect
+        shifter_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+        logger.log_info(f"Calculating gift cost for {shifter_type} character")
+
+        # For Ajaba, get their aspect
+        aspect = None
+        if shifter_type == 'Ajaba':
+            aspect = character.db.stats.get('identity', {}).get('lineage', {}).get('Aspect', {}).get('perm', '')
+            logger.log_info(f"Ajaba character with aspect: {aspect}")
+
+        # Get the gift details from the database
+        from world.wod20th.models import Stat
+        from django.db.models import Q
         
-        # Get character's splat and type
-        splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
-        char_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
-        logger.log_info(f"Character splat: {splat}, type: {char_type}")
-        
-        # Find the gift in the database
         gift = Stat.objects.filter(
             Q(name__iexact=gift_name) | Q(gift_alias__icontains=gift_name),
             category='powers',
             stat_type='gift'
         ).first()
         
-        if not gift:
-            logger.log_info(f"Gift {gift_name} not found in database")
-            return 0
+        if gift:
+            logger.log_info(f"Found gift in database: {gift.name}")
             
-        total_cost = 0
-        
-        # Calculate cost based on character type
-        if splat == 'Mortal+' and char_type == 'Kinfolk':
-            logger.log_info("Processing Kinfolk gift cost")
-            # Check if it's a breed gift (homid) or tribal gift
-            is_homid = False
-            is_tribal = False
-            
-            if gift.shifter_type:
-                is_homid = 'homid' in [t.lower() for t in (gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type])]
+            # For Ajaba, check if the gift matches their aspect
+            if shifter_type == 'Ajaba':
+                if gift.auspice:
+                    auspices = gift.auspice if isinstance(gift.auspice, list) else [gift.auspice]
+                    is_aspect_gift = aspect and aspect.lower() in [a.lower() for a in auspices]
+                    logger.log_info(f"Checking aspect gift - Character aspect: {aspect}, Gift auspices: {auspices}, Is aspect gift: {is_aspect_gift}")
+                    
+                    # For Ajaba, aspect gifts cost 3 XP per level
+                    if is_aspect_gift:
+                        cost = new_rating * 3
+                        logger.log_info(f"Aspect gift cost for Ajaba: {cost}")
+                        return cost
                 
-            if gift.tribe:
-                kinfolk_tribe = character.db.stats.get('identity', {}).get('lineage', {}).get('Tribe', {}).get('perm', '')
-                if kinfolk_tribe:
-                    allowed_tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
-                    is_tribal = kinfolk_tribe.lower() in [t.lower() for t in allowed_tribes]
+                # Non-aspect gifts cost 5 XP per level for Ajaba
+                cost = new_rating * 5
+                logger.log_info(f"Non-aspect gift cost for Ajaba: {cost}")
+                return cost
             
-            logger.log_info(f"Kinfolk gift checks - Homid: {is_homid}, Tribal: {is_tribal}")
-            
-            if is_homid or is_tribal:
-                total_cost = new_rating * 6  # Breed/Tribe gifts
-            else:
-                total_cost = new_rating * 10  # Other gifts
+            # For other shifter types, use their specific cost structure
+            elif shifter_type and shifter_type.lower() != 'garou':
+                # Check if this is a gift available to their shifter type
+                if gift.shifter_type:
+                    allowed_types = gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type]
+                    if shifter_type.lower() in [t.lower() for t in allowed_types]:
+                        # Base cost of 3 XP per level for gifts available to their type
+                        cost = new_rating * 3
+                        logger.log_info(f"Shifter type gift cost for {shifter_type}: {cost}")
+                        return cost
+                    else:
+                        # Higher cost (5 XP per level) for gifts not native to their type
+                        cost = new_rating * 5
+                        logger.log_info(f"Non-native gift cost for {shifter_type}: {cost}")
+                        return cost
                 
-        elif splat == 'Shifter':
-            logger.log_info("Processing Shifter gift cost")
-            # Get character's breed, auspice, and tribe
-            breed = character.db.stats.get('identity', {}).get('lineage', {}).get('Breed', {}).get('perm', '')
-            auspice = character.db.stats.get('identity', {}).get('lineage', {}).get('Auspice', {}).get('perm', '')
-            tribe = character.db.stats.get('identity', {}).get('lineage', {}).get('Tribe', {}).get('perm', '')
-            logger.log_info(f"Shifter details - Breed: {breed}, Auspice: {auspice}, Tribe: {tribe}")
+                # Default cost if shifter_type not specified in gift
+                cost = new_rating * 3
+                logger.log_info(f"Default gift cost for {shifter_type}: {cost}")
+                return cost
             
-            # Check gift type
+            # For Garou, check if it's a breed, auspice, or tribe gift
+            breed = character.get_stat('identity', 'lineage', 'Breed', temp=False)
+            auspice = character.get_stat('identity', 'lineage', 'Auspice', temp=False)
+            tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
+            
+            logger.log_info(f"Character details - Breed: {breed}, Auspice: {auspice}, Tribe: {tribe}, Type: {shifter_type}")
+            
             is_breed_gift = False
             is_auspice_gift = False
             is_tribe_gift = False
             is_special = False
             
+            # Check breed gifts
             if gift.shifter_type:
-                is_breed_gift = breed and breed.lower() in [t.lower() for t in (gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type])]
-                
+                allowed_types = gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type]
+                is_breed_gift = breed and breed.lower() in [t.lower() for t in allowed_types]
+            
+            # Check auspice gifts
             if gift.auspice:
-                is_auspice_gift = auspice and auspice.lower() in [a.lower() for a in (gift.auspice if isinstance(gift.auspice, list) else [gift.auspice])]
-                
+                allowed_auspices = gift.auspice if isinstance(gift.auspice, list) else [gift.auspice]
+                is_auspice_gift = auspice and auspice.lower() in [a.lower() for a in allowed_auspices]
+                logger.log_info(f"Checking auspice gift - Character auspice: {auspice}, Gift auspices: {allowed_auspices}, Is auspice gift: {is_auspice_gift}")
+            
+            # Check tribe gifts and special gifts
             if gift.tribe:
                 tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+                logger.log_info(f"Gift data - tribe: {tribes}, type: {type(tribes)}")
                 is_tribe_gift = tribe and tribe.lower() in [t.lower() for t in tribes]
-                is_special = any(t.lower() in ['croatan', 'planetary'] for t in tribes)
+                is_special = any(t.lower() in ['croatan', 'planetary', 'ju-fu'] for t in tribes)
+                logger.log_info(f"Tribe check details - Character tribe: {tribe}, Gift tribes: {tribes}")
             
             logger.log_info(f"Gift type checks - Breed: {is_breed_gift}, Auspice: {is_auspice_gift}, Tribe: {is_tribe_gift}, Special: {is_special}")
             
+            # Calculate cost based on gift type
             if is_special:
-                total_cost = new_rating * 7  # Croatan/Planetary gifts
+                cost = new_rating * 7  # Croatan/Planetary gifts cost 7 XP per level
+                logger.log_info(f"Special gift cost: {cost}")
             elif is_breed_gift or is_auspice_gift or is_tribe_gift:
-                total_cost = new_rating * 3  # Breed/Auspice/Tribe gifts
+                cost = new_rating * 3  # Breed/Auspice/Tribe gifts cost 3 XP per level
+                logger.log_info(f"Breed/Auspice/Tribe gift cost: {cost}")
             else:
-                total_cost = new_rating * 5  # Other gifts
+                cost = new_rating * 5  # Other gifts cost 5 XP per level
+                logger.log_info(f"Other gift cost: {cost}")
+            
+            return cost
         
-        logger.log_info(f"Final gift cost: {total_cost}")
-        return total_cost
+        # If gift not found in database, use base cost
+        cost = new_rating * 3  # Base cost of 3 XP per level
+        logger.log_info(f"Default cost for gift not found in database: {cost}")
+        return cost
         
     except Exception as e:
         logger.log_err(f"Error calculating gift cost: {str(e)}")
         return 0
-
 def check_weekly_xp_eligibility():
     """
     Check all characters for weekly XP eligibility.
@@ -2796,12 +2603,12 @@ def _check_shifter_gift_match(character, gift_data, shifter_type):
     mapping = SHIFTER_MAPPINGS[shifter_type]
     
     # Get character's details
-    breed = character.db.stats.get('identity', {}).get('lineage', {}).get('Breed', {}).get('perm', '')
-    aspect = character.db.stats.get('identity', {}).get('lineage', {}).get('Aspect', {}).get('perm', '')
-    auspice = character.db.stats.get('identity', {}).get('lineage', {}).get('Auspice', {}).get('perm', '')
-    tribe = character.db.stats.get('identity', {}).get('lineage', {}).get('Tribe', {}).get('perm', '')
-    faction = character.db.stats.get('identity', {}).get('lineage', {}).get('Faction', {}).get('perm', '')
-    path = character.db.stats.get('identity', {}).get('lineage', {}).get('Path', {}).get('perm', '')
+    breed = character.get_stat('identity', 'lineage', 'Breed', temp=False)
+    aspect = character.get_stat('identity', 'lineage', 'Aspect', temp=False)
+    auspice = character.get_stat('identity', 'lineage', 'Auspice', temp=False)
+    tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
+    faction = character.get_stat('identity', 'lineage', 'Faction', temp=False)
+    path = character.get_stat('identity', 'lineage', 'Kitsune Path', temp=False)
     
     logger.log_info(f"Character details - Breed: {breed}, Aspect: {aspect}, Auspice: {auspice}, Tribe: {tribe}, Faction: {faction}, Path: {path}")
 
@@ -2887,7 +2694,7 @@ def _check_shifter_gift_match(character, gift_data, shifter_type):
                 logger.log_info(f"Checking direct tribe - Tribe: {tribe}, Allowed tribes: {allowed_tribes}, Is tribe gift: {is_tribe_gift}")
 
     # Special case for Kitsune ju-fu gifts
-    if shifter_type == 'Kitsune' and mapping['special_gifts'].get('ju-fu'):
+    if shifter_type == 'Kitsune' and mapping.get('special_gifts', {}).get('ju-fu'):
         if gift_data.get('gift_type') == 'ju-fu':
             logger.log_info("Found Kitsune ju-fu gift")
             return False, False, True  # Return special flag for ju-fu gifts
@@ -2900,3 +2707,407 @@ def _check_shifter_gift_match(character, gift_data, shifter_type):
     logger.log_info(f"- Character tribe: {tribe}")
 
     return is_breed_gift, is_auspice_gift, is_tribe_gift
+
+def _handle_path_disciplines(character, stat_name, new_rating, current_rating, subcategory):
+    """Handle Thaumaturgy and Necromancy path updates."""
+    if subcategory == 'thaumaturgy':
+        if 'thaumaturgy' not in character.db.stats['powers']:
+            character.db.stats['powers']['thaumaturgy'] = {}
+        # Normalize path name to title case with 'of' lowercase
+        normalized_name = ' '.join(word.title() if word.lower() != 'of' else 'of' 
+                                for word in stat_name.split())
+        # Remove any existing path with different case
+        for existing_path in list(character.db.stats['powers']['thaumaturgy'].keys()):
+            if existing_path.lower() == normalized_name.lower():
+                if existing_path != normalized_name:
+                    # Transfer the existing rating to the normalized name
+                    existing_rating = character.db.stats['powers']['thaumaturgy'][existing_path]
+                    del character.db.stats['powers']['thaumaturgy'][existing_path]
+                    character.db.stats['powers']['thaumaturgy'][normalized_name] = existing_rating
+                    logger.log_info(f"Normalized path name from {existing_path} to {normalized_name}")
+        # Set the new rating
+        character.db.stats['powers']['thaumaturgy'][normalized_name] = {
+            'perm': new_rating,
+            'temp': new_rating
+        }
+        logger.log_info(f"Updated thaumaturgy path {normalized_name} to {new_rating}")
+        return True
+    elif subcategory == 'necromancy':
+        if 'necromancy' not in character.db.stats['powers']:
+            character.db.stats['powers']['necromancy'] = {}
+        character.db.stats['powers']['necromancy'][stat_name] = {
+            'perm': new_rating,
+            'temp': new_rating
+        }
+        return True
+    return False
+
+def _handle_blessing_updates(character, stat_name, new_rating):
+    """Handle special cases for blessings that modify other stats."""
+    if 'blessing' not in character.db.stats['powers']:
+        character.db.stats['powers']['blessing'] = {}
+    # Validate against BLESSINGS list
+    if stat_name not in BLESSINGS:
+        return False, f"{stat_name} is not a valid blessing"
+    character.db.stats['powers']['blessing'][stat_name] = {
+        'perm': new_rating,
+        'temp': new_rating
+    }
+    
+    # Handle special cases for blessings that modify other stats
+    splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+    if splat == 'Possessed':
+        if stat_name == 'Spirit Ties':
+            # Spirit Ties adds to Gnosis pool
+            gnosis_pool = character.db.stats.get('pools', {}).get('dual', {}).get('Gnosis', {})
+            if gnosis_pool:
+                base_gnosis = 1  # Base Gnosis for Possessed
+                new_gnosis = base_gnosis + new_rating
+                gnosis_pool['perm'] = new_gnosis
+                gnosis_pool['temp'] = new_gnosis
+                logger.log_info(f"Updated Gnosis to {new_gnosis} based on Spirit Ties rating {new_rating}")
+        elif stat_name == 'Berserker':
+            # Berserker sets Rage pool to 5
+            rage_pool = character.db.stats.get('pools', {}).get('dual', {}).get('Rage', {})
+            if rage_pool:
+                rage_pool['perm'] = 5
+                rage_pool['temp'] = 5
+                logger.log_info("Set Rage pool to 5 based on Berserker blessing")
+    return True, None
+
+def _handle_special_advantage_updates(character, stat_name, new_rating):
+    """Handle special advantage updates including Ferocity."""
+    if 'special_advantage' not in character.db.stats['powers']:
+        character.db.stats['powers']['special_advantage'] = {}
+
+    # Special handling for Ferocity by name
+    is_ferocity = stat_name.lower() == 'ferocity'
+        
+    # Check if it's in SPECIAL_ADVANTAGES
+    if stat_name.lower() in SPECIAL_ADVANTAGES:
+        advantage_info = SPECIAL_ADVANTAGES[stat_name.lower()]
+        if new_rating in advantage_info['valid_values']:
+            # Set the special advantage
+            character.db.stats['powers']['special_advantage'][stat_name.lower()] = {
+                'perm': new_rating,
+                'temp': new_rating
+            }
+            logger.log_info(f"Updated special advantage {stat_name} to {new_rating}")
+            
+            # Handle Ferocity special case - update Rage
+            if is_ferocity:
+                _update_ferocity_rage(character, new_rating)
+            return True, None
+        else:
+            return False, f"Invalid rating for {stat_name}. Valid values are: {advantage_info['valid_values']}"
+    # Check if it's in COMBAT_SPECIAL_ADVANTAGES
+    elif stat_name.lower() in COMBAT_SPECIAL_ADVANTAGES:
+        advantage_info = COMBAT_SPECIAL_ADVANTAGES[stat_name.lower()]
+        if new_rating in advantage_info['valid_values']:
+            character.db.stats['powers']['special_advantage'][stat_name.lower()] = {
+                'perm': new_rating,
+                'temp': new_rating
+            }
+            logger.log_info(f"Updated combat special advantage {stat_name} to {new_rating}")
+            return True, None
+        else:
+            return False, f"Invalid rating for {stat_name}. Valid values are: {advantage_info['valid_values']}"
+    return False, f"{stat_name} is not a valid special advantage"
+
+def _update_ferocity_rage(character, ferocity_rating):
+    """Update Rage pool based on Ferocity rating."""
+    # Initialize pools structure if it doesn't exist
+    if 'pools' not in character.db.stats:
+        character.db.stats['pools'] = {}
+    if 'dual' not in character.db.stats['pools']:
+        character.db.stats['pools']['dual'] = {}
+    
+    # Calculate Rage based on Ferocity level
+    rage_value = ferocity_rating // 2
+    
+    # Create Rage pool if it doesn't exist
+    if 'Rage' not in character.db.stats['pools']['dual']:
+        character.db.stats['pools']['dual']['Rage'] = {}
+        
+    # Explicitly set both permanent and temporary values
+    character.db.stats['pools']['dual']['Rage']['perm'] = rage_value
+    character.db.stats['pools']['dual']['Rage']['temp'] = rage_value
+    
+    logger.log_info(f"Set Rage pool to {rage_value} based on Ferocity {ferocity_rating}")
+
+def _handle_kinfolk_gnosis(character, new_rating):
+    """Handle Gnosis merit updates for Kinfolk characters."""
+    # Initialize pools structure if it doesn't exist
+    if 'pools' not in character.db.stats:
+        character.db.stats['pools'] = {}
+    if 'dual' not in character.db.stats['pools']:
+        character.db.stats['pools']['dual'] = {}
+    
+    # Calculate Gnosis based on the merit level
+    # The Gnosis merit at 7 = Gnosis 3, 6 = Gnosis 2, 5 = Gnosis 1
+    if new_rating == 5:
+        gnosis_value = 1
+    elif new_rating == 6:
+        gnosis_value = 2
+    elif new_rating == 7:
+        gnosis_value = 3
+    else:
+        gnosis_value = 0  # Invalid merit rating
+    
+    # Create or update Gnosis pool
+    if 'Gnosis' not in character.db.stats['pools']['dual']:
+        character.db.stats['pools']['dual']['Gnosis'] = {}
+    
+    # Set both permanent and temporary values
+    character.db.stats['pools']['dual']['Gnosis']['perm'] = gnosis_value
+    character.db.stats['pools']['dual']['Gnosis']['temp'] = gnosis_value
+    
+    logger.log_info(f"Set Gnosis pool to {gnosis_value} based on Gnosis merit level {new_rating} for Kinfolk character")
+
+def calculate_sphere_cost(character, sphere_name: str, new_rating: int, current_rating: int, is_staff_spend: bool = False) -> tuple:
+    """
+    Calculate the XP cost for increasing a Mage sphere.
+    
+    Args:
+        character: The character object
+        sphere_name: Name of the sphere
+        new_rating: The new rating to increase to
+        current_rating: The current rating of the sphere
+        is_staff_spend: Whether this is a staff-approved spend
+        
+    Returns:
+        tuple: (cost, requires_approval, error_message)
+    """
+    from world.wod20th.utils.mage_utils import is_affinity_sphere
+    from world.wod20th.utils.xp_costs import calculate_sphere_cost as calculate_sphere_cost_imported
+    from evennia.utils import logger
+    
+    logger.log_trace(f"Processing Mage sphere")
+    logger.log_trace(f"Current sphere rating: {current_rating}")
+    
+    # Validate inputs
+    if new_rating <= current_rating:
+        return 0, False, "No increase needed"
+    
+    # Check if this is an affinity sphere
+    is_affinity = is_affinity_sphere(character, sphere_name)
+    logger.log_trace(f"Is {sphere_name} an affinity sphere? {is_affinity}")
+    
+    # Calculate cost using the imported function
+    total_cost = calculate_sphere_cost_imported(current_rating, new_rating, is_affinity)
+    
+    # Check if approval is required (spheres above 1 require approval unless staff spend)
+    requires_approval = new_rating > 1 and not is_staff_spend
+    
+    logger.log_trace(f"Calculated sphere cost: {total_cost}, requires approval: {requires_approval}, error: None")
+    return total_cost, requires_approval, None
+
+def get_stat(self, category, subcategory, stat_name, temp=True):
+    """
+    Get a stat, handling nested dictionaries properly.
+    
+    Args:
+        category (str): The top-level category (e.g., 'attributes', 'abilities')
+        subcategory (str): The subcategory (e.g., 'physical', 'mental')
+        stat_name (str): The name of the stat
+        temp (bool): Whether to get the temporary value (default) or permanent value
+        
+    Returns:
+        The stat value, or None if not found
+    """
+    try:
+        if not hasattr(self, 'db') or not hasattr(self.db, 'stats'):
+            return None
+        
+        if category not in self.db.stats:
+            return None
+        
+        if subcategory not in self.db.stats[category]:
+            return None
+        
+        # Special handling for case-insensitive stat names (especially for abilities)
+        if category in ['abilities', 'secondary_abilities']:
+            # Try to find the stat with case-insensitive matching
+            stat_name_lower = stat_name.lower()
+            for existing_name, values in self.db.stats[category][subcategory].items():
+                if existing_name.lower() == stat_name_lower:
+                    # Return permanent or temporary value as requested
+                    if isinstance(values, dict):
+                        return values.get('perm' if not temp else 'temp', 0)
+                    return values
+            # If not found with case-insensitive matching, proceed with normal lookup
+        
+        # Normal stat lookup
+        if stat_name not in self.db.stats[category][subcategory]:
+            return None
+        
+        stat_data = self.db.stats[category][subcategory][stat_name]
+        if isinstance(stat_data, dict):
+            key = 'temp' if temp else 'perm'
+            return stat_data.get(key, None)
+        return stat_data
+    except Exception as e:
+        return None
+
+def staff_spend(self, stat_name, new_rating, category=None, subcategory=None, reason=""):
+    """
+    Spend XP on a stat with staff approval.
+    """
+    caller = self.caller
+    
+    # If no category/subcategory provided, try to determine them
+    if not category or not subcategory:
+        from world.wod20th.utils.xp_utils import _determine_stat_category
+        category, subcategory = _determine_stat_category(stat_name)
+        
+    target = self.target
+    if not target:
+        caller.msg("No target set.")
+        return
+        
+    # Perform specialized processing
+    from world.wod20th.utils.shifter_utils import _check_shifter_gift_match as shifter_gift_match
+    from world.wod20th.utils.shifter_utils import calculate_gift_cost as shifter_calculate_gift_cost
+   
+    current_rating = 0
+    
+    # Get current rating with better logging
+    logger.log_info(f"Getting current rating for {stat_name} ({category}/{subcategory})")
+    
+    # Handle case-insensitive matching
+    if category in ['abilities', 'secondary_abilities']:
+        stat_name_lower = stat_name.lower()
+        stats_dict = target.db.stats.get(category, {}).get(subcategory, {})
+        for existing_name, values in stats_dict.items():
+            if existing_name.lower() == stat_name_lower:
+                current_rating = values.get('perm', 0)
+                # Use the properly cased name from this point on
+                stat_name = existing_name
+                break
+        if current_rating is None:
+            current_rating = 0
+    elif category == 'powers' and subcategory in ['discipline', 'gift', 'sphere', 'art', 'realm', 'thaumaturgy', 'sorcery', 'numina', 'blessing', 'special_advantage', 'charm', 'necromancy', 'thaum_ritual', 'necromancy_ritual', 'faith', 'arcanos', 'hedge_ritual']:
+        # Special handling for powers with case sensitivity issues
+        stat_name_lower = stat_name.lower()
+        stats_dict = target.db.stats.get('powers', {}).get(subcategory, {})
+        for existing_name, values in stats_dict.items():
+            if existing_name.lower() == stat_name_lower:
+                current_rating = values.get('perm', 0)
+                # Use the properly cased name from this point on
+                stat_name = existing_name
+                break
+        if current_rating is None:
+            current_rating = 0
+    else:
+        current_rating = target.get_stat(category, subcategory, stat_name, temp=False) or 0
+        
+    logger.log_info(f"Current rating for {stat_name}: {current_rating}")
+    
+    # Calculate cost - this is a staff spend, so we manually calculate cost
+    if category == 'powers' and subcategory == 'discipline':
+        total_cost = calculate_discipline_cost(current_rating, new_rating)
+    elif category == 'powers' and subcategory == 'gift':
+        # Get character's splat
+        splat = target.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+        
+        if splat == 'Shifter':
+            # Import locally to avoid circular import
+            from world.wod20th.utils.shifter_utils import calculate_gift_cost as shifter_gift_cost
+            # Use named parameters to avoid confusion
+            total_cost = shifter_gift_cost(
+                character=target,
+                gift_name=stat_name,
+                new_rating=new_rating,
+                current_rating=current_rating
+            )
+        elif splat == 'Mortal+' and target.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '') == 'Kinfolk':
+            from world.wod20th.utils.mortalplus_utils import calculate_kinfolk_gift_cost
+            total_cost = calculate_kinfolk_gift_cost(current_rating, new_rating)
+        elif splat == 'Possessed':
+            from world.wod20th.utils.possessed_utils import calculate_possessed_gift_cost
+            total_cost = calculate_possessed_gift_cost(current_rating, new_rating)
+        else:
+            # Default to standard gift cost
+            from world.wod20th.utils.xp_costs import calculate_gift_cost as standard_gift_cost
+            total_cost = standard_gift_cost(current_rating, new_rating)
+    elif category == 'powers' and subcategory == 'sphere':
+        total_cost = calculate_sphere_cost(current_rating, new_rating)
+    elif category == 'powers' and subcategory == 'art':
+        total_cost = calculate_art_cost(current_rating, new_rating)
+    elif category == 'powers' and subcategory == 'realm':
+        total_cost = calculate_realm_cost(current_rating, new_rating)
+    elif category == 'powers' and subcategory == 'dual':
+        if stat_name == 'Willpower':
+            total_cost = calculate_willpower_cost(current_rating, new_rating)
+        elif stat_name == 'Rage':
+            total_cost = calculate_rage_cost(current_rating, new_rating)
+        elif stat_name == 'Gnosis':
+            total_cost = calculate_gnosis_cost(current_rating, new_rating)
+        elif stat_name == 'Glamour':
+            total_cost = calculate_glamour_cost(current_rating, new_rating)
+    elif category == 'powers' and subcategory == 'special_advantage':
+        total_cost = calculate_special_advantage_cost(current_rating, new_rating)
+    elif category == 'powers' and subcategory == 'charm':
+        total_cost = calculate_charm_cost(current_rating, new_rating)
+    elif category == 'powers' and subcategory == 'blessing':
+        total_cost = calculate_blessing_cost(current_rating, new_rating)
+    elif category == 'powers' and subcategory == 'necromancy':
+        total_cost = calculate_thaumaturgy_path_cost(current_rating, new_rating)
+    elif category == 'powers' and subcategory == 'sorcery':
+        total_cost = calculate_sorcerous_path_cost(current_rating, new_rating)
+    elif category == 'powers' and subcategory == 'numina':
+        total_cost = calculate_numina_cost(current_rating, new_rating)
+    elif category == 'powers' and subcategory == 'faith':
+        total_cost = calculate_faith_cost(current_rating, new_rating)
+    elif category == 'powers' and subcategory == 'arcanos':
+        total_cost = calculate_arcanos_cost(current_rating, new_rating)
+    elif category == 'powers' and subcategory == 'hedge_ritual':
+        total_cost = calculate_sorcerous_ritual_cost(current_rating, new_rating)
+    elif category == 'powers' and subcategory == 'thaum_ritual':
+        total_cost = calculate_ritual_cost(current_rating, new_rating)
+    elif category == 'powers' and subcategory == 'necromancy_ritual':
+        total_cost = calculate_ritual_cost(current_rating, new_rating)
+    else:
+        total_cost = calculate_xp_cost(current_rating, new_rating)
+    
+    # Process the purchase
+    success, message = process_xp_purchase(
+        target, stat_name, new_rating, category, subcategory, 
+        reason=reason, current_rating=current_rating, pre_calculated_cost=total_cost
+    )
+    
+    return success, message, total_cost
+
+def proper_title_case(text):
+    """
+    Convert text to proper title case, keeping certain words lowercase.
+    
+    Args:
+        text (str): The text to convert
+        
+    Returns:
+        str: The properly title-cased text
+    """
+    if not text:
+        return text
+        
+    # List of words that should be lowercase in titles
+    lowercase_words = ['a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 
+                      'on', 'at', 'to', 'from', 'by', 'of', 'in', 'with']
+    
+    # Split the text into words
+    words = text.split()
+    
+    # Always capitalize the first word
+    if words:
+        words[0] = words[0].capitalize()
+    
+    # Process the remaining words
+    for i in range(1, len(words)):
+        if words[i].lower() in lowercase_words:
+            words[i] = words[i].lower()
+        else:
+            words[i] = words[i].capitalize()
+    
+    # Join the words back together
+    return ' '.join(words)

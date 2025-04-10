@@ -1,9 +1,12 @@
 """
 Utility functions for handling Shifter-specific character initialization and updates.
 """
+from world.wod20th.utils.xp_utils import get_stat_model
 from world.wod20th.utils.banality import get_default_banality
 from world.wod20th.utils.stat_mappings import SHIFTER_BACKGROUNDS
-from typing import Dict, Union, List, Tuple, Set
+from typing import Dict, Union, List, Tuple, Set, Optional
+from evennia.utils import logger
+from django.db.models import Q
 
 # Valid shifter types
 SHIFTER_TYPE_CHOICES: List[Tuple[str, str]] = [
@@ -191,6 +194,270 @@ SHIFTER_RENOWN: Dict[str, Union[List[str], Dict[str, List[str]]]] = {
     "Ratkin": ["Infamy", "Obligation", "Cunning"],
     "Rokea": ["Valor", "Harmony", "Innovation"]
 }
+
+def _check_shifter_gift_match(character, gift_data: Dict, shifter_type: str) -> Tuple[bool, bool, bool]:
+    """
+    Check if a gift matches the character's breed/auspice/tribe.
+    Returns (is_breed_gift, is_auspice_gift, is_tribe_gift)
+    """
+    # Get character's breed, auspice, and tribe
+    breed = character.get_stat('identity', 'lineage', 'Breed', temp=False)
+    auspice = character.get_stat('identity', 'lineage', 'Auspice', temp=False)
+    tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
+    
+    # Get additional character attributes for specific shifter types
+    aspect = character.get_stat('identity', 'lineage', 'Aspect', temp=False)
+    path = character.get_stat('identity', 'lineage', 'Kitsune Path', temp=False)
+    faction = None
+    if shifter_type == 'Ananasi':
+        faction = character.get_stat('identity', 'lineage', 'Ananasi Faction', temp=False)
+    
+    # Initialize results
+    is_breed_gift = False
+    is_auspice_gift = False
+    is_tribe_gift = False
+    
+    # Check shifter type match first
+    if gift_data.get('shifter_type'):
+        allowed_types = gift_data['shifter_type'] if isinstance(gift_data['shifter_type'], list) else [gift_data['shifter_type']]
+        if shifter_type.lower() not in [t.lower() for t in allowed_types]:
+            # If shifter type doesn't match, return early
+            return False, False, False
+    
+    # Special case for Corax: all gifts are considered in-tribe/in-auspice
+    if shifter_type == 'Corax':
+        return True, True, True
+    
+    # Check for ju-fu gifts for Kitsune (these are special and always 7x level)
+    if shifter_type == 'Kitsune' and gift_data.get('tribe'):
+        tribes = gift_data['tribe'] if isinstance(gift_data['tribe'], list) else [gift_data['tribe']]
+        if 'ju-fu' in [t.lower() for t in tribes]:
+            # For ju-fu gifts, we return False for all checks since they're priced differently
+            return False, False, False
+    
+    # Handle breed check with mappings
+    if gift_data.get('breed') and breed:
+        allowed_breeds = gift_data['breed'] if isinstance(gift_data['breed'], list) else [gift_data['breed']]
+        breed_lower = breed.lower()
+        
+        # Handle special breed mappings
+        mapped_breed = breed_lower
+        
+        # Map Ajaba breeds
+        if shifter_type == 'Ajaba' and breed_lower == 'hyaenid':
+            mapped_breed = 'lupus'
+            
+        # Map Ananasi breeds
+        elif shifter_type == 'Ananasi' and breed_lower == 'crawlerling':
+            mapped_breed = 'lupus'
+            
+        # Map Bastet breeds
+        elif shifter_type == 'Bastet' and breed_lower == 'feline':
+            mapped_breed = 'lupus'
+            
+        # Map Corax breeds
+        elif shifter_type == 'Corax' and breed_lower == 'corvid':
+            mapped_breed = 'lupus'
+            
+        # Map Gurahl breeds
+        elif shifter_type == 'Gurahl' and breed_lower == 'ursine':
+            mapped_breed = 'lupus'
+            
+        # Map Kitsune breeds
+        elif shifter_type == 'Kitsune':
+            if breed_lower == 'kojin':
+                mapped_breed = 'homid'
+            elif breed_lower == 'roko':
+                mapped_breed = 'lupus'
+            elif breed_lower == 'shinju':
+                mapped_breed = 'metis'
+                
+        # Map Mokole breeds
+        elif shifter_type == 'Mokole' and breed_lower == 'suchid':
+            mapped_breed = 'lupus'
+            
+        # Map Nagah breeds
+        elif shifter_type == 'Nagah':
+            if breed_lower == 'balaram':
+                mapped_breed = 'homid'
+            elif breed_lower == 'ahi':
+                mapped_breed = 'metis'
+            elif breed_lower == 'vasuki':
+                mapped_breed = 'lupus'
+                
+        # Map Nuwisha breeds
+        elif shifter_type == 'Nuwisha' and breed_lower == 'latrani':
+            mapped_breed = 'lupus'
+            
+        # Map Ratkin breeds
+        elif shifter_type == 'Ratkin' and breed_lower == 'rodens':
+            mapped_breed = 'lupus'
+            
+        # Map Rokea breeds
+        elif shifter_type == 'Rokea' and breed_lower == 'squamus':
+            mapped_breed = 'lupus'
+        
+        # Check both the original breed and the mapped breed
+        is_breed_gift = breed_lower in [b.lower() for b in allowed_breeds] or mapped_breed in [b.lower() for b in allowed_breeds]
+        
+        # Special case for Nagah, Ratkin with breed-specific gifts
+        if shifter_type in ['Nagah', 'Ratkin'] and not is_breed_gift:
+            # Check if the gift is specifically for this shifter type's breed
+            is_breed_gift = f"{breed_lower}" in [b.lower() for b in allowed_breeds]
+    
+    # Handle auspice/aspect check with mappings
+    if gift_data.get('auspice'):
+        allowed_auspices = gift_data['auspice'] if isinstance(gift_data['auspice'], list) else [gift_data['auspice']]
+        
+        check_value = None
+        
+        # Determine what value to check against auspice field based on shifter type
+        if shifter_type == 'Ajaba' and aspect:
+            # Ajaba aspects map to auspices
+            check_value = aspect
+        elif shifter_type == 'Ananasi' and faction:
+            # Ananasi factions map to auspices
+            check_value = faction
+        elif shifter_type == 'Kitsune' and path:
+            # Kitsune paths map to auspices
+            check_value = path
+        elif shifter_type == 'Mokole' and auspice:
+            # Handle Mokole auspice mappings for Zhong Lung
+            mokole_auspice_map = {
+                'tung chun': 'setting sun warding',
+                'nam nsai': 'noonday sun unshading',
+                'sai chau': 'solar eclipse crowning',
+                'pei tung': 'midnight sun shining'
+            }
+            check_value = mokole_auspice_map.get(auspice.lower(), auspice)
+        elif shifter_type == 'Ratkin' and aspect:
+            # Ratkin aspects map to auspices
+            check_value = aspect
+        else:
+            # Default to standard auspice
+            check_value = auspice
+        
+        if check_value:
+            is_auspice_gift = check_value.lower() in [a.lower() for a in allowed_auspices]
+    
+    # Handle tribe check with mappings
+    if gift_data.get('tribe'):
+        allowed_tribes = gift_data['tribe'] if isinstance(gift_data['tribe'], list) else [gift_data['tribe']]
+        
+        check_value = None
+        
+        # Determine what value to check against tribe field based on shifter type
+        if shifter_type == 'Ananasi' and aspect:
+            # Ananasi aspects map to tribes
+            check_value = aspect
+        else:
+            # Default to standard tribe
+            check_value = tribe
+        
+        if check_value:
+            is_tribe_gift = check_value.lower() in [t.lower() for t in allowed_tribes]
+
+    # Special case for Nuwisha: all non-breed-specific gifts are in-tribe/in-auspice
+    if shifter_type == 'Nuwisha' and not is_breed_gift and gift_data.get('shifter_type'):
+        allowed_types = gift_data['shifter_type'] if isinstance(gift_data['shifter_type'], list) else [gift_data['shifter_type']]
+        if 'nuwisha' in [t.lower() for t in allowed_types]:
+            is_auspice_gift = True
+            is_tribe_gift = True
+    
+    return is_breed_gift, is_auspice_gift, is_tribe_gift
+
+def calculate_gift_cost(character, gift_name, new_rating, current_rating=None) -> int:
+    """
+    Calculate XP cost for Gifts.
+    
+    Args:
+        character: The character object
+        gift_name: Name of the gift
+        new_rating: The desired new rating
+        current_rating: The current rating (optional)
+        
+    Returns:
+        int: The XP cost
+    """
+    try:
+        logger.log_info(f"Shifter calculate_gift_cost - Parameters: character={character}, gift_name={gift_name}, new_rating={new_rating}, current_rating={current_rating}")
+        
+        # Safety check: make sure character is not an integer (parameter mix-up)
+        if isinstance(character, int):
+            logger.log_err(f"Error: character parameter is an integer instead of a character object. Using default cost.")
+            # Use default cost - gifts use flat costs based on rating
+            return new_rating * 3  # Default cost for non-special gifts
+        
+        # Handle case where character is not an object
+        if not hasattr(character, 'db'):
+            logger.log_err(f"Error: character parameter does not have 'db' attribute. Type: {type(character)}")
+            # Default to standard costs
+            return new_rating * 3  # Default cost
+        
+        # Set default current_rating if not provided
+        if current_rating is None:
+            current_rating = character.get_stat('powers', 'gift', gift_name, temp=False) or 0
+        
+        # Get the gift from the database
+        Stat = get_stat_model()
+        gift = Stat.objects.filter(
+            Q(name__iexact=gift_name) | Q(gift_alias__icontains=gift_name),
+            category='powers',
+            stat_type='gift'
+        ).first()
+        
+        if not gift:
+            logger.log_info(f"Gift '{gift_name}' not found in database, using default cost.")
+            # Use default cost - gifts use flat costs
+            return new_rating * 3  # Default cost for non-special gifts
+        
+        # Get character's shifter type
+        shifter_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+        logger.log_info(f"Character shifter type: {shifter_type}")
+        
+        # Check for Kitsune ju-fu gifts
+        is_jufu = False
+        if shifter_type == 'Kitsune' and gift.tribe:
+            tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+            is_jufu = any(t.lower() == 'ju-fu' for t in tribes)
+        
+        # Check if it's a special gift (Croatan/Planetary)
+        is_special = False
+        if gift.tribe:
+            tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+            is_special = any(t.lower() in ['croatan', 'planetary'] for t in tribes)
+            
+        logger.log_info(f"Gift '{gift_name}' found. Checking if special: {is_special}, ju-fu: {is_jufu}")
+        
+        # If it's a ju-fu gift or special gift, use the special cost
+        if is_jufu or is_special:
+            # Special gift cost - flat cost based on rating
+            total_cost = new_rating * 7
+            logger.log_info(f"Calculated special gift cost: {total_cost} XP")
+            return total_cost
+        
+        # Check if it matches breed/auspice/tribe
+        try:
+            is_breed_gift, is_auspice_gift, is_tribe_gift = _check_shifter_gift_match(character, gift.__dict__, shifter_type)
+            logger.log_info(f"Gift match check: breed={is_breed_gift}, auspice={is_auspice_gift}, tribe={is_tribe_gift}")
+        except Exception as e:
+            logger.log_err(f"Error in _check_shifter_gift_match: {str(e)}")
+            # Default to not matching for safety
+            is_breed_gift, is_auspice_gift, is_tribe_gift = False, False, False
+        
+        # Calculate cost based on gift type - flat cost based on rating
+        if is_breed_gift or is_auspice_gift or is_tribe_gift:
+            total_cost = new_rating * 3  # Breed/Auspice/Tribe gifts
+        else:
+            total_cost = new_rating * 5  # Other gifts
+        
+        logger.log_info(f"Calculated gift cost: {total_cost} XP")
+        return total_cost
+        
+    except Exception as e:
+        logger.log_err(f"Error calculating gift cost: {str(e)}")
+        # Return default cost on error
+        return new_rating * 3  # Default cost
 
 def initialize_shifter_type(character, shifter_type):
     """Initialize specific stats for a given shifter type."""
@@ -690,7 +957,7 @@ def initialize_garou(character, breed):
     }
     if tribe in GAROU_TRIBE_WILLPOWER:
         character.set_stat('pools', 'dual', 'Willpower', GAROU_TRIBE_WILLPOWER[tribe], temp=False)
-        character.set_stat('pools', 'dual', 'Willpower', GAROU_TRIBE_WILLPOWER[tribe], temp=True) 
+        character.set_stat('pools', 'dual', 'Willpower', GAROU_TRIBE_WILLPOWER[tribe], temp=True)
         character.msg(f"|gWillpower set to {GAROU_TRIBE_WILLPOWER[tribe]} for {tribe} tribe.")
 
 def get_shifter_identity_stats(shifter_type: str) -> List[str]:
@@ -1039,7 +1306,7 @@ def validate_shifter_stats(character, stat_name: str, value: str, category: str 
         
     # Validate gifts
     if category == 'powers' and stat_type == 'gift':
-        return validate_shifter_gift(character, stat_name, value)
+        return validate_shifter_gift(character, value)
         
     # Validate backgrounds
     if category == 'backgrounds' and stat_type == 'background':
@@ -1172,6 +1439,57 @@ def validate_shifter_gift(character, gift_name, gift_value):
         allowed_types = gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type]
         if shifter_type.lower() not in [t.lower() for t in allowed_types]:
             return False, f"The gift '{gift.name}' is not available to {shifter_type}", None
+
+    # For shifters, check breed/auspice/tribe restrictions
+    if splat == 'Shifter':
+        breed = character.get_stat('identity', 'lineage', 'Breed', temp=False)
+        auspice = character.get_stat('identity', 'lineage', 'Auspice', temp=False)
+        tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
+        
+        gift_data = {
+            'name': gift.name,
+            'breed': gift.breed,
+            'auspice': gift.auspice,
+            'tribe': gift.tribe
+        }
+        
+        is_breed_gift, is_auspice_gift, is_tribe_gift = _check_shifter_gift_match(
+            character,
+            gift_data,
+            shifter_type
+        )
+        
+        # Check for special gifts
+        is_special = False
+        if gift.tribe:
+            tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+            is_special = any(t.lower() in ['croatan', 'planetary', 'ju-fu'] for t in tribes)
+        
+        if not (is_breed_gift or is_auspice_gift or is_tribe_gift or is_special):
+            return False, f"The gift '{gift.name}' is not available to your breed, auspice/aspect, or tribe", None
+
+    # For Kinfolk, check tribe restrictions and Gnosis requirement
+    elif splat == 'Mortal+' and char_type == 'Kinfolk':
+        tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
+        if not tribe:
+            return False, "Must set tribe before learning gifts", None
+            
+        # Check if it's a tribe gift
+        if gift.tribe:
+            tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+            if not any(t.lower() == tribe.lower() for t in tribes):
+                return False, f"The gift '{gift.name}' is not available to {tribe} Kinfolk", None
+        
+        # For level 2 gifts, check Gnosis merit
+        try:
+            gift_level = int(gift_value)
+            if gift_level > 1:
+                gnosis_merit = next((value.get('perm', 0) for merit, value in character.db.stats.get('merits', {}).get('merit', {}).items() 
+                                   if merit.lower() == 'gnosis'), 0)
+                if not gnosis_merit:
+                    return False, "Must have the Gnosis Merit to learn level 2 gifts", None
+        except ValueError:
+            pass
 
     # Validate gift value
     try:

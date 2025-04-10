@@ -1,10 +1,11 @@
 """
 Utility functions for handling Possessed-specific character initialization and updates.
 """
-from world.wod20th.models import Stat
 from world.wod20th.utils.stat_mappings import POSSESSED_TYPES, POSSESSED_POOLS
 from world.wod20th.utils.banality import get_default_banality
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set, Tuple, Optional
+from evennia.utils import logger
+from django.db.models import Q
 
 # Valid possessed types
 POSSESSED_TYPES = {
@@ -211,6 +212,8 @@ def validate_possessed_powers(character, power_type, power_name, value):
 
     # Validate Gifts
     if power_type.lower() == 'gift':
+        # Get Stat model lazily to avoid circular imports
+        Stat = get_stat_model()
         # Check if the Gift exists in the database
         gift_exists = Stat.objects.filter(
             name__iexact=power_name,
@@ -418,11 +421,20 @@ def validate_possessed_charm(character, charm_name: str, value: str) -> tuple[bo
     except ValueError:
         return False, "Charm values must be numbers"
 
+def get_stat_model():
+    """Get the Stat model lazily to avoid circular imports."""
+    from world.wod20th.models import Stat
+    return Stat
+
 def validate_possessed_gift(character, gift_name: str, value: str) -> tuple[bool, str]:
     """Validate a possessed gift."""
     # Check if the gift exists in the database
+    Stat = get_stat_model()
+    from django.db.models import Q
+    
     gift = Stat.objects.filter(
-        name__iexact=gift_name,
+        Q(name__iexact=gift_name) |
+        Q(gift_alias__icontains=gift_name),  # Check aliases
         category='powers',
         stat_type='gift'
     ).first()
@@ -523,3 +535,89 @@ def update_possessed_pools_on_stat_change(character, stat_name: str, new_value: 
         except (ValueError, TypeError):
             character.msg("|rError updating Gnosis pool - invalid Spirit Ties value.|n")
             return
+
+def calculate_blessing_cost(current_rating: int, new_rating: int) -> int:
+    """
+    Calculate XP cost for Blessings.
+    Cost is new rating x 4 XP.
+    """
+    # Blessings use flat costs based on new_rating
+    return new_rating * 4
+
+def calculate_possessed_gift_cost(current_rating: int, new_rating: int) -> int:
+    """
+    Calculate XP cost for Gifts.
+    Cost is new rating x 7 XP.
+    
+    NOTE: This function can be called in two ways:
+    1. calculate_possessed_gift_cost(current_rating, new_rating)
+    2. calculate_possessed_gift_cost(character, gift_name, new_rating, current_rating)
+    
+    If first argument is a character object, we're in pattern #2.
+    """
+    # Check if first parameter is a character object (has db attribute)
+    if hasattr(current_rating, 'db'):
+        # Function was called as (character, gift_name, new_rating, current_rating)
+        character = current_rating
+        gift_name = new_rating
+        new_rating = new_rating  # Should be fixed to the right parameter
+        
+        # Extract the actual new_rating and current_rating from the params
+        if isinstance(new_rating, tuple) and len(new_rating) >= 2:
+            current_rating = new_rating[1] if new_rating[1] is not None else 0
+            new_rating = new_rating[0]
+        else:
+            # If we can't extract properly, use default values
+            current_rating = 0
+            # Try to get the new_rating as the third parameter
+            if isinstance(gift_name, int):
+                new_rating = gift_name
+        
+        logger.log_info(f"Possessed gift cost called with character object. Using gift_name={gift_name}, new_rating={new_rating}, current_rating={current_rating}")
+    
+    # Gifts use flat costs based on new_rating
+    total_cost = new_rating * 7
+    
+    logger.log_info(f"Possessed gift cost calculation: {total_cost} XP")
+    return total_cost
+
+def calculate_possessed_charm_cost(current_rating: int, new_rating: int) -> int:
+    """
+    Calculate XP cost for Charms.
+    Cost is 5 XP per level.
+    """
+    # For charms, use absolute difference cost (5 XP per dot)
+    return (new_rating - current_rating) * 5
+
+def validate_possessed_purchase(character, stat_name: str, new_rating: int, category: str, subcategory: str, is_staff_spend: bool = False) -> Tuple[bool, Optional[str]]:
+    """
+    Validate if a possessed character can purchase a stat increase.
+    
+    Args:
+        character: The character object
+        stat_name: Name of the stat
+        new_rating: The new rating to increase to
+        category: The stat category
+        subcategory: The stat subcategory
+        is_staff_spend: Whether this is a staff-approved spend
+        
+    Returns:
+        tuple: (can_purchase, error_message)
+    """
+    # Staff spends bypass validation
+    if is_staff_spend:
+        return True, None
+        
+    # Blessings require staff approval
+    if subcategory == 'blessing':
+        return False, "Blessings require staff approval. Please use +request to submit a request."
+        
+    # Gifts above level 2 require staff approval
+    if subcategory == 'gift' and new_rating > 2:
+        return False, "Gifts above level 2 require staff approval. Please use +request to submit a request."
+        
+    # Charms above level 2 require staff approval
+    if subcategory == 'charm' and new_rating > 2:
+        return False, "Charms above level 2 require staff approval. Please use +request to submit a request."
+        
+    return True, None

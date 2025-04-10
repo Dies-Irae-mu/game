@@ -20,16 +20,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Smell of Man",
-        "description": "Creatures of the wild have learned well that where man goes, death follows. With this Gift the werewolf enhances the human scent around him greatly, causing wild animals to feel uneasy and nervous. However, the scent also causes domestic animals to recognize the werewolf as their master.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Kitsune",
-        "splat": "Shifter"
-    },
-    {
         "name": "Flow of Aura",
         "description": "The Kitsune feels the emotional aura of a place - the imprint left behind by events of great sorrow, joy, aggression, and the like.",
         "game_line": "Werewolf: The Apocalypse",
