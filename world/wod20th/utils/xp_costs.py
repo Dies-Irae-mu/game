@@ -47,7 +47,7 @@ def calculate_ability_cost(current_rating: int, new_rating: int) -> int:
         total_cost = 3  # Initial cost
         current_rating = 1
     
-    for rating in range(current_rating + 1, new_rating + 1):
+    for rating in range(current_rating, new_rating):
         total_cost += rating * 2  # Current rating x 2
     return total_cost
 
@@ -107,7 +107,7 @@ def calculate_thaumaturgy_path_cost(current_rating: int, new_rating: int, is_sec
         total_cost = 7  # Initial cost for secondary path
         current_rating = 1
     
-    for rating in range(current_rating + 1, new_rating + 1):
+    for rating in range(current_rating, new_rating):
         total_cost += rating * 4  # Current rating x 4
     return total_cost
 
@@ -165,7 +165,7 @@ def calculate_willpower_cost(current_rating: int, new_rating: int) -> int:
         2, 4, 6, 8, 10 XP
     """
     total_cost = 0
-    for rating in range(current_rating + 1, new_rating + 1):
+    for rating in range(current_rating, new_rating):
         total_cost += rating * 2  # Current rating x 2
     return total_cost
 
@@ -208,7 +208,7 @@ def calculate_virtue_cost(current_rating: int, new_rating: int) -> int:
         2, 4, 6, 8, 10 XP
     """
     total_cost = 0
-    for rating in range(current_rating + 1, new_rating + 1):
+    for rating in range(current_rating, new_rating):
         total_cost += rating * 2  # Current rating x 2
     return total_cost
 
@@ -228,7 +228,7 @@ def calculate_path_cost(current_rating: int, new_rating: int) -> int:
         If it's 5 and you want 6, it's 10 XP
     """
     total_cost = 0
-    for rating in range(current_rating + 1, new_rating + 1):
+    for rating in range(current_rating, new_rating):
         total_cost += rating * 2
     return total_cost
 
@@ -274,7 +274,7 @@ def calculate_rage_cost(current_rating: int, new_rating: int) -> int:
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9 XP
     """
     total_cost = 0
-    for rating in range(current_rating + 1, new_rating + 1):
+    for rating in range(current_rating, new_rating):
         total_cost += rating
     return total_cost
 
@@ -294,7 +294,7 @@ def calculate_gnosis_cost(current_rating: int, new_rating: int) -> int:
         0, 2, 4, 6, 8, 10, 12, 14, 16, 18 XP
     """
     total_cost = 0
-    for rating in range(current_rating + 1, new_rating + 1):
+    for rating in range(current_rating, new_rating):
         total_cost += rating * 2
     return total_cost
 
@@ -360,7 +360,7 @@ def calculate_arete_cost(current_rating: int, new_rating: int) -> int:
         0 (free), 8 (2), 16 (3), 24 (4), 32 (5) XP
     """
     total_cost = 0
-    for rating in range(current_rating + 1, new_rating + 1):
+    for rating in range(current_rating, new_rating):
         total_cost += rating * 8
     return total_cost
 
@@ -380,7 +380,7 @@ def calculate_avatar_cost(current_rating: int, new_rating: int) -> int:
         0 (free), 7 (2), 14 (3), 21 (4), 28 (5) XP
     """
     total_cost = 0
-    for rating in range(current_rating + 1, new_rating + 1):
+    for rating in range(current_rating, new_rating):
         total_cost += rating * 7
     return total_cost
 
@@ -515,7 +515,7 @@ def calculate_arcanos_cost(current_rating: int, new_rating: int) -> int:
         total_cost = 7  # Initial cost
         current_rating = 1
     
-    for rating in range(current_rating + 1, new_rating + 1):
+    for rating in range(current_rating, new_rating):
         total_cost += rating * 3
     return total_cost
 
@@ -588,7 +588,7 @@ def calculate_blessing_cost(current_rating: int, new_rating: int) -> int:
         4XP then 8, 12, 16, 20
     """
     total_cost = 0
-    for rating in range(current_rating + 1, new_rating + 1):
+    for rating in range(current_rating, new_rating):
         total_cost += rating * 4
     return total_cost
 
@@ -608,7 +608,7 @@ def calculate_possessed_gift_cost(current_rating: int, new_rating: int) -> int:
         7XP then 14, 21, 28, 35 XP
     """
     total_cost = 0
-    for rating in range(current_rating + 1, new_rating + 1):
+    for rating in range(current_rating, new_rating):
         total_cost += rating * 7
     return total_cost
 
@@ -684,7 +684,7 @@ def calculate_kinfolk_gift_cost(current_rating: int, new_rating: int, gift_type:
     }.get(gift_type, 6)
     
     total_cost = 0
-    for rating in range(current_rating + 1, new_rating + 1):
+    for rating in range(current_rating, new_rating):
         total_cost += rating * multiplier
     return total_cost
 

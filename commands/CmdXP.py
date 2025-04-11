@@ -8,6 +8,7 @@ from django.db import transaction
 from evennia.utils import logger
 from django.db.models import Q
 from world.wod20th.utils.stat_mappings import MERIT_VALUES, RITE_VALUES, FLAW_VALUES, MERIT_CATEGORIES, REQUIRED_INSTANCES, ARTS, REALMS
+from world.wod20th.utils.sheet_constants import POWERS
 from world.wod20th.utils.xp_utils import process_xp_spend, _determine_stat_category, validate_xp_purchase
 from world.wod20th.utils.vampire_utils import validate_discipline_purchase
 from world.wod20th.utils.mage_utils import validate_sphere_purchase
@@ -18,17 +19,17 @@ class CmdXP(default_cmds.MuxCommand):
     
     Usage:
       +xp                     - View your XP
-      +xp <name>             - View another character's XP (Staff only)
-      +xp/desc <name>        - View detailed XP history (Staff only)
-      +xp/sub <name>/<amount>=<reason> - Remove XP from character (Staff only)
+      +xp <n>             - View another character's XP (Staff only)
+      +xp/desc <n>        - View detailed XP history (Staff only)
+      +xp/sub <n>/<amount>=<reason> - Remove XP from character (Staff only)
       +xp/init               - Initialize scene tracking
       +xp/endscene          - Manually end current scene (only if scene doesn't end automatically, remove in future)
-      +xp/add <name>=<amt>   - Add XP to a character (Staff only)
-      +xp/spend <name> <rating>=<reason> - Spend XP (Must be in OOC area)
+      +xp/add <n>=<amt>   - Add XP to a character (Staff only)
+      +xp/spend <n> <rating>=<reason> - Spend XP (Must be in OOC area)
       +xp/forceweekly       - Force weekly XP distribution (Staff only)
-      +xp/staffspend <name>/<stat> <rating>=<reason> - Spend XP on behalf of a character (Staff only)
-      +xp/fixstats <name>   - Fix a character's stats structure (Staff only)
-      +xp/fixdata <name>    - Fix a character's XP data structure (Staff only)
+      +xp/staffspend <n>/<stat> <rating>=<reason> - Spend XP on behalf of a character (Staff only)
+      +xp/fixstats <n>   - Fix a character's stats structure (Staff only)
+      +xp/fixdata <n>    - Fix a character's XP data structure (Staff only)
       
     Examples:
       +xp/spend Strength 3=Getting stronger
@@ -44,6 +45,12 @@ class CmdXP(default_cmds.MuxCommand):
     aliases = ["xp"]
     locks = "cmd:all()"
     help_category = "XP Commands"
+    
+    def __init__(self, *args, **kwargs):
+        """Initialize with gift_alias_used attribute."""
+        super().__init__(*args, **kwargs)
+        # Initialize gift_alias_used for storing the alias used in gift commands
+        self.gift_alias_used = None
     
     def func(self):
         """Execute command"""
@@ -382,6 +389,9 @@ class CmdXP(default_cmds.MuxCommand):
                         self.caller.msg(f"Invalid stat name: {stat_name}")
                         return
 
+                    # Store the original stat name for gift aliases
+                    original_stat_name = stat_name
+
                     # Get proper case for the stat name based on category
                     proper_stat_name = self._get_proper_stat_name(stat_name, category, subcategory)
                     logger.log_info(f"{self.caller.name}: Got proper stat name: {proper_stat_name}")
@@ -407,6 +417,16 @@ class CmdXP(default_cmds.MuxCommand):
                         reason=reason,
                         is_staff_spend=False
                     )
+                    
+                    # If successful and this is a gift, store the alias
+                    if success and category == 'powers' and subcategory == 'gift':
+                        # Check if we have a gift_alias_used attribute set by _get_proper_stat_name
+                        alias_to_use = getattr(self, 'gift_alias_used', original_stat_name)
+                        
+                        # If the alias is different from the canonical name, store it
+                        if alias_to_use and alias_to_use.lower() != proper_stat_name.lower():
+                            self.caller.set_gift_alias(proper_stat_name, alias_to_use, new_rating)
+                            logger.log_info(f"Set gift alias for {proper_stat_name}: {alias_to_use}")
                     
                     self.caller.msg(message)
                     if success:
@@ -1379,6 +1399,16 @@ class CmdXP(default_cmds.MuxCommand):
 
     def _get_proper_stat_name(self, stat_name, category, subcategory):
         """Get the proper case-sensitive name for a stat."""
+        # Store the original stat name for gift aliases
+        original_stat_name = stat_name
+
+        # Ensure stat_name is a string
+        if isinstance(stat_name, list):
+            if stat_name:
+                stat_name = stat_name[0] if len(stat_name) == 1 else " ".join(stat_name)
+            else:
+                stat_name = ""
+                
         from world.wod20th.utils.stat_mappings import (
             TALENTS, SKILLS, KNOWLEDGES,
             SECONDARY_TALENTS, SECONDARY_SKILLS, SECONDARY_KNOWLEDGES,
@@ -1387,187 +1417,172 @@ class CmdXP(default_cmds.MuxCommand):
             NEPHANDI_BACKGROUNDS, SHIFTER_BACKGROUNDS, SORCERER_BACKGROUNDS,
             KINAIN_BACKGROUNDS, MERIT_VALUES, RITE_VALUES, FLAW_VALUES, ARTS, REALMS
         )
-        from world.wod20th.utils.sheet_constants import (
-            POWERS
-        )
-
-        # Special handling for Mother's Touch and similar gifts
-        if category == 'powers' and subcategory == 'gift':
-            # Check for exact matches in database first
-            from world.wod20th.models import Stat
-            from django.db.models import Q
+        from world.wod20th.utils.sheet_constants import POWERS
+        
+        # Check for special handling of gift "Mother's Touch"
+        if category == 'powers' and subcategory == 'gift' and stat_name.lower() == "mother's touch":
+            # Store the original alias used
+            self.gift_alias_used = stat_name
+            # Return the exact case for the canonical name
+            return "Mother's Touch"
+        
+        # Handle other stats based on their category
+        if category == 'abilities':
+            if subcategory == 'talents':
+                for talent in TALENTS:
+                    if talent.lower() == stat_name.lower():
+                        return talent
+            elif subcategory == 'skills':
+                for skill in SKILLS:
+                    if skill.lower() == stat_name.lower():
+                        return skill
+            elif subcategory == 'knowledges':
+                for knowledge in KNOWLEDGES:
+                    if knowledge.lower() == stat_name.lower():
+                        return knowledge
+        elif category == 'secondary_abilities':
+            if subcategory == 'talents':
+                for talent in SECONDARY_TALENTS:
+                    if talent.lower() == stat_name.lower():
+                        return talent
+            elif subcategory == 'skills':
+                for skill in SECONDARY_SKILLS:
+                    if skill.lower() == stat_name.lower():
+                        return skill
+            elif subcategory == 'knowledges':
+                for knowledge in SECONDARY_KNOWLEDGES:
+                    if knowledge.lower() == stat_name.lower():
+                        return knowledge
+        elif category == 'backgrounds':
+            for background in UNIVERSAL_BACKGROUNDS:
+                if background.lower() == stat_name.lower():
+                    return background
+                    
+            # If not in universal backgrounds, check splat-specific backgrounds
+            splat = None
             
-            # Special handling for Mother's Touch
-            if stat_name.lower() == "mother's touch":
-                gift = Stat.objects.filter(
-                    name__iexact="Mother's Touch",
+            # Try to get splat information
+            try:
+                if hasattr(self, "target") and self.target:  # If we're checking a target character
+                    splat = self.target.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+                else:  # If we're checking the caller
+                    splat = self.caller.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+            except (KeyError, AttributeError):
+                pass
+                
+            # Check splat-specific backgrounds
+            if splat:
+                if splat == 'Vampire':
+                    for background in VAMPIRE_BACKGROUNDS:
+                        if background.lower() == stat_name.lower():
+                            return background
+                elif splat == 'Changeling':
+                    for background in CHANGELING_BACKGROUNDS:
+                        if background.lower() == stat_name.lower():
+                            return background
+                elif splat == 'Mage':
+                    # Get tradition or convention
+                    tradition = None
+                    try:
+                        if hasattr(self, "target") and self.target:
+                            tradition = self.target.db.stats.get('identity', {}).get('tradition', {}).get('Tradition', {}).get('perm', '')
+                        else:
+                            tradition = self.caller.db.stats.get('identity', {}).get('tradition', {}).get('Tradition', {}).get('perm', '')
+                    except (KeyError, AttributeError):
+                        pass
+                        
+                    if tradition:
+                        if tradition in ['Dreamspeaker', 'Verbena', 'Virtual Adept', 'Order of Hermes', 'Celestial Chorus', 'Akashic Brotherhood', 'Cult of Ecstasy', 'Euthanatos', 'Sons of Ether', 'Hollow Ones']:
+                            for background in TRADITIONS_BACKGROUNDS:
+                                if background.lower() == stat_name.lower():
+                                    return background
+                        elif tradition in ["Nephandi"]:
+                            for background in NEPHANDI_BACKGROUNDS:
+                                if background.lower() == stat_name.lower():
+                                    return background
+                        elif tradition in ['Iteration X', 'New World Order', 'Progenitors', 'Syndicate', 'Void Engineers']:
+                            for background in TECHNOCRACY_BACKGROUNDS:
+                                if background.lower() == stat_name.lower():
+                                    return background
+                elif splat == 'Shifter':
+                    for background in SHIFTER_BACKGROUNDS:
+                        if background.lower() == stat_name.lower():
+                            return background
+                elif splat == 'Mortal+':
+                    # Get sub-type for Mortal+
+                    mortalplus_type = None
+                    try:
+                        if hasattr(self, "target") and self.target:
+                            mortalplus_type = self.target.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+                        else:
+                            mortalplus_type = self.caller.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+                    except (KeyError, AttributeError):
+                        pass
+                        
+                    if mortalplus_type:
+                        if mortalplus_type in ['Sorcerer', 'Numina', 'Psychic']:
+                            for background in SORCERER_BACKGROUNDS:
+                                if background.lower() == stat_name.lower():
+                                    return background
+                        elif mortalplus_type in ['Kinain']:
+                            for background in KINAIN_BACKGROUNDS:
+                                if background.lower() == stat_name.lower():
+                                    return background
+                                    
+        elif category == 'merits':
+            # Check if stat exists in our MERIT_VALUES mapping
+            for merit_category, merits in MERIT_VALUES.items():
+                if subcategory.lower() == merit_category.lower():
+                    for merit, values in merits.items():
+                        if merit.lower() == stat_name.lower():
+                            return merit
+                                    
+        elif category == 'flaws':
+            # Check if stat exists in our FLAW_VALUES mapping
+            for flaw_category, flaws in FLAW_VALUES.items():
+                if subcategory.lower() == flaw_category.lower():
+                    for flaw, values in flaws.items():
+                        if flaw.lower() == stat_name.lower():
+                            return flaw
+                                    
+        elif category == 'powers':
+            if subcategory == 'gift':
+                # For gifts, we need to check the database
+                # Store the original alias used
+                self.gift_alias_used = original_stat_name
+                
+                # Convert stat_name to string if it's a list
+                if isinstance(stat_name, list):
+                    if stat_name:
+                        stat_name = stat_name[0] if len(stat_name) == 1 else " ".join(stat_name)
+                    else:
+                        stat_name = ""
+                
+                # Use the database to validate and get the proper case
+                from world.wod20th.models import Stat
+                from django.db.models import Q
+                
+                # Check for an exact match first
+                exact_match = Stat.objects.filter(
+                    name__iexact=stat_name,
                     category='powers',
                     stat_type='gift'
                 ).first()
-                if gift:
-                    return gift.name
-            
-            # For other gifts, try exact match or alias
-            gift = Stat.objects.filter(
-                name__iexact=stat_name,
-                category='powers',
-                stat_type='gift'
-            ).first()
-            
-            # If not found by exact name, check aliases but be more precise
-            if not gift:
-                # For aliases, we need to be careful not to match partial words
-                gifts = Stat.objects.filter(
+                
+                if exact_match:
+                    return exact_match.name
+                    
+                # If no exact match, try alias matching
+                alias_match = Stat.objects.filter(
+                    gift_alias__icontains=stat_name,
                     category='powers',
                     stat_type='gift'
-                )
+                ).first()
                 
-                # Manual check for better alias matching
-                for potential_gift in gifts:
-                    if potential_gift.gift_alias:
-                        # Split aliases and check for exact word match
-                        aliases = potential_gift.gift_alias.split(',')
-                        for alias in aliases:
-                            alias = alias.strip().lower()
-                            stat_lower = stat_name.lower()
-                            
-                            # Check for exact alias match or word boundary match
-                            if alias == stat_lower or f" {stat_lower} " in f" {alias} ":
-                                gift = potential_gift
-                                break
-                                
-                    if gift:
-                        break
-            
-            if gift:
-                return gift.name  # Return the exact name from database
-            
-            # Check for Arts and Realms after checking for gifts
-            if category == 'powers' and subcategory == 'art':
-                try:
-                    proper_name = find_proper_key(stat_name, ARTS)
-                    if proper_name:
-                        return proper_name
-                except:
-                    return stat_name
+                if alias_match:
+                    return alias_match.name
                     
-            if category == 'powers' and subcategory == 'realm':
-                try:
-                    proper_name = find_proper_key(stat_name, REALMS)
-                    if proper_name:
-                        return proper_name
-                except:
-                    return stat_name
-            
-            return stat_name  # If not found, return as is
-
-        # Helper function for case-insensitive key lookup with space/underscore normalization
-        def find_proper_key(name, collection):
-            try:
-                name_lower = name.lower().replace('_', ' ')
-                
-                # Handle both sets and dictionaries
-                for item in collection:
-                    if isinstance(item, str) and item.lower().replace('_', ' ') == name_lower:
-                        return item
-                return None
-            except:
-                return None
-
-        # Check backgrounds first
-        if category == 'backgrounds':
-            # First check universal backgrounds
-            proper_name = find_proper_key(stat_name, UNIVERSAL_BACKGROUNDS)
-            if proper_name:
-                return proper_name
-                
-            # Then check splat-specific backgrounds
-            # Note: The actual splat check is done in validate_xp_purchase
-            # Here we just want to find the proper name if it exists in any background list
-            for bg_list in [VAMPIRE_BACKGROUNDS, CHANGELING_BACKGROUNDS, MAGE_BACKGROUNDS,
-                          TECHNOCRACY_BACKGROUNDS, TRADITIONS_BACKGROUNDS, NEPHANDI_BACKGROUNDS,
-                          SHIFTER_BACKGROUNDS, SORCERER_BACKGROUNDS]:
-                proper_name = find_proper_key(stat_name, bg_list)
-                if proper_name:
-                    return proper_name
-
-        # Check merits, rites, and flaws
-        if category == 'merits':
-            proper_name = find_proper_key(stat_name, MERIT_VALUES)
-            if proper_name:
-                return proper_name
-        elif category == 'powers' and subcategory == 'rite':
-            proper_name = find_proper_key(stat_name, RITE_VALUES)
-            if proper_name:
-                return proper_name
-        elif category == 'flaws':
-            proper_name = find_proper_key(stat_name, FLAW_VALUES)
-            if proper_name:
-                return proper_name
-
-        # Convert to title case for comparison
-        stat_name = stat_name.title()
-        
-        # Define proper names for attributes
-        attribute_names = {
-            'physical': ['Strength', 'Dexterity', 'Stamina'],
-            'social': ['Charisma', 'Manipulation', 'Appearance'],
-            'mental': ['Perception', 'Intelligence', 'Wits']
-        }
-        
-        # Helper function for case-insensitive matching
-        def find_proper_name(name, collection):
-            # Handle different types of collections (dict, set, list)
-            if isinstance(collection, dict):
-                collection = collection.keys()
-            # For sets and lists, we can iterate directly
-            name_lower = name.lower()
-            for item in collection:
-                if isinstance(item, str) and item.lower() == name_lower:
-                    return item
-            return None
-
-        # Check attributes
-        if category == 'attributes':
-            for attrs in attribute_names.values():
-                proper_name = find_proper_name(stat_name, attrs)
-                if proper_name:
-                    return proper_name
-
-        # Check abilities and secondary abilities
-        if category == 'abilities':
-            if subcategory == 'talent':
-                proper_name = find_proper_name(stat_name, TALENTS)
-            elif subcategory == 'skill':
-                proper_name = find_proper_name(stat_name, SKILLS)
-            elif subcategory == 'knowledge':
-                proper_name = find_proper_name(stat_name, KNOWLEDGES)
-            if proper_name:
-                return proper_name
-
-        if category == 'secondary_abilities':
-            if subcategory == 'secondary_talent':
-                proper_name = find_proper_name(stat_name, SECONDARY_TALENTS)
-            elif subcategory == 'secondary_skill':
-                proper_name = find_proper_name(stat_name, SECONDARY_SKILLS)
-            elif subcategory == 'secondary_knowledge':
-                proper_name = find_proper_name(stat_name, SECONDARY_KNOWLEDGES)
-            if proper_name:
-                return proper_name
-            # If not found in predefined lists, use title case for each word except 'of'
-            words = stat_name.split()
-            capitalized_words = []
-            for word in words:
-                if word.lower() == 'of':
-                    capitalized_words.append('of')
-                else:
-                    capitalized_words.append(word.title())
-            return ' '.join(capitalized_words)
-
-        # Check powers
-        if category == 'powers':
-            # For gifts, just use the name as provided (in Title case)
-            if subcategory == 'gift':
+                # If still no match, return the original name
                 return stat_name
                 
             # Check if it's an Art
@@ -1576,11 +1591,8 @@ class CmdXP(default_cmds.MuxCommand):
                 for art in ARTS:
                     if art.lower() == stat_name.lower():
                         return art
-                return stat_name  # Return as-is if not found
-                
-            # Check if it's a Realm
-            if subcategory == 'realm':
-                # Try to find the proper case in REALMS
+            elif subcategory == 'realm':
+                # Check if the realm exists in our REALMS mapping
                 for realm in REALMS:
                     if realm.lower() == stat_name.lower():
                         return realm
@@ -1600,7 +1612,12 @@ class CmdXP(default_cmds.MuxCommand):
                 'charm': POWERS.get('charm', []),
                 'blessing': POWERS.get('blessing', [])
             }
-
+            def find_proper_name(name, name_list):
+                """Find the proper case-sensitive name from a list."""
+                for proper_name in name_list:
+                    if proper_name.lower() == name.lower():
+                        return proper_name
+                return None
             # Check other power types
             if subcategory in power_mappings:
                 proper_name = find_proper_name(stat_name, power_mappings[subcategory])
@@ -1831,7 +1848,16 @@ class CmdXP(default_cmds.MuxCommand):
                 }
                 # Store the alias if different from canonical name
                 if original_stat_name.lower() != stat_name.lower():
-                    self.set_gift_alias(stat_name, original_stat_name, new_rating)
+                    # Ensure the alias is a string, not a list
+                    alias_to_use = original_stat_name
+                    if isinstance(original_stat_name, list):
+                        # If it's a list, use the first element or a joined string
+                        if original_stat_name:
+                            alias_to_use = original_stat_name[0] if len(original_stat_name) == 1 else " ".join(original_stat_name)
+                        else:
+                            alias_to_use = stat_name  # Fallback if empty list
+                    
+                    self.set_gift_alias(stat_name, alias_to_use, new_rating)
             else:
                 # Handle non-gift stats
                 self.set_stat(category, subcategory, stat_name, new_rating, temp=False)
@@ -1916,6 +1942,9 @@ class CmdXP(default_cmds.MuxCommand):
             return
 
         logger.log_info(f"Parsed stat - name: {stat_name}, rating: {rating}")
+        
+        # Store the original stat name for gift aliases
+        original_stat_name = stat_name
 
         # Determine stat category
         from world.wod20th.utils.xp_utils import _determine_stat_category
@@ -1931,15 +1960,28 @@ class CmdXP(default_cmds.MuxCommand):
         # Check for proper case for the stat name
         from typeclasses.characters import Character
         if isinstance(target, Character):
-            # Get proper case for standard stats
-            proper_stat = target.get_proper_stat_name(category, subcategory, stat_name)
-            if proper_stat:
-                stat_name = proper_stat
-                logger.log_info(f"Got proper stat name: {stat_name}")
+            # For gifts, we want to check if this is an alias and get the canonical name
+            if category == 'powers' and subcategory == 'gift':
+                # Initialize gift_alias_used attribute
+                self.gift_alias_used = None
+                
+                # Get proper name, this will also set gift_alias_used if an alias is found
+                proper_stat = self._get_proper_stat_name(stat_name, category, subcategory)
+                if proper_stat:
+                    stat_name = proper_stat
+                    logger.log_info(f"Got proper gift name: {stat_name}")
+            else:
+                # Get proper case for standard stats
+                proper_stat = target.get_proper_stat_name(category, subcategory, stat_name)
+                if proper_stat:
+                    stat_name = proper_stat
+                    logger.log_info(f"Got proper stat name: {stat_name}")
                 
         # Use proper title casing for gifts and other stats that need it
         if category == 'powers' and subcategory == 'gift':
             from world.wod20th.utils.xp_utils import proper_title_case
+            if not self.gift_alias_used:
+                self.gift_alias_used = original_stat_name
             stat_name = proper_title_case(stat_name)
             logger.log_info(f"Applied proper title case: {stat_name}")
 
@@ -1952,6 +1994,22 @@ class CmdXP(default_cmds.MuxCommand):
             target, stat_name, rating, category, subcategory, 
             reason=staff_reason, is_staff_spend=True
         )
+
+        # If successful and this is a gift, store the alias
+        if success and category == 'powers' and subcategory == 'gift' and hasattr(target, 'set_gift_alias'):
+            # Set the gift alias using the original stat name
+            if self.gift_alias_used and self.gift_alias_used.lower() != stat_name.lower():
+                # Ensure the alias is a string, not a list
+                alias_to_use = self.gift_alias_used
+                if isinstance(self.gift_alias_used, list):
+                    # If it's a list, use the first element or a joined string
+                    if self.gift_alias_used:
+                        alias_to_use = self.gift_alias_used[0] if len(self.gift_alias_used) == 1 else " ".join(self.gift_alias_used)
+                    else:
+                        alias_to_use = original_stat_name  # Fallback if empty list
+                
+                target.set_gift_alias(stat_name, alias_to_use, rating)
+                logger.log_info(f"Set gift alias for {stat_name}: {alias_to_use}")
 
         # Report the result
         if success:

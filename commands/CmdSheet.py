@@ -600,13 +600,13 @@ class CmdSheet(MuxCommand):
         affiliation = character.get_stat('identity', 'lineage', 'Affiliation', temp=False)
         tradition = character.get_stat('identity', 'lineage', 'Tradition', temp=False)
         
-        # First handle basic abilities for each splat
+        # handle basic abilities for each splat
         if splat and splat.lower() == 'mage':
             base_secondary_talents.extend(['Blatancy', 'Flying', 'High Ritual'])
         elif splat and splat.lower() == 'mortal+' and type and type.lower() in ['sorcerer', 'psychic', 'faithful']:
             base_secondary_talents.extend(['Flying', 'High Ritual'])
         
-        # Then add fellowship/tradition/affiliation specific abilities
+        # add fellowship/tradition/affiliation specific abilities
         if splat and splat.lower() == 'mage' and affiliation and affiliation.lower() in 'technocracy':
             base_secondary_skills.extend(['Biotech', 'Energy Weapons', 'Helmsman', 'Microgravity Ops'])
             base_secondary_knowledges.extend(['Cybernetics', 'Hypertech', 'Paraphysics', 'Xenobiology'])
@@ -618,7 +618,7 @@ class CmdSheet(MuxCommand):
             base_secondary_skills.extend(['Biotech', 'Energy Weapons', 'Helmsman', 'Microgravity Ops'])
             base_secondary_knowledges.extend(['Cybernetics', 'Hypertech', 'Paraphysics', 'Xenobiology'])
         
-        # Handle Mortal+ special fellowship abilities
+        # handle Mortal+ special fellowship abilities
         if splat and splat.lower() == 'mortal+' and type and type.lower() in ['sorcerer', 'psychic', 'faithful']:
             if fellowship and fellowship.lower() in ['sons of ether', 'virtual adepts', 'society of ether', 'etherites', 'new world order', 'iteration x', 'void engineers', 'syndicate', 'progenitors']:
                 base_secondary_skills.extend(['Biotech', 'Energy Weapons', 'Helmsman', 'Microgravity Ops'])
@@ -626,6 +626,7 @@ class CmdSheet(MuxCommand):
             elif fellowship and fellowship.lower() in ['akashayana', 'akashic brotherhood']:
                 base_secondary_talents.append('Do')
         
+        # handle companion specific abilities if companion is in the Technocracy
         if splat and splat.lower() == 'companion' and affiliation and affiliation.lower() in 'technocracy':
             base_secondary_skills.extend(['Biotech', 'Energy Weapons', 'Helmsman', 'Microgravity Ops'])
             base_secondary_knowledges.extend(['Cybernetics', 'Hypertech', 'Paraphysics', 'Xenobiology'])

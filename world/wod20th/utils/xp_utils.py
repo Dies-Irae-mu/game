@@ -981,6 +981,45 @@ def process_xp_purchase(character, stat_name, new_rating, category, subcategory,
                 success, error = _handle_special_advantage_updates(character, stat_name, new_rating)
                 if not success:
                     return False, error
+            elif subcategory == 'gift':
+                # Special handling for gifts to store original name as alias
+                if subcategory not in character.db.stats['powers']:
+                    character.db.stats['powers'][subcategory] = {}
+                
+                # Get the canonical name from the database to ensure we're using the exact name
+                from world.wod20th.models import Stat
+                from django.db.models import Q
+                
+                gift = Stat.objects.filter(
+                    Q(name__iexact=stat_name) | Q(gift_alias__icontains=stat_name),
+                    category='powers',
+                    stat_type='gift'
+                ).first()
+                
+                # Use canonical name if found, otherwise use the provided stat_name
+                canonical_name = gift.name if gift else stat_name
+                
+                # Store the gift with its canonical name
+                character.db.stats['powers'][subcategory][canonical_name] = {
+                    'perm': new_rating,
+                    'temp': new_rating
+                }
+                
+                # Store the alias if original stat_name differs from canonical name
+                if hasattr(character, 'set_gift_alias') and stat_name.lower() != canonical_name.lower():
+                    logger.log_info(f"Storing gift alias: {stat_name} -> {canonical_name}")
+                    # Ensure the alias is a string, not a list
+                    alias_to_use = stat_name
+                    if isinstance(stat_name, list):
+                        # If it's a list, use the first element or a joined string
+                        if stat_name:
+                            alias_to_use = stat_name[0] if len(stat_name) == 1 else " ".join(stat_name)
+                        else:
+                            alias_to_use = canonical_name  # Fallback if empty list
+                    
+                    character.set_gift_alias(canonical_name, alias_to_use, new_rating)
+                
+                logger.log_info(f"Updated gift {canonical_name} to {new_rating}")
             else:
                 # Handle other powers normally
                 if subcategory not in character.db.stats['powers']:
