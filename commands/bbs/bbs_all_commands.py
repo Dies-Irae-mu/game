@@ -649,124 +649,162 @@ class CmdBBS(default_cmds.MuxCommand):
         """List all available boards."""
         boards = controller.db.boards
         if not boards:
-            self.caller.msg("No boards available.")
+            self.caller.msg("No boards have been created yet.")
             return
 
-        # Table Header
-        output = []
-        output.append("=" * 90)
-        output.append("{:<5} {:<10} {:<40} {:<20} {:<15}".format("ID", "Access", "Name", "Last Post", "# of messages"))
-        output.append("-" * 90)
+        # Get unread counts for all boards
+        unread_counts = {}
+        for board_id in boards:
+            unread_posts = controller.get_unread_posts(board_id, self.caller.key)
+            unread_counts[board_id] = len(unread_posts) if unread_posts else 0
 
-        # Sort boards by ID and convert to list of tuples
+        # Sort boards by ID
         sorted_boards = sorted(boards.items(), key=lambda x: x[0])
-
+        
+        table = self.styled_table(
+            "|wID|n",
+            "|wU|n",  # Unread column
+            "|wName|n",
+            "|wDescription|n",
+            "|wPosts|n"
+        )
+        
         for board_id, board in sorted_boards:
-            # Skip boards the character doesn't have access to, unless admin/builder
-            if not (controller.has_access(board_id, self.caller.key) or 
-                   self.check_admin_access() or 
-                   self.check_builder_access()):
+            if not controller.has_access(board_id, self.caller.key):
                 continue
                 
-            # Check if user has write access, considering admin/builder status
-            has_write = controller.has_write_access(board_id, self.caller.key) or self.check_admin_access() or self.check_builder_access()
-            read_only = "*" if not has_write else " "
+            # Format board name with read-only and roster indicators
+            name = board['name']
+            if board.get('read_only', False):
+                name = "* " + name
+            if board.get('roster_names', []):
+                name = name + "*"
+                
+            # Get unread count for this board
+            unread = unread_counts.get(board_id, 0)
+            unread_display = f"|r{unread}|n" if unread > 0 else "-"
+                
+            table.add_row(
+                str(board_id),
+                unread_display,
+                name,
+                board.get('description', ''),
+                str(len(board['posts']))
+            )
             
-            # Determine access type
-            access_type = "Roster" if board.get('roster_names') else "Public"
-            
-            # Get last post time, ensuring it's a date/time string
-            last_post = "No posts"
-            if board['posts']:
-                last_post = max((post['created_at'] for post in board['posts']), default="No posts")
-                if last_post != "No posts":
-                    last_post = self.format_datetime(last_post)
-            
-            num_posts = len(board['posts'])
-            output.append(f"{board_id:<5} {access_type:<10} {read_only} {board['name']:<40} {last_post:<20} {num_posts:<15}")
-
-        # Table Footer
-        output.append("-" * 90)
-        output.append("* = read only")
-        output.append("=" * 90)
-
-        self.caller.msg("\n".join(output))
+        self.caller.msg(str(table))
+        
+        # Show legend if needed
+        has_readonly = any(board.get('read_only', False) for board in boards.values())
+        has_roster = any(board.get('roster_names', []) for board in boards.values())
+        
+        if has_readonly or has_roster:
+            legend = []
+            if has_readonly:
+                legend.append("* before name = Read Only")
+            if has_roster:
+                legend.append("* after name = Roster Restricted")
+            self.caller.msg("\n" + ", ".join(legend))
 
     def list_posts(self, controller, board_ref):
-        """List all posts in the specified board."""
+        """List all posts in a board."""
         board = controller.get_board(board_ref)
         if not board:
             self.caller.msg(f"No board found with the name or number '{board_ref}'.")
             return
-        if not controller.has_access(board_ref, self.caller.key):
-            self.caller.msg(f"You do not have access to view posts on the board '{board['name']}'.")
+            
+        if not controller.has_access(board['id'], self.caller.key):
+            self.caller.msg("You don't have permission to read this board.")
             return
-
+            
         posts = board['posts']
-        pinned_posts = [post for post in posts if post.get('pinned', False)]
-        unpinned_posts = [post for post in posts if not post.get('pinned', False)]
-
-        # Table Header
-        output = []
-        output.append("=" * 78)
-        output.append(f"{'*' * 20} {board['name']} {'*' * 20}")
+        if not posts:
+            self.caller.msg(f"No posts on board '{board['name']}'.")
+            return
+            
+        # Sort posts with pinned posts first, then by date
+        sorted_posts = sorted(enumerate(posts), key=lambda x: (not x[1].get('pinned', False), x[1]['created_at']))
+            
+        table = self.styled_table(
+            "|w#|n",
+            "|wU|n",  # Unread column
+            "|wTitle|n",
+            "|wAuthor|n",
+            "|wDate|n"
+        )
         
-        # Add roster information if any, but only for admins and builders
-        roster_names = board.get('roster_names', [])
-        if roster_names and (self.check_admin_access() or self.check_builder_access()):
-            output.append("Restricted to rosters:")
-            for roster_name in roster_names:
-                try:
-                    roster = Roster.objects.get(name=roster_name)
-                    member_count = roster.get_members().count()
-                    output.append(f"- {roster_name}(ref: {roster.id}, members: {member_count})")
-                except Roster.DoesNotExist:
-                    output.append(f"- {roster_name} (WARNING: Roster no longer exists!)")
+        for post_index, post in sorted_posts:
+            # Check if post is unread
+            is_unread = controller.is_post_unread(board['id'], post_index, self.caller.key)
+            unread_display = "|rU|n" if is_unread else "-"
+            
+            # Format title with pin indicator
+            title = post['title']
+            if post.get('pinned', False):
+                title = "^" + title
+                
+            # Format date in user's timezone
+            date = self.format_datetime(post['created_at'])
+                
+            table.add_row(
+                str(post_index + 1),
+                unread_display,
+                title,
+                post['author'],
+                date
+            )
+            
+        self.caller.msg(str(table))
         
-        output.append("{:<5} {:<40} {:<20} {:<15}".format("ID", "Message", "Posted", "By"))
-        output.append("-" * 78)
-
-        # List pinned posts first with correct IDs
-        for i, post in enumerate(pinned_posts):
-            post_id = posts.index(post) + 1
-            formatted_time = self.format_datetime(post['created_at'])
-            output.append(f"{board['id']}/{post_id:<5} [Pinned] {post['title']:<40} {formatted_time:<20} {post['author']}")
-
-        # List unpinned posts with correct IDs
-        for post in unpinned_posts:
-            post_id = posts.index(post) + 1
-            formatted_time = self.format_datetime(post['created_at'])
-            output.append(f"{board['id']}/{post_id:<5} {post['title']:<40} {formatted_time:<20} {post['author']}")
-
-        # Table Footer
-        output.append("=" * 78)
-
-        self.caller.msg("\n".join(output))
+        # Show legend if needed
+        has_pinned = any(post.get('pinned', False) for post in posts)
+        has_unread = any(controller.is_post_unread(board['id'], i, self.caller.key) for i, _ in enumerate(posts))
+        
+        if has_pinned or has_unread:
+            legend = []
+            if has_pinned:
+                legend.append("^ = Pinned Post")
+            if has_unread:
+                legend.append("U = Unread Post")
+            self.caller.msg("\n" + ", ".join(legend))
 
     def read_post(self, controller, board_ref, post_number):
-        """Read a specific post in a board."""
+        """Read a specific post."""
         board = controller.get_board(board_ref)
         if not board:
             self.caller.msg(f"No board found with the name or number '{board_ref}'.")
             return
-        if not controller.has_access(board_ref, self.caller.key):
-            self.caller.msg(f"You do not have access to view posts on the board '{board['name']}'.")
+            
+        if not controller.has_access(board['id'], self.caller.key):
+            self.caller.msg("You don't have permission to read this board.")
             return
-        posts = board['posts']
-        if post_number < 1 or post_number > len(posts):
-            self.caller.msg(f"Invalid post number. Board '{board['name']}' has {len(posts)} posts.")
+            
+        try:
+            post_index = post_number - 1  # Convert to 0-based index
+            post = board['posts'][post_index]
+        except (IndexError, ValueError):
+            self.caller.msg(f"No post #{post_number} on board '{board['name']}'.")
             return
-        post = posts[post_number - 1]
-        edit_info = f"(edited on {self.format_datetime(post['edited_at'])})" if post['edited_at'] else ""
-
+            
         # Mark the post as read
-        controller.mark_post_read(board_ref, post_number - 1, self.caller.key)
-
-        self.caller.msg(f"{'-'*40}")
-        self.caller.msg(f"{'*' * 20} {board['name']} {'*' * 20}")
-        self.caller.msg(f"Title: {post['title']}")
-        self.caller.msg(f"Author: {post['author']}")
-        self.caller.msg(f"Date: {self.format_datetime(post['created_at'])} {edit_info}")
-        self.caller.msg(f"{'-'*40}")
-        self.caller.msg(f"{post['content']}")
-        self.caller.msg(f"{'-'*40}")
+        controller.mark_post_read(board['id'], post_index, self.caller.key)
+            
+        # Format the post header
+        header = f"|w{'=' * 78}|n\n"
+        header += f"|wBoard:|n {board['name']} (#{board['id']})\n"
+        header += f"|wPost:|n #{post_number}{' |w[Pinned]|n' if post.get('pinned', False) else ''}\n"
+        header += f"|wTitle:|n {post['title']}\n"
+        header += f"|wAuthor:|n {post['author']}\n"
+        header += f"|wDate:|n {self.format_datetime(post['created_at'])}\n"
+        if post.get('edited_at'):
+            header += f"|wEdited:|n {self.format_datetime(post['edited_at'])}\n"
+        header += f"|w{'-' * 78}|n\n"
+        
+        # Format the post content
+        content = post['content']
+        
+        # Format the footer
+        footer = f"\n|w{'=' * 78}|n"
+        
+        # Send the formatted post
+        self.caller.msg(header + content + footer)
