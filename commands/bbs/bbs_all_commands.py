@@ -31,6 +31,8 @@ class CmdBBS(default_cmds.MuxCommand):
       +bbs/edit <board>/<post> = <new message>
                                 - Edit one of your posts
       +bbs/delete <board>/<post> - Delete one of your posts
+      +bbs/scan                  - Show unread posts on all accessible boards
+      +bbs/readall <board>       - Mark all posts in a board as read
       
     Admin/Builder commands:
       +bbs/create <name> = <description>[/roster=<roster1>,<roster2>...]
@@ -51,6 +53,15 @@ class CmdBBS(default_cmds.MuxCommand):
       +bbs/unpin <board>/<post> - Unpin a post
       +bbs/deleteboard <board>  - Delete an entire board
       +bbs/readonly <board>     - Toggle read-only mode for a board
+      +bbs/viewas <board> = <player>
+                                - View a board as if you were another player
+                                - Useful for verifying permissions
+      
+    Admin options:
+      --asPlayer=<player>        - View boards/posts as if you were another player
+                                - Can be used with any read-based command
+                                - Example: +bbs --asPlayer=JohnDoe
+                                - Example: +bbs announcements --asPlayer=JohnDoe
       
     Board Permissions:
       Boards can have multiple permission settings that interact:
@@ -158,10 +169,37 @@ class CmdBBS(default_cmds.MuxCommand):
             return dt_str
 
     def func(self):
+        # Check for --asPlayer option
+        as_player = None
+        if "--asPlayer=" in self.args:
+            parts = self.args.split("--asPlayer=", 1)
+            self.args = parts[0].strip()
+            player_name = parts[1].strip()
+            
+            # Find the player
+            from evennia.utils import search
+            players = search.search_object_by_keyclass(player_name, "typeclasses.characters.Character")
+            
+            if not players:
+                self.caller.msg(f"No player found with the name '{player_name}'.")
+                return
+                
+            as_player = players[0]
+            
+            # Only admins and builders can use this option
+            if not (self.check_admin_access() or self.check_builder_access()):
+                self.caller.msg("You don't have permission to use the --asPlayer option.")
+                return
+                
+            self.caller.msg(f"Viewing as {as_player.key}...")
+
         if not self.args and not self.switches:
             # Just +bbs - list all boards
             controller = get_or_create_bbs_controller()
-            self.list_boards(controller)
+            if as_player:
+                self.list_boards_as_player(controller, as_player)
+            else:
+                self.list_boards(controller)
             return
 
         # Handle switches
@@ -176,10 +214,18 @@ class CmdBBS(default_cmds.MuxCommand):
             elif switch == "delete":
                 self.do_delete()
             elif switch == "scan":
-                self.do_scan()
+                if as_player:
+                    self.do_scan_as_player(as_player)
+                else:
+                    self.do_scan()
+            elif switch == "readall":
+                if as_player:
+                    self.do_readall_as_player(as_player)
+                else:
+                    self.do_readall()
             
             # Admin/Builder commands
-            elif switch in ["create", "editboard", "editboard/rosters", "addroster", "removeroster", "listrosters", "lock", "pin", "unpin", "deleteboard", "readonly"]:
+            elif switch in ["create", "editboard", "editboard/rosters", "addroster", "removeroster", "listrosters", "lock", "pin", "unpin", "deleteboard", "readonly", "viewas"]:
                 if not (self.check_admin_access() or self.check_builder_access()):
                     self.caller.msg("You don't have permission to use this command.")
                     return
@@ -206,6 +252,8 @@ class CmdBBS(default_cmds.MuxCommand):
                     self.do_deleteboard()
                 elif switch == "readonly":
                     self.do_readonly()
+                elif switch == "viewas":
+                    self.do_viewas()
             else:
                 self.caller.msg("Invalid switch or insufficient permissions.")
             return
@@ -218,7 +266,10 @@ class CmdBBS(default_cmds.MuxCommand):
                 board_ref = int(board_ref)
                 post_number = int(post_number)
                 controller = get_or_create_bbs_controller()
-                self.read_post(controller, board_ref, post_number)
+                if as_player:
+                    self.read_post_as_player(controller, board_ref, post_number, as_player)
+                else:
+                    self.read_post(controller, board_ref, post_number)
             except ValueError:
                 self.caller.msg("Usage: +bbs <board_number>/<post_number> where both are numbers.")
         else:
@@ -228,7 +279,10 @@ class CmdBBS(default_cmds.MuxCommand):
             except ValueError:
                 board_ref = self.args
             controller = get_or_create_bbs_controller()
-            self.list_posts(controller, board_ref)
+            if as_player:
+                self.list_posts_as_player(controller, board_ref, as_player)
+            else:
+                self.list_posts(controller, board_ref)
 
     def do_post(self):
         """Handle the post switch"""
@@ -608,9 +662,9 @@ class CmdBBS(default_cmds.MuxCommand):
         # Otherwise show detailed scan output
         # Table Header
         output = []
-        output.append("-" * 78)
+        output.append("=" * 120)
         output.append("Unread Postings on the Global Bulletin Board")
-        output.append("-" * 78)
+        output.append("-" * 120)
 
         for board_id, board in sorted_boards:
             if not controller.has_access(board_id, self.caller.key):
@@ -625,13 +679,10 @@ class CmdBBS(default_cmds.MuxCommand):
             
             # Get board access type indicators
             access_type = ""
-            if not board['public']:
+            if board.get('roster_names'):  # If board has roster restrictions
                 access_type = "*"  # restricted
             elif not controller.has_write_access(board_id, self.caller.key):
-                if board['public']:
-                    access_type = "-"  # read only
-                else:
-                    access_type = "(-)"  # read only but can write
+                access_type = "-"  # read only
 
             # Format board name with access type
             board_name = f"{board['name']} {access_type}"
@@ -639,11 +690,50 @@ class CmdBBS(default_cmds.MuxCommand):
             output.append(f"{board_name} (#{board_id}): {len(unread_posts)} unread ({unread_str})")
 
         # Add footer with capacity information
-        output.append("-" * 78)
+        output.append("-" * 120)
         if total_unread > 0:
-            capacity = (total_unread / sum(len(b['posts']) for b in boards.values())) * 100
+            total_posts = sum(len(b['posts']) for b in boards.values())
+            if total_posts > 0:  # Avoid division by zero
+                capacity = (total_unread / total_posts) * 100
+                output.append(f"Total unread posts: {total_unread} ({capacity:.1f}% of all posts)")
+        output.append("=" * 120)
 
         self.caller.msg("\n".join(output))
+
+    def do_readall(self):
+        """Mark all posts in a board as read.
+        
+        This command marks all posts in the specified board as read for the current user.
+        This is useful when you want to clear all unread flags from a board at once.
+        
+        Usage:
+            +bbs/readall <board>
+            
+        Example:
+            +bbs/readall announcements
+        """
+        if not self.args:
+            self.caller.msg("Usage: +bbs/readall <board>")
+            return
+            
+        board_ref = self.args.strip()
+        controller = get_or_create_bbs_controller()
+        board = controller.get_board(board_ref)
+        if not board:
+            self.caller.msg(f"No board found with the name or number '{board_ref}'.")
+            return
+            
+        if not (controller.has_access(board_ref, self.caller.key) or 
+                self.check_admin_access() or 
+                self.check_builder_access()):
+            self.caller.msg(f"You do not have access to view posts on the board '{board['name']}'.")
+            return
+            
+        # Mark all posts as read
+        for i in range(len(board['posts'])):
+            controller.mark_post_read(board_ref, i, self.caller.key)
+            
+        self.caller.msg(f"All posts in board '{board['name']}' have been marked as read.")
 
     def list_boards(self, controller):
         """List all available boards."""
@@ -654,26 +744,31 @@ class CmdBBS(default_cmds.MuxCommand):
 
         # Table Header
         output = []
-        output.append("=" * 90)
-        output.append("{:<5} {:<10} {:<40} {:<20} {:<15}".format("ID", "Access", "Name", "Last Post", "# of messages"))
-        output.append("-" * 90)
+        output.append("=" * 120)
+        output.append("{:<5} {:<10} {:<40} {:<20} {:<15} {:<10}".format("ID", "Access", "Name", "Last Post", "# of messages", "Unread"))
+        output.append("-" * 120)
 
         # Sort boards by ID and convert to list of tuples
         sorted_boards = sorted(boards.items(), key=lambda x: x[0])
 
         for board_id, board in sorted_boards:
-            # Skip boards the character doesn't have access to, unless admin/builder
-            if not (controller.has_access(board_id, self.caller.key) or 
-                   self.check_admin_access() or 
-                   self.check_builder_access()):
-                continue
-                
+            # Skip boards the character doesn't have access to
+            if not controller.has_access(board_id, self.caller.key):
+                # Only admins and builders can see boards they don't have access to
+                if not (self.check_admin_access() or self.check_builder_access()):
+                    continue
+
             # Check if user has write access, considering admin/builder status
             has_write = controller.has_write_access(board_id, self.caller.key) or self.check_admin_access() or self.check_builder_access()
             read_only = "*" if not has_write else " "
             
             # Determine access type
-            access_type = "Roster" if board.get('roster_names') else "Public"
+            if board.get('roster_names'):
+                access_type = "Roster"
+            elif not board.get('public', True):  # Default to public if not specified
+                access_type = "Private"
+            else:
+                access_type = "Public"
             
             # Get last post time, ensuring it's a date/time string
             last_post = "No posts"
@@ -681,14 +776,20 @@ class CmdBBS(default_cmds.MuxCommand):
                 last_post = max((post['created_at'] for post in board['posts']), default="No posts")
                 if last_post != "No posts":
                     last_post = self.format_datetime(last_post)
-            
+
             num_posts = len(board['posts'])
-            output.append(f"{board_id:<5} {access_type:<10} {read_only} {board['name']:<40} {last_post:<20} {num_posts:<15}")
+            
+            # Get unread post count
+            unread_posts = controller.get_unread_posts(board_id, self.caller.key)
+            unread_count = len(unread_posts)
+            unread_display = str(unread_count) if unread_count > 0 else "-"
+
+            output.append(f"{board_id:<5} {access_type:<10} {read_only} {board['name']:<40} {last_post:<20} {num_posts:<15} {unread_display:<10}")
 
         # Table Footer
-        output.append("-" * 90)
+        output.append("-" * 120)
         output.append("* = read only")
-        output.append("=" * 90)
+        output.append("=" * 120)
 
         self.caller.msg("\n".join(output))
 
@@ -698,7 +799,9 @@ class CmdBBS(default_cmds.MuxCommand):
         if not board:
             self.caller.msg(f"No board found with the name or number '{board_ref}'.")
             return
-        if not controller.has_access(board_ref, self.caller.key):
+        if not (controller.has_access(board_ref, self.caller.key) or 
+                self.check_admin_access() or 
+                self.check_builder_access()):
             self.caller.msg(f"You do not have access to view posts on the board '{board['name']}'.")
             return
 
@@ -708,7 +811,7 @@ class CmdBBS(default_cmds.MuxCommand):
 
         # Table Header
         output = []
-        output.append("=" * 78)
+        output.append("=" * 120)
         output.append(f"{'*' * 20} {board['name']} {'*' * 20}")
         
         # Add roster information if any, but only for admins and builders
@@ -722,24 +825,34 @@ class CmdBBS(default_cmds.MuxCommand):
                     output.append(f"- {roster_name}(ref: {roster.id}, members: {member_count})")
                 except Roster.DoesNotExist:
                     output.append(f"- {roster_name} (WARNING: Roster no longer exists!)")
-        
-        output.append("{:<5} {:<40} {:<20} {:<15}".format("ID", "Message", "Posted", "By"))
-        output.append("-" * 78)
+
+        # Add board access information
+        if not board.get('public', True):
+            output.append("|rThis is a private board|n")
+        elif roster_names:
+            output.append("|yThis board is restricted to specific rosters|n")
+
+        output.append("{:<5} {:<1} {:<40} {:<20} {:<15}".format("ID", "", "Message", "Posted", "By"))
+        output.append("-" * 120)
 
         # List pinned posts first with correct IDs
         for i, post in enumerate(pinned_posts):
             post_id = posts.index(post) + 1
             formatted_time = self.format_datetime(post['created_at'])
-            output.append(f"{board['id']}/{post_id:<5} [Pinned] {post['title']:<40} {formatted_time:<20} {post['author']}")
+            is_unread = controller.is_post_unread(board['id'], post_id - 1, self.caller.key)
+            unread_flag = "|rU|n" if is_unread else " "
+            output.append(f"{board['id']}/{post_id:<5} {unread_flag:<1} [Pinned] {post['title']:<40} {formatted_time:<20} {post['author']}")
 
         # List unpinned posts with correct IDs
         for post in unpinned_posts:
             post_id = posts.index(post) + 1
             formatted_time = self.format_datetime(post['created_at'])
-            output.append(f"{board['id']}/{post_id:<5} {post['title']:<40} {formatted_time:<20} {post['author']}")
+            is_unread = controller.is_post_unread(board['id'], post_id - 1, self.caller.key)
+            unread_flag = "|rU|n" if is_unread else " "
+            output.append(f"{board['id']}/{post_id:<5} {unread_flag:<1} {post['title']:<40} {formatted_time:<20} {post['author']}")
 
         # Table Footer
-        output.append("=" * 78)
+        output.append("=" * 120)
 
         self.caller.msg("\n".join(output))
 
@@ -749,24 +862,341 @@ class CmdBBS(default_cmds.MuxCommand):
         if not board:
             self.caller.msg(f"No board found with the name or number '{board_ref}'.")
             return
-        if not controller.has_access(board_ref, self.caller.key):
+        if not (controller.has_access(board_ref, self.caller.key) or 
+                self.check_admin_access() or 
+                self.check_builder_access()):
             self.caller.msg(f"You do not have access to view posts on the board '{board['name']}'.")
             return
+
         posts = board['posts']
         if post_number < 1 or post_number > len(posts):
             self.caller.msg(f"Invalid post number. Board '{board['name']}' has {len(posts)} posts.")
             return
+
         post = posts[post_number - 1]
         edit_info = f"(edited on {self.format_datetime(post['edited_at'])})" if post['edited_at'] else ""
-
+        
         # Mark the post as read
         controller.mark_post_read(board_ref, post_number - 1, self.caller.key)
-
-        self.caller.msg(f"{'-'*40}")
+        
+        self.caller.msg(f"{'='*120}")
         self.caller.msg(f"{'*' * 20} {board['name']} {'*' * 20}")
         self.caller.msg(f"Title: {post['title']}")
         self.caller.msg(f"Author: {post['author']}")
         self.caller.msg(f"Date: {self.format_datetime(post['created_at'])} {edit_info}")
-        self.caller.msg(f"{'-'*40}")
+        self.caller.msg(f"{'-'*120}")
         self.caller.msg(f"{post['content']}")
-        self.caller.msg(f"{'-'*40}")
+        self.caller.msg(f"{'='*120}")
+
+    def do_viewas(self):
+        """View a board as if you were another player.
+        
+        This command allows admins to view a board from the perspective of another player,
+        which is useful for verifying permissions and troubleshooting access issues.
+        
+        Usage:
+            +bbs/viewas <board> = <player>
+            
+        Example:
+            +bbs/viewas announcements = JohnDoe
+        """
+        if not self.args or "=" not in self.args:
+            self.caller.msg("Usage: +bbs/viewas <board> = <player>")
+            return
+            
+        board_ref, player_name = [arg.strip() for arg in self.args.split("=", 1)]
+        
+        # Find the player
+        from evennia.utils import search
+        players = search.search_object_by_keyclass(player_name, "typeclasses.characters.Character")
+        
+        if not players:
+            self.caller.msg(f"No player found with the name '{player_name}'.")
+            return
+            
+        target_player = players[0]
+        
+        # Get the board
+        controller = get_or_create_bbs_controller()
+        board = controller.get_board(board_ref)
+        if not board:
+            self.caller.msg(f"No board found with the name or number '{board_ref}'.")
+            return
+            
+        # Check if the target player has access to the board
+        has_access = controller.has_access(board_ref, target_player.key)
+        has_write = controller.has_write_access(board_ref, target_player.key)
+        
+        # Display access information
+        self.caller.msg(f"{'='*120}")
+        self.caller.msg(f"Viewing board '{board['name']}' (#{board['id']}) as {target_player.key}")
+        self.caller.msg(f"{'-'*120}")
+        self.caller.msg(f"Access: {'|gYes|n' if has_access else '|rNo|n'}")
+        self.caller.msg(f"Write Access: {'|gYes|n' if has_write else '|rNo|n'}")
+        
+        # Check roster access if applicable
+        roster_names = board.get('roster_names', [])
+        if roster_names:
+            self.caller.msg(f"Roster Restrictions: {', '.join(roster_names)}")
+            roster_access = False
+            for roster_name in roster_names:
+                try:
+                    roster = Roster.objects.get(name=roster_name)
+                    if roster.is_member(target_player):
+                        roster_access = True
+                        self.caller.msg(f"|gPlayer is a member of roster: {roster_name}|n")
+                    else:
+                        self.caller.msg(f"|rPlayer is NOT a member of roster: {roster_name}|n")
+                except Roster.DoesNotExist:
+                    self.caller.msg(f"|yWARNING: Roster '{roster_name}' no longer exists!|n")
+            
+            if not roster_access and roster_names:
+                self.caller.msg("|rPlayer is not a member of any required roster|n")
+        
+        # Check public/private status
+        if not board.get('public', True):
+            self.caller.msg("|yThis is a private board|n")
+        
+        # Check read-only status
+        if not has_write and has_access:
+            self.caller.msg("|yThis board is read-only for this player|n")
+            
+        self.caller.msg(f"{'-'*120}")
+        
+        # If the player has access, show the board content
+        if has_access:
+            self.caller.msg("Board content as seen by this player:")
+            self.list_posts_as_player(controller, board_ref, target_player)
+        else:
+            self.caller.msg("|rThis player cannot see this board's content|n")
+            
+        self.caller.msg(f"{'='*120}")
+        
+    def list_posts_as_player(self, controller, board_ref, target_player):
+        """List all posts in the specified board as if viewed by the target player."""
+        board = controller.get_board(board_ref)
+        if not board:
+            return
+
+        posts = board['posts']
+        pinned_posts = [post for post in posts if post.get('pinned', False)]
+        unpinned_posts = [post for post in posts if not post.get('pinned', False)]
+
+        # Table Header
+        output = []
+        output.append(f"{'*' * 20} {board['name']} {'*' * 20}")
+        
+        # Add board access information
+        if not board.get('public', True):
+            output.append("|rThis is a private board|n")
+        elif board.get('roster_names'):
+            output.append("|yThis board is restricted to specific rosters|n")
+
+        output.append("{:<5} {:<1} {:<40} {:<20} {:<15}".format("ID", "", "Message", "Posted", "By"))
+        output.append("-" * 120)
+
+        # List pinned posts first with correct IDs
+        for i, post in enumerate(pinned_posts):
+            post_id = posts.index(post) + 1
+            formatted_time = self.format_datetime(post['created_at'], target_player)
+            is_unread = controller.is_post_unread(board['id'], post_id - 1, target_player.key)
+            unread_flag = "|rU|n" if is_unread else " "
+            output.append(f"{board['id']}/{post_id:<5} {unread_flag:<1} [Pinned] {post['title']:<40} {formatted_time:<20} {post['author']}")
+
+        # List unpinned posts with correct IDs
+        for post in unpinned_posts:
+            post_id = posts.index(post) + 1
+            formatted_time = self.format_datetime(post['created_at'], target_player)
+            is_unread = controller.is_post_unread(board['id'], post_id - 1, target_player.key)
+            unread_flag = "|rU|n" if is_unread else " "
+            output.append(f"{board['id']}/{post_id:<5} {unread_flag:<1} {post['title']:<40} {formatted_time:<20} {post['author']}")
+
+        # Table Footer
+        output.append("=" * 120)
+
+        self.caller.msg("\n".join(output))
+
+    def list_boards_as_player(self, controller, target_player):
+        """List all available boards as if viewed by the target player."""
+        boards = controller.db.boards
+        if not boards:
+            self.caller.msg("No boards available.")
+            return
+
+        # Table Header
+        output = []
+        output.append("=" * 120)
+        output.append(f"Boards visible to {target_player.key}:")
+        output.append("{:<5} {:<10} {:<40} {:<20} {:<15} {:<10}".format("ID", "Access", "Name", "Last Post", "# of messages", "Unread"))
+        output.append("-" * 120)
+
+        # Sort boards by ID and convert to list of tuples
+        sorted_boards = sorted(boards.items(), key=lambda x: x[0])
+
+        for board_id, board in sorted_boards:
+            # Skip boards the character doesn't have access to
+            if not controller.has_access(board_id, target_player.key):
+                continue
+
+            # Check if user has write access
+            has_write = controller.has_write_access(board_id, target_player.key)
+            read_only = "*" if not has_write else " "
+            
+            # Determine access type
+            if board.get('roster_names'):
+                access_type = "Roster"
+            elif not board.get('public', True):  # Default to public if not specified
+                access_type = "Private"
+            else:
+                access_type = "Public"
+            
+            # Get last post time, ensuring it's a date/time string
+            last_post = "No posts"
+            if board['posts']:
+                last_post = max((post['created_at'] for post in board['posts']), default="No posts")
+                if last_post != "No posts":
+                    last_post = self.format_datetime(last_post, target_player)
+
+            num_posts = len(board['posts'])
+            
+            # Get unread post count
+            unread_posts = controller.get_unread_posts(board_id, target_player.key)
+            unread_count = len(unread_posts)
+            unread_display = str(unread_count) if unread_count > 0 else "-"
+
+            output.append(f"{board_id:<5} {access_type:<10} {read_only} {board['name']:<40} {last_post:<20} {num_posts:<15} {unread_display:<10}")
+
+        # Table Footer
+        output.append("-" * 120)
+        output.append("* = read only")
+        output.append("=" * 120)
+
+        self.caller.msg("\n".join(output))
+
+    def do_scan_as_player(self, target_player):
+        """Handle the scan switch - show unread posts on all accessible boards as if viewed by the target player."""
+        controller = get_or_create_bbs_controller()
+        boards = controller.db.boards
+        if not boards:
+            self.caller.msg("No boards available.")
+            return
+
+        # Count total unread posts
+        total_unread = 0
+        unread_boards = []
+
+        # Sort boards by ID
+        sorted_boards = sorted(boards.items(), key=lambda x: x[0])
+
+        for board_id, board in sorted_boards:
+            if not controller.has_access(board_id, target_player.key):
+                continue
+
+            unread_posts = controller.get_unread_posts(board_id, target_player.key)
+            if not unread_posts:
+                continue
+
+            total_unread += len(unread_posts)
+            unread_boards.append((board['name'], len(unread_posts)))
+
+        # If this is a login notification (no explicit command), show concise output
+        if not hasattr(self, 'session') or not self.session:
+            if total_unread > 0:
+                board_summary = ", ".join(f"{name}: {count}" for name, count in unread_boards)
+                self.caller.msg(f"|w{target_player.key} has {total_unread} unread post{'s' if total_unread != 1 else ''} "
+                              f"on the bulletin board ({board_summary}).|n")
+            return
+
+        # Otherwise show detailed scan output
+        # Table Header
+        output = []
+        output.append("=" * 120)
+        output.append(f"Unread Postings on the Global Bulletin Board (as {target_player.key})")
+        output.append("-" * 120)
+
+        for board_id, board in sorted_boards:
+            if not controller.has_access(board_id, target_player.key):
+                continue
+
+            unread_posts = controller.get_unread_posts(board_id, target_player.key)
+            if not unread_posts:
+                continue
+
+            # Format unread posts numbers
+            unread_str = ", ".join(str(x) for x in unread_posts)
+            
+            # Get board access type indicators
+            access_type = ""
+            if board.get('roster_names'):  # If board has roster restrictions
+                access_type = "*"  # restricted
+            elif not controller.has_write_access(board_id, target_player.key):
+                access_type = "-"  # read only
+
+            # Format board name with access type
+            board_name = f"{board['name']} {access_type}"
+            
+            output.append(f"{board_name} (#{board_id}): {len(unread_posts)} unread ({unread_str})")
+
+        # Add footer with capacity information
+        output.append("-" * 120)
+        if total_unread > 0:
+            total_posts = sum(len(b['posts']) for b in boards.values())
+            if total_posts > 0:  # Avoid division by zero
+                capacity = (total_unread / total_posts) * 100
+                output.append(f"Total unread posts: {total_unread} ({capacity:.1f}% of all posts)")
+        output.append("=" * 120)
+
+        self.caller.msg("\n".join(output))
+
+    def do_readall_as_player(self, target_player):
+        """Mark all posts in a board as read for the target player."""
+        if not self.args:
+            self.caller.msg("Usage: +bbs/readall <board>")
+            return
+            
+        board_ref = self.args.strip()
+        controller = get_or_create_bbs_controller()
+        board = controller.get_board(board_ref)
+        if not board:
+            self.caller.msg(f"No board found with the name or number '{board_ref}'.")
+            return
+            
+        if not controller.has_access(board_ref, target_player.key):
+            self.caller.msg(f"{target_player.key} does not have access to view posts on the board '{board['name']}'.")
+            return
+            
+        # Mark all posts as read
+        for i in range(len(board['posts'])):
+            controller.mark_post_read(board_ref, i, target_player.key)
+            
+        self.caller.msg(f"All posts in board '{board['name']}' have been marked as read for {target_player.key}.")
+
+    def read_post_as_player(self, controller, board_ref, post_number, target_player):
+        """Read a specific post in a board as if viewed by the target player."""
+        board = controller.get_board(board_ref)
+        if not board:
+            self.caller.msg(f"No board found with the name or number '{board_ref}'.")
+            return
+        if not controller.has_access(board_ref, target_player.key):
+            self.caller.msg(f"{target_player.key} does not have access to view posts on the board '{board['name']}'.")
+            return
+
+        posts = board['posts']
+        if post_number < 1 or post_number > len(posts):
+            self.caller.msg(f"Invalid post number. Board '{board['name']}' has {len(posts)} posts.")
+            return
+
+        post = posts[post_number - 1]
+        edit_info = f"(edited on {self.format_datetime(post['edited_at'], target_player)})" if post['edited_at'] else ""
+        
+        # Mark the post as read
+        controller.mark_post_read(board_ref, post_number - 1, target_player.key)
+        
+        self.caller.msg(f"{'='*120}")
+        self.caller.msg(f"{'*' * 20} {board['name']} {'*' * 20} (as {target_player.key})")
+        self.caller.msg(f"Title: {post['title']}")
+        self.caller.msg(f"Author: {post['author']}")
+        self.caller.msg(f"Date: {self.format_datetime(post['created_at'], target_player)} {edit_info}")
+        self.caller.msg(f"{'-'*120}")
+        self.caller.msg(f"{post['content']}")
+        self.caller.msg(f"{'='*120}")
