@@ -24,6 +24,14 @@ Sends notifications to Discord about server status, updates, backups, and restor
 
 Sets up a cron job to automatically update and restart the Evennia server when changes are detected in the specified git branch.
 
+### `setup_permissions.sh`
+
+Sets appropriate permissions for all files in the Scripts directory, creates necessary log files, and sets up the backups directory.
+
+### `test_discord_webhook.sh`
+
+Tests the Discord webhook functionality by sending a test message with system information.
+
 ## Prerequisites
 
 - Linux server with bash shell
@@ -38,18 +46,26 @@ Sets up a cron job to automatically update and restart the Evennia server when c
 
 1. Make the scripts executable:
    ```bash
-   chmod +x Scripts/backup_game.sh
-   chmod +x Scripts/restart_prod.sh
-   chmod +x Scripts/discord_notify.sh
-   chmod +x Scripts/setup_auto_update.sh
+   chmod +x Scripts/*.sh
    ```
 
-2. Configure the scripts with your specific settings:
+2. Set up permissions and create necessary directories:
+   ```bash
+   sudo ./Scripts/setup_permissions.sh
+   ```
+   This will:
+   - Make all shell scripts executable
+   - Set appropriate permissions for all files
+   - Create log files in `/var/log/`
+   - Create a backups directory
+   - Optionally test the Discord webhook
+
+3. Configure the scripts with your specific settings:
    - Edit `restart_prod.sh` to set the correct game directory and conda environment
    - Edit `backup_game.sh` to set the correct game directory
    - Edit `setup_auto_update.sh` to set the correct game directory, conda environment, and git branch
 
-3. Set up the auto-update cron job:
+4. Set up the auto-update cron job:
    ```bash
    ./Scripts/setup_auto_update.sh -d /path/to/game -e your_conda_env -b your_git_branch -i 60 -w your_discord_webhook_url
    ```
@@ -92,6 +108,16 @@ Options:
 - `-d, --directory DIR`: Game directory path (default: /root/game)
 - `-e, --env ENV`: Conda environment name (default: game_py311)
 - `-w, --webhook URL`: Discord webhook URL for notifications
+- `-h, --help`: Display help message
+
+### Testing Discord Webhook
+
+```bash
+./Scripts/test_discord_webhook.sh -w your_discord_webhook_url
+```
+
+Options:
+- `-w, --webhook URL`: Discord webhook URL (required)
 - `-h, --help`: Display help message
 
 ## Error Recovery Process
