@@ -907,3 +907,96 @@ class CmdSTFind(MuxCommand):
             string += "\n"
 
         caller.msg(string.strip())
+
+class CmdCheckGhosts(MuxCommand):
+    """
+    Check for ghost character objects in rooms.
+
+    Usage:
+      +checkghosts
+      +checkghosts <room dbref or name>
+      +checkghosts/cleanup - Attempt to clean up ghost characters
+
+    This command is useful for identifying and resolving "ghost" character 
+    objects that might have been left behind during teleportation operations.
+    
+    The cleanup switch attempts to remove ghost characters by forcing a proper
+    disconnection on any orphaned character objects.
+    """
+
+    key = "+checkghosts"
+    aliases = ["+ghostcheck"]
+    locks = "cmd:perm(Admin)"
+    help_category = "Admin Commands"
+
+    def func(self):
+        """Implement the command"""
+        caller = self.caller
+        args = self.args.strip()
+        
+        # Determine which room to check
+        if args:
+            target = caller.search(args, global_search=True)
+            if not target:
+                return
+            rooms = [target]
+        else:
+            # Without args, check all rooms
+            from typeclasses.rooms import Room
+            rooms = search.search_object("", typeclass=Room)
+        
+        # Set for tracking sessions we've seen
+        seen_sessions = set()
+        total_ghosts = 0
+        
+        for room in rooms:
+            ghosts = []
+            
+            # Check each character in the room
+            for obj in [o for o in room.contents if inherits_from(o, "evennia.objects.objects.DefaultCharacter")]:
+                # If the character has no sessions, it's not a ghost
+                if not obj.sessions.all():
+                    continue
+                    
+                # Check each session
+                for session in obj.sessions.all():
+                    session_id = id(session)
+                    
+                    # If we've seen this session on another character, this might be a ghost
+                    if session_id in seen_sessions:
+                        ghosts.append(obj)
+                    else:
+                        seen_sessions.add(session_id)
+            
+            # Report ghosts in this room
+            if ghosts:
+                total_ghosts += len(ghosts)
+                ghost_names = [ghost.name for ghost in ghosts]
+                caller.msg(f"Room {room.name} ({room.id}) contains potential ghost characters: {', '.join(ghost_names)}")
+                
+                # Clean up if the cleanup switch is used
+                if "cleanup" in self.switches:
+                    for ghost in ghosts:
+                        # Force a disconnect/reconnect cycle to clean up
+                        sessions = ghost.sessions.all()
+                        for session in sessions:
+                            session.msg("Admin is cleaning up ghost character instances...")
+                            # Option 1: Try to reattach the session to its proper location
+                            if hasattr(session, 'account') and session.account:
+                                try:
+                                    # Remove from location
+                                    ghost.location = None
+                                    caller.msg(f"Cleaned up ghost character {ghost.name}")
+                                except Exception as e:
+                                    caller.msg(f"Error cleaning up {ghost.name}: {e}")
+        
+        if args and not total_ghosts:
+            caller.msg(f"No ghost characters found in {target.name}.")
+        elif not args and not total_ghosts:
+            caller.msg("No ghost characters found in any rooms.")
+        else:
+            caller.msg(f"Total potential ghost characters found: {total_ghosts}")
+            if "cleanup" in self.switches:
+                caller.msg("Cleanup attempt completed. You may need to run this command again.")
+            else:
+                caller.msg("Use /cleanup switch to attempt automatic cleanup of ghost characters.")

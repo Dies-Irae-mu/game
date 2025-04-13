@@ -3665,7 +3665,13 @@ class CmdSelfStat(MuxCommand):
                     if word.lower() == 'of':
                         capitalized_words.append('of')
                     else:
-                        capitalized_words.append(word.title())
+                        # Custom capitalization to handle apostrophes
+                        if "'" in word:
+                            # Split by apostrophe, capitalize first part, keep rest lowercase
+                            parts = word.split("'", 1)
+                            capitalized_words.append(parts[0].capitalize() + "'" + parts[1].lower())
+                        else:
+                            capitalized_words.append(word.capitalize())
                 stat_name = ' '.join(capitalized_words) + '(' + instance
             else:
                 # Regular stats - capitalize each word except 'of'
@@ -3675,7 +3681,13 @@ class CmdSelfStat(MuxCommand):
                     if word.lower() == 'of':
                         capitalized_words.append('of')
                     else:
-                        capitalized_words.append(word.title())
+                        # Custom capitalization to handle apostrophes
+                        if "'" in word:
+                            # Split by apostrophe, capitalize first part, keep rest lowercase
+                            parts = word.split("'", 1)
+                            capitalized_words.append(parts[0].capitalize() + "'" + parts[1].lower())
+                        else:
+                            capitalized_words.append(word.capitalize())
                 stat_name = ' '.join(capitalized_words)
 
         # Get character's splat

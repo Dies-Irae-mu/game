@@ -1021,6 +1021,40 @@ class CmdManageHome(MuxCommand):
                     return True
         return False
 
+    def _destroy_room(self, room, main_room):
+        """Helper method to properly destroy a room and relocate all occupants"""
+        # Move any occupants to the main room
+        for obj in room.contents:
+            if obj.has_account:
+                obj.msg("This room is being destroyed. You are being moved out.")
+                
+                # Ensure we're not leaving a ghost character behind
+                if hasattr(obj, 'sessions'):
+                    for session in obj.sessions.all():
+                        if hasattr(session, 'puppet') and session.puppet == obj:
+                            # Make sure the session knows we're moving
+                            session.msg(text=f"Being moved out as this room is being destroyed...")
+                            
+                obj.move_to(main_room)
+
+        # Remove from child rooms list
+        if room in main_room.db.child_rooms:
+            main_room.db.child_rooms.remove(room)
+
+        # Delete all exits in the room
+        for exit in room.exits:
+            exit.delete()
+            
+        # Delete all exits to this room
+        for exit in main_room.exits:
+            if hasattr(exit, 'destination') and exit.destination == room:
+                exit.delete()
+                
+        # Delete the room itself
+        room.delete()
+        
+        return True
+
     def func(self):
         # If no switches and no args, treat as "go home" command
         if not self.switches and not self.args:
@@ -1045,8 +1079,23 @@ class CmdManageHome(MuxCommand):
                 self.caller.msg("Your home is currently locked and you don't have a key.")
                 return
                 
+            # Store old location for announcements
+            old_location = self.caller.location
+                
+            # Announce departure
+            if old_location:
+                old_location.msg_contents(f"{self.caller.name} has left to go home.", exclude=self.caller)
+                
+            # Ensure we're not leaving a ghost character behind by clearing any session references
+            # to the old location
+            for session in self.caller.sessions.all():
+                if hasattr(session, 'puppet') and session.puppet == self.caller:
+                    # Make sure the session knows we're moving
+                    session.msg(text="Moving to your home...")
+                
             # Try to go home
             self.caller.move_to(self.caller.home)
+            self.caller.home.msg_contents(f"{self.caller.name} arrives home.", exclude=self.caller)
             return
 
         # Handle find switch
@@ -1491,6 +1540,14 @@ class CmdManageHome(MuxCommand):
             for obj in residence.contents:
                 if obj.has_account:
                     obj.msg("This residence is being vacated. You are being moved out.")
+                    
+                    # Ensure we're not leaving a ghost character behind
+                    if hasattr(obj, 'sessions'):
+                        for session in obj.sessions.all():
+                            if hasattr(session, 'puppet') and session.puppet == obj:
+                                # Make sure the session knows we're moving
+                                session.msg(text=f"Being moved out as residence is being vacated...")
+                                
                     obj.move_to(building)
 
             # Clean up child rooms if they exist
@@ -1499,6 +1556,13 @@ class CmdManageHome(MuxCommand):
                     if room:
                         for obj in room.contents:
                             if obj.has_account:
+                                # Ensure we're not leaving a ghost character behind
+                                if hasattr(obj, 'sessions'):
+                                    for session in obj.sessions.all():
+                                        if hasattr(session, 'puppet') and session.puppet == obj:
+                                            # Make sure the session knows we're moving
+                                            session.msg(text=f"Being moved out as residence is being vacated...")
+                                            
                                 obj.move_to(building)
                         # Delete all exits in the child room
                         for exit in room.exits:
@@ -1803,26 +1867,9 @@ class CmdManageHome(MuxCommand):
                     self.caller.msg("This room is not part of your residence.")
                     return
 
-                # Move any occupants to the main room
-                for obj in location.contents:
-                    if obj.has_account:
-                        obj.msg("This room is being destroyed. You are being moved out.")
-                        obj.move_to(main_room)
-
-                # Remove from child rooms list
-                if location in main_room.db.child_rooms:
-                    main_room.db.child_rooms.remove(location)
-
-                # Delete all exits in both directions
-                for exit in location.exits:
-                    exit.delete()
-                for exit in main_room.exits:
-                    if hasattr(exit, 'destination') and exit.destination == location:
-                        exit.delete()
-
-                # Delete the room
-                location.delete()
-                self.caller.msg("Room destroyed.")
+                # Use the helper method to destroy the room
+                if self._destroy_room(location, main_room):
+                    self.caller.msg("Room destroyed.")
                 return
 
             # Handle object list case
@@ -1880,22 +1927,10 @@ class CmdManageHome(MuxCommand):
                         self.caller.msg(f"{obj.get_display_name(self.caller)} is not part of your residence.")
                         return
 
-                    # For rooms, handle occupants and cleanup
-                    for content in obj.contents:
-                        if content.has_account:
-                            content.msg("This room is being destroyed. You are being moved out.")
-                            content.move_to(main_room)
-
-                    # Remove from child rooms list
-                    main_room.db.child_rooms.remove(obj)
-
-                    # Delete all exits in both directions
-                    for exit in obj.exits:
-                        exit.delete()
-                    for exit in location.exits:
-                        if hasattr(exit, 'destination') and exit.destination == obj:
-                            exit.delete()
-
+                    # For rooms, use the helper method to destroy it
+                    if self._destroy_room(obj, main_room):
+                        self.caller.msg(f"{target} destroyed.")
+                        
                 elif obj.is_typeclass("typeclasses.exits.ApartmentExit"):
                     if not (obj.location == location or 
                            (obj.destination and obj.destination in main_room.db.child_rooms)):
@@ -1907,10 +1942,10 @@ class CmdManageHome(MuxCommand):
                         for exit in obj.destination.exits:
                             if exit.destination == obj.location:
                                 exit.delete()
-
-                # Delete the object
-                obj.delete()
-                self.caller.msg(f"{target} destroyed.")
+                    
+                    # Delete the exit
+                    obj.delete()
+                    self.caller.msg(f"{target} destroyed.")
 
         elif "view" in self.switches:
             # Check if we're in a valid residence

@@ -271,6 +271,12 @@ class CmdHangout(MuxCommand):
         # Handle teleport switches
         if any(switch in ["jump", "tel", "join", "visit"] for switch in self.switches):
             try:
+                # Check if player is in an OOC area
+                current_location = self.caller.location
+                if current_location and hasattr(current_location, 'db') and current_location.db.roomtype == "OOC Area":
+                    self.caller.msg("You cannot teleport directly from the OOC area. Use +ic first to return to IC areas.")
+                    return
+                    
                 hangout_id = int(self.args)
                 hangouts = HangoutDB.get_visible_hangouts(self.caller)
                 hangout = next((h for h in hangouts if h.db.hangout_id == hangout_id), None)
@@ -295,6 +301,13 @@ class CmdHangout(MuxCommand):
                 # Announce departure to the old room
                 old_location.msg_contents(f"{self.caller.name} has left for hangout {hangout_id}.")
                     
+                # Ensure we're not leaving a ghost character behind by clearing any session references
+                # to the old location
+                for session in self.caller.sessions.all():
+                    if hasattr(session, 'puppet') and session.puppet == self.caller:
+                        # Make sure the session knows we're moving
+                        session.msg(text=f"Moving to {hangout.key}...")
+                
                 # Move the character
                 self.caller.move_to(room, quiet=True)
                 

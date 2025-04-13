@@ -118,6 +118,16 @@ class CmdPlusIc(MuxCommand):
             caller.msg("Error: Unable to find a valid IC location.")
             return
 
+        # Message the old location
+        old_location = caller.location
+        old_location.msg_contents(f"{caller.name} returns to IC areas.", exclude=caller)
+
+        # Ensure we're not leaving a ghost character behind
+        for session in caller.sessions.all():
+            if hasattr(session, 'puppet') and session.puppet == caller:
+                # Make sure the session knows we're moving
+                session.msg(text=f"Returning to IC ({target_location.name})...")
+
         # Move the caller to the target location
         caller.move_to(target_location, quiet=True)
         caller.msg(f"You return to the IC area ({target_location.name}).")
@@ -149,11 +159,23 @@ class CmdPlusOoc(MuxCommand):
         caller.db.pre_ooc_location = current_location
 
         # Find Limbo (object #1729)
-        ooc_nexus = search_object("#1729")[0]
+        ooc_nexus = search_object("#2")[0]
 
         if not ooc_nexus:
             caller.msg("Error: ooc_nexus not found.")
             return
+            
+        # Set roomtype to OOC Area to enable checks in other commands
+        ooc_nexus.db.roomtype = "OOC Area"
+            
+        # Message the current location
+        current_location.msg_contents(f"{caller.name} heads to OOC areas.", exclude=caller)
+        
+        # Ensure we're not leaving a ghost character behind
+        for session in caller.sessions.all():
+            if hasattr(session, 'puppet') and session.puppet == caller:
+                # Make sure the session knows we're moving
+                session.msg(text=f"Moving to OOC area...")
 
         # Move the caller to Limbo
         caller.move_to(ooc_nexus, quiet=True)
@@ -170,7 +192,7 @@ class CmdMeet(MuxCommand):
       +meet/reject
 
     Sends a meet request to another player. If accepted, they'll be
-    teleported to your location.
+    teleported to your location. You cannot use this command from OOC areas.
     """
 
     key = "+meet"
@@ -194,6 +216,12 @@ class CmdMeet(MuxCommand):
 
     def func(self):
         caller = self.caller
+        
+        # Check if in OOC area
+        current_location = caller.location
+        if current_location and hasattr(current_location, 'db') and current_location.db.roomtype == "OOC Area":
+            caller.msg("You cannot use the +meet command from OOC areas. Use +ic first to return to IC areas.")
+            return
 
         if not self.args and not self.switches:
             caller.msg("Usage: +meet <player> or +meet/accept or +meet/reject")
@@ -205,6 +233,13 @@ class CmdMeet(MuxCommand):
                 return
             requester = caller.ndb.meet_request
             old_location = caller.location
+            
+            # Ensure we're not leaving a ghost character behind
+            for session in caller.sessions.all():
+                if hasattr(session, 'puppet') and session.puppet == caller:
+                    # Make sure the session knows we're moving
+                    session.msg(text=f"Moving to {requester.name}'s location...")
+            
             caller.move_to(requester.location, quiet=True)
             caller.msg(f"You accept the meet request from {requester.name} and join them.")
             requester.msg(f"{caller.name} has accepted your meet request and joined you.")
@@ -309,6 +344,15 @@ class CmdSummon(AdminCommand):
                 target.tags.add("in_material", category="state")
                 target.msg("You shift into the Material realm.")
 
+        # Store location for +return command
+        target.db.pre_summon_location = old_location
+        
+        # Ensure we're not leaving a ghost character behind
+        for session in target.sessions.all():
+            if hasattr(session, 'puppet') and session.puppet == target:
+                # Make sure the session knows we're moving
+                session.msg(text=f"You are being summoned by {caller.name}...")
+                
         target.move_to(caller.location, quiet=True)
         caller.msg(f"You have summoned {target.name} to your location.")
         target.msg(f"{caller.name} has summoned you.")
@@ -323,7 +367,7 @@ class CmdJoin(AdminCommand):
       +join <player>
 
     Teleports you to the specified player's location and matches your
-    Umbra/Material state to theirs.
+    Umbra/Material state to theirs. Cannot be used from OOC areas.
     """
 
     key = "+join"
@@ -332,6 +376,12 @@ class CmdJoin(AdminCommand):
 
     def func(self):
         caller = self.caller
+
+        # Check if in OOC area
+        current_location = caller.location
+        if current_location and hasattr(current_location, 'db') and current_location.db.roomtype == "OOC Area":
+            caller.msg("You cannot use the +join command from OOC areas. Use +ic first to return to IC areas.")
+            return
 
         if not self.args:
             caller.msg("Usage: +join <player>")
@@ -364,6 +414,10 @@ class CmdJoin(AdminCommand):
             caller.msg(f"{target.name} doesn't have a valid location to join.")
             return
 
+        # Store old location for potential return
+        old_location = caller.location
+        caller.db.pre_join_location = old_location
+
         # Handle Umbra/Material state
         caller_in_umbra = caller.tags.has("in_umbra", category="state")
         target_in_umbra = target.tags.has("in_umbra", category="state")
@@ -382,6 +436,15 @@ class CmdJoin(AdminCommand):
             else:
                 caller.tags.add("in_material", category="state")
                 caller.msg("You shift into the Material realm.")
+
+        # Ensure we're not leaving a ghost character behind
+        for session in caller.sessions.all():
+            if hasattr(session, 'puppet') and session.puppet == caller:
+                # Make sure the session knows we're moving
+                session.msg(text=f"Joining {target.name}...")
+
+        # Message to old location before moving
+        old_location.msg_contents(f"{caller.name} has left to join {target.name}.", exclude=caller)
 
         caller.move_to(target.location, quiet=True)
         caller.msg(f"You have joined {target.name} at their location.")

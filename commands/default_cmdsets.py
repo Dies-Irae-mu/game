@@ -38,7 +38,7 @@ from commands.CmdRoomLog import CmdRoomLog
 
 from commands.CmdUmbraInteraction import CmdUmbraInteraction
 from commands.communication import CmdMeet, CmdPlusIc, CmdPlusOoc, CmdOOC, CmdSummon, CmdJoin
-from commands.admin import CmdApprove, CmdUnapprove, CmdAdminLook, CmdTestLock, CmdPuppetFreeze, CmdMassUnapprove, CmdReturn
+from commands.admin import CmdApprove, CmdUnapprove, CmdAdminLook, CmdTestLock, CmdPuppetFreeze, CmdMassUnapprove, CmdReturn, CmdCheckGhosts
 from commands.CmdPump import CmdPump
 from commands.CmdSpendGain import CmdSpendGain
 from commands.where import CmdWhere
@@ -69,7 +69,7 @@ from commands.CmdAlias import CmdAlias
 from commands.CmdLFRP import CmdLFRP
 from evennia.commands.default import cmdset_character, cmdset_account
 from commands.CmdXP import CmdXP
-from commands.CmdXPCost import CmdXPCost
+#from commands.CmdXPCost import CmdXPCost
 from commands.CmdWho import CmdWho, CmdCensus
 from commands.housing import CmdRent, CmdManageHome
 from commands.comms import CustomCmdChannel, CmdNotifications
@@ -147,7 +147,7 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdFinger())
         self.add(CmdSelfStat())
         self.add(CmdXP())
-        self.add(CmdXPCost())
+        #self.add(CmdXPCost())
         self.add(CmdWho())
         self.add(CmdCensus())
         self.add(CmdRent())
@@ -211,6 +211,7 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdSetWyrmTaint())
         self.add(CmdRoom())
         self.add(CmdDebugXP())
+        self.add(CmdCheckGhosts())
         
         # Add equipment commands to account cmdset to make them globally available
         # This allows using these commands even when not in the same room as the target
