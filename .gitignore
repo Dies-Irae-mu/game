@@ -58,3 +58,12 @@ nosetests.xml
 
 media
 static
+
+# Evennia Auto-Update System Configuration
+Scripts/config.sh
+
+# Log files
+/var/log/evennia_*.log
+
+# Backup files
+backups/
