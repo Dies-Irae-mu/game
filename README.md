@@ -83,6 +83,35 @@ If `evennia` commands are not recognized, try reinstalling Evennia:
 pip install evennia
 ```
 
+## Development Setup
+
+### Git Hooks Setup
+
+This repository includes git hooks to protect sensitive files and ensure a smooth development experience. The hooks will:
+
+- Prevent accidental deletion of sensitive files (`settings.py`, `secret_settings.py`, `evennia.db3`)
+- Automatically backup sensitive files before commits
+- Restore sensitive files if they're missing after branch switches or merges
+
+To set up the git hooks:
+
+1. Run the setup script:
+   ```bash
+   python Scripts/setup_dev.py
+   ```
+
+This will:
+- Create a `settings.py.template` from your current `settings.py` (if it doesn't exist)
+- Set up the git hooks in `.git/hooks/`
+- If `settings.py` doesn't exist, it will automatically create it from `settings.py.template`
+
+The hooks will protect these sensitive files:
+- `server/conf/settings.py`
+- `server/conf/secret_settings.py`
+- `server/evennia.db3`
+
+If you try to delete any of these files through git, the operation will be blocked with a helpful error message.
+
 ---
 
 For additional support, join our community on Discord.
