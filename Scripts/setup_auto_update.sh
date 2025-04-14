@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Script to set up auto-update cron job for Evennia server
-# This script creates a cron job to automatically update and restart the Evennia server
+# Script to set up auto-restore cron job for Evennia server
+# This script creates a cron job to automatically restore from the latest backup if needed
 
 # Function to display usage
 usage() {
     echo "Usage: $0 [options]"
     echo "Options:"
     echo "  -b, --branch BRANCH      Git branch to pull from (default: main)"
-    echo "  -i, --interval MINUTES   Update interval in minutes (default: 60)"
+    echo "  -i, --interval MINUTES   Check interval in minutes (default: 60)"
     echo "  -d, --directory DIR      Game directory path (default: /root/game)"
     echo "  -e, --env ENV            Conda environment name (default: game_py311)"
     echo "  -w, --webhook URL        Discord webhook URL for notifications"
@@ -71,13 +71,13 @@ fi
 # Get the directory of this script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Create a temporary update script
-UPDATE_SCRIPT="$SCRIPT_DIR/update_game.sh"
-cat > "$UPDATE_SCRIPT" << EOF
+# Create a temporary restore script
+RESTORE_SCRIPT="$SCRIPT_DIR/restore_from_backup.sh"
+cat > "$RESTORE_SCRIPT" << EOF
 #!/bin/bash
 
-# Auto-update script for Evennia server
-# This script is called by the cron job to update and restart the Evennia server
+# Auto-restore script for Evennia server
+# This script is called by the cron job to restore from the latest backup if needed
 
 # Set the game directory
 GAME_DIRECTORY="$GAME_DIRECTORY"
@@ -85,11 +85,15 @@ GAME_DIRECTORY="$GAME_DIRECTORY"
 # Set the conda environment
 CONDA_ENV="$CONDA_ENV"
 
+# Set the conda paths
+CONDA_BASE="/root/miniconda3"
+CONDA_SH="\$CONDA_BASE/etc/profile.d/conda.sh"
+
 # Set the Discord webhook URL
 DISCORD_WEBHOOK_URL="$DISCORD_WEBHOOK_URL"
 
 # Log file
-LOG_FILE="/var/log/evennia_update.log"
+LOG_FILE="/var/log/evennia_restore.log"
 
 # Function to log messages
 log_message() {
@@ -119,79 +123,123 @@ send_discord_notification() {
     fi
 }
 
+# Function to find the latest backup
+find_latest_backup() {
+    local BACKUP_DIR="\$GAME_DIRECTORY/../backups/dated"
+    if [ ! -d "\$BACKUP_DIR" ]; then
+        log_message "Error: Backup directory does not exist: \$BACKUP_DIR"
+        return 1
+    fi
+    
+    # Find the most recent backup file
+    local LATEST_BACKUP=\$(ls -t "\$BACKUP_DIR"/backup_*.tar.gz 2>/dev/null | head -n1)
+    if [ -z "\$LATEST_BACKUP" ]; then
+        log_message "Error: No backup files found in \$BACKUP_DIR"
+        return 1
+    fi
+    
+    echo "\$LATEST_BACKUP"
+    return 0
+}
+
+# Function to check if restore is needed
+check_if_restore_needed() {
+    # Check if the server is running
+    if ! timeout 5 bash -c "source '\$CONDA_SH' && conda activate '\$CONDA_ENV' && evennia status" | grep -q "running"; then
+        log_message "Server is not running, restore may be needed"
+        return 0
+    fi
+    
+    # Check for specific error conditions that indicate restore is needed
+    if [ -f "\$GAME_DIRECTORY/server/evennia.db3" ]; then
+        if ! sqlite3 "\$GAME_DIRECTORY/server/evennia.db3" "SELECT 1;" &>/dev/null; then
+            log_message "Database appears to be corrupted, restore may be needed"
+            return 0
+        fi
+    fi
+    
+    return 1
+}
+
 # Change to the game directory
 cd "\$GAME_DIRECTORY" || {
     log_message "ERROR: Failed to change to game directory: \$GAME_DIRECTORY"
     if [ -n "\$DISCORD_WEBHOOK_URL" ]; then
-        send_discord_notification "Update Failed" "Failed to change to game directory: \$GAME_DIRECTORY" "0xe74c3c"
+        send_discord_notification "Restore Failed" "Failed to change to game directory: \$GAME_DIRECTORY" "0xe74c3c"
     fi
     exit 1
 }
 
-# Check if there are any changes to pull
-git fetch origin "$BRANCH" || {
-    log_message "ERROR: Failed to fetch from origin: $BRANCH"
-    if [ -n "\$DISCORD_WEBHOOK_URL" ]; then
-        send_discord_notification "Update Failed" "Failed to fetch from origin: $BRANCH" "0xe74c3c"
-    fi
-    exit 1
-}
-
-# Check if there are any changes to pull
-if ! git diff --quiet HEAD origin/$BRANCH; then
-    log_message "Changes detected, pulling from origin: $BRANCH"
+# Check if restore is needed
+if check_if_restore_needed; then
+    log_message "Restore condition detected, attempting to restore from backup"
     
-    # Send Discord notification about the update
+    # Send Discord notification about the restore
     if [ -n "\$DISCORD_WEBHOOK_URL" ]; then
-        send_discord_notification "Update Started" "Pulling changes from origin: $BRANCH" "0x3498db"
+        send_discord_notification "Restore Started" "Restore condition detected, attempting to restore from backup" "0x3498db"
     fi
     
-    # Pull the changes
-    if ! git pull origin "$BRANCH"; then
-        log_message "ERROR: Failed to pull from origin: $BRANCH"
+    # Find the latest backup
+    LATEST_BACKUP=\$(find_latest_backup)
+    if [ -z "\$LATEST_BACKUP" ]; then
+        log_message "ERROR: Failed to find latest backup"
         if [ -n "\$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Update Failed" "Failed to pull from origin: $BRANCH" "0xe74c3c"
+            send_discord_notification "Restore Failed" "Failed to find latest backup" "0xe74c3c"
         fi
         exit 1
     fi
     
-    log_message "Changes pulled successfully, restarting server"
+    # Create a backup of the current state before restore
+    if ! "\$SCRIPT_DIR/backup_game.sh"; then
+        log_message "WARNING: Failed to create backup before restore"
+        if [ -n "\$DISCORD_WEBHOOK_URL" ]; then
+            send_discord_notification "Restore Warning" "Failed to create backup before restore" "0xf39c12"
+        fi
+    fi
+    
+    # Extract the backup
+    if ! tar -xzf "\$LATEST_BACKUP" -C "\$GAME_DIRECTORY/.."; then
+        log_message "ERROR: Failed to extract backup"
+        if [ -n "\$DISCORD_WEBHOOK_URL" ]; then
+            send_discord_notification "Restore Failed" "Failed to extract backup" "0xe74c3c"
+        fi
+        exit 1
+    fi
     
     # Restart the server
     if ! "\$SCRIPT_DIR/restart_prod.sh"; then
-        log_message "ERROR: Failed to restart server"
+        log_message "ERROR: Failed to restart server after restore"
         if [ -n "\$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Update Failed" "Failed to restart server" "0xe74c3c"
+            send_discord_notification "Restore Failed" "Failed to restart server after restore" "0xe74c3c"
         fi
         exit 1
     fi
     
-    log_message "Server restarted successfully"
+    log_message "Server restored and restarted successfully"
     
-    # Send Discord notification about the successful update
+    # Send Discord notification about the successful restore
     if [ -n "\$DISCORD_WEBHOOK_URL" ]; then
-        send_discord_notification "Update Completed" "Changes pulled and server restarted successfully" "0x2ecc71"
+        send_discord_notification "Restore Completed" "Server restored and restarted successfully" "0x2ecc71"
     fi
 else
-    log_message "No changes detected"
+    log_message "No restore needed"
 fi
 
 exit 0
 EOF
 
-# Make the update script executable
-chmod +x "$UPDATE_SCRIPT"
+# Make the restore script executable
+chmod +x "$RESTORE_SCRIPT"
 
 # Add the cron job
-CRON_JOB="*/$INTERVAL * * * * $UPDATE_SCRIPT > /dev/null 2>&1"
-(crontab -l 2>/dev/null | grep -v "$UPDATE_SCRIPT"; echo "$CRON_JOB") | crontab -
+CRON_JOB="*/$INTERVAL * * * * $RESTORE_SCRIPT > /dev/null 2>&1"
+(crontab -l 2>/dev/null | grep -v "$RESTORE_SCRIPT"; echo "$CRON_JOB") | crontab -
 
-echo "Auto-update cron job added successfully"
-echo "Update interval: $INTERVAL minutes"
-echo "Git branch: $BRANCH"
+echo "Auto-restore cron job added successfully"
+echo "Check interval: $INTERVAL minutes"
 echo "Game directory: $GAME_DIRECTORY"
 echo "Conda environment: $CONDA_ENV"
-echo "Update script: $UPDATE_SCRIPT"
-echo "Log file: /var/log/evennia_update.log"
+echo "Restore script: $RESTORE_SCRIPT"
+echo "Log file: /var/log/evennia_restore.log"
 
 exit 0 
