@@ -30,7 +30,7 @@ The Evennia Auto-Update System provides automated management of your Evennia gam
 Options:
   -d, --directory DIR     Game directory path (default: /root/game)
   -e, --env ENV           Conda environment name (default: game_py311)
-  -b, --branch BRANCH     Git branch to pull from (default: main)
+  -b, --branch BRANCH     Git branch to pull from (default: production)
   -i, --interval MIN      Update interval in minutes (default: 60)
   -w, --webhook URL       Discord webhook URL (optional)
   -h, --help              Display help message

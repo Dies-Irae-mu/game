@@ -17,7 +17,7 @@
 # OPTIONS:
 #   -d, --directory DIR     Game directory path (default: /root/game)
 #   -e, --env ENV           Conda environment name (default: game_py311)
-#   -b, --branch BRANCH     Git branch to pull from (default: main)
+#   -b, --branch BRANCH     Git branch to pull from (default: production)
 #   -i, --interval MIN      Update interval in minutes (default: 60)
 #   -w, --webhook URL       Discord webhook URL (optional)
 #   -h, --help              Display help message
@@ -47,7 +47,7 @@ usage() {
     echo "Options:"
     echo "  -d, --directory DIR     Game directory path (default: /root/game)"
     echo "  -e, --env ENV           Conda environment name (default: game_py311)"
-    echo "  -b, --branch BRANCH     Git branch to pull from (default: main)"
+    echo "  -b, --branch BRANCH     Git branch to pull from (default: production)"
     echo "  -i, --interval MIN      Update interval in minutes (default: 60)"
     echo "  -w, --webhook URL       Discord webhook URL (optional)"
     echo "  -h, --help              Display this help message"
@@ -63,7 +63,7 @@ PYTHON_VERSION="3.12.4"
 CONDA_VERSION="24.5.0"
 USER_ID="0"
 GROUP_ID="0"
-GIT_BRANCH="main"
+GIT_BRANCH="production"
 UPDATE_INTERVAL=60
 DISCORD_WEBHOOK_URL=""
 
