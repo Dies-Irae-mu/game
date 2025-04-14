@@ -50,14 +50,28 @@ create_backup() {
     fi
     
     # Create backups directory if it doesn't exist
-    if [ ! -d "$BACKUPS_DIR" ]; then
-        log_message "Creating backups directory: $BACKUPS_DIR"
-        mkdir -p "$BACKUPS_DIR"
+    if [ ! -d "$BACKUP_DIR" ]; then
+        log_message "Creating backups directory: $BACKUP_DIR"
+        if ! mkdir -p "$BACKUP_DIR"; then
+            log_message "Failed to create backups directory: $BACKUP_DIR"
+            send_discord_notification "Backup Failed" "Failed to create backups directory: $BACKUP_DIR" "0xe74c3c"
+            return 1
+        fi
+    fi
+    
+    # Create dated backups directory if it doesn't exist
+    if [ ! -d "$BACKUP_DATED_DIR" ]; then
+        log_message "Creating dated backups directory: $BACKUP_DATED_DIR"
+        if ! mkdir -p "$BACKUP_DATED_DIR"; then
+            log_message "Failed to create dated backups directory: $BACKUP_DATED_DIR"
+            send_discord_notification "Backup Failed" "Failed to create dated backups directory: $BACKUP_DATED_DIR" "0xe74c3c"
+            return 1
+        fi
     fi
     
     # Generate backup name
     BACKUP_NAME="backup_$(date +%Y%m%d_%H%M%S)"
-    BACKUP_PATH="$BACKUPS_DIR/$BACKUP_NAME.tar.gz"
+    BACKUP_PATH="$BACKUP_DATED_DIR/$BACKUP_NAME.tar.gz"
     
     # Create backup
     if ! tar -czf "$BACKUP_PATH" -C "$(dirname "$GAME_DIRECTORY")" "$(basename "$GAME_DIRECTORY")" --exclude="*.pyc" --exclude="__pycache__" --exclude=".git" --exclude="backups"; then

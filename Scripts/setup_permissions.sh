@@ -106,16 +106,29 @@ for LOG_FILE in "${LOG_FILES[@]}"; do
 done
 
 # Create backups directory if it doesn't exist
-BACKUPS_DIR="$(dirname "$SCRIPT_DIR")/backups"
-if [ ! -d "$BACKUPS_DIR" ]; then
-    echo "Creating backups directory: $BACKUPS_DIR"
-    mkdir -p "$BACKUPS_DIR"
-    chmod 755 "$BACKUPS_DIR"
-    chown "$OWNER:$GROUP" "$BACKUPS_DIR"
+BACKUP_DIR="$(dirname "$SCRIPT_DIR")/backups"
+if [ ! -d "$BACKUP_DIR" ]; then
+    echo "Creating backups directory: $BACKUP_DIR"
+    mkdir -p "$BACKUP_DIR"
+    chmod 755 "$BACKUP_DIR"
+    chown "$OWNER:$GROUP" "$BACKUP_DIR"
 else
-    echo "Backups directory already exists: $BACKUPS_DIR"
-    chmod 755 "$BACKUPS_DIR"
-    chown "$OWNER:$GROUP" "$BACKUPS_DIR"
+    echo "Backups directory already exists: $BACKUP_DIR"
+    chmod 755 "$BACKUP_DIR"
+    chown "$OWNER:$GROUP" "$BACKUP_DIR"
+fi
+
+# Create dated backups directory if it doesn't exist
+BACKUP_DATED_DIR="$BACKUP_DIR/dated"
+if [ ! -d "$BACKUP_DATED_DIR" ]; then
+    echo "Creating dated backups directory: $BACKUP_DATED_DIR"
+    mkdir -p "$BACKUP_DATED_DIR"
+    chmod 755 "$BACKUP_DATED_DIR"
+    chown "$OWNER:$GROUP" "$BACKUP_DATED_DIR"
+else
+    echo "Dated backups directory already exists: $BACKUP_DATED_DIR"
+    chmod 755 "$BACKUP_DATED_DIR"
+    chown "$OWNER:$GROUP" "$BACKUP_DATED_DIR"
 fi
 
 echo "Permissions setup complete!"

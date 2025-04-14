@@ -39,6 +39,7 @@ A robust system for automatically updating and managing an Evennia MUD server wi
 3. The setup script will:
    - Create a configuration file (`config.sh`)
    - Set up log files
+   - Run `setup_permissions.sh` to set up proper permissions
    - Make all scripts executable
    - Add a cron job for automatic updates
 
@@ -107,6 +108,10 @@ export SCRIPT_DIR
 ### `setup.sh`
 
 Sets up the auto-update system by creating a configuration file and setting up the necessary permissions and cron jobs.
+
+### `setup_permissions.sh`
+
+Sets up the proper permissions for all scripts and log files. This script is called by `setup.sh` and should not be run directly.
 
 ### `update_game.sh`
 
