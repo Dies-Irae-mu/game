@@ -1,379 +1,322 @@
 #!/bin/bash
 
-# Script to restart the Evennia server with error handling and rollback capabilities
-# This script is called by the auto-update cron job when changes are detected
+# Evennia Auto-Update System - Server Restart Script
+# This script restarts the Evennia server with error handling and Discord notifications.
 
-# Set the game directory - CHANGE THIS to your actual game directory path
-GAME_DIRECTORY="/root/game"
+# Enable strict error handling
+set -euo pipefail
 
-# Set the conda environment - CHANGE THIS to your actual conda environment name
-CONDA_ENV="game_py311"
+# Import configuration
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_FILE="$SCRIPT_DIR/config.sh"
 
-# Log file
-LOG_FILE="/var/log/evennia_restart.log"
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Error: Configuration file not found: $CONFIG_FILE"
+    exit 1
+fi
 
-# Discord webhook URL - CHANGE THIS to your actual Discord webhook URL
-# To get a webhook URL, go to your Discord server settings > Integrations > Webhooks > New Webhook
-DISCORD_WEBHOOK_URL=""
+source "$CONFIG_FILE"
 
-# Enable error handling
-set -e
-trap 'error_handler $? $LINENO $BASH_LINENO "$BASH_COMMAND" $(printf "::%s" ${FUNCNAME[@]:-})' ERR
+# Log file for this script
+LOG_FILE="$RESTART_LOG"
 
-# Function to handle errors
-error_handler() {
-    local exit_code=$1
-    local line_no=$2
-    local bash_lineno=$3
-    local last_command=$4
-    local func_trace=$5
-    
-    # Log the error
-    log_message "ERROR: Command '$last_command' failed with exit code $exit_code at line $line_no"
-    log_message "Function trace: $func_trace"
-    
-    # Send Discord notification if configured
-    if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-        send_discord_notification "Script Error" "Command '$last_command' failed with exit code $exit_code at line $line_no\nFunction trace: $func_trace" "0xe74c3c"
-    fi
-    
-    # Don't exit here, let the script continue with error recovery
-}
+# Check if timeout command is available
+if ! command -v timeout &> /dev/null; then
+    echo "Warning: timeout command not found. Using default timeout values."
+    # These will be overridden by config.sh values if available
+    STOP_TIMEOUT=60
+    START_TIMEOUT=120
+fi
 
 # Function to log messages
 log_message() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a "$LOG_FILE"
 }
 
 # Function to send Discord notification
 send_discord_notification() {
-    local TITLE="$1"
-    local MESSAGE="$2"
-    local COLOR="$3"
-    
-    # Get the directory of this script
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    
-    # Check if discord_notify.sh exists
-    if [ -f "$SCRIPT_DIR/discord_notify.sh" ]; then
-        # Make sure it's executable
-        chmod +x "$SCRIPT_DIR/discord_notify.sh"
-        
-        # Send the notification
-        if ! "$SCRIPT_DIR/discord_notify.sh" -w "$DISCORD_WEBHOOK_URL" -t "$TITLE" -m "$MESSAGE" -c "$COLOR"; then
-            log_message "WARNING: Failed to send Discord notification: $TITLE"
+    if [ -n "$DISCORD_WEBHOOK_URL" ]; then
+        if [ ! -f "$SCRIPT_DIR/discord_notify.sh" ]; then
+            log_message "Error: discord_notify.sh script not found"
+            return 1
         fi
-    else
-        log_message "WARNING: Discord notification script not found: $SCRIPT_DIR/discord_notify.sh"
+        "$SCRIPT_DIR/discord_notify.sh" -w "$DISCORD_WEBHOOK_URL" -t "$1" -m "$2" -c "$3"
     fi
 }
 
+# Function to handle errors
+error_handler() {
+    local exit_code=$?
+    local line_number=$1
+    local function_name=$2
+    log_message "Error in $function_name at line $line_number (exit code: $exit_code)"
+    send_discord_notification "Restart Failed" "Error in $function_name at line $line_number (exit code: $exit_code)" "0xe74c3c"
+    exit $exit_code
+}
+
+# Set up error handling
+trap 'error_handler ${LINENO} "${FUNCNAME[0]}"' ERR
+
 # Function to create a backup
 create_backup() {
-    log_message "Creating backup before restart"
-    BACKUP_NAME="pre_restart_backup_$(date +%Y%m%d_%H%M%S)"
+    log_message "Creating backup before restart..."
+    send_discord_notification "Creating Backup" "Creating backup before restarting server" "0x3498db"
     
-    # Get the directory of this script
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    
-    # Check if backup script exists
     if [ ! -f "$SCRIPT_DIR/backup_game.sh" ]; then
-        log_message "ERROR: Backup script not found: $SCRIPT_DIR/backup_game.sh"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Backup Failed" "Backup script not found: $SCRIPT_DIR/backup_game.sh" "0xe74c3c"
-        fi
+        log_message "Error: backup_game.sh script not found"
+        send_discord_notification "Backup Failed" "backup_game.sh script not found" "0xe74c3c"
         return 1
     fi
     
-    # Make sure it's executable
-    chmod +x "$SCRIPT_DIR/backup_game.sh"
-    
-    # Run the backup script
-    if ! "$SCRIPT_DIR/backup_game.sh" -d "$GAME_DIRECTORY" -n "$BACKUP_NAME" -w "$DISCORD_WEBHOOK_URL"; then
-        log_message "ERROR: Backup script failed with exit code $?"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Backup Failed" "Backup script failed with exit code $?" "0xe74c3c"
-        fi
+    # Check if backup directory exists and is writable
+    if [ ! -d "$(dirname "$BACKUP_DIR")" ]; then
+        log_message "Error: Backup parent directory does not exist: $(dirname "$BACKUP_DIR")"
+        send_discord_notification "Backup Failed" "Backup parent directory does not exist" "0xe74c3c"
         return 1
     fi
     
-    log_message "Backup created successfully: $BACKUP_NAME"
+    if [ ! -w "$(dirname "$BACKUP_DIR")" ]; then
+        log_message "Error: Backup parent directory is not writable: $(dirname "$BACKUP_DIR")"
+        send_discord_notification "Backup Failed" "Backup parent directory is not writable" "0xe74c3c"
+        return 1
+    fi
+    
+    if ! "$SCRIPT_DIR/backup_game.sh"; then
+        log_message "Error: Failed to create backup"
+        send_discord_notification "Backup Failed" "Failed to create backup before restart" "0xe74c3c"
+        return 1
+    fi
+    
+    log_message "Backup created successfully"
+    send_discord_notification "Backup Created" "Backup created successfully before restart" "0x2ecc71"
     return 0
 }
 
 # Function to restore from backup
 restore_from_backup() {
-    local BACKUP_NAME=$1
-    log_message "Restoring from backup: $BACKUP_NAME"
+    local backup_file="$1"
     
-    # Get the parent directory of the game directory
-    PARENT_DIR=$(dirname "$GAME_DIRECTORY")
-    BACKUPS_DIR="$PARENT_DIR/backups"
-    
-    # Check if restore script exists
-    if [ ! -f "$BACKUPS_DIR/restore_backup.sh" ]; then
-        log_message "ERROR: Restore script not found: $BACKUPS_DIR/restore_backup.sh"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Restore Failed" "Restore script not found: $BACKUPS_DIR/restore_backup.sh" "0xe74c3c"
-        fi
+    # Check if backup file exists
+    if [ ! -f "$backup_file" ]; then
+        log_message "Backup file $backup_file does not exist"
+        send_discord_notification "Backup Restore Failed" "Backup file $backup_file does not exist" "red"
         return 1
     fi
     
-    # Make sure it's executable
-    chmod +x "$BACKUPS_DIR/restore_backup.sh"
-    
-    # Run the restore script
-    if ! "$BACKUPS_DIR/restore_backup.sh" -b "$BACKUP_NAME" -d "$GAME_DIRECTORY" -w "$DISCORD_WEBHOOK_URL"; then
-        log_message "ERROR: Restore script failed with exit code $?"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Restore Failed" "Restore script failed with exit code $?" "0xe74c3c"
-        fi
+    # Create a backup of the current state before restoring
+    log_message "Creating backup of current state before restore"
+    if ! create_backup; then
+        log_message "Failed to create backup before restore"
+        send_discord_notification "Backup Restore Failed" "Failed to create backup before restore" "red"
         return 1
     fi
     
-    log_message "Restore completed successfully"
+    # Extract the backup
+    log_message "Extracting backup from $backup_file"
+    if ! tar -xzf "$backup_file" -C "$GAME_DIRECTORY/.."; then
+        log_message "Failed to extract backup"
+        send_discord_notification "Backup Restore Failed" "Failed to extract backup" "red"
+        return 1
+    fi
+    
+    log_message "Backup restored successfully"
+    send_discord_notification "Backup Restored" "Backup restored successfully from $backup_file" "green"
     return 0
 }
 
 # Function to revert the last git pull
 revert_git_pull() {
-    log_message "Reverting the last git pull"
+    log_message "Reverting last git pull..."
+    send_discord_notification "Reverting Changes" "Attempting to revert last git pull" "0x3498db"
     
-    # Check if we're in a git repository
-    if [ ! -d "$GAME_DIRECTORY/.git" ]; then
-        log_message "ERROR: Not a git repository: $GAME_DIRECTORY"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Git Revert Failed" "Not a git repository: $GAME_DIRECTORY" "0xe74c3c"
-        fi
-        return 1
-    fi
-    
-    # Change to the game directory
-    cd "$GAME_DIRECTORY" || {
-        log_message "ERROR: Failed to change to game directory: $GAME_DIRECTORY"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Git Revert Failed" "Failed to change to game directory: $GAME_DIRECTORY" "0xe74c3c"
-        fi
-        return 1
-    }
-    
-    # Check if there are any commits to revert to
-    if ! git reflog | grep -q "HEAD@{1}"; then
-        log_message "ERROR: No previous commit to revert to"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Git Revert Failed" "No previous commit to revert to" "0xe74c3c"
-        fi
-        return 1
-    fi
-    
-    # Revert the last pull
-    if ! git reset --hard HEAD@{1}; then
-        log_message "ERROR: Failed to revert git pull with exit code $?"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Git Revert Failed" "Failed to revert git pull with exit code $?" "0xe74c3c"
-        fi
-        return 1
-    fi
-    
-    log_message "Git pull reverted successfully"
-    return 0
-}
-
-# Function to restart the Evennia server
-restart_evennia() {
-    log_message "Restarting Evennia server"
-    
-    # Check if conda is installed
-    if ! command -v conda &> /dev/null; then
-        log_message "ERROR: Conda is not installed or not in PATH"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Server Restart Failed" "Conda is not installed or not in PATH" "0xe74c3c"
-        fi
-        return 1
-    fi
-    
-    # Activate conda environment
-    if ! source "$(conda info --base)/etc/profile.d/conda.sh"; then
-        log_message "ERROR: Failed to source conda.sh"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Server Restart Failed" "Failed to source conda.sh" "0xe74c3c"
-        fi
-        return 1
-    fi
-    
-    if ! conda activate "$CONDA_ENV"; then
-        log_message "ERROR: Failed to activate conda environment: $CONDA_ENV"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Server Restart Failed" "Failed to activate conda environment: $CONDA_ENV" "0xe74c3c"
-        fi
-        return 1
-    fi
-    
-    # Check if evennia is installed
-    if ! command -v evennia &> /dev/null; then
-        log_message "ERROR: Evennia is not installed or not in PATH"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Server Restart Failed" "Evennia is not installed or not in PATH" "0xe74c3c"
-        fi
+    # Check if git is available
+    if ! command -v git &> /dev/null; then
+        log_message "Error: git command not found"
+        send_discord_notification "Revert Failed" "git command not found" "0xe74c3c"
         return 1
     fi
     
     # Change to game directory
-    cd "$GAME_DIRECTORY" || {
-        log_message "ERROR: Failed to change to game directory: $GAME_DIRECTORY"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Server Restart Failed" "Failed to change to game directory: $GAME_DIRECTORY" "0xe74c3c"
-        fi
-        return 1
-    }
+    cd "$GAME_DIRECTORY" || return 1
     
-    # Stop the server
-    log_message "Stopping Evennia server"
-    if ! evennia stop; then
-        log_message "WARNING: Failed to stop Evennia server gracefully, attempting to force stop"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Server Stop Warning" "Failed to stop Evennia server gracefully, attempting to force stop" "0xf39c12"
-        fi
+    # Check if we're in a git repository
+    if ! git rev-parse --git-dir &> /dev/null; then
+        log_message "Error: Not a git repository: $GAME_DIRECTORY"
+        send_discord_notification "Revert Failed" "Not a git repository" "0xe74c3c"
+        return 1
+    fi
+    
+    # Check if there are uncommitted changes
+    if [ -n "$(git status --porcelain)" ]; then
+        log_message "Warning: Uncommitted changes detected. These changes will be lost during revert."
+        send_discord_notification "Revert Warning" "Uncommitted changes detected. These changes will be lost during revert." "0xf39c12"
         
-        # Force stop the server
-        if pgrep -f "evennia" > /dev/null; then
-            pkill -f "evennia"
-            sleep 2
-            
-            # Check if server is still running
-            if pgrep -f "evennia" > /dev/null; then
-                log_message "ERROR: Failed to force stop Evennia server"
-                if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-                    send_discord_notification "Server Stop Failed" "Failed to force stop Evennia server" "0xe74c3c"
-                fi
-                return 1
-            fi
+        # Create a temporary stash to save uncommitted changes
+        log_message "Creating temporary stash to save uncommitted changes..."
+        if ! git stash push -m "Auto-stash before revert $(date '+%Y-%m-%d %H:%M:%S')"; then
+            log_message "Warning: Failed to stash uncommitted changes. Proceeding with revert anyway."
+            send_discord_notification "Revert Warning" "Failed to stash uncommitted changes. Proceeding with revert anyway." "0xf39c12"
+        else
+            log_message "Uncommitted changes stashed successfully"
         fi
     fi
     
-    # Wait for the server to stop
+    # Check if there are commits to revert to
+    if ! git rev-parse HEAD~1 &> /dev/null; then
+        log_message "Error: No previous commits to revert to"
+        send_discord_notification "Revert Failed" "No previous commits to revert to" "0xe74c3c"
+        return 1
+    fi
+    
+    # Get the current commit hash for logging
+    CURRENT_COMMIT=$(git rev-parse --short HEAD)
+    PREVIOUS_COMMIT=$(git rev-parse --short HEAD~1)
+    
+    log_message "Reverting from commit $CURRENT_COMMIT to $PREVIOUS_COMMIT"
+    
+    # Attempt to revert
+    if ! git reset --hard HEAD~1; then
+        log_message "Error: Failed to revert git pull"
+        send_discord_notification "Revert Failed" "Failed to revert git pull" "0xe74c3c"
+        return 1
+    fi
+    
+    log_message "Reverted git pull successfully from $CURRENT_COMMIT to $PREVIOUS_COMMIT"
+    send_discord_notification "Changes Reverted" "Successfully reverted from commit $CURRENT_COMMIT to $PREVIOUS_COMMIT" "0x2ecc71"
+    return 0
+}
+
+# Function to restart the Evennia server
+restart_server() {
+    log_message "Restarting Evennia server..."
+    send_discord_notification "Restarting Server" "Attempting to restart Evennia server" "0x3498db"
+    
+    # Check if conda is available
+    if ! command -v conda &> /dev/null; then
+        log_message "Error: conda command not found"
+        send_discord_notification "Restart Failed" "conda command not found" "0xe74c3c"
+        return 1
+    fi
+    
+    # Check if the conda environment exists
+    if ! conda env list | grep -q "^$CONDA_ENV "; then
+        log_message "Error: Conda environment '$CONDA_ENV' not found"
+        send_discord_notification "Restart Failed" "Conda environment '$CONDA_ENV' not found" "0xe74c3c"
+        return 1
+    fi
+    
+    # Change to game directory
+    cd "$GAME_DIRECTORY" || return 1
+    
+    # Get conda base directory
+    CONDA_BASE=$(conda info --base)
+    if [ ! -d "$CONDA_BASE" ]; then
+        log_message "Error: Conda base directory not found: $CONDA_BASE"
+        send_discord_notification "Restart Failed" "Conda base directory not found: $CONDA_BASE" "0xe74c3c"
+        return 1
+    fi
+    
+    # Check if conda.sh exists
+    CONDA_SH="$CONDA_BASE/etc/profile.d/conda.sh"
+    if [ ! -f "$CONDA_SH" ]; then
+        log_message "Error: Conda initialization script not found: $CONDA_SH"
+        send_discord_notification "Restart Failed" "Conda initialization script not found: $CONDA_SH" "0xe74c3c"
+        return 1
+    fi
+    
+    # Check if evennia command is available in the conda environment
+    if ! timeout 5 bash -c "source '$CONDA_SH' && conda activate '$CONDA_ENV' && command -v evennia &> /dev/null"; then
+        log_message "Error: evennia command not found in conda environment '$CONDA_ENV'"
+        send_discord_notification "Restart Failed" "evennia command not found in conda environment" "0xe74c3c"
+        return 1
+    fi
+    
+    # Stop the server with timeout
+    log_message "Stopping Evennia server..."
+    if ! timeout $STOP_TIMEOUT bash -c "source '$CONDA_SH' && conda activate '$CONDA_ENV' && evennia stop"; then
+        log_message "Error: Failed to stop Evennia server within $STOP_TIMEOUT seconds"
+        send_discord_notification "Restart Failed" "Failed to stop Evennia server within $STOP_TIMEOUT seconds" "0xe74c3c"
+        return 1
+    fi
+    
+    # Wait for the server to fully stop
+    log_message "Waiting for server to fully stop..."
     sleep 5
     
-    # Start the server
-    log_message "Starting Evennia server"
-    if ! evennia start; then
-        log_message "ERROR: Failed to start Evennia server with exit code $?"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Server Start Failed" "Failed to start Evennia server with exit code $?" "0xe74c3c"
+    # Check if the server is still running
+    if timeout 5 bash -c "source '$CONDA_SH' && conda activate '$CONDA_ENV' && evennia status" | grep -q "running"; then
+        log_message "Warning: Server is still running after stop command. Attempting to force stop..."
+        send_discord_notification "Restart Warning" "Server is still running after stop command. Attempting to force stop." "0xf39c12"
+        
+        # Try to force stop the server
+        if ! timeout 10 bash -c "source '$CONDA_SH' && conda activate '$CONDA_ENV' && evennia stop --force"; then
+            log_message "Error: Failed to force stop Evennia server"
+            send_discord_notification "Restart Failed" "Failed to force stop Evennia server" "0xe74c3c"
+            return 1
         fi
+        
+        # Wait again for the server to stop
+        sleep 5
+    fi
+    
+    # Start the server with timeout
+    log_message "Starting Evennia server..."
+    if ! timeout $START_TIMEOUT bash -c "source '$CONDA_SH' && conda activate '$CONDA_ENV' && evennia start"; then
+        log_message "Error: Failed to start Evennia server within $START_TIMEOUT seconds"
+        send_discord_notification "Restart Failed" "Failed to start Evennia server within $START_TIMEOUT seconds" "0xe74c3c"
         return 1
     fi
     
-    # Wait for the server to start
-    sleep 10
-    
-    # Check if the server is running
-    if ! pgrep -f "evennia" > /dev/null; then
-        log_message "ERROR: Evennia server is not running after start attempt"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Server Start Failed" "Evennia server is not running after start attempt" "0xe74c3c"
-        fi
+    # Verify the server is running
+    log_message "Verifying server is running..."
+    if ! timeout 10 bash -c "source '$CONDA_SH' && conda activate '$CONDA_ENV' && evennia status" | grep -q "running"; then
+        log_message "Error: Server failed to start properly"
+        send_discord_notification "Restart Failed" "Server failed to start properly" "0xe74c3c"
         return 1
     fi
     
     log_message "Evennia server restarted successfully"
+    send_discord_notification "Server Restarted" "Evennia server restarted successfully" "0x2ecc71"
     return 0
 }
 
 # Main execution
-log_message "Starting Evennia server restart process"
+log_message "Starting server restart process"
+send_discord_notification "Restart Process Started" "Starting server restart process" "0x3498db"
 
-# Send Discord notification about the restart attempt
-if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-    send_discord_notification "Server Restart Initiated" "Starting Evennia server restart process" "0x3498db"
-fi
-
-# Create a backup before attempting restart
-BACKUP_NAME=""
-if create_backup; then
-    BACKUP_NAME="pre_restart_backup_$(date +%Y%m%d_%H%M%S)"
-    if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-        send_discord_notification "Backup Created" "Backup created successfully: $BACKUP_NAME" "0x2ecc71"
-    fi
-else
-    if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-        send_discord_notification "Backup Failed" "Failed to create backup before restart" "0xe74c3c"
-    fi
+# Create a backup before restarting
+if ! create_backup; then
+    log_message "Error: Failed to create backup, aborting restart"
+    send_discord_notification "Restart Aborted" "Failed to create backup, aborting restart" "0xe74c3c"
+    exit 1
 fi
 
 # Attempt to restart the server
-if restart_evennia; then
-    log_message "Evennia server restart completed successfully"
-    if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-        send_discord_notification "Server Restart Successful" "Evennia server has been restarted successfully" "0x2ecc71"
-    fi
-    exit 0
-else
-    log_message "First restart attempt failed, reverting git pull and trying again"
-    if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-        send_discord_notification "Server Restart Failed" "First restart attempt failed, reverting git pull and trying again" "0xf39c12"
+if ! restart_server; then
+    log_message "Error: Failed to restart server, attempting to restore from backup"
+    send_discord_notification "Restart Failed" "Failed to restart server, attempting to restore from backup" "0xe74c3c"
+    
+    # Try to restore from backup
+    if ! restore_from_backup; then
+        log_message "Error: Failed to restore from backup, attempting to revert git pull"
+        send_discord_notification "Restore Failed" "Failed to restore from backup, attempting to revert git pull" "0xe74c3c"
+        
+        # Try to revert the last git pull
+        if ! revert_git_pull; then
+            log_message "Error: All recovery attempts failed"
+            send_discord_notification "Recovery Failed" "All recovery attempts failed" "0xe74c3c"
+            exit 1
+        fi
     fi
     
-    # Revert the last git pull
-    if revert_git_pull; then
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Git Pull Reverted" "Successfully reverted the last git pull" "0x3498db"
-        fi
-        
-        # Try to restart again
-        if restart_evennia; then
-            log_message "Evennia server restart completed successfully after git revert"
-            if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-                send_discord_notification "Server Restart Successful" "Evennia server has been restarted successfully after git revert" "0x2ecc71"
-            fi
-            exit 0
-        else
-            log_message "Second restart attempt failed, restoring from backup"
-            if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-                send_discord_notification "Server Restart Failed Again" "Second restart attempt failed, restoring from backup" "0xe67e22"
-            fi
-            
-            # Restore from backup
-            if [ -n "$BACKUP_NAME" ]; then
-                if restore_from_backup "$BACKUP_NAME"; then
-                    if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-                        send_discord_notification "Backup Restored" "Successfully restored from backup: $BACKUP_NAME" "0x3498db"
-                    fi
-                    
-                    # Try to restart one more time
-                    if restart_evennia; then
-                        log_message "Evennia server restart completed successfully after restore"
-                        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-                            send_discord_notification "Server Restart Successful" "Evennia server has been restarted successfully after backup restore" "0x2ecc71"
-                        fi
-                        exit 0
-                    else
-                        log_message "Final restart attempt failed after restore"
-                        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-                            send_discord_notification "Server Restart Failed Completely" "All restart attempts failed. Manual intervention required." "0xe74c3c"
-                        fi
-                        exit 1
-                    fi
-                else
-                    log_message "Failed to restore from backup"
-                    if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-                        send_discord_notification "Backup Restore Failed" "Failed to restore from backup: $BACKUP_NAME" "0xe74c3c"
-                    fi
-                    exit 1
-                fi
-            else
-                log_message "No backup available to restore from"
-                if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-                    send_discord_notification "No Backup Available" "No backup available to restore from. Manual intervention required." "0xe74c3c"
-                fi
-                exit 1
-            fi
-        fi
-    else
-        log_message "Failed to revert git pull"
-        if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Git Pull Revert Failed" "Failed to revert the last git pull. Manual intervention required." "0xe74c3c"
-        fi
+    # Try to restart the server again after recovery
+    if ! restart_server; then
+        log_message "Error: Failed to restart server after recovery"
+        send_discord_notification "Recovery Failed" "Failed to restart server after recovery" "0xe74c3c"
         exit 1
     fi
-fi 
+fi
+
+log_message "Server restart process completed successfully"
+send_discord_notification "Restart Process Completed" "Server restart process completed successfully" "0x2ecc71"
+exit 0 
