@@ -82,8 +82,8 @@ UPDATE_SCRIPT="$SCRIPT_DIR/update_game.sh"
 cat > "$UPDATE_SCRIPT" << EOF
 #!/bin/bash
 
-# Auto-update script for Evennia server
-# This script is called by the cron job to update and restart the Evennia server
+# Auto-restore script for Evennia server
+# This script is called by the cron job to restore from the latest backup if needed
 
 # Source the configuration file
 SCRIPT_DIR="\$(cd "\$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
@@ -128,11 +128,49 @@ send_discord_notification() {
     fi
 }
 
+# Function to find the latest backup
+find_latest_backup() {
+    local BACKUP_DIR="\$GAME_DIRECTORY/../backups/dated"
+    if [ ! -d "\$BACKUP_DIR" ]; then
+        log_message "Error: Backup directory does not exist: \$BACKUP_DIR"
+        return 1
+    fi
+    
+    # Find the most recent backup file
+    local LATEST_BACKUP=\$(ls -t "\$BACKUP_DIR"/backup_*.tar.gz 2>/dev/null | head -n1)
+    if [ -z "\$LATEST_BACKUP" ]; then
+        log_message "Error: No backup files found in \$BACKUP_DIR"
+        return 1
+    fi
+    
+    echo "\$LATEST_BACKUP"
+    return 0
+}
+
+# Function to check if restore is needed
+check_if_restore_needed() {
+    # Check if the server is running
+    if ! timeout 5 bash -c "source '\$CONDA_SH' && conda activate '\$CONDA_ENV' && evennia status" | grep -q "running"; then
+        log_message "Server is not running, restore may be needed"
+        return 0
+    fi
+    
+    # Check for specific error conditions that indicate restore is needed
+    if [ -f "\$GAME_DIRECTORY/server/evennia.db3" ]; then
+        if ! sqlite3 "\$GAME_DIRECTORY/server/evennia.db3" "SELECT 1;" &>/dev/null; then
+            log_message "Database appears to be corrupted, restore may be needed"
+            return 0
+        fi
+    fi
+    
+    return 1
+}
+
 # Change to the game directory
 cd "\$GAME_DIRECTORY" || {
     log_message "ERROR: Failed to change to game directory: \$GAME_DIRECTORY"
     if [ -n "\$DISCORD_WEBHOOK_URL" ]; then
-        send_discord_notification "Update Failed" "Failed to change to game directory: \$GAME_DIRECTORY" "0xe74c3c"
+        send_discord_notification "Restore Failed" "Failed to change to game directory: \$GAME_DIRECTORY" "0xe74c3c"
     fi
     exit 1
 }
@@ -164,25 +202,23 @@ if ! git diff --quiet HEAD origin/\$BRANCH; then
         exit 1
     fi
     
-    log_message "Changes pulled successfully, restarting server"
-    
     # Restart the server
     if ! "\$SCRIPT_DIR/restart_prod.sh"; then
-        log_message "ERROR: Failed to restart server"
+        log_message "ERROR: Failed to restart server after restore"
         if [ -n "\$DISCORD_WEBHOOK_URL" ]; then
-            send_discord_notification "Update Failed" "Failed to restart server" "0xe74c3c"
+            send_discord_notification "Restore Failed" "Failed to restart server after restore" "0xe74c3c"
         fi
         exit 1
     fi
     
-    log_message "Server restarted successfully"
+    log_message "Server restored and restarted successfully"
     
-    # Send Discord notification about the successful update
+    # Send Discord notification about the successful restore
     if [ -n "\$DISCORD_WEBHOOK_URL" ]; then
-        send_discord_notification "Update Completed" "Changes pulled and server restarted successfully" "0x2ecc71"
+        send_discord_notification "Restore Completed" "Server restored and restarted successfully" "0x2ecc71"
     fi
 else
-    log_message "No changes detected"
+    log_message "No restore needed"
 fi
 
 exit 0
