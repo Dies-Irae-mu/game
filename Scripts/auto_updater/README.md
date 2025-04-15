@@ -185,3 +185,5 @@ Common issues and solutions:
 ## Contributing
 
 Feel free to submit issues and enhancement requests! 
+
+Added a line to test the auto update sync
