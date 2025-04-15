@@ -112,11 +112,14 @@ create_backup() {
     local backup_name="$1"
     local timestamp
     timestamp=$(date '+%Y%m%d_%H%M%S')
+    local backup_dir
     local backup_file
 
     if [ -n "$backup_name" ]; then
+        backup_dir="$BACKUP_DATED_DIR/${backup_name}_${timestamp}"
         backup_file="$BACKUP_DATED_DIR/${backup_name}_${timestamp}.tar.gz"
     else
+        backup_dir="$BACKUP_DATED_DIR/backup_${timestamp}"
         backup_file="$BACKUP_DATED_DIR/backup_${timestamp}.tar.gz"
     fi
 
@@ -124,14 +127,32 @@ create_backup() {
     send_discord_notification "Creating backup of Evennia server"
 
     # Create backup directories if they don't exist
-    mkdir -p "$BACKUP_DIR" "$BACKUP_DATED_DIR"
+    mkdir -p "$BACKUP_DIR" "$BACKUP_DATED_DIR" "$backup_dir"
 
-    # Create the backup
-    if ! tar -czf "$backup_file" -C "$GAME_DIRECTORY" .; then
-        log_message "Failed to create backup"
-        send_discord_notification "Failed to create backup"
+    # Create the backup using rsync
+    if ! rsync -av --exclude='*.lock' \
+                  --exclude='*.pid' \
+                  --exclude='.git' \
+                  --exclude='media' \
+                  --exclude='logs' \
+                  --exclude='backups' \
+                  "$GAME_DIRECTORY"/ "$backup_dir"/; then
+        log_message "Failed to create backup with rsync"
+        send_discord_notification "Failed to create backup with rsync"
+        rm -rf "$backup_dir"
         return 1
     fi
+
+    # Create a compressed archive of the rsync backup
+    if ! tar -czf "$backup_file" -C "$BACKUP_DATED_DIR" "$(basename "$backup_dir")"; then
+        log_message "Failed to create compressed archive"
+        send_discord_notification "Failed to create compressed archive"
+        rm -rf "$backup_dir"
+        return 1
+    fi
+
+    # Clean up the temporary directory
+    rm -rf "$backup_dir"
 
     # Verify the backup
     if ! tar -tf "$backup_file" > /dev/null 2>&1; then

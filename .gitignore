@@ -68,5 +68,6 @@ Scripts/config.sh
 # Backup files
 backups/
 
-# Generated scripts
-Scripts/restore_from_backup.sh
+# Media Files
+media/
+media/**/*/
