@@ -96,21 +96,59 @@ restart_server() {
     send_discord_notification "Restarting Evennia server"
 
     # Create a backup before restarting
+    log_message "Creating backup before restart..."
     if ! "$SCRIPT_DIR/update.sh" backup create "pre_restart"; then
         log_message "Failed to create backup before restart"
         send_discord_notification "Failed to create backup before restart"
         return 1
     fi
+    log_message "Backup created successfully"
 
-    # Restart the server using evennia restart command
-    log_message "Executing evennia restart command..."
-    if ! cd "$GAME_DIRECTORY" && source "$CONDA_SH" && conda activate "$CONDA_ENV" && evennia restart; then
-        log_message "Failed to restart server using evennia restart"
-        send_discord_notification "Failed to restart server using evennia restart"
+    # Log current directory and environment
+    log_message "Current directory: $(pwd)"
+    log_message "CONDA_SH path: $CONDA_SH"
+    log_message "CONDA_ENV: $CONDA_ENV"
+    log_message "GAME_DIRECTORY: $GAME_DIRECTORY"
+
+    # Check if conda.sh exists
+    if [ ! -f "$CONDA_SH" ]; then
+        log_message "Error: conda.sh not found at $CONDA_SH"
         return 1
     fi
 
+    # Restart the server using evennia restart command
+    log_message "Executing evennia restart command..."
+    log_message "Changing to game directory: $GAME_DIRECTORY"
+    if ! cd "$GAME_DIRECTORY"; then
+        log_message "Failed to change to game directory"
+        return 1
+    fi
+
+    log_message "Sourcing conda.sh..."
+    if ! source "$CONDA_SH"; then
+        log_message "Failed to source conda.sh"
+        return 1
+    fi
+
+    log_message "Activating conda environment: $CONDA_ENV"
+    if ! conda activate "$CONDA_ENV"; then
+        log_message "Failed to activate conda environment"
+        return 1
+    fi
+
+    log_message "Running evennia restart command..."
+    # Capture the output of the evennia restart command
+    local restart_output
+    if ! restart_output=$(evennia restart 2>&1); then
+        log_message "Failed to restart server using evennia restart"
+        log_message "Evennia restart output: $restart_output"
+        send_discord_notification "Failed to restart server using evennia restart"
+        return 1
+    fi
+    log_message "Evennia restart command output: $restart_output"
+
     # Wait for server to restart
+    log_message "Waiting for server to restart (timeout: $START_TIMEOUT seconds)..."
     local timeout=$START_TIMEOUT
     while [ $timeout -gt 0 ]; do
         if check_server; then
@@ -118,6 +156,7 @@ restart_server() {
             send_discord_notification "Server restarted successfully"
             return 0
         fi
+        log_message "Server not yet ready, waiting... ($timeout seconds remaining)"
         sleep 1
         timeout=$((timeout - 1))
     done
