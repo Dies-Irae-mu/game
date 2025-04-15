@@ -96,7 +96,7 @@ restart_server() {
     send_discord_notification "Restarting Evennia server"
 
     # Create a backup before restarting
-    if ! "$SCRIPT_DIR/backup.sh" create "pre_restart"; then
+    if ! "$SCRIPT_DIR/update.sh" backup create "pre_restart"; then
         log_message "Failed to create backup before restart"
         send_discord_notification "Failed to create backup before restart"
         return 1
