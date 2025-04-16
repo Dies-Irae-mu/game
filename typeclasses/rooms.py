@@ -418,10 +418,43 @@ class RoomParent(DefaultRoom):
         """
         Send a message to all objects inside the room, excluding the sender and those in a different plane.
         """
+        # Suppress movement messages if this is a Quiet Room
+        if self.db.roomtype == "Quiet Room" and text:
+            # Check for standard movement messages
+            if from_obj and hasattr(from_obj, "name"):
+                # Message patterns that indicate movement
+                arrival_pattern = f"{from_obj.name} arrives to"
+                leaving_pattern = f"{from_obj.name} is leaving"
+                
+                # Check if this is a movement message
+                if (arrival_pattern in text or leaving_pattern in text):
+                    return  # Suppress movement messages in quiet rooms
+        
+        # If this is a source or destination of a quiet room, check the text
+        # to see if it's an arrival or departure message
+        if text and from_obj and hasattr(from_obj, "location") and hasattr(from_obj, "name"):
+            from_location = getattr(from_obj, "location", None)
+            
+            # Check if the from_obj's location is a quiet room
+            if (from_location and hasattr(from_location, "db") and 
+                getattr(from_location.db, "roomtype", None) == "Quiet Room"):
+                
+                # Message patterns that indicate movement from a quiet room
+                arrival_pattern = f"{from_obj.name} arrives to"
+                leaving_pattern = f"{from_obj.name} is leaving"
+                
+                # Check if this is a movement message
+                if (arrival_pattern in text or leaving_pattern in text):
+                    return  # Suppress message about movement from a quiet room
+        
         if from_obj and hasattr(from_obj, "location"):
             if from_obj.location.db.roomtype == "freezer":
                 if from_obj.has_account:  # Only block player characters
                     from_obj.msg("|rYou are frozen and cannot speak.|n")
+                    return
+            elif from_obj.location.db.roomtype == "Quiet Room":
+                if from_obj.has_account:  # Only block player characters
+                    from_obj.msg("|rYou are in a Quiet Room and cannot speak.|n")
                     return
         
         contents = self.contents
@@ -1161,6 +1194,18 @@ class RoomParent(DefaultRoom):
         if self.db.roomtype == "freezer" and moved_obj.has_account:
             moved_obj.msg("|rYou have been frozen and cannot leave this room or speak.|n")
             moved_obj.msg("Contact staff if you believe this is in error.")
+        
+        # If this is a Quiet Room, notify the character
+        elif self.db.roomtype == "Quiet Room" and moved_obj.has_account:
+            moved_obj.msg("|rYou have entered a Quiet Room. Communication commands are disabled here.|n")
+            
+    def at_object_leave(self, moved_obj, target_location, **kwargs):
+        """Called when an object leaves the room."""
+        # If this is a Quiet Room, notify the character they're leaving
+        if self.db.roomtype == "Quiet Room" and moved_obj.has_account:
+            moved_obj.msg("|gYou have left the Quiet Room. Communication commands are now available.|n")
+            
+        super().at_object_leave(moved_obj, target_location, **kwargs)
 
     def prevent_exit_use(self, exit_obj, character):
         """

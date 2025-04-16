@@ -90,6 +90,12 @@ class CmdPose(PoseBreakMixin, default_cmds.MuxCommand):
 
     def func(self):
         caller = self.caller
+        
+        # Check if the room is a Quiet Room
+        if hasattr(caller.location, 'db') and caller.location.db.roomtype == "Quiet Room":
+            caller.msg("|rYou are in a Quiet Room and cannot pose.|n")
+            return
+            
         if not self.args:
             caller.msg("Pose what?")
             return

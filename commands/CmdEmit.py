@@ -38,6 +38,11 @@ class CmdEmit(PoseBreakMixin, default_cmds.MuxCommand):
     def func(self):
         """Execute the @emit command"""
         caller = self.caller
+        
+        # Check if the room is a Quiet Room
+        if hasattr(caller.location, 'db') and caller.location.db.roomtype == "Quiet Room":
+            caller.msg("|rYou are in a Quiet Room and cannot emit messages.|n")
+            return
 
         if not self.args:
             caller.msg("Usage: @emit <message>")
