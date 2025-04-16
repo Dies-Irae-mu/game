@@ -79,42 +79,72 @@ send_discord_notification() {
         # First, escape backslashes, then quotes, then newlines
         local formatted_message=$(echo "$message" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
         
-        # Send the notification
-        curl -H "Content-Type: application/json" \
+        # Send to Discord with proper JSON formatting
+        curl -s -H "Content-Type: application/json" \
+             -X POST \
              -d "{\"content\":\"$formatted_message\"}" \
              "$DISCORD_WEBHOOK_URL"
     fi
 }
 
+# Function to format messages for Discord
+format_discord_message() {
+    local message="$1"
+    # Replace literal \n with actual newlines for display
+    echo "$message" | sed 's/\\n/\n/g'
+}
+
 # Function to get server status details
 get_server_status() {
-    local status=""
+    local status="Not Running"
+    local uptime="N/A"
+    local commit_hash="N/A"
+    local commit_msg="N/A"
     
     # Check if server is running
     if check_server; then
         status="Running"
-    else
-        status="Not Running"
-    fi
-    
-    # Get server uptime if running
-    local uptime=""
-    if [ "$status" = "Running" ]; then
-        local pid=$(pgrep -f "evennia")
-        if [ -n "$pid" ]; then
-            uptime=$(ps -o etime= -p "$pid" 2>/dev/null || echo "Unknown")
+        # Get server uptime from process
+        local pids=$(pgrep -f "evennia")
+        if [ -n "$pids" ]; then
+            # Count the number of processes
+            local process_count=$(echo "$pids" | wc -l)
+            
+            # Try different methods to get uptime for the first process
+            local first_pid=$(echo "$pids" | head -n 1)
+            if command -v ps >/dev/null 2>&1; then
+                # Try etime format first
+                uptime=$(ps -o etime= -p "$first_pid" 2>/dev/null)
+                # If that fails, try elapsed format
+                if [ -z "$uptime" ]; then
+                    uptime=$(ps -o elapsed= -p "$first_pid" 2>/dev/null)
+                fi
+                # If both fail, try to get start time and calculate
+                if [ -z "$uptime" ]; then
+                    local start_time=$(ps -o lstart= -p "$first_pid" 2>/dev/null)
+                    if [ -n "$start_time" ]; then
+                        uptime="Started at: $start_time"
+                    fi
+                fi
+            fi
+            # If we still don't have uptime, use a generic message
+            if [ -z "$uptime" ]; then
+                uptime="Running (PID: $first_pid)"
+            fi
+            
+            # Add process count to the uptime message
+            if [ "$process_count" -gt 1 ]; then
+                uptime="$uptime (Total processes: $process_count)"
+            fi
         fi
+        # Get current commit info
+        commit_hash=$(git -C "$GAME_DIRECTORY" rev-parse --short HEAD 2>/dev/null || echo "N/A")
+        commit_msg=$(git -C "$GAME_DIRECTORY" log -1 --pretty=format:"%s" 2>/dev/null || echo "N/A")
     fi
-    
-    # Get current commit hash
-    local commit_hash=$(git -C "$GAME_DIRECTORY" rev-parse HEAD 2>/dev/null || echo "Unknown")
-    local commit_msg=$(git -C "$GAME_DIRECTORY" log -1 --pretty=format:"%s" "$commit_hash" 2>/dev/null || echo "Unknown")
     
     # Build status message with proper Discord formatting
     echo "**Server Status:** $status"
-    if [ -n "$uptime" ]; then
-        echo "**Uptime:** $uptime"
-    fi
+    echo "**Uptime:** $uptime"
     echo "**Current Commit:** $commit_hash"
     echo "**Commit Message:** $commit_msg"
 }
@@ -130,90 +160,197 @@ check_server() {
 
 # Function to restart the server
 restart_server() {
-    log_message "Restarting Evennia server..."
+    local force_restart=false
+    local skip_backup=false
+    
+    # Parse command line arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -f|--force)
+                force_restart=true
+                shift
+                ;;
+            -s|--skip-backup)
+                skip_backup=true
+                shift
+                ;;
+            *)
+                echo "Unknown option: $1"
+                usage
+                ;;
+        esac
+    done
     
     # Get server status before restart
-    local before_status
-    before_status=$(get_server_status)
-    send_discord_notification "**Evennia Server Restart**\n\n$before_status\n\nInitiating restart process..."
+    local before_status=$(get_server_status)
     
-    # Create a backup before restarting
-    log_message "Creating backup before restart..."
-    if ! "$SCRIPT_DIR/update.sh" backup create "pre_restart"; then
-        log_message "Failed to create backup before restart"
-        send_discord_notification "Failed to create backup before restart"
-        return 1
-    fi
-    log_message "Backup created successfully"
-
-    # Log current directory and environment
-    log_message "Current directory: $(pwd)"
-    log_message "CONDA_SH path: $CONDA_SH"
-    log_message "CONDA_ENV: $CONDA_ENV"
-    log_message "GAME_DIRECTORY: $GAME_DIRECTORY"
-
-    # Check if conda.sh exists
-    if [ ! -f "$CONDA_SH" ]; then
-        log_message "Error: conda.sh not found at $CONDA_SH"
-        send_discord_notification "Error: conda.sh not found at $CONDA_SH"
-        return 1
-    fi
-
-    # Restart the server using evennia restart command
-    log_message "Executing evennia restart command..."
-    log_message "Changing to game directory: $GAME_DIRECTORY"
-    
-    # Execute all evennia commands in a subshell to maintain directory context
-    (
-        cd "$GAME_DIRECTORY" || { log_message "Failed to change to game directory"; exit 1; }
-        
-        log_message "Sourcing conda.sh..."
-        source "$CONDA_SH" || { log_message "Failed to source conda.sh"; exit 1; }
-        
-        log_message "Activating conda environment: $CONDA_ENV"
-        conda activate "$CONDA_ENV" || { log_message "Failed to activate conda environment"; exit 1; }
-        
-        log_message "Running evennia restart command..."
-        # Capture the output of the evennia restart command
-        local restart_output
-        restart_output=$(evennia restart 2>&1)
-        local exit_code=$?
-        
-        if [ $exit_code -ne 0 ]; then
-            log_message "Failed to restart server using evennia restart"
-            log_message "Evennia restart output: $restart_output"
-            send_discord_notification "Failed to restart server using evennia restart\n\n**Error Output:**\n\`\`\`\n$restart_output\n\`\`\`"
-            exit 1
+    # Check if server is running
+    if ! check_server; then
+        if [ "$force_restart" = false ]; then
+            log_message "Server is not running, use --force to start it"
+            send_discord_notification "$(format_discord_message "❌ Server is not running, use --force to start it")"
+            return 1
         fi
-        log_message "Evennia restart command output: $restart_output"
-    )
+    fi
     
-    # Check if the subshell exited successfully
-    if [ $? -ne 0 ]; then
+    # Create backup if not skipped
+    if [ "$skip_backup" = false ]; then
+        log_message "Creating backup before restart..."
+        send_discord_notification "$(format_discord_message "🔄 Creating backup before restart...")"
+        
+        if ! create_backup "pre_restart"; then
+            log_message "Failed to create backup before restart"
+            send_discord_notification "$(format_discord_message "❌ Failed to create backup before restart")"
+            return 1
+        fi
+    fi
+    
+    # Stop the server
+    log_message "Stopping server..."
+    send_discord_notification "$(format_discord_message "🛑 Stopping server...")"
+    
+    if ! stop_server; then
+        log_message "Failed to stop server"
+        send_discord_notification "$(format_discord_message "❌ Failed to stop server")"
         return 1
     fi
+    
+    # Start the server
+    log_message "Starting server..."
+    send_discord_notification "$(format_discord_message "🚀 Starting server...")"
+    
+    if ! start_server; then
+        log_message "Failed to start server"
+        send_discord_notification "$(format_discord_message "❌ Failed to start server")"
+        return 1
+    fi
+    
+    # Get server status after restart
+    local after_status=$(get_server_status)
+    
+    log_message "Server restarted successfully"
+    send_discord_notification "$(format_discord_message "✅ Server restarted successfully\n\nServer status before restart:\n$before_status\n\nServer status after restart:\n$after_status")"
+    return 0
+}
 
-    # Wait for server to restart
-    log_message "Waiting for server to restart (timeout: $START_TIMEOUT seconds)..."
-    local timeout=$START_TIMEOUT
-    while [ $timeout -gt 0 ]; do
-        if check_server; then
-            log_message "Server restarted successfully"
-            
-            # Get server status after restart
-            local after_status
-            after_status=$(get_server_status)
-            send_discord_notification "**Evennia Server Restart Complete**\n\n$after_status\n\nServer has been successfully restarted."
-            return 0
-        fi
-        log_message "Server not yet ready, waiting... ($timeout seconds remaining)"
+# Function to stop the server
+stop_server() {
+    log_message "Stopping Evennia server..."
+    send_discord_notification "$(format_discord_message "🛑 Stopping Evennia server...")"
+    
+    # Stop the server
+    if ! "$GAME_DIRECTORY/evennia" stop; then
+        log_message "Failed to stop Evennia server"
+        send_discord_notification "$(format_discord_message "❌ Failed to stop Evennia server")"
+        return 1
+    fi
+    
+    # Wait for server to stop
+    local attempts=0
+    while check_server && [ $attempts -lt 30 ]; do
         sleep 1
-        timeout=$((timeout - 1))
+        attempts=$((attempts + 1))
     done
+    
+    if check_server; then
+        log_message "Server failed to stop after 30 seconds"
+        send_discord_notification "$(format_discord_message "❌ Server failed to stop after 30 seconds")"
+        return 1
+    fi
+    
+    log_message "Server stopped successfully"
+    send_discord_notification "$(format_discord_message "✅ Server stopped successfully")"
+    return 0
+}
 
-    log_message "Server failed to restart within timeout"
-    send_discord_notification "**Evennia Server Restart Failed**\n\nServer failed to restart within the timeout period of $START_TIMEOUT seconds.\n\n$before_status"
-    return 1
+# Function to start the server
+start_server() {
+    log_message "Starting Evennia server..."
+    send_discord_notification "$(format_discord_message "🚀 Starting Evennia server...")"
+    
+    # Start the server
+    if ! "$GAME_DIRECTORY/evennia" start; then
+        log_message "Failed to start Evennia server"
+        send_discord_notification "$(format_discord_message "❌ Failed to start Evennia server")"
+        return 1
+    fi
+    
+    # Wait for server to start
+    local attempts=0
+    while ! check_server && [ $attempts -lt 30 ]; do
+        sleep 1
+        attempts=$((attempts + 1))
+    done
+    
+    if ! check_server; then
+        log_message "Server failed to start after 30 seconds"
+        send_discord_notification "$(format_discord_message "❌ Server failed to start after 30 seconds")"
+        return 1
+    fi
+    
+    log_message "Server started successfully"
+    send_discord_notification "$(format_discord_message "✅ Server started successfully")"
+    return 0
+}
+
+# Function to create a backup
+create_backup() {
+    local backup_name="$1"
+    local timestamp
+    timestamp=$(date '+%Y%m%d_%H%M%S')
+    local backup_dir
+    local backup_file
+
+    if [ -n "$backup_name" ]; then
+        backup_dir="$BACKUP_DATED_DIR/${backup_name}_${timestamp}"
+        backup_file="$BACKUP_DATED_DIR/${backup_name}_${timestamp}.tar.gz"
+    else
+        backup_dir="$BACKUP_DATED_DIR/backup_${timestamp}"
+        backup_file="$BACKUP_DATED_DIR/backup_${timestamp}.tar.gz"
+    fi
+
+    log_message "Creating backup: $backup_file"
+    send_discord_notification "$(format_discord_message "🔄 Creating backup of Evennia server")"
+
+    # Create backup directories if they don't exist
+    mkdir -p "$BACKUP_DIR" "$BACKUP_DATED_DIR" "$backup_dir"
+
+    # Create the backup using rsync
+    if ! rsync -av --exclude='*.lock' \
+                  --exclude='*.pid' \
+                  --exclude='.git' \
+                  --exclude='media' \
+                  --exclude='logs' \
+                  --exclude='backups' \
+                  "$GAME_DIRECTORY"/ "$backup_dir"/; then
+        log_message "Failed to create backup with rsync"
+        send_discord_notification "$(format_discord_message "❌ Failed to create backup with rsync")"
+        rm -rf "$backup_dir"
+        return 1
+    fi
+
+    # Create a compressed archive of the rsync backup
+    if ! tar -czf "$backup_file" -C "$BACKUP_DATED_DIR" "$(basename "$backup_dir")"; then
+        log_message "Failed to create compressed archive"
+        send_discord_notification "$(format_discord_message "❌ Failed to create compressed archive")"
+        rm -rf "$backup_dir"
+        return 1
+    fi
+
+    # Clean up the temporary directory
+    rm -rf "$backup_dir"
+
+    # Verify the backup
+    if ! tar -tf "$backup_file" > /dev/null 2>&1; then
+        log_message "Backup verification failed"
+        send_discord_notification "$(format_discord_message "❌ Backup verification failed")"
+        rm -f "$backup_file"
+        return 1
+    fi
+
+    log_message "Backup created successfully: $backup_file"
+    send_discord_notification "$(format_discord_message "✅ Backup created successfully")"
+    return 0
 }
 
 # Function to check server status
@@ -230,7 +367,7 @@ check_status() {
 # Main script
 case "${1:-}" in
     restart)
-        restart_server
+        restart_server "${@:2}"
         ;;
     status)
         check_status
