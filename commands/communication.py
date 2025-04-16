@@ -43,6 +43,11 @@ class CmdOOC(MuxCommand):
     help_category = "Comms"
 
     def func(self):
+        # Check if the room is a Quiet Room
+        if hasattr(self.caller.location, 'db') and self.caller.location.db.roomtype == "Quiet Room":
+            self.caller.msg("|rYou are in a Quiet Room and cannot use OOC communication.|n")
+            return
+            
         if not self.args:
             self.caller.msg("Say or pose what?")
             return
@@ -159,7 +164,7 @@ class CmdPlusOoc(MuxCommand):
         caller.db.pre_ooc_location = current_location
 
         # Find Limbo (object #1729)
-        ooc_nexus = search_object("#2")[0]
+        ooc_nexus = search_object("#1729")[0]
 
         if not ooc_nexus:
             caller.msg("Error: ooc_nexus not found.")

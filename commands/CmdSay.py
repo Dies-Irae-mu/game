@@ -26,6 +26,11 @@ class CmdSay(PoseBreakMixin, MuxCommand):
         """
         caller = self.caller
 
+        # Check if the room is a Quiet Room
+        if hasattr(caller.location, 'db') and caller.location.db.roomtype == "Quiet Room":
+            caller.msg("|rYou are in a Quiet Room and cannot speak.|n")
+            return
+
         if not self.args:
             caller.msg("Say what?")
             return
