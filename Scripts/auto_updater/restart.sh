@@ -109,15 +109,13 @@ get_server_status() {
     local commit_hash=$(git -C "$GAME_DIRECTORY" rev-parse HEAD 2>/dev/null || echo "Unknown")
     local commit_msg=$(git -C "$GAME_DIRECTORY" log -1 --pretty=format:"%s" "$commit_hash" 2>/dev/null || echo "Unknown")
     
-    # Build status message
-    local status_msg="**Server Status:** $status\n"
+    # Build status message with proper Discord formatting
+    echo "**Server Status:** $status"
     if [ -n "$uptime" ]; then
-        status_msg+="**Uptime:** $uptime\n"
+        echo "**Uptime:** $uptime"
     fi
-    status_msg+="**Current Commit:** $commit_hash\n"
-    status_msg+="**Commit Message:** $commit_msg\n"
-    
-    echo "$status_msg"
+    echo "**Current Commit:** $commit_hash"
+    echo "**Commit Message:** $commit_msg"
 }
 
 # Function to check if the server is running
@@ -134,8 +132,9 @@ restart_server() {
     log_message "Restarting Evennia server..."
     
     # Get server status before restart
-    local before_status=$(get_server_status)
-    send_discord_notification "**Evennia Server Restart**\n\n$before_status\nInitiating restart process..."
+    local before_status
+    before_status=$(get_server_status)
+    send_discord_notification "**Evennia Server Restart**\n\n$before_status\n\nInitiating restart process..."
     
     # Create a backup before restarting
     log_message "Creating backup before restart..."
@@ -201,7 +200,8 @@ restart_server() {
             log_message "Server restarted successfully"
             
             # Get server status after restart
-            local after_status=$(get_server_status)
+            local after_status
+            after_status=$(get_server_status)
             send_discord_notification "**Evennia Server Restart Complete**\n\n$after_status\n\nServer has been successfully restarted."
             return 0
         fi
