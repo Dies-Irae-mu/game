@@ -102,7 +102,8 @@ send_discord_notification() {
     local message="$1"
     if [ -n "$DISCORD_WEBHOOK_URL" ]; then
         # Format the message for Discord (escape special characters)
-        local formatted_message=$(echo "$message" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
+        # First, escape backslashes, then quotes, then newlines
+        local formatted_message=$(echo "$message" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
         
         # Send the notification
         curl -H "Content-Type: application/json" \
