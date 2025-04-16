@@ -122,7 +122,6 @@ get_commit_info() {
     echo "**Author:** $commit_author"
     echo "**Date:** $commit_date"
     echo "**Message:** $commit_msg"
-    echo ""
 }
 
 # Function to get changed files
@@ -145,7 +144,39 @@ get_changed_files() {
             *) echo "- $status: $file" ;;
         esac
     done
-    echo ""
+}
+
+# Function to get server status details
+get_server_status() {
+    local status=""
+    
+    # Check if server is running
+    if pgrep -f "evennia" > /dev/null; then
+        status="Running"
+    else
+        status="Not Running"
+    fi
+    
+    # Get server uptime if running
+    local uptime=""
+    if [ "$status" = "Running" ]; then
+        local pid=$(pgrep -f "evennia")
+        if [ -n "$pid" ]; then
+            uptime=$(ps -o etime= -p "$pid" 2>/dev/null || echo "Unknown")
+        fi
+    fi
+    
+    # Get current commit hash
+    local commit_hash=$(git -C "$GAME_DIRECTORY" rev-parse HEAD 2>/dev/null || echo "Unknown")
+    local commit_msg=$(git -C "$GAME_DIRECTORY" log -1 --pretty=format:"%s" "$commit_hash" 2>/dev/null || echo "Unknown")
+    
+    # Build status message with proper Discord formatting
+    echo "**Server Status:** $status"
+    if [ -n "$uptime" ]; then
+        echo "**Uptime:** $uptime"
+    fi
+    echo "**Current Commit:** $commit_hash"
+    echo "**Commit Message:** $commit_msg"
 }
 
 # Function to create a backup
@@ -268,18 +299,13 @@ pull_changes() {
         log_message "No changes to pull, server is up to date"
         
         # Get server status for the notification
-        local server_status=""
+        local server_status
+        server_status=$(get_server_status)
+        
         if pgrep -f "evennia" > /dev/null; then
-            server_status="Running"
-            local pid=$(pgrep -f "evennia")
-            local uptime=$(ps -o etime= -p "$pid" 2>/dev/null || echo "Unknown")
-            local commit_hash=$(git -C "$GAME_DIRECTORY" rev-parse HEAD 2>/dev/null || echo "Unknown")
-            local commit_msg=$(git -C "$GAME_DIRECTORY" log -1 --pretty=format:"%s" "$commit_hash" 2>/dev/null || echo "Unknown")
-            
-            send_discord_notification "**Evennia Server Status Check**\n\nNo changes to pull, server is up to date.\n\n**Server Status:** $server_status\n**Uptime:** $uptime\n**Current Commit:** $commit_hash\n**Commit Message:** $commit_msg"
+            send_discord_notification "**Evennia Server Status Check**\n\nNo changes to pull, server is up to date.\n\n$server_status"
         else
-            server_status="Not Running"
-            send_discord_notification "@here **Evennia Server Status Check**\n\nNo changes to pull, server is up to date.\n\n**Server Status:** $server_status\n\n**Warning:** Server is not currently running."
+            send_discord_notification "@here **Evennia Server Status Check**\n\nNo changes to pull, server is up to date.\n\n$server_status\n\n**Warning:** Server is not currently running."
         fi
         
         return 0
@@ -332,38 +358,44 @@ pull_changes() {
     
     log_message "Successfully pulled latest changes"
     
-    # Restart the server after pulling changes
-    log_message "Restarting server after update..."
-    send_discord_notification "Restarting Evennia server after update"
-    
-    if ! "$SCRIPT_DIR/restart.sh" restart; then
-        log_message "Failed to restart server after update, reverting changes..."
-        send_discord_notification "@here **Server Restart Failed**\n\nFailed to restart server after update, reverting changes..."
+    # Only restart the server if we actually pulled changes
+    if [ "$current_commit" != "$new_commit" ]; then
+        log_message "Changes detected, restarting server after update..."
+        send_discord_notification "Restarting Evennia server after update"
         
-        # Revert to the previous commit
-        if ! git -C "$GAME_DIRECTORY" reset --hard "$current_commit"; then
-            log_message "Failed to revert to previous version"
-            send_discord_notification "@here **Critical Error**\n\nFailed to revert to previous version"
-            return 1
-        fi
-        
-        log_message "Successfully reverted to previous version"
-        send_discord_notification "Successfully reverted to previous version"
-        
-        # Try to restart the server again
         if ! "$SCRIPT_DIR/restart.sh" restart; then
-            log_message "Failed to restart server after revert"
-            send_discord_notification "@here **Critical Error**\n\nFailed to restart server after revert. Server is not running."
+            log_message "Failed to restart server after update, reverting changes..."
+            send_discord_notification "@here **Server Restart Failed**\n\nFailed to restart server after update, reverting changes..."
+            
+            # Revert to the previous commit
+            if ! git -C "$GAME_DIRECTORY" reset --hard "$current_commit"; then
+                log_message "Failed to revert to previous version"
+                send_discord_notification "@here **Critical Error**\n\nFailed to revert to previous version"
+                return 1
+            fi
+            
+            log_message "Successfully reverted to previous version"
+            send_discord_notification "Successfully reverted to previous version"
+            
+            # Try to restart the server again
+            if ! "$SCRIPT_DIR/restart.sh" restart; then
+                log_message "Failed to restart server after revert"
+                send_discord_notification "@here **Critical Error**\n\nFailed to restart server after revert. Server is not running."
+                return 1
+            fi
+            
+            log_message "Server restarted successfully after revert"
+            send_discord_notification "Server restarted successfully after revert"
             return 1
         fi
         
-        log_message "Server restarted successfully after revert"
-        send_discord_notification "Server restarted successfully after revert"
-        return 1
+        log_message "Server restarted successfully after update"
+        send_discord_notification "Server restarted successfully after update"
+    else
+        log_message "No actual changes detected after pull, skipping restart"
+        send_discord_notification "No actual changes detected after pull, skipping restart"
     fi
     
-    log_message "Server restarted successfully after update"
-    send_discord_notification "Server restarted successfully after update"
     return 0
 }
 
