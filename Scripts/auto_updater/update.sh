@@ -314,13 +314,6 @@ pull_changes() {
     log_message "Found $behind commits to pull"
     send_discord_notification "Found $behind commits to pull for Evennia server"
 
-    # Create a backup before updating
-    if ! create_backup "pre_update"; then
-        log_message "Failed to create backup before update"
-        send_discord_notification "Failed to create backup before update"
-        return 1
-    fi
-
     # Store the current commit hash for potential revert
     local current_commit
     current_commit=$(git -C "$GAME_DIRECTORY" rev-parse HEAD)
@@ -330,7 +323,18 @@ pull_changes() {
         return 1
     fi
 
+    # Create a backup before updating
+    log_message "Creating backup before update..."
+    send_discord_notification "Creating backup before applying changes..."
+    if ! create_backup "pre_update"; then
+        log_message "Failed to create backup before update"
+        send_discord_notification "Failed to create backup before update"
+        return 1
+    fi
+    log_message "Backup created successfully"
+
     # Pull latest changes
+    log_message "Pulling latest changes..."
     if ! git -C "$GAME_DIRECTORY" pull origin "$GIT_BRANCH"; then
         log_message "Failed to pull latest changes"
         send_discord_notification "Failed to pull latest changes"
@@ -340,6 +344,13 @@ pull_changes() {
     # Get the new commit hash
     local new_commit
     new_commit=$(git -C "$GAME_DIRECTORY" rev-parse HEAD)
+    
+    # Check if we actually pulled changes
+    if [ "$current_commit" = "$new_commit" ]; then
+        log_message "No actual changes detected after pull, skipping restart"
+        send_discord_notification "No actual changes detected after pull, skipping restart"
+        return 0
+    fi
     
     # Prepare detailed update notification
     local update_details="**Evennia Server Update**\n\n"
@@ -358,43 +369,42 @@ pull_changes() {
     
     log_message "Successfully pulled latest changes"
     
-    # Only restart the server if we actually pulled changes
-    if [ "$current_commit" != "$new_commit" ]; then
-        log_message "Changes detected, restarting server after update..."
-        send_discord_notification "Restarting Evennia server after update"
+    # Restart the server after pulling changes
+    log_message "Restarting server after update..."
+    send_discord_notification "Restarting Evennia server after update"
+    
+    if ! "$SCRIPT_DIR/restart.sh" restart; then
+        log_message "Failed to restart server after update, reverting changes..."
+        send_discord_notification "@here **Server Restart Failed**\n\nFailed to restart server after update, reverting changes..."
         
-        if ! "$SCRIPT_DIR/restart.sh" restart; then
-            log_message "Failed to restart server after update, reverting changes..."
-            send_discord_notification "@here **Server Restart Failed**\n\nFailed to restart server after update, reverting changes..."
-            
-            # Revert to the previous commit
-            if ! git -C "$GAME_DIRECTORY" reset --hard "$current_commit"; then
-                log_message "Failed to revert to previous version"
-                send_discord_notification "@here **Critical Error**\n\nFailed to revert to previous version"
-                return 1
-            fi
-            
-            log_message "Successfully reverted to previous version"
-            send_discord_notification "Successfully reverted to previous version"
-            
-            # Try to restart the server again
-            if ! "$SCRIPT_DIR/restart.sh" restart; then
-                log_message "Failed to restart server after revert"
-                send_discord_notification "@here **Critical Error**\n\nFailed to restart server after revert. Server is not running."
-                return 1
-            fi
-            
-            log_message "Server restarted successfully after revert"
-            send_discord_notification "Server restarted successfully after revert"
+        # Revert to the previous commit
+        if ! git -C "$GAME_DIRECTORY" reset --hard "$current_commit"; then
+            log_message "Failed to revert to previous version"
+            send_discord_notification "@here **Critical Error**\n\nFailed to revert to previous version"
             return 1
         fi
         
-        log_message "Server restarted successfully after update"
-        send_discord_notification "Server restarted successfully after update"
-    else
-        log_message "No actual changes detected after pull, skipping restart"
-        send_discord_notification "No actual changes detected after pull, skipping restart"
+        log_message "Successfully reverted to previous version"
+        send_discord_notification "Successfully reverted to previous version"
+        
+        # Try to restart the server again
+        if ! "$SCRIPT_DIR/restart.sh" restart; then
+            log_message "Failed to restart server after revert"
+            send_discord_notification "@here **Critical Error**\n\nFailed to restart server after revert. Server is not running."
+            return 1
+        fi
+        
+        log_message "Server restarted successfully after revert"
+        send_discord_notification "Server restarted successfully after revert"
+        return 1
     fi
+    
+    # Get server status after successful update and restart
+    local server_status
+    server_status=$(get_server_status)
+    
+    log_message "Server restarted successfully after update"
+    send_discord_notification "**Evennia Server Update Complete**\n\nServer has been successfully updated and restarted.\n\n$server_status"
     
     return 0
 }
