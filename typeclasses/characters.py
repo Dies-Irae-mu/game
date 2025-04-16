@@ -46,6 +46,7 @@ class Character(DefaultCharacter):
         self.tags.add("in_material", category="state")
         self.db.unfindable = False
         self.db.fae_desc = ""
+        self.db.public_alts = []  # Initialize public alts as empty list
 
         self.db.approved = False  # Ensure all new characters start unapproved
         self.db.in_umbra = False  # Use a persistent attribute instead of a tag
@@ -105,6 +106,15 @@ class Character(DefaultCharacter):
             # Store the current time as the last disconnect time
             from time import time
             self.attributes.add("last_disconnect", time())
+            
+            # Store the last IP address used
+            if session and hasattr(session, 'address'):
+                ip_addr = isinstance(session.address, tuple) and session.address[0] or session.address
+                self.attributes.add("last_ip", ip_addr)
+
+            # Notification now handled by signal system
+            # from commands.CmdWatch import notify_watchers
+            # notify_watchers(self, False)
 
     def at_post_puppet(self, **kwargs):
         """
@@ -132,6 +142,10 @@ class Character(DefaultCharacter):
         logger.log_info(f"About to call display_login_notifications for {self.key}")
         self.display_login_notifications()
         logger.log_info(f"Finished display_login_notifications for {self.key}")
+
+        # Notification now handled by signal system
+        # from commands.CmdWatch import notify_watchers
+        # notify_watchers(self, True)
 
     @property
     def notification_settings(self):
@@ -207,20 +221,30 @@ class Character(DefaultCharacter):
 
             # Check for job updates
             if self.should_show_notification("jobs"):
-                from world.jobs.models import Job
-                if self.account:
-                    # Get jobs where the character is requester or participant
-                    jobs = Job.objects.filter(
-                        models.Q(requester=self.account) |
-                        models.Q(participants=self.account),
-                        status__in=['open', 'claimed']
-                    )
-                    
-                    # Count jobs with updates since last view
-                    updated_jobs = sum(1 for job in jobs if job.is_updated_since_last_view(self.account))
+                try:
+                    from world.jobs.models import Job
+                    from django.db.models import Q
+                    if self.account:
+                        # Get jobs where the character is requester or participant
+                        jobs = Job.objects.filter(
+                            Q(requester=self.account) |
+                            Q(participants=self.account),
+                            status__in=['open', 'claimed']
+                        )
+                        
+                        # Count jobs with updates since last view
+                        updated_jobs = sum(1 for job in jobs if job.is_updated_since_last_view(self.account))
 
-                    if updated_jobs > 0:
-                        self.msg(f"|wYou have {updated_jobs} job{'s' if updated_jobs != 1 else ''} with new activity.|n")
+                        if updated_jobs > 0:
+                            self.msg(f"|wYou have {updated_jobs} job{'s' if updated_jobs != 1 else ''} with new activity.|n")
+                except (ImportError, ModuleNotFoundError):
+                    # Jobs module not available or not properly installed
+                    from evennia.utils import logger
+                    logger.log_info(f"Jobs module not available during login notification for {self.key}")
+                except Exception as e:
+                    # Log any other errors but don't crash the login process
+                    from evennia.utils import logger
+                    logger.log_err(f"Error checking job notifications for {self.key}: {str(e)}")
 
     @lazy_property
     def notes(self):
@@ -1991,8 +2015,17 @@ class Character(DefaultCharacter):
         if not hasattr(self.db, 'gift_aliases'):
             self.db.gift_aliases = {}
         
+        # Handle case where alias might be a list
+        alias_to_use = alias
+        if isinstance(alias, list):
+            # If it's a list, use the first element or a joined string
+            if alias:
+                alias_to_use = alias[0] if len(alias) == 1 else " ".join(alias)
+            else:
+                alias_to_use = canonical_name  # Fallback if empty list
+                
         # Capitalize each word in the alias
-        capitalized_alias = ' '.join(word.capitalize() for word in alias.split())
+        capitalized_alias = ' '.join(word.capitalize() for word in alias_to_use.split())
         
         # Store the alias mapping with its value
         self.db.gift_aliases[canonical_name] = {

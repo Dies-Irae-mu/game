@@ -53,6 +53,8 @@ from commands.CmdBanality import CmdBanality
 from commands.groups_commands import CmdGroups
 from commands.CmdHelp import CmdHelp
 from commands.CmdEquip import CmdEquip, CmdInventory
+from commands.CmdWatch import CmdWatch
+from commands.CmdAlts import CmdAlts
 
 from commands.bbs.bbs_all_commands import CmdBBS
 from commands.bbs.bbs_admin_commands import CmdResetBBS
@@ -169,7 +171,9 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdUmbraInfo())
         self.add(CmdGroups())
         self.add(CmdEquip())
-        self.add(CmdInventory()) 
+        self.add(CmdInventory())
+        self.add(CmdWatch())
+        self.add(CmdAlts())
 
 class AccountCmdSet(cmdset_account.AccountCmdSet):
     """
@@ -212,6 +216,7 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdRoom())
         self.add(CmdDebugXP())
         self.add(CmdCheckGhosts())
+        self.add(CmdWatch())
         
         # Add equipment commands to account cmdset to make them globally available
         # This allows using these commands even when not in the same room as the target
