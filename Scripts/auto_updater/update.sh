@@ -101,10 +101,51 @@ log_message() {
 send_discord_notification() {
     local message="$1"
     if [ -n "$DISCORD_WEBHOOK_URL" ]; then
+        # Format the message for Discord (escape special characters)
+        local formatted_message=$(echo "$message" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
+        
+        # Send the notification
         curl -H "Content-Type: application/json" \
-             -d "{\"content\":\"$message\"}" \
+             -d "{\"content\":\"$formatted_message\"}" \
              "$DISCORD_WEBHOOK_URL"
     fi
+}
+
+# Function to get commit information
+get_commit_info() {
+    local commit_hash="$1"
+    local commit_msg=$(git -C "$GAME_DIRECTORY" log -1 --pretty=format:"%s" "$commit_hash")
+    local commit_author=$(git -C "$GAME_DIRECTORY" log -1 --pretty=format:"%an" "$commit_hash")
+    local commit_date=$(git -C "$GAME_DIRECTORY" log -1 --pretty=format:"%ad" --date=format:"%Y-%m-%d %H:%M:%S" "$commit_hash")
+    
+    echo "**Commit:** $commit_hash"
+    echo "**Author:** $commit_author"
+    echo "**Date:** $commit_date"
+    echo "**Message:** $commit_msg"
+    echo ""
+}
+
+# Function to get changed files
+get_changed_files() {
+    local old_commit="$1"
+    local new_commit="$2"
+    
+    echo "**Changed Files:**"
+    git -C "$GAME_DIRECTORY" diff --name-status "$old_commit" "$new_commit" | while read -r status file; do
+        case "$status" in
+            A) echo "- Added: $file" ;;
+            M) echo "- Modified: $file" ;;
+            D) echo "- Deleted: $file" ;;
+            R) echo "- Renamed: $file" ;;
+            C) echo "- Copied: $file" ;;
+            U) echo "- Updated: $file" ;;
+            T) echo "- Type changed: $file" ;;
+            X) echo "- Unknown: $file" ;;
+            B) echo "- Broken: $file" ;;
+            *) echo "- $status: $file" ;;
+        esac
+    done
+    echo ""
 }
 
 # Function to create a backup
@@ -221,11 +262,26 @@ pull_changes() {
     # Check if there are any changes to pull
     git -C "$GAME_DIRECTORY" fetch origin
     local behind
-    behind=$(git -C "$GAME_DIRECTORY" rev-list HEAD..origin/"$GIT_BRANCH" --count)
+    behind=$(git -C "$GAME_DIRECTORY" rev-parse HEAD..origin/"$GIT_BRANCH" --count)
     
     if [ "$behind" -eq 0 ]; then
         log_message "No changes to pull, server is up to date"
-        send_discord_notification "No changes to pull, server is up to date"
+        
+        # Get server status for the notification
+        local server_status=""
+        if pgrep -f "evennia" > /dev/null; then
+            server_status="Running"
+            local pid=$(pgrep -f "evennia")
+            local uptime=$(ps -o etime= -p "$pid" 2>/dev/null || echo "Unknown")
+            local commit_hash=$(git -C "$GAME_DIRECTORY" rev-parse HEAD 2>/dev/null || echo "Unknown")
+            local commit_msg=$(git -C "$GAME_DIRECTORY" log -1 --pretty=format:"%s" "$commit_hash" 2>/dev/null || echo "Unknown")
+            
+            send_discord_notification "**Evennia Server Status Check**\n\nNo changes to pull, server is up to date.\n\n**Server Status:** $server_status\n**Uptime:** $uptime\n**Current Commit:** $commit_hash\n**Commit Message:** $commit_msg"
+        else
+            server_status="Not Running"
+            send_discord_notification "@here **Evennia Server Status Check**\n\nNo changes to pull, server is up to date.\n\n**Server Status:** $server_status\n\n**Warning:** Server is not currently running."
+        fi
+        
         return 0
     fi
     
@@ -255,8 +311,26 @@ pull_changes() {
         return 1
     fi
 
+    # Get the new commit hash
+    local new_commit
+    new_commit=$(git -C "$GAME_DIRECTORY" rev-parse HEAD)
+    
+    # Prepare detailed update notification
+    local update_details="**Evennia Server Update**\n\n"
+    update_details+="**Previous Commit:** $current_commit\n"
+    update_details+="**New Commit:** $new_commit\n\n"
+    
+    # Add commit information
+    update_details+="**Latest Commit Details:**\n"
+    update_details+="$(get_commit_info $new_commit)\n"
+    
+    # Add changed files
+    update_details+="$(get_changed_files $current_commit $new_commit)\n"
+    
+    # Send the detailed notification
+    send_discord_notification "$update_details"
+    
     log_message "Successfully pulled latest changes"
-    send_discord_notification "Successfully pulled latest changes"
     
     # Restart the server after pulling changes
     log_message "Restarting server after update..."
@@ -264,25 +338,22 @@ pull_changes() {
     
     if ! "$SCRIPT_DIR/restart.sh" restart; then
         log_message "Failed to restart server after update, reverting changes..."
-        send_discord_notification "Failed to restart server after update, reverting changes..."
+        send_discord_notification "@here **Server Restart Failed**\n\nFailed to restart server after update, reverting changes..."
         
         # Revert to the previous commit
         if ! git -C "$GAME_DIRECTORY" reset --hard "$current_commit"; then
             log_message "Failed to revert to previous version"
-            send_discord_notification "Failed to revert to previous version"
+            send_discord_notification "@here **Critical Error**\n\nFailed to revert to previous version"
             return 1
         fi
         
         log_message "Successfully reverted to previous version"
         send_discord_notification "Successfully reverted to previous version"
         
-        # Try to restart the server again after reverting
-        log_message "Attempting to restart server after revert..."
-        send_discord_notification "Attempting to restart server after revert..."
-        
+        # Try to restart the server again
         if ! "$SCRIPT_DIR/restart.sh" restart; then
             log_message "Failed to restart server after revert"
-            send_discord_notification "Failed to restart server after revert"
+            send_discord_notification "@here **Critical Error**\n\nFailed to restart server after revert. Server is not running."
             return 1
         fi
         
@@ -321,6 +392,12 @@ check_status() {
         echo "You are $behind commits behind origin/$GIT_BRANCH"
     else
         echo "Your local branch is up to date with origin/$GIT_BRANCH"
+    fi
+
+    # Check if server is running
+    if ! pgrep -f "evennia" > /dev/null; then
+        echo "Warning: Evennia server is not running"
+        send_discord_notification "@here **Server Status Warning**\n\nEvennia server is not running"
     fi
 
     return 0
