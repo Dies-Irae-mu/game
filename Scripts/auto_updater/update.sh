@@ -293,7 +293,7 @@ pull_changes() {
     # Check if there are any changes to pull
     git -C "$GAME_DIRECTORY" fetch origin
     local behind
-    behind=$(git -C "$GAME_DIRECTORY" rev-parse HEAD..origin/"$GIT_BRANCH" --count)
+    behind=$(git -C "$GAME_DIRECTORY" rev-list --count HEAD..origin/"$GIT_BRANCH")
     
     if [ "$behind" -eq 0 ]; then
         log_message "No changes to pull, server is up to date"
