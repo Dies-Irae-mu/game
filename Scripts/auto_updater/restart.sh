@@ -75,10 +75,49 @@ log_message() {
 send_discord_notification() {
     local message="$1"
     if [ -n "$DISCORD_WEBHOOK_URL" ]; then
+        # Format the message for Discord (escape special characters)
+        local formatted_message=$(echo "$message" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
+        
+        # Send the notification
         curl -H "Content-Type: application/json" \
-             -d "{\"content\":\"$message\"}" \
+             -d "{\"content\":\"$formatted_message\"}" \
              "$DISCORD_WEBHOOK_URL"
     fi
+}
+
+# Function to get server status details
+get_server_status() {
+    local status=""
+    
+    # Check if server is running
+    if check_server; then
+        status="Running"
+    else
+        status="Not Running"
+    fi
+    
+    # Get server uptime if running
+    local uptime=""
+    if [ "$status" = "Running" ]; then
+        local pid=$(pgrep -f "evennia")
+        if [ -n "$pid" ]; then
+            uptime=$(ps -o etime= -p "$pid" 2>/dev/null || echo "Unknown")
+        fi
+    fi
+    
+    # Get current commit hash
+    local commit_hash=$(git -C "$GAME_DIRECTORY" rev-parse HEAD 2>/dev/null || echo "Unknown")
+    local commit_msg=$(git -C "$GAME_DIRECTORY" log -1 --pretty=format:"%s" "$commit_hash" 2>/dev/null || echo "Unknown")
+    
+    # Build status message
+    local status_msg="**Server Status:** $status\n"
+    if [ -n "$uptime" ]; then
+        status_msg+="**Uptime:** $uptime\n"
+    fi
+    status_msg+="**Current Commit:** $commit_hash\n"
+    status_msg+="**Commit Message:** $commit_msg\n"
+    
+    echo "$status_msg"
 }
 
 # Function to check if the server is running
@@ -93,8 +132,11 @@ check_server() {
 # Function to restart the server
 restart_server() {
     log_message "Restarting Evennia server..."
-    send_discord_notification "Restarting Evennia server"
-
+    
+    # Get server status before restart
+    local before_status=$(get_server_status)
+    send_discord_notification "**Evennia Server Restart**\n\n$before_status\nInitiating restart process..."
+    
     # Create a backup before restarting
     log_message "Creating backup before restart..."
     if ! "$SCRIPT_DIR/update.sh" backup create "pre_restart"; then
@@ -113,6 +155,7 @@ restart_server() {
     # Check if conda.sh exists
     if [ ! -f "$CONDA_SH" ]; then
         log_message "Error: conda.sh not found at $CONDA_SH"
+        send_discord_notification "Error: conda.sh not found at $CONDA_SH"
         return 1
     fi
 
@@ -139,7 +182,7 @@ restart_server() {
         if [ $exit_code -ne 0 ]; then
             log_message "Failed to restart server using evennia restart"
             log_message "Evennia restart output: $restart_output"
-            send_discord_notification "Failed to restart server using evennia restart"
+            send_discord_notification "Failed to restart server using evennia restart\n\n**Error Output:**\n\`\`\`\n$restart_output\n\`\`\`"
             exit 1
         fi
         log_message "Evennia restart command output: $restart_output"
@@ -156,7 +199,10 @@ restart_server() {
     while [ $timeout -gt 0 ]; do
         if check_server; then
             log_message "Server restarted successfully"
-            send_discord_notification "Server restarted successfully"
+            
+            # Get server status after restart
+            local after_status=$(get_server_status)
+            send_discord_notification "**Evennia Server Restart Complete**\n\n$after_status\n\nServer has been successfully restarted."
             return 0
         fi
         log_message "Server not yet ready, waiting... ($timeout seconds remaining)"
@@ -165,7 +211,7 @@ restart_server() {
     done
 
     log_message "Server failed to restart within timeout"
-    send_discord_notification "Server failed to restart within timeout"
+    send_discord_notification "**Evennia Server Restart Failed**\n\nServer failed to restart within the timeout period of $START_TIMEOUT seconds.\n\n$before_status"
     return 1
 }
 
