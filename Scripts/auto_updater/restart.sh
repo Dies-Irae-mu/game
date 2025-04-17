@@ -47,6 +47,20 @@ if [ ! -f "$CONFIG_FILE" ]; then
 fi
 source "$CONFIG_FILE"
 
+# Source conda.sh to enable conda commands
+if [ -f "$CONDA_SH" ]; then
+    source "$CONDA_SH"
+else
+    echo "Error: conda.sh not found at $CONDA_SH"
+    exit 1
+fi
+
+# Activate the conda environment
+if ! conda activate "$CONDA_ENV"; then
+    echo "Error: Failed to activate conda environment: $CONDA_ENV"
+    exit 1
+fi
+
 # Validate required configuration
 required_vars=("GAME_DIRECTORY" "RESTART_LOG" "DISCORD_WEBHOOK_URL")
 for var in "${required_vars[@]}"; do
