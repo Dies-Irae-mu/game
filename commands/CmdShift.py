@@ -92,6 +92,13 @@ class CmdShift(default_cmds.MuxCommand):
     help_category = "Shifter"
 
     def func(self):
+        # Check if in a Quiet Room
+        if (hasattr(self.caller.location, 'db') and 
+            hasattr(self.caller.location, 'is_command_restricted_in_quiet_room') and
+            self.caller.location.is_command_restricted_in_quiet_room(self.cmdstring)):
+            self.caller.msg("|rYou are in a Quiet Room and cannot use the +shift command here.|n")
+            return
+            
         if "debug" in self.switches:
             # No need to re-import ShapeshifterForm here since it's imported at the top
             all_forms = ShapeshifterForm.objects.all()

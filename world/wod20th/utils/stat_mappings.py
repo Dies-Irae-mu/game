@@ -1272,7 +1272,7 @@ def get_identity_stats(splat: str, subtype: str = None, affiliation: str = None)
             elif subtype == 'corax':
                 stats.extend(['Pack', 'Patron Totem'])
             elif subtype == 'gurahl':
-                stats.extend(['Auspice', 'Pack', 'Patron Totem'])
+                stats.extend(['Auspice', 'Tribe', 'Pack', 'Patron Totem'])
             elif subtype == 'kitsune':
                 stats.extend(['Kitsune Path', 'Kitsune Faction', 'Kitsune Clan', 'Go-En', 'Sempai'])
             elif subtype == 'mokole':

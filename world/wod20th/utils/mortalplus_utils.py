@@ -99,9 +99,15 @@ def initialize_mortalplus_stats(character, mortalplus_type):
     if 'legacy' not in character.db.stats['identity']:
         character.db.stats['identity']['legacy'] = {}
     
-    # Initialize powers category if it doesn't exist
+    # Initialize common power categories for all Mortal+ types
     if 'powers' not in character.db.stats:
         character.db.stats['powers'] = {}
+    if 'sorcery' not in character.db.stats['powers']:
+        character.db.stats['powers']['sorcery'] = {}
+    if 'numina' not in character.db.stats['powers']:
+        character.db.stats['powers']['numina'] = {}
+    if 'hedge_ritual' not in character.db.stats['powers']:
+        character.db.stats['powers']['hedge_ritual'] = {}
     
     # Initialize pools
     if 'pools' not in character.db.stats:
@@ -114,6 +120,13 @@ def initialize_mortalplus_stats(character, mortalplus_type):
     # Set the type in identity/lineage
     character.set_stat('identity', 'lineage', 'Type', mortalplus_type, temp=False)
     character.set_stat('identity', 'lineage', 'Type', mortalplus_type, temp=True)
+    
+    # Set Banality based on mortalplus_type
+    banality_value = get_default_banality('Mortal+', subtype=mortalplus_type)
+    if banality_value:
+        character.set_stat('pools', 'dual', 'Banality', banality_value, temp=False)
+        character.set_stat('pools', 'dual', 'Banality', banality_value, temp=True)
+        character.msg(f"|gBanality set to {banality_value} for {mortalplus_type}.|n")
     
     # Initialize type-specific stats
     if mortalplus_type == 'Ghoul':
@@ -131,8 +144,6 @@ def initialize_mortalplus_stats(character, mortalplus_type):
         # Set base Glamour and Banality
         character.set_stat('pools', 'dual', 'Glamour', 2, temp=False)
         character.set_stat('pools', 'dual', 'Glamour', 2, temp=True)
-        character.set_stat('pools', 'dual', 'Banality', 3, temp=False)
-        character.set_stat('pools', 'dual', 'Banality', 0, temp=True)
         
         # Initialize House and Legacy fields
         character.set_stat('identity', 'lineage', 'House', '', temp=False)
@@ -145,13 +156,12 @@ def initialize_mortalplus_stats(character, mortalplus_type):
         character.set_stat('identity', 'lineage', 'Affinity Realm', '', temp=True)
         
     elif mortalplus_type == 'Sorcerer':
-        # Initialize sorcery and hedge ritual categories
-        character.db.stats['powers']['sorcery'] = {}
-        character.db.stats['powers']['hedge_ritual'] = {}
+        # Additional sorcerer-specific initializations, if any
+        pass
         
     elif mortalplus_type == 'Psychic':
-        # Initialize numina category
-        character.db.stats['powers']['numina'] = {}
+        # Additional psychic-specific initializations, if any
+        pass
         
     elif mortalplus_type == 'Faithful':
         # Initialize faith category
@@ -168,6 +178,12 @@ def initialize_ghoul_stats(character):
         character.db.stats['powers'] = {}
     if 'discipline' not in character.db.stats['powers']:
         character.db.stats['powers']['discipline'] = {}
+    if 'sorcery' not in character.db.stats['powers']:
+        character.db.stats['powers']['sorcery'] = {}
+    if 'numina' not in character.db.stats['powers']:
+        character.db.stats['powers']['numina'] = {}
+    if 'hedge_ritual' not in character.db.stats['powers']:
+        character.db.stats['powers']['hedge_ritual'] = {}
     
     # Set base Blood Pool and Willpower
     character.set_stat('pools', 'dual', 'Blood', 3, temp=False)
@@ -179,12 +195,21 @@ def initialize_ghoul_stats(character):
 
 def initialize_kinfolk_stats(character):
     """Initialize Kinfolk-specific stats."""
+    # Initialize powers categories if they don't exist
+    if 'powers' not in character.db.stats:
+        character.db.stats['powers'] = {}
+    if 'gift' not in character.db.stats['powers']:
+        character.db.stats['powers']['gift'] = {}
+    if 'sorcery' not in character.db.stats['powers']:
+        character.db.stats['powers']['sorcery'] = {}
+    if 'numina' not in character.db.stats['powers']:
+        character.db.stats['powers']['numina'] = {}
+    if 'hedge_ritual' not in character.db.stats['powers']:
+        character.db.stats['powers']['hedge_ritual'] = {}
+    
     # Set base Willpower
     character.set_stat('pools', 'dual', 'Willpower', 3, temp=False)
     character.set_stat('pools', 'dual', 'Willpower', 3, temp=True)
-    
-    # Initialize Gifts category
-    character.db.stats['powers']['gift'] = {}
     
     # Check for Gnosis Merit
     merits = character.db.stats.get('merits', {}).get('merit', {})
@@ -276,13 +301,19 @@ def initialize_kinain_stats(character):
     character.set_stat('pools', 'dual', 'Willpower', 3, temp=False)
     character.set_stat('pools', 'dual', 'Willpower', 3, temp=True)
     
-    # Initialize Arts and Realms categories (empty until Fae Blood Merit)
+    # Initialize power categories
     if 'powers' not in character.db.stats:
         character.db.stats['powers'] = {}
     if 'art' not in character.db.stats['powers']:
         character.db.stats['powers']['art'] = {}
     if 'realm' not in character.db.stats['powers']:
         character.db.stats['powers']['realm'] = {}
+    if 'sorcery' not in character.db.stats['powers']:
+        character.db.stats['powers']['sorcery'] = {}
+    if 'numina' not in character.db.stats['powers']:
+        character.db.stats['powers']['numina'] = {}
+    if 'hedge_ritual' not in character.db.stats['powers']:
+        character.db.stats['powers']['hedge_ritual'] = {}
     
     # Initialize Affinity Realm in identity/lineage
     if 'identity' not in character.db.stats:
@@ -301,7 +332,9 @@ def initialize_sorcerer_stats(character):
         character.db.stats['powers']['sorcery'] = {}
     if 'hedge_ritual' not in character.db.stats['powers']:
         character.db.stats['powers']['hedge_ritual'] = {}
-    
+    if 'numina' not in character.db.stats['powers']:
+        character.db.stats['powers']['numina'] = {}
+
     # Set base Willpower
     character.set_stat('pools', 'dual', 'Willpower', 5, temp=False)
     character.set_stat('pools', 'dual', 'Willpower', 5, temp=True)
@@ -317,6 +350,10 @@ def initialize_psychic_stats(character):
         character.db.stats['powers'] = {}
     if 'numina' not in character.db.stats['powers']:
         character.db.stats['powers']['numina'] = {}
+    if 'sorcery' not in character.db.stats['powers']:
+        character.db.stats['powers']['sorcery'] = {}
+    if 'hedge_ritual' not in character.db.stats['powers']:
+        character.db.stats['powers']['hedge_ritual'] = {}
     
     # Set base Willpower
     character.set_stat('pools', 'dual', 'Willpower', 5, temp=False)
@@ -329,7 +366,13 @@ def initialize_faithful_stats(character):
         character.db.stats['powers'] = {}
     if 'faith' not in character.db.stats['powers']:
         character.db.stats['powers']['faith'] = {}
-    
+    if 'sorcery' not in character.db.stats['powers']:
+        character.db.stats['powers']['sorcery'] = {}
+    if 'hedge_ritual' not in character.db.stats['powers']:
+        character.db.stats['powers']['hedge_ritual'] = {}
+    if 'numina' not in character.db.stats['powers']:
+        character.db.stats['powers']['numina'] = {}
+
     # Set base Willpower
     character.set_stat('pools', 'dual', 'Willpower', 5, temp=False)
     character.set_stat('pools', 'dual', 'Willpower', 5, temp=True)
@@ -355,6 +398,13 @@ def validate_mortalplus_powers(character, power_type, value):
             if value not in clan_disciplines:
                 return False, f"Ghouls can only learn disciplines from their domitor's clan: {', '.join(clan_disciplines)}"
 
+        if 'sorcery' not in character.db.stats['powers']:
+            character.db.stats['powers']['sorcery'] = {}
+        if 'hedge_ritual' not in character.db.stats['powers']:
+            character.db.stats['powers']['hedge_ritual'] = {}
+        if 'numina' not in character.db.stats['powers']:
+            character.db.stats['powers']['numina'] = {}
+            
     # Validate Kinfolk powers
     elif mortalplus_type == 'Kinfolk':
         if power_type == 'Gifts':
@@ -382,6 +432,13 @@ def validate_mortalplus_powers(character, power_type, value):
             max_gnosis = (gnosis_merit - 4) if gnosis_merit >= 5 else 0
             if int(value) > max_gnosis:
                 return False, f"Character can only have up to {max_gnosis} Gnosis with current Merit level"
+
+        if 'sorcery' not in character.db.stats['powers']:
+            character.db.stats['powers']['sorcery'] = {}
+        if 'hedge_ritual' not in character.db.stats['powers']:
+            character.db.stats['powers']['hedge_ritual'] = {}
+        if 'numina' not in character.db.stats['powers']:
+            character.db.stats['powers']['numina'] = {}
 
     # Validate Kinain powers
     elif mortalplus_type == 'Kinain':

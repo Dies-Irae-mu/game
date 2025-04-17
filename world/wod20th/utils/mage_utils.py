@@ -356,26 +356,65 @@ def validate_stat_value(self, stat_name: str, value: str, category: str = None, 
             if stat_type == 'sphere':
                 return False, "For Changelings and Kinain, Time is a Realm and cannot be set as a Sphere"
 
-def update_mage_pools_on_stat_change(character, stat_name, new_value):
+def update_mage_pools_on_stat_change(character, stat_name: str, new_value: str) -> None:
     """
-    Update mage pools when a relevant stat changes.
-    Called by CmdSelfStat after setting stats.
+    Update mage pools and resources when relevant stats change.
+    
+    Args:
+        character: Character object to update
+        stat_name (str): The name of the stat that changed
+        new_value (str): The new value for the stat
     """
-    # Convert to lowercase for comparison
     stat_name = stat_name.lower()
     
-    # Handle Avatar background changes
+    # Handle Avatar changes
     if stat_name == 'avatar':
         try:
-            # Convert new_value to int if it's a string
-            avatar_value = int(new_value) if isinstance(new_value, str) else new_value
-            # Set Quintessence pool to match Avatar value
-            character.set_stat('pools', 'dual', 'Quintessence', avatar_value, temp=False)
-            character.set_stat('pools', 'dual', 'Quintessence', avatar_value, temp=True)
-            character.msg(f"|gQuintessence pool set to {avatar_value} based on Avatar background.|n")
-        except (ValueError, TypeError):
-            character.msg("|rError updating Quintessence pool - invalid Avatar value.|n")
+            avatar_value = int(new_value)
+            # Update Quintessence pool
+            quintessence = avatar_value + 1
+            character.set_stat('pools', 'dual', 'Quintessence', quintessence, temp=False)
+            character.set_stat('pools', 'dual', 'Quintessence', quintessence, temp=True)
+            character.msg(f"|gQuintessence pool set to {quintessence} based on Avatar {new_value}.|n")
+            
+            # Update Paradox pool - max capacity is Avatar + 3
+            paradox_max = avatar_value + 3
+            paradox_current = min(character.get_stat_value('pools', 'single', 'Paradox'), paradox_max)
+            character.set_stat('pools', 'single', 'Paradox', paradox_current, max_value=paradox_max)
+            character.msg(f"|gParadox pool maximum set to {paradox_max} based on Avatar {new_value}.|n")
+        except ValueError:
+            character.msg("|rError updating pools - invalid Avatar value.|n")
             return
+    
+    # Handle changes to affiliation, tradition, convention, or nephandi faction
+    # These affect the Banality value
+    elif stat_name in ['affiliation', 'tradition', 'convention', 'nephandi faction']:
+        # Get current values
+        affiliation = character.get_stat_value('identity', 'mage', 'affiliation')
+        tradition = character.get_stat_value('identity', 'mage', 'tradition')
+        convention = character.get_stat_value('identity', 'mage', 'convention')
+        nephandi_faction = character.get_stat_value('identity', 'mage', 'nephandi faction')
+        
+        # Update the relevant parameter based on the stat that changed
+        if stat_name == 'affiliation':
+            affiliation = new_value
+        elif stat_name == 'tradition':
+            tradition = new_value
+        elif stat_name == 'convention':
+            convention = new_value
+        elif stat_name == 'nephandi faction':
+            nephandi_faction = new_value
+        
+        # Update Banality
+        banality = get_default_banality('Mage', subtype=affiliation, 
+                                      tradition=tradition, 
+                                      convention=convention,
+                                      nephandi_faction=nephandi_faction)
+        if banality:
+            character.set_stat('pools', 'dual', 'Banality', banality, temp=False)
+            character.set_stat('pools', 'dual', 'Banality', banality, temp=True)
+            display_type = tradition or convention or nephandi_faction or affiliation
+            character.msg(f"|gBanality set to {banality} for {display_type}.|n")
 
 def validate_mage_stats(character, stat_name: str, value: str, category: str = None, stat_type: str = None) -> tuple[bool, str]:
     """

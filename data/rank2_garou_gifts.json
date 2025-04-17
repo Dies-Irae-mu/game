@@ -815,16 +815,17 @@
     {
         "name": "Hidden Secrets",
         "description": "Children of Crow are terribly fond of blackmail, and this Gift does a lot to help their natural tendencies along. The Corax know this Gift as Dark Truths; the Shadow Lords learned the Gift from the raven-folk, and improved on it a bit. The Gift is taught by a fly-spirit.",
-        "system": "To use this Gift, the character rolls Perception + Manipulation (difficulty 7). Success indicates the Garou learns one of the target's deepest and most embarrassing secrets. These secrets are of no use in combat, but make excellent blackmail material. Of course, not everyone has secrets of equal value.",
+        "system": "To use this Gift, the character rolls Perception + Manipulation (difficulty 7). Success indicates the Garou learns one of the target's deepest and most embarrassing secrets. These secrets are of no use in combat, but make excellent blackmail material. Of course, not everyone has secrets of equal value.\n\nCorax know this gift as 'Dark Truths.' To utilize Dark Truths, the Corax spends a Gnosis point and rolls Perception + Enigmas (difficulty 7). It functions similarly to Hidden Secrets.",
         "source": "Shadow Lord Tribebook (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [2],
-		"splat": "Shifter",
+        "values": [2, 3],
+        "splat": "Shifter",
         "tribe": "Shadow Lords",
-        "shifter_type": ["Garou"],
-		"camp": "Children of Crow"
+        "shifter_type": ["Garou", "Corax"],
+        "camp": "Children of Crow",
+        "gift_alias": "Dark Truths"
     },
     {
         "name": "Song of the Earth Mother",
