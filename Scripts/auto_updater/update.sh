@@ -314,7 +314,7 @@ restart_server() {
 
 # Function to create a backup
 create_backup() {
-    local backup_name="$1"
+    local backup_name="${1:-}"
     local timestamp
     timestamp=$(date '+%Y%m%d_%H%M%S')
     local backup_dir
