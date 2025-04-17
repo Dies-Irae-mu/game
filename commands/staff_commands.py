@@ -276,6 +276,72 @@ class CmdStaffStat(CmdSelfStat):
         # For non-numeric stats, return as is
         return True, "", value
 
+    def fix_stats_capitalization(self, target=None):
+        """
+        Fix capitalization of existing stats in the target character's stats dictionary.
+        
+        Args:
+            target (Character, optional): The character whose stats to fix. If None, use self.target.
+        
+        Returns:
+            int: Number of stats fixed
+        """
+        # Use the provided target or default to self.target
+        target = target or self.target
+        
+        if not target or not hasattr(target, 'db') or not hasattr(target.db, 'stats'):
+            return 0
+
+        fixed_count = 0
+        stats_dict = target.db.stats
+        
+        # Categories to check
+        categories = [
+            'attributes', 'abilities', 'secondary_abilities', 'powers', 
+            'merits', 'flaws', 'backgrounds', 'virtues', 'advantages', 'pools'
+        ]
+        
+        for category in categories:
+            if category in stats_dict:
+                for stat_type in stats_dict[category]:
+                    # Get a copy of the keys to avoid modifying during iteration
+                    stat_names = list(stats_dict[category][stat_type].keys())
+                    for old_name in stat_names:
+                        proper_name = self._get_canonical_stat_name(old_name)
+                        
+                        # If name changed after canonicalization, update it
+                        if proper_name != old_name:
+                            # Copy the stat value
+                            stat_value = stats_dict[category][stat_type][old_name]
+                            # Delete old entry
+                            del stats_dict[category][stat_type][old_name]
+                            # Create new entry with proper name
+                            stats_dict[category][stat_type][proper_name] = stat_value
+                            fixed_count += 1
+        
+        # Also fix gift aliases if they exist
+        if hasattr(target.db, 'gift_aliases') and target.db.gift_aliases:
+            alias_dict = target.db.gift_aliases
+            aliases_to_update = {}
+            
+            # First collect all the changes to make
+            for canonical_name, alias_info in alias_dict.items():
+                proper_canonical = self._get_canonical_stat_name(canonical_name)
+                if proper_canonical != canonical_name:
+                    # Need to update this entry
+                    aliases_to_update[canonical_name] = proper_canonical
+                    fixed_count += 1
+            
+            # Then apply the changes
+            for old_name, new_name in aliases_to_update.items():
+                alias_dict[new_name] = alias_dict[old_name]
+                del alias_dict[old_name]
+        
+        if fixed_count > 0:
+            self.caller.msg(f"|gFixed capitalization for {fixed_count} stats on {target.name}.|n")
+        
+        return fixed_count
+
     def func(self):
         """Execute the command with staff privileges."""
         if not self.args:
@@ -291,6 +357,9 @@ class CmdStaffStat(CmdSelfStat):
             if not self.stat_name:
                 self.caller.msg("|rUsage: +staffstat <character>=<stat>[(<instance>)]/<category>:<value>|n")
                 return
+
+            # Fix capitalization of existing stats on the target character
+            self.fix_stats_capitalization()
 
             # Get character's splat type and character type 
             splat = self.target.get_stat('other', 'splat', 'Splat', temp=False)
@@ -645,6 +714,51 @@ class CmdFixStats(MuxCommand):
         """Execute the command."""
         from world.wod20th.management.commands.fix_stats import do_fix_stats
         do_fix_stats(self.caller, self.args.strip())
+
+class CmdFixStatsCapitalization(MuxCommand):
+    """
+    Fix character stat capitalization by updating stats to use proper names
+    from the database.
+
+    Usage:
+      +fixcaps [<character>]
+
+    If no character is specified, prompts for one. This command will update
+    all stat names to use the canonical capitalization from the database.
+    """
+
+    key = "+fixcaps"
+    aliases = ["+fixcapitalization"]
+    locks = "cmd:perm(Admin) or perm(Builder)"
+    help_category = "Admin Commands"
+
+    def func(self):
+        """Execute the command."""
+        caller = self.caller
+        
+        if not self.args:
+            caller.msg("Usage: +fixcaps <character>")
+            return
+            
+        # Find the character
+        target = caller.search(self.args.strip(), global_search=True)
+        if not target:
+            return
+            
+        # If target is an account, get their character
+        if hasattr(target, 'character'):
+            target = target.character
+        
+        # Create a temporary staff stat command instance
+        from commands.staff_commands import CmdStaffStat
+        cmd = CmdStaffStat()
+        cmd.caller = caller
+        
+        # Run the capitalization fix
+        fix_count = cmd.fix_stats_capitalization(target)
+        
+        if fix_count == 0:
+            caller.msg(f"No capitalization issues found for {target.name}.")
 
 class CmdSetWyrmTaint(MuxCommand):
     """
