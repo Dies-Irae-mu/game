@@ -159,58 +159,157 @@ get_changed_files() {
     done
 }
 
-# Function to get server status with details
-get_server_status() {
-    local status="Not Running"
-    local uptime="N/A"
-    local commit_hash="N/A"
-    local commit_msg="N/A"
+# Function to check if the server is running
+check_server() {
+    # Check for server process
+    if pgrep -f "evennia/server/server.py" > /dev/null; then
+        return 0
+    fi
     
-    if check_server; then
-        status="Running"
-        # Get server uptime from process
-        local pids=$(pgrep -f "evennia")
-        if [ -n "$pids" ]; then
-            # Count the number of processes
-            local process_count=$(echo "$pids" | wc -l)
-            
-            # Try different methods to get uptime for the first process
-            local first_pid=$(echo "$pids" | head -n 1)
-            if command -v ps >/dev/null 2>&1; then
-                # Try etime format first
-                uptime=$(ps -o etime= -p "$first_pid" 2>/dev/null)
-                # If that fails, try elapsed format
-                if [ -z "$uptime" ]; then
-                    uptime=$(ps -o elapsed= -p "$first_pid" 2>/dev/null)
-                fi
-                # If both fail, try to get start time and calculate
-                if [ -z "$uptime" ]; then
-                    local start_time=$(ps -o lstart= -p "$first_pid" 2>/dev/null)
-                    if [ -n "$start_time" ]; then
-                        uptime="Started at: $start_time"
-                    fi
-                fi
-            fi
-            # If we still don't have uptime, use a generic message
+    # Check for the server PID file
+    if [ -f "$GAME_DIRECTORY/server/server.pid" ]; then
+        local pid=$(cat "$GAME_DIRECTORY/server/server.pid")
+        if ps -p "$pid" > /dev/null 2>&1; then
+            return 0
+        fi
+    fi
+    
+    return 1
+}
+
+# Function to check if the web portal is running
+check_web_portal() {
+    # Check for portal process
+    if pgrep -f "evennia/server/portal/portal.py" > /dev/null; then
+        return 0
+    fi
+    
+    # Check for the portal PID file
+    if [ -f "$GAME_DIRECTORY/server/portal.pid" ]; then
+        local pid=$(cat "$GAME_DIRECTORY/server/portal.pid")
+        if ps -p "$pid" > /dev/null 2>&1; then
+            return 0
+        fi
+    fi
+    
+    return 1
+}
+
+# Function to get process uptime
+get_process_uptime() {
+    local pid="$1"
+    local uptime="N/A"
+    
+    if [ -n "$pid" ]; then
+        if command -v ps >/dev/null 2>&1; then
+            # Try etime format first
+            uptime=$(ps -o etime= -p "$pid" 2>/dev/null)
+            # If that fails, try elapsed format
             if [ -z "$uptime" ]; then
-                uptime="Running (PID: $first_pid)"
+                uptime=$(ps -o elapsed= -p "$pid" 2>/dev/null)
             fi
-            
-            # Add process count to the uptime message
-            if [ "$process_count" -gt 1 ]; then
-                uptime="$uptime (Total processes: $process_count)"
+            # If both fail, try to get start time and calculate
+            if [ -z "$uptime" ]; then
+                local start_time=$(ps -o lstart= -p "$pid" 2>/dev/null)
+                if [ -n "$start_time" ]; then
+                    uptime="Started at: $start_time"
+                fi
             fi
         fi
-        # Get current commit info
-        commit_hash=$(git -C "$GAME_DIRECTORY" rev-parse --short HEAD 2>/dev/null || echo "N/A")
-        commit_msg=$(git -C "$GAME_DIRECTORY" log -1 --pretty=format:"%s" 2>/dev/null || echo "N/A")
+    fi
+    
+    echo "$uptime"
+}
+
+# Function to get server status with details
+get_server_status() {
+    local server_status="Not Running"
+    local portal_status="Not Running"
+    local server_uptime="N/A"
+    local portal_uptime="N/A"
+    local commit_hash="N/A"
+    local commit_msg="N/A"
+    local github_url="N/A"
+    
+    # Check server status
+    if check_server; then
+        server_status="Running"
+        local server_pid=$(pgrep -f "evennia/server/server.py")
+        server_uptime=$(get_process_uptime "$server_pid")
+    fi
+    
+    # Check portal status
+    if check_web_portal; then
+        portal_status="Running"
+        local portal_pid=$(pgrep -f "evennia/server/portal/portal.py")
+        portal_uptime=$(get_process_uptime "$portal_pid")
+    fi
+    
+    # Get current commit info
+    commit_hash=$(git -C "$GAME_DIRECTORY" rev-parse --short HEAD 2>/dev/null || echo "N/A")
+    commit_msg=$(git -C "$GAME_DIRECTORY" log -1 --pretty=format:"%s" 2>/dev/null || echo "N/A")
+    
+    # Get GitHub URL if available
+    local remote_url=$(git -C "$GAME_DIRECTORY" config --get remote.origin.url 2>/dev/null || echo "")
+    if [[ "$remote_url" == *"github.com"* ]]; then
+        # Convert SSH URL to HTTPS if needed
+        if [[ "$remote_url" == git@* ]]; then
+            remote_url=$(echo "$remote_url" | sed 's/git@github.com:/https:\/\/github.com\//')
+        fi
+        # Remove .git suffix if present
+        remote_url=$(echo "$remote_url" | sed 's/\.git$//')
+        github_url="$remote_url/commit/$commit_hash"
     fi
     
     # Build status message with proper Discord formatting
-    echo "**Server Status:** $status"
-    echo "**Uptime:** $uptime"
+    echo "**Game Server Status:** $server_status"
+    echo "**Server Uptime:** $server_uptime"
+    echo "**Web Portal Status:** $portal_status"
+    echo "**Portal Uptime:** $portal_uptime"
     echo "**Current Commit:** $commit_hash"
     echo "**Commit Message:** $commit_msg"
+    if [ "$github_url" != "N/A" ]; then
+        echo "**GitHub Link:** $github_url"
+    fi
+}
+
+# Function to restart the server using restart.sh
+restart_server() {
+    log_message "Restarting Evennia server using restart.sh..."
+    
+    # Check if restart.sh exists
+    if [ ! -f "$SCRIPT_DIR/restart.sh" ]; then
+        log_message "Error: restart.sh not found at $SCRIPT_DIR/restart.sh"
+        send_discord_notification "$(format_discord_message "❌ Error: restart.sh not found at $SCRIPT_DIR/restart.sh")"
+        return 1
+    fi
+    
+    # Make sure restart.sh is executable
+    chmod +x "$SCRIPT_DIR/restart.sh"
+    
+    # Run restart.sh
+    if ! "$SCRIPT_DIR/restart.sh"; then
+        log_message "Failed to restart server using restart.sh"
+        send_discord_notification "$(format_discord_message "❌ Failed to restart server using restart.sh")"
+        return 1
+    fi
+    
+    # Wait for server to start
+    log_message "Waiting for server to start..."
+    local attempts=0
+    while [ $attempts -lt 30 ]; do
+        if check_server && check_web_portal; then
+            log_message "Server and portal started successfully"
+            send_discord_notification "$(format_discord_message "✅ Server and portal started successfully")"
+            return 0
+        fi
+        sleep 2
+        attempts=$((attempts + 1))
+    done
+    
+    log_message "Server failed to start after 60 seconds"
+    send_discord_notification "$(format_discord_message "❌ Server failed to start after 60 seconds")"
+    return 1
 }
 
 # Function to create a backup
@@ -368,6 +467,19 @@ pull_changes() {
     local commit_msg=$(git -C "$GAME_DIRECTORY" log -1 --pretty=format:"%s")
     local changed_files=$(git -C "$GAME_DIRECTORY" diff --name-only "$current_commit" HEAD)
     
+    # Get GitHub URL if available
+    local github_url="N/A"
+    local remote_url=$(git -C "$GAME_DIRECTORY" config --get remote.origin.url 2>/dev/null || echo "")
+    if [[ "$remote_url" == *"github.com"* ]]; then
+        # Convert SSH URL to HTTPS if needed
+        if [[ "$remote_url" == git@* ]]; then
+            remote_url=$(echo "$remote_url" | sed 's/git@github.com:/https:\/\/github.com\//')
+        fi
+        # Remove .git suffix if present
+        remote_url=$(echo "$remote_url" | sed 's/\.git$//')
+        github_url="$remote_url/commit/$commit_hash"
+    fi
+    
     # Get information about commits from main that were merged
     local main_commits=""
     if [ "$GIT_BRANCH" = "production" ]; then
@@ -388,7 +500,7 @@ pull_changes() {
     
     # Restart server
     log_message "Restarting server..."
-    send_discord_notification "$(format_discord_message "🔄 Restarting server...\n\nCommit: $commit_hash\nAuthor: $commit_author\nMessage: $commit_msg\n\nChanged files:\n$changed_files$main_commits\n\nServer status before restart:\n$before_status")"
+    send_discord_notification "$(format_discord_message "🔄 Restarting server...\n\nCommit: $commit_hash\nAuthor: $commit_author\nMessage: $commit_msg\n\nChanged files:\n$changed_files$main_commits\n\nGitHub: $github_url\n\nServer status before restart:\n$before_status")"
     
     if ! restart_server; then
         log_message "Server restart failed, reverting changes"
@@ -417,7 +529,7 @@ pull_changes() {
     local after_status=$(get_server_status)
     
     log_message "Server successfully updated and restarted"
-    send_discord_notification "$(format_discord_message "✅ Server successfully updated and restarted\n\nCommit: $commit_hash\nAuthor: $commit_author\nMessage: $commit_msg\n\nChanged files:\n$changed_files$main_commits\n\nServer status after restart:\n$after_status")"
+    send_discord_notification "$(format_discord_message "✅ Server successfully updated and restarted\n\nCommit: $commit_hash\nAuthor: $commit_author\nMessage: $commit_msg\n\nChanged files:\n$changed_files$main_commits\n\nGitHub: $github_url\n\nServer status after restart:\n$after_status")"
     return 0
 }
 
