@@ -2071,15 +2071,15 @@
     {
         "name": "Prophetic Vision",
         "description": "This Gift enables the Garou to receive a vision of the future based on the study of the night sky. The vision usually reveals itself in astrological terms (“Lu-Bat's influence suggests an attitude of acceptance towards the events of the next several days” or “The intervention of Shantar indicates that changes may occur rapidly in the near future”). This Gift is taught by a star-spirit.",
-        "system": "The Garou spends one Gnosis point and rolls Wits + Enigmas (difficulty 7). The number of successes indicates how precise a vision appears to the character. A single success provides vague information, while three of more successes allows the revelation of specific details. Storytellers should couch their visions in symbols appropriate to the Incarna and matter at hand; the seer should have to interpret the vision rather than be spoon-fed.",
+        "system": "The Garou spends one Gnosis point and rolls Wits + Enigmas (difficulty 7). The number of successes indicates how precise a vision appears to the character. A single success provides vague information, while three of more successes allows the revelation of specific details. Storytellers should couch their visions in symbols appropriate to the Incarna and matter at hand; the seer should have to interpret the vision rather than be spoon-fed.\n\nGurahl have a version of this Gift as well. They are required to be in a meditative state. The Gurahl rolls Perception + Enigmas (difficulty 9), with the ability to lower the difficulty by spending Gnosis on a rate of 1 Gnosis per -1 difficulty.",
         "source": "Rage Across the Heavens",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [3],
-		"splat": "Shifter",
-		"auspice": "Theurge",
-        "shifter_type": ["Garou"]
+        "values": [3, 5],
+        "splat": "Shifter",
+        "auspice": "Theurge",
+        "shifter_type": ["Garou", "Gurahl"]
     },
     {
         "name": "Umbral Tracking",

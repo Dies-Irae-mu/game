@@ -146,17 +146,6 @@ def get_changeling_identity_stats(kith: str = None) -> List[str]:
         'Unseelie Legacy'
     ]
 
-def initialize_glamour(seeming):
-    """Calculate initial Glamour based on seeming."""
-    seeming = seeming.lower() if seeming else ''
-    if seeming == 'childling':
-        return 5  # Base 4 + 1 for Childling
-    elif seeming == 'wilder':
-        return 4  # Base 4
-    elif seeming == 'grump':
-        return 4  # Base 4
-    return 4  # Default value is 4
-
 def adjust_pools_for_seeming(character, old_seeming, new_seeming):
     """
     Adjust Willpower and Glamour pools based on Seeming changes.
@@ -166,39 +155,52 @@ def adjust_pools_for_seeming(character, old_seeming, new_seeming):
         old_seeming: The character's previous seeming (or None)
         new_seeming: The new seeming being set
     """
-    # Handle Willpower adjustments for Grump
-    current_willpower = character.get_stat('pools', 'dual', 'Willpower', temp=False) or 4
+    if not new_seeming:
+        return
+        
+    # Convert seemings to lowercase for case-insensitive comparison
+    new_seeming_lower = new_seeming.lower()
+    old_seeming_lower = old_seeming.lower() if old_seeming else None
     
-    # Remove Grump bonus if changing from Grump to something else
-    if old_seeming and old_seeming.lower() == 'grump' and new_seeming.lower() != 'grump':
-        # Only reduce if we previously added the bonus
-        if current_willpower == 5:
-            character.set_stat('pools', 'dual', 'Willpower', 4, temp=False)
-            character.set_stat('pools', 'dual', 'Willpower', 4, temp=True)
-            character.msg("|yYour Willpower is set to base 4 as you are no longer a Grump.|n")
+    # Base pools are 4 for all changelings
+    base_willpower = 4
+    base_glamour = 4
     
-    # Add Grump bonus if changing to Grump
-    elif new_seeming.lower() == 'grump' and (not old_seeming or old_seeming.lower() != 'grump'):
-        character.set_stat('pools', 'dual', 'Willpower', 5, temp=False)
-        character.set_stat('pools', 'dual', 'Willpower', 5, temp=True)
+    # Check if this is a seeming change
+    is_seeming_change = old_seeming_lower and old_seeming_lower != new_seeming_lower
+    
+    # Debug information
+    if is_seeming_change:
+        character.msg(f"|cDEBUG: Changing seeming from {old_seeming_lower} to {new_seeming_lower}|n")
+    
+    # Always reset to baseline, regardless of old seeming
+    # This ensures we don't retain previous boosts
+    character.set_stat('pools', 'dual', 'Willpower', base_willpower, temp=False)
+    character.set_stat('pools', 'dual', 'Willpower', base_willpower, temp=True)
+    character.set_stat('pools', 'dual', 'Glamour', base_glamour, temp=False)
+    character.set_stat('pools', 'dual', 'Glamour', base_glamour, temp=True)
+    
+    # Notify about reset if changing seemings
+    if is_seeming_change:
+        character.msg("|yYour Willpower and Glamour are reset to base values (4) due to your seeming change.|n")
+    
+    # Apply the bonus for the new seeming
+    if new_seeming_lower == 'childling':
+        # Childlings get +1 Glamour
+        character.set_stat('pools', 'dual', 'Glamour', base_glamour + 1, temp=False)
+        character.set_stat('pools', 'dual', 'Glamour', base_glamour + 1, temp=True)
+        character.msg("|gYour Glamour is set to 5 due to your Childling seeming.|n")
+    
+    elif new_seeming_lower == 'grump':
+        # Grumps get +1 Willpower
+        character.set_stat('pools', 'dual', 'Willpower', base_willpower + 1, temp=False)
+        character.set_stat('pools', 'dual', 'Willpower', base_willpower + 1, temp=True)
         character.msg("|gYour Willpower is set to 5 due to your Grump seeming.|n")
     
-    # Handle Glamour adjustments for Childling
-    current_glamour = character.get_stat('pools', 'dual', 'Glamour', temp=False) or 4
-    
-    # Remove Childling bonus if changing from Childling to something else
-    if old_seeming and old_seeming.lower() == 'childling' and new_seeming.lower() != 'childling':
-        # Only reduce if we previously added the bonus
-        if current_glamour == 5:
-            character.set_stat('pools', 'dual', 'Glamour', 4, temp=False)
-            character.set_stat('pools', 'dual', 'Glamour', 4, temp=True)
-            character.msg("|yYour Glamour is set to base 4 as you are no longer a Childling.|n")
-    
-    # Add Childling bonus if changing to Childling
-    elif new_seeming.lower() == 'childling' and (not old_seeming or old_seeming.lower() != 'childling'):
-        character.set_stat('pools', 'dual', 'Glamour', 5, temp=False)
-        character.set_stat('pools', 'dual', 'Glamour', 5, temp=True)
-        character.msg("|gYour Glamour is set to 5 due to your Childling seeming.|n")
+    elif new_seeming_lower == 'wilder':
+        # Wilders can choose +1 Glamour or +1 Willpower
+        character.msg("|gAs a Wilder, you can choose to increase either your Glamour or your Willpower by 1.|n")
+        character.msg("|gUse +selfstat Glamour/pools.dual=5 to increase Glamour or +selfstat Willpower/pools.dual=5 to increase Willpower.|n")
 
 def initialize_changeling_stats(character, kith):
     """Initialize specific stats for a changeling character."""
@@ -332,17 +334,16 @@ def initialize_changeling_stats(character, kith):
     else:
         banality = get_default_banality('Changeling', subtype=kith)
         character.set_stat('pools', 'dual', 'Banality', banality, temp=False)
-        character.set_stat('pools', 'dual', 'Banality', banality, temp=True)
+        character.set_stat('pools', 'dual', 'Banality', 0, temp=True)
         character.msg(f"|gBanality set to {banality} (permanent) for {kith}.")
     
     # Initialize base pools based on seeming
-    glamour = initialize_glamour(character.get_stat('identity', 'lineage', 'Seeming', temp=False))
-    character.set_stat('pools', 'dual', 'Glamour', glamour, temp=False)
-    character.set_stat('pools', 'dual', 'Glamour', glamour, temp=True)
-    
-    # Set base Willpower
+    # Always set base values first (4 for both pools)
+    character.set_stat('pools', 'dual', 'Glamour', 4, temp=False)
+    character.set_stat('pools', 'dual', 'Glamour', 4, temp=True)
     character.set_stat('pools', 'dual', 'Willpower', 4, temp=False)
     character.set_stat('pools', 'dual', 'Willpower', 4, temp=True)
+    character.msg("|gBase Willpower and Glamour set to 4.|n")
     
     # Adjust pools based on seeming changes
     new_seeming = character.get_stat('identity', 'lineage', 'Seeming', temp=False)
@@ -434,7 +435,12 @@ def initialize_inanimae_stats(character):
             if phyla_title in phyla_pools:
                 pools = phyla_pools[phyla_title]
                 for pool, value in pools.items():
-                    character.db.stats['pools']['dual'][pool] = {'perm': value, 'temp': value}
+                    if pool == 'Banality':
+                        character.set_stat('pools', 'dual', pool, value, temp=False)
+                        character.set_stat('pools', 'dual', pool, 0, temp=True)
+                    else:
+                        character.set_stat('pools', 'dual', pool, value, temp=False)
+                        character.set_stat('pools', 'dual', pool, value, temp=True)
                 character.msg(f"|gInitialized pools for {phyla_title} phyla: Glamour {pools['Glamour']}, Willpower {pools['Willpower']}, Banality {pools['Banality']}|n")
             
             # Send appropriate message for Mannikins
@@ -705,8 +711,12 @@ def update_changeling_pools_on_stat_change(character, stat_name: str, new_value:
             if phyla_title in phyla_pools:
                 pools = phyla_pools[phyla_title]
                 for pool, value in pools.items():
-                    character.set_stat('pools', 'dual', pool, value, temp=False)
-                    character.set_stat('pools', 'dual', pool, value, temp=True)
+                    if pool == 'Banality':
+                        character.set_stat('pools', 'dual', pool, value, temp=False)
+                        character.set_stat('pools', 'dual', pool, 0, temp=True)
+                    else:
+                        character.set_stat('pools', 'dual', pool, value, temp=False)
+                        character.set_stat('pools', 'dual', pool, value, temp=True)
                 character.msg(f"|gSet pools for {phyla_title} phyla: Glamour {pools['Glamour']}, Willpower {pools['Willpower']}, Banality {pools['Banality']}|n")
     
     # Handle House changes for Kinain

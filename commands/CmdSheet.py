@@ -338,21 +338,24 @@ class CmdSheet(MuxCommand):
         if splat == 'Mortal+':
             return get_mortalplus_identity_stats(char_type)
         
-        # Get tribe for Garou characters
+        # Get tribe for all appropriate Shifter types
         tribe = None
-        if char_type and char_type.lower() == 'garou':
-            tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
-            # Get base stats from get_identity_stats
-            stats = get_identity_stats(splat, char_type, tribe)
-            
-            # Special handling for Silver Fangs
-            if tribe and tribe.lower() == 'silver fangs':
-                # Remove 'Camp' if it's in the list
-                if 'Camp' in stats:
-                    stats.remove('Camp')
-                # Add Silver Fang specific stats
-                stats.extend(['Fang House', 'Lodge'])
-            return stats
+        if char_type and splat == 'Shifter':
+            # These shifter types all have tribes
+            shifter_types_with_tribes = ['garou', 'gurahl', 'bastet', 'rokea']
+            if char_type.lower() in shifter_types_with_tribes:
+                tribe = character.get_stat('identity', 'lineage', 'Tribe', temp=False)
+                # Get base stats from get_identity_stats
+                stats = get_identity_stats(splat, char_type, tribe)
+                
+                # Special handling for Silver Fangs
+                if tribe and char_type.lower() == 'garou' and tribe.lower() == 'silver fangs':
+                    # Remove 'Camp' if it's in the list
+                    if 'Camp' in stats:
+                        stats.remove('Camp')
+                    # Add Silver Fang specific stats
+                    stats.extend(['Fang House', 'Lodge'])
+                return stats
         
         # Special handling for Mage characters
         if splat == 'Mage':
@@ -1119,6 +1122,33 @@ class CmdSheet(MuxCommand):
                     discipline_value = values.get('perm', 0)
                     powers.append(format_stat(discipline, discipline_value, default=0, width=self.POWERS_WIDTH))
 
+            # Process sorcery
+            sorcery = character.db.stats.get('powers', {}).get('sorcery', {})
+            if sorcery:
+                powers.append(" " * 38)  # Add spacing
+                powers.append(divider("Sorcery", width=38, color="|b"))
+                for power, values in sorted(sorcery.items()):
+                    power_value = values.get('perm', 0)
+                    powers.append(format_stat(power, power_value, default=0, width=self.POWERS_WIDTH))
+
+            # Process numina
+            numina = character.db.stats.get('powers', {}).get('numina', {})
+            if numina:
+                powers.append(" " * 38)  # Add spacing
+                powers.append(divider("Numina", width=38, color="|b"))
+                for power, values in sorted(numina.items()):
+                    power_value = values.get('perm', 0)
+                    powers.append(format_stat(power, power_value, default=0, width=self.POWERS_WIDTH))
+
+            # Process hedge rituals
+            hedge_rituals = character.db.stats.get('powers', {}).get('hedge_ritual', {})
+            if hedge_rituals:
+                powers.append(" " * 38)  # Add spacing
+                powers.append(divider("Hedge Rituals", width=38, color="|b"))
+                for ritual, values in sorted(hedge_rituals.items()):
+                    ritual_value = values.get('perm', 0)
+                    powers.append(format_stat(ritual, ritual_value, default=0, width=self.POWERS_WIDTH))
+
         elif mortalplus_type.lower() == 'kinfolk':
             # Process gifts
             gifts = character.db.stats.get('powers', {}).get('gift', {})
@@ -1134,6 +1164,33 @@ class CmdSheet(MuxCommand):
                 for rite, values in sorted(rites.items()):
                     rite_value = values.get('perm', 0)
                     powers.append(format_stat(rite, rite_value, default=0, width=self.POWERS_WIDTH))
+            
+            # Process sorcery
+            sorcery = character.db.stats.get('powers', {}).get('sorcery', {})
+            if sorcery:
+                powers.append(" " * 38)  # Add spacing
+                powers.append(divider("Sorcery", width=38, color="|b"))
+                for power, values in sorted(sorcery.items()):
+                    power_value = values.get('perm', 0)
+                    powers.append(format_stat(power, power_value, default=0, width=self.POWERS_WIDTH))
+
+            # Process numina
+            numina = character.db.stats.get('powers', {}).get('numina', {})
+            if numina:
+                powers.append(" " * 38)  # Add spacing
+                powers.append(divider("Numina", width=38, color="|b"))
+                for power, values in sorted(numina.items()):
+                    power_value = values.get('perm', 0)
+                    powers.append(format_stat(power, power_value, default=0, width=self.POWERS_WIDTH))
+
+            # Process hedge rituals
+            hedge_rituals = character.db.stats.get('powers', {}).get('hedge_ritual', {})
+            if hedge_rituals:
+                powers.append(" " * 38)  # Add spacing
+                powers.append(divider("Hedge Rituals", width=38, color="|b"))
+                for ritual, values in sorted(hedge_rituals.items()):
+                    ritual_value = values.get('perm', 0)
+                    powers.append(format_stat(ritual, ritual_value, default=0, width=self.POWERS_WIDTH))
 
         elif mortalplus_type.lower() == 'kinain':
             # Process arts
@@ -1143,6 +1200,33 @@ class CmdSheet(MuxCommand):
                 for art, values in sorted(arts.items()):
                     art_value = values.get('perm', 0)
                     powers.append(format_stat(art, art_value, default=0, width=self.POWERS_WIDTH))
+
+            # Process sorcery
+            sorcery = character.db.stats.get('powers', {}).get('sorcery', {})
+            if sorcery:
+                powers.append(" " * 38)  # Add spacing
+                powers.append(divider("Sorcery", width=38, color="|b"))
+                for power, values in sorted(sorcery.items()):
+                    power_value = values.get('perm', 0)
+                    powers.append(format_stat(power, power_value, default=0, width=self.POWERS_WIDTH))
+
+            # Process numina
+            numina = character.db.stats.get('powers', {}).get('numina', {})
+            if numina:
+                powers.append(" " * 38)  # Add spacing
+                powers.append(divider("Numina", width=38, color="|b"))
+                for power, values in sorted(numina.items()):
+                    power_value = values.get('perm', 0)
+                    powers.append(format_stat(power, power_value, default=0, width=self.POWERS_WIDTH))
+
+            # Process hedge rituals
+            hedge_rituals = character.db.stats.get('powers', {}).get('hedge_ritual', {})
+            if hedge_rituals:
+                powers.append(" " * 38)  # Add spacing
+                powers.append(divider("Hedge Rituals", width=38, color="|b"))
+                for ritual, values in sorted(hedge_rituals.items()):
+                    ritual_value = values.get('perm', 0)
+                    powers.append(format_stat(ritual, ritual_value, default=0, width=self.POWERS_WIDTH))
 
             # Add spacing between sections if both arts and realms exist
             if arts and character.db.stats.get('powers', {}).get('realm', {}):
@@ -1177,6 +1261,13 @@ class CmdSheet(MuxCommand):
                     ritual_value = values.get('perm', 0)
                     powers.append(format_stat(ritual, ritual_value, default=0, width=self.POWERS_WIDTH))
 
+            numina = character.db.stats.get('powers', {}).get('numina', {})
+            if numina:
+                powers.append(divider("Numina", width=38, color="|b"))
+                for power, values in sorted(numina.items()):
+                    power_value = values.get('perm', 0)
+                    powers.append(format_stat(power, power_value, default=0, width=self.POWERS_WIDTH))
+
         elif mortalplus_type.lower() == 'psychic':
             # Process numina
             numina = character.db.stats.get('powers', {}).get('numina', {})
@@ -1186,6 +1277,23 @@ class CmdSheet(MuxCommand):
                     power_value = values.get('perm', 0)
                     powers.append(format_stat(power, power_value, default=0, width=self.POWERS_WIDTH))
 
+            # Process sorcery
+            sorcery = character.db.stats.get('powers', {}).get('sorcery', {})
+            if sorcery:
+                powers.append(" " * 38)  # Add spacing
+                powers.append(divider("Sorcery", width=38, color="|b"))
+                for power, values in sorted(sorcery.items()):
+                    power_value = values.get('perm', 0)
+                    powers.append(format_stat(power, power_value, default=0, width=self.POWERS_WIDTH))
+
+            # Process hedge rituals
+            hedge_rituals = character.db.stats.get('powers', {}).get('hedge_ritual', {})
+            if hedge_rituals:
+                powers.append(divider("Hedge Rituals", width=38, color="|b"))
+                for ritual, values in sorted(hedge_rituals.items()):
+                    ritual_value = values.get('perm', 0)
+                    powers.append(format_stat(ritual, ritual_value, default=0, width=self.POWERS_WIDTH))
+
         elif mortalplus_type.lower() == 'faithful':
             # Process faith
             faith = character.db.stats.get('powers', {}).get('faith', {})
@@ -1194,7 +1302,33 @@ class CmdSheet(MuxCommand):
                 for power, values in sorted(faith.items()):
                     power_value = values.get('perm', 0)
                     powers.append(format_stat(power, power_value, default=0, width=self.POWERS_WIDTH))
-        
+                    
+            # Process sorcery
+            sorcery = character.db.stats.get('powers', {}).get('sorcery', {})
+            if sorcery:
+                powers.append(" " * 38)  # Add spacing
+                powers.append(divider("Sorcery", width=38, color="|b"))
+                for power, values in sorted(sorcery.items()):
+                    power_value = values.get('perm', 0)
+                    powers.append(format_stat(power, power_value, default=0, width=self.POWERS_WIDTH))
+
+            # Process numina
+            numina = character.db.stats.get('powers', {}).get('numina', {})
+            if numina:
+                powers.append(" " * 38)  # Add spacing
+                powers.append(divider("Numina", width=38, color="|b"))
+                for power, values in sorted(numina.items()):
+                    power_value = values.get('perm', 0)
+                    powers.append(format_stat(power, power_value, default=0, width=self.POWERS_WIDTH))
+
+            # Process hedge rituals
+            hedge_rituals = character.db.stats.get('powers', {}).get('hedge_ritual', {})
+            if hedge_rituals:
+                powers.append(" " * 38)  # Add spacing
+                powers.append(divider("Hedge Rituals", width=38, color="|b"))
+                for ritual, values in sorted(hedge_rituals.items()):
+                    ritual_value = values.get('perm', 0)
+                    powers.append(format_stat(ritual, ritual_value, default=0, width=self.POWERS_WIDTH))        
         return powers
 
     def process_possessed_powers(self, character, powers):

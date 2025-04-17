@@ -50,7 +50,8 @@ AUSPICE_CHOICES_DICT: Dict[str, List[str]] = {
     'Rokea': ['Brightwater', 'Dimwater', 'Darkwater'],
     'Nagah': ['Kamakshi', 'Kartikeya', 'Kamsa', 'Kali'],
     'Mokole': ['Rising Sun', 'Noonday Sun', 'Shrouded Sun', 'Midnight Sun', 
-               'Decorated Sun', 'Solar Eclipse']
+               'Decorated Sun', 'Solar Eclipse'],
+    'Gurahl': ['Arcas', 'Uzmati', 'Kojubat', 'Kieh', 'Rishi']
 }
 
 ASPECT_CHOICES_DICT: Dict[str, List[str]] = {
@@ -984,6 +985,13 @@ def update_shifter_pools_on_stat_change(character, stat_name, new_value):
     new_value = new_value.lower() if isinstance(new_value, str) else new_value
 
     if stat_name == 'type':
+        # Update Banality based on the new shifter type
+        banality = get_default_banality('Shifter', subtype=new_value)
+        if banality:
+            character.set_stat('pools', 'dual', 'Banality', banality, temp=False)
+            character.set_stat('pools', 'dual', 'Banality', banality, temp=True)
+            character.msg(f"|gBanality set to {banality} for {new_value}.|n")
+            
         # When shifter type is set/changed, call the appropriate initialize function
         initialize_shifter_type(character, new_value)
     elif stat_name == 'breed':

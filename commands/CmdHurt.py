@@ -53,15 +53,26 @@ class CmdHurt(Command):
 
         damage_type_full = {'b': 'bashing', 'l': 'lethal', 'a': 'aggravated'}[damage_type]
         
+        # Initialize health_level_bonuses if it doesn't exist
+        if not hasattr(target.db, 'health_level_bonuses') or target.db.health_level_bonuses is None:
+            target.db.health_level_bonuses = {
+                'bruised': 0,
+                'hurt': 0,
+                'injured': 0,
+                'wounded': 0,
+                'mauled': 0,
+                'crippled': 0
+            }
+        
         # Calculate total health levels including bonuses
-        base_health = 7
-        bonus_health = calculate_total_health_levels(target)
-        total_health = base_health + bonus_health
+        total_health = calculate_total_health_levels(target)
 
         # Apply damage
         apply_damage_or_healing(target, damage, damage_type_full)
 
         # Ensure damage doesn't exceed maximum health
+        base_health = target.get_stat('other', 'other', 'Health') or 7
+        total_health = base_health + total_health
         if target.db.agg > total_health:
             target.db.agg = total_health
 

@@ -24,6 +24,13 @@ class CmdChangelingInteraction(MuxCommand):
 
     def func(self):
         """Execute command."""
+        # Check if in a Quiet Room
+        if (hasattr(self.caller.location, 'db') and 
+            hasattr(self.caller.location, 'is_command_restricted_in_quiet_room') and
+            self.caller.location.is_command_restricted_in_quiet_room(self.cmdstring)):
+            self.caller.msg("|rYou are in a Quiet Room and cannot use fae interaction commands here.|n")
+            return
+            
         splat = self.caller.db.stats['other']['splat'].get('Splat', {}).get('perm', '')
         
         # Check if character is either a Changeling or Kinain

@@ -2,6 +2,7 @@ from evennia import default_cmds
 from evennia.utils import utils
 from world.wod20th.models import Stat
 from evennia import search_object
+from world.wod20th.utils.damage import calculate_total_health_levels, apply_damage_or_healing
 
 class CmdPump(default_cmds.MuxCommand):
     """
@@ -17,6 +18,8 @@ class CmdPump(default_cmds.MuxCommand):
       +boost/set <player>=<stat>/<amount>[/<description>] - Staff: Set boost on player
       +boost/remove <player>=<id> - Staff: Remove boost from player
       +boost/removeall <player> - Staff: Remove all boosts from player
+      +boost/rage <stat>=<amount> - Gurahl: Spend Rage to boost Strength or Stamina
+      +boost/rage health=<amount> - Gurahl: Spend Rage to gain additional health levels
 
     Examples:
       +boost strength=2
@@ -29,6 +32,8 @@ class CmdPump(default_cmds.MuxCommand):
       +boost/endall
       +boost/refresh
       +boosts
+      +boost/rage strength=2 - Gurahl: Spend 2 Rage to boost Strength
+      +boost/rage health=2 - Gurahl: Spend 2 Rage to gain 2 health levels
       +boosts John - Staff: View John's boosts
       +boost/set Jane=strength/2/Blessing
       +boost/remove Jane=1
@@ -41,6 +46,8 @@ class CmdPump(default_cmds.MuxCommand):
     - Changelings: Can boost any attribute or ability
     - Mages: Can boost any attribute or ability
     - Fomori/Kami: Through blessings
+    - Gurahl: Can spend Rage to boost Strength or Stamina (up to 2x form value)
+    - Gurahl: Can spend Rage to gain additional health levels
 
     Use +boost/end <id> to end a specific boost early.
     Use +boost/endall to end all active boosts.
@@ -236,13 +243,20 @@ class CmdPump(default_cmds.MuxCommand):
         
         # Find the boost with this ID
         found_stat = None
+        is_health_boost = False
         for stat, boost_info in caller.db.attribute_boosts.items():
             if boost_info.get('id') == boost_id:
                 found_stat = stat
+                is_health_boost = boost_info.get('is_health_boost', False)
                 break
 
         if not found_stat:
             caller.msg(f"No boost found with ID {boost_id}.")
+            return
+
+        # Special handling for health boosts
+        if is_health_boost:
+            self._clear_gurahl_health_boost(caller)
             return
 
         # Get the boost info
@@ -352,6 +366,11 @@ class CmdPump(default_cmds.MuxCommand):
 
         # Process each boost
         for stat_name, boost_info in list(caller.db.attribute_boosts.items()):
+            # Special handling for health boosts
+            if boost_info.get('is_health_boost', False):
+                self._clear_gurahl_health_boost(caller)
+                continue
+                
             amount = boost_info.get('amount', 0)
             boost_id = boost_info.get('id', '?')
             
@@ -764,7 +783,6 @@ class CmdPump(default_cmds.MuxCommand):
                     # For other stats, just adjust temporary value based on current permanent
                     new_value = perm_value + amount
                     caller.set_stat(category, stat_type, stat_name, new_value, temp=True)
-                    updated_stats.append(f"{stat_name} now at {new_value} (base {perm_value} + {amount})")
 
         if updated_stats:
             caller.msg("Refreshed all active boosts:")
@@ -793,41 +811,383 @@ class CmdPump(default_cmds.MuxCommand):
             # Work directly with the stats dictionary for attributes
             stats_dict = character.db.stats
             current_perm = stats_dict[category][stat_type][proper_stat_name]['perm']
+            current_temp = stats_dict[category][stat_type][proper_stat_name]['temp']
             
-            # Check if there's an existing boost
+            # Store boost information - initialize if needed
             self._ensure_attribute_boosts(character)
-            boost_amount = 0
-            if proper_stat_name in character.db.attribute_boosts:
-                boost_amount = character.db.attribute_boosts[proper_stat_name]['amount']
-                
-            # Calculate new temporary value based on current permanent value and boost
-            new_temp = min(current_perm + boost_amount + amount, cap)
+            
+            # Add the boost on top of the current temp value (which might include form modifiers)
+            new_temp = min(current_temp + amount, cap)
             
             # Set the new temporary value
             stats_dict[category][stat_type][proper_stat_name]['temp'] = new_temp
-            return new_temp, current_perm
+            
+            return new_temp, current_temp
         else:
             # For non-attributes, use get_stat/set_stat
             current_perm = character.get_stat(category, stat_type, proper_stat_name, temp=False)
-            if current_perm is None:
+            current_temp = character.get_stat(category, stat_type, proper_stat_name, temp=True)
+            
+            if current_perm is None or current_temp is None:
                 return None, f"Cannot find values for {proper_stat_name}"
-                
-            # Check if there's an existing boost
-            self._ensure_attribute_boosts(character)
-            boost_amount = 0
-            if proper_stat_name in character.db.attribute_boosts:
-                boost_amount = character.db.attribute_boosts[proper_stat_name]['amount']
                 
             # For pools, adjust both permanent and temporary values
             if category == 'pools' and stat_type == 'dual' and stat_name.lower() in ['rage', 'gnosis', 'willpower']:
-                new_value = min(current_perm + boost_amount + amount, cap)
+                new_value = min(current_perm + amount, cap)
                 character.set_stat(category, stat_type, proper_stat_name, new_value, temp=True)
                 return new_value, current_perm
             else:
-                # For other stats, just adjust temporary value
-                new_value = min(current_perm + boost_amount + amount, cap)
+                # For other stats, add boost to current temp value
+                new_value = min(current_temp + amount, cap)
                 character.set_stat(category, stat_type, proper_stat_name, new_value, temp=True)
-                return new_value, current_perm
+                return new_value, current_temp
+
+    def _remove_boost(self, stat_name, amount):
+        """Remove the stat boost after the duration."""
+        # Get stat location
+        category, stat_type = self._get_stat_location(stat_name.lower())
+        if not category or not stat_type:
+            return
+
+        # Get current values
+        current_temp = self.caller.get_stat(category, stat_type, stat_name, temp=True)
+        perm_value = self.caller.get_stat(category, stat_type, stat_name, temp=False)
+        
+        if current_temp is None or perm_value is None:
+            return
+
+        # For pools, adjust both permanent and temporary values
+        if category == 'pools' and stat_type == 'dual' and stat_name.lower() in ['rage', 'gnosis', 'willpower']:
+            new_value = max(0, current_temp - amount)  # Just subtract the boost amount
+            self.caller.set_stat(category, stat_type, stat_name, new_value, temp=False)
+            self.caller.set_stat(category, stat_type, stat_name, new_value, temp=True)
+        else:
+            # For other stats, get the form-adjusted value
+            if category == 'attributes':
+                # Get form-modified value by subtracting just the boost amount
+                stats_dict = self.caller.db.stats
+                current_value = stats_dict[category][stat_type][stat_name]['temp']
+                new_value = max(perm_value, current_value - amount)  # Don't go below perm value
+                # Set the new value
+                stats_dict[category][stat_type][stat_name]['temp'] = new_value
+            else:
+                # For non-attributes, just remove the boost amount
+                new_value = max(perm_value, current_temp - amount)  # Don't go below perm value
+                self.caller.set_stat(category, stat_type, stat_name, new_value, temp=True)
+        
+        # Remove from active boosts if present
+        self._ensure_attribute_boosts(self.caller)
+        if stat_name in self.caller.db.attribute_boosts:
+            boost_id = self.caller.db.attribute_boosts[stat_name].get('id', '?')
+            del self.caller.db.attribute_boosts[stat_name]
+            self.caller.msg(f"Boost #{boost_id} expired: Your {stat_name} returns to normal ({new_value}).")
+
+    def _handle_gurahl_rage_boost(self, caller):
+        """Handle the Gurahl-specific rage-based attribute boost."""
+        # Check if character is a Gurahl
+        shifter_type = caller.get_stat('identity', 'lineage', 'Type', temp=False)
+        if shifter_type != 'Gurahl':
+            caller.msg("Only Gurahl can use this ability.")
+            return
+            
+        if not self.args or "=" not in self.args:
+            caller.msg("Usage: +boost/rage <stat>=<amount>")
+            return
+            
+        stat_name, amount_str = self.args.split("=")
+        stat_name = stat_name.strip().lower()
+        
+        # Special handling for health boost
+        if stat_name == "health":
+            try:
+                amount = int(amount_str)
+            except ValueError:
+                caller.msg("The amount must be a number.")
+                return
+                
+            if amount <= 0:
+                caller.msg("The amount must be a positive number.")
+                return
+                
+            # Check if character has enough Rage
+            current_rage = caller.get_stat('pools', 'dual', 'Rage', temp=True)
+            if current_rage < amount:
+                caller.msg(f"You don't have enough Rage. Current Rage: {current_rage}")
+                return
+                
+            # Spend Rage
+            new_rage = current_rage - amount
+            caller.set_stat('pools', 'dual', 'Rage', new_rage, temp=True)
+            
+            # Initialize bonus_health_from_rage if it doesn't exist or is None
+            if not hasattr(caller.db, 'bonus_health_from_rage') or caller.db.bonus_health_from_rage is None:
+                caller.db.bonus_health_from_rage = 0
+            
+            # Add the health levels
+            old_bonus = caller.db.bonus_health_from_rage
+            caller.db.bonus_health_from_rage += amount
+            
+            # Get the current injury level to determine which type of health levels to add
+            injury_level = caller.db.injury_level or "Healthy"
+            
+            # Map injury level to health level type
+            level_type_map = {
+                "Healthy": "bruised",
+                "Bruised": "bruised",
+                "Hurt": "hurt",
+                "Injured": "injured",
+                "Wounded": "wounded",
+                "Mauled": "mauled",
+                "Crippled": "crippled",
+                "Incapacitated": "crippled"  # Default to crippled if they're incapacitated
+            }
+            
+            level_type = level_type_map.get(injury_level, "bruised").lower()
+            
+            # Store the health level type for the damage system to use
+            caller.db.rage_health_level_type = level_type
+            
+            # Initialize health_level_bonuses if needed
+            if not hasattr(caller.db, 'health_level_bonuses'):
+                caller.db.health_level_bonuses = {
+                    'bruised': 0,
+                    'hurt': 0,
+                    'injured': 0,
+                    'wounded': 0,
+                    'mauled': 0,
+                    'crippled': 0
+                }
+            
+            # Recalculate the total health levels to ensure proper display
+            from world.wod20th.utils.damage import calculate_total_health_levels
+            calculate_total_health_levels(caller)
+            
+            # Get a new boost ID and add it to the attribute_boosts dictionary
+            self._ensure_attribute_boosts(caller)
+            boost_id = self._get_next_boost_id(caller)
+            
+            # Store in attribute_boosts so it shows up in +boosts and can be ended with +boost/endall
+            caller.db.attribute_boosts["Health Levels"] = {
+                'id': boost_id,
+                'amount': amount,
+                'source': "Rage Health Boost",
+                'is_health_boost': True,  # Special flag to identify health boosts
+                'level_type': level_type  # Store the level type for reference
+            }
+            
+            # Capitalize the level type for display
+            display_level_type = level_type.capitalize()
+            
+            caller.msg(f"You spend {amount} Rage to gain {amount} additional {display_level_type} health levels for the scene.")
+            
+            # Schedule clearance after 8 hours (scene duration)
+            utils.delay(28800, self._clear_gurahl_health_boost, caller)
+            
+            # Emit message to room
+            room_msg = f"{caller.name} growls deeply as their body bulks up, gaining additional resilience at the {display_level_type} level."
+            caller.location.msg_contents(room_msg)
+            
+            # Post to MudInfo channel
+            try:
+                from evennia.utils.create import create_channel
+                mudinfo = create_channel("MudInfo", autosubscribe=False)
+                if mudinfo:
+                    mudinfo.msg(f"[{caller.name}] Rage Health Boost: +{amount} {display_level_type} health levels")
+            except Exception:
+                # If channel messaging fails, continue without error
+                pass
+                
+            return
+        
+        # Only allow Strength or Stamina for attribute boosts
+        if stat_name not in ['strength', 'stamina']:
+            caller.msg("Gurahl can only use Rage to boost Strength, Stamina, or health.")
+            return
+            
+        if not self.args or "=" not in self.args:
+            caller.msg("Usage: +boost/rage <stat>=<amount>")
+            return
+            
+        amount_str = self.args.split("=")[1].strip()
+            
+        try:
+            amount = int(amount_str)
+        except ValueError:
+            caller.msg("The amount must be a number.")
+            return
+            
+        if amount <= 0:
+            caller.msg("The amount must be a positive number.")
+            return
+            
+        # Check if character has enough Rage
+        current_rage = caller.get_stat('pools', 'dual', 'Rage', temp=True)
+        if current_rage < amount:
+            caller.msg(f"You don't have enough Rage. Current Rage: {current_rage}")
+            return
+            
+        # Get proper case for the stat name
+        proper_stat_name = self._get_proper_case(stat_name)
+        
+        # Get current form's value for the stat and store it
+        current_form = getattr(caller.db, 'current_form', 'Homid')
+        current_form_value = caller.db.stats['attributes']['physical'][proper_stat_name]['temp']
+        perm_value = caller.db.stats['attributes']['physical'][proper_stat_name]['perm']
+        
+        # Calculate max allowed boost (up to twice the current form's value)
+        max_boost = current_form_value * 2
+        
+        # Calculate new value
+        new_value = current_form_value + amount
+        
+        # Check if the new value exceeds the maximum allowed
+        if new_value > max_boost:
+            # Cap at maximum allowed
+            excess = new_value - max_boost
+            actual_boost = amount - excess
+            
+            # Refund excess Rage points
+            if excess > 0:
+                caller.msg(f"You cannot boost {proper_stat_name} beyond {max_boost}. Refunding {excess} Rage points.")
+                amount = actual_boost
+                
+            # Apply the capped boost
+            new_value = max_boost
+        
+        # Set the new temporary value
+        caller.db.stats['attributes']['physical'][proper_stat_name]['temp'] = new_value
+        
+        # Spend Rage
+        new_rage = current_rage - amount
+        caller.set_stat('pools', 'dual', 'Rage', new_rage, temp=True)
+        
+        # Set duration for 1 turn (fixed duration regardless of Rage spent)
+        duration = 60  # 60 seconds per turn
+        
+        # Get a new boost ID
+        boost_id = self._get_next_boost_id(caller)
+        
+        # Store the boost with timer and original form value
+        self._ensure_attribute_boosts(caller)
+        
+        # Store the boost with the original form value
+        caller.db.attribute_boosts[proper_stat_name] = {
+            'id': boost_id,
+            'amount': amount,
+            'source': "Rage Boost",
+            'form_value': current_form_value,  # Store original form value to restore later
+            'is_gurahl_rage': True  # Mark as a Gurahl rage boost for special handling
+        }
+            
+        # Set a timer to remove the boost
+        utils.delay(duration, self._remove_gurahl_rage_boost, caller, proper_stat_name, amount, boost_id)
+        
+        caller.msg(f"You spend {amount} Rage to boost your {proper_stat_name} to {new_value} for 1 turn.")
+        
+        # Emit messages
+        self._emit_boost_message(caller, proper_stat_name, new_value, amount, "Rage Boost")
+        
+        # Emit message to room
+        room_msg = f"{caller.name} uses their rage to boost their {proper_stat_name} to {new_value} for 1 turn."
+        caller.location.msg_contents(room_msg)
+
+    def _remove_gurahl_rage_boost(self, caller, stat_name, amount, boost_id):
+        """Remove Gurahl rage-based attribute boost."""
+        # Make sure the boost still exists
+        if not hasattr(caller.db, 'attribute_boosts') or stat_name not in caller.db.attribute_boosts:
+            return
+            
+        boost_info = caller.db.attribute_boosts[stat_name]
+        
+        # Check if it's the same boost (by ID)
+        if boost_info.get('id') != boost_id:
+            return
+            
+        # Get the original form value that we stored
+        original_form_value = boost_info.get('form_value')
+        
+        # Restore the original form value
+        caller.db.stats['attributes']['physical'][stat_name]['temp'] = original_form_value
+        
+        # Remove the boost
+        del caller.db.attribute_boosts[stat_name]
+        
+        # Recycle the boost ID
+        if hasattr(caller.db, 'recycled_boost_ids'):
+            caller.db.recycled_boost_ids.append(boost_id)
+        
+        caller.msg(f"Boost #{boost_id} expired: Your {stat_name} returns to normal ({original_form_value}).")
+
+    def _handle_gurahl_health_boost(self, caller):
+        """Handle Gurahl-specific health level boost. 
+        This method is deprecated - health is now handled directly by _handle_gurahl_rage_boost."""
+        # Redirect to the new handler
+        if not self.args or "=" not in self.args:
+            caller.msg("Usage: +boost/rage health=<amount>")
+            return
+            
+        # Create the appropriate argument for _handle_gurahl_rage_boost
+        amount_str = self.args.split("=")[1].strip()
+        self.args = f"health={amount_str}"
+        self._handle_gurahl_rage_boost(caller)
+
+    def _clear_gurahl_health_boost(self, caller):
+        """Clear Gurahl rage-based health boosts."""
+        if hasattr(caller.db, 'bonus_health_from_rage') and caller.db.bonus_health_from_rage is not None and caller.db.bonus_health_from_rage > 0:
+            old_bonus = caller.db.bonus_health_from_rage
+            
+            # Get the level type that was being boosted
+            level_type = getattr(caller.db, 'rage_health_level_type', 'bruised').lower()
+            
+            # Reset the rage-based health boost
+            caller.db.bonus_health_from_rage = 0
+            caller.db.rage_health_level_type = None
+            
+            # Reset the specific level type in health_level_bonuses
+            if hasattr(caller.db, 'health_level_bonuses') and level_type in caller.db.health_level_bonuses:
+                # Save the base bruised bonus before recalculation
+                base_bruised = caller.db.health_level_bonuses.get('bruised', 0)
+                if level_type == 'bruised':
+                    # For bruised, we need to preserve the bonus from things like Huge Size
+                    from world.wod20th.utils.damage import calculate_total_health_levels
+                    calculate_total_health_levels(caller)  # This will set the proper base bruised level
+                else:
+                    # For other levels, just set to 0
+                    caller.db.health_level_bonuses[level_type] = 0
+            
+            # Also remove from attribute_boosts if it exists there
+            self._ensure_attribute_boosts(caller)
+            for stat_name, boost_info in list(caller.db.attribute_boosts.items()):
+                if boost_info.get('is_health_boost', False):
+                    del caller.db.attribute_boosts[stat_name]
+                    break
+            
+            # Recalculate total health levels to ensure other bonuses (like Huge Size merit) are preserved
+            from world.wod20th.utils.damage import calculate_total_health_levels
+            calculate_total_health_levels(caller)
+            
+            # Capitalize level type for display
+            display_level_type = level_type.capitalize()
+            
+            caller.msg(f"Your additional {old_bonus} {display_level_type} health levels from Rage expenditure fade away.")
+            
+            # Add a message to clarify if they still have bonus health from other sources
+            if hasattr(caller.db, 'bonus_health') and caller.db.bonus_health is not None and caller.db.bonus_health > 0:
+                sources = []
+                
+                # Check for Huge Size merit - check both locations
+                huge_size = caller.get_stat('merits', 'physical', 'Huge Size', temp=False)
+                if not huge_size:
+                    huge_size = caller.get_stat('merits', 'merit', 'Huge Size', temp=False)
+                if huge_size:
+                    sources.append("Huge Size merit")
+                
+                if sources:
+                    source_text = ", ".join(sources)
+                    caller.msg(f"You still have {caller.db.bonus_health} bonus health levels from {source_text}.")
+            
+            return True
+        return False
 
     def func(self):
         caller = self.caller
@@ -883,8 +1243,24 @@ class CmdPump(default_cmds.MuxCommand):
         if "end" in self.switches:
             self._handle_end_boost(caller, self.args)
             return
+            
+        # Handle Gurahl rage-based attribute boost
+        if "rage" in self.switches:
+            self._handle_gurahl_rage_boost(caller)
+            return
+            
+        # Handle Gurahl rage-based health boost (remove this section since it's now part of rage)
+        if "health" in self.switches:
+            # Check if character is a Gurahl before proceeding
+            shifter_type = caller.get_stat('identity', 'lineage', 'Type', temp=False)
+            if shifter_type != 'Gurahl':
+                caller.msg("Only Gurahl can use this ability.")
+                return
+                
+            self._handle_gurahl_health_boost(caller)
+            return
 
-        # Get character's splat
+        # Get character's splat for regular boost
         splat = caller.get_stat('other', 'splat', 'Splat', temp=False)
         if not splat:
             caller.msg("Error: Could not determine character type.")
@@ -1057,34 +1433,3 @@ class CmdPump(default_cmds.MuxCommand):
             
             # Emit messages to room and MudInfo
             self._emit_boost_message(caller, proper_stat_name, new_temp, actual_increase, source)
-
-    def _remove_boost(self, stat_name, amount):
-        """Remove the stat boost after the duration."""
-        # Get stat location
-        category, stat_type = self._get_stat_location(stat_name.lower())
-        if not category or not stat_type:
-            return
-
-        # Get current values
-        current_temp = self.caller.get_stat(category, stat_type, stat_name, temp=True)
-        perm_value = self.caller.get_stat(category, stat_type, stat_name, temp=False)
-        
-        if current_temp is None or perm_value is None:
-            return
-
-        # For pools, adjust both permanent and temporary values
-        if category == 'pools' and stat_type == 'dual' and stat_name.lower() in ['rage', 'gnosis', 'willpower']:
-            new_value = max(perm_value - amount, 1)  # Ensure pools don't go below 1
-            self.caller.set_stat(category, stat_type, stat_name, new_value, temp=False)
-            self.caller.set_stat(category, stat_type, stat_name, new_value, temp=True)
-        else:
-            # For other stats, just adjust temporary value
-            new_value = max(current_temp - amount, perm_value)
-            self.caller.set_stat(category, stat_type, stat_name, new_value, temp=True)
-        
-        # Remove from active boosts if present
-        self._ensure_attribute_boosts(self.caller)
-        if stat_name in self.caller.db.attribute_boosts:
-            boost_id = self.caller.db.attribute_boosts[stat_name].get('id', '?')
-            del self.caller.db.attribute_boosts[stat_name]
-            self.caller.msg(f"Boost #{boost_id} expired: Your {stat_name} returns to normal ({new_value}).")
