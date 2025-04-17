@@ -225,7 +225,7 @@ check_status() {
 # Function to check conda environment
 check_conda_env() {
     # Check if we're in the correct conda environment
-    if [ -z "$CONDA_DEFAULT_ENV" ]; then
+    if [ -z "$CONDA_ENV" ]; then
         log_message "Error: Not in a conda environment. Please activate the Evennia environment first."
         send_discord_notification "$(format_discord_message "❌ Error: Not in a conda environment. Please activate the Evennia environment first.")"
         exit 1
