@@ -7,23 +7,19 @@
 # PURPOSE:
 #   This script manages the restart process for the Evennia game server, including:
 #   1. Stopping the current server instance
-#   2. Creating a backup before restart
-#   3. Starting a new server instance
-#   4. Verifying the server is running correctly
+#   2. Starting a new server instance
+#   3. Verifying the server is running correctly
 #
 # USAGE:
 #   ./restart.sh [options]
 #
 # OPTIONS:
 #   -f, --force    - Force restart without confirmation
-#   -b, --backup   - Create a backup before restart (default: yes)
-#   -n, --nobackup - Skip backup before restart
 #   -h, --help     - Display help message
 #
 # EXAMPLES:
-#   ./restart.sh           # Restart with confirmation and backup
+#   ./restart.sh           # Restart with confirmation
 #   ./restart.sh --force   # Force restart without confirmation
-#   ./restart.sh --nobackup # Restart without creating a backup
 #
 # DEPENDENCIES:
 #   - The config.sh file must exist and be properly configured
@@ -33,7 +29,6 @@
 # OUTPUT:
 #   - Logs all operations to the restart log file
 #   - Sends Discord notifications for important events
-#   - Creates backups before restart (if enabled)
 #
 #=============================================================================
 
@@ -161,17 +156,12 @@ check_server() {
 # Function to restart the server
 restart_server() {
     local force_restart=false
-    local skip_backup=false
     
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
         case "$1" in
             -f|--force)
                 force_restart=true
-                shift
-                ;;
-            -s|--skip-backup)
-                skip_backup=true
                 shift
                 ;;
             *)
@@ -189,18 +179,6 @@ restart_server() {
         if [ "$force_restart" = false ]; then
             log_message "Server is not running, use --force to start it"
             send_discord_notification "$(format_discord_message "❌ Server is not running, use --force to start it")"
-            return 1
-        fi
-    fi
-    
-    # Create backup if not skipped
-    if [ "$skip_backup" = false ]; then
-        log_message "Creating backup before restart..."
-        send_discord_notification "$(format_discord_message "🔄 Creating backup before restart...")"
-        
-        if ! create_backup "pre_restart"; then
-            log_message "Failed to create backup before restart"
-            send_discord_notification "$(format_discord_message "❌ Failed to create backup before restart")"
             return 1
         fi
     fi
@@ -231,126 +209,6 @@ restart_server() {
         send_discord_notification "$(format_discord_message "❌ Server failed to start after restart\n\n**Last Known Status:**\n$after_status")"
         return 1
     fi
-}
-
-# Function to stop the server
-stop_server() {
-    log_message "Stopping Evennia server..."
-    send_discord_notification "$(format_discord_message "🛑 Stopping Evennia server...")"
-    
-    # Stop the server
-    if ! "$GAME_DIRECTORY/evennia" stop; then
-        log_message "Failed to stop Evennia server"
-        send_discord_notification "$(format_discord_message "❌ Failed to stop Evennia server")"
-        return 1
-    fi
-    
-    # Wait for server to stop
-    local attempts=0
-    while check_server && [ $attempts -lt 30 ]; do
-        sleep 1
-        attempts=$((attempts + 1))
-    done
-    
-    if check_server; then
-        log_message "Server failed to stop after 30 seconds"
-        send_discord_notification "$(format_discord_message "❌ Server failed to stop after 30 seconds")"
-        return 1
-    fi
-    
-    log_message "Server stopped successfully"
-    send_discord_notification "$(format_discord_message "✅ Server stopped successfully")"
-    return 0
-}
-
-# Function to start the server
-start_server() {
-    log_message "Starting Evennia server..."
-    send_discord_notification "$(format_discord_message "🚀 Starting Evennia server...")"
-    
-    # Start the server
-    if ! "$GAME_DIRECTORY/evennia" start; then
-        log_message "Failed to start Evennia server"
-        send_discord_notification "$(format_discord_message "❌ Failed to start Evennia server")"
-        return 1
-    fi
-    
-    # Wait for server to start
-    local attempts=0
-    while ! check_server && [ $attempts -lt 30 ]; do
-        sleep 1
-        attempts=$((attempts + 1))
-    done
-    
-    if ! check_server; then
-        log_message "Server failed to start after 30 seconds"
-        send_discord_notification "$(format_discord_message "❌ Server failed to start after 30 seconds")"
-        return 1
-    fi
-    
-    log_message "Server started successfully"
-    send_discord_notification "$(format_discord_message "✅ Server started successfully")"
-    return 0
-}
-
-# Function to create a backup
-create_backup() {
-    local backup_name="$1"
-    local timestamp
-    timestamp=$(date '+%Y%m%d_%H%M%S')
-    local backup_dir
-    local backup_file
-
-    if [ -n "$backup_name" ]; then
-        backup_dir="$BACKUP_DATED_DIR/${backup_name}_${timestamp}"
-        backup_file="$BACKUP_DATED_DIR/${backup_name}_${timestamp}.tar.gz"
-    else
-        backup_dir="$BACKUP_DATED_DIR/backup_${timestamp}"
-        backup_file="$BACKUP_DATED_DIR/backup_${timestamp}.tar.gz"
-    fi
-
-    log_message "Creating backup: $backup_file"
-    send_discord_notification "$(format_discord_message "🔄 Creating backup of Evennia server")"
-
-    # Create backup directories if they don't exist
-    mkdir -p "$BACKUP_DIR" "$BACKUP_DATED_DIR" "$backup_dir"
-
-    # Create the backup using rsync
-    if ! rsync -av --exclude='*.lock' \
-                  --exclude='*.pid' \
-                  --exclude='.git' \
-                  --exclude='media' \
-                  --exclude='logs' \
-                  --exclude='backups' \
-                  "$GAME_DIRECTORY"/ "$backup_dir"/; then
-        log_message "Failed to create backup with rsync"
-        send_discord_notification "$(format_discord_message "❌ Failed to create backup with rsync")"
-        rm -rf "$backup_dir"
-        return 1
-    fi
-
-    # Create a compressed archive of the rsync backup
-    if ! tar -czf "$backup_file" -C "$BACKUP_DATED_DIR" "$(basename "$backup_dir")"; then
-        log_message "Failed to create compressed archive"
-        send_discord_notification "$(format_discord_message "❌ Failed to create compressed archive")"
-        rm -rf "$backup_dir"
-        return 1
-    fi
-
-    # Clean up the temporary directory
-    rm -rf "$backup_dir"
-
-    # Verify the backup
-    if ! tar -tf "$backup_file" > /dev/null 2>&1; then
-        log_message "Backup verification failed"
-        send_discord_notification "$(format_discord_message "❌ Backup verification failed")"
-        rm -f "$backup_file"
-        return 1
-    fi
-
-    log_message "Backup created successfully: $backup_file"
-    send_discord_notification "$(format_discord_message "✅ Backup created successfully")"
-    return 0
 }
 
 # Function to check server status
