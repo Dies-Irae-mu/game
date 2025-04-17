@@ -56,11 +56,30 @@ for var in "${required_vars[@]}"; do
     fi
 done
 
+# Validate paths and permissions
+if [ ! -d "$GAME_DIRECTORY" ]; then
+    echo "Error: Game directory does not exist: $GAME_DIRECTORY"
+    exit 1
+fi
+
+if [ ! -w "$(dirname "$RESTART_LOG")" ]; then
+    echo "Error: Cannot write to log directory: $(dirname "$RESTART_LOG")"
+    exit 1
+fi
+
+# Validate Discord webhook URL format
+if [[ ! "$DISCORD_WEBHOOK_URL" =~ ^https://discord\.com/api/webhooks/ ]]; then
+    echo "Error: Invalid Discord webhook URL format"
+    exit 1
+fi
+
 # Constants
 MAX_RESTART_WAIT=300  # 5 minutes maximum wait for restart
 PROCESS_CHECK_INTERVAL=5  # Check every 5 seconds
 SERVER_PID_FILE="$GAME_DIRECTORY/server/server.pid"
 PORTAL_PID_FILE="$GAME_DIRECTORY/server/portal.pid"
+MAX_LOG_SIZE=10485760  # 10MB
+LOG_ROTATE_COUNT=5
 
 # Function to display usage information
 usage() {
@@ -81,42 +100,17 @@ usage() {
     exit 1
 }
 
-# Function to log messages with timestamp
-log_message() {
-    local message="$1"
-    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-    echo "$timestamp - $message" | tee -a "$RESTART_LOG"
-    
-    # Implement basic log rotation if log file gets too large (10MB)
-    if [ -f "$RESTART_LOG" ] && [ "$(stat -f%z "$RESTART_LOG" 2>/dev/null || stat -c%s "$RESTART_LOG")" -gt 10485760 ]; then
-        mv "$RESTART_LOG" "$RESTART_LOG.old"
-        touch "$RESTART_LOG"
-    fi
-}
-
-# Function to sanitize text for Discord
-sanitize_discord_message() {
-    local message="$1"
-    # Remove or escape potentially dangerous characters
-    echo "$message" | sed 's/`/\\`/g' | sed 's/@/\\@/g' | sed 's/\*/\\*/g' | sed 's/_/\\_/g'
-}
-
-# Function to send Discord notifications with error handling
-send_discord_notification() {
-    local message="$1"
-    if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-        local sanitized_message=$(sanitize_discord_message "$message")
-        local formatted_message=$(echo "$sanitized_message" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
-        
-        if ! curl -s -H "Content-Type: application/json" \
-             -X POST \
-             --max-time 10 \
-             --retry 3 \
-             --retry-delay 2 \
-             -d "{\"content\":\"$formatted_message\"}" \
-             "$DISCORD_WEBHOOK_URL"; then
-            log_message "Warning: Failed to send Discord notification"
-        fi
+# Function to rotate logs
+rotate_logs() {
+    local log_file="$1"
+    if [ -f "$log_file" ] && [ "$(stat -f%z "$log_file" 2>/dev/null || stat -c%s "$log_file")" -gt "$MAX_LOG_SIZE" ]; then
+        for i in $(seq $((LOG_ROTATE_COUNT-1)) -1 1); do
+            if [ -f "${log_file}.$i" ]; then
+                mv "${log_file}.$i" "${log_file}.$((i+1))"
+            fi
+        done
+        mv "$log_file" "${log_file}.1"
+        touch "$log_file"
     fi
 }
 
@@ -135,8 +129,6 @@ check_process_by_pid_file() {
     fi
     
     if ! ps -p "$pid" > /dev/null 2>&1; then
-        # Process not running, clean up stale PID file
-        rm -f "$pid_file"
         return 1
     fi
     
@@ -185,13 +177,13 @@ get_server_status() {
     if check_server; then
         status="Running"
         
-        # Get server process uptime
+        # Get server process info
         if [ -f "$SERVER_PID_FILE" ]; then
             local server_pid=$(cat "$SERVER_PID_FILE")
             server_uptime=$(get_process_uptime "$server_pid")
         fi
         
-        # Get portal process uptime
+        # Get portal process info
         if [ -f "$PORTAL_PID_FILE" ]; then
             local portal_pid=$(cat "$PORTAL_PID_FILE")
             portal_uptime=$(get_process_uptime "$portal_pid")
@@ -239,6 +231,39 @@ wait_for_server_state() {
     done
 }
 
+# Function to log messages with timestamp
+log_message() {
+    local message="$1"
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    echo "$timestamp - $message" | tee -a "$RESTART_LOG"
+    
+    # Basic log rotation if log file gets too large
+    if [ -f "$RESTART_LOG" ] && [ "$(stat -f%z "$RESTART_LOG" 2>/dev/null || stat -c%s "$RESTART_LOG")" -gt "$MAX_LOG_SIZE" ]; then
+        mv "$RESTART_LOG" "$RESTART_LOG.old"
+        touch "$RESTART_LOG"
+    fi
+}
+
+# Function to send Discord notifications with error handling
+send_discord_notification() {
+    local message="$1"
+    if [ -n "$DISCORD_WEBHOOK_URL" ]; then
+        # Format the message for Discord (escape special characters)
+        local formatted_message=$(echo "$message" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+        
+        # Send to Discord with proper JSON formatting and error handling
+        if ! curl -s -H "Content-Type: application/json" \
+             -X POST \
+             --max-time 10 \
+             --retry 3 \
+             --retry-delay 2 \
+             -d "{\"content\":\"$formatted_message\"}" \
+             "$DISCORD_WEBHOOK_URL"; then
+            log_message "Warning: Failed to send Discord notification"
+        fi
+    fi
+}
+
 # Function to restart the server
 restart_server() {
     local force_restart=false
@@ -268,7 +293,10 @@ restart_server() {
     fi
     
     log_message "Restarting Evennia server..."
-    send_discord_notification "🔄 Restarting Evennia server...\n\n**Before Restart Status:**\n$(get_server_status)"
+    send_discord_notification "🔄 Restarting Evennia server...
+
+**Before Restart Status:**
+$(get_server_status)"
     
     if ! evennia restart; then
         log_message "Failed to restart server"
@@ -280,11 +308,17 @@ restart_server() {
     if wait_for_server_state "running" "$MAX_RESTART_WAIT"; then
         local after_status=$(get_server_status)
         log_message "Server restarted successfully"
-        send_discord_notification "✅ Server restarted successfully\n\n**After Restart Status:**\n$after_status"
+        send_discord_notification "✅ Server restarted successfully
+
+**After Restart Status:**
+$after_status"
     else
         local after_status=$(get_server_status)
         log_message "Server failed to start after restart (timeout after ${MAX_RESTART_WAIT}s)"
-        send_discord_notification "❌ Server failed to start after restart (timeout)\n\n**Last Known Status:**\n$after_status"
+        send_discord_notification "❌ Server failed to start after restart (timeout)
+
+**Last Known Status:**
+$after_status"
         return 1
     fi
 }
