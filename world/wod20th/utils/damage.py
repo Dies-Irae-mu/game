@@ -1,4 +1,5 @@
 from evennia.utils.ansi import ANSIString
+import time
 
 
 def calculate_total_health_levels(character):
@@ -55,21 +56,42 @@ def calculate_total_health_levels(character):
         
     # Add bonus health from Gurahl Rage expenditure
     if hasattr(character.db, 'bonus_health_from_rage') and character.db.bonus_health_from_rage:
-        rage_bonus = character.db.bonus_health_from_rage
-        # Get the level type with a proper null check
-        rage_level_type = None
-        if hasattr(character.db, 'rage_health_level_type'):
-            rage_level_type = character.db.rage_health_level_type
-            if rage_level_type is not None:
-                rage_level_type = rage_level_type.lower()
+        # Check if the health boost is stale (older than 8 hours)
+        current_time = time.time()
+        health_boost_time = getattr(character.db, 'health_boost_timestamp', None)
         
-        # Default to 'bruised' if not set or None
-        if not rage_level_type:
-            rage_level_type = 'bruised'
-        
-        # Add the rage bonus to the appropriate level type
-        if rage_level_type in character.db.health_level_bonuses:
-            character.db.health_level_bonuses[rage_level_type] += rage_bonus
+        # If there's no timestamp or it's older than 8 hours (28800 seconds), clear the boost
+        if health_boost_time is None or (current_time - health_boost_time > 28800):
+            # Clear stale health boost
+            character.db.bonus_health_from_rage = 0
+            character.db.rage_health_level_type = None
+            
+            # Also remove from attribute_boosts if it exists there
+            if hasattr(character.db, 'attribute_boosts') and character.db.attribute_boosts:
+                for stat_name, boost_info in list(character.db.attribute_boosts.items()):
+                    if boost_info.get('is_health_boost', False):
+                        del character.db.attribute_boosts[stat_name]
+                        break
+            
+            # Log the automatic cleanup
+            character.msg("|yYour Rage health boost has expired.|n")
+        else:
+            # Not stale, apply the boost normally
+            rage_bonus = character.db.bonus_health_from_rage
+            # Get the level type with a proper null check
+            rage_level_type = None
+            if hasattr(character.db, 'rage_health_level_type'):
+                rage_level_type = character.db.rage_health_level_type
+                if rage_level_type is not None:
+                    rage_level_type = rage_level_type.lower()
+            
+            # Default to 'bruised' if not set or None
+            if not rage_level_type:
+                rage_level_type = 'bruised'
+            
+            # Add the rage bonus to the appropriate level type
+            if rage_level_type in character.db.health_level_bonuses:
+                character.db.health_level_bonuses[rage_level_type] += rage_bonus
     
     # Calculate total bonus health
     total_bonus = sum(character.db.health_level_bonuses.values())

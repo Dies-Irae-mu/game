@@ -927,6 +927,10 @@ class CmdPump(default_cmds.MuxCommand):
             old_bonus = caller.db.bonus_health_from_rage
             caller.db.bonus_health_from_rage += amount
             
+            # Store the current time as timestamp for the health boost
+            import time
+            caller.db.health_boost_timestamp = time.time()
+            
             # Get the current injury level to determine which type of health levels to add
             injury_level = caller.db.injury_level or "Healthy"
             
@@ -1142,6 +1146,10 @@ class CmdPump(default_cmds.MuxCommand):
             # Reset the rage-based health boost
             caller.db.bonus_health_from_rage = 0
             caller.db.rage_health_level_type = None
+            
+            # Clear the timestamp
+            if hasattr(caller.db, 'health_boost_timestamp'):
+                delattr(caller.db, 'health_boost_timestamp')
             
             # Reset the specific level type in health_level_bonuses
             if hasattr(caller.db, 'health_level_bonuses') and level_type in caller.db.health_level_bonuses:

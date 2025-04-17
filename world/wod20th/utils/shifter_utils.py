@@ -56,7 +56,7 @@ AUSPICE_CHOICES_DICT: Dict[str, List[str]] = {
 
 ASPECT_CHOICES_DICT: Dict[str, List[str]] = {
     'Ajaba': ['Dawn', 'Midnight', 'Dusk'],
-    'Ananasi': ['Tenere', 'Hatar', 'Kumoti'],
+    'Ananasi': ['Tenere', 'Hatar', 'Kumo', 'Kumoti', 'Antara', 'Kumatai', 'Padrone'],
     'Ratkin': ['Knife Skulkers', 'Shadow Seers', 'Tunnel Runners', 'Warriors'],
     'Mokole': ['Rising Sun', 'Noonday Sun', 'Shrouded Sun', 'Midnight Sun', 
                'Decorated Sun', 'Solar Eclipse']
