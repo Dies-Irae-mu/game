@@ -1,0 +1,82 @@
+[
+    {
+        "name": "Mask of the Bear Spirit",
+        "description": "The Gurahl can take on certain ursine features while in homid form, becoming more intimidating. An ancestor-spirit teaches this Gift.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            1
+        ],
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Dream of a Thousand Cranes",
+        "description": "By folding an origami crane, the Hakken enjoys good luck for a short period of time. An ancestor-spirit teaches this Gift.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [1],
+        "shifter_type": "Garou",
+        "tribe": "Hakken",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Fair Path",
+        "description": "The Hakken appears at formal ceremonies clean and dressed in proper attire, even if he has just returned from battle. A water-spirit teaches this Gift.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [1],
+        "shifter_type": "Garou",
+        "tribe": "Hakken",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Storm Winds Slash",
+        "description": "Hakken may use their blades to injure Wyrm creatures at a distance. This Gift is taught by a metal or wind-spirit.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [2],
+        "shifter_type": "Garou",
+        "tribe": "Hakken",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Dark of Night",
+        "description": "A Hakken can cause an opponent to become temporarily blinded. Hakken reserve such underhanded tactics for use against minions of the Wyrm. This Gift comes from a raven-spirit.\n\nThe Ratkin have a version of this Gift called Blur of the Weeping Eyes. It functions the same, save that the character spits at her victim rather than spilling ink. The Gift causes the victim's eyes to swell and become so rheumy that he cannot see.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [2, 3],
+        "shifter_type": ["Garou", "Ratkin"],
+        "tribe": "Hakken",
+        "auspice": "Plague Lord",
+        "splat": "Shifter",
+        "gift_alias": "Blur of the Weeping Eyes"
+    },
+    {
+        "name": "Living Treasure",
+        "description": "A Hakken can convince the spirit of a treasure in his possession to relate its history and lore. An ancestor-spirit imparts this Gift.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [4],
+        "shifter_type": "Garou",
+        "tribe": "Hakken",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Divine Wind",
+        "description": "The Hakken can call forth a powerful storm in a designated area. The storm uproots trees and overturns cars in its fury. An ancestor-spirit or a servant of Narukami, Lord of Thunder, teaches this Gift.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [5],
+        "shifter_type": "Garou",
+        "tribe": "Hakken",
+        "splat": "Shifter"
+    }
+]
