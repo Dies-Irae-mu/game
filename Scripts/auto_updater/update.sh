@@ -287,8 +287,8 @@ restart_server() {
     # Make sure restart.sh is executable
     chmod +x "$SCRIPT_DIR/restart.sh"
     
-    # Run restart.sh
-    if ! "$SCRIPT_DIR/restart.sh"; then
+    # Run restart.sh with the restart command
+    if ! "$SCRIPT_DIR/restart.sh" restart; then
         log_message "Failed to restart server using restart.sh"
         send_discord_notification "$(format_discord_message "❌ Failed to restart server using restart.sh")"
         return 1
@@ -314,7 +314,7 @@ restart_server() {
 
 # Function to create a backup
 create_backup() {
-    local backup_name="$1"
+    local backup_name="${1:-}"
     local timestamp
     timestamp=$(date '+%Y%m%d_%H%M%S')
     local backup_dir
