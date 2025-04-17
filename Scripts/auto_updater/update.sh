@@ -287,8 +287,8 @@ restart_server() {
     # Make sure restart.sh is executable
     chmod +x "$SCRIPT_DIR/restart.sh"
     
-    # Run restart.sh
-    if ! "$SCRIPT_DIR/restart.sh"; then
+    # Run restart.sh with the restart command
+    if ! "$SCRIPT_DIR/restart.sh" restart; then
         log_message "Failed to restart server using restart.sh"
         send_discord_notification "$(format_discord_message "❌ Failed to restart server using restart.sh")"
         return 1
