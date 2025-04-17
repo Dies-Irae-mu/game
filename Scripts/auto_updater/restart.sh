@@ -205,32 +205,32 @@ restart_server() {
         fi
     fi
     
-    # Stop the server
-    log_message "Stopping server..."
-    send_discord_notification "$(format_discord_message "🛑 Stopping server...")"
+    # Send restart notification
+    log_message "Restarting Evennia server..."
+    send_discord_notification "$(format_discord_message "🔄 Restarting Evennia server...\n\n**Before Restart Status:**\n$before_status")"
     
-    if ! stop_server; then
-        log_message "Failed to stop server"
-        send_discord_notification "$(format_discord_message "❌ Failed to stop server")"
+    # Restart the server using evennia restart command
+    if ! evennia restart; then
+        log_message "Failed to restart server"
+        send_discord_notification "$(format_discord_message "❌ Failed to restart server")"
         return 1
     fi
     
-    # Start the server
-    log_message "Starting server..."
-    send_discord_notification "$(format_discord_message "🚀 Starting server...")"
-    
-    if ! start_server; then
-        log_message "Failed to start server"
-        send_discord_notification "$(format_discord_message "❌ Failed to start server")"
-        return 1
-    fi
+    # Wait for server to restart
+    sleep 10
     
     # Get server status after restart
     local after_status=$(get_server_status)
     
-    log_message "Server restarted successfully"
-    send_discord_notification "$(format_discord_message "✅ Server restarted successfully\n\nServer status before restart:\n$before_status\n\nServer status after restart:\n$after_status")"
-    return 0
+    # Check if server is running
+    if check_server; then
+        log_message "Server restarted successfully"
+        send_discord_notification "$(format_discord_message "✅ Server restarted successfully\n\n**After Restart Status:**\n$after_status")"
+    else
+        log_message "Server failed to start after restart"
+        send_discord_notification "$(format_discord_message "❌ Server failed to start after restart\n\n**Last Known Status:**\n$after_status")"
+        return 1
+    fi
 }
 
 # Function to stop the server
@@ -364,12 +364,34 @@ check_status() {
     fi
 }
 
+# Function to check conda environment
+check_conda_env() {
+    # Check if we're in the correct conda environment
+    if [ -z "$CONDA_DEFAULT_ENV" ]; then
+        log_message "Error: Not in a conda environment. Please activate the Evennia environment first."
+        send_discord_notification "$(format_discord_message "❌ Error: Not in a conda environment. Please activate the Evennia environment first.")"
+        exit 1
+    fi
+    
+    # Check if evennia command is available
+    if ! command -v evennia >/dev/null 2>&1; then
+        log_message "Error: Evennia command not found. Please ensure you're in the correct conda environment."
+        send_discord_notification "$(format_discord_message "❌ Error: Evennia command not found. Please ensure you're in the correct conda environment.")"
+        exit 1
+    fi
+    
+    log_message "Using conda environment: $CONDA_DEFAULT_ENV"
+    return 0
+}
+
 # Main script
 case "${1:-}" in
     restart)
+        check_conda_env
         restart_server "${@:2}"
         ;;
     status)
+        check_conda_env
         check_status
         ;;
     *)
