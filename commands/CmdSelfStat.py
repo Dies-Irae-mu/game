@@ -2330,6 +2330,61 @@ class CmdSelfStat(MuxCommand):
             del self.caller.db.stats['necromancy']
             self.caller.msg("|gFixed Necromancy paths storage location.|n")
 
+    def fix_stats_capitalization(self):
+        """Fix capitalization of existing stats in the character's stats dictionary."""
+        if not hasattr(self.caller, 'db') or not hasattr(self.caller.db, 'stats'):
+            return
+
+        fixed_count = 0
+        stats_dict = self.caller.db.stats
+        
+        # Categories to check
+        categories = [
+            'attributes', 'abilities', 'secondary_abilities', 'powers', 
+            'merits', 'flaws', 'backgrounds', 'virtues', 'advantages', 'pools'
+        ]
+        
+        for category in categories:
+            if category in stats_dict:
+                for stat_type in stats_dict[category]:
+                    # Get a copy of the keys to avoid modifying during iteration
+                    stat_names = list(stats_dict[category][stat_type].keys())
+                    for old_name in stat_names:
+                        proper_name = self._get_canonical_stat_name(old_name)
+                        
+                        # If name changed after canonicalization, update it
+                        if proper_name != old_name:
+                            # Copy the stat value
+                            stat_value = stats_dict[category][stat_type][old_name]
+                            # Delete old entry
+                            del stats_dict[category][stat_type][old_name]
+                            # Create new entry with proper name
+                            stats_dict[category][stat_type][proper_name] = stat_value
+                            fixed_count += 1
+        
+        # Also fix gift aliases if they exist
+        if hasattr(self.caller.db, 'gift_aliases') and self.caller.db.gift_aliases:
+            alias_dict = self.caller.db.gift_aliases
+            aliases_to_update = {}
+            
+            # First collect all the changes to make
+            for canonical_name, alias_info in alias_dict.items():
+                proper_canonical = self._get_canonical_stat_name(canonical_name)
+                if proper_canonical != canonical_name:
+                    # Need to update this entry
+                    aliases_to_update[canonical_name] = proper_canonical
+                    fixed_count += 1
+            
+            # Then apply the changes
+            for old_name, new_name in aliases_to_update.items():
+                alias_dict[new_name] = alias_dict[old_name]
+                del alias_dict[old_name]
+        
+        if fixed_count > 0:
+            self.caller.msg(f"|gFixed capitalization for {fixed_count} stats.|n")
+        
+        return fixed_count
+        
     def func(self):
         """Execute the command."""
         if not self.args:
@@ -2347,6 +2402,9 @@ class CmdSelfStat(MuxCommand):
 
         # Fix any incorrectly stored Necromancy paths
         self._fix_necromancy_paths()
+        
+        # Fix capitalization of existing stats
+        self.fix_stats_capitalization()
 
         # Fix incorrectly stored Ferocity for Shifters
         splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
@@ -3652,43 +3710,17 @@ class CmdSelfStat(MuxCommand):
 
     def set_stat(self, stat_name: str, value: str, category: str = None, stat_type: str = None) -> None:
         """Set a stat value."""
-        # Capitalize the stat name properly
+        # Use get_canonical_stat_name for consistent capitalization
         if stat_name:
-            # Special handling for multi-word stats
-            if '(' in stat_name:
-                # Handle stats with instances
-                base_name, instance = stat_name.split('(', 1)
-                # Special handling for 'of' in base name
-                words = base_name.split()
-                capitalized_words = []
-                for word in words:
-                    if word.lower() == 'of':
-                        capitalized_words.append('of')
-                    else:
-                        # Custom capitalization to handle apostrophes
-                        if "'" in word:
-                            # Split by apostrophe, capitalize first part, keep rest lowercase
-                            parts = word.split("'", 1)
-                            capitalized_words.append(parts[0].capitalize() + "'" + parts[1].lower())
-                        else:
-                            capitalized_words.append(word.capitalize())
-                stat_name = ' '.join(capitalized_words) + '(' + instance
-            else:
-                # Regular stats - capitalize each word except 'of'
-                words = stat_name.split()
-                capitalized_words = []
-                for word in words:
-                    if word.lower() == 'of':
-                        capitalized_words.append('of')
-                    else:
-                        # Custom capitalization to handle apostrophes
-                        if "'" in word:
-                            # Split by apostrophe, capitalize first part, keep rest lowercase
-                            parts = word.split("'", 1)
-                            capitalized_words.append(parts[0].capitalize() + "'" + parts[1].lower())
-                        else:
-                            capitalized_words.append(word.capitalize())
-                stat_name = ' '.join(capitalized_words)
+            stat_name = self._get_canonical_stat_name(stat_name)
+            
+            # If there's an instance, maintain the proper case for it
+            if '(' in stat_name and ')' in stat_name:
+                base_name, rest = stat_name.split('(', 1)
+                instance = rest.split(')', 1)[0]
+                # We already have proper case for base_name from _get_canonical_stat_name
+                # Keep instance case as is or handle it specially if needed
+                stat_name = f"{base_name}({instance})"
 
         # Get character's splat
         splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
@@ -4326,6 +4358,14 @@ class CmdSelfStat(MuxCommand):
             'privacy obsession': 'Privacy Obsession',
             'resources': 'Resources',
             'professional certification': 'Professional Certification',
+            'power-brokering': 'Power-Brokering',
+            'power brokering': 'Power-Brokering',
+            'cultural savvy': 'Cultural Savvy',
+            'area knowledge': 'Area Knowledge',
+            'ptsd': 'PTSD',
+            'ocpd': 'OCPD',
+            'ocd': 'OCD',
+            'adhd': 'ADHD',
             'strength': 'Strength',
             'dexterity': 'Dexterity',
             'stamina': 'Stamina',
@@ -4372,14 +4412,60 @@ class CmdSelfStat(MuxCommand):
             'date of chrysalis': 'Date of Chrysalis',
             'date of awakening': 'Date of Awakening',
             'first change date': 'First Change Date',
-            'date of possession': 'Date of Possession'
+            'date of possession': 'Date of Possession',
+            'path of the father\'s vengeance': 'Path of the Father\'s Vengeance',
+            'lure of flames': 'Lure of Flames',
+            'movement of the mind': 'Movement of the Mind',
+            'hands of destruction': 'Hands of Destruction',
+            'neptune\'s might': 'Neptune\'s Might',
+            'path of the warrior': 'Path of the Warrior',
+            'way of the spirits': 'Way of the Spirits',
+            'shadow of the beast': 'Shadow of the Beast',
+            'spirit of the fray': 'Spirit of the Fray',
         }
         if stat_name.lower() in STAT_CASES:
             return STAT_CASES[stat_name.lower()]
             
-        # For compound words (e.g., "Animal Ken"), preserve existing case
+        # Handle hyphenated words correctly
+        if '-' in stat_name:
+            parts = stat_name.split('-')
+            return '-'.join(part.capitalize() for part in parts)
+            
+        # For compound words, properly handle connecting words
         if ' ' in stat_name:
-            return ' '.join(word.capitalize() for word in stat_name.split())
+            words = stat_name.split()
+            connecting_words = {'of', 'the', 'and', 'in', 'for', 'from', 'with', 'to', 'a', 'an'}
+            result = []
+            
+            for i, word in enumerate(words):
+                # Always capitalize first and last word
+                if i == 0 or i == len(words) - 1:
+                    # Custom capitalization to handle apostrophes
+                    if "'" in word:
+                        parts = word.split("'", 1)
+                        result.append(parts[0].capitalize() + "'" + parts[1].lower())
+                    else:
+                        result.append(word.capitalize())
+                # Keep connecting words lowercase unless they're the first or last word
+                elif word.lower() in connecting_words:
+                    result.append(word.lower())
+                else:
+                    # Custom capitalization to handle apostrophes
+                    if "'" in word:
+                        parts = word.split("'", 1)
+                        result.append(parts[0].capitalize() + "'" + parts[1].lower())
+                    else:
+                        result.append(word.capitalize())
+                        
+            return ' '.join(result)
+            
+        # Check if it's likely an acronym (all uppercase in original)
+        if stat_name.isupper():
+            return stat_name.upper()
+            
+        # Check if it looks like an acronym (2-5 letters, all consonants or mostly consonants)
+        if 2 <= len(stat_name) <= 5 and sum(1 for c in stat_name.lower() if c in 'aeiou') <= 1:
+            return stat_name.upper()
             
         # Default to simple title case
         return stat_name.title()

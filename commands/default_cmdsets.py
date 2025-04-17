@@ -46,7 +46,7 @@ from commands.chargen import CmdSubmit
 from commands.CmdSelfStat import CmdSelfStat
 from commands.CmdShift import CmdShift
 from commands.CmdStaff import CmdStaff, CmdPST
-from commands.staff_commands import CmdStaffStat, CmdFixStats, CmdSetWyrmTaint
+from commands.staff_commands import CmdStaffStat, CmdFixStats, CmdSetWyrmTaint, CmdFixStatsCapitalization
 from commands.unfindable import CmdUnfindable
 from commands.CmdChangelingInteraction import CmdChangelingInteraction
 from commands.CmdBanality import CmdBanality
@@ -174,6 +174,10 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdInventory())
         self.add(CmdWatch())
         self.add(CmdAlts())
+        self.add(CmdFixStats())
+        self.add(CmdFixStatsCapitalization())
+        self.add(CmdSetWyrmTaint())
+        self.add(CmdRoom())
 
 class AccountCmdSet(cmdset_account.AccountCmdSet):
     """
@@ -212,6 +216,7 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdDesc())
         self.add(CmdStaffStat())
         self.add(CmdFixStats())
+        self.add(CmdFixStatsCapitalization())
         self.add(CmdSetWyrmTaint())
         self.add(CmdRoom())
         self.add(CmdDebugXP())
