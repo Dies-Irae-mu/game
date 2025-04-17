@@ -186,4 +186,4 @@ Common issues and solutions:
 
 Feel free to submit issues and enhancement requests! 
 
-Added a line to test the auto update sync. 7 - Increment for new test
+Added a line to test the auto update sync. 8 - Increment for new test
