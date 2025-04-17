@@ -24,6 +24,13 @@ class CmdUmbraInteraction(MuxCommand):
 
     def func(self):
         """Execute command."""
+        # Check if in a Quiet Room
+        if (hasattr(self.caller.location, 'db') and 
+            hasattr(self.caller.location, 'is_command_restricted_in_quiet_room') and
+            self.caller.location.is_command_restricted_in_quiet_room(self.cmdstring)):
+            self.caller.msg("|rYou are in a Quiet Room and cannot use umbra interaction commands here.|n")
+            return
+            
         if not self.switches:
             if self.cmdstring == "+step":
                 self.do_step()

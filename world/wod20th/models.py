@@ -526,7 +526,7 @@ class MokoleArchidTrait(models.Model):
                 'stat_modifiers': {},
                 'special_rules': 'Bite causes retching, -2 Social'
             },
-            'Tail': {
+            'Tall': {
                 'description': 'Body mass and height doubles, +1 Stamina. Can reach/see over obstacles more easily. +2 to Perception when appropriate.',
                 'can_stack': True,
                 'stat_modifiers': {'stamina': 1},

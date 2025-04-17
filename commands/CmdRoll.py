@@ -56,6 +56,7 @@ class CmdRoll(default_cmds.MuxCommand):
         # Check for job option at the end of the command
         job_id = None
         args = self.args.strip()
+        rolling_to_job = False
         
         # Look for --job at the end of the command
         if args.endswith('--job'):
@@ -65,6 +66,7 @@ class CmdRoll(default_cmds.MuxCommand):
         job_parts = args.split(' --job ')
         if len(job_parts) > 1:
             args = job_parts[0].strip()
+            rolling_to_job = True
             try:
                 job_id = int(job_parts[1].strip())
                 
@@ -85,6 +87,14 @@ class CmdRoll(default_cmds.MuxCommand):
                 return
             except IndexError:
                 self.caller.msg("Usage: +roll <expression> [vs <difficulty>] [--job <id>]")
+                return
+
+        # Check if in a Quiet Room - only allow with job option
+        if (hasattr(self.caller.location, 'db') and 
+            hasattr(self.caller.location, 'is_command_restricted_in_quiet_room')):
+            # Pass the switches to check for special handling of --job
+            if self.caller.location.is_command_restricted_in_quiet_room(self.cmdstring, ['--job'] if rolling_to_job else None):
+                self.caller.msg("|rYou are in a Quiet Room. You can only roll with the --job option.|n")
                 return
 
         # Store original args and restore after job check
@@ -396,7 +406,11 @@ class CmdRoll(default_cmds.MuxCommand):
                 job.comments.append(new_comment)
                 job.save()
 
+                # Only send the roll result to the caller when rolling to a job
                 self.caller.msg(f"Roll result added as comment to job #{job_id}.")
+                
+                # Don't log the roll to the room if it's to a job
+                return
             except Job.DoesNotExist:
                 self.caller.msg(f"Error: Job #{job_id} not found.")
             except Exception as e:

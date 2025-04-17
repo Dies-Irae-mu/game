@@ -313,6 +313,25 @@ def update_vampire_pools_on_stat_change(character, stat_name: str, new_value: st
             character.msg("|rError updating blood pool - invalid generation value.|n")
             return
     
+    # Update Banality when clan changes
+    elif stat_name == 'clan':
+        # Convert clan to proper case using CLAN_CHOICES
+        clan_key = new_value.lower() if new_value else None
+        proper_clan = next((t[1] for t in CLAN_CHOICES if t[0] == clan_key), None)
+        
+        if proper_clan:
+            banality = get_default_banality('Vampire', subtype=proper_clan)
+            if banality:
+                character.set_stat('pools', 'dual', 'Banality', banality, temp=False)
+                character.set_stat('pools', 'dual', 'Banality', banality, temp=True)
+                character.msg(f"|gBanality set to {banality} for {proper_clan}.|n")
+        else:
+            # Set default vampire banality
+            banality = get_default_banality('Vampire')
+            character.set_stat('pools', 'dual', 'Banality', banality, temp=False)
+            character.set_stat('pools', 'dual', 'Banality', banality, temp=True)
+            character.msg(f"|gDefault vampire Banality set to {banality}.|n")
+    
     # Update virtues when path changes
     elif stat_name == 'path of enlightenment':
         if new_value in PATH_VIRTUES:
