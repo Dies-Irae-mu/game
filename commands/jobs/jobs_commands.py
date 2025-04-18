@@ -17,6 +17,7 @@ import json
 import copy
 from evennia.help.models import HelpEntry
 from world.equipment.models import Equipment, PlayerInventory, InventoryItem
+from evennia.accounts.models import AccountDB
 
 class CmdJobs(MuxCommand):
     """
@@ -1588,26 +1589,48 @@ class CmdJobs(MuxCommand):
             # Get the count before clearing
             job_count = archived_jobs.count()
 
-            # Get all active jobs before starting transaction
-            active_jobs = list(Job.objects.filter(archive_id__isnull=True).order_by('id'))
+            # Store all job data with participants before making any changes
+            job_data = []
+            for job in Job.objects.filter(archive_id__isnull=True).order_by('id'):
+                # Skip jobs with deleted requesters
+                if not job.requester:
+                    continue
+                    
+                participant_usernames = []
+                for participant in job.participants.all():
+                    participant_usernames.append(participant.username)
+                
+                # Log the original job participants
+                logger.log_info(f"Original Job #{job.id} has participants: {', '.join(participant_usernames)}")
+                
+                # Store all job data needed for recreation
+                job_data.append({
+                    'title': job.title,
+                    'description': job.description,
+                    'requester_id': job.requester.id,
+                    'assignee_id': job.assignee.id if job.assignee else None,
+                    'queue_id': job.queue.id,
+                    'status': job.status,
+                    'comments': job.comments,
+                    'created_at': job.created_at,
+                    'participant_ids': [p.id for p in job.participants.all()],
+                    'participant_usernames': participant_usernames,
+                    'original_id': job.id
+                })
 
             # Start a transaction for the main operations
             with transaction.atomic():
                 # First, clear all job attachments
                 JobAttachment.objects.all().delete()
                 
-                # Clear all participants (many-to-many relationships)
-                for job in Job.objects.all():
-                    job.participants.clear()
-
-                # Clear all archive_id references from jobs table
-                Job.objects.all().update(archive_id=None)
+                # Delete all jobs with archive_id
+                Job.objects.filter(archive_id__isnull=False).delete()
                 
                 # Delete all archived jobs
                 archived_jobs.delete()
-
-                # Delete all jobs but keep their data
-                Job.objects.all().delete()
+                
+                # Delete all jobs without archive_id
+                Job.objects.filter(archive_id__isnull=True).delete()
 
                 # Reset sequences based on database engine
                 with connection.cursor() as cursor:
@@ -1625,14 +1648,42 @@ class CmdJobs(MuxCommand):
                         # SQLite - just delete from sqlite_sequence
                         cursor.execute("DELETE FROM sqlite_sequence WHERE name IN ('jobs_job', 'jobs_archivedjob');")
 
-                # Reinsert active jobs with new IDs, handling deleted users
-                for job in active_jobs:
-                    # Skip jobs with deleted requesters
-                    if not job.requester:
-                        continue
-                    job.pk = None  # This will force a new ID
-                    job.archive_id = None  # Ensure archive_id is cleared
-                    job.save()
+                # Recreate jobs in order
+                old_to_new_mapping = {}
+                for job_info in job_data:
+                    # Create the new job with all data except participants
+                    new_job = Job.objects.create(
+                        title=job_info['title'],
+                        description=job_info['description'],
+                        requester_id=job_info['requester_id'],
+                        assignee_id=job_info['assignee_id'],
+                        queue_id=job_info['queue_id'],
+                        status=job_info['status'],
+                        comments=job_info['comments'],
+                        created_at=job_info['created_at']
+                    )
+                    
+                    old_id = job_info['original_id']
+                    new_id = new_job.id
+                    old_to_new_mapping[old_id] = new_id
+                    
+                    logger.log_info(f"Recreated job: #{old_id} -> #{new_id}")
+                    
+                    # Now add participants using their IDs
+                    for participant_id in job_info['participant_ids']:
+                        try:
+                            account = AccountDB.objects.get(id=participant_id)
+                            new_job.participants.add(account)
+                            logger.log_info(f"Added participant {account.username} to job #{new_id}")
+                        except AccountDB.DoesNotExist:
+                            logger.log_err(f"Could not find participant account with ID {participant_id}")
+                    
+                    # Double-check the participants
+                    new_participants = list(new_job.participants.all())
+                    new_participant_usernames = [p.username for p in new_participants]
+                    
+                    logger.log_info(f"Job #{new_id} should have participants: {', '.join(job_info['participant_usernames'])}")
+                    logger.log_info(f"Job #{new_id} actually has participants: {', '.join(new_participant_usernames)}")
 
             # After transaction, handle SQLite VACUUM separately
             if 'sqlite' in connection.settings_dict['ENGINE']:
