@@ -20,7 +20,7 @@ class CmdXP(default_cmds.MuxCommand):
     Usage:
       +xp                     - View your XP
       +xp <n>             - View another character's XP (Staff only)
-      +xp/desc <n>        - View detailed XP history (Staff only)
+      +xp/view <n>        - View detailed XP history (Staff only)
       +xp/sub <n>/<amount>=<reason> - Remove XP from character (Staff only)
       +xp/init               - Initialize scene tracking
       +xp/endscene          - Manually end current scene (only if scene doesn't end automatically, remove in future)
@@ -28,6 +28,8 @@ class CmdXP(default_cmds.MuxCommand):
       +xp/spend <n> <rating>=<reason> - Spend XP (Must be in OOC area)
       +xp/forceweekly       - Force weekly XP distribution (Staff only)
       +xp/staffspend <n>/<stat> <rating>=<reason> - Spend XP on behalf of a character (Staff only)
+      +xp/approve <n>/<amount>=<reason> - Record XP spend without cost (Staff only)
+      +xp/refund <n>/<amount>=<reason> - Refund XP to a character (Staff only)
       +xp/fixstats <n>   - Fix a character's stats structure (Staff only)
       +xp/fixdata <n>    - Fix a character's XP data structure (Staff only)
       
@@ -37,6 +39,8 @@ class CmdXP(default_cmds.MuxCommand):
       +xp/spend Resources 2=Business success
       +xp/staffspend Bob/Strength 3=Staff correction
       +xp/sub Bob/5=Correcting XP error
+      +xp/approve Bob/5=Learning through mentor IC
+      +xp/refund Bob/3=Overcharge correction
       +xp/staffspend ryan/<FLAW NAME>=Flaw Buyoff
       +xp/fixdata Bob       - Fix Bob's XP data structure
     """
@@ -443,7 +447,7 @@ class CmdXP(default_cmds.MuxCommand):
                     self.caller.msg("An error occurred while processing your request.")
                 return
 
-            if "desc" in self.switches:
+            if "view" in self.switches:
                 if not self.caller.check_permstring("builders"):
                     self.caller.msg("You don't have permission to view detailed XP history.")
                     return
@@ -891,6 +895,162 @@ class CmdXP(default_cmds.MuxCommand):
                     self.caller.msg(f"Error fixing XP data: {str(e)}")
                 return
 
+            if "approve" in self.switches:
+                # Only staff can approve XP spends
+                if not self.caller.check_permstring("builders"):
+                    self.caller.msg("You don't have permission to approve XP spends.")
+                    return
+                    
+                try:
+                    from decimal import Decimal, ROUND_DOWN, InvalidOperation
+                    # Parse input
+                    if "=" not in self.args:
+                        self.caller.msg("Usage: +xp/approve <name>/<amount>=<reason>")
+                        return
+                        
+                    target_info, reason = self.args.split("=", 1)
+                    reason = reason.strip()
+                    
+                    # Parse target info
+                    if "/" not in target_info:
+                        self.caller.msg("Must specify both character name and amount.")
+                        return
+                    target_name, amount = target_info.split("/", 1)
+                    
+                    # Find target character
+                    target = search_object(target_name.strip(), 
+                                        typeclass='typeclasses.characters.Character')
+                    if not target:
+                        self.caller.msg(f"Character '{target_name}' not found.")
+                        return
+                    target = target[0]
+                    
+                    # Validate XP amount
+                    try:
+                        xp_amount = Decimal(amount).quantize(Decimal('0.01'), rounding=ROUND_DOWN)
+                        if xp_amount <= 0:
+                            raise ValueError
+                    except (ValueError, InvalidOperation):
+                        self.caller.msg("Amount must be a positive number.")
+                        return
+
+                    # Check if character has enough current XP
+                    if target.db.xp['current'] < xp_amount:
+                        self.caller.msg(f"Character only has {target.db.xp['current']} XP available.")
+                        return
+
+                    # Update XP counters - both increase spent and decrease current
+                    target.db.xp['spent'] += xp_amount
+                    target.db.xp['current'] -= xp_amount
+                    
+                    # Log the approval
+                    approval = {
+                        'type': 'approve',
+                        'amount': float(xp_amount),
+                        'reason': reason,
+                        'staff_name': self.caller.name,
+                        'timestamp': datetime.now().isoformat()
+                    }
+                    
+                    if 'spends' not in target.db.xp:
+                        target.db.xp['spends'] = []
+                    target.db.xp['spends'].insert(0, approval)
+                    
+                    # Log to server logs
+                    logger.log_info(f"XP APPROVE: {self.caller.name} approved {float(xp_amount)} XP for {target.name} - Reason: {reason}")
+                    
+                    # Notify staff and target
+                    self.caller.msg(f"Approved {xp_amount} XP for {target.name} for {reason}")
+                    target.msg(f"{xp_amount} XP was approved by {self.caller.name} for {reason}")
+                    self._display_xp(target)
+                    
+                except ValueError as e:
+                    self.caller.msg("Usage: +xp/approve <name>/<amount>=<reason>")
+                    self.caller.msg("Example: +xp/approve Bob/5.00=Learning through RP")
+                except Exception as e:
+                    logger.log_err(f"Error in XP approve: {str(e)}")
+                    self.caller.msg(f"Error processing approval: {str(e)}")
+                return
+
+            if "refund" in self.switches:
+                # Only staff can refund XP
+                if not self.caller.check_permstring("builders"):
+                    self.caller.msg("You don't have permission to refund XP.")
+                    return
+                    
+                try:
+                    from decimal import Decimal, ROUND_DOWN, InvalidOperation
+                    # Parse input
+                    if "=" not in self.args:
+                        self.caller.msg("Usage: +xp/refund <name>/<amount>=<reason>")
+                        return
+                        
+                    target_info, reason = self.args.split("=", 1)
+                    reason = reason.strip()
+                    
+                    # Parse target info
+                    if "/" not in target_info:
+                        self.caller.msg("Must specify both character name and amount.")
+                        return
+                    target_name, amount = target_info.split("/", 1)
+                    
+                    # Find target character
+                    target = search_object(target_name.strip(), 
+                                        typeclass='typeclasses.characters.Character')
+                    if not target:
+                        self.caller.msg(f"Character '{target_name}' not found.")
+                        return
+                    target = target[0]
+                    
+                    # Validate XP amount
+                    try:
+                        xp_amount = Decimal(amount).quantize(Decimal('0.01'), rounding=ROUND_DOWN)
+                        if xp_amount <= 0:
+                            raise ValueError
+                    except (ValueError, InvalidOperation):
+                        self.caller.msg("Amount must be a positive number.")
+                        return
+
+                    # Update XP counters
+                    target.db.xp['current'] += xp_amount
+                    target.db.xp['ic_xp'] += xp_amount
+                    target.db.xp['spent'] -= xp_amount
+                    
+                    # Ensure spent XP doesn't go negative
+                    if target.db.xp['spent'] < 0:
+                        target.db.xp['spent'] = Decimal('0.00')
+                    
+                    # Log the refund
+                    refund = {
+                        'type': 'refund',
+                        'amount': float(xp_amount),
+                        'reason': reason,
+                        'staff_name': self.caller.name,
+                        'timestamp': datetime.now().isoformat()
+                    }
+                    
+                    if 'spends' not in target.db.xp:
+                        target.db.xp['spends'] = []
+                    
+                    # Add the refund to the history at position 0 (most recent)
+                    target.db.xp['spends'].insert(0, refund)
+                    
+                    # Log to server logs
+                    logger.log_info(f"XP REFUND: {self.caller.name} refunded {float(xp_amount)} XP to {target.name} - Reason: {reason}")
+                    
+                    # Notify staff and target
+                    self.caller.msg(f"Refunded {xp_amount} XP to {target.name} for {reason}")
+                    target.msg(f"{xp_amount} XP was refunded by {self.caller.name} for {reason}")
+                    self._display_xp(target)
+                    
+                except ValueError as e:
+                    self.caller.msg("Usage: +xp/refund <name>/<amount>=<reason>")
+                    self.caller.msg("Example: +xp/refund Bob/5.00=Overcharge correction")
+                except Exception as e:
+                    logger.log_err(f"Error in XP refund: {str(e)}")
+                    self.caller.msg(f"Error processing refund: {str(e)}")
+                return
+
         # Staff viewing another character's XP
         if self.args and not self.switches:
             # Check if viewing self
@@ -991,20 +1151,29 @@ class CmdXP(default_cmds.MuxCommand):
                 for entry in xp_data['spends'][:5]:  # Show last 5 entries
                     timestamp = datetime.fromisoformat(entry['timestamp'])
                     formatted_time = timestamp.strftime("%Y-%m-%d %H:%M")
-                    if entry['type'] == 'receive':
-                        msg += f"{formatted_time} - Received {entry['amount']} XP: {entry['reason']}\n"
-                    elif entry['type'] == 'spend':
+                    entry_type = entry['type'].lower()
+                    amount = entry['amount']
+                    
+                    if entry_type == 'receive':
+                        msg += f"{formatted_time} - Received {amount} XP: {entry['reason']}\n"
+                    elif entry_type == 'spend':
                         if entry.get('flaw_buyoff'):
-                            msg += f"{formatted_time} - Spent {entry['amount']} XP to buy off {entry['stat_name']} flaw\n"
+                            msg += f"{formatted_time} - Spent {amount} XP to buy off {entry['stat_name']} flaw\n"
                         elif 'previous_rating' in entry:
                             # This is a normal XP spend
-                            msg += f"{formatted_time} - Spent {entry['amount']} XP on {entry['stat_name']} - increased from {entry['previous_rating']} to {entry['new_rating']}\n"
+                            msg += f"{formatted_time} - Spent {amount} XP on {entry['stat_name']} - increased from {entry['previous_rating']} to {entry['new_rating']}\n"
                         elif 'staff_name' in entry:
                             # This is an XP removal by staff
-                            msg += f"{formatted_time} - XP Removed by {entry['staff_name']}: {entry['amount']} XP ({entry['reason']})\n"
+                            msg += f"{formatted_time} - XP Removed by {entry['staff_name']}: {amount} XP ({entry['reason']})\n"
                         else:
                             # Generic spend entry
-                            msg += f"{formatted_time} - Spent {entry['amount']} XP on {entry['reason']}\n"
+                            msg += f"{formatted_time} - Spent {amount} XP on {entry['reason']}\n"
+                    elif entry_type == 'refund':
+                        # Refund entry
+                        msg += f"{formatted_time} - XP Refunded by {entry['staff_name']}: {amount} XP ({entry['reason']})\n"
+                    elif entry_type == 'approve':
+                        # Approve entry
+                        msg += f"{formatted_time} - XP Approved by {entry['staff_name']}: {amount} XP ({entry['reason']})\n"
             else:
                 msg += "No XP history yet.\n"
             
@@ -1238,13 +1407,21 @@ class CmdXP(default_cmds.MuxCommand):
             entry_type = entry['type'].title()
             amount = f"{float(entry['amount']):.2f}"
             
+            # Set a default value for details
+            details = entry.get('reason', 'No reason given')
+            
+            # Handle different entry types
             if entry_type == "Spend":
                 if 'stat_name' in entry and 'previous_rating' in entry:
                     # Handle stat names with parentheses
                     stat_name = entry['stat_name']
                     details = f"{stat_name} ({entry['previous_rating']} -> {entry['new_rating']})"
-                else:
-                    details = entry.get('reason', 'No reason given')
+            elif entry_type == "Receive":
+                details = entry.get('reason', 'Staff award')
+            elif entry_type == "Approve":
+                details = f"Staff approved - {entry.get('reason', 'No reason given')}"
+            elif entry_type == "Refund":
+                details = f"Staff refund - {entry.get('reason', 'No reason given')}"
                 
             table.add_row(
                 timestamp.strftime('%Y-%m-%d %H:%M'),
