@@ -16,28 +16,30 @@ class CmdRoll(default_cmds.MuxCommand):
 
     Usage:
       +roll <expression> [vs <difficulty>] [--job <id>]
-      +roll/nightmare [<number>] <expression> [vs <difficulty>] [--job <id>]
-      +roll/log
+          Note that you must put a space between the stat name and the + or - operator,
+          otherwise it will be interpreted as part of the stat name (like a hyphen).
+      +roll/log - This will display the last 10 rolls made in this location, but will
+                  not show the stat names or values, just the results.
+
+      Changling-specific Command:    
+      +roll/nightmare/[<number>] <expression> [vs <difficulty>] [--job <id>]
+          You can use this in two ways: if you specify a number it will use that many
+          Nightmare dice, otherwise it will use the character's current Nightmare rating.
+          If you specify a number, it must be a positive integer.
 
     Examples:
-      +roll strength+dexterity+3-2
-      +roll stre+dex+3-2 vs 7
-      +roll/nightmare Legerdemain+Prop vs 6
-      +roll/nightmare/3 Legerdemain+Prop vs 6
+      +roll strength + dexterity + 3 - 2
+      +roll stre + dex + 3- 2 vs 7
+      +roll/nightmare Legerdemain + Prop vs 6
+      +roll/nightmare/3 Legerdemain + Prop vs 6
       +roll/log
-      +roll strength+dexterity+3-2 --job 123
-      +roll stre+dex+3-2 vs 7 --job 123
+      +roll strength + dexterity + 3 - 2 --job 123
+      +roll str + dex + 3 - 2 vs 7 --job 123
 
     This command allows you to roll dice based on your character's stats
     and any modifiers. You can specify stats by their full name or abbreviation.
     The difficulty is optional and defaults to 6 if not specified.
     Stats that don't exist or have non-numeric values are treated as 0.
-
-    The /nightmare switch is used for Changeling characters to replace regular
-    dice with Nightmare dice. The number of Nightmare dice can be specified
-    after the switch, or it will default to the character's current Nightmare rating.
-
-    Use +roll/log to view the last 10 rolls made in this location.
 
     The --job option allows you to submit the roll result as a comment to a job.
     You must have permission to comment on the specified job.
@@ -181,42 +183,38 @@ class CmdRoll(default_cmds.MuxCommand):
         expression, difficulty = match.groups()
         difficulty = int(difficulty) if difficulty else 6
 
-        # Process the expression
-        # First split by operators while preserving them
+        # Process the expression by properly handling standalone + and - operators
         components = []
-        current = ''
-        in_quotes = False
-        quote_char = None
         
-        for char in expression:
-            if char in '"\'':
-                if not in_quotes:
-                    in_quotes = True
-                    quote_char = char
-                    current += char
-                elif char == quote_char:
-                    in_quotes = False
-                    current += char
-                else:
-                    current += char
-            elif char in '+-' and not in_quotes:
-                if current:
-                    components.append(('+' if not current.startswith('-') else '-', current.strip('+-')))
-                    current = char
-                else:
-                    current = char
-            else:
-                current += char
+        # Manually separate components with a simpler approach
+        # First split by + operator
+        # This assumes + and - are used as standalone operators, not within stat names
+        plus_parts = re.split(r'(?<!\w)\+(?!\w)', expression)
         
-        if current:
-            components.append(('+' if not current.startswith('-') else '-', current.strip('+-')))
-
+        for plus_index, plus_part in enumerate(plus_parts):
+            # Split each part by - operator
+            minus_parts = re.split(r'(?<!\w)-(?!\w)', plus_part)
+            
+            # Process the first part with + operator (or implicit + if it's the first part)
+            if minus_parts[0].strip():
+                components.append(('+', minus_parts[0].strip()))
+            
+            # Process subsequent parts with - operator
+            for minus_part in minus_parts[1:]:
+                if minus_part.strip():
+                    components.append(('-', minus_part.strip()))
+        
+        # If the components are empty, something went wrong
+        if not components:
+            self.caller.msg("Could not parse roll expression. Try a simpler format like 'stat1+stat2'.")
+            return
+        
         dice_pool = 0
         description = []
         detailed_description = []
         warnings = []
 
-        for sign, value in components:
+        for i, (sign, value) in enumerate(components):
             # Remove quotes if present
             value = value.strip().strip('"\'').strip()
             
@@ -224,8 +222,13 @@ class CmdRoll(default_cmds.MuxCommand):
                 try:
                     modifier = int(value)
                     dice_pool += modifier if sign == '+' else -modifier
-                    description.append(f"{sign} |w{abs(modifier)}|n")
-                    detailed_description.append(f"{sign} |w{abs(modifier)}|n")
+                    # Only add sign for components after the first one
+                    if i == 0:
+                        description.append(f"|w{abs(modifier)}|n")
+                        detailed_description.append(f"|w{abs(modifier)}|n")
+                    else:
+                        description.append(f"{sign} |w{abs(modifier)}|n")
+                        detailed_description.append(f"{sign} |w{abs(modifier)}|n")
                 except ValueError:
                     warnings.append(f"|rWarning: Invalid number '{value}'.|n")
             else:
@@ -236,15 +239,30 @@ class CmdRoll(default_cmds.MuxCommand):
                     
                 if stat_value > 0:
                     dice_pool += stat_value if sign == '+' else -stat_value
-                    description.append(f"{sign}|n |w{full_name}|n")
-                    detailed_description.append(f"{sign} |w{full_name} ({stat_value})|n")
+                    # Only add sign for components after the first one
+                    if i == 0:
+                        description.append(f"|w{full_name}|n")
+                        detailed_description.append(f"|w{full_name} ({stat_value})|n")
+                    else:
+                        description.append(f"{sign} |w{full_name}|n")
+                        detailed_description.append(f"{sign} |w{full_name} ({stat_value})|n")
                 elif stat_value == 0 and full_name:
-                    description.append(f"{sign} |w{full_name}|n")
-                    detailed_description.append(f"{sign} |w{full_name} (0)|n")
+                    # Only add sign for components after the first one
+                    if i == 0:
+                        description.append(f"|w{full_name}|n")
+                        detailed_description.append(f"|w{full_name} (0)|n")
+                    else:
+                        description.append(f"{sign} |w{full_name}|n")
+                        detailed_description.append(f"{sign} |w{full_name} (0)|n")
                     warnings.append(f"|rWarning: Stat '{full_name}' not found or has no value. Treating as 0.|n")
                 else:
-                    description.append(f"{sign} |h|x{full_name}|n")
-                    detailed_description.append(f"{sign} |h|x{full_name} (0)|n")
+                    # Only add sign for components after the first one
+                    if i == 0:
+                        description.append(f"|h|x{full_name}|n")
+                        detailed_description.append(f"|h|x{full_name} (0)|n")
+                    else:
+                        description.append(f"{sign} |h|x{full_name}|n")
+                        detailed_description.append(f"{sign} |h|x{full_name} (0)|n")
                     warnings.append(f"|rWarning: Stat '{full_name}' not found or has no value. Treating as 0.|n")
 
         # Apply health penalties
@@ -450,23 +468,41 @@ class CmdRoll(default_cmds.MuxCommand):
         if not splat:
             splat = self.caller.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
 
+        # Properly capitalize hyphenated names for lookup
+        def capitalize_hyphenated(name):
+            """Capitalize each part of a hyphenated name"""
+            parts = name.split('-')
+            return '-'.join(p.capitalize() for p in parts)
+        
+        # Create capitalized versions for exact matching
+        capitalized_name = capitalize_hyphenated(stat_name)
+
+        # First try exact match with properly capitalized name
+        if 'abilities' in character_stats:
+            for ability_type, abilities in character_stats['abilities'].items():
+                if capitalized_name in abilities:
+                    stat_data = abilities[capitalized_name]
+                    if 'temp' in stat_data and stat_data['temp'] != 0:
+                        return stat_data['temp'], capitalized_name
+                    return stat_data.get('perm', 0), capitalized_name
+
         # First try exact match in the most relevant category based on splat
         if splat.lower() == 'changeling':
             # For Changelings, check Arts first
-            art_value = self.caller.db.stats.get('powers', {}).get('art', {}).get(stat_name.title(), {}).get('temp', None)
+            art_value = self.caller.db.stats.get('powers', {}).get('art', {}).get(capitalized_name, {}).get('temp', None)
             if art_value is not None:
-                return art_value, stat_name.title()
+                return art_value, capitalized_name
             
             # Then check Realms
-            realm_value = self.caller.db.stats.get('powers', {}).get('realm', {}).get(stat_name.title(), {}).get('temp', None)
+            realm_value = self.caller.db.stats.get('powers', {}).get('realm', {}).get(capitalized_name, {}).get('temp', None)
             if realm_value is not None:
-                return realm_value, stat_name.title()
+                return realm_value, capitalized_name
 
         elif splat.lower() == 'shifter':
             # For Shifters, prioritize Gifts over other stats
-            gift_value = self.caller.db.stats.get('powers', {}).get('gift', {}).get(stat_name.title(), {}).get('temp', None)
+            gift_value = self.caller.db.stats.get('powers', {}).get('gift', {}).get(capitalized_name, {}).get('temp', None)
             if gift_value is not None:
-                return gift_value, stat_name.title()
+                return gift_value, capitalized_name
 
             # Special case for Primal-Urge
             if normalized_nospace in ['primalurge', 'primal']:
@@ -495,6 +531,34 @@ class CmdRoll(default_cmds.MuxCommand):
         if normalized_nospace in abbreviations:
             normalized_input = abbreviations[normalized_nospace]
             normalized_nospace = normalized_input
+
+        # Check for secondary abilities with hyphens - use capitalized name
+        for category in ['secondary_knowledge', 'secondary_talent', 'secondary_skill']:
+            if 'secondary_abilities' in character_stats and category in character_stats['secondary_abilities']:
+                for stat, stat_data in character_stats['secondary_abilities'][category].items():
+                    # Try exact match with properly capitalized name
+                    if stat == capitalized_name:
+                        if 'temp' in stat_data and stat_data['temp'] != 0:
+                            return stat_data['temp'], stat
+                        return stat_data.get('perm', 0), stat
+                    
+                    # Try case-insensitive match
+                    if stat.lower() == normalized_input:
+                        if 'temp' in stat_data and stat_data['temp'] != 0:
+                            return stat_data['temp'], stat
+                        return stat_data.get('perm', 0), stat
+                    
+                    # Check with hyphen replaced by space
+                    if stat.lower().replace('-', ' ') == normalized_input.replace('-', ' '):
+                        if 'temp' in stat_data and stat_data['temp'] != 0:
+                            return stat_data['temp'], stat
+                        return stat_data.get('perm', 0), stat
+                    
+                    # Check without spaces and hyphens
+                    if stat.lower().replace('-', '').replace(' ', '') == normalized_nospace:
+                        if 'temp' in stat_data and stat_data['temp'] != 0:
+                            return stat_data['temp'], stat
+                        return stat_data.get('perm', 0), stat
 
         # Direct check for secondary abilities
         if 'secondary_abilities' in character_stats:
@@ -543,7 +607,8 @@ class CmdRoll(default_cmds.MuxCommand):
                 return stat_data['temp'], full_name
             return stat_data.get('perm', 0), full_name
 
-        return 0, stat_name.capitalize()
+        # If still no match, return with proper capitalization
+        return 0, capitalized_name
 
     def display_roll_log(self):
         """
@@ -585,42 +650,31 @@ class CmdRoll(default_cmds.MuxCommand):
         Returns the number of dice to subtract from the pool.
         """
         # Get current damage levels
-        bashing = character.db.bash or 0
-        lethal = character.db.leth or 0
+        bashing = character.db.bashing or 0
+        lethal = character.db.lethal or 0
         aggravated = character.db.agg or 0
         
         # Calculate total damage
         total_damage = bashing + lethal + aggravated
         
-        # Get base health levels (7) plus any bonuses
-        base_health = 7
+        # Calculate total health levels including bonuses
+        from world.wod20th.utils.damage import calculate_total_health_levels
+        bonus_health = calculate_total_health_levels(character)
+        total_health = 7 + bonus_health  # 7 is the base health level count
         
-        # Check for Huge Size merit
-        huge_size = character.get_stat('merits', 'physical', 'Huge Size', temp=False)
-        if not huge_size:
-            huge_size = character.get_stat('merits', 'merit', 'Huge Size', temp=False)
-        if huge_size:
-            base_health += 1
+        # Get the current injury level
+        injury_level = character.db.injury_level or "Healthy"
         
-        # Check for Glome phyla
-        glome_phyla = character.get_stat('identity', 'lineage', 'Phyla') == 'Glome'
-        if not glome_phyla:
-            glome_phyla = character.get_stat('identity', 'phyla', 'Phyla') == 'Glome'
-        if glome_phyla:
-            base_health += 2
-        
-        # Check for Troll kith
-        if character.get_stat('identity', 'lineage', 'Kith') == 'Troll':
-            base_health += 1
-
-        # Calculate penalty based on damage relative to total health
-        if total_damage <= 2:  # First two health levels (Bruised)
+        # Apply penalty based on injury level
+        if injury_level == "Healthy" or injury_level == "Bruised":
             return 0
-        elif total_damage <= 4:  # Hurt/Injured (-1)
+        elif injury_level == "Hurt" or injury_level == "Injured":
             return 1
-        elif total_damage <= 6:  # Wounded/Mauled (-2)
+        elif injury_level == "Wounded" or injury_level == "Mauled":
             return 2
-        elif total_damage <= base_health - 2:  # Crippled (-5)
+        elif injury_level == "Crippled":
             return 5
+        elif injury_level == "Incapacitated" or injury_level == "Dead" or injury_level == "Torpor":
+            return total_health  # Effectively prevents any dice rolling
         
         return 0

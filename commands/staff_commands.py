@@ -307,7 +307,7 @@ class CmdStaffStat(CmdSelfStat):
                     # Get a copy of the keys to avoid modifying during iteration
                     stat_names = list(stats_dict[category][stat_type].keys())
                     for old_name in stat_names:
-                        proper_name = self._get_canonical_stat_name(old_name)
+                        proper_name = self.get_canonical_stat_name(old_name)
                         
                         # If name changed after canonicalization, update it
                         if proper_name != old_name:
@@ -326,7 +326,7 @@ class CmdStaffStat(CmdSelfStat):
             
             # First collect all the changes to make
             for canonical_name, alias_info in alias_dict.items():
-                proper_canonical = self._get_canonical_stat_name(canonical_name)
+                proper_canonical = self.get_canonical_stat_name(canonical_name)
                 if proper_canonical != canonical_name:
                     # Need to update this entry
                     aliases_to_update[canonical_name] = proper_canonical
@@ -498,6 +498,10 @@ class CmdStaffStat(CmdSelfStat):
                             del self.target.db.stats['flaw']
 
             # Set the stat value
+
+            category = stat.category
+            subcategory = stat.stat_type
+            
             try:
                 # Special handling for Splat changes
                 if stat.name == 'Splat' and stat.category == 'other':
@@ -589,9 +593,17 @@ class CmdStaffStat(CmdSelfStat):
                         }
 
                 # Special handling for gifts to store the alias used
-                if stat.category == 'powers' and stat.stat_type == 'gift' and hasattr(self, 'alias_used'):
-                    # Store the alias using the target's set_gift_alias method
-                    self.target.set_gift_alias(stat.name, self.alias_used, new_value)
+                if category == 'powers' and subcategory == 'gift':
+                    try:
+                        # Store the alias using the target's set_gift_alias method
+                        if hasattr(self, 'alias_used') and self.alias_used and self.alias_used.lower() != stat.name.lower():
+                            self.target.set_gift_alias(stat.name, self.alias_used, new_value)
+                            self.caller.msg(f"|gSet gift alias: {self.alias_used} → {stat.name}|n")
+                    except Exception as e:
+                        # If an error occurs while setting the gift alias, log it but don't fail the whole command
+                        from evennia.utils import logger
+                        logger.log_err(f"Error setting gift alias: {str(e)}")
+                        self.caller.msg(f"|rWarning: Gift was set but there was an error setting alias: {str(e)}|n")
 
                 # Update any dependent stats (like willpower, path rating, etc.)
                 self._update_dependent_stats(full_stat_name, new_value)
@@ -608,10 +620,16 @@ class CmdStaffStat(CmdSelfStat):
 
             except Exception as e:
                 self.caller.msg(f"|rError setting stat: {str(e)}|n")
+                # Log the traceback for debugging
+                from evennia.utils import logger
+                logger.log_trace()
                 return
 
         except Exception as e:
             self.caller.msg(f"|rError: {str(e)}|n")
+            # Log the traceback for debugging
+            from evennia.utils import logger
+            logger.log_trace()
             return
 
     def _check_gift_alias(self, gift_name: str) -> tuple[bool, str]:
@@ -634,6 +652,34 @@ class CmdStaffStat(CmdSelfStat):
             # For Ananasi, prioritize renown over gift
             if char_type == 'Ananasi':
                 return False, None
+
+        # Check direct aliases in character's gift_aliases attribute
+        if hasattr(self.target.db, 'gift_aliases') and self.target.db.gift_aliases:
+            for canonical, alias_info in self.target.db.gift_aliases.items():
+                # Handle different formats of gift aliases
+                aliases_to_check = []
+                
+                # New format: dict with 'aliases' list
+                if isinstance(alias_info, dict) and 'aliases' in alias_info:
+                    if isinstance(alias_info['aliases'], list):
+                        aliases_to_check.extend(alias_info['aliases'])
+                    elif isinstance(alias_info['aliases'], str):
+                        aliases_to_check.append(alias_info['aliases'])
+                
+                # Legacy format: dict with 'alias' string
+                elif isinstance(alias_info, dict) and 'alias' in alias_info:
+                    aliases_to_check.append(alias_info['alias'])
+                
+                # Very old format: direct string
+                elif isinstance(alias_info, str):
+                    aliases_to_check.append(alias_info)
+                
+                # Check if any alias matches
+                for alias in aliases_to_check:
+                    if isinstance(alias, str) and alias.lower() == gift_name.lower():
+                        self.alias_used = gift_name
+                        self.caller.msg(f"|y'{gift_name}' is a stored alias for the gift '{canonical}'.|n")
+                        return True, canonical
         
         # Check if character can use gifts
         can_use_gifts = (
@@ -647,6 +693,9 @@ class CmdStaffStat(CmdSelfStat):
             
         # Check if the gift exists in the database
         from world.wod20th.models import Stat
+        import difflib
+        
+        # Try an exact match first
         gift = Stat.objects.filter(
             name__iexact=gift_name,
             category='powers',
@@ -655,39 +704,55 @@ class CmdStaffStat(CmdSelfStat):
         
         if gift:
             # For staff, we allow setting any gift regardless of character type
+            self.alias_used = gift_name
             return True, gift.name  # Found exact match
-         
-        # Get all gifts and check their aliases
-        all_gifts = Stat.objects.filter(
+
+        # Check for aliases in the database
+        gifts_with_alias = Stat.objects.filter(
             category='powers',
             stat_type='gift'
         )
-        matched_gift = None
-        for g in all_gifts:
-            if g.gift_alias and any(alias.lower() == gift_name.lower() for alias in g.gift_alias):
-                matched_gift = g
-                break
         
-        if matched_gift:
-            gift = matched_gift
+        for potential_gift in gifts_with_alias:
+            if potential_gift.gift_alias:
+                # Handle different formats of gift_alias
+                if isinstance(potential_gift.gift_alias, list):
+                    # Check each alias in the list
+                    for alias in potential_gift.gift_alias:
+                        if isinstance(alias, str) and alias.lower() == gift_name.lower():
+                            self.alias_used = gift_name
+                            self.caller.msg(f"|y'{gift_name}' is a database alias for the gift '{potential_gift.name}'.|n")
+                            return True, potential_gift.name
+                elif isinstance(potential_gift.gift_alias, str) and potential_gift.gift_alias.lower() == gift_name.lower():
+                    self.alias_used = gift_name
+                    self.caller.msg(f"|y'{gift_name}' is a database alias for the gift '{potential_gift.name}'.|n")
+                    return True, potential_gift.name
             
-            # Find which alias matched
-            matched_alias = None
-            if gift.gift_alias:
-                for alias in gift.gift_alias:
-                    if alias.lower() == gift_name.lower():
-                        matched_alias = alias
-                        break
+        # If not found by exact match, try a more focused partial match
+        # Only for search terms with substantial length
+        if len(gift_name) > 3:
+            # Get all potentially matching gifts
+            potential_matches = Stat.objects.filter(
+                category='powers',
+                stat_type='gift'
+            )
             
-            if matched_alias:
-                # Store the original input name as the alias_used before it gets changed
-                self.alias_used = matched_alias  # Use the exact alias from the database
-                
-                # Customize message based on character type for staff feedback
-                self.caller.msg(f"|y'{matched_alias}' is an alias for the gift '{gift.name}'. Setting '{gift.name}' to {self.value_change}.|n")
+            # Find the best match using similarity ratio
+            best_match = None
+            best_score = 0.7  # Minimum 70% similarity required
             
-            return True, gift.name
+            for potential in potential_matches:
+                similarity = difflib.SequenceMatcher(None, gift_name.lower(), potential.name.lower()).ratio()
+                if similarity > best_score:
+                    best_score = similarity
+                    best_match = potential
             
+            if best_match:
+                gift = best_match
+                self.alias_used = gift_name
+                self.caller.msg(f"|yFound similar gift: '{gift.name}'. Setting it to {self.value_change}.|n")
+                return True, gift.name
+         
         return False, None
 
 class CmdFixStats(MuxCommand):

@@ -662,9 +662,9 @@ class CmdBBS(default_cmds.MuxCommand):
         # Otherwise show detailed scan output
         # Table Header
         output = []
-        output.append("=" * 120)
+        output.append("=" * 78)
         output.append("Unread Postings on the Global Bulletin Board")
-        output.append("-" * 120)
+        output.append("-" * 78)
 
         for board_id, board in sorted_boards:
             if not controller.has_access(board_id, self.caller.key):
@@ -690,13 +690,13 @@ class CmdBBS(default_cmds.MuxCommand):
             output.append(f"{board_name} (#{board_id}): {len(unread_posts)} unread ({unread_str})")
 
         # Add footer with capacity information
-        output.append("-" * 120)
+        output.append("-" * 78)
         if total_unread > 0:
             total_posts = sum(len(b['posts']) for b in boards.values())
             if total_posts > 0:  # Avoid division by zero
                 capacity = (total_unread / total_posts) * 100
                 output.append(f"Total unread posts: {total_unread} ({capacity:.1f}% of all posts)")
-        output.append("=" * 120)
+        output.append("=" * 78)
 
         self.caller.msg("\n".join(output))
 
@@ -744,9 +744,9 @@ class CmdBBS(default_cmds.MuxCommand):
 
         # Table Header
         output = []
-        output.append("=" * 120)
-        output.append("{:<5} {:<10} {:<40} {:<20} {:<15} {:<10}".format("ID", "Access", "Name", "Last Post", "# of messages", "Unread"))
-        output.append("-" * 120)
+        output.append("=" * 78)
+        output.append("{:<3} {:<8} {:<25} {:<15} {:<10} {:<7}".format("ID", "Access", "Name", "Last Post", "# msgs", "Unread"))
+        output.append("-" * 78)
 
         # Sort boards by ID and convert to list of tuples
         sorted_boards = sorted(boards.items(), key=lambda x: x[0])
@@ -784,12 +784,12 @@ class CmdBBS(default_cmds.MuxCommand):
             unread_count = len(unread_posts)
             unread_display = str(unread_count) if unread_count > 0 else "-"
 
-            output.append(f"{board_id:<5} {access_type:<10} {read_only} {board['name']:<40} {last_post:<20} {num_posts:<15} {unread_display:<10}")
+            output.append(f"{board_id:<3} {access_type:<8} {read_only} {board['name']:<25} {last_post:<15} {num_posts:<10} {unread_display:<7}")
 
         # Table Footer
-        output.append("-" * 120)
+        output.append("-" * 78)
         output.append("* = read only")
-        output.append("=" * 120)
+        output.append("=" * 78)
 
         self.caller.msg("\n".join(output))
 
@@ -811,8 +811,8 @@ class CmdBBS(default_cmds.MuxCommand):
 
         # Table Header
         output = []
-        output.append("=" * 120)
-        output.append(f"{'*' * 20} {board['name']} {'*' * 20}")
+        output.append("=" * 78)
+        output.append(f"{'*' * 15} {board['name']} {'*' * 15}")
         
         # Add roster information if any, but only for admins and builders
         roster_names = board.get('roster_names', [])
@@ -832,8 +832,8 @@ class CmdBBS(default_cmds.MuxCommand):
         elif roster_names:
             output.append("|yThis board is restricted to specific rosters|n")
 
-        output.append("{:<5} {:<1} {:<40} {:<20} {:<15}".format("ID", "", "Message", "Posted", "By"))
-        output.append("-" * 120)
+        output.append("{:<5} {:<1} {:<30} {:<15} {:<15}".format("ID", "", "Message", "Posted", "By"))
+        output.append("-" * 78)
 
         # List pinned posts first with correct IDs
         for i, post in enumerate(pinned_posts):
@@ -841,7 +841,7 @@ class CmdBBS(default_cmds.MuxCommand):
             formatted_time = self.format_datetime(post['created_at'])
             is_unread = controller.is_post_unread(board['id'], post_id - 1, self.caller.key)
             unread_flag = "|rU|n" if is_unread else " "
-            output.append(f"{board['id']}/{post_id:<5} {unread_flag:<1} [Pinned] {post['title']:<40} {formatted_time:<20} {post['author']}")
+            output.append(f"{board['id']}/{post_id:<5} {unread_flag:<1} [Pinned] {post['title']:<30} {formatted_time:<15} {post['author']}")
 
         # List unpinned posts with correct IDs
         for post in unpinned_posts:
@@ -849,10 +849,10 @@ class CmdBBS(default_cmds.MuxCommand):
             formatted_time = self.format_datetime(post['created_at'])
             is_unread = controller.is_post_unread(board['id'], post_id - 1, self.caller.key)
             unread_flag = "|rU|n" if is_unread else " "
-            output.append(f"{board['id']}/{post_id:<5} {unread_flag:<1} {post['title']:<40} {formatted_time:<20} {post['author']}")
+            output.append(f"{board['id']}/{post_id:<5} {unread_flag:<1} {post['title']:<30} {formatted_time:<15} {post['author']}")
 
         # Table Footer
-        output.append("=" * 120)
+        output.append("=" * 78)
 
         self.caller.msg("\n".join(output))
 
@@ -879,14 +879,14 @@ class CmdBBS(default_cmds.MuxCommand):
         # Mark the post as read
         controller.mark_post_read(board_ref, post_number - 1, self.caller.key)
         
-        self.caller.msg(f"{'='*120}")
-        self.caller.msg(f"{'*' * 20} {board['name']} {'*' * 20}")
+        self.caller.msg(f"{'='*78}")
+        self.caller.msg(f"{'*' * 15} {board['name']} {'*' * 15}")
         self.caller.msg(f"Title: {post['title']}")
         self.caller.msg(f"Author: {post['author']}")
         self.caller.msg(f"Date: {self.format_datetime(post['created_at'])} {edit_info}")
-        self.caller.msg(f"{'-'*120}")
+        self.caller.msg(f"{'-'*78}")
         self.caller.msg(f"{post['content']}")
-        self.caller.msg(f"{'='*120}")
+        self.caller.msg(f"{'='*78}")
 
     def do_viewas(self):
         """View a board as if you were another player.
@@ -928,9 +928,9 @@ class CmdBBS(default_cmds.MuxCommand):
         has_write = controller.has_write_access(board_ref, target_player.key)
         
         # Display access information
-        self.caller.msg(f"{'='*120}")
+        self.caller.msg(f"{'='*78}")
         self.caller.msg(f"Viewing board '{board['name']}' (#{board['id']}) as {target_player.key}")
-        self.caller.msg(f"{'-'*120}")
+        self.caller.msg(f"{'-'*78}")
         self.caller.msg(f"Access: {'|gYes|n' if has_access else '|rNo|n'}")
         self.caller.msg(f"Write Access: {'|gYes|n' if has_write else '|rNo|n'}")
         
@@ -961,7 +961,7 @@ class CmdBBS(default_cmds.MuxCommand):
         if not has_write and has_access:
             self.caller.msg("|yThis board is read-only for this player|n")
             
-        self.caller.msg(f"{'-'*120}")
+        self.caller.msg(f"{'-'*78}")
         
         # If the player has access, show the board content
         if has_access:
@@ -970,7 +970,7 @@ class CmdBBS(default_cmds.MuxCommand):
         else:
             self.caller.msg("|rThis player cannot see this board's content|n")
             
-        self.caller.msg(f"{'='*120}")
+        self.caller.msg(f"{'='*78}")
         
     def list_posts_as_player(self, controller, board_ref, target_player):
         """List all posts in the specified board as if viewed by the target player."""
@@ -984,7 +984,7 @@ class CmdBBS(default_cmds.MuxCommand):
 
         # Table Header
         output = []
-        output.append(f"{'*' * 20} {board['name']} {'*' * 20}")
+        output.append(f"{'*' * 15} {board['name']} {'*' * 15}")
         
         # Add board access information
         if not board.get('public', True):
@@ -992,8 +992,8 @@ class CmdBBS(default_cmds.MuxCommand):
         elif board.get('roster_names'):
             output.append("|yThis board is restricted to specific rosters|n")
 
-        output.append("{:<5} {:<1} {:<40} {:<20} {:<15}".format("ID", "", "Message", "Posted", "By"))
-        output.append("-" * 120)
+        output.append("{:<5} {:<1} {:<30} {:<15} {:<15}".format("ID", "", "Message", "Posted", "By"))
+        output.append("-" * 78)
 
         # List pinned posts first with correct IDs
         for i, post in enumerate(pinned_posts):
@@ -1001,7 +1001,7 @@ class CmdBBS(default_cmds.MuxCommand):
             formatted_time = self.format_datetime(post['created_at'], target_player)
             is_unread = controller.is_post_unread(board['id'], post_id - 1, target_player.key)
             unread_flag = "|rU|n" if is_unread else " "
-            output.append(f"{board['id']}/{post_id:<5} {unread_flag:<1} [Pinned] {post['title']:<40} {formatted_time:<20} {post['author']}")
+            output.append(f"{board['id']}/{post_id:<5} {unread_flag:<1} [Pinned] {post['title']:<30} {formatted_time:<15} {post['author']}")
 
         # List unpinned posts with correct IDs
         for post in unpinned_posts:
@@ -1009,10 +1009,10 @@ class CmdBBS(default_cmds.MuxCommand):
             formatted_time = self.format_datetime(post['created_at'], target_player)
             is_unread = controller.is_post_unread(board['id'], post_id - 1, target_player.key)
             unread_flag = "|rU|n" if is_unread else " "
-            output.append(f"{board['id']}/{post_id:<5} {unread_flag:<1} {post['title']:<40} {formatted_time:<20} {post['author']}")
+            output.append(f"{board['id']}/{post_id:<5} {unread_flag:<1} {post['title']:<30} {formatted_time:<15} {post['author']}")
 
         # Table Footer
-        output.append("=" * 120)
+        output.append("=" * 78)
 
         self.caller.msg("\n".join(output))
 
@@ -1025,10 +1025,10 @@ class CmdBBS(default_cmds.MuxCommand):
 
         # Table Header
         output = []
-        output.append("=" * 120)
+        output.append("=" * 78)
         output.append(f"Boards visible to {target_player.key}:")
-        output.append("{:<5} {:<10} {:<40} {:<20} {:<15} {:<10}".format("ID", "Access", "Name", "Last Post", "# of messages", "Unread"))
-        output.append("-" * 120)
+        output.append("{:<3} {:<8} {:<25} {:<15} {:<10} {:<7}".format("ID", "Access", "Name", "Last Post", "# msgs", "Unread"))
+        output.append("-" * 78)
 
         # Sort boards by ID and convert to list of tuples
         sorted_boards = sorted(boards.items(), key=lambda x: x[0])
@@ -1064,12 +1064,12 @@ class CmdBBS(default_cmds.MuxCommand):
             unread_count = len(unread_posts)
             unread_display = str(unread_count) if unread_count > 0 else "-"
 
-            output.append(f"{board_id:<5} {access_type:<10} {read_only} {board['name']:<40} {last_post:<20} {num_posts:<15} {unread_display:<10}")
+            output.append(f"{board_id:<3} {access_type:<8} {read_only} {board['name']:<25} {last_post:<15} {num_posts:<10} {unread_display:<7}")
 
         # Table Footer
-        output.append("-" * 120)
+        output.append("-" * 78)
         output.append("* = read only")
-        output.append("=" * 120)
+        output.append("=" * 78)
 
         self.caller.msg("\n".join(output))
 
@@ -1110,9 +1110,9 @@ class CmdBBS(default_cmds.MuxCommand):
         # Otherwise show detailed scan output
         # Table Header
         output = []
-        output.append("=" * 120)
+        output.append("=" * 78)
         output.append(f"Unread Postings on the Global Bulletin Board (as {target_player.key})")
-        output.append("-" * 120)
+        output.append("-" * 78)
 
         for board_id, board in sorted_boards:
             if not controller.has_access(board_id, target_player.key):
@@ -1138,13 +1138,13 @@ class CmdBBS(default_cmds.MuxCommand):
             output.append(f"{board_name} (#{board_id}): {len(unread_posts)} unread ({unread_str})")
 
         # Add footer with capacity information
-        output.append("-" * 120)
+        output.append("-" * 78)
         if total_unread > 0:
             total_posts = sum(len(b['posts']) for b in boards.values())
             if total_posts > 0:  # Avoid division by zero
                 capacity = (total_unread / total_posts) * 100
                 output.append(f"Total unread posts: {total_unread} ({capacity:.1f}% of all posts)")
-        output.append("=" * 120)
+        output.append("=" * 78)
 
         self.caller.msg("\n".join(output))
 
@@ -1192,11 +1192,11 @@ class CmdBBS(default_cmds.MuxCommand):
         # Mark the post as read
         controller.mark_post_read(board_ref, post_number - 1, target_player.key)
         
-        self.caller.msg(f"{'='*120}")
-        self.caller.msg(f"{'*' * 20} {board['name']} {'*' * 20} (as {target_player.key})")
+        self.caller.msg(f"{'='*78}")
+        self.caller.msg(f"{'*' * 15} {board['name']} {'*' * 15} (as {target_player.key})")
         self.caller.msg(f"Title: {post['title']}")
         self.caller.msg(f"Author: {post['author']}")
         self.caller.msg(f"Date: {self.format_datetime(post['created_at'], target_player)} {edit_info}")
-        self.caller.msg(f"{'-'*120}")
+        self.caller.msg(f"{'-'*78}")
         self.caller.msg(f"{post['content']}")
-        self.caller.msg(f"{'='*120}")
+        self.caller.msg(f"{'='*78}")

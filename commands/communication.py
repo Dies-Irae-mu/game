@@ -111,12 +111,21 @@ class CmdPlusIc(MuxCommand):
             caller.tags.remove("unapproved", category="approval")
             caller.tags.add("approved", category="approval")
             is_approved = True
+            
+        # Staff bypass - check for admin, builder, or storyteller permissions
+        is_staff = False
+        if hasattr(caller, 'check_permstring'):
+            for perm in ["Admin", "Builder", "Staff", "Storyteller"]:
+                if caller.check_permstring(perm):
+                    is_staff = True
+                    break
 
-        if not is_approved or has_unapproved:
+        # Only enforce approval for non-staff
+        if not is_staff and (not is_approved or has_unapproved):
             caller.msg("You must be approved to enter IC areas.")
             return
 
-        # Get the stored pre_ooc_location, or use the default room #30
+        # Get the stored pre_ooc_location, or use the default room #52
         target_location = caller.db.pre_ooc_location or search_object("#52")[0]
 
         if not target_location:
@@ -127,14 +136,20 @@ class CmdPlusIc(MuxCommand):
         old_location = caller.location
         old_location.msg_contents(f"{caller.name} returns to IC areas.", exclude=caller)
 
-        # Ensure we're not leaving a ghost character behind
+        # Properly handle session disconnection and reconnection
+        # First force unpuppet from all sessions to completely detach from current location
         for session in caller.sessions.all():
             if hasattr(session, 'puppet') and session.puppet == caller:
-                # Make sure the session knows we're moving
+                # Tell client we're moving
                 session.msg(text=f"Returning to IC ({target_location.name})...")
-
-        # Move the caller to the target location
+                
+        # Move the character to the new location
         caller.move_to(target_location, quiet=True)
+        
+        # Force location update in case of any cached references
+        caller.location = target_location
+        
+        # Announce arrival at new location
         caller.msg(f"You return to the IC area ({target_location.name}).")
         target_location.msg_contents(f"{caller.name} has returned to the IC area.", exclude=caller)
 
@@ -176,14 +191,19 @@ class CmdPlusOoc(MuxCommand):
         # Message the current location
         current_location.msg_contents(f"{caller.name} heads to OOC areas.", exclude=caller)
         
-        # Ensure we're not leaving a ghost character behind
+        # Properly handle session disconnection and reconnection
+        # First notify all sessions we're moving
         for session in caller.sessions.all():
             if hasattr(session, 'puppet') and session.puppet == caller:
-                # Make sure the session knows we're moving
                 session.msg(text=f"Moving to OOC area...")
-
-        # Move the caller to Limbo
+                
+        # Move the character to the new location
         caller.move_to(ooc_nexus, quiet=True)
+        
+        # Force location update in case of any cached references
+        caller.location = ooc_nexus
+        
+        # Announce arrival at new location
         caller.msg(f"You move to the OOC area.")
         ooc_nexus.msg_contents(f"{caller.name} has entered the OOC area.", exclude=caller)
 
@@ -197,7 +217,7 @@ class CmdMeet(MuxCommand):
       +meet/reject
 
     Sends a meet request to another player. If accepted, they'll be
-    teleported to your location. You cannot use this command from OOC areas.
+    teleported to your location. You cannot use this command from OOC areas unless you're staff.
     """
 
     key = "+meet"
@@ -222,9 +242,17 @@ class CmdMeet(MuxCommand):
     def func(self):
         caller = self.caller
         
-        # Check if in OOC area
+        # Check if caller is staff - admin, builder, or storyteller
+        is_staff = False
+        if hasattr(caller, 'check_permstring'):
+            for perm in ["Admin", "Builder", "Staff", "Storyteller"]:
+                if caller.check_permstring(perm):
+                    is_staff = True
+                    break
+        
+        # Check if in OOC area - only restrict non-staff
         current_location = caller.location
-        if current_location and hasattr(current_location, 'db') and current_location.db.roomtype == "OOC Area":
+        if not is_staff and current_location and hasattr(current_location, 'db') and current_location.db.roomtype == "OOC Area":
             caller.msg("You cannot use the +meet command from OOC areas. Use +ic first to return to IC areas.")
             return
 
@@ -239,13 +267,16 @@ class CmdMeet(MuxCommand):
             requester = caller.ndb.meet_request
             old_location = caller.location
             
-            # Ensure we're not leaving a ghost character behind
+            # Properly handle session disconnection and reconnection
             for session in caller.sessions.all():
                 if hasattr(session, 'puppet') and session.puppet == caller:
-                    # Make sure the session knows we're moving
                     session.msg(text=f"Moving to {requester.name}'s location...")
             
             caller.move_to(requester.location, quiet=True)
+            
+            # Force location update in case of any cached references
+            caller.location = requester.location
+            
             caller.msg(f"You accept the meet request from {requester.name} and join them.")
             requester.msg(f"{caller.name} has accepted your meet request and joined you.")
             old_location.msg_contents(f"{caller.name} has left to meet {requester.name}.", exclude=caller)
@@ -352,13 +383,16 @@ class CmdSummon(AdminCommand):
         # Store location for +return command
         target.db.pre_summon_location = old_location
         
-        # Ensure we're not leaving a ghost character behind
+        # Properly handle session disconnection and reconnection
         for session in target.sessions.all():
             if hasattr(session, 'puppet') and session.puppet == target:
-                # Make sure the session knows we're moving
                 session.msg(text=f"You are being summoned by {caller.name}...")
                 
         target.move_to(caller.location, quiet=True)
+        
+        # Force location update in case of any cached references
+        target.location = caller.location
+        
         caller.msg(f"You have summoned {target.name} to your location.")
         target.msg(f"{caller.name} has summoned you.")
         old_location.msg_contents(f"{target.name} has been summoned by {caller.name}.", exclude=target)
@@ -372,21 +406,21 @@ class CmdJoin(AdminCommand):
       +join <player>
 
     Teleports you to the specified player's location and matches your
-    Umbra/Material state to theirs. Cannot be used from OOC areas.
+    Umbra/Material state to theirs. Staff can use this command from anywhere.
     """
 
     key = "+join"
-    locks = "cmd:perm(builders) or perm(storyteller)"
+    locks = "cmd:perm(builders) or perm(storyteller) or perm(admin) or perm(staff)"
     help_category = "Admin Commands"
 
     def func(self):
         caller = self.caller
 
-        # Check if in OOC area
+        # Check if in OOC area - but allow for staff
         current_location = caller.location
         if current_location and hasattr(current_location, 'db') and current_location.db.roomtype == "OOC Area":
-            caller.msg("You cannot use the +join command from OOC areas. Use +ic first to return to IC areas.")
-            return
+            # Allow it but warn them
+            caller.msg("Note: You're using +join from an OOC area as staff. This is allowed but may have unexpected effects.")
 
         if not self.args:
             caller.msg("Usage: +join <player>")
@@ -442,15 +476,17 @@ class CmdJoin(AdminCommand):
                 caller.tags.add("in_material", category="state")
                 caller.msg("You shift into the Material realm.")
 
-        # Ensure we're not leaving a ghost character behind
         for session in caller.sessions.all():
             if hasattr(session, 'puppet') and session.puppet == caller:
-                # Make sure the session knows we're moving
                 session.msg(text=f"Joining {target.name}...")
 
         # Message to old location before moving
         old_location.msg_contents(f"{caller.name} has left to join {target.name}.", exclude=caller)
 
         caller.move_to(target.location, quiet=True)
+        
+        # Force location update in case of any cached references
+        caller.location = target.location
+        
         caller.msg(f"You have joined {target.name} at their location.")
         target.location.msg_contents(f"{caller.name} appears in the room.", exclude=caller)

@@ -616,7 +616,12 @@ class CmdSheet(MuxCommand):
         
         if splat and splat.lower() == 'mage' and tradition and tradition.lower() in ['akashayana', 'akashic brotherhood']:
             base_secondary_talents.append('Do')
-        
+
+        if splat and splat.lower() == 'mage' and affiliation and affiliation.lower() in ['nephandi']:
+            base_secondary_talents.append('Do')
+            base_secondary_skills.extend(['Biotech', 'Energy Weapons', 'Helmsman', 'Microgravity Ops'])
+            base_secondary_knowledges.extend(['Cybernetics', 'Hypertech', 'Paraphysics', 'Xenobiology'])
+
         if splat and splat.lower() == 'mage' and tradition and tradition.lower() in ['virtual adepts', 'sons of ether', 'society of ether', 'etherites']:
             base_secondary_skills.extend(['Biotech', 'Energy Weapons', 'Helmsman', 'Microgravity Ops'])
             base_secondary_knowledges.extend(['Cybernetics', 'Hypertech', 'Paraphysics', 'Xenobiology'])
@@ -1052,6 +1057,11 @@ class CmdSheet(MuxCommand):
                     
                     # Use the display name method to get the proper name
                     display_name = character.get_display_name_for_gift(gift_name)
+                    
+                    # Debug logging to help troubleshoot alias displays
+                    from evennia.utils import logger
+                    logger.log_info(f"Gift display for {character.name}: canonical={gift_name}, display={display_name}")
+                    
                     powers.append(format_stat(display_name, gift_value, default=0, width=self.POWERS_WIDTH))
             if not has_gifts:
                 powers.append("None".ljust(38))
