@@ -30,9 +30,58 @@ class Character(DefaultCharacter):
 
     def at_object_creation(self):
         """
-        Called only at initial creation.
+        Called when object is first created.
         """
         super().at_object_creation()
+        
+        # Initialize stats dictionary
+        self.db.stats = {}
+        
+        # Initialize notification settings
+        self.db.notifications = {
+            "say": True,
+            "pose": True,
+            "emit": True,
+            "page": True,
+            "whisper": True,
+            "new_page": True,
+        }
+        
+        # Initialize notes storage
+        self.db.notes = {}
+        self.db.notes_public = {}  # For public notes that others can view
+        
+        # Initialize scene tracking
+        self.db.scene_data = {
+            "in_scene": False,
+            "scene_started": None,  # Time when the scene started
+            "last_activity": None,  # Time of last activity
+            "activity_count": 0,    # Number of activity events in the scene
+            "participants": [],     # List of participants in the scene
+            "scene_id": None        # Unique ID for the scene
+        }
+        
+        # Initialize XP
+        from decimal import Decimal
+        self.db.xp = {
+            'total': Decimal('0.00'),
+            'current': Decimal('0.00'),
+            'spent': Decimal('0.00'),
+            'ic_xp': Decimal('0.00'),
+            'monthly_spent': Decimal('0.00'),
+            'spends': [],
+            'last_scene': None,
+            'scenes_this_week': 0,
+        }
+        
+        # Initialize gift aliases
+        self.db.gift_aliases = {}
+        
+        # Default speaking language
+        self.db.speaking_language = "English"
+        
+        # Language skills
+        self.db.languages = ["English"]
 
         # Initialize basic attributes
         self.db.desc = ""
@@ -83,6 +132,20 @@ class Character(DefaultCharacter):
         if not hasattr(self, 'ndb'):
             self.ndb = type('ndb', (), {})()
         self.ndb.is_staff_spend = False
+        
+        # Auto-join Newbie channel
+        try:
+            from evennia.comms.models import ChannelDB
+            newbie_channel = ChannelDB.objects.filter(db_key__iexact="Newbie").first()
+            if newbie_channel:
+                # Subscribe to the channel
+                newbie_channel.subscriptions.add(self)
+                
+                # Add the alias
+                self.nicks.add("newb $1", f"channel Newbie = $1", category="inputline")
+        except Exception as e:
+            from evennia.utils import logger
+            logger.log_err(f"Error adding character to Newbie channel: {e}")
 
     def at_post_unpuppet(self, account=None, session=None, **kwargs):
         """
@@ -196,7 +259,27 @@ class Character(DefaultCharacter):
 
     def display_login_notifications(self):
         """Display notifications upon login."""
+        from evennia.utils import logger
+        logger.log_info(f"About to display login notifications for {self.key}")
+        
         if self.account:
+            # Check for first login notification
+            if not self.attributes.has("first_login_complete"):
+                self.msg("|g=========================== Welcome to Dies Irae! ===========================|n")
+                self.msg("|wYou have been automatically subscribed to the |cNewbie|w channel.|n")
+                self.msg("|wYou can talk on this channel using the |cnewb|w command, for example:|n")
+                self.msg("|c   newb Hello everyone! I'm new here.|n")
+                self.msg("|wYou can see all your available channels with the |cchannel/list|w command.|n")
+                self.msg("|wFor help getting started, type |chelp|w or ask questions on the Newbie channel.|n")
+                self.msg("                                                                                  ")
+                self.msg("|bJust as a note: if you've logged in before and you're seeing this, it's because|n")
+                self.msg("|bthe typeclass has been updated. Don't worry, your character data is still here!|n")
+                self.msg("|bYou also haven't been added to the newbie channel. This will only show up once.|n")
+                self.msg("|g==============================================================================|n")
+                
+                # Mark first login as complete
+                self.attributes.add("first_login_complete", True)
+            
             # Check for unread mail
             if self.should_show_notification("mail"):
                 from evennia.comms.models import Msg
@@ -824,6 +907,29 @@ class Character(DefaultCharacter):
                 category = category.rstrip('s')
                 if category == 'advantage':
                     category = 'special_advantage'
+
+        # Special handling for instanced backgrounds
+        if stat_type == 'backgrounds' and category == 'background' and '(' in stat_name and ')' in stat_name:
+            # For backgrounds like "Allies(Police)", check if it exists directly
+            if stat_type not in self.db.stats:
+                return 0
+            if category not in self.db.stats[stat_type]:
+                return 0
+            if stat_name in self.db.stats[stat_type][category]:
+                # The background exists as a direct entry (correct format)
+                value = self.db.stats[stat_type][category][stat_name].get('temp' if temp else 'perm', 0)
+                return value
+            else:
+                # Check if it might be stored in the old format with 'instances'
+                base_name = stat_name[:stat_name.find('(')].strip()
+                instance = stat_name[stat_name.find('(')+1:stat_name.find(')')].strip()
+                
+                if (base_name in self.db.stats[stat_type][category] and
+                    'instances' in self.db.stats[stat_type][category][base_name] and
+                    instance in self.db.stats[stat_type][category][base_name]['instances']):
+                    # Found in old format, return the value
+                    return self.db.stats[stat_type][category][base_name]['instances'][instance].get('temp' if temp else 'perm', 0)
+                return 0
 
         # Handle other stats
         if stat_type not in self.db.stats:
@@ -2005,53 +2111,153 @@ class Character(DefaultCharacter):
 
     def set_gift_alias(self, canonical_name: str, alias: str, value: int) -> None:
         """
-        Set a gift alias for a character.
+        Set an alias for a gift.
         
         Args:
-            canonical_name (str): The canonical (original) name of the gift
-            alias (str): The alias used for the gift
-            value (int): The value/level of the gift
+            canonical_name: The canonical name of the gift
+            alias: The alias to set
+            value: The value of the gift (1-5)
         """
-        if not hasattr(self.db, 'gift_aliases'):
-            self.db.gift_aliases = {}
-        
-        # Handle case where alias might be a list
-        alias_to_use = alias
-        if isinstance(alias, list):
-            # If it's a list, use the first element or a joined string
-            if alias:
-                alias_to_use = alias[0] if len(alias) == 1 else " ".join(alias)
-            else:
-                alias_to_use = canonical_name  # Fallback if empty list
-                
-        # Capitalize each word in the alias
-        capitalized_alias = ' '.join(word.capitalize() for word in alias_to_use.split())
-        
-        # Store the alias mapping with its value
-        self.db.gift_aliases[canonical_name] = {
-            'alias': capitalized_alias,
-            'value': value
-        }
-
-    def get_gift_alias(self, canonical_name: str) -> tuple[str, int]:
-        """
-        Get the alias and value for a gift.
-        
-        Args:
-            canonical_name (str): The canonical (original) name of the gift
+        # Ensure we have a valid canonical name and alias
+        if not canonical_name or not alias:
+            return
             
-        Returns:
-            tuple[str, int]: The (alias, value) pair, or (None, None) if not found
-        """
         # Initialize gift_aliases if it doesn't exist
         if not hasattr(self.db, 'gift_aliases') or self.db.gift_aliases is None:
             self.db.gift_aliases = {}
             
-        gift_data = self.db.gift_aliases.get(canonical_name)
-        if gift_data:
-            return gift_data['alias'], gift_data['value']
-        return None, None
+        try:
+            # Create new entry if the canonical name doesn't exist yet
+            if canonical_name not in self.db.gift_aliases:
+                self.db.gift_aliases[canonical_name] = {
+                    'aliases': [alias],
+                    'value': value
+                }
+            else:
+                # Get the existing entry
+                alias_entry = self.db.gift_aliases[canonical_name]
+                
+                # Ensure we're using the new format with 'aliases' list
+                if 'aliases' not in alias_entry:
+                    # Convert from old format to new format
+                    if 'alias' in alias_entry:
+                        old_alias = alias_entry.get('alias')
+                        if old_alias:
+                            alias_entry['aliases'] = [old_alias]
+                        else:
+                            alias_entry['aliases'] = []
+                        # Remove old alias key
+                        if 'alias' in alias_entry:
+                            del alias_entry['alias']
+                    else:
+                        # Create new aliases list
+                        alias_entry['aliases'] = []
+                
+                # Ensure aliases is actually a list and not None
+                if not alias_entry.get('aliases'):
+                    alias_entry['aliases'] = []
+                elif not isinstance(alias_entry['aliases'], list):
+                    # Convert to list if not already
+                    if isinstance(alias_entry['aliases'], str):
+                        alias_entry['aliases'] = [alias_entry['aliases']]
+                    else:
+                        # Reset to empty list for any other type
+                        alias_entry['aliases'] = []
+                
+                # Add the new alias if it's not already in the list
+                if alias not in alias_entry['aliases']:
+                    alias_entry['aliases'].append(alias)
+                
+                # Update the value
+                alias_entry['value'] = value
+                
+                # Update the entry
+                self.db.gift_aliases[canonical_name] = alias_entry
+                
+        except Exception as e:
+            from evennia.utils import logger
+            logger.log_err(f"Error in set_gift_alias for {self.name}: {str(e)}")
+            logger.log_trace()
 
+    def get_display_name_for_gift(self, canonical_name: str) -> str:
+        """
+        Get the display name for a gift, which might be an alias or the canonical name.
+        
+        Args:
+            canonical_name: The canonical name of the gift
+            
+        Returns:
+            The display name for the gift (alias if one exists, otherwise canonical name)
+        """
+        # Check if this character has gift aliases
+        if hasattr(self.db, 'gift_aliases') and self.db.gift_aliases:
+            # Get the gift alias info for this canonical name
+            alias_info = self.db.gift_aliases.get(canonical_name)
+            if alias_info:
+                # Return the first alias if available, otherwise canonical name
+                if 'aliases' in alias_info and alias_info['aliases']:
+                    # New format - return first alias from list
+                    return alias_info['aliases'][0]
+                elif 'alias' in alias_info and alias_info['alias']:
+                    # Old format - return the single alias
+                    return alias_info['alias']
+        
+        # No alias found, return the canonical name
+        return canonical_name
+
+    def get_gift_alias(self, canonical_name: str) -> tuple[str, int]:
+        """
+        Get the alias for a canonical gift name.
+        
+        Args:
+            canonical_name: The canonical name of the gift
+            
+        Returns:
+            tuple: (alias, value) or (None, 0) if no alias exists
+        """
+        if not hasattr(self.db, 'gift_aliases'):
+            return None, 0
+            
+        alias_info = self.db.gift_aliases.get(canonical_name)
+        if not alias_info:
+            return None, 0
+            
+        # Handle both new and old formats
+        if 'aliases' in alias_info and alias_info['aliases']:
+            # New format - return first alias and value
+            return alias_info['aliases'][0], alias_info.get('value', 0)
+        elif 'alias' in alias_info:
+            # Old format - return the single alias and value
+            return alias_info.get('alias'), alias_info.get('value', 0)
+            
+        # No alias found
+        return None, 0
+
+    def get_all_gift_aliases(self) -> dict:
+        """
+        Get all gift aliases for this character.
+        
+        Returns:
+            dict: Dictionary of {canonical_name: {aliases: [...], value: int}}
+        """
+        if not hasattr(self.db, 'gift_aliases'):
+            return {}
+            
+        # Convert any old format entries to new format
+        result = {}
+        for canonical_name, alias_info in self.db.gift_aliases.items():
+            if 'aliases' in alias_info:
+                # Already in new format
+                result[canonical_name] = alias_info
+            elif 'alias' in alias_info:
+                # Convert old format to new format
+                result[canonical_name] = {
+                    'aliases': [alias_info['alias']],
+                    'value': alias_info.get('value', 0)
+                }
+                
+        return result
+        
     def remove_gift_alias(self, canonical_name: str) -> bool:
         """
         Remove a gift alias mapping.
@@ -2069,18 +2275,7 @@ class Character(DefaultCharacter):
             del self.db.gift_aliases[canonical_name]
             return True
         return False
-
-    def get_all_gift_aliases(self) -> dict:
-        """
-        Get all gift aliases.
         
-        Returns:
-            dict: Dictionary of all gift aliases and their values
-        """
-        if not hasattr(self.db, 'gift_aliases'):
-            self.db.gift_aliases = {}
-        return self.db.gift_aliases
-
     def format_gift_aliases_string(self) -> str:
         """
         Format gift aliases as a comma-delimited string.
@@ -2093,9 +2288,15 @@ class Character(DefaultCharacter):
             
         alias_parts = []
         for canonical_name, data in self.db.gift_aliases.items():
-            alias_parts.append(f"{data['alias']}:{canonical_name}:{data['value']}")
+            if 'aliases' in data and data['aliases']:
+                # New format - use first alias from list
+                for alias in data['aliases']:
+                    alias_parts.append(f"{alias}:{canonical_name}:{data.get('value', 0)}")
+            elif 'alias' in data:
+                # Old format - use the single alias
+                alias_parts.append(f"{data['alias']}:{canonical_name}:{data.get('value', 0)}")
         return ", ".join(alias_parts)
-
+        
     def parse_gift_aliases_string(self, aliases_string: str) -> None:
         """
         Parse a comma-delimited string of gift aliases and store them.
@@ -2106,7 +2307,8 @@ class Character(DefaultCharacter):
         if not aliases_string:
             return
             
-        self.db.gift_aliases = {}
+        if not hasattr(self.db, 'gift_aliases'):
+            self.db.gift_aliases = {}
         
         for alias_part in aliases_string.split(','):
             try:
@@ -2118,27 +2320,6 @@ class Character(DefaultCharacter):
                 self.set_gift_alias(canonical.strip(), alias.strip(), int(value))
             except (ValueError, IndexError):
                 continue
-
-    def get_display_name_for_gift(self, canonical_name: str) -> str:
-        """
-        Get the display name for a gift (alias if exists, otherwise canonical name).
-        
-        Args:
-            canonical_name (str): The canonical (original) name of the gift
-            
-        Returns:
-            str: The display name to use for the gift
-        """
-        if not canonical_name:
-            return ""
-            
-        # Initialize gift_aliases if it doesn't exist
-        if not hasattr(self.db, 'gift_aliases') or self.db.gift_aliases is None:
-            self.db.gift_aliases = {}
-            
-        # Get the alias and value
-        alias, _ = self.get_gift_alias(canonical_name)
-        return alias if alias else canonical_name
 
     def fix_disciplines(self):
         """Fix disciplines that were incorrectly stored in powers.disciplines."""
@@ -2167,11 +2348,14 @@ class Character(DefaultCharacter):
 
         # First fix secondary abilities
         secondary_abilities_fixed = self.fix_secondary_abilities()
+        
+        # Fix instanced backgrounds
+        backgrounds_fixed = self.fix_instanced_backgrounds()
 
         # Get the powers dictionary
         powers = self.db.stats.get('powers', {})
         if not powers:
-            return secondary_abilities_fixed
+            return secondary_abilities_fixed or backgrounds_fixed
 
         # Define power type mappings (plural to singular)
         power_mappings = {
@@ -2180,15 +2364,15 @@ class Character(DefaultCharacter):
             'realms': 'realm',
             'disciplines': 'discipline',
             'gifts': 'gift',
-            'numina': 'numina',  # Already singular
+            'numina': 'numina',
             'charms': 'charm',
             'blessings': 'blessing',
             'rituals': 'ritual',
-            'sorceries': 'sorcery',
-            'advantages': 'special_advantage'
+            'sorcery': 'sorcery',
+            'special_advantages': 'special_advantage'
         }
 
-        changes_made = False
+        changes_made = False # use this to indicate if you need to have anything recalculated (fix_powers, or recalculating pools from the utils files, etc.)
 
         # Fix each power type
         for plural, singular in power_mappings.items():
@@ -2207,6 +2391,12 @@ class Character(DefaultCharacter):
                         powers[singular][power_name]['temp'] = max(current_temp, new_temp)
 
                 # Remove the plural category
+                del powers[plural]
+                changes_made = True
+            # Also check if singular category is missing but plural exists
+            elif plural in powers and singular not in powers:
+                # Move all powers from plural to singular
+                powers[singular] = powers[plural]
                 del powers[plural]
                 changes_made = True
 
@@ -2234,10 +2424,21 @@ class Character(DefaultCharacter):
                 powers['gift'] = fixed_gifts
                 changes_made = True
 
+        # Special handling for sorcery and numina - ensure they exist for Mortal+ characters
+        mortalplus_type = self.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+        if mortalplus_type in ['Sorcerer', 'Psychic', 'Kinfolk', 'Ghoul', 'Faithful']:
+            # Ensure these categories exist for these character types
+            if mortalplus_type == 'Sorcerer' and 'sorcery' not in powers:
+                powers['sorcery'] = {}
+                changes_made = True
+            elif mortalplus_type == 'Psychic' and 'numina' not in powers:
+                powers['numina'] = {}
+                changes_made = True
+
         if changes_made:
             self.db.stats['powers'] = powers
             
-        return changes_made or secondary_abilities_fixed
+        return changes_made or secondary_abilities_fixed or backgrounds_fixed
 
     def fix_secondary_abilities(self):
         """Fix secondary abilities that might be stored in the wrong structure."""
@@ -2282,6 +2483,88 @@ class Character(DefaultCharacter):
                 if not self.db.stats[subcategory]:  # If empty, remove the subcategory
                     del self.db.stats[subcategory]
                     
+        return changes_made
+
+    def debug_powers(self):
+        """Debug method to check the structure of powers for Mortal+ characters."""
+        from evennia.utils import logger
+        
+        if not hasattr(self, 'db') or not hasattr(self.db, 'stats'):
+            logger.log_info(f"No stats structure for {self.key}")
+            return
+            
+        mortalplus_type = self.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+        if not mortalplus_type:
+            logger.log_info(f"{self.key} is not a Mortal+ character")
+            return
+            
+        logger.log_info(f"Debugging powers for {self.key}, Mortal+ type: {mortalplus_type}")
+        
+        # Log the structure of the powers dictionary
+        powers = self.db.stats.get('powers', {})
+        logger.log_info(f"Powers keys: {list(powers.keys())}")
+        
+        # Check for specific power types based on character type
+        if mortalplus_type == 'Sorcerer':
+            sorcery = powers.get('sorcery', {})
+            sorceries = powers.get('sorceries', {})
+            logger.log_info(f"Sorcery keys: {list(sorcery.keys())}")
+            logger.log_info(f"Sorceries keys: {list(sorceries.keys())}")
+        elif mortalplus_type == 'Psychic':
+            numina = powers.get('numina', {})
+            numinas = powers.get('numinas', {})
+            logger.log_info(f"Numina keys: {list(numina.keys())}")
+            logger.log_info(f"Numinas keys: {list(numinas.keys())}")
+        
+        # Check stats initialization
+        self.fix_powers()
+        
+        # Log again after fix
+        powers = self.db.stats.get('powers', {})
+        logger.log_info(f"Powers keys after fix: {list(powers.keys())}")
+        
+        if mortalplus_type == 'Sorcerer':
+            sorcery = powers.get('sorcery', {})
+            logger.log_info(f"Sorcery keys after fix: {list(sorcery.keys())}")
+        elif mortalplus_type == 'Psychic':
+            numina = powers.get('numina', {})
+            logger.log_info(f"Numina keys after fix: {list(numina.keys())}")
+            
+        return "Powers debugging complete. Check server logs."
+
+    def fix_instanced_backgrounds(self):
+        """Fix instanced backgrounds to use the correct format."""
+        if not hasattr(self.db, 'stats') or not self.db.stats:
+            return False
+            
+        if 'backgrounds' not in self.db.stats or 'background' not in self.db.stats['backgrounds']:
+            return False
+            
+        changes_made = False
+        
+        # Look for backgrounds with 'instances'
+        backgrounds_to_remove = []
+        for bg_name, bg_data in self.db.stats['backgrounds']['background'].items():
+            if isinstance(bg_data, dict) and 'instances' in bg_data:
+                # For each instance, create a new entry
+                for instance_name, instance_data in bg_data['instances'].items():
+                    # Create full background name
+                    full_bg_name = f"{bg_name}({instance_name})"
+                    # Add as direct entry
+                    self.db.stats['backgrounds']['background'][full_bg_name] = {
+                        'perm': instance_data.get('perm', 0),
+                        'temp': instance_data.get('temp', 0)
+                    }
+                    changes_made = True
+                
+                # Mark original background for removal
+                backgrounds_to_remove.append(bg_name)
+        
+        # Remove the original backgrounds with instances
+        for bg_name in backgrounds_to_remove:
+            del self.db.stats['backgrounds']['background'][bg_name]
+            changes_made = True
+        
         return changes_made
 
 class Note:

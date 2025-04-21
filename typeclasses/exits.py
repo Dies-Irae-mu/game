@@ -232,9 +232,22 @@ class Exit(DefaultExit):
                 if hasattr(traversing_object, 'msg'):
                     traversing_object.msg("There was an error processing your movement. Please try again.")
                 return False
+        
+        # Notify sessions about the upcoming move
+        if hasattr(traversing_object, 'sessions'):
+            for session in traversing_object.sessions.all():
+                if hasattr(session, 'puppet') and session.puppet == traversing_object:
+                    session.msg(text=f"Moving to {target_location.name if target_location else 'unknown location'}...")
             
         # Call parent's at_traverse
-        return super().at_traverse(traversing_object, target_location, **kwargs)
+        success = super().at_traverse(traversing_object, target_location, **kwargs)
+        
+        # Force location update to ensure consistency
+        if success and traversing_object.location != target_location:
+            traversing_object.location = target_location
+            logger.log_info(f"Force-updated location for {traversing_object} to {target_location}")
+            
+        return success
     
     def at_failed_traverse(self, traversing_object, **kwargs):
         """
@@ -302,9 +315,22 @@ class ApartmentExit(Exit):
             if hasattr(traversing_object, 'msg'):
                 traversing_object.msg("You don't have permission to enter this apartment.")
             return False
+        
+        # Notify sessions about the upcoming move
+        if hasattr(traversing_object, 'sessions'):
+            for session in traversing_object.sessions.all():
+                if hasattr(session, 'puppet') and session.puppet == traversing_object:
+                    session.msg(text=f"Moving to {target_location.name if target_location else 'unknown location'}...")
             
         # Call parent's at_traverse
-        return super().at_traverse(traversing_object, target_location, **kwargs)
+        success = super(Exit, self).at_traverse(traversing_object, target_location, **kwargs)
+        
+        # Force location update to ensure consistency
+        if success and traversing_object.location != target_location:
+            traversing_object.location = target_location
+            logger.log_info(f"Force-updated location for {traversing_object} to {target_location}")
+            
+        return success
     
     def at_failed_traverse(self, traversing_object, **kwargs):
         """

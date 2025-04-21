@@ -834,6 +834,17 @@ POSSESSED_POOLS = {
     }
 }
 
+THAUMATURGY_PATHS = {
+    'Path of Blood', 'Lure of Flames', 'Movement of the Mind', 'Path of Conjuring', 'Path of Corruption', 'Path of Mars', 
+    'Hands of Destruction', 'Neptune\'s Might', 'Path of Technomancy', 'Path of the Father\'s Vengeance', 'Green Path', 
+    'Elemental Mastery', 'Weather Control', 'Gift of Morpheus', 'Oneiromancy', 'Path of Mercury', 'Spirit Manipulation', 
+    'Two Centimes Path', 'Path of Transmutation', 'Path of Warding', 'Countermagic', 'Thaumaturgical Countermagic'
+}
+
+NECROMANCY_PATHS = {
+    'Sepulchre Path', 'Bone Path', 'Ash Path', 'Cenotaph Path', 'Vitreous Path', 'Mortis Path', 'Grave\'s Decay', 'Path of Skulls', 'Corpse in the Monster', 'Twilight Garden'
+}
+
 # Power Categories
 POWER_CATEGORIES = {
     'gift': 'powers',

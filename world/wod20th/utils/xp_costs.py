@@ -180,7 +180,7 @@ def calculate_merit_flaw_cost(rating: int) -> int:
     Returns:
         int: XP cost
     """
-    return abs(rating) * 2
+    return abs(rating) * 5
 
 def calculate_specialty_cost() -> int:
     """

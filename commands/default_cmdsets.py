@@ -55,6 +55,7 @@ from commands.CmdHelp import CmdHelp
 from commands.CmdEquip import CmdEquip, CmdInventory
 from commands.CmdWatch import CmdWatch
 from commands.CmdAlts import CmdAlts
+from commands.CmdTxt import CmdText
 
 from commands.bbs.bbs_all_commands import CmdBBS
 from commands.bbs.bbs_admin_commands import CmdResetBBS
@@ -70,7 +71,7 @@ from commands.CmdFinger import CmdFinger
 from commands.CmdAlias import CmdAlias
 from commands.CmdLFRP import CmdLFRP
 from evennia.commands.default import cmdset_character, cmdset_account
-from commands.CmdXP import CmdXP
+from commands.xp_commands import CmdXP
 #from commands.CmdXPCost import CmdXPCost
 from commands.CmdWho import CmdWho, CmdCensus
 from commands.housing import CmdRent, CmdManageHome
@@ -146,6 +147,7 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdSay())
         self.add(CmdLanguage())
         self.add(CmdPage())
+        self.add(CmdText())
         self.add(CmdFinger())
         self.add(CmdSelfStat())
         self.add(CmdXP())

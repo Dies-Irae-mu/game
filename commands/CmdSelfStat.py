@@ -304,6 +304,36 @@ class CmdSelfStat(MuxCommand):
         else:
             return False, f"Invalid value for {parent_value}. Valid options are: {', '.join(sorted(valid_values))}"
 
+    def _remove_stat_from_other_categories(self, stat_name: str, target_category: str, target_type: str) -> None:
+        """
+        Remove a stat from all categories except the target category and type.
+        
+        Args:
+            stat_name: The name of the stat to remove
+            target_category: The category to keep the stat in
+            target_type: The type within the category to keep the stat in
+        """
+        if not hasattr(self.caller, 'db') or not hasattr(self.caller.db, 'stats'):
+            return
+            
+        # Categories to check
+        categories_to_check = ['attributes', 'abilities', 'secondary_abilities', 'identity', 
+                               'powers', 'merits', 'flaws', 'backgrounds', 'virtues', 
+                               'advantages', 'pools']
+        
+        for category in categories_to_check:
+            if category in self.caller.db.stats:
+                for stat_type in self.caller.db.stats[category]:
+                    # Skip the target category and type - we want to keep this one
+                    if category == target_category and stat_type == target_type:
+                        continue
+                        
+                    # Check if the stat exists in this category/type
+                    if stat_name in self.caller.db.stats[category][stat_type]:
+                        # Remove the stat
+                        del self.caller.db.stats[category][stat_type][stat_name]
+                        self.caller.msg(f"|yRemoved duplicate '{stat_name}' from {category}.{stat_type}|n")
+
     def get_stat_category(self, stat_name: str, stat_type: str, splat: str = None) -> str:
         """
         Get the appropriate category for a stat based on stat type and splat.
@@ -386,16 +416,53 @@ class CmdSelfStat(MuxCommand):
     def _check_gift_alias(self, gift_name: str) -> tuple[bool, str]:
         """
         Check if a gift name is an alias and return the canonical name.
-        
-        Args:
-            gift_name: The name of the gift to check
-            
-        Returns:
-            Tuple of (is_alias, canonical_name)
         """
+        # We DO NOT set original_alias here at all
+        # Original alias should only be set in validate_stat_value
+        
+        # We track alias_used but only if we find a match
+        character = self.caller
+        if hasattr(self, 'target') and self.target:
+            character = self.target
+        
         # Get character's splat and type
-        splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
-        char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+        splat = character.get_stat('other', 'splat', 'Splat', temp=False)
+        char_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+        
+        # Special handling for Obedience which could be both a gift and a renown type
+        if gift_name.lower() == 'obedience':
+            # For Ananasi, prioritize renown over gift
+            if char_type == 'Ananasi':
+                return False, None
+
+        # Check direct aliases in character's gift_aliases attribute
+        if hasattr(character.db, 'gift_aliases') and character.db.gift_aliases:
+            for canonical, alias_info in character.db.gift_aliases.items():
+                # Handle different formats of gift aliases
+                aliases_to_check = []
+                
+                # New format: dict with 'aliases' list
+                if isinstance(alias_info, dict) and 'aliases' in alias_info:
+                    if isinstance(alias_info['aliases'], list):
+                        aliases_to_check.extend(alias_info['aliases'])
+                    elif isinstance(alias_info['aliases'], str):
+                        aliases_to_check.append(alias_info['aliases'])
+                
+                # Legacy format: dict with 'alias' string
+                elif isinstance(alias_info, dict) and 'alias' in alias_info:
+                    aliases_to_check.append(alias_info['alias'])
+                
+                # Very old format: direct string
+                elif isinstance(alias_info, str):
+                    aliases_to_check.append(alias_info)
+                
+                # Check if any alias matches
+                for alias in aliases_to_check:
+                    if isinstance(alias, str) and alias.lower() == gift_name.lower():
+                        # Only set alias_used if we found a match
+                        self.alias_used = gift_name
+                        self.caller.msg(f"|y'{gift_name}' is a stored alias for the gift '{canonical}'.|n")
+                        return True, canonical
         
         # Check if character can use gifts
         can_use_gifts = (
@@ -409,6 +476,9 @@ class CmdSelfStat(MuxCommand):
             
         # Check if the gift exists in the database
         from world.wod20th.models import Stat
+        import difflib
+        
+        # Try an exact match first
         gift = Stat.objects.filter(
             name__iexact=gift_name,
             category='powers',
@@ -416,93 +486,58 @@ class CmdSelfStat(MuxCommand):
         ).first()
         
         if gift:
-            # Check if this character type can use this gift
-            if splat == 'Shifter' and gift.shifter_type:
-                allowed_types = []
-                if isinstance(gift.shifter_type, list):
-                    allowed_types = [t.lower() for t in gift.shifter_type]
-                else:
-                    allowed_types = [gift.shifter_type.lower()]
-                
-                # For Garou, check if they're trying to use an alias
-                if char_type == 'Garou' and gift.gift_alias:
-                    # Check if the input name matches any alias
-                    if any(alias.lower() == gift_name.lower() for alias in gift.gift_alias):
-                        self.caller.msg(f"|rPlease use the Garou name '{gift.name}' instead of '{gift_name}'.|n")
-                        return False, None
-                
-                if char_type.lower() not in allowed_types:
-                    # Return false but include the gift name for validation
-                    return False, gift.name
-            elif splat == 'Mortal+' and char_type == 'Kinfolk':
-                # Validate Kinfolk gift access
-                is_valid, error_msg, canonical_name = self._validate_kinfolk_gift(gift)
-                if not is_valid:
-                    self.caller.msg(f"|r{error_msg}|n")
-                    return False, None
-                return True, canonical_name
+            # For staff, we allow setting any gift regardless of character type
+            self.alias_used = gift_name
             return True, gift.name  # Found exact match
-         
-        # Get all gifts and check their aliases
-        all_gifts = Stat.objects.filter(
+
+        # Check for aliases in the database
+        gifts_with_alias = Stat.objects.filter(
             category='powers',
             stat_type='gift'
         )
-        matched_gift = None
-        for g in all_gifts:
-            if g.gift_alias and any(alias.lower() == gift_name.lower() for alias in g.gift_alias):
-                matched_gift = g
-                break
         
-        if matched_gift:
-            gift = matched_gift
-            # Check if this character type can use this gift
-            if splat == 'Shifter':
-                if gift.shifter_type:
-                    allowed_types = []
-                    # For Garou, prevent using non-Garou names
-                    if char_type == 'Garou':
-                        self.caller.msg(f"|rPlease use the Garou name '{gift.name}' instead of '{gift_name}'.|n")
-                        return False, None
-                    elif isinstance(gift.shifter_type, list):
-                        allowed_types = [t.lower() for t in gift.shifter_type]
-                    else:
-                        allowed_types = [gift.shifter_type.lower()]
-                    if char_type.lower() not in allowed_types:
-                        # Return false but include the gift name for validation
-                        return False, gift.name
+        for potential_gift in gifts_with_alias:
+            if potential_gift.gift_alias:
+                # Handle different formats of gift_alias
+                if isinstance(potential_gift.gift_alias, list):
+                    # Check each alias in the list
+                    for alias in potential_gift.gift_alias:
+                        if isinstance(alias, str) and alias.lower() == gift_name.lower():
+                            self.alias_used = gift_name
+                            self.caller.msg(f"|y'{gift_name}' is a database alias for the gift '{potential_gift.name}'.|n")
+                            return True, potential_gift.name
+                elif isinstance(potential_gift.gift_alias, str) and potential_gift.gift_alias.lower() == gift_name.lower():
+                    self.alias_used = gift_name
+                    self.caller.msg(f"|y'{gift_name}' is a database alias for the gift '{potential_gift.name}'.|n")
+                    return True, potential_gift.name
             
-            # Find which alias matched
-            matched_alias = None
-            if gift.gift_alias:
-                for alias in gift.gift_alias:
-                    if alias.lower() == gift_name.lower():
-                        matched_alias = alias
-                        break
+        # If not found by exact match, try a more focused partial match
+        # Only for search terms with substantial length
+        if len(gift_name) > 3:
+            # Get all potentially matching gifts
+            potential_matches = Stat.objects.filter(
+                category='powers',
+                stat_type='gift'
+            )
             
-            if matched_alias:
-                # Store the original input name as the alias_used before it gets changed
-                self.alias_used = matched_alias  # Use the exact alias from the database
-                
-                # Customize message based on character type
-                if splat == 'Shifter':
-                    if char_type == 'Garou':
-                        self.caller.msg(f"|rPlease use the Garou name '{gift.name}' instead of '{gift_name}'.|n")
-                        return False, None
-                    else:
-                        self.caller.msg(f"|y'{matched_alias}' is the {char_type} name for the Garou gift '{gift.name}'. Setting '{gift.name}' to {self.value_change}.|n")
-                else:
-                    self.caller.msg(f"|y'{matched_alias}' is also known as '{gift.name}'. Setting '{gift.name}' to {self.value_change}.|n")
-                
-                # Return after setting the message
+            # Find the best match using similarity ratio
+            best_match = None
+            best_score = 0.7  # Minimum 70% similarity required
+            
+            for potential in potential_matches:
+                similarity = difflib.SequenceMatcher(None, gift_name.lower(), potential.name.lower()).ratio()
+                if similarity > best_score:
+                    best_score = similarity
+                    best_match = potential
+            
+            if best_match:
+                gift = best_match
+                self.alias_used = gift_name
+                self.caller.msg(f"|yFound similar gift: '{gift.name}'. Setting it to {self.value_change}.|n")
                 return True, gift.name
-                
-            # If we found a match but no matching alias (unusual case), still return the gift name
-            return True, gift.name
-            
-        # If no match was found at all
+         
         return False, None
-
+    
     def validate_stat_value(self, stat_name: str, value: str, category: str = None, stat_type: str = None) -> tuple:
         """
         Validate a stat value based on its type and category.
@@ -722,16 +757,38 @@ class CmdSelfStat(MuxCommand):
             
             if not can_use_gifts:
                 return False, "Only Shifters, Possessed, and Kinfolk can have gifts", None
+            
+            # Use the raw input name captured at the beginning of command processing
+            # This ensures we preserve the original user input (e.g., "Qyrl's Blood")
+            if hasattr(self, 'raw_input_name') and self.raw_input_name:
+                original_input = self.raw_input_name
+            else:
+                # Fallback to stat_name if raw_input_name is not available
+                original_input = stat_name
+            
+            # Debug the state before gift alias check
+            self.debug_gift_alias(stat_name, None)
                 
             # Check for gift aliases first
             is_alias, canonical_name = self._check_gift_alias(stat_name)
+            
+            # Debug the state after gift alias check
+            self.debug_gift_alias(stat_name, canonical_name)
+            
             if is_alias:
-                # Only set alias_used if it wasn't already set in _check_gift_alias
+                # Set original_alias to the user's input (e.g., "Qyrl's Blood")
+                self.original_alias = original_input
+                
+                # Set alias_used to track what specific alias matched (useful for multiple aliases)
                 if not hasattr(self, 'alias_used'):
                     self.alias_used = stat_name
-                # Update stat_name to canonical name
+                    
+                # Update stat_name to canonical name (e.g., "Shroud")
                 stat_name = canonical_name
                 self.stat_name = canonical_name
+                
+                # Debug after updating values
+                self.debug_gift_alias(stat_name, canonical_name)
             
             if not canonical_name:
                 return False, f"Could not find a valid gift name for '{stat_name}'", None
@@ -1137,6 +1194,1550 @@ class CmdSelfStat(MuxCommand):
         self.stat_type = None
         self.is_specialty = False
         self.specialty = None
+        # Initialize alias tracking
+        self.original_alias = None
+        self.alias_used = None
+        
+        args = self.args.strip()
+        if not args:
+            return
+
+        # Split into parts before and after =
+        if '=' in args:
+            first_part, self.value_change = args.split('=', 1)
+            first_part = first_part.strip()
+            self.value_change = self.value_change.strip()
+            
+            # Handle special case for stats with colon in their values
+            # Check if this might be a stat that allows colons in the value
+            special_colon_stats = ['elemental affinity']
+            potential_stat_name = first_part.lower()
+            
+            # If the original stat name is a known special case and the value contains a colon
+            if potential_stat_name in special_colon_stats and ':' in self.value_change:
+                # Keep the value with the colon as is - don't try to parse it further
+                self.stat_name = first_part.strip()
+                # Don't modify the value, let the validation handle it
+                return
+        else:
+            first_part = args
+            self.value_change = None
+
+        try:
+            # Check for specialty syntax first: ability[specialty]
+            if '[' in first_part and ']' in first_part:
+                ability_part, specialty = first_part.split('[', 1)
+                if not specialty.endswith(']'):
+                    raise ValueError("Malformed specialty syntax. Use: ability[specialty]")
+                specialty = specialty[:-1].strip()  # Remove the closing bracket
+                self.stat_name = ability_part.strip()
+                self.is_specialty = True
+                self.specialty = specialty
+                return  # Exit early for specialty handling
+
+            # Handle instance format: stat(instance)/category
+            if '(' in first_part and ')' in first_part:
+                # Extract stat name and everything after the opening parenthesis
+                parts = first_part.split('(', 1)
+                self.stat_name = parts[0].strip()
+                
+                # Extract instance and category
+                instance_and_rest = parts[1]
+                if ')' not in instance_and_rest:
+                    raise ValueError("Malformed instance syntax. Missing closing parenthesis. Use: stat(instance)/category")
+                
+                # Split at the closing parenthesis
+                instance_parts = instance_and_rest.split(')', 1)
+                self.instance = instance_parts[0].strip()
+                
+                # Check if there's a category specified after the instance
+                if len(instance_parts) > 1 and '/' in instance_parts[1]:
+                    category_part = instance_parts[1].split('/', 1)[1].strip()
+                    
+                    # Handle explicit category.type notation
+                    if '.' in category_part:
+                        cat_parts = category_part.split('.', 1)
+                        self.category = cat_parts[0].strip()
+                        self.stat_type = cat_parts[1].strip()
+                    else:
+                        # Use the standard mapping for other formats
+                        self.map_category_and_type(category_part)
+                    
+                    # If category mapping failed, exit early
+                    if not self.category or not self.stat_type:
+                        return
+                else:
+                    # No category specified, detect based on stat name
+                    self.detect_category_and_type()
+            else:
+                # Handle non-instance format: stat/category
+                if '/' in first_part:
+                    parts = first_part.split('/', 1)
+                    self.stat_name = parts[0].strip()
+                    category_part = parts[1].strip()
+                    
+                    # Handle explicit category.type notation
+                    if '.' in category_part:
+                        cat_parts = category_part.split('.', 1)
+                        self.category = cat_parts[0].strip()
+                        self.stat_type = cat_parts[1].strip()
+                    else:
+                        # Use the standard mapping for other formats
+                        self.map_category_and_type(category_part)
+                    
+                    # If category mapping failed, exit early
+                    if not self.category or not self.stat_type:
+                        return
+                else:
+                    self.stat_name = first_part.strip()
+                    # No category specified, detect based on stat name
+                    self.detect_category_and_type()
+                
+                # Check if this stat requires an instance
+                if self._requires_instance(self.stat_name, self.category):
+                    self._display_instance_requirement_message(self.stat_name)
+                    self.stat_name = None  # Set to None to indicate parsing failed
+                    return
+                
+                # Special handling for Gnosis
+                if self.stat_name.lower() == 'gnosis':
+                    splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+                    char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+                    
+                    if splat and splat.lower() in ['shifter', 'possessed']:
+                        self.category = 'pools'
+                        self.stat_type = 'dual'
+                    elif splat and splat.lower() == 'mortal+' and char_type and char_type.lower() == 'kinfolk':
+                        self.category = 'merits'
+                        self.stat_type = 'supernatural'
+            
+            # Special handling for Nature and Time
+            if not self.category:
+                splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+                char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+                
+                if self.stat_name.lower() == 'nature':
+                    # For Changelings and Kinain, Nature is a realm power
+                    if splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
+                        self.category = 'powers'
+                        self.stat_type = 'realm'
+                    else:
+                        self.category = 'identity'
+                        self.stat_type = 'personal'
+                elif self.stat_name.lower() == 'demeanor':
+                    self.category = 'identity'
+                    self.stat_type = 'personal'
+                elif self.stat_name.lower() == 'time':
+                    if splat == 'Mage':
+                        self.category = 'powers'
+                        self.stat_type = 'sphere'
+                    else:
+                        self.category = 'attributes'
+                        self.stat_type = 'physical'
+            
+        except Exception as e:
+            self.caller.msg(f"|rError parsing command: {str(e)}|n")
+            self.stat_name = None  # Set to None to indicate parsing failed
+
+    def map_category_and_type(self, category_or_type: str):
+        """Map user-provided category/type to correct internal values."""
+        # Convert to title case for consistent comparison
+        stat_title = self.stat_name.title()
+        stat_lower = self.stat_name.lower()
+
+        # Special handling for Rank vs Organizational Rank
+        if stat_lower == 'rank':
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            if splat and splat.lower() == 'shifter':
+                self.category = 'identity'
+                self.stat_type = 'lineage'
+                return
+            # If not a shifter, treat as Organizational Rank background
+            self.stat_name = 'Organizational Rank'
+            self.category = 'backgrounds'
+            self.stat_type = 'background'
+            return
+
+        category_or_type = category_or_type.lower()
+        
+        # Direct category mappings based on STAT_TYPE_TO_CATEGORY structure
+        category_map = {
+            # Attributes
+            'physical': ('attributes', 'physical'),
+            'social': ('attributes', 'social'),
+            'mental': ('attributes', 'mental'),
+            
+            # Abilities
+            'ability': ('abilities', 'talent'),  # Default to talent, will be adjusted in validation
+            'talent': ('abilities', 'talent'),
+            'skill': ('abilities', 'skill'),
+            'knowledge': ('abilities', 'knowledge'),
+            'secondary_talent': ('secondary_abilities', 'secondary_talent'),
+            'secondary_skill': ('secondary_abilities', 'secondary_skill'),
+            'secondary_knowledge': ('secondary_abilities', 'secondary_knowledge'),
+            
+            # Identity
+            'personal': ('identity', 'personal'),
+            'lineage': ('identity', 'lineage'),
+            'identity': ('identity', 'identity'),
+            'archetype': ('identity', 'personal'),
+            
+            # Powers
+            'discipline': ('powers', 'discipline'),
+            'combodiscipline': ('powers', 'combodiscipline'),
+            'thaumaturgy': ('powers', 'thaumaturgy'),
+            'gift': ('powers', 'gift'),
+            'rite': ('powers', 'rite'),
+            'sphere': ('powers', 'sphere'),
+            'rote': ('powers', 'rote'),
+            'art': ('powers', 'art'),
+            'realm': ('powers', 'realm'),
+            'blessing': ('powers', 'blessing'),
+            'charm': ('powers', 'charm'),
+            'sorcery': ('powers', 'sorcery'),
+            'faith': ('powers', 'faith'),
+            'numina': ('powers', 'numina'),
+            'hedge_ritual': ('powers', 'hedge_ritual'),
+            'special_advantage': ('powers', 'special_advantage'),
+            
+            # Merits and Flaws
+            'physical_merit': ('merits', 'physical'),
+            'social_merit': ('merits', 'social'),
+            'mental_merit': ('merits', 'mental'),
+            'supernatural_merit': ('merits', 'supernatural'),
+            'physical_flaw': ('flaws', 'physical'),
+            'social_flaw': ('flaws', 'social'),
+            'mental_flaw': ('flaws', 'mental'),
+            'supernatural_flaw': ('flaws', 'supernatural'),
+            
+            # Virtues
+            'virtue': ('virtues', 'moral'),
+            'conscience': ('virtues', 'moral'),
+            'conviction': ('virtues', 'moral'),
+            'self-control': ('virtues', 'moral'),
+            'instinct': ('virtues', 'moral'),
+            'courage': ('virtues', 'moral'),
+            
+            # Backgrounds
+            'background': ('backgrounds', 'background'),
+            
+            # Advantages
+            'renown': ('advantages', 'renown'),
+            
+            # Pools
+            'willpower': ('pools', 'dual'),
+            'rage': ('pools', 'dual'),
+            'gnosis': ('pools', 'dual'),
+            'glamour': ('pools', 'dual'),
+            'banality': ('pools', 'dual'),
+            'blood': ('pools', 'dual'),
+            'quintessence': ('pools', 'dual'),
+            'paradox': ('pools', 'dual'),
+            'essence energy': ('pools', 'dual'),
+            'path': ('pools', 'moral'),
+            'road': ('pools', 'moral'),
+            'arete': ('pools', 'advantage'),
+            'enlightenment': ('pools', 'advantage'),
+            'resonance': ('pools', 'resonance'),
+            'dynamic': ('virtues', 'synergy'),
+            'static': ('virtues', 'synergy'),
+            'entropic': ('virtues', 'synergy'),
+            
+            # Common aliases
+            'disciplines': ('powers', 'discipline'),
+            'gifts': ('powers', 'gift'),
+            'spheres': ('powers', 'sphere'),
+            'realms': ('powers', 'realm'),
+            'arts': ('powers', 'art'),
+            'blessings': ('powers', 'blessing'),
+            'charms': ('powers', 'charm'),
+            'advantages': ('powers', 'special_advantage'),
+            'backgrounds': ('backgrounds', 'background'),
+            'pools': ('pools', 'dual'),
+            'virtues': ('virtues', 'moral'),
+            
+            # Special cases
+            'date of birth': ('identity', 'personal'),
+            'date of embrace': ('identity', 'personal'),
+            'date of chrysalis': ('identity', 'personal'),
+            'date of awakening': ('identity', 'personal'),
+            'first change date': ('identity', 'personal'),
+            'date of possession': ('identity', 'personal'),
+            'occupation': ('identity', 'personal'),
+            'patron totem': ('identity', 'lineage'),
+            'totem': ('backgrounds', 'background'),
+            'possessed wings': ('powers', 'blessing'),
+            'companion wings': ('powers', 'special_advantage'),
+            'possessed size': ('powers', 'blessing'),
+            'companion size': ('powers', 'special_advantage'),
+            'spirit type': ('identity', 'lineage'),
+            'anchor': ('identity', 'lineage'),
+            'essence energy': ('pools', 'dual'),
+            'organizational rank': ('backgrounds', 'background'),
+            'jamak spirit': ('identity', 'lineage'),
+            'fuel': ('identity', 'lineage'),
+            'elemental affinity': ('identity', 'lineage'),
+            'element': ('identity', 'lineage') #alias for elemental affinity
+        }
+        
+        # Try exact match first
+        if category_or_type in category_map:
+            self.category, self.stat_type = category_map[category_or_type]
+            
+            # Validate that the stat belongs in this category
+            if not self._validate_stat_in_category(self.stat_name, self.category, self.stat_type):
+                # Don't set category/type to None here - let _validate_stat_in_category handle redirection
+                return
+            return
+            
+        # Try case-insensitive match
+        category_or_type_lower = category_or_type.lower()
+        for key, value in category_map.items():
+            if key.lower() == category_or_type_lower:
+                self.category, self.stat_type = value
+                
+                # Validate that the stat belongs in this category
+                if not self._validate_stat_in_category(self.stat_name, self.category, self.stat_type):
+                    # Don't set category/type to None here - let _validate_stat_in_category handle redirection
+                    return
+                return
+                
+        # If still not found, set both and let validation handle errors
+        if '.' in category_or_type:
+            parts = category_or_type.split('.', 1)
+            self.category = parts[0]
+            self.stat_type = parts[1]
+        else:
+            self.category = category_or_type
+            self.stat_type = category_or_type
+
+    def _validate_stat_in_category(self, stat_name: str, category: str, stat_type: str) -> bool:
+        """
+        Validate that a stat belongs in the specified category and type.
+        
+        Args:
+            stat_name: The name of the stat to check
+            category: The category to check against
+            stat_type: The stat type to check against
+            
+        Returns:
+            bool: True if the stat belongs in the category/type, False otherwise
+        """
+        # Convert to title case for consistent comparison
+        stat_title = stat_name.title()
+        stat_lower = stat_name.lower()
+
+        # Special handling for Obedience stat
+        if stat_lower == 'obedience':
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            if splat == 'Shifter':
+                # Get shifter type
+                shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+                if shifter_type == 'Ananasi':
+                    # For Ananasi, Obedience is a renown stat
+                    if category == 'advantages' and stat_type == 'renown':
+                        return True
+                    self.caller.msg(f"|rFor Ananasi characters, Obedience is a renown stat and cannot be set as a {category}.{stat_type}.|n")
+                    self.category = 'advantages'
+from evennia.commands.default.muxcommand import MuxCommand
+from world.wod20th.utils.sheet_constants import (
+    KITH, KNOWLEDGES, SECONDARY_KNOWLEDGES, SECONDARY_SKILLS, 
+    SECONDARY_TALENTS, SKILLS, TALENTS, CLAN, BREED, GAROU_TRIBE,
+    SEEMING, PATHS_OF_ENLIGHTENMENT, SECT, AFFILIATION, TRADITION,
+    CONVENTION, NEPHANDI_FACTION
+)
+from world.wod20th.utils.stat_mappings import (
+    ALL_RITES, CATEGORIES, KINAIN_BACKGROUNDS, STAT_TYPES, STAT_TYPE_TO_CATEGORY,
+    IDENTITY_STATS, SPLAT_STAT_OVERRIDES, ALL_RITES,
+    POOL_TYPES, POWER_CATEGORIES, ABILITY_TYPES,
+    ATTRIBUTE_CATEGORIES, SPECIAL_ADVANTAGES, COMBAT_SPECIAL_ADVANTAGES,
+    STAT_VALIDATION, VALID_SPLATS, GENERATION_MAP,
+    GENERATION_FLAWS, BLOOD_POOL_MAP, get_identity_stats,
+    UNIVERSAL_BACKGROUNDS, VAMPIRE_BACKGROUNDS,
+    CHANGELING_BACKGROUNDS, MAGE_BACKGROUNDS,
+    TECHNOCRACY_BACKGROUNDS, TRADITIONS_BACKGROUNDS,
+    NEPHANDI_BACKGROUNDS, SHIFTER_BACKGROUNDS,
+    SORCERER_BACKGROUNDS, IDENTITY_PERSONAL, IDENTITY_LINEAGE,
+    ARTS, REALMS, VALID_DATES, MERIT_VALUES, FLAW_VALUES,
+    MERIT_CATEGORIES, FLAW_CATEGORIES, MERIT_SPLAT_RESTRICTIONS,
+    FLAW_SPLAT_RESTRICTIONS, ARTS, REALMS, ALL_MERITS, ALL_FLAWS,
+    KINFOLK_BREED_CHOICES
+)
+from world.wod20th.utils.vampire_utils import (
+    calculate_blood_pool, initialize_vampire_stats, update_vampire_virtues_on_path_change, 
+    CLAN_CHOICES, get_clan_disciplines, validate_vampire_stats, validate_vampire_path
+)
+from world.wod20th.utils.mage_utils import (
+    initialize_mage_stats, AFFILIATION, TRADITION, CONVENTION,
+    TRADITION_SUBFACTION, METHODOLOGIES, NEPHANDI_FACTION, 
+    MAGE_SPHERES, update_mage_pools_on_stat_change, validate_mage_stats
+)
+from world.wod20th.utils.shifter_utils import (
+    SHIFTER_RENOWN, initialize_shifter_type, SHIFTER_TYPE_CHOICES, BREED_CHOICES_DICT,
+    AUSPICE_CHOICES, GAROU_TRIBE_CHOICES, BASTET_TRIBE_CHOICES, 
+    update_shifter_pools_on_stat_change, SHIFTER_IDENTITY_STATS, 
+    BREED_CHOICES, ASPECT_CHOICES_DICT, AUSPICE_CHOICES_DICT,
+    validate_shifter_stats
+)
+from world.wod20th.utils.changeling_utils import (
+    FAE_COURTS, HOUSES, PHYLA, initialize_changeling_stats, KITH, SEEMING,
+    SEELIE_LEGACIES, UNSEELIE_LEGACIES, KINAIN_LEGACIES,
+    validate_changeling_stats
+)
+from world.wod20th.utils.mortalplus_utils import (
+    initialize_mortalplus_stats, MORTALPLUS_TYPE_CHOICES,
+    MORTALPLUS_TYPES, MORTALPLUS_POOLS, MORTALPLUS_POWERS,
+    validate_mortalplus_stats
+)
+from world.wod20th.utils.possessed_utils import (
+    initialize_possessed_stats, POSSESSED_TYPE_CHOICES,
+    POSSESSED_TYPES, POSSESSED_POWERS, validate_possessed_stats
+)
+from world.wod20th.utils.companion_utils import (
+    initialize_companion_stats, COMPANION_TYPE_CHOICES,
+    COMPANION_POWERS, validate_companion_stats
+)
+from world.wod20th.utils.virtue_utils import (
+    calculate_willpower, calculate_path, PATH_VIRTUES
+)
+from world.wod20th.utils.stat_initialization import (
+    find_similar_stats, check_stat_exists
+)
+from world.wod20th.utils.archetype_utils import (
+    ARCHETYPES, validate_archetype, get_archetype_info
+)
+from world.wod20th.utils.banality import get_default_banality
+import re
+from evennia.utils.search import search_object
+
+REQUIRED_INSTANCES = ['Library', 'Status', 'Influence', 'Wonder', 'Secret Weapon', 'Companion', 
+                      'Familiar', 'Enhancement', 'Laboratory', 'Favor', 'Acute Senses', 
+                      'Enchanting Feature', 'Secret Code Language', 'Hideaway', 'Safehouse', 
+                      'Sphere Natural', 'Phobia', 'Addiction', 'Allies', 'Contacts', 'Caretaker',
+                      'Alternate Identity', 'Equipment', 'Professional Certification', 'Allergic',
+                      'Impediment', 'Enemy', 'Mentor', 'Old Flame', 'Additional Discipline', 
+                      'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish', 'Chimerical Item', 'Chimerical Companion',
+                      'Dreamers', 'Digital Dreamers', 'Addiction', 'Phobia', 'Derangement',
+                      'Obsession', 'Compulsion', 'Bigot', 'Ability Deficit', 'Sect Enmity', 'Camp Enmity',
+                      'Retainers', 'Sphere Inept', 'Art Affinity', 'Immunity'
+                     ] 
+
+# Add the REQUIRED_SPECIALTIES constant
+REQUIRED_SPECIALTIES = {
+    'Crafts': 'mechanics, blacksmithing, woodworking, etc.',
+    'Artistry': 'painting, sculpture, graphic design, etc.',
+    'Pilot': 'boat, plane, tank, etc.',
+    'Area Knowledge': 'an area of San Diego',
+    'Martial Arts': 'requires a style',
+    'Performance': 'singing, dancing, guitar, etc.',
+    'Fencing': 'western or kenjutsu',
+    'Science': 'biology, chemistry, physics, etc.',
+    'Hypertech': 'electronics, computers, robotics, etc.'
+}
+
+class CmdSelfStat(MuxCommand):
+    """
+    Usage:
+      +selfstat <stat>[(<instance>)]/<type>=[+-]<value>
+      +selfstat <stat>[(<instance>)]/<type>=
+
+    Examples:
+      +selfstat Strength/Physical=+1
+      +selfstat Firearms/Skill=-1
+      +selfstat Status(Ventrue)/Social= (removes the stat)
+      +selfstat Nature/Personal=Architect
+      +selfstat Demeanor/Personal=Bon Vivant
+
+    Staff command:
+      +staffstat <character>=<stat>[(<instance>)]/<type>=[+-]<value>
+      +staffstat <character>=<stat>[(<instance>)]/<type>=
+      +staffstat <character>=<stat>=<value>
+
+    Examples:
+      +staffstat Bob=Strength/Physical:3
+      +staffstat Bob=Strength:3        (same as above)
+      +staffstat Jane=Status(Camarilla):2
+      +staffstat Mike=Path of Enlightenment:Night
+      +staffstat Sarah=Nature/Personal:Architect
+
+    This version of the selfstat command allows staff to set stats on other characters, 
+    bypassing normal restrictions like character approval status and validation limits.
+    """
+
+    key = "+selfstat"
+    aliases = ["selfstat"]
+    locks = "cmd:all()"  # All players can use this command
+    help_category = "Chargen & Character Info"
+    def __init__(self):
+        """Initialize the command."""
+        super().__init__()
+        self.switches = []
+        self.is_specialty = False  # Add this line
+        self.specialty = None      # Add this line
+        self.stat_name = ""
+        self.instance = None
+        self.category = None
+        self.value_change = None
+        self.stat_type = None
+        
+    # Helper Methods
+    def _display_instance_requirement_message(self, stat_name: str) -> None:
+        """Display message indicating an instance is required for a stat."""
+        from world.wod20th.models import Stat
+        stat = Stat.objects.filter(name__iexact=stat_name).first()
+        
+        # Get the category and type if available
+        category = stat.category if stat else self.category
+        stat_type = stat.stat_type if stat else self.stat_type
+        
+        # Provide more specific guidance based on the stat type
+        if category == 'merits':
+            self.caller.msg(f"|rThe merit '{stat_name}' requires an instance. Use format: {stat_name}(instance)/{stat_type}=value|n")
+            self.caller.msg(f"|yFor example: {stat_name}(Sabbat)/{stat_type}=3|n")
+            self.caller.msg(f"|yThe category is '{category}' and the stat type is one of: 'physical', 'social', 'mental', or 'supernatural'.|n")
+        elif category == 'flaws':
+            self.caller.msg(f"|rThe flaw '{stat_name}' requires an instance. Use format: {stat_name}(instance)/{stat_type}=value|n")
+            self.caller.msg(f"|yFor example: {stat_name}(Sabbat)/{stat_type}=3|n")
+            self.caller.msg(f"|yThe category is '{category}' and the stat type is one of: 'physical', 'social', 'mental', or 'supernatural'.|n")
+        elif category == 'backgrounds':
+            self.caller.msg(f"|rThe background '{stat_name}' requires an instance. Use format: {stat_name}(instance)/background=value|n")
+            self.caller.msg(f"|yFor example: {stat_name}(Camarilla)/background=3|n")
+        else:
+            self.caller.msg(f"|rThe stat '{stat_name}' requires an instance. Use format: {stat_name}(instance)=value|n")
+            self.caller.msg(f"|yFor example: {stat_name}(Specific)/category=value|n")
+        
+        # Add usage information
+        self.caller.msg(f"|yUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
+		
+    def _validate_breed(self, shifter_type: str, value: str) -> tuple[bool, str, str]:
+        """
+        Validate breed value for a given shifter type.
+        
+        Args:
+            shifter_type: The type of shifter
+            value: The breed value to validate
+            
+        Returns:
+            Tuple of (is_valid, matched_value, error_message)
+        """
+        valid_breeds = BREED_CHOICES_DICT.get(shifter_type, [])
+        is_valid, matched_value = self.case_insensitive_in(value, set(valid_breeds))
+        error_msg = f"|rInvalid breed for {shifter_type}. Valid breeds are: {', '.join(sorted(valid_breeds))}|n"
+        return is_valid, matched_value, error_msg
+
+    def _validate_splat_type(self, splat: str) -> tuple[bool, str]:
+        """
+        Validate a splat type.
+        
+        Args:
+            splat: The splat type to validate
+            
+        Returns:
+            Tuple of (is_valid, error_message)
+        """
+        valid_splats = {'Vampire', 'Mage', 'Shifter', 'Changeling', 'Mortal+', 'Possessed', 'Companion', 'Mortal'}
+        is_valid = splat.title() in valid_splats
+        error_msg = f"|rInvalid splat type. Valid types are: {', '.join(sorted(valid_splats))}|n"
+        return is_valid, error_msg
+
+    def _validate_kith(self, value: str) -> tuple[bool, str, str]:
+        """
+        Validate a kith value.
+        
+        Args:
+            value: The kith value to validate
+            
+        Returns:
+            Tuple of (is_valid, matched_value, error_message)
+        """
+        is_valid, matched_value = self.case_insensitive_in(value, KITH)
+        error_msg = f"|rInvalid kith. Valid kiths are: {', '.join(sorted(KITH))}|n"
+        return is_valid, matched_value, error_msg
+
+    @property
+    def affiliation(self) -> str:
+        """Get the character's affiliation."""
+        return self.caller.get_stat('identity', 'lineage', 'Affiliation', temp=False)
+
+    @property
+    def character_type(self) -> str:
+        """Get the character's type."""
+        return self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+
+    @property
+    def splat(self) -> str:
+        """Get the character's splat."""
+        return self.caller.get_stat('identity', 'personal', 'Splat', temp=False)
+
+    def case_insensitive_in(self, value: str, valid_set: set) -> tuple[bool, str]:
+        """
+        Check if a value exists in a set while ignoring case.
+        Returns (bool, matched_value) where matched_value is the correctly-cased version if found.
+        """
+        if not value:
+            return False, None
+            
+        # Try title case
+        if value.title() in valid_set:
+            return True, value.title()
+            
+        # Try case-insensitive match
+        value_lower = value.lower()
+        for valid_value in valid_set:
+            if valid_value.lower() == value_lower:
+                return True, valid_value
+            
+        # If no match found, suggest similar values
+        similar_values = []
+        for valid_value in valid_set:
+            # Check if the input is a substring of any valid value
+            if value_lower in valid_value.lower():
+                similar_values.append(valid_value)
+            # Check if input matches the beginning of any word in the valid value
+            elif any(word.lower().startswith(value_lower) 
+                    for word in valid_value.split()):
+                similar_values.append(valid_value)
+                
+        if similar_values:
+            return False, f"Invalid value. Did you mean one of these?: {', '.join(sorted(similar_values))}"
+        else:
+            return False, f"Invalid value. Valid options are: {', '.join(sorted(valid_set))}"
+
+    def case_insensitive_in_nested(self, value: str, nested_dict: dict, parent_value: str) -> tuple[bool, str]:
+        """
+        Check if a value exists in a nested dictionary's list, ignoring case.
+        Returns (bool, matched_value) where matched_value is the correctly-cased version if found.
+        """
+        if not value or not parent_value:
+            return False, None
+            
+        # Get valid values for this parent
+        valid_values = nested_dict.get(parent_value, [])
+        if not valid_values:
+            # If no values found for this parent, check all values
+            all_values = set()
+            for values in nested_dict.values():
+                all_values.update(values)
+            # Try to find similar values across all categories
+            similar_values = []
+            value_lower = value.lower()
+            for valid_value in all_values:
+                if value_lower in valid_value.lower() or any(word.lower().startswith(value_lower) for word in valid_value.split()):
+                    similar_values.append(valid_value)
+            if similar_values:
+                return False, f"Invalid value. Similar values found in other categories: {', '.join(sorted(similar_values))}"
+            return False, f"Invalid value. No valid options found for {parent_value}"
+            
+        # Try direct match first
+        is_valid, matched_value = self.case_insensitive_in(value, set(valid_values))
+        if is_valid:
+            return True, matched_value
+            
+        # If no match, suggest similar values for this parent
+        value_lower = value.lower()
+        similar_values = []
+        for valid_value in valid_values:
+            if value_lower in valid_value.lower() or any(word.lower().startswith(value_lower) for word in valid_value.split()):
+                similar_values.append(valid_value)
+                
+        if similar_values:
+            return False, f"Invalid value for {parent_value}. Did you mean one of these?: {', '.join(sorted(similar_values))}"
+        else:
+            return False, f"Invalid value for {parent_value}. Valid options are: {', '.join(sorted(valid_values))}"
+
+    def _remove_stat_from_other_categories(self, stat_name: str, target_category: str, target_type: str) -> None:
+        """
+        Remove a stat from all categories except the target category and type.
+        
+        Args:
+            stat_name: The name of the stat to remove
+            target_category: The category to keep the stat in
+            target_type: The type within the category to keep the stat in
+        """
+        if not hasattr(self.caller, 'db') or not hasattr(self.caller.db, 'stats'):
+            return
+            
+        # Categories to check
+        categories_to_check = ['attributes', 'abilities', 'secondary_abilities', 'identity', 
+                               'powers', 'merits', 'flaws', 'backgrounds', 'virtues', 
+                               'advantages', 'pools']
+        
+        for category in categories_to_check:
+            if category in self.caller.db.stats:
+                for stat_type in self.caller.db.stats[category]:
+                    # Skip the target category and type - we want to keep this one
+                    if category == target_category and stat_type == target_type:
+                        continue
+                        
+                    # Check if the stat exists in this category/type
+                    if stat_name in self.caller.db.stats[category][stat_type]:
+                        # Remove the stat
+                        del self.caller.db.stats[category][stat_type][stat_name]
+                        self.caller.msg(f"|yRemoved duplicate '{stat_name}' from {category}.{stat_type}|n")
+
+    def get_stat_category(self, stat_name: str, stat_type: str, splat: str = None) -> str:
+        """
+        Get the appropriate category for a stat based on stat type and splat.
+        """
+        # Check for splat-specific overrides first
+        if splat and splat in SPLAT_STAT_OVERRIDES:
+            if stat_name in SPLAT_STAT_OVERRIDES[splat]:
+                return SPLAT_STAT_OVERRIDES[splat][stat_name][1]
+
+        # Use the standard mapping
+        return STAT_TYPE_TO_CATEGORY.get(stat_type, 'other')
+
+    def get_background_splat_restriction(self, stat_name: str) -> tuple[bool, str, str]:
+        """
+        Check if a background is restricted to a specific splat type.
+        Returns (is_restricted, splat_name, error_message).
+        """
+        # Convert stat name to title case for comparison
+        stat_title = stat_name.title()
+        
+        # Check if this is a splat-specific background
+        if stat_title in (bg.title() for bg in VAMPIRE_BACKGROUNDS):
+            return True, "Vampire", f"The background '{stat_name}' is only available to Vampire characters."
+        elif stat_title in (bg.title() for bg in CHANGELING_BACKGROUNDS):
+            return True, "Changeling", f"The background '{stat_name}' is only available to Changeling characters."
+        elif stat_title in (bg.title() for bg in MAGE_BACKGROUNDS + TECHNOCRACY_BACKGROUNDS + TRADITIONS_BACKGROUNDS + NEPHANDI_BACKGROUNDS):
+            return True, "Mage", f"The background '{stat_name}' is only available to Mage characters."
+        elif stat_title in (bg.title() for bg in SHIFTER_BACKGROUNDS):
+            return True, "Shifter", f"The background '{stat_name}' is only available to Shifter characters."
+        elif stat_title in (bg.title() for bg in SORCERER_BACKGROUNDS):
+            return True, "Mortal+", f"The background '{stat_name}' is only available to Mortal+ characters."
+            
+        return False, "", ""
+
+    def _validate_kinfolk_gift(self, gift, value=None) -> tuple[bool, str, str]:
+        """
+        Validate if a Kinfolk can learn a specific gift.
+        
+        Args:
+            gift: The gift object to validate
+            value: Optional value to validate for the gift level
+            
+        Returns:
+            Tuple of (is_valid, error_message, corrected_value)
+        """
+        # Get kinfolk's tribe
+        kinfolk_tribe = self.caller.get_stat('identity', 'lineage', 'Tribe', temp=False)
+        if not kinfolk_tribe:
+            return False, "Must set tribe before learning gifts", None
+        
+        # If value provided, validate gift level (Kinfolk can only learn level 1-2)
+        if value is not None:
+            try:
+                gift_value = int(value)
+                if gift_value > 2:
+                    return False, "Kinfolk can only learn level 1-2 gifts", None
+            except ValueError:
+                return False, "Gift value must be a number", None
+        
+        # Check if it's a homid gift
+        if gift.shifter_type:
+            allowed_types = gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type]
+            if 'homid' in [t.lower() for t in allowed_types]:
+                return True, "", gift.name
+        
+        # Check if it's a tribal gift
+        if gift.tribe:
+            # Handle both string and list cases for tribe
+            if isinstance(gift.tribe, str):
+                if gift.tribe.lower() == kinfolk_tribe.lower():
+                    return True, "", gift.name
+            else:
+                # Handle list case
+                allowed_tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
+                if kinfolk_tribe.lower() in [t.lower() for t in allowed_tribes]:
+                    return True, "", gift.name
+        
+        return False, f"Kinfolk can only learn Homid gifts or gifts from their tribe ({kinfolk_tribe})", None
+
+    def _check_gift_alias(self, gift_name: str) -> tuple[bool, str]:
+        """
+        Check if a gift name is an alias and return the canonical name.
+        """
+        # We DO NOT set original_alias here at all
+        # Original alias should only be set in validate_stat_value
+        
+        # We track alias_used but only if we find a match
+        character = self.caller
+        if hasattr(self, 'target') and self.target:
+            character = self.target
+        
+        # Get character's splat and type
+        splat = character.get_stat('other', 'splat', 'Splat', temp=False)
+        char_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+        
+        # Special handling for Obedience which could be both a gift and a renown type
+        if gift_name.lower() == 'obedience':
+            # For Ananasi, prioritize renown over gift
+            if char_type == 'Ananasi':
+                return False, None
+
+        # Check direct aliases in character's gift_aliases attribute
+        if hasattr(character.db, 'gift_aliases') and character.db.gift_aliases:
+            for canonical, alias_info in character.db.gift_aliases.items():
+                # Handle different formats of gift aliases
+                aliases_to_check = []
+                
+                # New format: dict with 'aliases' list
+                if isinstance(alias_info, dict) and 'aliases' in alias_info:
+                    if isinstance(alias_info['aliases'], list):
+                        aliases_to_check.extend(alias_info['aliases'])
+                    elif isinstance(alias_info['aliases'], str):
+                        aliases_to_check.append(alias_info['aliases'])
+                
+                # Legacy format: dict with 'alias' string
+                elif isinstance(alias_info, dict) and 'alias' in alias_info:
+                    aliases_to_check.append(alias_info['alias'])
+                
+                # Very old format: direct string
+                elif isinstance(alias_info, str):
+                    aliases_to_check.append(alias_info)
+                
+                # Check if any alias matches
+                for alias in aliases_to_check:
+                    if isinstance(alias, str) and alias.lower() == gift_name.lower():
+                        # Only set alias_used if we found a match
+                        self.alias_used = gift_name
+                        self.caller.msg(f"|y'{gift_name}' is a stored alias for the gift '{canonical}'.|n")
+                        return True, canonical
+        
+        # Check if character can use gifts
+        can_use_gifts = (
+            splat == 'Shifter' or 
+            splat == 'Possessed' or 
+            (splat == 'Mortal+' and char_type == 'Kinfolk')
+        )
+        
+        if not can_use_gifts:
+            return False, None
+            
+        # Check if the gift exists in the database
+        from world.wod20th.models import Stat
+        import difflib
+        
+        # Try an exact match first
+        gift = Stat.objects.filter(
+            name__iexact=gift_name,
+            category='powers',
+            stat_type='gift'
+        ).first()
+        
+        if gift:
+            # For staff, we allow setting any gift regardless of character type
+            self.alias_used = gift_name
+            return True, gift.name  # Found exact match
+
+        # Check for aliases in the database
+        gifts_with_alias = Stat.objects.filter(
+            category='powers',
+            stat_type='gift'
+        )
+        
+        for potential_gift in gifts_with_alias:
+            if potential_gift.gift_alias:
+                # Handle different formats of gift_alias
+                if isinstance(potential_gift.gift_alias, list):
+                    # Check each alias in the list
+                    for alias in potential_gift.gift_alias:
+                        if isinstance(alias, str) and alias.lower() == gift_name.lower():
+                            self.alias_used = gift_name
+                            self.caller.msg(f"|y'{gift_name}' is a database alias for the gift '{potential_gift.name}'.|n")
+                            return True, potential_gift.name
+                elif isinstance(potential_gift.gift_alias, str) and potential_gift.gift_alias.lower() == gift_name.lower():
+                    self.alias_used = gift_name
+                    self.caller.msg(f"|y'{gift_name}' is a database alias for the gift '{potential_gift.name}'.|n")
+                    return True, potential_gift.name
+            
+        # If not found by exact match, try a more focused partial match
+        # Only for search terms with substantial length
+        if len(gift_name) > 3:
+            # Get all potentially matching gifts
+            potential_matches = Stat.objects.filter(
+                category='powers',
+                stat_type='gift'
+            )
+            
+            # Find the best match using similarity ratio
+            best_match = None
+            best_score = 0.7  # Minimum 70% similarity required
+            
+            for potential in potential_matches:
+                similarity = difflib.SequenceMatcher(None, gift_name.lower(), potential.name.lower()).ratio()
+                if similarity > best_score:
+                    best_score = similarity
+                    best_match = potential
+            
+            if best_match:
+                gift = best_match
+                self.alias_used = gift_name
+                self.caller.msg(f"|yFound similar gift: '{gift.name}'. Setting it to {self.value_change}.|n")
+                return True, gift.name
+         
+        return False, None
+    
+    def validate_stat_value(self, stat_name: str, value: str, category: str = None, stat_type: str = None) -> tuple:
+        """
+        Validate a stat value based on its type and category.
+        Returns (is_valid, error_message, corrected_value)
+        """
+        # Check for None values in all parameters
+        if stat_name is None:
+            return False, "Stat name cannot be None", None
+        if value is None:
+            return False, f"Value cannot be None for {stat_name}", None
+        if category is None:
+            # This is expected in some cases when auto-detecting the category
+            pass
+        if stat_type is None:
+            # This is expected in some cases when auto-detecting the stat_type
+            pass
+            
+        # Special handling for hedge rituals
+        if category == 'powers' and stat_type == 'hedge_ritual':
+            try:
+                ritual_value = int(value)
+                if ritual_value < 0 or ritual_value > 5:
+                    return False, f"Hedge ritual level must be between 0 and 5", None
+                return True, "", str(ritual_value)
+            except ValueError:
+                return False, "Hedge ritual level must be a number", None
+            
+        # Get character's splat and type - try direct access first
+        splat = None
+        if (hasattr(self.caller, 'db') and 
+            hasattr(self.caller.db, 'stats') and 
+            'other' in self.caller.db.stats and 
+            'splat' in self.caller.db.stats['other'] and 
+            'Splat' in self.caller.db.stats['other']['splat']):
+            splat = self.caller.db.stats['other']['splat']['Splat'].get('perm')
+        
+        # If direct access failed, try get_stat
+        if not splat:
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            
+        char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+
+        # Only allow Mortals to set Occupation
+        if stat_name.lower() == 'occupation' and splat != 'Mortal':
+            return False, "Only Mortals can set an Occupation.", None
+
+        # Special handling for Arcane
+        if stat_name.lower() == 'arcane':
+            try:
+                value_int = int(value)
+                if value_int < 0 or value_int > 5:
+                    return False, f"Arcane must be between 0 and 5", None
+                
+                # For Vampires, validate as a merit
+                if splat == 'Vampire':
+                    if category != 'merits' or stat_type != 'social':
+                        return False, "For Vampires, Arcane must be set as a social merit", None
+                # For non-Vampires, validate as a background
+                else:
+                    if category != 'backgrounds' or stat_type != 'background':
+                        return False, "For non-Vampires, Arcane must be set as a background", None
+                return True, "", str(value_int)
+            except ValueError:
+                return False, "Arcane value must be a number", None
+
+        # Get the stat definition from the database
+        from world.wod20th.models import Stat
+        stat = Stat.objects.filter(name__iexact=stat_name).first()
+        
+        # Check if this stat requires an instance
+        if self._requires_instance(stat_name, category) and not self.instance:
+            self._display_instance_requirement_message(stat_name)
+            return False, "", None
+        
+        if stat and stat.category == 'backgrounds':
+            # For backgrounds, validate the value is numeric and in range
+            try:
+                bg_value = int(value)
+                if bg_value < 0 or bg_value > 10:
+                    return False, f"{stat_name} must be between 0 and 10", None
+                return True, "", str(bg_value)
+            except ValueError:
+                return False, f"{stat_name} value must be a number", None
+
+        # Special handling for merits
+        if category == 'merits':
+            # Get character's splat type if needed for restriction checks
+            char_type = None
+            if splat == 'Shifter':
+                char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+            elif splat == 'Mortal+':
+                char_type = self.caller.get_stat('identity', 'lineage', 'MortalPlus Type', temp=False)
+            elif splat == 'Companion':
+                char_type = self.caller.get_stat('identity', 'lineage', 'Companion Type', temp=False)
+            elif splat == 'Possessed':
+                char_type = self.caller.get_stat('identity', 'lineage', 'Possessed Type', temp=False)
+                
+            # Get the merit from the database
+            from world.wod20th.models import Stat
+            merit = Stat.objects.filter(
+                name__iexact=stat_name,
+                category='merits',
+                stat_type=stat_type
+            ).first()
+            
+            if merit:
+                # Update stat_name to use proper case from database
+                self.stat_name = merit.name
+                
+                # Check if this is a shifter-specific merit
+                if merit.shifter_type:
+                    if splat != 'Shifter':
+                        # Remove the stat if it was set
+                        if category in self.caller.db.stats and stat_type in self.caller.db.stats[category]:
+                            if self.stat_name in self.caller.db.stats[category][stat_type]:
+                                del self.caller.db.stats[category][stat_type][self.stat_name]
+                        return False, f"The merit '{merit.name}' is only available to Shifter characters.", None
+                    
+                    # Handle shifter_type the same way as gifts
+                    allowed_types = []
+                    if isinstance(merit.shifter_type, list):
+                        # Handle negation cases (e.g., "!Ananasi")
+                        for t in merit.shifter_type:
+                            if isinstance(t, str):
+                                if t.startswith('!'):
+                                    if char_type.lower() == t[1:].lower():
+                                        # Remove the stat if it was set
+                                        if category in self.caller.db.stats and stat_type in self.caller.db.stats[category]:
+                                            if self.stat_name in self.caller.db.stats[category][stat_type]:
+                                                del self.caller.db.stats[category][stat_type][self.stat_name]
+                                        return False, f"The merit '{merit.name}' is not available to {char_type} characters.", None
+                                else:
+                                    allowed_types.append(t.lower())
+                    else:
+                        allowed_types = [merit.shifter_type.lower()]
+                    
+                    # Check if character's type is allowed
+                    if allowed_types and char_type.lower() not in allowed_types:
+                        # Check if they already have this merit
+                        current_value = self.caller.get_stat('merits', stat_type, merit.name, temp=False)
+                        if current_value is None:  # Only block if they don't already have it
+                            # Format the list of types nicely
+                            type_list = [t.title() for t in allowed_types]
+                            if len(type_list) == 1:
+                                type_str = type_list[0]
+                            elif len(type_list) == 2:
+                                type_str = f"{type_list[0]} and {type_list[1]}"
+                            else:
+                                type_str = f"{', '.join(type_list[:-1])}, and {type_list[-1]}"
+                            # Remove the stat if it was set
+                            if category in self.caller.db.stats and stat_type in self.caller.db.stats[category]:
+                                if self.stat_name in self.caller.db.stats[category][stat_type]:
+                                    del self.caller.db.stats[category][stat_type][self.stat_name]
+                            return False, f"The merit '{merit.name}' is only available to {type_str} characters.", None
+                
+                # Validate merit value
+                try:
+                    merit_value = int(value)
+                    if merit_value not in merit.values:
+                        # Remove the stat if it was set
+                        if category in self.caller.db.stats and stat_type in self.caller.db.stats[category]:
+                            if self.stat_name in self.caller.db.stats[category][stat_type]:
+                                del self.caller.db.stats[category][stat_type][self.stat_name]
+                        return False, f"Invalid value for merit {merit.name}. Valid values are: {', '.join(map(str, merit.values))}", None
+                    return True, "", str(merit_value)
+                except ValueError:
+                    # Remove the stat if it was set
+                    if category in self.caller.db.stats and stat_type in self.caller.db.stats[category]:
+                        if self.stat_name in self.caller.db.stats[category][stat_type]:
+                            del self.caller.db.stats[category][stat_type][self.stat_name]
+                    return False, "Merit value must be a number", None
+
+        # Special handling for Companions' special advantages
+        if splat == 'Companion' and (category == 'powers' and stat_type == 'special_advantage'):
+            # Get proper case name from SPECIAL_ADVANTAGES
+            proper_name = next((name for name in SPECIAL_ADVANTAGES.keys() if name.lower() == stat_name.lower()), 
+                              next((name for name in COMBAT_SPECIAL_ADVANTAGES.keys() if name.lower() == stat_name.lower()), None))
+            if not proper_name:
+                return False, f"'{stat_name}' is not a valid special advantage", None
+
+            # Check if this advantage requires an instance
+            if self._requires_instance(proper_name):
+                if not self.instance:
+                    # This will be handled earlier in the command flow
+                    return False, f"'{proper_name}' requires an instance", None
+                # When we have an instance, use it as part of the stat name
+                proper_name = f"{proper_name}({self.instance})"
+
+            # Get the advantage info
+            advantage_key = proper_name
+            advantage_info = SPECIAL_ADVANTAGES.get(advantage_key, COMBAT_SPECIAL_ADVANTAGES.get(advantage_key))
+            if not advantage_info:
+                return False, f"No information found for {proper_name}", None
+                
+            try:
+                advantage_value = int(value)
+                if 'valid_values' not in advantage_info:
+                    return False, f"No valid values defined for {proper_name}", None
+                if advantage_value not in advantage_info['valid_values']:
+                    valid_values_str = ', '.join(map(str, advantage_info['valid_values']))
+                    return False, f"Invalid value for {proper_name}. Valid values are: {valid_values_str}", None
+                
+                # Update stat_name to proper case
+                self.stat_name = proper_name
+                return True, "", str(advantage_value)
+            except ValueError:
+                return False, "Special advantage value must be a number", None
+
+        # Special handling for gifts
+        if category == 'powers' and stat_type == 'gift':
+            # Check if character can use gifts
+            can_use_gifts = (
+                splat == 'Shifter' or 
+                splat == 'Possessed' or 
+                (splat == 'Mortal+' and char_type == 'Kinfolk')
+            )
+            
+            if not can_use_gifts:
+                return False, "Only Shifters, Possessed, and Kinfolk can have gifts", None
+            
+            # Use the raw input name captured at the beginning of command processing
+            # This ensures we preserve the original user input (e.g., "Qyrl's Blood")
+            if hasattr(self, 'raw_input_name') and self.raw_input_name:
+                original_input = self.raw_input_name
+            else:
+                # Fallback to stat_name if raw_input_name is not available
+                original_input = stat_name
+            
+            # Debug the state before gift alias check
+            self.debug_gift_alias(stat_name, None)
+                
+            # Check for gift aliases first
+            is_alias, canonical_name = self._check_gift_alias(stat_name)
+            
+            # Debug the state after gift alias check
+            self.debug_gift_alias(stat_name, canonical_name)
+            
+            if is_alias:
+                # Set original_alias to the user's input (e.g., "Qyrl's Blood")
+                self.original_alias = original_input
+                
+                # Set alias_used to track what specific alias matched (useful for multiple aliases)
+                if not hasattr(self, 'alias_used'):
+                    self.alias_used = stat_name
+                    
+                # Update stat_name to canonical name (e.g., "Shroud")
+                stat_name = canonical_name
+                self.stat_name = canonical_name
+                
+                # Debug after updating values
+                self.debug_gift_alias(stat_name, canonical_name)
+            
+            if not canonical_name:
+                return False, f"Could not find a valid gift name for '{stat_name}'", None
+            
+            # Get the gift from the database
+            from world.wod20th.models import Stat
+            gift = Stat.objects.filter(
+                name__iexact=stat_name,
+                category='powers',
+                stat_type='gift'
+            ).first()
+            
+            if not gift:
+                return False, f"'{stat_name}' is not a valid gift", None
+                
+            # For Shifters, check shifter_type
+            if splat == 'Shifter' and gift.shifter_type:
+                allowed_types = []
+                if isinstance(gift.shifter_type, list):
+                    allowed_types = [t.lower() for t in gift.shifter_type]
+                else:
+                    allowed_types = [gift.shifter_type.lower()]
+                
+                if char_type.lower() not in allowed_types:
+                    # Only display the error message once here, not in _check_gift_alias
+                    return False, f"The gift '{gift.name}' is not available to {char_type}. Available to: {', '.join(t.title() for t in allowed_types)}", None
+                
+            elif splat == 'Mortal+' and char_type == 'Kinfolk':
+                # Validate Kinfolk gift access and level
+                is_valid, error_msg, canonical_name = self._validate_kinfolk_gift(gift, value)
+                if not is_valid:
+                    return False, error_msg, None
+                return True, "", value
+            
+            # Validate the gift value
+            try:
+                gift_value = int(value)
+                # First check if the gift has specific valid values
+                if gift.values:
+                    valid_values = gift.values if isinstance(gift.values, list) else [gift.values]
+                    if gift_value not in valid_values:
+                        return False, f"Invalid value for {gift.name}. Valid values are: {', '.join(map(str, valid_values))}", None
+                # If no specific values defined, use default range check
+                elif gift_value < 0 or gift_value > 5:
+                    return False, "Gift values must be between 0 and 5", None
+                # Return the canonical name and the original alias
+                return True, "", str(gift_value)
+            except ValueError:
+                return False, "Gift value must be a number", None
+
+        if not splat:
+            return False, "Character must have a splat set", None
+
+        # Special handling for Ferocity based on splat
+        if stat_name.lower() == 'ferocity':
+            if splat == 'Shifter':
+                # Get shifter type
+                shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+                if not shifter_type:
+                    return False, "Must set shifter type before setting Ferocity.", None
+                
+                # Check if this shifter type has access to Ferocity renown
+                valid_renown = SHIFTER_RENOWN.get(shifter_type, [])
+                if 'Ferocity' not in valid_renown:
+                    return False, f"{shifter_type} characters do not have access to Ferocity renown.", None
+                
+                # For Shifters, Ferocity is a Renown type
+                try:
+                    ferocity_value = int(value)
+                    if ferocity_value < 0 or ferocity_value > 10:
+                        return False, "Ferocity renown must be between 0 and 10", None
+                    self.category = 'advantages'
+                    self.stat_type = 'renown'
+                    return True, "", str(ferocity_value)
+                except ValueError:
+                    return False, "Ferocity renown value must be a number", None
+            elif splat == 'Companion':
+                # For Companions, Ferocity is a special advantage
+                self.category = 'powers'
+                self.stat_type = 'special_advantage'
+                # Let companion validation handle it
+                result = validate_companion_stats(self.caller, stat_name, value, self.category, self.stat_type)
+                if len(result) == 3:
+                    is_valid, error_msg, proper_value = result
+                    if proper_value and stat_name.lower() == 'elemental affinity':
+                        # For elemental affinity, use the proper_value as the actual value to set
+                        return is_valid, error_msg, proper_value
+                    return is_valid, error_msg, str(proper_value) if proper_value else None
+                return False, "Invalid value for Ferocity", None
+        
+        # Special handling for Obedience based on splat
+        if stat_name.lower() == 'obedience':
+            if splat == 'Shifter':
+                # Get shifter type
+                shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+                if not shifter_type:
+                    return False, "Must set shifter type before setting Obedience.", None
+                
+                # Check if this shifter type has access to Obedience renown
+                valid_renown = SHIFTER_RENOWN.get(shifter_type, [])
+                if 'Obedience' not in valid_renown:
+                    return False, f"{shifter_type} characters do not have access to Obedience renown.", None
+                
+                # For Shifters, Obedience is a Renown type
+                try:
+                    obedience_value = int(value)
+                    if obedience_value < 0 or obedience_value > 10:
+                        return False, "Obedience renown must be between 0 and 10", None
+                    self.category = 'advantages'
+                    self.stat_type = 'renown'
+                    return True, "", str(obedience_value)
+                except ValueError:
+                    return False, "Obedience renown value must be a number", None
+
+        # Special handling for Path of Enlightenment and Enlightenment
+        if stat_name.lower() in ['path of enlightenment', 'enlightenment']:
+            # For Vampires and Ghouls
+            if splat == 'Vampire' or (splat == 'Mortal+' and char_type == 'Ghoul'):
+                # Always use Path of Enlightenment in identity.personal
+                self.stat_name = 'Path of Enlightenment'
+                self.category = 'identity'
+                self.stat_type = 'personal'
+                
+                # Validate the path value
+                from world.wod20th.utils.vampire_utils import validate_vampire_path
+                is_valid, error_msg = validate_vampire_path(value)
+                if not is_valid:
+                    return False, error_msg, None
+                
+                # If valid, return success
+                return True, "", value
+            
+            # For Technocracy Mages
+            elif splat == 'Mage':
+                affiliation = self.caller.get_stat('identity', 'lineage', 'Affiliation', temp=False)
+                if affiliation == 'Technocracy':
+                    try:
+                        val = int(value)
+                        if val < 1 or val > 10:
+                            return False, "Enlightenment must be between 1 and 10 for Technocracy mages", None
+                        # Set in pools/advantage
+                        self.category = 'pools'
+                        self.stat_type = 'advantage'
+                        return True, "", str(val)
+                    except ValueError:
+                        return False, "Enlightenment must be a number", None
+                else:
+                    return False, "Only Technocracy mages can have Enlightenment", None
+            
+            else:
+                return False, "Only Technocracy mages, Vampires, and Ghouls can have Enlightenment", None
+
+        # Special handling for Berserker
+        if stat_name.lower() == 'berserker':
+            # For Possessed characters, always handle as blessing regardless of category
+            if splat == 'Possessed':
+                # Call possessed_utils validation directly
+                result = validate_possessed_stats(self.caller, stat_name, value, 'powers', 'blessing')
+                if result[0]:  # If validation was successful
+                    self.category = 'powers'  # Set the correct category
+                    self.stat_type = 'blessing'  # Set the correct stat type
+                return result  # Return early after validation
+            
+            # For Shifter characters, always handle as merit
+            elif splat == 'Shifter':
+                self.category = 'merits'
+                self.stat_type = 'mental'
+                try:
+                    val = int(value)
+                    if val != 2:
+                        return False, "Berserker merit must be 2 points for Shifters", None
+                    return True, "", str(val)
+                except ValueError:
+                    return False, "Merit value must be a number", None
+            
+            # For other splats, reject
+            else:
+                return False, "Berserker is only available to Possessed (as a blessing) or Shifters (as a merit)", None
+
+        # Define categories that must be numeric
+        numeric_categories = {
+            'attributes': True,
+            'abilities': True,
+            'backgrounds': True,
+            'powers': True,
+            'merits': True,
+            'flaws': True,
+            'virtues': True,
+            'pools': True
+        }
+
+        # Check if this stat belongs to a numeric category
+        if category in numeric_categories:
+            # Special case for charms, which are powers but not numeric
+            if stat_type == 'charm':
+                return True, "", value
+                
+            try:
+                numeric_value = int(value)
+                # Add range validation based on category
+                if category == 'attributes':
+                    if numeric_value < 1 or numeric_value > 10:
+                        return False, f"{stat_name} must be between 1 and 10", None
+                elif category in ['abilities', 'powers', 'virtues']:
+                    if numeric_value < 0 or numeric_value > 5:
+                        return False, f"{stat_name} must be between 0 and 5", None
+                elif category == 'backgrounds':
+                    if numeric_value < 0 or numeric_value > 10:
+                        return False, f"{stat_name} must be between 0 and 10", None
+                elif category == 'pools':
+                    if numeric_value < 0 or numeric_value > 10:
+                        return False, f"{stat_name} must be between 0 and 10", None
+                return True, "", str(numeric_value)
+            except ValueError:
+                return False, f"{stat_name} must be a number", None
+
+        # Handle Shifter-specific validation
+        if splat == 'Shifter':
+            from world.wod20th.utils.shifter_utils import validate_shifter_stats
+            result = validate_shifter_stats(self.caller, stat_name, value, category, stat_type)
+            if len(result) == 2:
+                is_valid, error_msg = result
+                return is_valid, error_msg, value if is_valid else None
+            return result
+            
+        # Call appropriate validation function based on splat
+        if splat == 'Vampire':
+            result = validate_vampire_stats(self.caller, stat_name, value, category, stat_type)
+            if len(result) == 2:
+                is_valid, error_msg = result
+                return is_valid, error_msg, value if is_valid else None
+            return result
+        elif splat == 'Mage':
+            result = validate_mage_stats(self.caller, stat_name, value, category, stat_type)
+            if len(result) == 2:
+                is_valid, error_msg = result
+                return is_valid, error_msg, value if is_valid else None
+            return result
+        elif splat == 'Changeling':
+            result = validate_changeling_stats(self.caller, stat_name, value, category, stat_type)
+            if len(result) == 2:
+                is_valid, error_msg = result
+                return is_valid, error_msg, value if is_valid else None
+            return result
+        elif splat == 'Mortal+':
+            result = validate_mortalplus_stats(self.caller, stat_name, value, category, stat_type)
+            if len(result) == 2:
+                is_valid, error_msg = result
+                return is_valid, error_msg, value if is_valid else None
+            return result
+        elif splat == 'Possessed':
+            result = validate_possessed_stats(self.caller, stat_name, value, category, stat_type)
+            # Remove the length check since we know it's always a 3-tuple
+            is_valid, error_msg, corrected_value = result
+            return is_valid, error_msg, corrected_value
+        elif splat == 'Companion':
+            result = validate_companion_stats(self.caller, stat_name, value, category, stat_type)
+            if len(result) == 3:
+                is_valid, error_msg, proper_value = result
+                if proper_value and stat_name.lower() == 'elemental affinity':
+                    # For elemental affinity, use the proper_value as the actual value to set
+                    return is_valid, error_msg, proper_value
+                elif proper_value:  # For other stats, use the proper_value as the stat name
+                    self.stat_name = proper_value
+                return is_valid, error_msg, value if is_valid else None
+            return result
+        
+        return True, "", value
+
+    def get_identity_category(self, stat_name: str) -> str:
+        """
+        Determine whether an identity stat belongs in personal or lineage.
+        """
+        # First check if it's in the direct mappings
+        stat_name = stat_name.lower()
+        if stat_name in IDENTITY_PERSONAL:
+            return 'personal'
+        elif stat_name in IDENTITY_LINEAGE:
+            return 'lineage'
+            
+        # If not found in direct mappings, check if it's a valid identity stat for the character's splat
+        splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+        if not splat:
+            return None
+            
+        # Get subtype and affiliation if applicable
+        subtype = None
+        affiliation = None
+        
+        if splat.lower() == 'shifter':
+            subtype = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+        elif splat.lower() == 'mage':
+            affiliation = self.caller.get_stat('identity', 'lineage', 'Affiliation', temp=False)
+        elif splat.lower() == 'changeling':
+            subtype = self.caller.get_stat('identity', 'lineage', 'Kith', temp=False)
+        elif splat.lower() == 'possessed':
+            subtype = self.caller.get_stat('identity', 'lineage', 'Possessed Type', temp=False)
+        elif splat.lower() == 'mortal+':
+            subtype = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+            
+        valid_stats = get_identity_stats(splat, subtype, affiliation)
+        
+        # If the stat is in the valid stats list, determine its category
+        if stat_name.title() in valid_stats:
+            # Personal stats are typically the base stats and dates
+            if any(word in stat_name for word in ['name', 'date', 'nature', 'demeanor', 'concept']):
+                return 'personal'
+            # Everything else is lineage
+            return 'lineage'
+            
+        return None
+
+    def _detect_identity_category(self, stat_name: str) -> tuple[str, str]:
+        """
+        Detect if a stat is an identity stat and which category it belongs to.
+        
+        Args:
+            stat_name: The name of the stat to check
+            
+        Returns:
+            Tuple of (category, type) or (None, None) if not an identity stat
+        """
+        # Convert to title case for consistent comparison
+        stat_title = stat_name.title()
+        stat_lower = stat_name.lower()
+
+        # Special handling for Rank
+        if stat_lower == 'rank':
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            if splat and splat.lower() == 'shifter':
+                return 'identity', 'lineage'
+            return None, None
+
+        # Handle date stats explicitly
+        date_stats = {
+            'date of birth',
+            'date of embrace',
+            'date of chrysalis',
+            'date of awakening',
+            'first change date',
+            'date of possession'
+        }
+        if stat_lower in date_stats:
+            return 'identity', 'personal'
+
+        # Check direct mappings
+        if stat_title in IDENTITY_PERSONAL:
+            return 'identity', 'personal'
+        elif stat_title in IDENTITY_LINEAGE:
+            return 'identity', 'lineage'
+        elif stat_title in ['House', 'Fae Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
+                          'Type', 'Tribe', 'Breed', 'Kinfolk Breed', 'Auspice', 'Clan', 'Generation', 'Affiliation',
+                          'Tradition', 'Convention', 'Methodology', 'Traditions Subfaction',
+                          'Nephandi Faction', 'Possessed Type', 'Companion Type', 'Pryio', 'Lodge',
+                          'Camp', 'Fang House', 'Crown', 'Plague', 'Ananasi Faction', 'Ananasi Cabal',
+                          'Kitsune Path', 'Kitsune Faction', 'Ajaba Faction', 'Rokea Faction',
+                          'Stream', 'Varna', 'Deed Name', 'Aspect', 'Jamak Spirit', 'Rank', 'Elemental Affinity', 'Fuel', 'Sect']:
+            return 'identity', 'lineage'
+        elif stat_title in ['Full Name', 'Concept', 'Date of Birth', 'Date of Chrysalis', 'Date of Awakening',
+                          'First Change Date', 'Date of Embrace', 'Date of Possession', 'Nature', 'Demeanor',
+                          'Path of Enlightenment', 'Fae Name', 'Tribal Name', 'Occupation']:
+            return 'identity', 'personal'
+            
+        # If not in direct mappings, check if it's a valid identity stat for the character's splat
+        splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+        if not splat:
+            return None, None
+            
+        # Get subtype and affiliation if applicable
+        subtype = None
+        affiliation = None
+        
+        if splat.lower() == 'shifter':
+            subtype = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+        elif splat.lower() == 'mage':
+            affiliation = self.caller.get_stat('identity', 'lineage', 'Affiliation', temp=False)
+        elif splat.lower() == 'changeling':
+            subtype = self.caller.get_stat('identity', 'lineage', 'Kith', temp=False)
+        elif splat.lower() == 'possessed':
+            subtype = self.caller.get_stat('identity', 'lineage', 'Possessed Type', temp=False)
+        elif splat.lower() == 'mortal+':
+            subtype = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+            
+        valid_stats = get_identity_stats(splat, subtype, affiliation)
+        
+        # If the stat is in the valid stats list, determine its category
+        if stat_title in valid_stats:
+            # Personal stats are typically the base stats and dates
+            if any(word.lower() in stat_lower for word in ['name', 'date', 'nature', 'demeanor', 'concept']):
+                return 'identity', 'personal'
+            # Everything else is lineage
+            return 'identity', 'lineage'
+            
+        return None, None
+
+    def parse(self):
+        """Parse the arguments."""
+        self.stat_name = ""
+        self.instance = None
+        self.category = None
+        self.value_change = None
+        self.temp = False
+        self.stat_type = None
+        self.is_specialty = False
+        self.specialty = None
+        # Initialize alias tracking
+        self.original_alias = None
+        self.alias_used = None
         
         args = self.args.strip()
         if not args:
@@ -1871,6 +3472,36 @@ class CmdSelfStat(MuxCommand):
         stat_title = stat_name.title()
         stat_lower = stat_name.lower()
 
+        # Special handling for Nature and Time based on character type
+        if stat_lower == 'nature':
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+            
+            # For Changelings and Kinain, Nature is a realm power
+            if (splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain')):
+                return 'powers', 'realm'
+            # For all other character types, Nature is an identity stat
+            else:
+                return 'identity', 'personal'
+                
+        elif stat_lower == 'time':
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+            
+            if splat == 'Mage':
+                return 'powers', 'sphere'
+            elif splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
+                return 'powers', 'realm'
+            else:
+                return 'attributes', 'physical'
+
+        # Special handling for Rank
+        if stat_lower == 'rank':
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            if splat and splat.lower() == 'shifter':
+                return 'identity', 'lineage'
+            return None, None
+
         # Check attributes first
         for category, attributes in ATTRIBUTE_CATEGORIES.items():
             if stat_title in attributes:
@@ -2350,7 +3981,7 @@ class CmdSelfStat(MuxCommand):
                     # Get a copy of the keys to avoid modifying during iteration
                     stat_names = list(stats_dict[category][stat_type].keys())
                     for old_name in stat_names:
-                        proper_name = self._get_canonical_stat_name(old_name)
+                        proper_name = self.get_canonical_stat_name(old_name)
                         
                         # If name changed after canonicalization, update it
                         if proper_name != old_name:
@@ -2369,7 +4000,7 @@ class CmdSelfStat(MuxCommand):
             
             # First collect all the changes to make
             for canonical_name, alias_info in alias_dict.items():
-                proper_canonical = self._get_canonical_stat_name(canonical_name)
+                proper_canonical = self.get_canonical_stat_name(canonical_name)
                 if proper_canonical != canonical_name:
                     # Need to update this entry
                     aliases_to_update[canonical_name] = proper_canonical
@@ -2390,6 +4021,20 @@ class CmdSelfStat(MuxCommand):
         if not self.args:
             self.caller.msg("|rUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
             return
+
+        # Capture the raw input for gift aliases before any transformations
+        if '=' in self.args:
+            raw_input, raw_value = self.args.split('=', 1)
+            raw_input = raw_input.strip()
+            # Strip any category or instance information to get just the base name
+            if '/' in raw_input:
+                raw_input = raw_input.split('/', 1)[0].strip()
+            if '(' in raw_input and ')' in raw_input:
+                raw_input = raw_input.split('(', 1)[0].strip()
+            # Store the raw input for later use
+            self.raw_input_name = raw_input
+        else:
+            self.raw_input_name = None
 
         if not self.stat_name:
             self.caller.msg("|rUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
@@ -2437,7 +4082,7 @@ class CmdSelfStat(MuxCommand):
             return
 
         # Normalize the stat name case before proceeding
-        self.stat_name = self._get_canonical_stat_name(self.stat_name)
+        self.stat_name = self.get_canonical_stat_name(self.stat_name)
 
         # Get character's splat type and character type 
         splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
@@ -3192,7 +4837,7 @@ class CmdSelfStat(MuxCommand):
                     self.caller.msg(error_msg)
                     return
             # Get the canonical name for the stat
-            canonical_name = self._get_canonical_stat_name(self.stat_name)
+            canonical_name = self.get_canonical_stat_name(self.stat_name)
             
             # Try to find and remove the stat using the canonical name
             if self.category and canonical_name in self.caller.db.stats.get(self.category, {}).get(self.stat_type, {}):
@@ -3696,6 +5341,11 @@ class CmdSelfStat(MuxCommand):
                     self.caller.set_stat('pools', 'moral', 'Path', new_path, temp=True)
                     self.caller.msg(f"|gPath rating recalculated to {new_path}.|n")
 
+        # Update pools based on splat type
+        if splat == 'Shifter':
+            from world.wod20th.utils.shifter_utils import update_shifter_pools_on_stat_change
+            update_shifter_pools_on_stat_change(self.caller, stat_name, value)
+
     def validate_archetype(self, archetype_name):
         """Validate that an archetype exists and is valid."""
         is_valid, error_msg = validate_archetype(archetype_name)
@@ -3712,18 +5362,50 @@ class CmdSelfStat(MuxCommand):
         """Set a stat value."""
         # Use get_canonical_stat_name for consistent capitalization
         if stat_name:
-            stat_name = self._get_canonical_stat_name(stat_name)
+            stat_name = self.get_canonical_stat_name(stat_name)
             
             # If there's an instance, maintain the proper case for it
             if '(' in stat_name and ')' in stat_name:
                 base_name, rest = stat_name.split('(', 1)
                 instance = rest.split(')', 1)[0]
-                # We already have proper case for base_name from _get_canonical_stat_name
+                # We already have proper case for base_name from get_canonical_stat_name
                 # Keep instance case as is or handle it specially if needed
                 stat_name = f"{base_name}({instance})"
 
         # Get character's splat
         splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+        char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+
+        # Special handling for Time stat based on character type
+        if stat_name.lower() == 'time':
+            if splat == 'Mage':
+                category = 'powers'
+                stat_type = 'sphere'
+                # Remove any existing Time stats in other categories to avoid conflicts
+                self._remove_stat_from_other_categories('Time', 'powers', 'sphere')
+            elif splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
+                category = 'powers'
+                stat_type = 'realm'
+                # Remove any existing Time stats in other categories to avoid conflicts
+                self._remove_stat_from_other_categories('Time', 'powers', 'realm')
+            else:
+                category = 'attributes'
+                stat_type = 'physical'
+                # Remove any existing Time stats in other categories to avoid conflicts
+                self._remove_stat_from_other_categories('Time', 'attributes', 'physical')
+        
+        # Special handling for Nature stat based on character type
+        elif stat_name.lower() == 'nature':
+            if splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
+                category = 'powers'
+                stat_type = 'realm'
+                # Remove any existing Nature stats in other categories to avoid conflicts
+                self._remove_stat_from_other_categories('Nature', 'powers', 'realm')
+            else:
+                category = 'identity'
+                stat_type = 'personal'
+                # Remove any existing Nature stats in other categories to avoid conflicts
+                self._remove_stat_from_other_categories('Nature', 'identity', 'personal')
 
         # If category or stat_type is None, try to detect them
         if not category or not stat_type:
@@ -4039,14 +5721,31 @@ class CmdSelfStat(MuxCommand):
             # Store the gift with its value
             try:
                 gift_value = int(value)
-                self.caller.db.stats['powers']['gift'][stat_name] = {
-                    'perm': gift_value,
-                    'temp': gift_value
-                }
                 
-                # Store the alias using the new method
-                self.caller.set_gift_alias(stat_name, self.alias_used, gift_value)
+                # Debug current state of aliases
+                self.debug_gift_alias(stat_name, None)
                 
+                # Determine the best alias to use, prioritizing raw input
+                if hasattr(self, 'raw_input_name') and self.raw_input_name and self.raw_input_name.lower() != stat_name.lower():
+                    # Use the raw input as the alias (e.g., "Qyrl's Blood" for "Shroud")
+                    self.caller.set_gift_alias(stat_name, self.raw_input_name, gift_value)
+                    self.caller.msg(f"|g'{self.raw_input_name}' is an alias for the gift '{stat_name}'.|n")
+                    self.caller.msg(f"|gSet gift {stat_name} to {gift_value}. Alias: {self.raw_input_name}|n")
+                    return
+                elif hasattr(self, 'original_alias') and self.original_alias and self.original_alias.lower() != stat_name.lower():
+                    # Use the original input as the alias (e.g., "Qyrl's Blood" for "Shroud")
+                    self.caller.set_gift_alias(stat_name, self.original_alias, gift_value)
+                    self.caller.msg(f"|g'{self.original_alias}' is an alias for the gift '{stat_name}'.|n")
+                    self.caller.msg(f"|gSet gift {stat_name} to {gift_value}. Alias: {self.original_alias}|n")
+                    return
+                elif hasattr(self, 'alias_used') and self.alias_used and self.alias_used.lower() != stat_name.lower():
+                    # Use the detected alias
+                    self.caller.set_gift_alias(stat_name, self.alias_used, gift_value)
+                    self.caller.msg(f"|g'{self.alias_used}' is an alias for the gift '{stat_name}'.|n")
+                    self.caller.msg(f"|gSet gift {stat_name} to {gift_value}. Alias: {self.alias_used}|n")
+                    return
+                
+                # If we got here, no aliases were found or they matched the stat name
                 self.caller.msg(f"|gSet gift {stat_name} to {gift_value}.|n")
             except ValueError:
                 self.caller.msg("|rGift value must be a number.|n")
@@ -4102,14 +5801,38 @@ class CmdSelfStat(MuxCommand):
             
             # Store gift alias if this is a gift
             if category == 'powers' and stat_type == 'gift':
-                # Get the canonical name (in this case, stat_name is the canonical name)
-                canonical_name = stat_name
-                # Get the alias (the original input from the user, without the value part)
-                alias = self.args.split('=')[0].split('/')[0].strip()
-                # Store the alias mapping
-                self.caller.set_gift_alias(canonical_name, alias, value)
-                # Success message for gifts
-                self.caller.msg(f"|gSet {alias} to {value}.|n")
+                try:
+                    # Store the gift with its value
+                    gift_value = int(value)
+                    
+                    # Debug current state of aliases
+                    self.debug_gift_alias(stat_name, None)
+                    
+                    # Determine the best alias to use, prioritizing raw input
+                    if hasattr(self, 'raw_input_name') and self.raw_input_name and self.raw_input_name.lower() != stat_name.lower():
+                        # Use the raw input as the alias (e.g., "Qyrl's Blood" for "Shroud")
+                        self.caller.set_gift_alias(stat_name, self.raw_input_name, gift_value)
+                        self.caller.msg(f"|g'{self.raw_input_name}' is an alias for the gift '{stat_name}'.|n")
+                        self.caller.msg(f"|gSet gift {stat_name} to {gift_value}. Alias: {self.raw_input_name}|n")
+                        return
+                    elif hasattr(self, 'original_alias') and self.original_alias and self.original_alias.lower() != stat_name.lower():
+                        # Use the original input as the alias (e.g., "Qyrl's Blood" for "Shroud")
+                        self.caller.set_gift_alias(stat_name, self.original_alias, gift_value)
+                        self.caller.msg(f"|g'{self.original_alias}' is an alias for the gift '{stat_name}'.|n")
+                        self.caller.msg(f"|gSet gift {stat_name} to {gift_value}. Alias: {self.original_alias}|n")
+                        return
+                    elif hasattr(self, 'alias_used') and self.alias_used and self.alias_used.lower() != stat_name.lower():
+                        # Use the detected alias
+                        self.caller.set_gift_alias(stat_name, self.alias_used, gift_value)
+                        self.caller.msg(f"|g'{self.alias_used}' is an alias for the gift '{stat_name}'.|n")
+                        self.caller.msg(f"|gSet gift {stat_name} to {gift_value}. Alias: {self.alias_used}|n")
+                        return
+                    
+                    # If we got here, no aliases were found or they matched the stat name
+                    self.caller.msg(f"|gSet gift {stat_name} to {gift_value}.|n")
+                except ValueError:
+                    self.caller.msg("|rGift value must be a number.|n")
+                return
         except Exception as e:
             self.caller.msg(f"|rError processing stat value: {str(e)}|n")
             return
@@ -4117,7 +5840,12 @@ class CmdSelfStat(MuxCommand):
         # Special handling for gifts to store the alias used
         if category == 'powers' and stat_type == 'gift' and hasattr(self, 'alias_used'):
             # Store the alias using the new method
-            self.caller.set_gift_alias(stat_name, self.alias_used, value)
+            if hasattr(self, 'alias_used') and self.alias_used:
+                self.caller.set_gift_alias(stat_name, self.alias_used, value)
+            else:
+                # If no specific alias was tracked, use the original input as a fallback
+                alias_to_use = getattr(self, 'original_alias', stat_name)
+                self.caller.set_gift_alias(stat_name, alias_to_use, value)
 
         # Provide feedback with category information
         self.caller.msg(f"|gSet {stat_name} to {value} as a {category}.{stat_type}.|n")
@@ -4158,15 +5886,69 @@ class CmdSelfStat(MuxCommand):
         # Special handling for gifts to store the alias used
         if category == 'powers' and stat_type == 'gift' and hasattr(self, 'alias_used'):
             # Store the alias using the new method
-            self.caller.set_gift_alias(stat_name, self.alias_used, value)
+            if hasattr(self, 'alias_used') and self.alias_used:
+                self.caller.set_gift_alias(stat_name, self.alias_used, value)
+            else:
+                # If no specific alias was tracked, use the original input as a fallback
+                alias_to_use = getattr(self, 'original_alias', stat_name)
+                self.caller.set_gift_alias(stat_name, alias_to_use, value)
+
 
         # Update pools based on splat type
         if splat == 'Shifter':
             from world.wod20th.utils.shifter_utils import update_shifter_pools_on_stat_change
             update_shifter_pools_on_stat_change(self.caller, stat_name, value)
 
+        # Store gift alias if this is a gift
+        if category == 'powers' and stat_type == 'gift':
+            try:
+                # Store the gift with its value
+                gift_value = int(value)
+                
+                # Make sure the gift is stored in character stats
+                self.caller.db.stats['powers']['gift'][stat_name] = {
+                    'perm': gift_value,
+                    'temp': gift_value
+                }
+                
+                # Debug current state of aliases
+                self.debug_gift_alias(stat_name, None)
+            except ValueError:
+                self.caller.msg("|rGift value must be a number.|n")
+                return
+
     def detect_category_and_type(self):
         """Detect the category and type of a stat based on its name."""
+        # Special handling for Nature and Time
+        if self.stat_name.lower() == 'nature':
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+            
+            # For Changelings and Kinain, Nature is a realm power
+            if (splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain')):
+                self.category = 'powers'
+                self.stat_type = 'realm'
+            # For all other character types, Nature is an identity stat
+            else:
+                self.category = 'identity'
+                self.stat_type = 'personal'
+            return
+            
+        elif self.stat_name.lower() == 'time':
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+            
+            if splat == 'Mage':
+                self.category = 'powers'
+                self.stat_type = 'sphere'
+            elif splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
+                self.category = 'powers'
+                self.stat_type = 'realm'
+            else:
+                self.category = 'attributes'
+                self.stat_type = 'physical'
+            return
+
         # First check if it's a background
         if self.stat_name.lower() in [bg.lower() for bg in (UNIVERSAL_BACKGROUNDS + 
                                                            VAMPIRE_BACKGROUNDS + 
@@ -4198,22 +5980,6 @@ class CmdSelfStat(MuxCommand):
             self.stat_type = 'lineage'
             return
 
-            
-        # Special handling for Nature - should only be a realm power for Changelings and Kinain
-        if self.stat_name.lower() == 'nature':
-            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
-            char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-            
-            # For Changelings and Kinain, Nature is a realm power
-            if (splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain')):
-                self.category = 'powers'
-                self.stat_type = 'realm'
-            # For all other character types, Nature is an identity stat
-            else:
-                self.category = 'identity'
-                self.stat_type = 'personal'
-            return
-            
         # Check for secondary abilities with case-insensitive comparison
         stat_lower = self.stat_name.lower()
         for talent in SECONDARY_TALENTS:
@@ -4330,7 +6096,7 @@ class CmdSelfStat(MuxCommand):
             
         return False
 
-    def _get_canonical_stat_name(self, stat_name: str) -> str:
+    def get_canonical_stat_name(self, stat_name: str) -> str:
         """
         Get the canonical (proper case) version of a stat name.
         
@@ -4340,135 +6106,25 @@ class CmdSelfStat(MuxCommand):
         Returns:
             The canonical stat name with proper case, or the original if no match found
         """
-        # Handle None or empty values
-        if not stat_name:
-            return ""
+        # If we know the category and subcategory, use the more specific function
+        if hasattr(self, 'stat_category') and hasattr(self, 'stat_type'):
+            category = self.stat_category
+            subcategory = self.stat_type
             
-        from world.wod20th.models import Stat
+            # Use this XP utils function for all stat name lookups, keep it with the XP functions because that'll be where it's most used
+            if category and subcategory:
+                from world.wod20th.utils.xp_utils import get_proper_stat_name
+                character = self.caller
+                
+                # For staffstat, use the target character
+                if hasattr(self, 'target') and self.target:
+                    character = self.target
+                    
+                return get_proper_stat_name(stat_name, category, subcategory, character=character)
         
-        # First try exact case-insensitive match
-        stat = Stat.objects.filter(name__iexact=stat_name).first()
-        if stat:
-            return stat.name
-            
-        # Try special case mappings (like those in CmdPump)
-        STAT_CASES = {
-            'primal-urge': 'Primal-Urge',
-            'animal ken': 'Animal Ken',
-            'privacy obsession': 'Privacy Obsession',
-            'resources': 'Resources',
-            'professional certification': 'Professional Certification',
-            'power-brokering': 'Power-Brokering',
-            'power brokering': 'Power-Brokering',
-            'cultural savvy': 'Cultural Savvy',
-            'area knowledge': 'Area Knowledge',
-            'ptsd': 'PTSD',
-            'ocpd': 'OCPD',
-            'ocd': 'OCD',
-            'adhd': 'ADHD',
-            'strength': 'Strength',
-            'dexterity': 'Dexterity',
-            'stamina': 'Stamina',
-            'charisma': 'Charisma',
-            'manipulation': 'Manipulation',
-            'appearance': 'Appearance',
-            'intelligence': 'Intelligence',
-            'wits': 'Wits',
-            'perception': 'Perception',
-            'athletics': 'Athletics',
-            'brawl': 'Brawl',
-            'dodge': 'Dodge',
-            'intimidation': 'Intimidation',
-            'leadership': 'Leadership',
-            'streetwise': 'Streetwise',
-            'subterfuge': 'Subterfuge',
-            'crafts': 'Crafts',
-            'drive': 'Drive',
-            'etiquette': 'Etiquette',
-            'firearms': 'Firearms',
-            'melee': 'Melee',
-            'performance': 'Performance',
-            'security': 'Security',
-            'stealth': 'Stealth',
-            'survival': 'Survival',
-            'academics': 'Academics',
-            'computer': 'Computer',
-            'enigmas': 'Enigmas',
-            'investigation': 'Investigation',
-            'law': 'Law',
-            'medicine': 'Medicine',
-            'occult': 'Occult',
-            'politics': 'Politics',
-            'rituals': 'Rituals',
-            'science': 'Science',
-            'technology': 'Technology',
-            'rage': 'Rage',
-            'gnosis': 'Gnosis',
-            'willpower': 'Willpower',
-            'path of enlightenment': 'Path of Enlightenment',
-            'organizational rank': 'Organizational Rank',
-            'date of birth': 'Date of Birth',
-            'date of embrace': 'Date of Embrace',
-            'date of chrysalis': 'Date of Chrysalis',
-            'date of awakening': 'Date of Awakening',
-            'first change date': 'First Change Date',
-            'date of possession': 'Date of Possession',
-            'path of the father\'s vengeance': 'Path of the Father\'s Vengeance',
-            'lure of flames': 'Lure of Flames',
-            'movement of the mind': 'Movement of the Mind',
-            'hands of destruction': 'Hands of Destruction',
-            'neptune\'s might': 'Neptune\'s Might',
-            'path of the warrior': 'Path of the Warrior',
-            'way of the spirits': 'Way of the Spirits',
-            'shadow of the beast': 'Shadow of the Beast',
-            'spirit of the fray': 'Spirit of the Fray',
-        }
-        if stat_name.lower() in STAT_CASES:
-            return STAT_CASES[stat_name.lower()]
-            
-        # Handle hyphenated words correctly
-        if '-' in stat_name:
-            parts = stat_name.split('-')
-            return '-'.join(part.capitalize() for part in parts)
-            
-        # For compound words, properly handle connecting words
-        if ' ' in stat_name:
-            words = stat_name.split()
-            connecting_words = {'of', 'the', 'and', 'in', 'for', 'from', 'with', 'to', 'a', 'an'}
-            result = []
-            
-            for i, word in enumerate(words):
-                # Always capitalize first and last word
-                if i == 0 or i == len(words) - 1:
-                    # Custom capitalization to handle apostrophes
-                    if "'" in word:
-                        parts = word.split("'", 1)
-                        result.append(parts[0].capitalize() + "'" + parts[1].lower())
-                    else:
-                        result.append(word.capitalize())
-                # Keep connecting words lowercase unless they're the first or last word
-                elif word.lower() in connecting_words:
-                    result.append(word.lower())
-                else:
-                    # Custom capitalization to handle apostrophes
-                    if "'" in word:
-                        parts = word.split("'", 1)
-                        result.append(parts[0].capitalize() + "'" + parts[1].lower())
-                    else:
-                        result.append(word.capitalize())
-                        
-            return ' '.join(result)
-            
-        # Check if it's likely an acronym (all uppercase in original)
-        if stat_name.isupper():
-            return stat_name.upper()
-            
-        # Check if it looks like an acronym (2-5 letters, all consonants or mostly consonants)
-        if 2 <= len(stat_name) <= 5 and sum(1 for c in stat_name.lower() if c in 'aeiou') <= 1:
-            return stat_name.upper()
-            
-        # Default to simple title case
-        return stat_name.title()
+        # For cases where we don't have category information, use the utility in xp_utils
+        from world.wod20th.utils.xp_utils import get_canonical_stat_name
+        return get_canonical_stat_name(None, stat_name)
 
     def _validate_path(self, path_name: str) -> tuple[bool, str, str]:
         """
@@ -4485,3 +6141,56 @@ class CmdSelfStat(MuxCommand):
         if is_valid:
             return True, result, ""  # result contains the proper path name
         return False, "", result  # result contains the error message
+    
+    def validate_nature_stat(self, stat_name: str) -> tuple[bool, str, str]:
+        """
+        Validate a Nature stat name.
+        """
+        if stat_name.lower() in ['time', 'nature']:
+            from evennia import search_object
+            from typeclasses.characters import Character
+            from evennia.commands.default.muxcommand import MuxCommand
+            from evennia import Command
+            
+        # Get the current command instance
+        import inspect
+        frame = inspect.currentframe()
+        while frame:
+            if 'self' in frame.f_locals:
+                cmd_instance = frame.f_locals['self']
+                if isinstance(cmd_instance, (Command, MuxCommand)):
+                    break
+            frame = frame.f_back
+        
+        if frame and 'self' in frame.f_locals:
+            cmd = frame.f_locals['self']
+            if hasattr(cmd, 'caller'):
+                char = cmd.caller
+                if cmd.switches and 'staffspend' in cmd.switches and cmd.args:
+                    target_name = cmd.args.split('/')[0].strip()
+                    target = search_object(target_name, typeclass=Character)
+                    if target:
+                        char = target[0]
+                
+                if char:
+                    splat = char.get_stat('other', 'splat', 'Splat', temp=False)
+                    char_type = char.get_stat('identity', 'lineage', 'Type', temp=False)
+                    
+                    if stat_name.lower() == 'time':
+                        if splat == 'Mage':
+                            return ('powers', 'sphere')
+                        elif splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
+                            return ('powers', 'realm')
+                    elif stat_name.lower() == 'nature':
+                        if splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
+                            return ('powers', 'realm')
+                        else:
+                            return ('identity', 'personal')
+                        
+    def debug_gift_alias(self, stat_name, canonical_name=None):
+        """Debug gift alias information."""
+        from evennia.utils import logger
+        logger.log_info(f"DEBUG GIFT ALIAS: raw_input={getattr(self, 'raw_input_name', None)}, "
+                        f"original_alias={getattr(self, 'original_alias', None)}, "
+                        f"alias_used={getattr(self, 'alias_used', None)}, "
+                        f"stat_name={stat_name}, canonical_name={canonical_name}")
