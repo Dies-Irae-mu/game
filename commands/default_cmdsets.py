@@ -57,7 +57,7 @@ from commands.CmdWatch import CmdWatch
 from commands.CmdAlts import CmdAlts
 from commands.CmdTxt import CmdText
 
-from commands.bbs.bbs_all_commands import CmdBBS
+from commands.bbs.bbs_all_commands import CmdBBS, CmdBBRead, CmdBBPost
 from commands.bbs.bbs_admin_commands import CmdResetBBS
 #from commands.oss.oss_cmdset import OssCmdSet
 
@@ -110,6 +110,8 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdHelpNum())
         self.add(CmdGradientName())
         self.add(CmdBBS())
+        self.add(CmdBBRead())
+        self.add(CmdBBPost())
         #self.add(OssCmdSet)
         self.add(CmdFaeDesc())
         self.add(CmdPST())
