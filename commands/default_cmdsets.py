@@ -51,13 +51,13 @@ from commands.unfindable import CmdUnfindable
 from commands.CmdChangelingInteraction import CmdChangelingInteraction
 from commands.CmdBanality import CmdBanality
 from commands.groups_commands import CmdGroups
-from commands.CmdHelp import CmdHelp
+from commands.CmdHelp import CmdHelp, CmdHelpNum
 from commands.CmdEquip import CmdEquip, CmdInventory
 from commands.CmdWatch import CmdWatch
 from commands.CmdAlts import CmdAlts
 from commands.CmdTxt import CmdText
 
-from commands.bbs.bbs_all_commands import CmdBBS
+from commands.bbs.bbs_all_commands import CmdBBS, CmdBBRead, CmdBBPost
 from commands.bbs.bbs_admin_commands import CmdResetBBS
 #from commands.oss.oss_cmdset import OssCmdSet
 
@@ -107,8 +107,11 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         
         # Add all our custom commands
         self.add(CmdHelp())
+        self.add(CmdHelpNum())
         self.add(CmdGradientName())
         self.add(CmdBBS())
+        self.add(CmdBBRead())
+        self.add(CmdBBPost())
         #self.add(OssCmdSet)
         self.add(CmdFaeDesc())
         self.add(CmdPST())
@@ -202,6 +205,7 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         
         # Add our custom help command
         self.add(CmdHelp())
+        self.add(CmdHelpNum())
         
         self.add(CmdNotes())
         self.add(CmdSummon())
