@@ -595,13 +595,13 @@ class CmdJobs(MuxCommand):
                 self.caller.msg(f"Player {player.username} successfully added to job #{job_id}.")
                 self.post_to_jobs_channel(self.caller.name, job.id, f"added {player.username} to")
                 
-                # Send mail notifications to all participants
-                notification_message = f"{self.caller.name} has added {player.username} to Job #{job_id}: {job.title}"
-                self.send_mail_to_all_participants(job, notification_message, exclude_account=None)
-                
-                # Send separate notification to the newly added player
+                # Send separate notification to the newly added player first
                 player_notification = f"You have been added to Job #{job_id}: {job.title} by {self.caller.name}"
                 self.send_mail_notification(job, player_notification, to_account=player)
+                
+                # Then send mail notifications to all other participants explicitly excluding the newly added player
+                notification_message = f"{self.caller.name} has added {player.username} to Job #{job_id}: {job.title}"
+                self.send_mail_to_all_participants(job, notification_message, exclude_account=player)
             else:
                 self.caller.msg(f"Failed to add {player.username} to job #{job_id}. Please contact an administrator.")
 
@@ -1332,8 +1332,9 @@ class CmdJobs(MuxCommand):
             participants.add(participant)
             
         # Remove the excluded account if specified
-        if exclude_account and exclude_account in participants:
-            participants.remove(exclude_account)
+        if exclude_account:
+            # Make sure to check by username to handle different account objects with same username
+            participants = {p for p in participants if p.username != exclude_account.username}
             
         # Remove the caller to avoid self-notification
         if self.caller.account in participants:
