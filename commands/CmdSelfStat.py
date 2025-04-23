@@ -133,12 +133,15 @@ class CmdSelfStat(MuxCommand):
         self.switches = []
         self.is_specialty = False  # Add this line
         self.specialty = None      # Add this line
+        # Initialize alias tracking
+        self.original_alias = None
+        self.alias_used = None
         self.stat_name = ""
         self.instance = None
         self.category = None
         self.value_change = None
         self.stat_type = None
-        
+
     # Helper Methods
     def _display_instance_requirement_message(self, stat_name: str) -> None:
         """Display message indicating an instance is required for a stat."""
@@ -1674,6 +1677,9 @@ class CmdSelfStat(MuxCommand):
         self.switches = []
         self.is_specialty = False  # Add this line
         self.specialty = None      # Add this line
+        # Initialize alias tracking
+        self.original_alias = None
+        self.alias_used = None
         self.stat_name = ""
         self.instance = None
         self.category = None
@@ -2078,6 +2084,7 @@ class CmdSelfStat(MuxCommand):
                 return True, gift.name
          
         return False, None
+    
     
     def validate_stat_value(self, stat_name: str, value: str, category: str = None, stat_type: str = None) -> tuple:
         """
@@ -5555,6 +5562,14 @@ class CmdSelfStat(MuxCommand):
 
         # Set the stat using the caller's set_stat method
         self.caller.set_stat(category, stat_type, stat_name, value, temp=False)
+        
+        # For advantages.renown, don't set the temporary value
+        if category == 'advantages' and stat_type == 'renown':
+            # Renown temp values are managed through +renown command, not set here
+            self.caller.msg(f"|gSet permanent {stat_name} Renown to {value}.|n")
+            return
+            
+        # For all other stats, set the temporary value too
         self.caller.set_stat(category, stat_type, stat_name, value, temp=True)
         
         # Update pools based on splat type
@@ -6194,3 +6209,4 @@ class CmdSelfStat(MuxCommand):
                         f"original_alias={getattr(self, 'original_alias', None)}, "
                         f"alias_used={getattr(self, 'alias_used', None)}, "
                         f"stat_name={stat_name}, canonical_name={canonical_name}")
+        
