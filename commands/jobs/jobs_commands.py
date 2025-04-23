@@ -30,6 +30,7 @@ class CmdJobs(MuxCommand):
       +jobs <#>                  - View details of a specific job
       +jobs/create <category>/<title>=<text> [= <template>] <args>
       +jobs/comment <#>=<text>   - Add a comment to a job
+      +jobs/add <#>=<text>       - Alias for +jobs/comment
       +jobs/close <#>           - Close a job
       +jobs/reopen <#>          - Reopen an archived job
       +jobs/addplayer <#>=<player>
@@ -49,6 +50,8 @@ class CmdJobs(MuxCommand):
       +jobs/archive <#>
       +jobs/complete <#>=<reason>
       +jobs/cancel <#>=<reason>
+      +jobs/transfer <#>=<category>  - Move a job to a different category/queue
+      +jobs/from <name>              - List all jobs associated with a player (staff only)
       +jobs/clear_archive        - Clear all archived jobs and reset job numbers (Admin only)
 
     Categories:
@@ -93,14 +96,21 @@ class CmdJobs(MuxCommand):
         elif self.args and not self.switches:
             # Check if this is a job creation request (contains =)
             if "=" in self.args:
-                self.create_job_from_simple_syntax()
+                # Check if this is a category/title format request
+                parts = self.args.split('=', 1)[0]
+                if "/" in parts:
+                    # Forward to the proper create job method that handles categories
+                    self.create_job()
+                else:
+                    # Use the simple syntax for basic job creation
+                    self.create_job_from_simple_syntax()
             else:
                 self.view_job()
         elif "archive" in self.switches:
             self.view_archived_job()
         elif "create" in self.switches:
             self.create_job()
-        elif "comment" in self.switches:
+        elif "comment" in self.switches or "add" in self.switches:
             self.add_comment()
         elif "close" in self.switches:
             self.close_job()
@@ -138,6 +148,10 @@ class CmdJobs(MuxCommand):
             self.complete_job()
         elif "cancel" in self.switches:
             self.cancel_job()
+        elif "transfer" in self.switches:
+            self.transfer_job()
+        elif "from" in self.switches:
+            self.list_jobs_from_player()
         elif "clear_archive" in self.switches:
             self.clear_archive()
         else:
@@ -377,7 +391,7 @@ class CmdJobs(MuxCommand):
     def create_job(self):
         """Handle job creation with proper category handling."""
         if not self.args:
-            self.caller.msg("Usage: +jobs/create <category>/<title>=<text>")
+            self.caller.msg("Usage: +jobs/create <category>/<title>=<text> or +jobs <category>/<title>=<text>")
             return
 
         # Split on first = only
@@ -580,6 +594,14 @@ class CmdJobs(MuxCommand):
             if player in job.participants.all():
                 self.caller.msg(f"Player {player.username} successfully added to job #{job_id}.")
                 self.post_to_jobs_channel(self.caller.name, job.id, f"added {player.username} to")
+                
+                # Send mail notifications to all participants
+                notification_message = f"{self.caller.name} has added {player.username} to Job #{job_id}: {job.title}"
+                self.send_mail_to_all_participants(job, notification_message, exclude_account=None)
+                
+                # Send separate notification to the newly added player
+                player_notification = f"You have been added to Job #{job_id}: {job.title} by {self.caller.name}"
+                self.send_mail_notification(job, player_notification, to_account=player)
             else:
                 self.caller.msg(f"Failed to add {player.username} to job #{job_id}. Please contact an administrator.")
 
@@ -621,11 +643,23 @@ class CmdJobs(MuxCommand):
                 self.caller.msg(f"{player.username} is not added to this job.")
                 return
 
+            # Store the player information before removing
+            player_username = player.username
+            
+            # Send notification before removing the player
+            notification_message = f"{self.caller.name} has removed {player_username} from Job #{job_id}: {job.title}"
+            self.send_mail_to_all_participants(job, notification_message, exclude_account=None)
+            
+            # Send notification to the removed player
+            removed_notification = f"You have been removed from Job #{job_id}: {job.title} by {self.caller.name}"
+            self.send_mail_notification(job, removed_notification, to_account=player)
+            
+            # Now remove the player
             job.participants.remove(player)
             job.save()
 
-            self.caller.msg(f"Player {player.username} removed from job #{job_id}.")
-            self.post_to_jobs_channel(self.caller.name, job.id, f"removed {player.username} from")
+            self.caller.msg(f"Player {player_username} removed from job #{job_id}.")
+            self.post_to_jobs_channel(self.caller.name, job.id, f"removed {player_username} from")
 
         except (ValueError, Job.DoesNotExist):
             self.caller.msg("Invalid job ID.")
@@ -663,6 +697,15 @@ class CmdJobs(MuxCommand):
 
             self.caller.msg(f"Job #{job_id} assigned to {staff.username}.")
             self.post_to_jobs_channel(self.caller.name, job.id, f"assigned to {staff.username}")
+            
+            # Notify all participants about the assignment
+            notification_message = f"Job #{job_id} has been assigned to {staff.username} by {self.caller.name}"
+            self.send_mail_to_all_participants(job, notification_message, exclude_account=None)
+            
+            # Send a separate notification to the assignee if different from the caller
+            if staff != self.caller.account:
+                assignee_notification = f"You have been assigned to Job #{job_id}: {job.title} by {self.caller.name}"
+                self.send_mail_notification(job, assignee_notification, to_account=staff)
 
         except (ValueError, Job.DoesNotExist):
             self.caller.msg("Invalid job ID.")
@@ -1006,6 +1049,14 @@ class CmdJobs(MuxCommand):
             if attached_to_arg:
                 self.caller.msg(f"Attached to template argument '{attached_to_arg}'.")
             
+            # Notify all participants about the attachment
+            notification_message = f"{self.caller.name} has attached object '{obj.key}' to Job #{job_id}"
+            if attached_to_arg:
+                notification_message += f" (attached to argument '{attached_to_arg}')"
+            self.send_mail_to_all_participants(job, notification_message, exclude_account=None)
+            
+            self.post_to_jobs_channel(self.caller.name, job.id, f"attached object '{obj.key}' to")
+            
         except (ValueError, Job.DoesNotExist):
             self.caller.msg("Invalid job ID.")
 
@@ -1031,6 +1082,12 @@ class CmdJobs(MuxCommand):
 
             attachment.delete()
             self.caller.msg(f"Object '{obj.key}' removed from job #{job.id}.")
+            
+            # Notify all participants about the removal
+            notification_message = f"{self.caller.name} has removed object '{obj.key}' from Job #{job_id}"
+            self.send_mail_to_all_participants(job, notification_message, exclude_account=None)
+            
+            self.post_to_jobs_channel(self.caller.name, job.id, f"removed object '{obj.key}' from")
             
         except (ValueError, Job.DoesNotExist):
             self.caller.msg("Invalid job ID.")
@@ -1235,25 +1292,56 @@ class CmdJobs(MuxCommand):
         message = f"{player_name} {action} Job #{job_id}"
         channel.msg(f"[Job System] {message}")
 
-    def send_mail_notification(self, job, message):
-        """Send a mail notification to the job requester."""
-        if job.requester and job.requester != self.caller.account:  # Don't send mail if you're acting on your own job
+    def send_mail_notification(self, job, message, to_account=None):
+        """Send a mail notification to a specific account."""
+        recipient = to_account if to_account else job.requester
+        
+        if recipient and recipient != self.caller.account:  # Don't send mail if you're acting on your own job
             try:
                 subject = f"Job #{job.id} Update"
                 mail_body = f"Job #{job.id}: {job.title}\n\n{message}"
                 
                 # Use the mail command's proper format
-                mail_cmd = f"@mail {job.requester.username}={subject}/{mail_body}"
+                mail_cmd = f"@mail {recipient.username}={subject}/{mail_body}"
                 self.caller.execute_cmd(mail_cmd)
                 
                 # Only show success message if we actually sent the mail
-                if job.requester.username:
-                    self.caller.msg(f"Notification sent to {job.requester.username}.")
+                if recipient.username:
+                    self.caller.msg(f"Notification sent to {recipient.username}.")
                 else:
                     self.caller.msg("Could not send notification - invalid recipient username.")
                     
             except Exception as e:
                 self.caller.msg(f"Failed to send notification: {str(e)}")
+
+    def send_mail_to_all_participants(self, job, message, exclude_account=None):
+        """Send a mail notification to all participants in a job."""
+        # Collect all unique accounts involved with the job
+        participants = set()
+        
+        # Add requester if exists
+        if job.requester:
+            participants.add(job.requester)
+            
+        # Add assignee if exists
+        if job.assignee:
+            participants.add(job.assignee)
+            
+        # Add all participants
+        for participant in job.participants.all():
+            participants.add(participant)
+            
+        # Remove the excluded account if specified
+        if exclude_account and exclude_account in participants:
+            participants.remove(exclude_account)
+            
+        # Remove the caller to avoid self-notification
+        if self.caller.account in participants:
+            participants.remove(self.caller.account)
+            
+        # Send mail to each participant
+        for participant in participants:
+            self.send_mail_notification(job, message, to_account=participant)
 
     def complete_job(self):
         self._change_job_status("completed")
@@ -1477,17 +1565,52 @@ class CmdJobs(MuxCommand):
                     'created_at': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
                 })
 
+            # Try to add any participants that were on the old job
+            try:
+                # Analyze the archived job comments to find participants
+                if archived_job.comments:
+                    lines = archived_job.comments.split('\n')
+                    for line in lines:
+                        # Look for "has added X to Job" pattern
+                        if "has added" in line and "to Job" in line:
+                            parts = line.split("has added")
+                            if len(parts) > 1:
+                                player_part = parts[1].split("to Job")[0].strip()
+                                if player_part and player_part != "object":  # Don't match object attachments
+                                    # Try to find this account
+                                    try:
+                                        account = AccountDB.objects.get(username__iexact=player_part)
+                                        new_job.participants.add(account)
+                                        self.caller.msg(f"Added previous participant {account.username} to reopened job.")
+                                    except (AccountDB.DoesNotExist, AccountDB.MultipleObjectsReturned):
+                                        # Ignore errors if account cannot be found
+                                        pass
+            except Exception as e:
+                # Log but continue - this is a best-effort to restore participants
+                self.caller.msg(f"Could not fully restore participants: {e}")
+
             new_job.save()
 
             self.caller.msg(f"Job #{job_id} has been reopened as Job #{new_job.id}.")
             self.post_to_jobs_channel(self.caller.name, new_job.id, f"reopened (was Job #{job_id})")
 
             # Notify the original requester if different from the reopener
-            if archived_job.requester != self.caller.account:
-                self.send_mail_notification(
-                    new_job,
-                    f"Your job '{archived_job.title}' (#{job_id}) has been reopened as Job #{new_job.id} by {self.caller.name}."
-                )
+            if archived_job.requester and archived_job.requester != self.caller.account:
+                notification_message = f"Your job '{archived_job.title}' (#{job_id}) has been reopened as Job #{new_job.id} by {self.caller.name}."
+                self.send_mail_notification(new_job, notification_message, to_account=archived_job.requester)
+            
+            # Notify assignee if exists and different from reopener and requester
+            if (new_job.assignee and 
+                new_job.assignee != self.caller.account and 
+                (not archived_job.requester or new_job.assignee != archived_job.requester)):
+                assignee_notification = f"Job '{new_job.title}' (#{job_id}) has been reopened as Job #{new_job.id} by {self.caller.name}."
+                self.send_mail_notification(new_job, assignee_notification, to_account=new_job.assignee)
+                
+            # Notify all participants that were added to the new job
+            for participant in new_job.participants.all():
+                if participant != self.caller.account and participant != archived_job.requester and participant != new_job.assignee:
+                    participant_notification = f"A job you were previously involved with '{new_job.title}' (#{job_id}) has been reopened as Job #{new_job.id} by {self.caller.name}."
+                    self.send_mail_notification(new_job, participant_notification, to_account=participant)
 
         except ValueError:
             self.caller.msg("Invalid job ID.")
@@ -1700,6 +1823,226 @@ class CmdJobs(MuxCommand):
             self.caller.msg(f"Error clearing archive: {str(e)}")
             logger.log_err(f"Error in clear_archive: {str(e)}")
             logger.log_err("Full error details:", exc_info=True)
+
+    def transfer_job(self):
+        """Transfer a job to a different category/queue."""
+        if not self.args or "=" not in self.args:
+            self.caller.msg("Usage: +jobs/transfer <#>=<category>")
+            return
+            
+        if not self.caller.check_permstring("Admin"):
+            self.caller.msg("You don't have permission to transfer jobs.")
+            return
+
+        job_id, new_category = self.args.split("=", 1)
+        job_id = job_id.strip()
+        new_category = new_category.strip().upper()  # Convert to uppercase for consistency
+        
+        # Validate category - make case-insensitive comparison
+        valid_categories = ["REQ", "BUG", "PLOT", "BUILD", "MISC", "XP", 
+                          "PRP", "VAMP", "SHIFT", "MORT", "POSS", "COMP", 
+                          "LING", "MAGE", "EQUIP"]
+        
+        if new_category not in valid_categories:
+            self.caller.msg(f"Invalid category. Valid categories are: {', '.join(valid_categories)}")
+            return
+            
+        try:
+            job_id = int(job_id)
+            job = Job.objects.get(id=job_id)
+            
+            # Get the old category for notification
+            old_category = job.queue.name
+            
+            if old_category == new_category:
+                self.caller.msg(f"Job #{job_id} is already in the {new_category} category.")
+                return
+                
+            # Get or create the new queue
+            new_queue, created = Queue.objects.get_or_create(
+                name=new_category,
+                defaults={'automatic_assignee': None}
+            )
+            
+            # Store the old queue and update to the new one
+            job.queue = new_queue
+            
+            # Add a comment about the transfer
+            job.comments.append({
+                'author': self.caller.name,
+                'text': f"Transferred job from {old_category} to {new_category}",
+                'created_at': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+            })
+            
+            # Save the job with its new queue
+            job.save()
+            
+            self.caller.msg(f"Job #{job_id} transferred from {old_category} to {new_category}.")
+            self.post_to_jobs_channel(self.caller.name, job.id, f"transferred from {old_category} to {new_category}")
+            
+            # Notify all participants about the transfer
+            notification_message = f"Job #{job_id} has been transferred from {old_category} to {new_category} by {self.caller.name}"
+            self.send_mail_to_all_participants(job, notification_message, exclude_account=None)
+            
+            # If the new queue has an automatic assignee, assign the job
+            if new_queue.automatic_assignee:
+                old_assignee = job.assignee
+                job.assignee = new_queue.automatic_assignee
+                job.status = 'claimed'
+                job.save()
+                
+                assignee_username = new_queue.automatic_assignee.username
+                self.caller.msg(f"Job automatically reassigned to {assignee_username}.")
+                self.post_to_jobs_channel(self.caller.name, job.id, f"automatically reassigned to {assignee_username}")
+                
+                # Notify the new assignee
+                if new_queue.automatic_assignee != self.caller.account:
+                    assignee_notification = f"You have been automatically assigned to Job #{job_id}: {job.title} (transferred from {old_category} to {new_category})"
+                    self.send_mail_notification(job, assignee_notification, to_account=new_queue.automatic_assignee)
+                
+                # Notify all participants about the reassignment
+                assignment_message = f"Job #{job_id} has been automatically reassigned to {assignee_username} due to transfer to {new_category}"
+                self.send_mail_to_all_participants(job, assignment_message, exclude_account=new_queue.automatic_assignee)
+            
+        except ValueError:
+            self.caller.msg("Invalid job ID.")
+        except Job.DoesNotExist:
+            self.caller.msg(f"Job #{job_id} not found.")
+        except Exception as e:
+            self.caller.msg(f"Error transferring job: {str(e)}")
+
+    def list_jobs_from_player(self):
+        """List all jobs associated with a player (staff only)."""
+        if not self.caller.check_permstring("Admin"):
+            self.caller.msg("You don't have permission to use this command.")
+            return
+
+        if not self.args:
+            self.caller.msg("Usage: +jobs/from <player name>")
+            return
+
+        player_name = self.args.strip()
+        try:
+            # Search for the player account
+            player_match = search_account(player_name)
+            
+            if not player_match:
+                self.caller.msg(f"Could not find account '{player_name}'.")
+                return
+                
+            if len(player_match) > 1:
+                # If multiple matches, show them all
+                matches = ", ".join([p.username for p in player_match])
+                self.caller.msg(f"Multiple matches found: {matches}")
+                self.caller.msg("Please be more specific.")
+                return
+                
+            player = player_match[0]
+            player_username = player.username
+
+            # Find active jobs where player is requester, participant, or assignee
+            active_jobs = Job.objects.filter(
+                models.Q(requester=player) |
+                models.Q(participants=player) |
+                models.Q(assignee=player),
+                archive_id__isnull=True
+            ).distinct().order_by('-created_at')
+            
+            # Find archived jobs where player was requester or assignee
+            archived_jobs = ArchivedJob.objects.filter(
+                models.Q(requester=player) |
+                models.Q(assignee=player)
+            ).distinct().order_by('-closed_at')
+            
+            # Count of each type
+            active_count = active_jobs.count()
+            archived_count = archived_jobs.count()
+            total_count = active_count + archived_count
+
+            if total_count == 0:
+                self.caller.msg(f"No jobs found for player '{player_username}'.")
+                return
+
+            # Define column widths
+            col_widths = {
+                'job_id': 6,    # "Job # "
+                'queue': 10,    # "Queue     "
+                'title': 25,    # "Job Title                "
+                'role': 12,     # "Player Role  "
+                'status': 10,   # "Status     "
+                'archived': 9   # "Archived "
+            }
+
+            output = header(f"Jobs for {player_username} ({total_count} total)", width=78, fillchar="|r-|n") + "\n"
+            
+            # Create the header row with fixed column widths
+            header_row = (
+                f"|cJob #".ljust(col_widths['job_id']) +
+                f"Queue".ljust(col_widths['queue']) +
+                f"Job Title".ljust(col_widths['title']) +
+                f"Role".ljust(col_widths['role']) +
+                f"Status".ljust(col_widths['status']) +
+                f"Archived|n"
+            )
+            output += header_row + "\n"
+            output += ANSIString("|r" + "-" * 78 + "|n") + "\n"
+
+            # Add active jobs
+            if active_count > 0:
+                for job in active_jobs:
+                    # Determine the player's role in this job
+                    role = []
+                    if job.requester == player:
+                        role.append("Requester")
+                    if job.assignee == player:
+                        role.append("Assignee")
+                    if player in job.participants.all():
+                        role.append("Participant")
+                        
+                    role_text = ", ".join(role)
+                    
+                    # Format each field with proper width
+                    job_id = str(job.id).ljust(col_widths['job_id'])
+                    queue = crop(job.queue.name, width=col_widths['queue']-2).ljust(col_widths['queue'])
+                    title = crop(job.title, width=col_widths['title']-2).ljust(col_widths['title'])
+                    role_display = crop(role_text, width=col_widths['role']-2).ljust(col_widths['role'])
+                    status = crop(job.status, width=col_widths['status']-2).ljust(col_widths['status'])
+                    archived = "No".ljust(col_widths['archived'])
+                    
+                    # Combine all fields with proper spacing
+                    row = f"{job_id}{queue}{title}{role_display}{status}{archived}"
+                    output += row + "\n"
+
+            # Add archived jobs
+            if archived_count > 0:
+                for job in archived_jobs:
+                    # Determine the player's role in this job
+                    role = []
+                    if job.requester == player:
+                        role.append("Requester")
+                    if job.assignee == player:
+                        role.append("Assignee")
+                        
+                    role_text = ", ".join(role)
+                    
+                    # Format each field with proper width
+                    job_id = str(job.original_id).ljust(col_widths['job_id'])
+                    queue = crop(job.queue.name, width=col_widths['queue']-2).ljust(col_widths['queue'])
+                    title = crop(job.title, width=col_widths['title']-2).ljust(col_widths['title'])
+                    role_display = crop(role_text, width=col_widths['role']-2).ljust(col_widths['role'])
+                    status = crop(job.status, width=col_widths['status']-2).ljust(col_widths['status'])
+                    archived = "Yes".ljust(col_widths['archived'])
+                    
+                    # Combine all fields with proper spacing
+                    row = f"{job_id}{queue}{title}{role_display}{status}{archived}"
+                    output += row + "\n"
+
+            output += footer(width=78, fillchar="|r-|n")
+            self.caller.msg(output)
+            
+        except Exception as e:
+            self.caller.msg(f"Error listing jobs for player: {str(e)}")
+            logger.log_err(f"Error in list_jobs_from_player: {str(e)}", exc_info=True)
 
 class JobSystemCmdSet(CmdSet):
     """

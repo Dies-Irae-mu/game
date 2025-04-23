@@ -427,6 +427,9 @@ class CmdRoll(default_cmds.MuxCommand):
                 # Only send the roll result to the caller when rolling to a job
                 self.caller.msg(f"Roll result added as comment to job #{job_id}.")
                 
+                # Send mail notification to all participants about the roll
+                self.send_mail_to_all_participants(job, f"{self.caller.name} has added a roll to Job #{job_id}: {comment_text}")
+                
                 # Don't log the roll to the room if it's to a job
                 return
             except Job.DoesNotExist:
@@ -446,6 +449,39 @@ class CmdRoll(default_cmds.MuxCommand):
             # Log the error but don't let it interrupt the roll command
             self.caller.msg("|rWarning: Could not log roll.|n")
             print(f"Roll logging error: {e}")
+            
+    def send_mail_to_all_participants(self, job, message):
+        """Send a mail notification to all participants in a job."""
+        # Collect all unique accounts involved with the job
+        participants = set()
+        
+        # Add requester if exists
+        if job.requester:
+            participants.add(job.requester)
+            
+        # Add assignee if exists
+        if job.assignee:
+            participants.add(job.assignee)
+            
+        # Add all participants
+        for participant in job.participants.all():
+            participants.add(participant)
+            
+        # Remove the caller to avoid self-notification
+        if self.caller.account in participants:
+            participants.remove(self.caller.account)
+            
+        # Send mail to each participant
+        for participant in participants:
+            try:
+                subject = f"Job #{job.id} Update"
+                mail_body = f"Job #{job.id}: {job.title}\n\n{message}"
+                
+                # Use the mail command's proper format
+                mail_cmd = f"@mail {participant.username}={subject}/{mail_body}"
+                self.caller.execute_cmd(mail_cmd)
+            except Exception as e:
+                self.caller.msg(f"Failed to send notification to {participant.username}: {str(e)}")
 
     def get_stat_value_and_name(self, stat_name):
         """

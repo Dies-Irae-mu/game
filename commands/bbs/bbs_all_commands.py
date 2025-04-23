@@ -1276,14 +1276,18 @@ class CmdBBRead(default_cmds.MuxCommand):
     
     Usage:
       +bbread                   - List all available boards
+      +bbread <board>           - List all posts on a board
       +bbread <board>/<post>    - Read a specific post
     
     This command allows you to read posts on the bulletin board system.
     If used without arguments, it shows a list of all available boards.
+    When given just a board number, it shows all posts on that board.
     When given a board and post number, it displays the contents of that post.
     
     Examples:
       +bbread                   - Show list of available boards
+      +bbread 1                 - Show all posts on board #1
+      +bbread announcements     - Show all posts on the announcements board
       +bbread announcements/1   - Read post #1 on the announcements board
       +bbread 1/2               - Read post #2 on board #1
     """
@@ -1302,20 +1306,31 @@ class CmdBBRead(default_cmds.MuxCommand):
             cmd_bbs.list_boards(controller)
             return
             
-        # Otherwise, handle reading a specific post
+        # Create a CmdBBS instance and controller for reuse
+        cmd_bbs = CmdBBS()
+        cmd_bbs.caller = self.caller
+        controller = get_or_create_bbs_controller()
+        
+        # If it doesn't contain a slash, treat as a board reference
         if "/" not in self.args:
-            self.caller.msg("Usage: +bbread <board>/<post>")
+            try:
+                # Try to interpret as a board number
+                board_ref = int(self.args.strip())
+            except ValueError:
+                # Or as a board name
+                board_ref = self.args.strip()
+                
+            # Show all posts on the board
+            cmd_bbs.list_posts(controller, board_ref)
             return
         
+        # Handle reading a specific post
         board_ref, post_number = self.args.split("/", 1)
         try:
             board_ref = int(board_ref)
             post_number = int(post_number)
             
-            # Create a CmdBBS instance and call its read_post method
-            cmd_bbs = CmdBBS()
-            cmd_bbs.caller = self.caller
-            controller = get_or_create_bbs_controller()
+            # Read the specific post
             cmd_bbs.read_post(controller, board_ref, post_number)
         except ValueError:
             self.caller.msg("Usage: +bbread <board_number>/<post_number> where both are numbers.")
