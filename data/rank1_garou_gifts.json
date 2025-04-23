@@ -53,7 +53,7 @@
         "values": [1, 2],
         "shifter_type": ["Garou", "Gurahl", "Rokea"],
         "splat": "Shifter",
-        "tribe": ["Black Furies", "Croatan"],
+        "tribe": ["Black Furies"],
         "gift_alias": ["Unsea's Blessing"]
     },
 	{
@@ -651,7 +651,7 @@
         "shifter_type": ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"],
         "splat": "Shifter",
         "breed": "Homid",
-        "tribe": ["Get of Fenris", "Croatan"],
+        "tribe": ["Get of Fenris"],
         "gift_alias": ["Banish Burning"]
     },
     {

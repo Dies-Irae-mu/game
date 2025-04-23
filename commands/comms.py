@@ -41,6 +41,7 @@ class CustomCmdChannel(MuxCommand):
       /boot      - remove user from channel (staff only)
       /view       - show detailed channel information (staff only)
       /purge      - purge all channel aliases
+      /defalias   - set default alias for a channel (staff only)
 
     Example:
       pub Hello!                  (using an alias)
@@ -56,7 +57,7 @@ class CustomCmdChannel(MuxCommand):
     aliases = ["chan"]
     switch_options = ("list", "all", "sub", "unsub", "alias", "unalias", "who", 
                      "history", "mute", "unmute", "create", "destroy", "desc", 
-                     "lock", "unlock", "ban", "unban", "boot", "purge", "view", "last")
+                     "lock", "unlock", "ban", "unban", "boot", "purge", "view", "last", "defalias")
     channel_class = ChannelDB
     help_category = "Comms"
 
@@ -440,7 +441,7 @@ class CustomCmdChannel(MuxCommand):
             return
 
         # Staff-only switches check
-        staff_switches = ["create", "destroy", "desc", "lock", "unlock", "ban", "unban", "boot", "view"]
+        staff_switches = ["create", "destroy", "desc", "lock", "unlock", "ban", "unban", "boot", "view", "defalias"]
         if any(switch in self.switches for switch in staff_switches):
             if not caller.check_permstring("Builder"):
                 caller.msg("You must have |wBuilder|n or higher permission to use this command.")
@@ -513,7 +514,12 @@ class CustomCmdChannel(MuxCommand):
                 aliases = self.add_channel_alias(caller, channel, self.rhs)
                 alias_msg = f"Aliases set: {', '.join(aliases)}"
             else:
-                alias = channel.key[:3].lower()
+                # Check if channel has a staff-defined default alias
+                if hasattr(channel, 'db') and channel.db.default_alias:
+                    alias = channel.db.default_alias
+                else:
+                    # Use the first three characters as before
+                    alias = channel.key[:3].lower()
                 self.add_channel_alias(caller, channel, alias)
                 alias_msg = f"Default alias '{alias}' was set"
             
@@ -812,6 +818,31 @@ class CustomCmdChannel(MuxCommand):
                 self.handle_view(self.lhs)
                 return
 
+            elif switch == "defalias":
+                if not self.rhs:
+                    self.msg("Usage: channel/defalias <channel> = <default_alias>")
+                    return
+                    
+                channels = self.search_channel(self.lhs, exact=False)
+                if not channels:
+                    return
+                channel = channels[0]
+                
+                if not self.check_channel_access(channel, "control"):
+                    self.msg("You don't have permission to set default aliases for this channel.")
+                    return
+                
+                # Set the default alias in the channel's attributes
+                default_alias = self.rhs.strip()
+                if not default_alias:
+                    self.msg("Default alias cannot be empty.")
+                    return
+                    
+                channel.db.default_alias = default_alias
+                self.msg(f"Default alias for channel {channel.key} set to '{default_alias}'.")
+                self.msg(f"New subscribers will automatically use this alias.")
+                return
+
     def handle_view(self, channelname):
         """Show detailed channel information for staff."""
         caller = self.caller
@@ -875,6 +906,11 @@ class CustomCmdChannel(MuxCommand):
         aliases = [alias.strip() for alias in channel.aliases.all()]
         alias_str = ", ".join(aliases) if aliases else "None"
         caller.msg(f"\n|wAliases:|n {alias_str}")
+        
+        # Default Alias
+        default_alias = channel.db.default_alias if hasattr(channel, 'db') and channel.db.default_alias else None
+        if default_alias:
+            caller.msg(f"|wDefault Alias:|n {default_alias}")
         
         # Subscription Info
         subs = channel.subscriptions.all()

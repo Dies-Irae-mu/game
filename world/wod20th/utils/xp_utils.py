@@ -257,19 +257,19 @@ SHIFTER_MAPPINGS = {
     },
     'Mokole': {
         'auspices': {
-            'Rising Sun Striking': True,
-            'Noonday Sun Unshading': True,
-            'Setting Sun Warding': True,
-            'Shrouded Sun Concealing': True,
-            'Midnight Sun Shining': True,
-            'Decorated Suns Gathering': True,
-            'Solar Eclipse Crowning': True
+            'Rising Sun': True,
+            'Noonday Sun': True,
+            'Setting Sun': True,
+            'Shrouded Sun': True,
+            'Midnight Sun': True,
+            'Decorated Suns': True,
+            'Solar Eclipse': True
         },
         'auspice_mappings': {
-            'Tung Chun': 'Setting Sun Warding',
-            'Nam Nsai': 'Noonday Sun Unshading',
-            'Sai Chau': 'Solar Eclipse Crowning',
-            'Pei Tung': 'Midnight Sun Shining'
+            'Tung Chun': 'Setting Sun',
+            'Nam Nsai': 'Noonday Sun',
+            'Sai Chau': 'Solar Eclipse',
+            'Pei Tung': 'Midnight Sun'
         },
         'breed_mappings': {
             'Homid': 'homid',
@@ -1674,6 +1674,7 @@ def calculate_gift_cost(character, gift_name, new_rating, current_rating=None):
     except Exception as e:
         logger.log_err(f"Error calculating gift cost: {str(e)}")
         return 0
+    
 def check_weekly_xp_eligibility():
     """
     Check all characters for weekly XP eligibility.

@@ -2304,7 +2304,7 @@
         "shifter_type": ["Garou", "Ananasi", "Bastet", "Mokole", "Nagah"],
         "tribe": ["Bagheera", "Tenere"],
         "splat": "Shifter",
-        "auspice": ["Galliard", "Solar Eclipse Crowning", "Kamsa"],
+        "auspice": ["Galliard", "Solar Eclipse", "Kamsa"],
         "breed": ["Vasuki", "Feline"],
         "gift_alias": ["Mother's Look"]
     },

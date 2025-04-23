@@ -300,7 +300,9 @@ class CmdLanguage(MuxCommand):
         Usage: +language/set <character>=<language1>,<language2>,...
         Adds specified languages to character's existing languages.
         """
-        if not self.caller.check_permstring("Developer"):
+        if not (self.caller.check_permstring("builders") or 
+                self.caller.check_permstring("admin") or 
+                self.caller.check_permstring("staff")):
             self.caller.msg("You don't have permission to set languages.")
             return
             
@@ -445,8 +447,10 @@ class CmdLanguage(MuxCommand):
 
         # Check if this is a staff removing language from another player
         if "=" in self.args:
-            if not self.caller.check_permstring("Developer"):
-                self.caller.msg("Only staff are allowed to remove languages from other players.")
+            if not (self.caller.check_permstring("builders") or 
+                    self.caller.check_permstring("admin") or 
+                    self.caller.check_permstring("staff")):
+                self.caller.msg("You don't have permission to set languages.")
                 return
             
             target_name, language = self.args.split("=", 1)
@@ -502,8 +506,10 @@ class CmdLanguage(MuxCommand):
         Staff command to view a character's languages.
         Usage: +language/view <character>
         """
-        if not self.caller.check_permstring("builders"):
-            self.caller.msg("You don't have permission to view other characters' languages.")
+        if not (self.caller.check_permstring("builders") or 
+                self.caller.check_permstring("admin") or 
+                self.caller.check_permstring("staff")):
+            self.caller.msg("You don't have permission to set languages.")
             return
 
         if not self.args:

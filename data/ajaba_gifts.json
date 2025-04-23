@@ -7,23 +7,19 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            1
-        ],
+        "values": [1],
         "shifter_type": "Ajaba",
         "splat": "Shifter"
     },
     {
         "name": "Crushing Jaws",
         "description": "Only death can loose the Ajaba's jaws. By using this Gift together as a group, several Ajaba can pull apart even the mightiest opponent. A hyena-spirit teaches this Gift.",
-        "system": "The player spends one Willpower point after executing a successful bite attack to lock her jaws. Each turn thereafter, the Ajaba automatically inflicts one health level of unsoakable aggravated damage as her jaws crush bone and rend flesh. She may take no other action, save to voluntarily let go of her prey. While she is locked in, all close-range attacks against her are made at -2 difficulty due to her relative immobility. Only death can pry her loose against her will.",
+        "system": "The player spends one Willpower point after executing a successful bite attack to lock her jaws. Each turn thereafter, the Ajaba automatically inflicts one health level of unsoakable aggravated damage as her jaws crush bone and rend flesh. She may take no other action, save to voluntarily let go of her prey. While she is locked in, all close-range attacks against her are made at –2 difficulty due to her relative immobility. Only death can pry her loose against her will.",
         "source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            2
-        ],
+        "values": [2],
         "shifter_type": "Ajaba",
         "splat": "Shifter"
     },
@@ -35,9 +31,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            3
-        ],
+        "values": [3],
         "shifter_type": "Ajaba",
         "splat": "Shifter"
     },
@@ -49,23 +43,19 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            4
-        ],
+        "values": [4],
         "shifter_type": "Ajaba",
         "splat": "Shifter"
     },
     {
         "name": "Finishing Blow",
         "description": "A merely wounded enemy is an enemy that can still fight; dead, they can do no more harm. This Gift, taught by a lion-spirit, helps the Ajaba finish their kills.",
-        "system": "When attacking an enemy already suffering a wound penalty of at least -2, the player may spend one Rage point (before rolling the attack) to double the Ajaba's Strength for the purpose of determining damage.",
+        "system": "When attacking an enemy already suffering a wound penalty of at least –2, the player may spend one Rage point (before rolling the attack) to double the Ajaba's Strength for the purpose of determining damage.",
         "source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            1
-        ],
+        "values": [1],
         "shifter_type": "Ajaba",
 		"auspice": "Dawn",
         "splat": "Shifter"
@@ -77,12 +67,10 @@
         "source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            2
-        ],
-        "shifter_type": "Ajaba",
 		"auspice": "Dawn",
+        "stat_type": "gift",
+        "values": [2],
+        "shifter_type": "Ajaba",
         "splat": "Shifter"
     },
     {
@@ -93,11 +81,9 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            4
-        ],
-        "shifter_type": "Ajaba",
 		"auspice": "Dawn",
+        "values": [4],
+        "shifter_type": "Ajaba",
         "splat": "Shifter"
     },
     {
@@ -108,11 +94,9 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": "Ajaba",
 		"auspice": "Midnight",
+        "values": [1],
+        "shifter_type": "Ajaba",
         "splat": "Shifter"
     },
     {
@@ -123,14 +107,9 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            1
-        ],
-        "shifter_type": [
-            "Ajaba",
-            "Mokole"
-        ],
-		"auspice": "Midnight",
+        "values": [1],
+        "shifter_type": ["Ajaba", "Mokole"],
+		"auspice": ["Midnight", "Shrouded Sun Concealing"],
         "gift_alias": "Call the Rain",
         "splat": "Shifter"
     },
@@ -142,9 +121,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            2
-        ],
+        "values": [2],
         "shifter_type": "Ajaba",
 		"auspice": "Midnight",
         "splat": "Shifter"
@@ -157,9 +134,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            2
-        ],
+        "values": [2],
         "shifter_type": "Ajaba",
 		"auspice": "Midnight",
         "splat": "Shifter"
@@ -172,9 +147,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            2
-        ],
+        "values": [2],
         "shifter_type": "Ajaba",
 		"auspice": "Midnight",
         "splat": "Shifter"
@@ -182,14 +155,12 @@
     {
         "name": "Bitter Tears",
         "description": "Standing in the pouring rain, the Ajaba composes a spontaneous poem expressing their sorrow at Gaia's fallen state; the intensity of the rain redoubles, and it carries some measure of their sadness. An ancestor-spirit teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Manipulation + Expression (difficulty 7). All humans touched by the rain whose main dwelling is in a place with a Gauntlet of 7 or higher are seized with a great listless melancholy so long as the rain lasts, suffering a -3 penalty to all dice pools. This Gift may only be used while standing in the rain.",
+        "system": "The player spends one Gnosis point and rolls Manipulation + Expression (difficulty 7). All humans touched by the rain whose main dwelling is in a place with a Gauntlet of 7 or higher are seized with a great listless melancholy so long as the rain lasts, suffering a –3 penalty to all dice pools. This Gift may only be used while standing in the rain.",
         "source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            4
-        ],
+        "values": [4],
         "shifter_type": "Ajaba",
 		"auspice": "Midnight",
         "splat": "Shifter"
@@ -202,9 +173,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            5
-        ],
+        "values": [5],
         "shifter_type": "Ajaba",
 		"auspice": "Midnight",
         "splat": "Shifter"
@@ -217,9 +186,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            1
-        ],
+        "values": [1],
         "shifter_type": "Ajaba",
 		"auspice": "Dusk",
         "splat": "Shifter"
@@ -232,9 +199,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            1
-        ],
+        "values": [1],
         "shifter_type": "Ajaba",
 		"auspice": "Dusk",
         "splat": "Shifter"
@@ -247,9 +212,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            2
-        ],
+        "values": [2],
         "shifter_type": "Ajaba",
 		"auspice": "Dusk",
         "splat": "Shifter"
@@ -262,9 +225,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            3
-        ],
+        "values": [3],
         "shifter_type": "Ajaba",
 		"auspice": "Dusk",
         "splat": "Shifter"
@@ -277,9 +238,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            4
-        ],
+        "values": [4],
         "shifter_type": "Ajaba",
 		"auspice": "Dusk",
         "splat": "Shifter"
@@ -292,9 +251,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [
-            4
-        ],
+        "values": [4],
         "shifter_type": "Ajaba",
 		"auspice": "Dusk",
         "splat": "Shifter"
