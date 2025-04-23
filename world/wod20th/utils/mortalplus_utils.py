@@ -67,23 +67,33 @@ MORTALPLUS_POWERS: Dict[str, Dict[str, List[str]]] = {
         'Disciplines': ['Dominate', 'Presence', 'Obfuscate', 'Protean', 'Thaumaturgy', 'Viscissitude', 
                        'Celerity', 'Obfuscate', 'Quietus', 'Potence', 'Presence', 'Animalism', 
                        'Protean', 'Fortitude', 'Serpentis', 'Necromancy', 'Obtenebration', 
-                       'Auspex', 'Dementation', 'Chimerstry', 'Thaumaturgy', 'Vicissitude']
+                       'Auspex', 'Dementation', 'Chimerstry', 'Thaumaturgy', 'Vicissitude'],
+        'Sorcery': [],
+        'Numina': []
     },
     'Kinfolk': {
-        'Gifts': []
+        'Gifts': [],
+        'Sorcery': [],
+        'Numina': []
     },
     'Sorcerer': {
-        'Sorcery': []
+        'Sorcery': [],
+        'Numina': []
     },
     'Psychic': {
+        'Sorcery': [],
         'Numina': []
     },
     'Faithful': {
-        'Faith': []
+        'Faith': [],
+        'Sorcery': [],
+        'Numina': []
     },
     'Kinain': {
         'Arts': [],
-        'Realms': []
+        'Realms': [],
+        'Sorcery': [],
+        'Numina': []
     }
 }
 

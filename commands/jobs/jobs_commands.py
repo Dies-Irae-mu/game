@@ -699,8 +699,8 @@ class CmdJobs(MuxCommand):
             self.post_to_jobs_channel(self.caller.name, job.id, f"assigned to {staff.username}")
             
             # Notify all participants about the assignment
-            notification_message = f"Job #{job_id} has been assigned to {staff.username} by {self.caller.name}"
-            self.send_mail_to_all_participants(job, notification_message, exclude_account=None)
+            notification_message = f"{self.caller.name} has added {staff.username} to Job #{job_id}: {job.title}"
+            self.send_mail_to_all_participants(job, notification_message, exclude_account=staff)
             
             # Send a separate notification to the assignee if different from the caller
             if staff != self.caller.account:

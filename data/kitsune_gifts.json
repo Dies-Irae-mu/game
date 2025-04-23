@@ -1,7 +1,9 @@
 [
     {
         "name": "Chi Sense",
-        "description": "The Kitsune may sense the ebb and flow of Yin and Yang through the world around her. The player permanently adds one die to any Gift or Rite which inspects or alters the environment around the Kitsune.",
+        "description": "The Kitsune may sense the ebb and flow of Yin and Yang through the world around her. This Gift is taught by any spirit of the Middle Kingdom.",
+		"system": "The player permanently adds one die to any Gift or Rite which inspects or alters the environment around the Kitsune.",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -10,88 +12,114 @@
         "splat": "Shifter"
     },
     {
-        "name": "Seduction Gift",
-        "description": "A Fox with this Gift can cause humans to fall in love with her.",
+        "name": "Seduction Kitsune Gift",
+        "description": "A Fox with this Gift can cause humans to fall in love with her. A cloud- or rain-spirit teaches it.",
+		"system": "The player spends one Gnosis point and rolls Charisma + Subterfuge (difficulty 6) in a contested roll against the victim's Willpower (difficulty 7). The more successes the Kitsune wins by, the deeper the target's infatuation.",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
         "shifter_type": "Kitsune",
+		"breed": "Kojin",
         "splat": "Shifter"
     },
     {
         "name": "Flow of Aura",
-        "description": "The Kitsune feels the emotional aura of a place - the imprint left behind by events of great sorrow, joy, aggression, and the like.",
+        "description": "The Kitsune feels the emotional aura of a place — the imprint left behind by events of great sorrow, joy, aggression, and the like. Wood- and stone-spirits teach this Gift.",
+		"system": "The player rolls Perception + Empathy (difficulty 6). The more successes gained, the more the Fox picks up about the nature of the area's aura and what caused it. One success might reveal that a building has a foreboding atmosphere; five might reveal that it is actively haunted by the ghost of a traveling student who took his own life there.",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
+		"breed": "Shinju",
         "shifter_type": "Kitsune",
         "splat": "Shifter"
     },
     {
         "name": "Blessing the Blade",
-        "description": "The sorcerer calls on a local spirit to inhabit a blade for a finite time to enhance it with supernatural power. If prepared in advance, special wrappings restrain the spirit until the bearer speaks an enemy's name.",
+        "description": "The sorcerer calls on a local spirit to inhabit a blade for a finite time to enhance it with supernatural power. If prepared in advance, special wrappings restrain the spirit until the bearer speaks an enemy's name. Only one such weapon may be carried at a time. This Gift is taught by a fire-spirit.",
+		"system": "The player spends one Gnosis point. The weapon does aggravated damage for one scene only.",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
         "shifter_type": "Kitsune",
+		"auspice": "Doshi",
         "splat": "Shifter"
     },
     {
         "name": "Sense Hostility",
-        "description": "The Eji can sense hostile beings within 100 feet.",
+        "description": "The Eji can sense hostile beings within 100 feet. A fox-spirit teaches this Gift.",
+		"system": "The player rolls Perception + Alertness (difficulty 6).",
+		"source": "Changing Breeds 20th Anniversary Edition",		
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
         "shifter_type": "Kitsune",
+		"auspice": "Eji",
         "splat": "Shifter"
     },
     {
         "name": "Fable",
-        "description": "The Kataribe uses her expression and will to sway onlookers. By telling a tale or singing a song, she can plant a suggestion in the minds and hearts of listeners.",
+        "description": "The Kataribe uses her expression and will to sway onlookers. By telling a tale or singing a song, she can plant a suggestion in the minds and hearts of listeners. Nightingale-spirits teach this Gift.",
+		"system": "The player spends a Willpower point and rolls Manipulation + Empathy (difficulty 7) to plant a faint compulsion in the listener's head, which lingers for the Kitsune's Chie in days. Recordings and broadcasts cannot carry this Gift's magic.",
+		"source": "Changing Breeds 20th Anniversary Edition",		
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
+		"auspice": "Kataribe",
         "shifter_type": "Kitsune",
         "splat": "Shifter"
     },
     {
         "name": "Lantern",
-        "description": "By crafting a paper lantern or similar kami, the Kitsune can infuse it with an eerie light. The light is as bright as that of a mundane paper lantern, and lasts for one scene.",
+        "description": "By crafting a paper lantern or similar kami, the Kitsune can infuse it with an eerie light.",
+		"system": "The light is as bright as that of a mundane paper lantern, and lasts for one scene.",
+		"source": "Changing Breeds 20th Anniversary Edition",		
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
+		"tribe": "Ju-Fu",
         "shifter_type": "Kitsune",
         "splat": "Shifter"
     },
     {
         "name": "Umekochi's Mouth",
         "description": "The Kitsune crafts a small paper cup, dish, or other container, which can hold four times as much as it should.",
+		"system": "The player rolls Gnosis (difficulty 6).",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
+		"tribe": "Ju-Fu",
         "shifter_type": "Kitsune",
         "splat": "Shifter"
     },
     {
         "name": "Element Child",
-        "description": "The Kitsune can create a small amount of one of the basic elements by destroying a kami bearing that element's symbol. The Kitsune prepares the kami by writing a mandala showing the elements in relation to each other.",
+        "description": "The Kitsune can create a small amount of one of the basic elements by destroying a kami bearing that element's symbol. The Kitsune prepares the kami by writing a mandala showing the elements in relation to each other. When he wants to activate the kami, he must fold it into an appropriate shape (airplane, shuriken, water bomb or the like) and throw it where he wants it to be.",
+		"system": "The player spends a Gnosis point and rolls Gnosis (difficulty 6) at the time of preparation. In most other respects, this Gift is identical to the Metis Gift: Create Element.",
+		"source": "Hengeyokai Pg. 171-3",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
+		"tribe": "Ju-Fu",
         "shifter_type": "Kitsune",
         "splat": "Shifter"
     },
     {
         "name": "Moon Dance",
-        "description": "The Kitsune becomes completely invisible so long as no moonlight touches her. She may step in and out of moonlight, appearing and vanishing as she does.",
+        "description": "The Kitsune becomes completely invisible so long as no moonlight touches her. She may step in and out of moonlight, appearing and vanishing as she does. Lunes teach this Gift, which cannot be used during the daytime.",
+		"system": "The player spends one Gnosis point. The effect lasts the entire night. The Gift doesn't mask the Kitsune from any sense save sight.",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -101,57 +129,359 @@
     },
     {
         "name": "Sense Imbalance",
-        "description": "The Kitsune can sense if any one of the Triat has upset the balance in the area. She knows if the Weaver is too strong, or if the Wyld is lacking.",
+        "description": "The Kitsune can sense if any one of the Triat has upset the balance in the area. She knows if the Weaver is too strong, or if the Wyld is lacking. A servant of the Emerald Mother teaches this Gift.",
+		"system": "The player rolls Perception + Occult (difficulty 6) to evaluate the area's spiritual balance.",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [2],
         "shifter_type": "Kitsune",
+		"breed": "Roko",
         "splat": "Shifter"
     },
     {
         "name": "Imperial Authority",
-        "description": "Shinju can assert their superiority by staring into another's eyes. Animals fawn, while humans and shen assume the Ninetails is of superior social standing.",
+        "description": "Shinju can assert their superiority by staring into another's eyes. Animals fawn, while humans and shen assume the Ninetails is of superior social standing. This Gift is taught by dragon- or phoenix-spirits.",
+		"system": "The player rolls Charisma + Intimidation (difficulty 6, or 9 against other shen).",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [2],
         "shifter_type": "Kitsune",
+		"breed": "Shinju",
         "splat": "Shifter"
     },
     {
         "name": "Past Whispers",
-        "description": "The Kitsune can learn the thoughts impressed upon a place. Intense thought fragments (especially those spoken aloud) may linger for years.",
+        "description": "The Kitsune can learn the thoughts impressed upon a place. Intense thought fragments (especially those spoken aloud) may linger for years. Wind-spirits teach this Gift.",
+		"system": "The player rolls Perception + Occult (difficulty 7). The more successes gained, the more detail is revealed.",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [2],
         "shifter_type": "Kitsune",
+		"breed": "Shinju",
         "splat": "Shifter"
     },
     {
         "name": "Blood Omen",
-        "description": "The Fox reads the future through blood sacrifice. The actual divination is performed by reading entrails, interpreting the smoke of a burnt offering, casting bones, or in some other way using the resulting body as an oracular tool.",
+        "description": "The Fox reads the future through blood sacrifice. The actual divination is performed by reading entrails, interpreting the smoke of a burnt offering, casting bones, or in some other way using the resulting body as an oracular tool. Doshi are careful to dedicate the sacrifice to spirits opposed to the Wyrm. Predator-spirits teach this Gift.",
+		"system": "The player rolls Intelligence + Enigmas (difficulty 9, or 7 for human or shen sacrifices!) and spends one Gnosis point. The more successes, the more accurate and detailed the information gained.",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [2],
         "shifter_type": "Kitsune",
+		"auspice": "Doshi",
         "splat": "Shifter"
     },
     {
         "name": "Bolt",
-        "description": "The Kitsune calls a bolt of raw elemental force to strike his foe - fire, lightning, and freezing wind are all possibilities.",
+        "description": "The Kitsune calls a bolt of raw elemental force to strike his foe — fire, lightning, and freezing wind are all possibilities. Elementals teach this Gift.",
+		"system": "The player spends one Rage point and rolls Dexterity + Occult, difficulty 6. The target suffers aggravated damage equal to the successes rolled; the range is 50 yards.",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [2],
         "shifter_type": "Kitsune",
+		"auspice": "Eji",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Enduring Warrior",
+        "description": "Eji using this Gift heal just like their hengeyokai cousins. A bear-spirit teaches it.",
+		"system": "The player spends one point of Rage to regenerate like a Garou for the rest of the scene.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Changing Breeds 20th Anniversary Edition",
+        "values": [
+            2
+        ],
+        "shifter_type": "Kitsune",
+		"auspice": "Eji",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Fan-Shadow-Robe",
+        "description": "The Kitsune can change her appearance. She can't precisely duplicate the appearance of another, however, or perfectly replicate complex patterns or garments (such as military uniforms). Chimerlings teach this Gift.",
+		"system": "The player rolls Manipulation + Empathy, with the difficulty depending on how radical the Kitsune wishes the change to be (6 to change hair and eye color, 8 to appear as a different build and ethnicity entirely). The alterations last for one scene.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Changing Breeds 20th Anniversary Edition",
+        "values": [
+            2
+        ],
+        "shifter_type": "Kitsune",
+		"auspice": "Gukutsushi",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Silence Kitsune Gift",
+        "description": "The werefox blankets the area in an eerie silence. Lake- and mountain-spirits teach this Gift.",
+		"system": "The player spends two Gnosis points and rolls Manipulation + Stealth, difficulty 8. The area affected is 5 yards in radius per success. The Gift lasts for one scene.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Changing Breeds 20th Anniversary Edition",
+        "values": [
+            2
+        ],
+        "shifter_type": "Kitsune",
+		"auspice": "Kataribe",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Lore",
+        "description": "The Kataribe can access thememories of other Bards, living and dead, to find specific information about an artifact, location, person, etc. (This is similar to Wisdom of the Ancient Ways, but brings up stories, riddles, mnemonics, nursery rhymes, songs, and the like — things Kataribe would treasure, but not necessarily obviously useful.) This Gift comes from Tortoise-, Elephant and other long-lived, deep thinking spirits.",
+		"system": "The player rolls Intelligence + Rituals; the Storyteller sets the difficulty based on the obscurity of the information. The Fox must have a personal contact with the subject— sight, touch, her own memories — or the Gift will not work.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "PGttCB Pg. 108-9, Hengeyokai Pg. 168-9",
+        "values": [
+            2
+        ],
+        "shifter_type": "Kitsune",
+		"auspice": "Kataribe",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Attraction",
+        "description": "The Kitsune attracts or repels a certain type of animal by crafting an appropriate kami. She might repel tigers to travel safely through the jungle, or fashion a paper firefly to summon enough fireflies to eerily light a graveyard.",
+		"system": "The player rolls Manipulation + Animal Ken, difficulty 7. The more successes, the stronger the kami's effects.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Changing Breeds 20th Anniversary Edition",
+        "values": [
+            2
+        ],
+        "shifter_type": "Kitsune",
+		"tribe": "Ju-Fu",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Silver Sigil",
+        "description": "The Kitsune can write “badge” on a piece of paper — people will see a badge. She can write “passport” on a bit of bark, and breeze through customs.",
+		"system": "The player rolls Gnosis, difficulty 7. The kami remains effective for one scene.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Changing Breeds 20th Anniversary Edition",
+        "values": [
+            2
+        ],
+        "shifter_type": "Kitsune",
+		"tribe": "Ju-Fu",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Eyes of the Wall",
+        "description": "This trick really creates two kami: the Fox takes a paper and cuts a hole in it, leaving the cut-out hole someplace useful. The Kitsune can then put her eye to the hole in her half of the kami to see what the cut-out would 'see.' She can even get each side's view by looking through alternate sides of the hole. Kitsune who fly kites as a hobby are particularly enamored of this trick.",
+		"system": "The player spends two Gnosis and rolls Gnosis, difficulty 7, when creating the two-in-one kami. The stolen view lasts for a whole day and a night.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Hengeyokai Pg. 171-3",
+        "values": [
+            2
+        ],
+        "shifter_type": "Kitsune",
+		"tribe": "Ju-Fu",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Labyrinth",
+        "description": "By hiding this kami in a room and speaking a word of binding, the Kitsune can prevent anyone from leaving. A person who climbs out the window finds himself coming back in through the door, and so on. People can still enter the room as usual — leaving is the tricky part. As the Kitsune must be present to activate the effect, he is trapped inside along with any other prisoners until the kami is destroyed.",
+		"system": "The player rolls Wits + Enigmas, difficulty 8; the Gnosis cost is three.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Hengeyokai Pg. 171-3",
+        "values": [
+            2
+        ],
+        "shifter_type": "Kitsune",
+		"tribe": "Ju-Fu",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Ghost Speech",
+        "description": "This Gift allows Kitsune to speak with inhabitants of the Yin Realm — the Dark Umbra. It is taught by ancestor-spirits and spirits associated with death.",
+		"system": "The Kitsune may speak in a tone that carries across into the Yin Realm, and hear any responses to her words.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Changing Breeds 20th Anniversary Edition",
+        "values": [
+            3
+        ],
+        "shifter_type": "Kitsune",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Puppeteer's Secret",
+        "description": "The Fox fades into the crowd; everyone assumes she belongs, and that her familiar face has been there for quite some time. Deer-spirits teach this Gift.",
+		"system": "The player rolls Charisma + Subterfuge, difficulty 6. If the Kitsune begins to act suspiciously given her attire and the situation, or otherwise draws attention to herself, the Storyteller may demand a fresh roll to keep the Gift from breaking.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Changing Breeds 20th Anniversary Edition",
+        "values": [
+            3
+        ],
+        "shifter_type": "Kitsune",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Blind",
+        "description": "The Kitsune can blind an enemy for one day. This Gift is taught by a porcupine-spirit.",
+		"system": "The player spends one Gnosis point and rolls Manipulation + Medicine (difficulty 7) resisted by the Stamina (also difficulty 7) of a target within 10 feet.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Changing Breeds 20th Anniversary Edition",
+        "values": [
+            3
+        ],
+        "shifter_type": "Kitsune",
+		"breed": "Roko",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Ten Chi",
+        "description": "The Kitsune always knows where he is, in whatever Realm he occupies, by feeling his relationship to Gaia. Additionally, wherever he stands becomes his territory; natural animals sense this and allow the werefox to pass without challenge. Migratory bird-spirits teach this Gift.",
+		"system": "The Kitsune may spend one Gnosis to know what Realm he stands in, where the cardinal directions are, and in which direction his home lies.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Changing Breeds 20th Anniversary Edition",
+        "values": [
+            3
+        ],
+        "shifter_type": "Kitsune",
+		"breed": "Roko",
+        "splat": "Shifter"
+    },
+    {
+        "name": "By the Light of the Moon",
+        "description": "The Kitsune can see any creature touched by moonlight, no matter what mundane skill or magic they use to hide. Bat-spirits teach this Gift.",
+		"system": "The player spends one Gnosis point and rolls Perception + Alertness (difficulty 6). All moontouched beings within (successes x 20) feet are revealed to the Kitsune.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Changing Breeds 20th Anniversary Edition",
+        "values": [
+            3
+        ],
+        "shifter_type": "Kitsune",
+		"auspice": "Doshi",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Swarm of Servants",
+        "description": "From the fur of his tail the Doshi can summon tiny vermin — mice, lice, beetles, frogs, and so forth — to serve him. Vermin spirits teach this Gift.",
+		"system": "The player spends one Willpower point and rolls Stamina + Occult (difficulty 8). Each success calls 25 vermin that the Doshi controls. The swarm must stay within 20 feet, and can harass foes (–1 to victim's dice pools per 25 vermin) and perform simple tasks (at Strength 1).",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Changing Breeds 20th Anniversary Edition",
+        "values": [
+            3
+        ],
+        "shifter_type": "Kitsune",
+		"auspice": "Doshi",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Call of the Dead",
+        "description": "The Kitsune uses Yin energies to disrupt the vital energies of the living with just a touch. Ice-spirits teach this Gift.",
+		"system": "The player spends one Rage point and rolls Stamina + Occult (difficulty 8). Living creatures, spirits, vampires with Humanity 6+, and Yang-aspected Kuei-jin suffer lethal damage equal to the successes rolled. Five or more successes instantly kills human targets.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Changing Breeds 20th Anniversary Edition",
+        "values": [
+            3
+        ],
+        "shifter_type": "Kitsune",
+		"auspice": "Eji",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Song of Fear",
+        "description": "The Kitsune may cast her fox frenzy into another. This Gift is taught by hare-spirits.",
+		"system": "The player rolls Manipulation + Intimidation (difficulty of the target's Willpower). Each success sends the target into flight for one turn.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Changing Breeds 20th Anniversary Edition",
+        "values": [
+            3
+        ],
+        "shifter_type": "Kitsune",
+		"auspice": "Eji",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Seek",
+        "description": "The Kitsune asks the local spirits for a single individual's location. The spirits answer correctly if they can; should the individual be beyond their territory, they say as much. The spirits of predatory animals teach this Gift.",
+		"system": "The player spends a Gnosis point to contact an appropriate spirit, and rolls Wits + Occult, difficulty 6, to beseech its help.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Changing Breeds 20th Anniversary Edition",
+        "values": [
+            3
+        ],
+        "shifter_type": "Kitsune",
+		"auspice": "Kataribe",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Uzume Sings",
+        "description": "The Kataribe's voice becomes achingly beautiful, paralyzing an enemy or luring him forward to his doom. Nightingale- and snake-spirits teach this Gift.",
+		"system": "The player spends one Gnosis point and rolls Charisma + Performance (difficulty of the target's Willpower). For every success, the target is under the Fox's power for one turn.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Changing Breeds 20th Anniversary Edition",
+        "values": [
+            3
+        ],
+        "shifter_type": "Kitsune",
+		"auspice": "Kataribe",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Paper Beast",
+        "description": "The Kitsune fashions a kami in the shape of a mundane animal, with the animal's pictogram written on it. When the Kitsune spits on the kami, the paper beast immediately grows to full size and obeys the Fox's commands.",
+		"system": "The player spends two Gnosis and rolls Gnosis, difficulty 7. The resulting creature has all the traits of its likeness, but only one health level. (Rank 5 Kitsune Gift Paper Flesh): As the Gift: Paper Beast, save that it requires three Gnosis points, and the beast is fully flesh and blood (though it reverts to paper at the end of the scene or when slain).",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Changing Breeds 20th Anniversary Edition",
+        "values": [
+            3,
+			5
+        ],
+        "shifter_type": "Kitsune",
+		"tribe": "Ju-Fu",
+		"alias": "Paper Flesh",
         "splat": "Shifter"
     },
     {
         "name": "Shadow-Fan-Flowers",
         "description": "One creature within the Kitsune's line of sight sees a vision and believes. The illusion is perfectly detailed with color, light, and motion.",
+		"system": "One creature within the Kitsune's line of sight sees a vision and believes. The illusion is perfectly detailed with color, light, and motion. Chimerlings teach this Gift.",
+		"source": "The player spends a point of Gnosis and rolls Manipulation + Enigmas (difficulty of the victim's Willpower). Supernatural targets may roll Willpower (difficulty 9) to realize the illusion is false only if given compelling reason to suspect its falsity.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -161,67 +491,87 @@
     },
     {
         "name": "Forgetfulness",
-        "description": "The Kitsune can erase an individual's memories of a specific event.",
+        "description": "The Kitsune can erase an individual's memories of a specific event. Fogspirits teach this Gift.",
+		"system": "The player spends one Gnosis and Willpower point, then makes a contested Manipulation + Subterfuge (difficulty 6) roll against the victim's Willpower (difficulty 3 + Kitsune's number of tails).",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
         "shifter_type": "Kitsune",
+		"breed": "Kojin",
         "splat": "Shifter"
     },
     {
         "name": "Carrion Clothes",
-        "description": "Wild foxes catch birds by pretending to be dead; werefoxes aspire to bigger game. This Gift causes the Kitsune to appear to all natural and supernatural examination to be dead.",
+        "description": "Wild foxes catch birds by pretending to be dead; werefoxes aspire to bigger game. This Gift causes the Kitsune to appear to all natural and supernatural examination to be dead. This Gift is taught by fly-spirits.",
+		"system": "The player spends a Gnosis point and makes a Stamina + Larceny roll (difficulty 7). The Gift hides only small motions, such as breathing or cracking an eyelid to look about; any greater movement breaks the spell.",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
         "shifter_type": "Kitsune",
+		"breed": "Roko",
         "splat": "Shifter"
     },
     {
         "name": "Elemental Meld",
-        "description": "The Eji may transform into any physical element (earth, water, fire or air), allowing her to merge with and move through that element. On attaining rank five, the Kitsune can change into secondary elements (mist, electricity, moonlight, etc.) as well.",
+        "description": "The Eji may transform into any physical element (earth, water, fire or air), allowing her to merge with and move through that element. On attaining rank five, the Kitsune can change into secondary elements (mist, electricity, moonlight, etc.) as well. Elementals teach this Gift.",
+		"system": "The player spends a Gnosis point and rolls Manipulation + Gnosis (difficulty 8). She must be in contact with the desired element to change, and changes on contact (taking no harm from fire, for example). She reverts to her natural form upon leaving the element. Her body remains the same size and in one piece but can distort to avoid obstacles. Silver, radioactivity, and toxic waste harm her as normal and will bar her progress. While merged, detecting the Kitsune requires a Perception + Alertness roll (difficulty 9).",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
         "shifter_type": "Kitsune",
+		"auspice": "Eji",
         "splat": "Shifter"
     },
     {
         "name": "Sorcerous Bite",
-        "description": "The Kitsune can transform her teeth into any substance she wills, most commonly silver or jade. They are uncommonly strong, regardless of the substance chosen.",
+        "description": "The Kitsune can transform her teeth into any substance she wills, most commonly silver or jade. They are uncommonly strong, regardless of the substance chosen. Elementals teach this Gift.",
+		"system": "The player spends a Gnosis point and rolls Stamina + Primal-Urge. Silver teeth don't harm the Fox by their mere presence.",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
         "shifter_type": "Kitsune",
+		"auspice": "Eji",
         "splat": "Shifter"
     },
     {
         "name": "Kuei Dance",
-        "description": "This Gift calls on the dead to bear witness. There is no compulsion, but the dead are eager to be remembered, so rarely refuse. The spell may take any form, from story to song to dance, with the ghost acting out her part as appropriate.",
+        "description": "This Gift calls on the dead to bear witness. There is no compulsion, but the dead are eager to be remembered, so rarely refuse. The spell may take any form, from story to song to dance, with the ghost acting out her part as appropriate. This Gift is taught by ancestor-spirits.",
+		"system": "The player spends a Willpower point and rolls Gnosis + Empathy, difficulty 8, to establish contact. This Gift works only if the deceased lingers in some spiritual form, such as a ghost or ancestor-spirit. The more successes rolled, the more coherent the ghost's performance.",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
         "shifter_type": "Kitsune",
+		"auspice": "Kataribe",
         "splat": "Shifter"
     },
     {
         "name": "Walk",
         "description": "This last-minute escape route allows the Kitsune to vanish from sight as she tears the kami, reappearing in the Mirror Lands in the form of her choice.",
+		"system": "The player must invest four Gnosis in a kami and roll Gnosis, difficulty 7 to prepare this charm. Once the Nine-Tails activates the power, stepping sideways is instantaneous and automatic.",
+		"source": "Hengeyokai Pg. 171-3",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
         "shifter_type": "Kitsune",
+		"tribe": "Ju-Fu",
         "splat": "Shifter"
     },
     {
         "name": "Possession",
-        "description": "The Kitsune abandons her body to take over another's.",
+        "description": "The Kitsune abandons her body to take over another's. This Gift is taught by one of Fox's brood.",
+		"system": "The Kitsune must be in contact with the victim, the victim's hair or nail cuttings, or an extremely important personal token of the victim. The player spends a point of Gnosis and Willpower, then rolls Manipulation + Occult (difficulty of the victim's Willpower). If successful, the Fox becomes a spirit and possesses her victim; supernatural targets may roll Stamina + Occult (difficulty of Kitsune's Willpower) each day at sunrise to attempt to exorcise the Fox. The Kitsune returns to her own body when she is cast out or ends the possession.",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -231,32 +581,56 @@
     },
     {
         "name": "Call to Allies",
-        "description": "This Gift is the Kitsune's ultimate distress call. Her Batsu, clan, and sentai will hear it, along with all other friendly neutrals and unknown allies in the area, as well as local spirits and spiritually sensitive mortals.",
+        "description": "This Gift is the Kitsune's ultimate distress call. Her Batsu, clan, and sentai will hear it, along with all other friendly neutrals and unknown allies in the area, as well as local spirits and spiritually sensitive mortals. The Fox's fear or rage acts as a beacon unerringly guiding any that answer the cry to her. This Gift is taught by an ancestor-spirit.",
+		"system": "The Kitsune must simply call out in need.",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
         "shifter_type": "Kitsune",
+		"breed": "Kojin",
         "splat": "Shifter"
     },
     {
         "name": "Marionette",
-        "description": "The Kitsune can make the target move in whatever fashion she wishes by mimicking the desired action.",
+        "description": "The Kitsune can make the target move in whatever fashion she wishes by mimicking the desired action. Snake-spirits teach this Gift.",
+		"system": "The player spends a Willpower point and rolls Manipulation + Subterfuge, resisted by the victim's Willpower (both difficulty 7); the Kitsune controls her victim for one turn per success.",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
         "shifter_type": "Kitsune",
+		"breed": "Shinju",
         "splat": "Shifter"
     },
     {
         "name": "Seal of Inari",
-        "description": "The sorcerer can secretly 'brand' anyone he encounters with sigils only Kitsune can see. These may be warnings, death marks, requests for help, etc.",
+        "description": "The sorcerer can secretly “brand” anyone he encounters with sigils only Kitsune can see. These may be warnings, death marks, requests for help, etc. These ghostly marks shine through all concealment so long as the bearer's head is visible. Chimerlings teach this Gift.",
+		"system": "The player rolls Manipulation + Occult (difficulty 8). For each success, he may inscribe one message of his choice on the recipient.",
+		"source": "Changing Breeds 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
         "shifter_type": "Kitsune",
+		"auspice": "Doshi",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Kidnap",
+        "description": "One of the dirtier tricks in the Kitsune arsenal, this allows a Fox to abduct a person or shen into the Umbra. It matters little where the Kitsune is standing at the time; a Fox in the Mirror Lands can pull a target in with him, while a Fox in the physical world can either throw his target into the Umbra while remaining behind himself, or vanish along with the unfortunate victim. The Kitsune hurls the kami at his target while cryinga word of activation; if the Fox is in the Umbra at the time, the paper literally appears from nowhere, striking the target. As the target vanishes in a flash of light and smoke, the now-blank piece of paper drifts slowly to the ground....",
+		"system": "The player must invest two Gnosis in the kami and seal it with a Gnosis roll, difficulty 8. To activate the kami, the Fox must make a Gnosis roll, difficulty of the local Wall; however, only one success is necessary.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "Hengeyokai Pg. 171-3",
+        "values": [
+            5
+        ],
+        "shifter_type": "Kitsune",
+		"tribe": "Ju-Fu",
         "splat": "Shifter"
     }
 ]
