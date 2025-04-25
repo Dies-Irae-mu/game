@@ -1,42 +1,42 @@
 [
 	{
 	  "name": "Spirit's Mark (Merit)",
-	  "description": "The spirit riding you bleeds over into the physical world a bit. You aren’t physically any different (not as a result of this Trait, anyway) but you exude a certain aura. What exactly that aura feels like depends on a) whether Spirit’s Mark is a Merit or a Flaw and b) what kind of spirit possesses you. An attractive fomor might reek of pure lust, granting a -2 on all Seduction-related difficulties. A Kami possesses by a predator-spirit might engender a feeling similar to the Curse in humans (+1 to Social difficulties not related to Intimidation). The Storyteller should work with the player to decide what kind of feeling the character gives off and how it translates into game play. Generally, it should be worth a difficulty adjustment of 1 or 2, depending on how specific the feeling is.",
+	  "description": "The spirit riding you bleeds over into the physical world a bit. You aren't physically any different (not as a result of this Trait, anyway) but you exude a certain aura. What exactly that aura feels like depends on a) whether Spirit's Mark is a Merit or a Flaw and b) what kind of spirit possesses you. An attractive fomor might reek of pure lust, granting a -2 on all Seduction-related difficulties. A Kami possesses by a predator-spirit might engender a feeling similar to the Curse in humans (+1 to Social difficulties not related to Intimidation). The Storyteller should work with the player to decide what kind of feeling the character gives off and how it translates into game play. Generally, it should be worth a difficulty adjustment of 1 or 2, depending on how specific the feeling is.",
 	  "system": "",
 	  "game_line": "Werewolf: The Apocalypse",
-	  "category": "flaws",
-	  "stat_type": "",
+	  "category": "merits",
+	  "stat_type": "supernatural",
 	  "values": [2],
 	  "possessed_type": "General"
 	},
 	{
 	  "name": "Banespeak",
-	  "description": "	With your transformation, you have discovered a way into your dark spiritual side and are able to speak with the Bane part of yourself. When you speak with your Bane, you appear to be talking animatedly to yourself. Your Bane whispers dark secrets to the tattered remains of your soul, and your soul withers a little more with each vile revelation. Your Storyteller will create the Bane, but will not reveal to you the extent of its knowledge or its secret powers. While your Bane will not guide you all the time, at moments of deep urgency it may be able to provide you with clues or information about the Wyrm or Garou worlds which you would not otherwise know.",
+	  "description": "With your transformation, you have discovered a way into your dark spiritual side and are able to speak with the Bane part of yourself. When you speak with your Bane, you appear to be talking animatedly to yourself. Your Bane whispers dark secrets to the tattered remains of your soul, and your soul withers a little more with each vile revelation. Your Storyteller will create the Bane, but will not reveal to you the extent of its knowledge or its secret powers. While your Bane will not guide you all the time, at moments of deep urgency it may be able to provide you with clues or information about the Wyrm or Garou worlds which you would not otherwise know.",
 	  "system": "",
 	  "game_line": "Werewolf: The Apocalypse",
 	  "category": "merits",
-	  "stat_type": "",
+	  "stat_type": "supernatural",
 	  "values": [3],
 	  "possessed_type": "Fomori"
 	},
 	{
 	  "name": "Hidden Power",
-	  "description": "	None of your Powers or Taints are physically obvious. You appear to be human (or whatever you were before becoming a fomor). If you have extra limbs or body barbs, they are retractable and hidden under a sheath of skin. You seem to be one of the crowd.",
+	  "description": "None of your Powers or Taints are physically obvious. You appear to be human (or whatever you were before becoming a fomor). If you have extra limbs or body barbs, they are retractable and hidden under a sheath of skin. You seem to be one of the crowd.",
 	  "system": "",
 	  "game_line": "Werewolf: The Apocalypse",
-	  "category": "flaws",
-	  "stat_type": "",
+	  "category": "merits",
+	  "stat_type": "supernatural",
 	  "values": [1],
 	  "possessed_type": "Fomori"
 	},
 	{
 	  "name": "Stigmata of the Wyrm",
-	  "description": "	These are marks of the Urge Wyrms which sometimes commune with favored servants. To “win” one, a fomor must first understand the aspects of the Wyrm (which indicates some level of insanity to begin with), then contact her own inner corruption (to discover which aspect favors her), manifest that Urge in word, body and deed, and often undergo some hideous ordeal of consecration. Seeking the Wyrm within often requires a perverted visionquest; this usually involves breaking away from all friends (including other fomori), and indulging in some excess related to the vision your character seeks until some truth appears. These excesses can include killing sprees, near-fatal drug binges, wanton cruelty (brutalizing homeless folks, children, animals, etc.), prolonged depressions, psychotic episodes, mad orgies and other deadly activities. At some point, a vision of the Urge Wyrm’s Malign Incarna appears to the fortunate one and sends her through some excruciating test of loyalty; such ordeals are related to the Urge Wyrm involved — tests of greed, cruelty, deceit, etc. A fomor who survives the test (many do not) receives the mark of favor. Like the tests, stigmata marks relate to the Urge Wyrm the character serves: Pesuak, Lord of Lies, often gifts his chosen with forked tongues. Karnala, Desire’s Urge, has more attractive marks, often hypnotically intriguing tattoos. Foobok gifts his followers with forever-open eyes, while Pizak’s mark consists of massive brands which never heal. The exact nature of the mark is left to the troupe’s imagination, but it should reflect some appropriately deviant behavior. Stigmata can be really useful in social situations with others who understand the mark; Black Spiral Dancers may revere the chosen (or may kill her anyway — they are demented, after all!), and Pentex superiors and Wyrm-mystics will give her respect. Even humans who embrace the Urge Wyrm’s principles will regard the chosen one with a measure of awe and reverence. Stigmata are usually worth one to three extra dice for Social rolls when dealing with the Wyrm-tainted. Naturally, the character will stand out like a beacon to Sense Wyrm and other such Gifts, and must continue to serve the Urge Wyrm whenever possible.",
+	  "description": "These are marks of the Urge Wyrms which sometimes commune with favored servants. To “win” one, a fomor must first understand the aspects of the Wyrm (which indicates some level of insanity to begin with), then contact her own inner corruption (to discover which aspect favors her), manifest that Urge in word, body and deed, and often undergo some hideous ordeal of consecration. Seeking the Wyrm within often requires a perverted visionquest; this usually involves breaking away from all friends (including other fomori), and indulging in some excess related to the vision your character seeks until some truth appears. These excesses can include killing sprees, near-fatal drug binges, wanton cruelty (brutalizing homeless folks, children, animals, etc.), prolonged depressions, psychotic episodes, mad orgies and other deadly activities. At some point, a vision of the Urge Wyrm's Malign Incarna appears to the fortunate one and sends her through some excruciating test of loyalty; such ordeals are related to the Urge Wyrm involved — tests of greed, cruelty, deceit, etc. A fomor who survives the test (many do not) receives the mark of favor. Like the tests, stigmata marks relate to the Urge Wyrm the character serves: Pesuak, Lord of Lies, often gifts his chosen with forked tongues. Karnala, Desire's Urge, has more attractive marks, often hypnotically intriguing tattoos. Foobok gifts his followers with forever-open eyes, while Pizak's mark consists of massive brands which never heal. The exact nature of the mark is left to the troupe's imagination, but it should reflect some appropriately deviant behavior. Stigmata can be really useful in social situations with others who understand the mark; Black Spiral Dancers may revere the chosen (or may kill her anyway — they are demented, after all!), and Pentex superiors and Wyrm-mystics will give her respect. Even humans who embrace the Urge Wyrm's principles will regard the chosen one with a measure of awe and reverence. Stigmata are usually worth one to three extra dice for Social rolls when dealing with the Wyrm-tainted. Naturally, the character will stand out like a beacon to Sense Wyrm and other such Gifts, and must continue to serve the Urge Wyrm whenever possible.",
 	  "system": "",
 	  "game_line": "Werewolf: The Apocalypse",
-	  "category": "flaws",
-	  "stat_type": "",
+	  "category": "merits",
+	  "stat_type": "supernatural",
 	  "values": [4],
 	  "possessed_type": "Fomori"
-	},
+	}
 ]

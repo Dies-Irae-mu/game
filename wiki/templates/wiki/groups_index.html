@@ -1,0 +1,42 @@
+{% extends "wiki/base_wiki.html" %}
+{% load static %}
+{% load wiki_filters %}
+
+{% block titleblock %}Group Pages{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <h1>Group Pages</h1>
+    <p>This section contains pages for player-created groups like werewolf packs, vampire covens, mage cabals, and player-run businesses.</p>
+    
+    <div class="header-actions">
+        {% if can_create %}
+        <a href="{% url 'wiki:create_group' %}" class="btn">Create New Group Page</a>
+        {% endif %}
+        <a href="{% url 'wiki:plots_index' %}" class="btn">View Plots</a>
+        <a href="{% url 'wiki:page_list' %}" class="btn">All Wiki Pages</a>
+    </div>
+</div>
+
+<div class="wiki-pages full-width">
+    {% if groups %}
+        <div class="list-group">
+        {% for page in groups %}
+            <a href="{% url 'wiki:group_detail' page.slug %}" class="list-group-item list-group-item-action">
+                <h5 class="mb-1">{{ page.title }}</h5>
+                {% if page.brief_description %}
+                <div class="brief-description">{{ page.brief_description }}</div>
+                {% endif %}
+                <small>Last edited by {{ page.last_editor|display_username }} on {{ page.updated_at|date }}</small>
+            </a>
+        {% endfor %}
+        </div>
+    {% else %}
+        <p>No group pages have been created yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<!-- Empty sidebar to ensure all content is in the main column -->
+{% endblock %} 

@@ -721,7 +721,7 @@ class Character(DefaultCharacter):
             # Special handling for Changelings looking at other Changelings or Kinain
             if target_splat == 'Changeling' or is_kinain:
                 looker.msg("|mMore about this {} is hidden beyond mortal eyes...|n".format(
-                    "Kithain" if target_splat == 'Changeling' else "Kinain"
+                    "Fae" if target_splat == 'Changeling' else "Kinain"
                 ))
             else:
                 # Get target's Banality from pools.dual

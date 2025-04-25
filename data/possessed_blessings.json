@@ -16,7 +16,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "General"
   },
   {
@@ -26,7 +26,7 @@
     "game_line": "Werewolf: The Apocalypse", 
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "General"
   },
 	{
@@ -36,7 +36,7 @@
 	  "game_line": "Werewolf: The Apocalypse",
 	  "category": "powers",
 	  "stat_type": "blessing",
-	  "values": [1],
+	  "values": [5],
 	  "possessed_type": "Kami"
 	},
 	{
@@ -56,7 +56,7 @@
 	  "game_line": "Werewolf: The Apocalypse",
 	  "category": "powers",
 	  "stat_type": "blessing",
-	  "values": [2],
+	  "values": [3],
 	  "possessed_type": "Fomori"
 	},
 	{
@@ -76,7 +76,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "General"
   },
   {
@@ -96,7 +96,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "General"
   },
   {
@@ -116,7 +116,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [4],
     "possessed_type": "General"
   },
   {
@@ -136,7 +136,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing", 
-    "values": [1,2,3],
+    "values": [5, 10, 15],
     "possessed_type": "General"
   },
   {
@@ -156,18 +156,18 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [2],
     "possessed_type": "General"
   },
   {
-    "name": "Size",
+    "name": "Size (Possessed)",
     "description": "While the power Size Shift allows for dramatic but temporary changes in mass, Size represents permanent changes in size and mass, both increases and decreases.",
     "system": "Size can be taken three times. Each purchase either increases or decreases the size of the Kami. Each increase adds one Health Level and one point of both Strength and Stamina. Each decrease reduces her maximum Strength and Stamina by one each, and increases the difficulty of rolls to to spot her or to hit her in combat by 1.",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1,2,3],
-    "possessed_type": "General"
+    "values": [4, 6],
+    "possessed_type": "Kami"
   },
   {
     "name": "Size Shift",
@@ -176,7 +176,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1,2,3],
+    "values": [2, 4, 6],
     "possessed_type": "General"
   },
   {
@@ -186,8 +186,8 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1,2,3,4,5],
-    "possessed_type": "General"
+    "values": [3,6,9,12,15],
+    "possessed_type": "Kami"
   },
   {
     "name": "Spirit Charm",
@@ -196,17 +196,17 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1,2,3,4,5],
-    "possessed_type": "General"
+    "values": [1],
+    "possessed_type": "Kami"
   },
   {
     "name": "Spirit Ties",
     "description": "The possessed has an innate connection to the spirit world.",
-    "system": "This power can be bought multiple times; each time, the possessed gains one point of Gnosis (up to a maximum of 5). The possessed can't step sideways into the Umbra, but she can activate fetishes (Gaian for Kami, Bane for Fomori)",
+    "system": "The fomor has an innate connection to the spirit world. Buying this power grants the Fomor 1 point of Gnosis which they may raise as normal using XP or Bonus Points (up to a maximum of 5). The fomor can't step sideways into the Umbra, but she can activate Bane fetishes.",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1,2,3,4,5],
+    "values": [2],
     "possessed_type": "General"
   },
   {
@@ -216,7 +216,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "General"
   },
   {
@@ -226,7 +226,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [2],
     "possessed_type": "General"
   },
   {
@@ -246,7 +246,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "General"
   },
   {
@@ -256,7 +256,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "General"
   },
   {
@@ -266,7 +266,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [2],
     "possessed_type": "Kami"
   },
   {
@@ -316,7 +316,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Kami"
   },
   {
@@ -352,7 +352,7 @@
   {
     "name": "Ritekeeper",
     "description": "The Kami can learn Garou rites, through actually performing them is particularly taxing. Most often, they're gifted with the knowledge of a Rite so they might pass it to Garou to whom it will be most useful.",
-    "system": "The Kami knows Rites with a total level of her permanent Gnosis. In addition to any cost a Rite may have, the Kami must spend a point of Willpower to perform them. When teaching the Rite to a shapeshifter, the time it takes him to learn the rite is cut in half.",
+    "system": "The Kami knows Rites with a total level of her permanent Gnosis. In addition to any cost a Rite may have, the Kami must spend a point of Willpower to perform them. When teaching the Rite to a shapeshifter, the time it takes him to learn the rite is cut in half. Rites that are tribe specific are excluded. After purchasing one level of this blessing, the Kami is able to purcahse rites at XP cost.",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
@@ -366,7 +366,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1,2,3,4],
+    "values": [1,4],
     "possessed_type": "Kami"
   },
   {
@@ -436,7 +436,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1,2,3],
+    "values": [2, 4, 6],
     "possessed_type": "Fomori"
   },
   {
@@ -446,7 +446,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Fomori"
   },
   {
@@ -456,7 +456,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Fomori"
   },
   {
@@ -476,7 +476,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Fomori"
   },
   {
@@ -496,7 +496,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Fomori"
   },
   {
@@ -506,7 +506,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [2],
     "possessed_type": "Fomori"
   },
   {
@@ -516,7 +516,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [2],
     "possessed_type": "Fomori"
   },
   {
@@ -526,7 +526,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [5],
     "possessed_type": "Fomori"
   },
   {
@@ -536,7 +536,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Fomori"
   },
   {
@@ -546,7 +546,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [5],
     "possessed_type": "Fomori"
   },
   {
@@ -556,7 +556,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [2],
     "possessed_type": "Fomori"
   },
   {
@@ -566,17 +566,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
-    "possessed_type": "Fomori"
-  },
-  {
-    "name": "Fiery Discharge",
-    "description": "The fomor can spew a fiery fluid from one of its existing orifices or a new one created through mutation. The fluid could be any variant of a natural discharge. Whatever form the discharge assumes, it burns. An additional mutated gland secretes and forcefully expresses this fluid, but readying it before each burst takes time.",
-    "system": "This attack requires a Wits + Athletics roll, and normal modifiers from Firearms attacks apply. The attack can be made once every other round; the Berserker power does not allow additional attacks with the discharge. Each success on the attack roll not only increases the chance to hit, but also defines the range of the attack in yards/meters. Damage is aggravated, but it can be mitigated by Gifts like Resist Toxin.",
-    "game_line": "Werewolf: The Apocalypse",
-    "category": "powers",
-    "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Fomori"
   },
   {
@@ -596,7 +586,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [2],
     "possessed_type": "Fomori"
   },
   {
@@ -616,7 +606,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [4],
     "possessed_type": "Fomori"
   },
   {
@@ -626,7 +616,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [2],
     "possessed_type": "Fomori"
   },
   {
@@ -636,7 +626,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Fomori"
   },
   {
@@ -656,7 +646,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [5],
     "possessed_type": "Fomori"
   },
   {
@@ -666,7 +656,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Fomori"
   },
   {
@@ -686,7 +676,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [5],
     "possessed_type": "Fomori"
   },
   {
@@ -696,7 +686,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Fomori"
   },
   {
@@ -706,7 +696,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Fomori"
   },
   {
@@ -716,7 +706,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [4],
     "possessed_type": "Fomori"
   },
   {
@@ -726,7 +716,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [2],
     "possessed_type": "Fomori"
   },
   {
@@ -736,7 +726,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Fomori"
   },
   {
@@ -746,7 +736,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [2],
     "possessed_type": "Fomori"
   },
   {
@@ -756,7 +746,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Fomori"
   },
   {
@@ -766,17 +756,17 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Fomori"
   },
   {
-    "name": "Rat Head",
+    "name": "Rat Head (Possessed)",
     "description": "Did you know rats have a collapsible skeletal structure that allows them to squeeze through holes about the size of their skull? The fomor with this power can wriggle through holes as small as 5% of its ordinary circumference. Like a tiny, mischievous rat, a human-sized fomor can squeeze through a hole about the size of a quarter.",
     "system": "The fomor rolls Dexterity + Athletics (difficulty 6). The effects last for one 'slide' through a hole (until the fomor reaches an area wider than its original size). A failed roll means the fomor is stuck; this requires further attempts, but each successive attempt increases the difficulty by one. While squeezing like this, the fomor can move at half her normal running speed.",
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [2],
     "possessed_type": "Fomori"
   },
   {
@@ -786,7 +776,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [5],
     "possessed_type": "Fomori"
   },
   {
@@ -796,7 +786,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [5],
     "possessed_type": "Fomori"
   },
   {
@@ -806,7 +796,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [2],
     "possessed_type": "Fomori"
   },
   {
@@ -816,7 +806,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Fomori"
   },
   {
@@ -846,8 +836,58 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [2],
     "possessed_type": "Fomori"
+  },
+    {
+    "name": "Moonstone",
+    "description": "This power gives the Kami's body properties similar to a caern's pathstone, allowing Moon Bridges to link directly to her person.",
+    "system": " This power does not automatically confer the Rite of the Opening Bridge, though it makes that rite possible within the bounds of the Kami herself. The Kami must also purchase the power Spirit Den to purchase Moonstone.",
+    "game_line": "Werewolf: The Apocalypse",
+    "category": "powers",
+    "stat_type": "blessing",
+    "values": [4],
+    "possessed_type": "Kami"
+  },
+    {
+    "name": "Wellspring",
+    "description": "The Kami acts in much the same manner as a caern, providing spiritual sustenance for any shapeshifters who spent enough time in her boundaries.",
+    "system": "The Kami spends two points of Gnosis per caern level, up to ten points to make a Level 5 caern. For the next lunar month, she is a caern of that level for all purposes, though she does not have a type. The Kami can terminate this power at any time before the end of the month. When it ends, she regains half of the Gnosis she invested to become a caern. All Rorqual possess this power for free. ",
+    "game_line": "Werewolf: The Apocalypse",
+    "category": "powers",
+    "stat_type": "blessing",
+    "values": [5],
+    "possessed_type": "Kami"
+  },
+      {
+    "name": "Enchanting Voice",
+    "description": "They may entralll listeners with a song.",
+    "system": "As long as the character sings, anyone within the area must make a Willpower roll (resisted by the character's Charisma + Performance) to take any action other than listen to the song. If the listeners are aware of some form of impending or even present danger, they receive three additional dice on the roll. If they are wounded while listening to the song, the effect of the character's voice is broken. The possessed character's voice has no power to influence listeners in other ways (barring other powers of similar nature, such as Spirit Gift: Roll Over).",
+    "game_line": "Werewolf: The Apocalypse",
+    "category": "powers",
+    "stat_type": "blessing",
+    "values": [1],
+    "possessed_type": "Kami"
+  },
+    {
+    "name": "Safe Place",
+    "description": "This power effectively removes access to the Kami from the Umbra. She has no Penumbral shadow, and attempts to Step Sideways near her are tremendously difficult. Even when successful, they simply eject the invader at the Kami's nearest boundary.",
+    "system": "The Gauntlet around the Kami out to (Gnosis x5) yards becomes a staggering difficulty 9 to cross for travelers in the Umbra. Success does not place the potential invader on the Kami herself, but just outside the area of increased Gauntlet.",
+    "game_line": "Werewolf: The Apocalypse",
+    "category": "powers",
+    "stat_type": "blessing",
+    "values": [3],
+    "possessed_type": "Kami"
+  },
+    {
+    "name": "Spirit Den",
+    "description": "The Gauntlet of the Kami's land-body is thin enough that passing through the Kami's center is as effective as Stepping Sideways into the Umbra. Her reflection in the Penumbra is identical to her earthly body.",
+    "system": "No roll is needed to pass from the Umbra to the Kami, and vice versa. If this power is taken with Safe Place, treat the reflection as if the Rite of the Shrouded Glen (W20, p.207) has been performed successfully.",
+    "game_line": "Werewolf: The Apocalypse",
+    "category": "powers",
+    "stat_type": "blessing",
+    "values": [3],
+    "possessed_type": "Kami"
   },
   {
     "name": "Stomach Pumper",
@@ -856,7 +896,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [2],
     "possessed_type": "Fomori"
   },
   {
@@ -866,7 +906,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [4],
     "possessed_type": "Fomori"
   },
   {
@@ -876,7 +916,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1,2,3,4,5],
+    "values": [2, 4, 6, 8, 10],
     "possessed_type": "Fomori"
   },
   {
@@ -886,7 +926,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [2],
     "possessed_type": "Fomori"
   },
   {
@@ -896,7 +936,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Fomori"
   },
   {
@@ -906,7 +946,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [4],
     "possessed_type": "Fomori"
   },
   {
@@ -916,7 +956,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [4],
     "possessed_type": "Fomori"
   },
   {
@@ -926,7 +966,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [3],
     "possessed_type": "Fomori"
   },
   {
@@ -936,7 +976,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [4],
     "possessed_type": "Fomori"
   },
   {
@@ -946,7 +986,7 @@
     "game_line": "Werewolf: The Apocalypse",
     "category": "powers",
     "stat_type": "blessing",
-    "values": [1],
+    "values": [2],
     "possessed_type": "Fomori"
   },
   {

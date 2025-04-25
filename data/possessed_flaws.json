@@ -1,21 +1,21 @@
 [
 	{
 	  "name": "Spirit's Mark (Flaw)",
-	  "description": "The spirit riding you bleeds over into the physical world a bit. You aren’t physically any different (not as a result of this Trait, anyway) but you exude a certain aura. What exactly that aura feels like depends on a) whether Spirit’s Mark is a Merit or a Flaw and b) what kind of spirit possesses you. An attractive fomor might reek of pure lust, granting a -2 on all Seduction-related difficulties. A Kami possesses by a predator-spirit might engender a feeling similar to the Curse in humans (+1 to Social difficulties not related to Intimidation). The Storyteller should work with the player to decide what kind of feeling the character gives off and how it translates into game play. Generally, it should be worth a difficulty adjustment of 1 or 2, depending on how specific the feeling is.",
+	  "description": "The spirit riding you bleeds over into the physical world a bit. You aren't physically any different (not as a result of this Trait, anyway) but you exude a certain aura. What exactly that aura feels like depends on a) whether Spirit's Mark is a Merit or a Flaw and b) what kind of spirit possesses you. An attractive fomor might reek of pure lust, granting a -2 on all Seduction-related difficulties. A Kami possesses by a predator-spirit might engender a feeling similar to the Curse in humans (+1 to Social difficulties not related to Intimidation). The Storyteller should work with the player to decide what kind of feeling the character gives off and how it translates into game play. Generally, it should be worth a difficulty adjustment of 1 or 2, depending on how specific the feeling is.",
 	  "system": "",
 	  "game_line": "Werewolf: The Apocalypse",
 	  "category": "flaws",
-	  "stat_type": "",
+	  "stat_type": "supernatural",
 	  "values": [2],
 	  "possessed_type": "General"
 	},
 	{
 	  "name": "Known to the Enemy",
-	  "description": "	They've got your number. Someone on the other side knows about you, what you are, and has a general idea of where to find you. If you're a fomor, this might be a Garou or another Gaian shapeshifter. If you're a Kami, this might be a Black Spiral Dancer, perhaps, or a powerful fomor. This Flaw doesn't assume that the enemy is actively hunting you, but if you do anything too conspicuous, they might decide that you're worth the attention.",
+	  "description": "They've got your number. Someone on the other side knows about you, what you are, and has a general idea of where to find you. If you're a fomor, this might be a Garou or another Gaian shapeshifter. If you're a Kami, this might be a Black Spiral Dancer, perhaps, or a powerful fomor. This Flaw doesn't assume that the enemy is actively hunting you, but if you do anything too conspicuous, they might decide that you're worth the attention.",
 	  "system": "",
 	  "game_line": "Werewolf: The Apocalypse",
 	  "category": "flaws",
-	  "stat_type": "",
+	  "stat_type": "social",
 	  "values": [3],
 	  "possessed_type": "General"
 	},
@@ -25,18 +25,18 @@
 	  "system": "",
 	  "game_line": "Werewolf: The Apocalypse",
 	  "category": "flaws",
-	  "stat_type": "",
+	  "stat_type": "physical",
 	  "values": [1],
 	  "possessed_type": "General"
 	},
 	{
 	  "name": "Scary Presence",
-	  "description": "The Wyrm rides you always; no matter how you act or appear, you're cursed to frighten people by your very presence. This Flaw has no physical manifestation — you scare folks simply by existing. Mundane humans will avoid you however they can, and may become violent if pressed. Even other fomori will sense the taint that infects your soul; they may not flee, but you won’t be popular, either. Loneliness is your lot forever.",
+	  "description": "The Wyrm rides you always; no matter how you act or appear, you're cursed to frighten people by your very presence. This Flaw has no physical manifestation — you scare folks simply by existing. Mundane humans will avoid you however they can, and may become violent if pressed. Even other fomori will sense the taint that infects your soul; they may not flee, but you won't be popular, either. Loneliness is your lot forever.",
 	  "system": "",
 	  "game_line": "Werewolf: The Apocalypse",
 	  "category": "flaws",
-	  "stat_type": "",
+	  "stat_type": "supernatural",
 	  "values": [2],
 	  "possessed_type": "Fomori"
-	},
+	}
 ]

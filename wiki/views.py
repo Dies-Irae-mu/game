@@ -1,11 +1,17 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import DetailView
-from .models import WikiPage
+from .models import WikiPage, FeaturedImage
 from django.db.models import Q, F
 from django.db.models.functions import Length
 from django.core.paginator import Paginator
 import logging
 from evennia.objects.models import ObjectDB
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden, JsonResponse, Http404
+from django.urls import reverse
+from django.contrib import messages
+from django.views.decorators.http import require_POST
+import markdown2
 
 logger = logging.getLogger(__name__)
 
@@ -35,10 +41,18 @@ def page_detail(request, slug):
     # Get related articles
     related_articles = page.related_to.all().order_by('title')
     
+    # Check if the current user can edit this page
+    # Staff can always edit any page
+    if request.user.is_authenticated and request.user.is_staff:
+        can_edit = True
+    else:
+        can_edit = page.can_edit(request.user) if request.user.is_authenticated else False
+    
     context = {
         'page': page,
         'featured_articles': featured_articles,
-        'related_articles': related_articles
+        'related_articles': related_articles,
+        'can_edit': can_edit
     }
     
     return render(request, 'wiki/base_wiki.html', context)
@@ -69,6 +83,9 @@ class WikiPageDetailView(DetailView):
             context['related_articles'] = self.object.related_to.filter(
                 published=True
             )
+            
+            # Check if the current user can edit this page
+            context['can_edit'] = self.object.can_edit(self.request.user) if self.request.user.is_authenticated else False
         
         return context
 
@@ -228,3 +245,301 @@ def search_wiki(request):
             'error': "An error occurred while performing the search."
         }
         return render(request, 'wiki/search_results.html', context)
+
+
+def groups_index(request):
+    """Display list of all group pages."""
+    groups = WikiPage.get_groups().order_by('title')
+    
+    context = {
+        'groups': groups,
+        'featured_articles': WikiPage.objects.filter(
+            is_featured=True,
+            published=True
+        ).order_by('featured_order')[:10],
+        'can_create': request.user.is_authenticated,
+    }
+    
+    return render(request, 'wiki/groups_index.html', context)
+
+
+def plots_index(request):
+    """Display list of all plot pages."""
+    plots = WikiPage.get_plots().order_by('title')
+    
+    context = {
+        'plots': plots,
+        'featured_articles': WikiPage.objects.filter(
+            is_featured=True,
+            published=True
+        ).order_by('featured_order')[:10],
+        'can_create': request.user.is_authenticated,
+    }
+    
+    return render(request, 'wiki/plots_index.html', context)
+
+
+@login_required
+def create_page(request, page_type=WikiPage.REGULAR):
+    """Create a new wiki page with the specified page type."""
+    # Check permissions - only staff can create regular pages
+    if page_type == WikiPage.REGULAR and not request.user.is_staff:
+        return HttpResponseForbidden("You don't have permission to create this type of page.")
+    
+    if request.method == 'POST':
+        title = request.POST.get('title', '')
+        content = request.POST.get('content', '')
+        brief_description = request.POST.get('brief_description', '')
+        banner_image = request.FILES.get('banner_image', None)
+        featured_image = request.FILES.get('featured_image', None)
+        show_texture = request.POST.get('show_texture', 'on') == 'on'
+        
+        if not title:
+            messages.error(request, "Title is required")
+            return render(request, 'wiki/create_page.html', {'page_type': page_type})
+        
+        # Create the page
+        page = WikiPage(
+            title=title,
+            content=content,
+            brief_description=brief_description,
+            page_type=page_type,
+        )
+        
+        # Save with the current user
+        page.save(current_user=request.user)
+        
+        # Handle images if provided
+        if banner_image or featured_image:
+            featured_img_obj = FeaturedImage(page=page, show_texture=show_texture)
+            if banner_image:
+                featured_img_obj.banner = banner_image
+            if featured_image:
+                featured_img_obj.image = featured_image
+            featured_img_obj.save()
+        
+        messages.success(request, f"'{title}' has been created successfully!")
+        return redirect(page.get_absolute_url())
+    
+    # Determine page type name for template context
+    page_type_name = dict(WikiPage.PAGE_TYPE_CHOICES).get(page_type, 'Regular')
+    
+    return render(request, 'wiki/create_page.html', {
+        'page_type': page_type,
+        'page_type_name': page_type_name,
+        'allow_html': True,  # Allow HTML in content
+    })
+
+
+@login_required
+def edit_page(request, slug, return_to=None):
+    """Edit an existing wiki page."""
+    page = get_object_or_404(WikiPage, slug=slug)
+    
+    # Check if user has permission to edit this page
+    # Staff can always edit, otherwise check page permissions
+    if request.user.is_staff:
+        can_edit = True
+        template = 'wiki/edit_page.html'  # Admin template
+    else:
+        can_edit = page.can_edit(request.user)
+        template = 'wiki/player_edit.html'  # Player template
+    
+    if not can_edit:
+        return HttpResponseForbidden("You don't have permission to edit this page.")
+    
+    # Get or create featured image
+    try:
+        featured_image = page.featured_image
+    except:
+        featured_image = None
+    
+    if request.method == 'POST':
+        content = request.POST.get('content', '')
+        comment = request.POST.get('comment', '')
+        
+        # Update the page
+        page.content = content
+        
+        # Update brief_description if this is a group or plot page
+        if page.page_type in [WikiPage.GROUP, WikiPage.PLOT]:
+            brief_description = request.POST.get('brief_description', '')
+            page.brief_description = brief_description
+            
+        page.save(current_user=request.user)
+        
+        # Create a revision
+        page.revisions.create(
+            content=content,
+            editor=request.user,
+            comment=comment
+        )
+        
+        # Handle featured image if user is staff or has special permissions
+        if request.user.is_staff:
+            banner_image = request.FILES.get('banner_image', None)
+            featured_image_file = request.FILES.get('featured_image', None)
+            show_texture = request.POST.get('show_texture', 'on') == 'on'
+            
+            if banner_image or featured_image_file or show_texture is not None:
+                if not featured_image:
+                    featured_image = FeaturedImage(page=page)
+                
+                if banner_image:
+                    featured_image.banner = banner_image
+                
+                if featured_image_file:
+                    featured_image.image = featured_image_file
+                
+                featured_image.show_texture = show_texture
+                featured_image.save()
+        # If player is allowed to upload images
+        elif request.user.has_perm('wiki.can_upload_images'):
+            featured_image_file = request.FILES.get('featured_image', None)
+            
+            if featured_image_file:
+                if not featured_image:
+                    featured_image = FeaturedImage(page=page)
+                
+                featured_image.image = featured_image_file
+                featured_image.save()
+        
+        messages.success(request, f"'{page.title}' has been updated successfully!")
+        
+        # Determine where to redirect based on page type or return_to parameter
+        if return_to == 'group' or page.page_type == WikiPage.GROUP:
+            return redirect('wiki:group_detail', slug=page.slug)
+        elif return_to == 'plot' or page.page_type == WikiPage.PLOT:
+            return redirect('wiki:plot_detail', slug=page.slug)
+        else:
+            return redirect(page.get_absolute_url())
+    
+    # Determine if the user can upload images
+    can_upload_images = request.user.is_staff or request.user.has_perm('wiki.can_upload_images')
+    
+    context = {
+        'page': page,
+        'featured_image': featured_image,
+        'allow_html': True,  # Allow HTML in content
+        'can_upload_images': can_upload_images,
+    }
+    
+    # Add return_to to context if provided
+    if return_to:
+        context['return_to'] = return_to
+    
+    return render(request, template, context)
+
+
+@login_required
+@require_POST
+def preview_markdown(request):
+    """Preview markdown content."""
+    content = request.POST.get('content', '')
+    
+    # Use markdown2 (or any other markdown library you prefer)
+    markdowner = markdown2.Markdown(extras=[
+        'fenced-code-blocks',
+        'tables',
+        'break-on-newline',
+        'header-ids',
+        'strike',
+        'footnotes'
+    ])
+    
+    html = markdowner.convert(content)
+    
+    return JsonResponse({
+        'success': True,
+        'html': html
+    })
+
+
+def create_group(request):
+    """Create a new group page."""
+    return create_page(request, page_type=WikiPage.GROUP)
+
+
+def create_plot(request):
+    """Create a new plot page."""
+    return create_page(request, page_type=WikiPage.PLOT)
+
+
+def group_detail(request, slug):
+    """Display a group wiki page."""
+    page = get_object_or_404(WikiPage, slug=slug, page_type=WikiPage.GROUP)
+    
+    # Get featured articles
+    featured_articles = WikiPage.objects.filter(
+        is_featured=True,
+        published=True
+    ).order_by('featured_order')[:10]
+    
+    # Get related articles
+    related_articles = page.related_to.all().order_by('title')
+    
+    # Check if the current user can edit this page
+    if request.user.is_authenticated and request.user.is_staff:
+        can_edit = True
+    else:
+        can_edit = page.can_edit(request.user) if request.user.is_authenticated else False
+    
+    context = {
+        'page': page,
+        'featured_articles': featured_articles,
+        'related_articles': related_articles,
+        'can_edit': can_edit,
+        'is_group_page': True
+    }
+    
+    return render(request, 'wiki/base_wiki.html', context)
+
+
+def plot_detail(request, slug):
+    """Display a plot wiki page."""
+    page = get_object_or_404(WikiPage, slug=slug, page_type=WikiPage.PLOT)
+    
+    # Get featured articles
+    featured_articles = WikiPage.objects.filter(
+        is_featured=True,
+        published=True
+    ).order_by('featured_order')[:10]
+    
+    # Get related articles
+    related_articles = page.related_to.all().order_by('title')
+    
+    # Check if the current user can edit this page
+    if request.user.is_authenticated and request.user.is_staff:
+        can_edit = True
+    else:
+        can_edit = page.can_edit(request.user) if request.user.is_authenticated else False
+    
+    context = {
+        'page': page,
+        'featured_articles': featured_articles,
+        'related_articles': related_articles,
+        'can_edit': can_edit,
+        'is_plot_page': True
+    }
+    
+    return render(request, 'wiki/base_wiki.html', context)
+
+
+@login_required
+def edit_group(request, slug):
+    """Edit a group wiki page."""
+    # Get the group page
+    page = get_object_or_404(WikiPage, slug=slug, page_type=WikiPage.GROUP)
+    
+    # Redirect to the standard edit page view with a return_to parameter
+    return edit_page(request, slug, return_to='group')
+
+
+@login_required
+def edit_plot(request, slug):
+    """Edit a plot wiki page."""
+    # Get the plot page
+    page = get_object_or_404(WikiPage, slug=slug, page_type=WikiPage.PLOT)
+    
+    # Redirect to the standard edit page view with a return_to parameter
+    return edit_page(request, slug, return_to='plot')

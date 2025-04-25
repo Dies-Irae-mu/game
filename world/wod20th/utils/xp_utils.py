@@ -335,6 +335,285 @@ SHIFTER_MAPPINGS = {
         }
     }
 }
+GENERAL_SHIFTER_GIFTS = {
+    'Ajaba': [
+        'Eye of the Hunter',
+        'Wolf at the Door',
+        'Infectious Laughter',
+        'Primal Anger',
+        'Sense Prey',
+        'Curse of Hatred',
+        "Man's Skin",
+        'Odious Aroma',
+        'Pulse of the Prey',
+        'Clenched Jaw',
+        'Gift of the Skunk', 
+        'Laugh of the Hyena',
+        'Crushing Jaws',
+        'Feral Grin',
+        'Laughter of the Soul',
+        'Culling the Weak',
+        'Gnaw',
+        'Gorge',
+        'Endurance of Heimdall',
+        'Survivor',
+        'Withering Stare'
+    ],
+    'Ananasi': [
+        'Balance',
+        'Spirit of the Lizard',
+        'Many Eyes',
+        'Resist Pain',
+        'Resist Toxin',
+        'Stolen Moments',
+        'Hand Fangs',
+        'Man-Spider Form',
+        'Replenishment of the Flesh',
+        'Gift of the Porcupine',
+        'Blood Pump',
+        'Great Leap',
+        'Catfeet',
+        'Entropic Bite',
+        'Hydraulic Strength',
+        'Carapace',
+        'Survivor'
+    ],
+    'Bastet': [
+        'Banish Sickness',
+        'Catfeet',
+        'Razor Claws',
+        "Mother's Touch",
+        'Open Seal',
+        'Sense Magic',
+        'Truth of Gaia',
+        'Sense Wyrm',
+        'Silent Stalking',
+        'Eyes of the Cat',
+        'Staredown',
+        'Spirit of the Fray',
+        "Night's Passage",
+        'Pulse of the Prey',
+        'Sense Silver',
+        'Shriek',
+        'Taking the Forgotten',
+        'Caper',
+        'Scrying',
+        "Impala's Flight",
+        'Invisibility',
+        'Mental Speech',
+        'Clawstorm',
+        'Walking Between Worlds',
+        'Silver Claws',
+        'Perfect Passage',
+        'Withering Stare'
+    ],
+    'Corax': [
+        'Enemy Ways',
+        'Morse',
+        'Open Seal',
+        'Persuasion', 
+        "Raven's Gleaning",
+        "Scent of the True Form",
+        'Spirit Speech',
+        'Truth of Gaia',
+        'Voice of the Mimic',
+        'Carrion\'s Call',
+        'Messenger\'s Fortitude',
+        'Razor Feathers',
+        'Sky\'s Beneficence',
+        'Speech of the World',
+        'Swallow\'s Return',
+        'Taking the Forgotten',
+        'Whisper Catching',
+        'Spider\'s Song',
+        'Dead Talk',
+        'Eyes of the Eagle',
+        'Hummingbird Dart',
+        'Mynah\'s Touch',
+        'Scrying',
+        'Sense the Unnatural',
+        'Sun\'s Guard',
+        'Attunement',
+        'Airt Sense Gift',
+        'Bloody Feather Storm',
+        'Flight of Separation',
+        'Gauntlet Runner',
+        'Kiss of Helios',
+        'Deceptive Demise',
+        'Portents',
+        'Theft of Stars',
+        'Thieving Talons of the Magpie'
+    ],
+    'Gurahl': [
+        'Desperate Strength',
+        "Mother's Touch",
+        'Resist Pain',
+        'Nature\'s Plenty',
+        'Sense Wyrm',
+        'Danger Sense Gift',
+        'Resist Toxin',
+        'Wyld Resurgence',
+        'Calm',
+        'True Fear',
+        'Para Bellum',
+        'Treeshake',
+        'Calm the Savage Beast',
+        'Dreams fo the Buri-Jaan',
+        'Lover\'s Touch',
+        'Adaptation',
+        'Heart of the Mountain',
+        'Bury the Wolf',
+        'Masking the Hunted',
+        'Gaia\'s Breath',
+        'Gentle Soul'
+
+    ],
+    'Kitsune': [
+        'Chi Sense',
+        'Mindspeak',
+        'Scent of Running Water',
+        'Moon Dance',
+        'Sense Magic',
+        'Spirit Speech',
+        'Ghost Speech',
+        'Puppeteer\'s Secret',
+        'Shadow-Fan-Flowers',
+        'Possession'
+    ],
+    'Mokole': [
+        'Falling Touch',
+        'Fatal Flaw', 
+        'Inspiration',
+        'Razor Claws',
+        'Sense Wyrm',
+        'Shed', 
+        'Scent of the True Form',
+        'Speed of Thought',
+        'Blessings of the Nest',
+        'Reptoid Form',
+        'Sense Silver',
+        'Silver Claws',
+        'Odious Aroma',
+        'True Fear',
+        'Dragon\'s Breath',
+        'Walking Between Worlds',
+        'Attunement',
+        'Cocoon',
+        'Serenity',
+        'Grasp the Beyond',
+        'Song of the Great Beast'
+    ],
+    'Nagah': [
+        'Eyes of the Dragon Kings',
+        'Lizard\'s Favor',
+        'Scent of Running Water',
+        'Sense Wyrm',
+        'Fatal Flaw',
+        'Shed', 
+        'Burrow',
+        'Mindspeak',
+        'Pulse of the Prey',
+        'Veil of the Wani',
+        'Blessings of Kali', 
+        'Combat Healing', 
+        'Pure Venom',
+        'Darting Fangs',
+        'Swimming the Spirit River',
+        'Breath of the Dragon Lords'
+    ],
+    'Nuwisha': [
+        'Camouflage',
+        "Coyote's Intuition",
+        'Earworm',
+        'Emperor\'s Clothes',
+        'Finders Keepers',
+        'Laugh of the Hyena',
+        'Speed of Thought',
+        'Salaryman',
+        'Scent of Sweet Honey',
+        'Secret Question',
+        'Sleep of the Ages',
+        'Shed',
+        'Spirit Speech',
+        'Swollen Tongue',
+        'Man\'s Skin',
+        'Two Tongues',
+        'Beneath the Electron Bridge',
+        'Command Spirit',
+        'Curse of Tiresias',
+        'Distractions',
+        'Gift of the Termite',
+        'New Face',
+        'Odious Aroma',
+        'Spirit of the Fish',
+        'Sheep\'s Clothing',
+        'Suspicious Glance',
+        'Tiny Coyote',
+        'Voice Bank',
+        'Blisters',
+        'False Spoor',
+        'Fool\'s Fortune',
+        'Forbidden Words',
+        'Gift of Rage',
+        'Happy Thoughts',
+        'Now You Don\'t', 
+        'Pain Remains',
+        'Spirit of the Bird',
+        'Shadow Walk',
+        'Umbral Camouflage',
+        'Pulse of the Invisible',
+        'Bridge Walker',
+        'Cartoon Physics',
+        'Disappearing Act',
+        'Grasp the Beyond',
+        'Locked Door',
+        'Phantasm',
+        'Playing the Heart-Strings',
+        'Trickster\'s Skin',
+        'Assimilation',
+        'Fetish Doll',
+        'Ghost Danse',
+        'Friend and Foe',
+        'Stop Hitting Yourself',
+        'Ultimate Argument of Logic',
+        'Umbral Gateway'
+    ],
+    'Ratkin': [
+        'City Running',
+        'Cloak of Shadows',
+        'Darksight Gift',
+        'Spirit of the Lizard',
+        'Deep Pockets',
+        'Backbite',
+        'Squeeze',
+        'Attunement',
+        'Gnaw',
+        'Riot', 
+        'Survivor'
+    ],
+    'Rokea': [
+        'Hare\'s Leap',
+        'Fast',
+        'Killing Bite',
+        'Sense Danger',
+        'Gift of the Porcupine',
+        'Gulp', 
+        'Venom Blood',
+        'Scent of Sight',
+        'Troll Skin',
+        'Wyld Resurgence',
+        'Resist Toxin',
+        'Fathom Sight',
+        'Gift of the Ray',
+        'Rat Head',
+        'Form of Sea',
+        'Fenris\' Bite',
+        'Patient Hunter',
+        'Song of the Great Beast', 
+        'Primal Assurance',
+        'Whirlpool Maw'
+    ]   
+}
 
 def _get_primary_thaumaturgy_path(character):
     """Get the primary thaumaturgy path for a character. This is the first path purchased and the one that is the highest rating. 
@@ -464,6 +743,32 @@ def calculate_xp_cost(character, is_staff_spend: bool, stat_name: str, category:
         else:
             total_cost = calculate_ability_cost(current_rating, new_rating)
             requires_approval = new_rating > 2
+        return total_cost, requires_approval
+        
+    # Handle rites
+    elif category == 'powers' and subcategory == 'rite':
+        from world.wod20th.utils.xp_costs import calculate_rite_cost
+        # Get the rite level from the RITE_VALUES mapping
+        from world.wod20th.utils.stat_mappings import RITE_VALUES
+        
+        # Default to level 1 if we can't determine from RITE_VALUES
+        rite_level = 1
+        is_minor = False
+        
+        if stat_name in RITE_VALUES:
+            rite_values = RITE_VALUES[stat_name]
+            if rite_values and isinstance(rite_values, list):
+                rite_level = rite_values[0]  # Use the first value as the level
+            elif rite_values:
+                rite_level = rite_values
+                
+            # Check if it's a minor rite (level 0)
+            if rite_level == 0:
+                is_minor = True
+                
+        total_cost = calculate_rite_cost(rite_level, is_minor)
+        requires_approval = rite_level > 1
+        
         return total_cost, requires_approval
 
     # Handle disciplines
@@ -1135,6 +1440,101 @@ def _determine_stat_category(stat_name):
     """
     logger.log_info(f"Determining category for stat: {stat_name}")
 
+    # Import merit, flaw, and rite data structures for comprehensive checking
+    from world.wod20th.utils.stat_mappings import (
+        MERIT_VALUES, FLAW_VALUES, 
+        MERIT_CATEGORIES, FLAW_CATEGORIES,
+        ALL_MERITS, ALL_FLAWS, RITE_VALUES
+    )
+    
+    # Check for rites first - exact match only
+    stat_name_lower = stat_name.lower()
+    for rite_name in RITE_VALUES.keys():
+        if rite_name.lower() == stat_name_lower:
+            logger.log_info(f"Found exact rite match: {rite_name}")
+            return ('powers', 'rite')
+    
+    # Check for merit or flaw by direct lookup in values dictionaries
+    stat_name_lower = stat_name.lower()
+    
+    # Check if it's a merit using MERIT_VALUES - exact match only
+    for merit_name in MERIT_VALUES.keys():
+        if merit_name.lower() == stat_name_lower:
+            # Determine the merit category
+            for category, merits in MERIT_CATEGORIES.items():
+                if merit_name in merits:
+                    logger.log_info(f"Found exact merit match: {merit_name} in category {category}")
+                    return ('merits', category)
+    
+    # Check if it's a flaw using FLAW_VALUES - exact match only
+    for flaw_name in FLAW_VALUES.keys():
+        if flaw_name.lower() == stat_name_lower:
+            # Determine the flaw category
+            for category, flaws in FLAW_CATEGORIES.items():
+                if flaw_name in flaws:
+                    logger.log_info(f"Found exact flaw match: {flaw_name} in category {category}")
+                    return ('flaws', category)
+    
+    # Stricter fuzzy matching for merits - check for exact words
+    # Only consider it a match if the input is a complete multi-word match or very similar
+    if len(stat_name_lower.split()) > 1:  # Only do fuzzy matching for multi-word inputs
+        word_set = set(stat_name_lower.split())
+        close_merits = []
+        
+        for merit in ALL_MERITS:
+            if 'name' not in merit:
+                continue
+                
+            merit_name = merit['name']
+            merit_words = set(merit_name.lower().split())
+            
+            # Check if all words in stat_name are in the merit name
+            if word_set.issubset(merit_words) or merit_words.issubset(word_set):
+                # Only consider it a match if most words match
+                word_match_ratio = len(word_set.intersection(merit_words)) / max(len(word_set), len(merit_words))
+                if word_match_ratio > 0.7:  # At least 70% of words must match
+                    close_merits.append((merit, word_match_ratio))
+        
+        if close_merits:
+            best_match = max(close_merits, key=lambda x: x[1])[0]
+            merit_name = best_match['name']
+            merit_type = best_match.get('type', 'physical').lower()
+            
+            logger.log_info(f"Found strict fuzzy merit match: {merit_name} of type {merit_type}")
+            return ('merits', merit_type)
+    
+    # Stricter fuzzy matching for flaws - check for exact words
+    if len(stat_name_lower.split()) > 1:  # Only do fuzzy matching for multi-word inputs
+        word_set = set(stat_name_lower.split())
+        close_flaws = []
+        
+        for flaw in ALL_FLAWS:
+            if 'name' not in flaw:
+                continue
+                
+            flaw_name = flaw['name']
+            flaw_words = set(flaw_name.lower().split())
+            
+            # Check if all words in stat_name are in the flaw name
+            if word_set.issubset(flaw_words) or flaw_words.issubset(word_set):
+                # Only consider it a match if most words match
+                word_match_ratio = len(word_set.intersection(flaw_words)) / max(len(word_set), len(flaw_words))
+                if word_match_ratio > 0.7:  # At least 70% of words must match
+                    close_flaws.append((flaw, word_match_ratio))
+        
+        if close_flaws:
+            best_match = max(close_flaws, key=lambda x: x[1])[0]
+            flaw_name = best_match['name']
+            flaw_type = best_match.get('type', 'physical').lower()
+            
+            logger.log_info(f"Found strict fuzzy flaw match: {flaw_name} of type {flaw_type}")
+            return ('flaws', flaw_type)
+    
+    # Special case handling for very specific merit/flaw matches
+    if stat_name_lower == "acute sense" or stat_name_lower == "acute senses":
+        logger.log_info(f"Matched special case 'Acute Sense(s)': {stat_name}")
+        return ('merits', 'physical')
+
     # Check for rituals first - case insensitive
     stat_name_lower = stat_name.lower()
     
@@ -1166,10 +1566,19 @@ def _determine_stat_category(stat_name):
             return ('merits', merit_category)
         # Try case-insensitive match
         stat_lower = stat_name.lower()
-        for merit in merits:
-            if isinstance(merit, str) and merit.lower() == stat_lower:
-                logger.log_info(f"Found case-insensitive merit match: {merit}")
-                return ('merits', merit_category)
+        
+        # Check if merits is a dictionary or a list
+        if isinstance(merits, dict):
+            for merit_name in merits.keys():
+                if isinstance(merit_name, str) and merit_name.lower() == stat_lower:
+                    logger.log_info(f"Found case-insensitive merit match: {merit_name}")
+                    return ('merits', merit_category)
+        else:
+            # Assume it's a list-like structure
+            for merit in merits:
+                if isinstance(merit, str) and merit.lower() == stat_lower:
+                    logger.log_info(f"Found case-insensitive merit match: {merit}")
+                    return ('merits', merit_category)
 
     # Check if it's a flaw
     from world.wod20th.utils.stat_mappings import FLAW_VALUES
@@ -1180,10 +1589,19 @@ def _determine_stat_category(stat_name):
             return ('flaws', flaw_category)
         # Try case-insensitive match
         stat_lower = stat_name.lower()
-        for flaw in flaws:
-            if isinstance(flaw, str) and flaw.lower() == stat_lower:
-                logger.log_info(f"Found case-insensitive flaw match: {flaw}")
-                return ('flaws', flaw_category)
+        
+        # Check if flaws is a dictionary or a list
+        if isinstance(flaws, dict):
+            for flaw_name in flaws.keys():
+                if isinstance(flaw_name, str) and flaw_name.lower() == stat_lower:
+                    logger.log_info(f"Found case-insensitive flaw match: {flaw_name}")
+                    return ('flaws', flaw_category)
+        else:
+            # Assume it's a list-like structure
+            for flaw in flaws:
+                if isinstance(flaw, str) and flaw.lower() == stat_lower:
+                    logger.log_info(f"Found case-insensitive flaw match: {flaw}")
+                    return ('flaws', flaw_category)
 
     # Check if it's a background (case-insensitive)
     all_backgrounds = (UNIVERSAL_BACKGROUNDS + VAMPIRE_BACKGROUNDS + 
@@ -1562,12 +1980,25 @@ def calculate_gift_cost(character, gift_name, new_rating, current_rating=None):
         shifter_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
         logger.log_info(f"Calculating gift cost for {shifter_type} character")
 
-        # For Ajaba, get their aspect
+        # For shifters who have it, get their aspect
         aspect = None
-        if shifter_type == 'Ajaba':
+        if shifter_type in ['Ajaba', 'Ratkin', 'Ananasi']:
             aspect = character.db.stats.get('identity', {}).get('lineage', {}).get('Aspect', {}).get('perm', '')
-            logger.log_info(f"Ajaba character with aspect: {aspect}")
+            logger.log_info(f"Shifter character with aspect: {aspect}")
+        
+        if shifter_type in ['Ananasi']:
+            faction = character.db.stats.get('identity', {}).get('lineage', {}).get('Ananasi Faction', {}).get('perm', '')
+            logger.log_info(f"Ananasi character with faction: {faction}")
 
+        # Check if this is a general gift for this shifter type
+        if shifter_type and shifter_type != 'Garou' and gift_name in GENERAL_SHIFTER_GIFTS.get(shifter_type, []):
+            # Use in-breed cost (3 per level)
+            logger.log_info(f"Gift '{gift_name}' is a general gift for {shifter_type}. Using in-breed cost.")
+            return new_rating * 3
+        
+        # If we get here, it's not a general gift
+        logger.log_info(f"Gift '{gift_name}' is not a general gift for {shifter_type}. Using standard cost calculation.")
+    
         # Get the gift details from the database
         from world.wod20th.models import Stat
         from django.db.models import Q
@@ -2310,30 +2741,74 @@ def process_xp_spend(character, stat_name, new_rating, category, subcategory, re
             cat_subcat = _determine_stat_category(stat_name)
             if cat_subcat:
                 category, subcategory = cat_subcat
+                logger.log_info(f"Determined category: {category}, subcategory: {subcategory} for {stat_name}")
             else:
-                # Try to check if it's a merit or flaw before giving up
-                from world.wod20th.utils.stat_mappings import MERIT_VALUES, FLAW_VALUES
+                # Try to check if it's a merit, flaw, or rite before giving up
+                from world.wod20th.utils.stat_mappings import (
+                    MERIT_VALUES, FLAW_VALUES, MERIT_CATEGORIES, FLAW_CATEGORIES,
+                    RITE_VALUES
+                )
                 
-                # Check merit categories
-                for merit_category, merits in MERIT_VALUES.items():
-                    if stat_name in merits or stat_name.lower() in [m.lower() for m in merits]:
-                        logger.log_info(f"Found merit match: {stat_name} in category {merit_category}")
-                        category = 'merits'
-                        subcategory = merit_category
+                # Check for exact merit/flaw/rite match
+                stat_name_lower = stat_name.lower()
+                
+                # Check for exact rite matches
+                for rite_name in RITE_VALUES.keys():
+                    if rite_name.lower() == stat_name_lower:
+                        category = 'powers'
+                        subcategory = 'rite'
+                        stat_name = rite_name  # Use the correct case
                         break
                 
-                # Check flaw categories
+                # Check for exact merit matches
                 if not category:
-                    for flaw_category, flaws in FLAW_VALUES.items():
-                        if stat_name in flaws or stat_name.lower() in [f.lower() for f in flaws]:
-                            logger.log_info(f"Found flaw match: {stat_name} in category {flaw_category}")
-                            category = 'flaws'
-                            subcategory = flaw_category
+                    for merit_name in MERIT_VALUES.keys():
+                        if merit_name.lower() == stat_name_lower:
+                            if not is_staff_spend:
+                                return False, f"Merits require staff approval. Please use the +request command instead.", 0
+                            category = 'merits'
+                            for merit_category, merits in MERIT_CATEGORIES.items():
+                                if merit_name in merits:
+                                    subcategory = merit_category
+                                    break
+                            if not subcategory:
+                                subcategory = 'physical'  # Default
                             break
+                
+                # Check for exact flaw matches
+                if not category:
+                    for flaw_name in FLAW_VALUES.keys():
+                        if flaw_name.lower() == stat_name_lower:
+                            if not is_staff_spend:
+                                return False, f"Buying off flaws requires staff approval. Please use the +request command instead.", 0
+                            category = 'flaws'
+                            for flaw_category, flaws in FLAW_CATEGORIES.items():
+                                if flaw_name in flaws:
+                                    subcategory = flaw_category
+                                    break
+                            if not subcategory:
+                                subcategory = 'physical'  # Default
+                            break
+                
+                # Special case for Acute Sense(s)
+                if not category and (stat_name_lower == "acute sense" or stat_name_lower == "acute senses"):
+                    if not is_staff_spend:
+                        return False, f"Merits require staff approval. Please use the +request command instead.", 0
+                    category = 'merits'
+                    subcategory = 'physical'
                 
                 # If still not found
                 if not category:
                     return False, f"Could not determine category for {stat_name}", 0
+
+        # Early rejection for merits and flaws for non-staff users
+        if category in ['merits', 'flaws'] and not is_staff_spend:
+            reject_message = "Merits require staff approval" if category == 'merits' else "Buying off flaws requires staff approval"
+            return False, f"{reject_message}. Please use the +request command instead.", 0
+            
+        # Special handling for rites - level 1 rites can be purchased, higher need staff approval
+        if category == 'powers' and subcategory == 'rite' and new_rating > 1 and not is_staff_spend:
+            return False, f"Rites above level 1 require staff approval. Please use the +request command instead.", 0
 
         # Get character's splat and type
         splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
@@ -2341,7 +2816,13 @@ def process_xp_spend(character, stat_name, new_rating, category, subcategory, re
         
         if not splat:
             return False, "Character splat not set", 0
-        
+            
+        # Validate if the stat is appropriate for this character's splat (skip for staff)
+        if not is_staff_spend:
+            is_valid_for_splat, splat_validation_message = validate_stat_for_splat(character, stat_name, category, subcategory)
+            if not is_valid_for_splat:
+                return False, splat_validation_message, 0
+
         # Store the original stat name before normalization
         original_stat_name = stat_name
         
@@ -2383,25 +2864,37 @@ def process_xp_spend(character, stat_name, new_rating, category, subcategory, re
         # Calculate cost based on the category
         logger.log_info(f"Calculating cost for {canonical_gift_name or stat_name}, category: {category}, subcategory: {subcategory}")
         
-        if category == 'merits':
-            # Ensure proper merit cost calculation (5 XP per dot)
-            from world.wod20th.utils.xp_costs import calculate_merit_cost
-            cost = calculate_merit_cost(current_rating, new_rating)
-            logger.log_info(f"Merit cost for {stat_name}: {cost} XP")
-        elif category == 'flaws':
-            # Flaw costs for buying off
-            from world.wod20th.utils.xp_costs import calculate_flaw_cost
-            cost = calculate_flaw_cost(current_rating, new_rating)
-            logger.log_info(f"Flaw buyoff cost for {stat_name}: {cost} XP")
-        else:
-            # Regular cost calculation
-            cost, requires_approval = calculate_xp_cost(
-                character, is_staff_spend, canonical_gift_name or stat_name, category, subcategory, current_rating, new_rating
-            )
-            
-            # Skip approval check for staff spends
-            if requires_approval and not is_staff_spend:
-                return False, f"Staff approval required for {canonical_gift_name or stat_name} at this level", cost
+        # Special check for general gifts FIRST
+        cost = 0
+        requires_approval = False
+        
+        if category == 'powers' and subcategory == 'gift':
+            shifter_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+            if shifter_type and shifter_type != 'Garou' and (canonical_gift_name or stat_name) in GENERAL_SHIFTER_GIFTS.get(shifter_type, []):
+                logger.log_info(f"Gift '{canonical_gift_name or stat_name}' is a general gift for {shifter_type}. Using in-breed cost in process_xp_spend.")
+                cost = new_rating * 3
+        
+        # Only calculate using other methods if general gift check didn't set cost
+        if cost == 0:
+            if category == 'merits':
+                # Ensure proper merit cost calculation (5 XP per dot)
+                from world.wod20th.utils.xp_costs import calculate_merit_cost
+                cost = calculate_merit_cost(current_rating, new_rating)
+                logger.log_info(f"Merit cost for {stat_name}: {cost} XP")
+            elif category == 'flaws':
+                # Flaw costs for buying off
+                from world.wod20th.utils.xp_costs import calculate_flaw_cost
+                cost = calculate_flaw_cost(current_rating, new_rating)
+                logger.log_info(f"Flaw buyoff cost for {stat_name}: {cost} XP")
+            else:
+                # Regular cost calculation
+                cost, requires_approval = calculate_xp_cost(
+                    character, is_staff_spend, canonical_gift_name or stat_name, category, subcategory, current_rating, new_rating
+                )
+                
+                # Skip approval check for staff spends
+                if requires_approval and not is_staff_spend:
+                    return False, f"Staff approval required for {canonical_gift_name or stat_name} at this level", cost
         
         # Check if character has enough XP
         current_xp = character.db.xp.get('current', 0)
@@ -3116,3 +3609,153 @@ def validate_stat_requirements(character, stat_name, category, subcategory, new_
         return False, "Kinfolk must purchase or increase the Gnosis merit instead of directly increasing Gnosis pool", current_rating
     
     return True, "Validation passed", current_rating
+
+def validate_stat_for_splat(character, stat_name, category, subcategory):
+    """
+    Validate if a stat is appropriate for a character's splat.
+    
+    Args:
+        character: The character object
+        stat_name: The name of the stat to validate
+        category: The category of the stat
+        subcategory: The subcategory of the stat
+        
+    Returns:
+        tuple: (is_valid, message)
+    """
+    splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+    char_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+    
+    if not splat:
+        return True, ""  # If splat is not set, don't validate
+    
+    # Define splat-specific validation rules
+    # Format: stat_name.lower(): [list of valid splats]
+    stat_name_lower = stat_name.lower()
+    
+    # Special abilities validation
+    SPLAT_SPECIFIC_ABILITIES = {
+        # Shifter-specific
+        'rituals': ['Shifter', 'Mortal+'],  # Mortal+ Kinfolk can buy rituals
+        'rites': ['Shifter', 'Mortal+'],    # Mortal+ Kinfolk can buy rites
+        'primal-urge': ['Shifter'],
+        
+        # Vampire-specific
+        'blood pool': ['Vampire', 'Mortal+'],  # Mortal+ Ghouls can have blood pool
+        'generation': ['Vampire'],
+        'auspex': ['Vampire', 'Mortal+'],      # Mortal+ Ghouls can have auspex
+        'thaumaturgy': ['Vampire', 'Mortal+'], # Mortal+ Ghouls can have thaumaturgy
+        'necromancy': ['Vampire'],
+        
+        # Mage-specific
+        'arete': ['Mage'],
+        'avatar': ['Mage'],
+        'correspondence': ['Mage'],
+        'entropy': ['Mage'],
+        'forces': ['Mage'],
+        'life': ['Mage'],
+        'matter': ['Mage'],
+        'mind': ['Mage'],
+        'prime': ['Mage'],
+        'spirit': ['Mage'],
+        'time': ['Mage'],
+        'dimensional science': ['Mage'],
+        'primal utility': ['Mage'],
+        'data': ['Mage'],
+        
+        # Changeling-specific
+        'glamour': ['Changeling', 'Mortal+'],  # Mortal+ Kinain can have glamour
+        'banality': ['Changeling', 'Mortal+'],
+        'remembrance': ['Changeling'],
+        'chicanery': ['Changeling', 'Mortal+'],
+        'sovereign': ['Changeling', 'Mortal+'],
+        'legerdemain': ['Changeling', 'Mortal+'],
+        'primal': ['Changeling', 'Mortal+'],
+        'wayfare': ['Changeling', 'Mortal+'],
+        'naming': ['Changeling', 'Mortal+'],
+        
+        # General pools
+        'willpower': ['all'],
+        'rage': ['Shifter'],
+        'gnosis': ['Shifter', 'Mage', 'Mortal+']  # Mortal+ Kinfolk with Gnosis merit can have gnosis
+    }
+    
+    # Check if the stat has splat-specific restrictions
+    if stat_name_lower in SPLAT_SPECIFIC_ABILITIES:
+        allowed_splats = SPLAT_SPECIFIC_ABILITIES[stat_name_lower]
+        
+        # Special handling for "all" - always allowed
+        if 'all' in allowed_splats:
+            return True, ""
+        
+        # Check if the character's splat is allowed
+        if splat in allowed_splats:
+            # For Mortal+, check the specific type if needed
+            if splat == 'Mortal+' and stat_name_lower in ['rituals', 'rites', 'gnosis']:
+                # Kinfolk can buy these
+                if char_type != 'Kinfolk':
+                    valid_types = {'rituals': 'Kinfolk', 'rites': 'Kinfolk', 'gnosis': 'Kinfolk'}
+                    return False, f"{stat_name} is only available to {valid_types[stat_name_lower]} characters, not {char_type}."
+            
+            # Check Mortal+ Ghouls for vampire abilities
+            if splat == 'Mortal+' and stat_name_lower in ['blood pool', 'auspex', 'thaumaturgy']:
+                if char_type != 'Ghoul':
+                    valid_types = {'blood pool': 'Ghoul', 'auspex': 'Ghoul', 'thaumaturgy': 'Ghoul'}
+                    return False, f"{stat_name} is only available to {valid_types[stat_name_lower]} characters, not {char_type}."
+            
+            # Check Mortal+ Kinain for changeling abilities
+            if splat == 'Mortal+' and stat_name_lower in ['glamour', 'banality', 'chicanery', 'sovereign', 'legerdemain', 'primal', 'wayfare', 'naming']:
+                if char_type != 'Kinain':
+                    return False, f"{stat_name} is only available to Kinain characters, not {char_type}."
+            
+            return True, ""
+        
+        # If we got here, the splat is not allowed
+        allowed_splats_str = ", ".join([s for s in allowed_splats if s != 'Mortal+'])
+        
+        # Add Mortal+ subtypes if applicable
+        mortal_subtypes = []
+        if 'Mortal+' in allowed_splats:
+            if stat_name_lower in ['rituals', 'rites', 'gnosis']:
+                mortal_subtypes.append('Kinfolk')
+            if stat_name_lower in ['blood pool', 'auspex', 'thaumaturgy']:
+                mortal_subtypes.append('Ghoul')
+            if stat_name_lower in ['glamour', 'banality', 'chicanery', 'sovereign', 'legerdemain', 'primal', 'wayfare', 'naming']:
+                mortal_subtypes.append('Kinain')
+        
+        if mortal_subtypes:
+            allowed_splats_str += " or " + "/".join(mortal_subtypes) if allowed_splats_str else "/".join(mortal_subtypes)
+        
+        return False, f"{stat_name} is only available to {allowed_splats_str} characters, not {splat}."
+    
+    # Handle splat-specific powers by category
+    if category == 'powers':
+        if subcategory == 'sphere' and splat != 'Mage':
+            return False, f"Spheres are only available to Mage characters, not {splat}."
+        
+        if subcategory == 'discipline' and splat not in ['Vampire', 'Mortal+']:
+            # For Mortal+, only Ghouls can have disciplines
+            if splat == 'Mortal+' and char_type != 'Ghoul':
+                return False, f"Disciplines are only available to Vampire or Ghoul characters, not {splat} {char_type}."
+            return False, f"Disciplines are only available to Vampire or Ghoul characters, not {splat}."
+        
+        if subcategory == 'gift' and splat not in ['Shifter', 'Mortal+']:
+            # For Mortal+, only Kinfolk can have gifts
+            if splat == 'Mortal+' and char_type != 'Kinfolk':
+                return False, f"Gifts are only available to Shifter or Kinfolk characters, not {splat} {char_type}."
+            return False, f"Gifts are only available to Shifter or Kinfolk characters, not {splat}."
+        
+        if subcategory == 'art' and splat not in ['Changeling', 'Mortal+']:
+            # For Mortal+, only Kinain can have arts
+            if splat == 'Mortal+' and char_type != 'Kinain':
+                return False, f"Arts are only available to Changeling or Kinain characters, not {splat} {char_type}."
+            return False, f"Arts are only available to Changeling or Kinain characters, not {splat}."
+        
+        if subcategory == 'realm' and splat not in ['Changeling', 'Mortal+']:
+            # For Mortal+, only Kinain can have realms
+            if splat == 'Mortal+' and char_type != 'Kinain':
+                return False, f"Realms are only available to Changeling or Kinain characters, not {splat} {char_type}."
+            return False, f"Realms are only available to Changeling or Kinain characters, not {splat}."
+    
+    # If we reach here, the stat is valid for this splat
+    return True, ""

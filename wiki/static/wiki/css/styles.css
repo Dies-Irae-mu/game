@@ -1515,3 +1515,510 @@ body.menu-open {
     margin-top: 0.25em;
 }
 
+.wiki-pages {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 0;
+    background-color: transparent;
+}
+
+.wiki-pages .list-group-item {
+    margin-bottom: 10px;
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.wiki-pages .list-group-item:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.wiki-pages h5 {
+    margin-bottom: 5px;
+    font-family: 'impact_label_reversed', Arial, sans-serif;
+    letter-spacing: 2px;
+    font-size: 22px;
+    color: rgba(213, 96, 91, 1);
+}
+
+.wiki-pages small {
+    color: rgba(255, 255, 255, 0.7);
+    font-family: 'analog_typewriter', Arial, sans-serif;
+    font-size: 14px;
+}
+
+.edit-controls {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.edit-controls .btn {
+    padding: 8px 15px;
+    border-radius: 0;
+    font-family: 'impact_label_reversed', Arial, sans-serif;
+    letter-spacing: 2px;
+    font-size: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.edit-controls .btn-primary {
+    background-color: rgba(213, 96, 91, 0.8);
+    color: #fff;
+}
+
+.edit-controls .btn-primary:hover {
+    background-color: rgba(213, 96, 91, 1);
+}
+
+.edit-controls .btn-secondary {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+}
+
+.edit-controls .btn-secondary:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: 90px;
+    padding: 0 20px;
+    flex-grow: 1;
+    overflow: auto;
+}
+
+.content form {
+    max-width: 100%;
+    display: block;
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-family: 'impact_label_reversed', Arial, sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: #fff;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    font-family: 'roboto mono', monospace;
+}
+
+.btn {
+    padding: 10px 20px;
+    font-family: 'impact_label_reversed', Arial, sans-serif;
+    letter-spacing: 2px;
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: rgba(213, 96, 91, 0.8);
+}
+
+.btn-primary:hover {
+    background-color: rgba(213, 96, 91, 1);
+}
+
+.image-upload-section {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.image-upload-section h3 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.creation-form-container {
+    width: 100%;
+    max-width: 100%;
+}
+
+.creation-form-container form {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.edit-mode {
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-mode .main-content {
+    width: 100%;
+    max-width: 100%;
+}
+
+.edit-mode form {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.edit-mode .form-group {
+    margin-bottom: 20px;
+}
+
+.edit-mode .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.edit-mode .form-group input[type="text"],
+.edit-mode .form-group input[type="email"],
+.edit-mode .form-group input[type="password"],
+.edit-mode .form-group select,
+.edit-mode .form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.edit-mode .form-group textarea {
+    min-height: 200px;
+}
+
+.edit-mode .button-group {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.edit-mode .button-group button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.edit-mode .button-group button:hover {
+    background-color: #555;
+}
+
+/* Player Editor Styles */
+.content-preview {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    padding: 20px !important;
+    margin-top: 20px;
+    color: #fff;
+}
+
+.content-preview h3 {
+    font-family: 'impact_label_reversed', Arial, sans-serif;
+    font-size: 22px;
+    margin-bottom: 15px;
+    background-color: transparent;
+    padding: 0;
+}
+
+.content-preview #preview-content {
+    font-family: 'roboto mono', monospace;
+    line-height: 1.6;
+}
+
+/* Alert styling */
+.alert-container {
+    margin-bottom: 20px;
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid transparent;
+    border-radius: 0;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.alert-warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+}
+
+.alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+/* Button styles */
+.btn-info {
+    background-color: rgba(23, 162, 184, 0.8);
+    border-color: rgba(23, 162, 184, 0.5);
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: rgba(23, 162, 184, 1);
+}
+
+/* Actions container */
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.preview-container {
+    flex-basis: 100%;
+    margin-top: 15px;
+}
+
+/* Style the editor toolbar */
+.editor-toolbar {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.editor-toolbar button {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.editor-toolbar button:hover,
+.editor-toolbar button.active {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.CodeMirror {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.CodeMirror-cursor {
+    border-left: 1px solid #fff !important;
+}
+
+.CodeMirror-selected {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.CodeMirror-line {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Required field styling */
+input:required, textarea:required {
+    border-left: 3px solid rgba(213, 96, 91, 0.8);
+}
+
+/* Editing guidelines styling */
+.sidebar h2:nth-of-type(2) {
+    margin-top: 30px;
+}
+
+.sidebar h2:nth-of-type(2) + ul li {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Make formatting examples more readable */
+.sidebar h2:nth-of-type(3) + ul li {
+    font-family: 'roboto mono', monospace;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Content Header styling */
+.content-header {
+    width: 100%;
+    margin-bottom: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 20px;
+}
+
+.content-header h1 {
+    width: 100%;
+    margin-bottom: 20px;
+    font-size: 36px;
+    letter-spacing: 6px;
+}
+
+.content-header p {
+    margin-bottom: 30px;
+    font-family: 'roboto mono', monospace;
+    font-size: 16px;
+    color: #fff;
+    line-height: 1.6;
+    max-width: 800px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.header-actions .btn {
+    padding: 8px 16px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(213, 96, 91, 0.7);
+    color: rgba(213, 96, 91, 1);
+    font-family: 'impact_label_reversed', Arial, sans-serif;
+    letter-spacing: 2px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.header-actions .btn:hover {
+    background-color: rgba(213, 96, 91, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Wiki pages list styling */
+.wiki-pages {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.wiki-pages .list-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+.wiki-pages .list-group-item {
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;
+    transition: all 0.3s ease;
+    display: block;
+    color: #fff;
+    text-decoration: none;
+}
+
+.wiki-pages .list-group-item:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+    border-color: rgba(213, 96, 91, 0.7);
+    transform: translateY(-2px);
+}
+
+.wiki-pages .list-group-item h5 {
+    font-family: 'analog_typewriter', Arial, sans-serif;
+    font-size: 22px;
+    margin-bottom: 8px;
+    color: rgba(213, 96, 91, 1);
+    letter-spacing: 2px;
+    font-weight: normal;
+}
+
+.wiki-pages .list-group-item small {
+    font-family: 'roboto mono', monospace;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Make sure content area uses full width when sidebar is empty */
+.content {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 30px;
+}
+
+.content > *:only-child {
+    width: 100%;
+}
+
+/* Full width wiki pages styling */
+.wiki-pages.full-width {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+}
+
+.wiki-pages.full-width .list-group {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+/* Ensure each item gets full width in the vertical layout */
+.wiki-pages.full-width .list-group-item {
+    width: 100%;
+    margin-bottom: 15px;
+    display: block;
+}
+
+/* Make sure content column takes full width when needed */
+.content > div:only-child {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Override the right column completely */
+.content:has(.wiki-pages.full-width) {
+    display: block;
+    width: 100%;
+}
+
+/* Layout adjustments for the new vertical design */
+@media (max-width: 1600px) {
+    .wiki-pages.full-width .list-group {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Brief description styling in list items */
+.wiki-pages .list-group-item .brief-description {
+    font-family: 'roboto mono', monospace;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 8px 0 10px 0;
+    line-height: 1.4;
+    padding-left: 5px;
+    border-left: 2px solid rgba(213, 96, 91, 0.5);
+}
+
+/* Ensure proper spacing in list items with descriptions */
+.wiki-pages .list-group-item:has(.brief-description) small {
+    margin-top: 5px;
+    display: block;
+}
+

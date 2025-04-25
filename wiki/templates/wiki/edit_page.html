@@ -1,0 +1,139 @@
+{% extends "wiki/base_edit.html" %}
+{% load static %}
+
+{% block titleblock %}Edit {{ page.title }}{% endblock %}
+
+{% block content %}
+<div class="creation-form-container">
+    <h1>Edit: {{ page.title }}</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {% if page.page_type == 'group' or page.page_type == 'plot' %}
+        <div class="form-group">
+            <label for="brief_description">Brief Description (appears on index page):</label>
+            <input type="text" class="form-control" id="brief_description" name="brief_description" maxlength="255" value="{{ page.brief_description }}">
+            <small class="form-text text-muted">
+                A short description (255 chars max) that will appear on the index listing.
+            </small>
+        </div>
+        {% endif %}
+        
+        <div class="form-group">
+            <label for="content">Content:</label>
+            <textarea class="form-control markdown-editor" id="content" name="content" rows="15">{{ page.content }}</textarea>
+            <small class="form-text text-muted">
+                You can use Markdown formatting for rich text. HTML is also supported.
+            </small>
+        </div>
+        
+        <div class="image-upload-section">
+            <h3>Page Images</h3>
+            
+            <div class="form-group">
+                <label for="featured_image">Featured Background Image:</label>
+                <input type="file" class="form-control" id="featured_image" name="featured_image" accept="image/*">
+                {% if featured_image and featured_image.image %}
+                <div class="current-image">
+                    <p>Current image: <a href="{{ featured_image.get_image_url }}" target="_blank">View</a></p>
+                    <img src="{{ featured_image.get_image_url }}" style="max-width: 150px; max-height: 100px; margin-top: 5px;">
+                </div>
+                {% endif %}
+                <small class="form-text text-muted">
+                    This image will appear as the background for your page header.
+                </small>
+            </div>
+            
+            <div class="form-group">
+                <label for="banner_image">Banner Image:</label>
+                <input type="file" class="form-control" id="banner_image" name="banner_image" accept="image/*">
+                {% if featured_image and featured_image.banner %}
+                <div class="current-image">
+                    <p>Current image: <a href="{{ featured_image.get_banner_url }}" target="_blank">View</a></p>
+                    <img src="{{ featured_image.get_banner_url }}" style="max-width: 150px; max-height: 100px; margin-top: 5px;">
+                </div>
+                {% endif %}
+                <small class="form-text text-muted">
+                    This image will appear in the banner area of your page.
+                </small>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="show_texture" {% if not featured_image or featured_image.show_texture %}checked{% endif %}> 
+                    Show texture overlay on featured image
+                </label>
+                <small class="form-text text-muted">
+                    The texture helps text remain readable over background images.
+                </small>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="comment">Edit Comment:</label>
+            <input type="text" class="form-control" id="comment" name="comment" placeholder="Brief description of your changes">
+            <small class="form-text text-muted">
+                This helps others understand what you changed and why.
+            </small>
+        </div>
+        
+        <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+        {% if return_to == 'group' or page.page_type == 'group' %}
+            <a href="{% url 'wiki:group_detail' page.slug %}" class="btn btn-secondary mt-3">Cancel</a>
+        {% elif return_to == 'plot' or page.page_type == 'plot' %}
+            <a href="{% url 'wiki:plot_detail' page.slug %}" class="btn btn-secondary mt-3">Cancel</a>
+        {% else %}
+            <a href="{% url 'wiki:page_detail' page.slug %}" class="btn btn-secondary mt-3">Cancel</a>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div class="sidebar">
+    <h2>Quick Links</h2>
+    <ul>
+        {% if return_to == 'group' or page.page_type == 'group' %}
+            <li><a href="{% url 'wiki:group_detail' page.slug %}">Back to Page</a></li>
+            <li><a href="{% url 'wiki:groups_index' %}">All Groups</a></li>
+        {% elif return_to == 'plot' or page.page_type == 'plot' %}
+            <li><a href="{% url 'wiki:plot_detail' page.slug %}">Back to Page</a></li>
+            <li><a href="{% url 'wiki:plots_index' %}">All Plots</a></li>
+        {% else %}
+            <li><a href="{% url 'wiki:page_detail' page.slug %}">Back to Page</a></li>
+        {% endif %}
+        <li><a href="{% url 'wiki:page_history' page.slug %}">View History</a></li>
+    </ul>
+    
+    <h2>Formatting Help</h2>
+    <ul>
+        <li>**Bold text** for <strong>bold text</strong></li>
+        <li>*Italic text* for <em>italic text</em></li>
+        <li># Heading 1</li>
+        <li>## Heading 2</li>
+        <li>- Bullet point</li>
+        <li>1. Numbered list</li>
+        <li>[Link text](URL) for links</li>
+        <li>&lt;img src="URL"&gt; for images</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize markdown editor if available
+    if (typeof SimpleMDE !== 'undefined') {
+        var simplemde = new SimpleMDE({ 
+            element: document.getElementById("content"),
+            spellChecker: false,
+            autosave: {
+                enabled: true,
+                unique_id: "edit_wiki_{{ page.slug }}",
+            }
+        });
+    }
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,85 @@
+{% extends "wiki/base_wiki.html" %}
+{% load static %}
+
+{% block titleblock %}{{ page.title }}{% endblock %}
+
+{% block content %}
+<div class="left_content">
+    <h1>{{ page.title }}</h1>
+    
+    {% if page.mush_group %}
+    <div class="mush-group-info">
+        <div class="group-header">
+            <h2>Group Information</h2>
+            {% if page.mush_group.group_id %}
+            <span class="group-id">ID: {{ page.mush_group.group_id }}</span>
+            {% endif %}
+        </div>
+        
+        {% if page.mush_group.leader %}
+        <div class="group-detail">
+            <strong>Leader:</strong> {{ page.mush_group.leader.full_name }}
+        </div>
+        {% endif %}
+        
+        {% if page.mush_group.ic_description %}
+        <div class="group-detail">
+            <h3>IC Description</h3>
+            <div class="ic-description">
+                {{ page.mush_group.ic_description|linebreaksbr }}
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if page.mush_group.roster %}
+        <div class="group-detail">
+            <strong>Roster:</strong> {{ page.mush_group.roster.name }}
+        </div>
+        {% endif %}
+        
+        {% if page.mush_group.website %}
+        <div class="group-detail">
+            <strong>Website:</strong> <a href="{{ page.mush_group.website }}" target="_blank">{{ page.mush_group.website }}</a>
+        </div>
+        {% endif %}
+        
+        <div class="group-members">
+            <h3>Members</h3>
+            <ul class="member-list">
+            {% for membership in page.mush_group.groupmembership_set.all %}
+                <li>
+                    {{ membership.character.full_name }}
+                    {% if membership.title %}<span class="member-title">{{ membership.title }}</span>{% endif %}
+                    {% if membership.role %}<span class="member-role">{{ membership.role.name }}</span>{% endif %}
+                </li>
+            {% empty %}
+                <li><em>No members listed</em></li>
+            {% endfor %}
+            </ul>
+        </div>
+        
+        <hr class="group-separator" />
+    </div>
+    {% endif %}
+    
+    {{ page.content|safe }}
+</div>
+
+<div class="right_content {% if not page.right_content %}hidden{% endif %}">
+    {% if page.right_content %}
+        {{ page.right_content|safe }}
+    {% endif %}
+    
+    {% if page.mush_group %}
+    <div class="sidebar-section">
+        <h4>Group Actions</h4>
+        <ul>
+            {% if user.is_authenticated %}
+            <li><a href="/groups/view/{{ page.mush_group.group_id }}/">View in Group System</a></li>
+            <li><a href="/groups/join/{{ page.mush_group.group_id }}/">Request to Join</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

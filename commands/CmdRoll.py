@@ -20,6 +20,10 @@ class CmdRoll(default_cmds.MuxCommand):
           otherwise it will be interpreted as part of the stat name (like a hyphen).
       +roll/log - This will display the last 10 rolls made in this location, but will
                   not show the stat names or values, just the results.
+      +roll/specialty <expression> [vs <difficulty>] [--job <id>]
+          This will use the "exploding 10s" rule, where any 10 rolled will generate
+          an additional die roll. If that roll is also a 10, it explodes again, and
+          so on until no more 10s are rolled.
 
       Changling-specific Command:    
       +roll/nightmare/[<number>] <expression> [vs <difficulty>] [--job <id>]
@@ -30,6 +34,7 @@ class CmdRoll(default_cmds.MuxCommand):
     Examples:
       +roll strength + dexterity + 3 - 2
       +roll stre + dex + 3- 2 vs 7
+      +roll/specialty dexterity + brawl vs 6
       +roll/nightmare Legerdemain + Prop vs 6
       +roll/nightmare/3 Legerdemain + Prop vs 6
       +roll/log
@@ -101,6 +106,9 @@ class CmdRoll(default_cmds.MuxCommand):
 
         # Store original args and restore after job check
         self.args = args
+
+        # Check for specialty switch for exploding 10s
+        use_specialty = 'specialty' in self.switches if self.switches else False
 
         # Handle Nightmare dice
         nightmare_dice = 0
@@ -375,8 +383,52 @@ class CmdRoll(default_cmds.MuxCommand):
                 description.append(f"|r({nightmare_dice} Nightmare dice)|n")
                 detailed_description.append(f"|r({nightmare_dice} Nightmare dice - {nightmare_rolls})|n")
         else:
-            # Regular roll without Nightmare dice
-            rolls, successes, ones = roll_dice(dice_pool, difficulty)
+            # For specialty/exploding dice
+            if use_specialty:
+                all_rolls = []
+                extra_rolls = []
+                extra_successes = 0
+                
+                # Initial roll
+                initial_rolls, initial_successes, initial_ones = roll_dice(dice_pool, difficulty)
+                all_rolls.extend(initial_rolls)
+                successes = initial_successes
+                ones = initial_ones
+                
+                # Handle exploding 10s - reroll any 10s
+                tens_to_reroll = [i for i, roll in enumerate(initial_rolls) if roll == 10]
+                reroll_generation = 1
+                
+                while tens_to_reroll:
+                    current_rerolls = []
+                    for _ in tens_to_reroll:
+                        roll = randint(1, 10)
+                        current_rerolls.append(roll)
+                        if roll >= difficulty:
+                            extra_successes += 1
+                            successes += 1
+                        if roll == 1:
+                            ones += 1
+                    
+                    # Add this generation's rolls to the extras
+                    extra_rolls.append(current_rerolls)
+                    
+                    # Check for new 10s to reroll
+                    tens_to_reroll = [i for i, roll in enumerate(current_rerolls) if roll == 10]
+                    reroll_generation += 1
+                
+                # Format rolls for display
+                rolls = initial_rolls
+                
+                # Add specialty info to descriptions
+                if extra_rolls:
+                    flattened_extras = [roll for generation in extra_rolls for roll in generation]
+                    description.append(f"|c(Specialty: +{extra_successes} from rerolls)|n")
+                    detailed_description.append(f"|c(Specialty: {extra_successes} extra successes from {flattened_extras})|n")
+            else:
+                # Regular roll without Nightmare dice or specialty
+                rolls, successes, ones = roll_dice(dice_pool, difficulty)
+            
             nightmare_dice = 0  # Ensure nightmare_dice is defined for non-nightmare rolls
 
         # Interpret the results
