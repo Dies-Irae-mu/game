@@ -145,6 +145,8 @@ def initialize_mortalplus_stats(character, mortalplus_type):
         # Set blood pool
         character.set_stat('pools', 'dual', 'Blood', 3, temp=False)
         character.set_stat('pools', 'dual', 'Blood', 3, temp=True)
+        character.set_stat('pools', 'dual', 'Willpower', 3, temp=False)
+        character.set_stat('pools', 'dual', 'Willpower', 3, temp=True)
         
     elif mortalplus_type == 'Kinain':
         # Initialize arts and realms categories
@@ -164,22 +166,36 @@ def initialize_mortalplus_stats(character, mortalplus_type):
         character.set_stat('identity', 'lineage', 'Second Legacy', '', temp=True)
         character.set_stat('identity', 'lineage', 'Affinity Realm', '', temp=False)
         character.set_stat('identity', 'lineage', 'Affinity Realm', '', temp=True)
+
+        character.set_stat('pools', 'dual', 'Willpower', 3, temp=False)
+        character.set_stat('pools', 'dual', 'Willpower', 3, temp=True)
         
     elif mortalplus_type == 'Sorcerer':
         # Additional sorcerer-specific initializations, if any
-        pass
+        character.set_stat('pools', 'dual', 'Willpower', 5, temp=False)
+        character.set_stat('pools', 'dual', 'Willpower', 5, temp=True)
         
     elif mortalplus_type == 'Psychic':
         # Additional psychic-specific initializations, if any
-        pass
+        character.set_stat('pools', 'dual', 'Willpower', 5, temp=False)
+        character.set_stat('pools', 'dual', 'Willpower', 5, temp=True)
         
     elif mortalplus_type == 'Faithful':
         # Initialize faith category
         character.db.stats['powers']['faith'] = {}
-        
-    # Set base Willpower
-    character.set_stat('pools', 'dual', 'Willpower', 3, temp=False)
-    character.set_stat('pools', 'dual', 'Willpower', 3, temp=True)
+        character.set_stat('pools', 'dual', 'Willpower', 5, temp=False)
+        character.set_stat('pools', 'dual', 'Willpower', 5, temp=True)
+    
+    elif mortalplus_type == 'Kinfolk':
+        # Initialize tribe category
+        character.db.stats['identity']['lineage']['Tribe'] = ''
+        character.db.stats['identity']['lineage']['Pack'] = ''
+        character.db.stats['identity']['lineage']['Patron Totem'] = ''
+        character.db.stats['identity']['lineage']['Kinfolk Breed'] = ''
+        character.db.stats['powers']['gift'] = {}
+        character.db.stats['powers']['rite'] = {}
+        character.set_stat('pools', 'dual', 'Willpower', 3, temp=False)
+        character.set_stat('pools', 'dual', 'Willpower', 3, temp=True)
 
 def initialize_ghoul_stats(character):
     """Initialize Ghoul-specific stats."""

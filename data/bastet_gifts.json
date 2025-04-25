@@ -72,18 +72,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Tree Climber",
-        "description": "By extending and sharpening his claws, then invoking this Gift, a Bastet may travel up or down any vertical surface, from tree to concrete.",
-        "system": "Climbing this way requires a Dexterity + Athletics roll. Really hard or slippery surfaces, like ice or steel, are difficulty 8, while easy ones like rock or bark are at difficulty 6. The character traveling this way moves at ten feet a turn or so and may have to make new rolls if the circumstances change (in an avalanche, for example).",
-        "source": "Revised - BB Bastet p.97",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
         "name": "Cat Claws",
         "description": "By calling on her heritage, a Bastet in Homid or Sokto form can unsheathe her claws and attack as if she were in Crinos.",
         "system": "The player need not spend a Willpower point to enact this particular partial transformation (see W20, p. 286), and the difficulty of the transformation is 6.",
@@ -92,78 +80,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Sweet Hunter's Smile",
-        "description": "As the homid Gift: Persuasion. This Gift allows a homid to become more persuasive when dealing with others, in such a way that his statements and arguments are imbued with added meaning or credibility. An ancestor-spirit teaches this Gift.",
-        "system": "The player rolls Charisma + Subterfuge. If successful, the Storyteller reduces the difficulties of all Social rolls by one for the remainder of the scene. In addition, any successful Social rolls may have significantly more impact than they would without the Gift. A werewolf could win arguments with hard line opponents, or cause a cold-hearted psychopath to relent (at least for a little while).",
-        "source": "CB20 Pg. 86",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Urban Hunter",
-        "description": "As the homid Gift: City Running. Called Climb Like an Ape in previous versions. Garou with this Gift find that moving vertically is just as easy as moving horizontally; whether they are walking along a sidewalk, climbing stairs, or scaling the side of a building, their pace doesn't change in the slightest, nor do they tire out more rapidly. This Gift doesn't make it any easier or less dangerous to climb in precarious circumstance — a ten-story fall is still a ten-story fall, and a sheer surface remains sheer — but the Gift does make sure that the character can climb as quickly as he walks.",
-        "system": "The player spends a point of Rage. For the next scene the Garou's movement rate is unchanged whether he is climbing or walking; he moves at Dexterity +5 meters per turn, period. This Gift does not decrease the difficulty for Athletics rolls used to climb, but it does allow the Garou to run, or make an Athletics roll to improve his speed, just as he could while moving across an empty plain. This Gift is taught by a monkey-spirit.",
-        "source": "CB20 Pg. 86",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Create Element",
-        "description": "As the metis Gift. The metis has the power to create a small amount of one of the four basic elements — fire, air, earth or water. In this way, she can replenish the air supply in an airtight room, make a rock to throw at someone, create a fire without matches or wood, or even fill a bathtub without any faucet or pipes. The metis cannot create specialized forms of any element. Precious metals (especially silver), lethal gases and acid are beyond his reach. This Gift creates only natural air, earth, fire and water. Elementals teach this Gift.",
-        "system": "The werewolf's player spends one Gnosis point and rolls Gnosis. Each success allows the character to create approximately one cubic foot of the desired element, to a maximum weight of 100 lbs, anywhere he can see within 60 feet. The element remains in existence until used up (breathed in the case of air or burned up in the case of fire without any fuel to keep it going). The flames created with this Gift are genuinely hot, but they are no substitute for a flame-thrower. They inflict one health level of damage per success, to a maximum of three health levels of damage.",
-        "source": "CB20 Pg. 87",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Sense Primal Nature",
-        "description": "As the metis Gift: Sense Wyrm, save that its difficulty is one higher and it can simultaneously sense and discern emanations of the Weaver, Wyrm, and Wyld. The werewolf can sense manifestations of the Wyrm in the nearby area. This Gift involves a mystical sense, not a visual or olfactory image, although werewolves using the Gift sometimes say things like, “This place stinks of the Wyrm” (with a few more colorful adjectives). Garou should remember that the Wyrm's taint can cling to relatively blameless souls. Werewolves may sense an innocent person who happens to work in a Wyrm-controlled factory or who has eated tainted food. This power requires active concentration. Any spirit of Gaia may teach this Gift.",
-        "system": "The player rolls Perception + Occult. The difficulty depends on the concentration and strength of the Wyrm's influence. Sensing a single fomor in the next room would be difficulty 6, while detecting the stench of a Bane that was in the room an hour ago would be difficulty 8. Vampires register as Wyrm-tainted, save those with Humanity Traits of 7 or higher.",
-        "source": "CB20 Pg. 87",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Shed",
-        "description": "As the metis Gift. The Garou knows the trick of shedding and growing fur at an alarming rate. This Gift makes the Garou especially difficult to grapple successfully; opponents find themselves holding tufts of fur instead of their target. The Garou can also slide through tight spaces using his shedding fur as natural lubrication. A lizard-spirit or snake-spirit teaches this Gift.",
-        "system": "The Garou may use his slick outer coating to avoid being grappled. With a successful Dexterity + Primal-Urge roll (difficulty 7), he can free himself from any successful grappling attack. The fur also reduces by two the werewolf's difficulty whenever he squeezes through tight spaces or slips restraints, such as handcuffs.",
-        "source": "CB20 Pg. 87",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Heightened Senses",
-        "description": "As the lupus Gift. The werewolf with this Gift tunes in to the world around him, increasing his senses vastly. When in Homid or Glabro form, her senses become as sharp as those of a wolf, allowing him to hear sounds beyond his normal range, granting him superior night vision and making his sense of smell stronger than that of any dog. In wolf forms, his senses become preternaturally potent, allowing him to perform feats that border on precognition. This Gift has drawbacks as well. If a fire alarm were to go off around a Garou using this Gift, it might render him helpless. Cities can barrage the werewolf with a sensory overload. Wolf-spirits teach this gift.",
-        "system": "The player spends a Gnosis point. The effects last for one scene. In Homid or Glabro forms, the werewolf's Perception difficulties decrease by two, and he may roll Perception + Primal-Urge to perform sensory feats impossible for humans (such as tracking by scent). In Crinos, Hispo and Lupus forms, Perception difficulties decrease by three (which is not cumulative with the ordinary Lupus-form Perception bonuses), and the werewolf gains an extra die to Primal-Urge dice pools.",
-        "source": "CB20 Pg. 87",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
+		"breed": "Homid",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -177,18 +94,7 @@
         "stat_type": "gift",
         "values": [1],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Pounce",
-        "description": "As the lupus Gift: Hare's Leap. Lupus Version. Called Leap of the Kangaroo for Bunyip and Hare's Leap for Lupus. By invoking this Gift, the werewolf may leap incredible distances. Hare-, frog- and cat-spirits usually teach this Gift. The lost Bunyip knew this Gift as Leap of the Kangaroo, however marsupial-spirits seem loath to aid werewolves these days. Today, many werewolves call this Gift “Leap of the Kangaroo” in their fallen cousins' honor.",
-        "system": "The player rolls Stamina + Athletics (difficulty 7). If successful, she may double her normal jumping distance.",
-        "source": "CB20 Pg. 87",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
+		"breed": "Feline",
         "splat": "Shifter"
     },
     {
@@ -200,6 +106,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
+		"breed": "Feline",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -212,6 +119,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
+		"breed": "Feline",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -224,42 +132,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Treeclimber",
-        "description": "As the Stargazer Gift: Balance. The Stargazer is able to walk across any ledge, rope, etc., no matter how thin or slippery. Wind-spirits teach this Gift.",
-        "system": "No point expenditure or roll is required. Difficulties for climbing decrease by three.",
-        "source": "CB20 Pg. 87",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Hunter's Mists",
-        "description": "As the Black Fury Gift: Curse of Aeolus. The Fury calls up a thick, eerie fog that obscures vision and unnerves her opponents. The Fury can see through the fog, but all other have trouble navigating by sight. A spirit in service to Aeolus, the fog totem, teaches this Gift.",
-        "system": "The player makes a Gnosis roll. The difficulty varies according to the surrounding terrain and humidity: 4 near the sea, 6 under normal circumstances, 9 in a desert. The Black Fury can see normally, but others caught in this fog halve their Perception scores (with regards to sight only). The fog is quite unnerving, and everyone except the Fury and her packmates loses a die from all Willpower dice pools.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Storm of Pests",
-        "description": "As the Bone Gnawer Gift: Scent of Sweet Honey. A target the Garou touched at some point during the last hour begins to exude a wonderfully sweet aroma, and becomes slightly sticky to the touch. All manner of vermin quickly appear and coat the victim. The resulting coat of gnats, flies, bees and beetles crawls, stings, and generally impairs vision and hearing. Insect-spirits teach this Gift.",
-        "system": "The player spends one Gnosis point and rolls Wits + Subterfuge (difficulty 7). The target suffers a -1 penalty to all actions for one hour per success; the smell will not wash off during this time.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
+		"tribe": "Bagheera",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -273,6 +146,7 @@
         "stat_type": "gift",
         "values": [1],
         "shifter_type": "Bastet",
+		"tribe": "Bubasti",
         "splat": "Shifter"
     },
     {
@@ -285,18 +159,7 @@
         "stat_type": "gift",
         "values": [1],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Faerie Light",
-        "description": "As the Fianna Gift. The Garou can conjure a small, bobbing sphere of light. The sphere illuminates only a three-foot area, but that is usually enough to provide the necessary light — or to lead foes into ambush. A marsh-spirit or faerie teaches this Gift.",
-        "system": "The player rolls Wits + Enigmas (difficulty 6). The light can appear anywhere within the Garou's line of sight. It can move, bobbing along at 10 feet per turn, if bidden to do so. The light lasts for one turn per success, but the player can spend a point of Gnosis to make it last for the entire scene.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
+		"tribe": "Bubasti",
         "splat": "Shifter"
     },
     {
@@ -309,6 +172,7 @@
         "stat_type": "gift",
         "values": [1],
         "shifter_type": "Bastet",
+		"tribe": "Ceilican",
         "splat": "Shifter"
     },
     {
@@ -321,6 +185,7 @@
         "stat_type": "gift",
         "values": [1],
         "shifter_type": "Bastet",
+		"tribe": "Ceilican",
         "splat": "Shifter"
     },
     {
@@ -333,6 +198,7 @@
         "stat_type": "gift",
         "values": [1],
         "shifter_type": "Bastet",
+		"tribe": "Khan",
         "splat": "Shifter"
     },
     {
@@ -345,18 +211,7 @@
         "stat_type": "gift",
         "values": [1],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Mockingbird's Mirror",
-        "description": "As the Corax Gift: Voice of the Mimic. The Corax may perfectly mimic any voice or sound she has ever heard. A mynah-spirit teaches this Gift.",
-        "system": "This Gift's effects are permanent.",
-        "source": "CB20 Pg. 89",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
+		"tribe": "Khan",
         "splat": "Shifter"
     },
     {
@@ -369,110 +224,15 @@
         "stat_type": "gift",
         "values": [1],
         "shifter_type": "Bastet",
+		"tribe": ["Pumonca", "Qualmi"],
         "splat": "Shifter",
 		"gift_alias": "Breakfast of Stones"
-    },
-    {
-        "name": "Turned Fur",
-        "description": "As the Wendigo Gift: Camouflage, save that the Qualmi must discard any clothing and equipment before activating the Gift. The Wendigo blends in with the surrounding wilderness, which makes him very difficult to see. A deer-spirit teaches this Gift.",
-        "system": "The difficulties to spot the Garou increase by three, provided that he is in the woods. The werewolf invokes the effects at whim.",
-        "source": "CB20 Pg. 89",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Majesty",
-        "description": "As the Rokea Gift: King Fish. This Gift allows the Dimwater to command the respect of others. A shark-spirit teaches it.",
-        "system": "The Rokea permanently adds one die to Leadership and Intimidation rolls.",
-        "source": "CB20 Pg. 89",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Submit",
-        "description": "As the Black Fury Gift: Kneel. By pointing a finger or claw at a target, a Fury can force him to his knees. Only the strongest-willed can do anything but strain and swear in response. This Gift is taught by one of Pegasus's brood.",
-        "system": "The Fury rolls Manipulation + Intimidation (difficulty of the subject's Willpower). Her target falls to his knees unless he spends a Gnosis point to resist the Gift's effects (other supernatural beings may spend their own form of mystic energy, such as blood or quintessence, but mortals remain helpless). The target kneels for one turn per success.",
-        "source": "CB20 Pg. 89",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Blissful Ignorance",
-        "description": "As the Ragabash Gift. The Garou can become completely invisible to all senses, spirits or monitoring devices by remaining still. A chameleon-spirit teaches this Gift.",
-        "system": "The Garou's player rolls Dexterity + Stealth (difficulty 7). Each success subtracts one success from the Perception + Alertness rolls of those looking for the character actively. If no one is doing so, then just one success indicates complete concealment.",
-        "source": "CB20 Pg. 90",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Speed of Thought",
-        "description": "As the Silent Strider Gift. The Garou doubles her running speed. A roadrunner- or cheetah-spirit teaches this Gift.",
-        "system": "The player spends one Gnosis point. The Gift lasts until the end of the scene.",
-        "source": "CB20 Pg. 90",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
     },
     {
         "name": "Call Spirits",
         "description": "By speaking the ancient language of The-World-That-Was, a Bastet may communicate with nearby spirits as if they normally speak her language. This Gift weaves between the Gauntlet and the material world, and carries both ways.",
         "system": "The player rolls Gnosis against the local Gauntlet. If she's standing inside the Penumbra already, no roll is necessary. Once she learns this Gift, the werecat understands Spirit-speech for the rest of her life, although some truly alien spirits might be beyond normal comprehension.",
         "source": "Revised - BB Bastet p.96",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Cat Sight",
-        "description": "As the metis Gift: Eyes of the Cat. The Bastet may see clearly in pitch darkness. His eyes glow a lambent green while this power is in effect.",
-        "system": "The character must state when the Gift is in effect, but it requires no roll or expenditure. The character suffers no difficulty or dice-pool penalties from darkness.",
-        "source": "W20 Changing Breeds p. 86",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Eerie Eyes",
-        "description": "As the homid Gift: Staredown. By staring into the eyes of a human or animal, a Bastet can cause the target to flee in terror. This Gift can be used against other shifters, but the target will freeze in place rather than flee.",
-        "system": "The character using this Gift may focus on only one target per turn; the player rolls Charisma + Intimidation (difficulty 5 + the victim's Rank). The victim flees for one turn per success, although he may expend a Willpower point to resist the Gift's effects for a turn. Should the character score five or more successes, the victim flees for the duration of the scene. Other Fera (and most powerful Wyrm-monsters) will not flee, but they cannot attack while the Gift's user continues to stare them down. However, if they are attacked themselves, all bets are off.",
-        "source": "W20 Changing Breeds p. 86",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "First Slash",
-        "description": "As the Ahroun Gift: Spirit of the Fray. This Gift allows the Bastet to attack with lightning speed, striking before any foe.",
-        "system": "Once the character learns this Gift, its effects are permanent. The Bastet may add 10 to all his initiative rolls, which will nearly always ensure that he strikes first. If he chooses, the character may spend a Gnosis point to add another 10 to his initiative roll. Remember, though, that doing so prevents him from spending Rage to gain extra actions; fera can't use Rage and Gnosis in the same turn.",
-        "source": "W20 Changing Breeds p. 86",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -505,30 +265,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Pulse of the Prey",
-        "description": "As the Ragabash Gift. (Formerly Sense of the Prey) If he knows anything about his prey, the character can track it down as rapidly as he can travel. This unerring sense of direction operates anywhere, and it is useful for tracking spirits through the Umbra as well as finding beings on Earth.",
-        "system": "No roll is required unless the target is hiding actively (intent alone is not enough), in which case a Perception + Enigmas roll is made against a difficulty of the target's Wits + Stealth. If the target is a spirit, the difficulty is the spirit's Gnosis.",
-        "source": "W20 Changing Breeds p. 86",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Sense Silver",
-        "description": "As the metis Gift. As consummate warriors, Bastet must be prepared for every eventuality — including silver weaponry. This Gift, taught by Lunes, allows the character to detect the presence of silver.",
-        "system": "The player rolls Perception + Primal-Urge (difficulty 7). If successful, she can detect the presence of any nearby silver. Three successes allow him to pinpoint the silver's location.",
-        "source": "W20 Changing Breeds p. 86",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
         "name": "Shriek",
         "description": "With an ear-splitting scream, the Bastet deafens everyone nearby.",
         "system": "The player rolls Stamina + Intimidation (difficulty 7). Everyone within 20 feet is deafened (and at +1 difficulty to all rolls) for one turn per success.",
@@ -553,42 +289,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Swipe",
-        "description": "As the Ragabash Gift: Taking the Forgotten. The Bastet with this Gift can steal something from a target, and his victim will forget that she ever possessed the stolen item.",
-        "system": "The player must score three successes on a Wits + Stealth roll (difficulty of the victim's Intelligence + Streetwise).",
-        "source": "W20 Changing Breeds p. 86",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Eavesdropper's Ear",
-        "description": "As the Shadow Lord Gift: Whisper Catching. Secrets are an important commodity, and those who strive to keep their secrets may very well be hiding something dangerous. This Gift was developed to root out potential traitors or plotters against the Garou, but has been open to… certain abuses ever since. The Shadow Lord may supernaturally eavesdrop on whispered conversations nearby, giving her an edge over those with something to hide. This Gift is taught by a crow-spirit.",
-        "system": "The player spends a Willpower point. For the duration of the scene, any whisper within earshot is as audible to the Shadow Lord as if the speaker were speaking loudly and clearly. The player may still have to make Perception checks to hear whispers within earshot if obstacles or distance would make even an ordinary conversation difficult to hear. The Murmur Rite blocks this Gift; the Shadow Lords are not willing to violate the privacy of a shadow moot, even for their own personal gain.",
-        "source": "CB20 Pg. 86",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Jam Technology",
-        "description": "As the homid Gift. The werewolf can cause technological devices to cease functioning, albeit temporarily. Even the simplest of shaped objects will refuse to perform its function. A Gremlin — a type of Wyld-spirit that enjoys breaking things — teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Manipulation + Crafts. The werewolf may choose the level of complexity she inteds to “jam.” All technological devices (i.e., any devices shaped from fabricated materials like metal or plastic) of that complexity within 50 feet cease functioning for one turn per success. The devices remain unchanged but inert. Knives won't cut, gunpowder won't ignite, gears won't turn and so on. The difficulty of the roll is based on the following chart: Device Difficulty Computer: 4 Phone: 6 Automobile: 8 Gun: 9 Knife: 10",
-        "source": "CB20 Pg. 86",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
         "name": "Blinding Moonbeam Gaze",
         "description": "The werecat shoots bright beams of moonlight from her eyes. These don't inflict damage, but can blind or distract an opponent, and provide illumination as well.",
         "system": "The player rolls Gnosis (difficulty 7), and may turn her 'high beams' on and off at will for the rest of the scene. The moonbeams are roughly equivalent to a high-powered flashlight.",
@@ -597,6 +297,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [2],
+		"breed": "Metis",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -609,18 +310,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Prehensile Tail",
-        "description": "As the lupus Gift: Monkey Tail. Although the lupus' tail retains the appearance of a regular wolf's tail, it gains far more agility and flexibility. Although incapable of fine manipulation, the tail can grasp objects, wrap around branches or allow the Garou to hang upside down. The tail can also attack from an unexpected direction. A monkey-spirit must be persuaded to teach a Garou this Gift.",
-        "system": "After learning the Gift, the Garou's tail automatically becomes prehensile whenever she likes. In order to manipulate the tail successfully, the player must make a Dexterity + Athletics roll (difficulty 6). The difficulty can increase for very delicate operations. If the Garou's Strength exceeds her Stamina, she can use the tail to hang or swing. When attempting to life objects with her tail, the Garou's Strength rating is halved. If used as an attack, the tail's damage is Strength -1.",
-        "source": "CB20 Pg. 87",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
+		"breed": "Metis",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -634,18 +324,8 @@
         "stat_type": "gift",
         "values": [2],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Lawgiver's Legacy",
-        "description": "As the Philodox Gift: Command the Gathering. The Philodox draws all eyes to herself with a great exclamation, a clap of her hands, the striking of klaive to shield, or some other such gesture. Until she has had her say, none may depart or interrupt her. A lion-spirit teaches this Gift.",
-        "system": "The player spends one Willpower point and rolls Appearance + Leadership (difficulty equals the highest Willpower among those whose attention she seeks to gain). If the roll succeeds, all in attendance fall quiet and listen. Any individual who wishes to interrupt the Philodox or walk out before she has finished speaking must spend two points of Willpower to do so.",
-        "source": "CB20 Pg. 87",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
+		"breed": "Feline",
+		"tribe": "Balam",
         "splat": "Shifter"
     },
     {
@@ -658,66 +338,7 @@
         "stat_type": "gift",
         "values": [2],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Pathfinder",
-        "description": "As the Ragabash Gift. The werewolf can strike implausible trails through pristine wilderness and the urban jungle alike, locating the fastest and shortest routes from one place to another. A crow-spirit teaches this Gift.",
-        "system": "The player rolls Perception + Survival (for wilderness) or Streetwise (for urban environments) against difficulty 7. The number of successes equals the quality of the path she blazes and how much she decreases her travel time. Every success reduces travel time by approximately 10 percent, up to a maximum of half the original travel time. The difficulty of any rolls to track the werewolf increase by two when this Gift is active; this decrease is cumulative with other similar effects, such as Scent of Running Water.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Terrors",
-        "description": "As the Ahroun Gift: True Fear. The Ahroun can display the true extent of her power, scaring one chosen foe into quiescence for a number of turns. Spirits of fear teach this Gift.",
-        "system": "The player rolls Strength + Intimidation (difficulty of the target's Willpower). Each success she achieves cows the enemy for one turn; the victim cannot attack at this time. He may defend himself if attacked and otherwise act normally, although his action will likely be guided by fear.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Smoking Mirror",
-        "description": "As the Rank Three common Bastet Gift: Farsight. As the Uktena Gift: Scrying. By staring into a mirror or other reflective surface, the Bastet can witness distant events or spy on rivals. She can follow a comrade's progress into a dangerous ambush or sneak a peek into the Tremere chantry house. Other supernaturals, especially ones with similar abilities, may have defenses against this Gift.",
-        "system": "After spending one Gnosis point, the player must roll Perception + Occult (difficulty 7). The difficulty increases to 10 if the character does not posses an item owned by the target or something taken from the chosen area. The Bastet can see everything as if she were the proverbial fly on the wall.",
-        "source": "PGttCB p70, Bastet BB p98",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Dreamspeak",
-        "description": "As the Galliard Gift. The Galliard can enter another's dream and thereby affect the course of that dream. The werewolf does not have to be anywhere near the target, but she must know or have seen the dreamer. A Chimerling teaches this Gift.",
-        "system": "The player rolls Wits + Empathy (difficulty 8). If the dreamer awakens while the Galliard is still within the dream, the werewolf is thrown out of the dream world, and he loses a Gnosis point.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Spirit Barrier",
-        "description": "As the homid Gift: Spirit Ward. A werewolf with this Gift may protect himself from spirits by performing a quick warding rite. To use this Gift, the werewolf draws an invisible pictogram in the air that scares and unnerves any nearby spirits (except pack totems or caern spirits). The symbol travels with the werewolf as long as it lasts. An ancestor-spirit teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Manipulation + Rituals (difficulty 7). Spirits within 100 feet of the character (again, except the pack totem or local caern spirits) must subtract one from their dice pools for each success. This Gift lasts for one scene.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
+		"tribe": "Bagheera",
         "splat": "Shifter"
     },
     {
@@ -730,18 +351,7 @@
         "stat_type": "gift",
         "values": [2],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Banish Burning",
-        "description": "As the homid Gift: Master of Fire. Once humans tamed fire to keep them warm and to drive off the wild beasts, they were humanity's ancient pact with the spirits of fire. The spirits of flame agree to hold back their hunger when the werewolf touches them. An ancestor spirit or a fire-spirit grants this Gift.",
-        "system": "This Gift allows a werewolf to heal fire damage as if it were bashing. This requires the expenditure of a Gnosis point; the effects last for a scene.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
+		"tribe": "Bubasti",
         "splat": "Shifter"
     },
     {
@@ -754,18 +364,7 @@
         "stat_type": "gift",
         "values": [2],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Heart of Fury",
-        "description": "As the Ahroun Gift. The Garou can steel himself against anger, suppressing his Rage and creating a mental dam against the explosive frenzies of his kind. This anger will catch up with him eventually, though, so he must vent it before it breaks free. A boar-spirit teaches this Gift.",
-        "system": "The player rolls Willpower (difficulty of the character's permanent Rage rating). Every two successes add one to the character's frenzy difficulties for the scene, making it harder to frenzy. When the scene ends, however, past slights and injuries come rushing back to haunt the Garou, refilling the Garou's heart and soul. He must spend one Willpower point or make a frenzy check immediately at the regular difficulty.",
-        "source": "CB20 Pg. 89",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
+		"tribe": "Ceilican",
         "splat": "Shifter"
     },
     {
@@ -778,42 +377,7 @@
         "stat_type": "gift",
         "values": [2],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Snarl of the Predator",
-        "description": "As the Garou Get of Fenris Gift. The Garou lets out a feral snarl that terrifies opponents and cows them into submission. A wolf-spirit teaches this Gift.",
-        "system": "The player rolls Charisma + Intimidation (difficulty of the opponent's Wits + 3). Each success subtracts one die from an opponent's dice pools on the next turn. This Gift takes one full turn to invoke.",
-        "source": "PGttCB p72",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Speak With Wind Spirits",
-        "description": "As the Wendigo Gift. The Wendigo may call upon wind-spirits for knowledge and guidance. He can ask them one question, which must concern the immediate area (wind-spirits have notoriously short attention spans). A wind-spirit teaches this Gift.",
-        "system": "Upon learning this Gift, the Garou can speak with wind-spirits automatically while he is in the Umbra. To ask a question in the Physical world, the player must spend one Gnosis point and roll Manipulation + Expression (difficulty 7). The number of successes reflects the accuracy of the information.",
-        "source": "CB20 Pg. 89",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Spirit of the Fish",
-        "description": "As the Uktena Gift. The werewolf blessed with this Gift can breathe underwater and swim as fast as he can run in Hispo form. Unsurprisingly, a fish-spirit teaches this Gift.",
-        "system": "The player spends one Gnosis and rolls Stamina + Animal Ken (difficulty 7). The effects last for one hour per success.",
-        "source": "CB20 Pg. 89",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
+		"tribe": "Khan",
         "splat": "Shifter"
     },
     {
@@ -826,18 +390,7 @@
         "stat_type": "gift",
         "values": [2],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Stonework",
-        "description": "As the Rank Three Homid Gift: Craft of the Maker, (As the Garou Homid Gift: Reshape Object), except that it only affects stone, dirt, clay and glass, employs a Manipulation + Survival roll, and reshapes the object permanently. The werewolf can shape once-living material (but not undead!) into a variety of objects instantly. Trees may become shelter, buck antlers become spears, animal hides become armor, and flowers become perfumes. The item will resemble the object from which it was shaped (e.g., the aforementioned spear is made of antler, not wood). A Pattern Spider — one of the Weaver's spirits — teaches this Gift.",
-        "system": "The player rolls Manipulation + Crafts against a variable difficulty (5 to turn a broken tree limb into a spear, 8 to turn a plant into a floatable raft) and spends a Gnosis point. The created object will last a length of time according to a specific chart. Expending an additional Gnosis point allows a created weapon to inflict aggravated damage for the scene's duration or until the object returns to its original form. This effect can be made permanent with the sacrifice of a permanent point of Gnosis if the object itself is changed permanently. Successes - Duration / One - 5 minutes Two - 10 minutes Three - One scene Four - One story Five - Permanent.",
-        "source": "Bastet BB p113",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
+		"tribe": "Pumonca",
         "splat": "Shifter"
     },
     {
@@ -850,6 +403,7 @@
         "stat_type": "gift",
         "values": [2],
         "shifter_type": "Bastet",
+		"tribe": "Qualmi",
         "splat": "Shifter"
     },
     {
@@ -862,30 +416,7 @@
         "stat_type": "gift",
         "values": [2],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Armor of Kings",
-        "description": "As the Children of Gaia Gift: Luna's Armor. The Child of Gaia may call for Luna's protection in battle. This Gift even allows limited resistance to silver. A Lune teaches this Gift.",
-        "system": "The Garou concentrates for one full turn, and the player spends a Gnosis point and rolls base Stamina + Survival (difficulty 7). The player may add one die per success to the Garou's soak pool for the rest of the scene. These bonus dice may also be used to soak silver damage, but only these dice. For example, if the Garou's Stamina is 4 and the player rolls three successes, the Garou has seven dice to soak non-silver damage and three to soak silver.",
-        "source": "CB20 Pg. 90",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Heart of Storms",
-        "description": "As the Get of Fenris Gift: Might of Thor. The Garou can increase his strength tremendously, the better to slay his foes. A wolf-spirit teaches this Gift.",
-        "system": "The player spends one Gnosis and one Rage, then rolls Willpower (difficulty 8). The Garou's Strength doubles for one turn per success. After the Gift wears off, the Get is weakened considerably (Physical Attributes are considered 1 and Willpower is halved) until he can rest for at least one hour.",
-        "source": "CB20 Pg. 90",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
+		"tribe": "Qualmi",
         "splat": "Shifter"
     },
     {
@@ -898,6 +429,7 @@
         "stat_type": "gift",
         "values": [2],
         "shifter_type": "Bastet",
+		"tribe": "Simba",
         "splat": "Shifter"
     },
     {
@@ -910,30 +442,7 @@
         "stat_type": "gift",
         "values": [2],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Sense the Unnatural",
-        "description": "As the lupus Gift. The werewolf can sense any unnatural presence and determine its approximate strength and type. Supernatural presences can include magic, spirits, the Wyrm, wraiths and vampires, although it won't pick them out specifically as such. The werewolf may sense a person plagued by hauntings as easily as a ghost. Any spirit servant of Gaia can teach this gift.",
-        "system": "The player rolls Perception + Enigmas. The more successes he rolls, the more information he gains. The sensory input is somewhat vague and subject to interpretation though. For instance, a vampire might smell of old blood, of fear, of rotten flesh, of fresh meat or of whatever else the Storyteller finds appropriate. Interpreting the information properly might require an Intelligence + Occult roll (Storyteller's option).",
-        "source": "CB20 Pg. 90",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Walking Between Worlds",
-        "description": "As the Level Four general Bastet Gift. Swara alone may buy this as a Level Two Gift. This is one of their most closely-guarded secrets. The Bastet may step sideways as Garou do.",
-        "system": "This Gift's effects are permanent once learned.",
-        "source": "CB20 Pg. 90",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [2, 4],
-        "shifter_type": "Bastet",
+		"tribe": "Simba",
         "splat": "Shifter"
     },
     {
@@ -946,6 +455,7 @@
         "stat_type": "gift",
         "values": [2],
         "shifter_type": "Bastet",
+		"tribe": "Swara",
         "splat": "Shifter"
     },
     {
@@ -987,13 +497,15 @@
     {
         "name": "Cheshire Prank",
         "description": "Why should Lewis Carroll have all the fun? It took a while, but enterprising Bastet finally discovered the secret to disappearing from plain sight. Today, it remains a valuable but popular trick.",
-        "system": "By putting on a wide grin, spending a Gnosis point, and rolling Charisma + Subterfuge (difficulty 7), a Bastet may fade from view. The Prank takes three turns to complete. This invisibility lasts for the scene's duration and foils even magical perceptions. The Gift wont dampen sounds, but any werecat who cant move silently by this Rank is in big trouble, anyway. This Gift only works in Feline and Chatro forms, and changing forms ends the invisibility.",
+        "system": "By putting on a wide grin, spending a Gnosis point, and rolling Charisma + Subterfuge (difficulty 7), a Bastet may fade from view. The Prank takes three turns to complete. This invisibility lasts for the scene's duration and foils even magical perceptions. The Gift wont dampen sounds, but any werecat who cant move silently by this Rank is in big trouble, anyway. This Gift only works in Feline and Chatro forms, and changing forms ends the invisibility. (Bastet Qualmi Rank 3 Gift Nighttime Web: As the common Bastet Gift: Cheshire Prank, except that it works in all forms, and does not require a grin.)",
         "source": "Revised - BB Bastet p.98",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
         "values": [3],
         "shifter_type": "Bastet",
+		"gift_alias": "Nighttime Web",
+		"tribe": "Qualmi",
         "splat": "Shifter"
     },
     {
@@ -1001,18 +513,6 @@
         "description": "By chittering slightly, a Bastet may, with this Gift, make her prey come to her. So long as she stands still and chants, the victim will wander slightly dazed until he's close enough to grab. Once the cat moves, the trance is broke. Naturally, this Gift can be used for all kinds of hunting...",
         "system": "The Bastet player rolls Manipulation + Primal Urge (difficulty 7) to command her target to approach. Unless he can resist with a Willpower roll (difficulty 8), any human or animal will obey. Supernatural opponents with a mind empowering supernatural ability (if active when the Gift's influence began) or more than five points of Rage resist at difficulty 6. Otherwise, they're attracted as usual. This only works against victims who were unaware of the Bastet's presence beforehand - as far as they know, they want to wander over that way. Once the prey is close, the werecat can move in however she prefers; a leap, a distraction, or an opening line all work equally well once the target's in place. This Gift does not work in combat.",
         "source": "Revised - BB Bastet p.98",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Farsight",
-        "description": "As the Uktena Gift: Scrying. By staring into a mirror or other reflective surface, the Bastet can witness distant events or spy on rivals. She can follow a comrade's progress into a dangerous ambush or sneak a peek into the Tremere chantry house. Other supernaturals, especially ones with similar abilities, may have defenses against this Gift.",
-        "system": "After spending one Gnosis point, the player must roll Perception + Occult (difficulty 7). The difficulty increases to 10 if the character does not posses an item owned by the target or something taken from the chosen area. The Bastet can see everything as if she were the proverbial fly on the wall.",
-        "source": "W20 Changing Breeds p. 86",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
@@ -1069,18 +569,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Invisibility",
-        "description": "As the Uktena Gift. The Bastet can vanish from sight.",
-        "system": "When this Gift is in use, the Bastet must concentrate on staying invisible. He cannot move faster than half normal walking speed, and he cannot draw attention to himself.",
-        "source": "W20 Changing Breeds p. 86",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
         "name": "Purr",
         "description": "The ultimate tool of feline seduction: by softly purring near some person or animal, the Bastet instills her with a desire to cuddle, pet and spoil him. So long as he treats his paramour well, she'll want nothing more than to shower him with affection for days at a time. Purr works in any form.",
         "system": "To set this charm in motion, the Bastet must purr audibly for at least a minute. The player spends a Willpower point and rolls Charisma + Empathy (difficulty of the target's Willpower). This Gift works on anyone, and unless she has some reason to suspect a trick, the subject will believe her affections are genuine (soon, they may be). Violence or unreasonable demands ('Go kill that vampire for me, sweetheart') wreck the charm beyond repair - it'll never work on her again. The infatuation lingers for one day per success; the results may last a lifetime.",
@@ -1105,18 +593,6 @@
         "splat": "Shifter"
     },	
     {
-        "name": "Touch the Mind",
-        "description": "As the metis Gift: Mental Speech. This Gift grants mental communication, even over vast distances. The user must either know the target personally (although he does not have to be friends with that person) or have something that belongs to that them, such as a lock of his hair.",
-        "system": "The player rolls Charisma + Empathy (difficulty 8) and expends a Willpower point; the effects last for a scene. His character may hold a mental conversation with a target at a maximum distance of 10 miles per success. It does not allow mind reading, but the werecat may use social Abilities, such as Intimidation.",
-        "source": "W20 Changing Breeds p. 86",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
         "name": "Babel's Cure",
         "description": "By flexing Rahjah's powers, a Bastet can translate any human language in her vicinity. Invoking the Unmaker will turn everything into gibberish.",
         "system": "To render languages either clear or unintelligible, the player rolls her Manipulation + Linguistics (difficulty 6). this Gift works on spoken words, writing, and even body language. Everyone within 50 feet will understand all communications for the duration. Cahlash's inversion of the Gift scrambles everything the same way. Either version lasts for one turn (or minute) per success, and each can cancel the other out.",
@@ -1125,30 +601,9 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Cowing the Bullet",
-        "description": "As the homid Gift. The spirits of tools recognize man as their master; as a result, they become reluctant to harm the homid. A Weaver-spirit teaches this Gift.",
-        "system": "The player spends a Gnosis point. For the rest of the scene, the Garou gains two additional soak dice against all crafted weapons not made of silver.",
-        "source": "CB20 Pg. 86",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Craft of the Maker",
-        "description": "As the homid Gift: Reshape Object. The werewolf can shape once-living material (but not undead!) into a variety of objects instantly. Trees may become shelter, buck antlers become spears, animal hides become armor, and flowers become perfumes. The item will resemble the object from which it was shaped (e.g., the aforementioned spear is made of antler, not wood). A Pattern Spider — one of the Weaver's spirits — teaches this Gift.",
-        "system": "The player rolls Manipulation + Crafts against a variable difficulty (5 to turn a broken tree limb into a spear, 8 to turn a plant into a floatable raft) and spends a Gnosis point. The created object will last a length of time according to a specific chart. Expending an additional Gnosis point allows a created weapon to inflict aggravated damage for the scene's duration or until the object returns to its original form. This effect can be made permanent with the sacrifice of a permanent point of Gnosis if the object itself is changed permanently. Successes - Duration / One - 5 minutes Two - 10 minutes Three - One scene Four - One story Five - Permanent.",
-        "source": "CB20 Pg. 86",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
+		"breed": "Homid",
+		"gift_alias": "Traveler's Tongues",
+		"tribe": "Bagheera",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1161,18 +616,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Visceral Agony",
-        "description": "As the Black Fury Gift. The werewolf's claws change to barbed, wicked talons dripping with black venom. While wounds caused by these claws cause no extra damage, the pain alone they inflict is crippling. A pain-spirit teaches this Gift.",
-        "system": "The player spends a Rage point before the character attacks. Any wound penalties the target suffers as a result of this attack are doubled (i.e., a foe at Wounded would lose four dice). If the target is in frenzy or otherwise resistant to pain, he still suffers normal wound penalties.",
-        "source": "CB20 Pg. 87",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
+		"breed": "Metis",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1185,42 +629,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Chains of Mist",
-        "description": "As the Uktena Gift. Silvery filaments spin out from the Garou's claws, becoming streamers of mist that enwrap and confound nearby spirits, sapping their strength. A fog-spirit teaches this Gift.",
-        "system": "The Uktena concentrates for a turn; and the player spends one Gnosis point and rolls Dexterity + Enigmas (difficulty 7). One spirit of the player's choice within 200 feet (60 m) is affected per success. Spirits struck by this Gift treat their Rage, Gnosis, and Willpower ratings as though they were one lower than they truly are for the purpose of all dice rolls for the",
-        "source": "CB20 Pg. 87",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Underbelly",
-        "description": "As the Shadow Lord Gift: Fatal Flaw. The Shadow Lord can discern a target's weakness, granting an advantage in combat. A Stormcrow teaches this Gift.",
-        "system": "The Shadow Lord must concentrate for one full turn. The player rolls Perception + Empathy (difficulty of the target's Wits + Subterfuge). Success grants the Garou an extra die of damage during combat with that target. Additional successes grant knowledge of further weaknesses (although no further damage bonus is gained). Five successes reveal all of the target's flaws.",
-        "source": "CB20 Pg. 87",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Weak Arm",
-        "description": "As the philodox Gift. Philodox are masters of judgment, and this trait extends even into the field of battle. By watching an opponent's fighting style, the werewolf can evaluate his strengths and weaknesses. Snake- and wind-spirits teach this Gift.",
-        "system": "The player rolls Perception + Brawl (difficulty 8). Each success gives her one bonus die to add to her attack or damage rolls against this opponent. For instance, a Philodox who gets four successes on this roll could add two dice to her attack rolls and two to her damage pool. This Gift can be used against a given foe only once per scene, and the benefits are lost at the end of the scene. The Garou must concentrate for a full turn to use this Gift.",
-        "source": "CB20 Pg. 87",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
+		"breed": "Metis",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1234,30 +643,7 @@
         "stat_type": "gift",
         "values": [3],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Traveler's Tongues",
-        "description": "As the Bastet Homid Gift: Babel's Cure. By flexing Rahjah's powers, a Bastet can translate any human language in her vicinity. Invoking the Unmaker will turn everything into gibberish.",
-        "system": "To render languages either clear or unintelligible, the player rolls her Manipulation + Linguistics (difficulty 6). this Gift works on spoken words, writing, and even body language. Everyone within 50 feet will understand all communications for the duration. Cahlash's inversion of the Gift scrambles everything the same way. Either version lasts for one turn (or minute) per success, and each can cancel the other out.",
-        "source": "Bastet BB p101",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Ancestral Wings",
-        "description": "As the Black Fury Gift: Wings of Pegasus. The Fury can sprout majestic wings when in Hispo form, allowing her to fly at will. An avatar of Pegasus teaches this Gift.",
-        "system": "The player spends a Gnosis point to produce the wings capable of 50 miles per hour (80 kph) flight, which last until dismissed. Fine flying maneuvers require a Dexterity + Athletics roll at a difficulty determined by the Storyteller.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
+		"tribe": "Bagheera",
         "splat": "Shifter"
     },
     {
@@ -1270,18 +656,7 @@
         "stat_type": "gift",
         "values": [3],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Wandering Forest",
-        "description": "As the Red Talon Gift: Trackless Waste. Humans have no sense of direction, the Talons assert. With this Gift, the Garou can make certain that they don't. The Talon employing Trackless Waste must have some familiarity with the terrain in question. Upon using the Gift, humans become hopelessly lost. Compasses malfunction, maps are misleading, and landmarks seem to be out of place. A spirit of the wilderness teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Intelligence + Primal-Urge. Each success “scrambles” a two-mile radius. This Gift functions on other werewolves, but they can resist with a Perception + Primal-Urge roll, and they must score more successes than the Talon to remain unaffected. This Gift lasts for four hours.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
+		"tribe": "Balam",
         "splat": "Shifter"
     },
     {
@@ -1294,66 +669,8 @@
         "stat_type": "gift",
         "values": [3],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "The Many Tongues of Ptah",
-        "description": "As the homid Gift: Speech of the World. This Gift allows Gaia's warriors to read and wield the spirit of speech, bypassing the need to learn different languages and dialects. The Garou may speak and understand any human language she encounters, though she speaks with an obvious accent, marking her as an outsider. Speech of the World doesn't convey literacy, nor is it an encyclopedia of cultural information. An ancestor-spirit teaches this Gift.",
-        "system": "The player rolls Intelligence + Academics (difficulty 7). The effect lasts for one scene.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Faerie Kin",
-        "description": "As the Fianna Gift. The Fianna can call upon ancient pacts between her people and the fae. By emitting a special howl, the Garou can call whatever fae are in the area to help. They will obey the Fianna, but not without question. A dream-spirit teaches this Gift, and the teaching normally involves a quest of some kind.",
-        "system": "The player spends at least one Gnosis point and rolls Manipulation + Occult (difficulty 8). Spending more Gnosis increases the raw power of the faeries who respond, while more successes on the roll means that more faeries answer. Note that this Gift may summon changelings or dream-spirits called chimera, but it will call true fae only in strange Umbral reaches, and even then very rarely. Botching this roll is bad news; the faeries who respond are vicious and malevolent, and they will act to hinder the Garou.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Phantasm",
-        "description": "As the Fianna Gift. The Garou creates an unmoving illusion that contains visual, auditory, olfactory and even tactile elements. A grain-spirit — the so-called “spirit of spirits” — teaches this gift.",
-        "system": "The player spends one Gnosis for each 10-foot area to be covered by the illusion and then rolls Intelligence + Expression. Anyone who doubts the illusion must roll Perception + Alertness and exceed the Garou's successes in order to see through it.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Data Flow",
-        "description": "As the Garou Glass Walkers Gift. The Glass Walkers originally developed this Gift as a “remote control” for new electronic devices. As the computer gained importance, this Gift gained a whole new utility. Glass Walkers now use this ability to take control of the data resources that are so important to the world's economy and to society in general. By focusing her attention on a single computer, a Glass Walker can take control of that machine from across the room. She can order it to erase its memory, alter security clearances, transmit false data or simply print a document. An electrical spirit or the even more complex computer spirits can teach this Gift.",
-        "system": "A successful Wits + Computer roll (difficulty 7) plus the expenditure of one Gnosis point establishes contact with the computer. As long as the Garou keeps her target in her line of sight, she can maintain contact with the machine. While this Gift allows remote access, the Garou must still make all the appropriate roll to manipulate the computer.",
-        "source": "Bastet BB p110",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Asuras' Bane",
-        "description": "As the Bubasti Gift: Banish Cahlash's Brood. The weretiger's fur turns white with use, rather than black. By calling upon the Father of Dark Spirits, a Bubasti may command Wyrmish spirits to depart. Each time the Bubasti does so, his fur grows a deeper shade of black and his actions become more... erratic. Sense Wyrm detects a faint trace of Wyrm-taint on the Bastet for a week afterward.",
-        "system": "The player spend a Willpower point and rolls Manipulation + Enigmas against a difficulty of the higher of the spirit's Rage or Gnosis. Each success removes three points of the spirit's Essence. Botching the roll inflicts an immediate derangement of the Storyteller's choice.",
-        "source": "CB20 Pg. 89",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
+		"gift_alias": "Asuras' Bane",
+		"tribe": ["Bubasti", "Khan"],
         "splat": "Shifter"
     },
     {
@@ -1366,30 +683,7 @@
         "stat_type": "gift",
         "values": [3],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Maker's Charm",
-        "description": "As the Bastet Homid Gift: Craft of the Maker. (As the Garou Homid Gift: Reshape Object.) The werewolf can shape once-living material (but not undead!) into a variety of objects instantly. Trees may become shelter, buck antlers become spears, animal hides become armor, and flowers become perfumes. The item will resemble the object from which it was shaped (e.g., the aforementioned spear is made of antler, not wood). A Pattern Spider — one of the Weaver's spirits — teaches this Gift.",
-        "system": "The player rolls Manipulation + Crafts against a variable difficulty (5 to turn a broken tree limb into a spear, 8 to turn a plant into a floatable raft) and spends a Gnosis point. The created object will last a length of time according to a specific chart. Expending an additional Gnosis point allows a created weapon to inflict aggravated damage for the scene's duration or until the object returns to its original form. This effect can be made permanent with the sacrifice of a permanent point of Gnosis if the object itself is changed permanently. Successes - Duration / One - 5 minutes Two - 10 minutes Three - One scene Four - One story Five - Permanent.",
-        "source": "Bastet BB p101",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Bayou's Embrace",
-        "description": "As the Red Talon Gift: Quicksand. The Garou turns the ground into a sticky morass that catches foes and prevents them from escaping or even walking. An earth elemental teaches this Gift.",
-        "system": "The player spends a Gnosis point and rolls Manipulation + Primal-Urge (difficulty 7). Each success changes the ground into a quicksand-like bog for a 10-foot radius. Anyone trying to move through it (except the Garou) moves at half walking speed, and he may not execute combat maneuvers that require overland movement. Additionally, all other combat maneuvers take a +1 difficulty penalty.",
-        "source": "CB20 Pg. 89",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
+		"tribe": "Khan",
         "splat": "Shifter"
     },
     {
@@ -1401,7 +695,10 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [3],
-        "shifter_type": "Bastet",
+        "shifter_type": ["Bastet", "Mokole"],
+		"gift_alias": "Dragon's Tongue",
+		"auspice": "Rising Sun Striking",
+		"tribe": "Pumonca",
         "splat": "Shifter"
     },
     {
@@ -1414,18 +711,7 @@
         "stat_type": "gift",
         "values": [3],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Song of the Earth Mother",
-        "description": "As the Shadow Lord Gift. A more powerful version of Sense Wyrm, this Gift allows the user to sense the presence of Wyrm activity within a broad area. Essentially, the Garou communes with the earth and listens to what it says. The Gift is taught by an earth-spirit.",
-        "system": "The user spends 10 minutes communing with the earth, during which time she may take no other actions. The player then spends two Gnosis points and rolls Perception + Occult (difficulty 7). Success indicates that the earth tells her about any supernatural presence within an area of 100 yards (91 m) per success. While the Gift doesn't offer specific information about the being or beings detected, it does indicate whether or not the presence is Wyrm-tainted.",
-        "source": "CB20 Pg. 89",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
+		"tribe": "Pumonca",
         "splat": "Shifter"
     },
     {
@@ -1438,42 +724,7 @@
         "stat_type": "gift",
         "values": [3],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Nighttime Web",
-        "description": "As the common Bastet Gift: Cheshire Prank, except that it works in all forms, and does not require a grin. Why should Lewis Carroll have all the fun? It took a while, but enterprising Bastet finally discovered the secret to disappearing from plain sight. Today, it remains a valuable but popular trick.",
-        "system": "By putting on a wide grin, spending a Gnosis point, and rolling Charisma + Subterfuge (difficulty 7), a Bastet may fade from view. The Prank takes three turns to complete. This invisibility lasts for the scene's duration and foils even magical perceptions. The Gift wont dampen sounds, but any werecat who cant move silently by this Rank is in big trouble, anyway. This Gift only works in Feline and Chatro forms, and changing forms ends the invisibility.",
-        "source": "Bastet BB p115",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Coup de Grace",
-        "description": "As the Black Fury Gift. The Garou studies her foe, looking for the best place to strike. In doing so, she sets herself up to land this devastating attack. An owl-spirit teaches this Gift.",
-        "system": "The player spends one Willpower point and rolls Perception + Brawl (difficulty of the target's Stamina + Dodge). If successful, the player doubles her damage dice on the Garou's next successful attack.",
-        "source": "CB20 Pg. 90",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Fireroar",
-        "description": "As the Khan Gift: Dragonroar. Bellowing like a thunderclap, the Khan breathes a ball of fire onto his foes.",
-        "system": "The player spends two Gnosis points. The fireball is aimed with Dexterity + Brawl, and inflicts Ferocity levels of aggravated damage. In subsequent turns the target continues to burn for half the damage suffered the previous turn (round down), until the flames gutter out.",
-        "source": "PGttCB p73, Bastet BB p112",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
+		"tribe": "Qualmi",
         "splat": "Shifter"
     },
     {
@@ -1486,42 +737,7 @@
         "stat_type": "gift",
         "values": [3],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Wrath of Kings",
-        "description": "As the Silver Fang Gift: Wrath of Gaia. The Garou shows himself in full, terrible, glory as Gaia's chosen warrior. His splendor overwhelms minions of the Wyrm, driving them before him in terror unless they can master their instinctive fear of this predator. An avatar of Gaia herself teaches this Gift.",
-        "system": "The player spends a Gnosis point and rolls Charisma + Intimidation. Any minions of the Wyrm who look upon the Garou for the next scene must roll Willpower (difficulty 7) and equal or exceed the player's successes. Otherwise, they flee in terror.",
-        "source": "CB20 Pg. 90",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Messenger's Fortitude",
-        "description": "As the Silent Strider Gift. The Garou can run at full speed for three days without rest, food or water. When the Garou reaches her destination, she has 10 minutes to complete whatever business brought her, then she must sleep for three days. A camel- or wolf-spirit teaches this Gift.",
-        "system": "The player spends one Gnosis point. The Garou may do nothing but run; stopping ends the Gift. For an additional Gnosis point, he may imbue another being with this Gift's benefits.",
-        "source": "CB20 Pg. 90",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Speed Beyond Thought",
-        "description": "As the Silent Strider Gift. The Garou can run at 10 times his normal land speed. The effects last for up to eight hours, during which the Garou can do nothing but concentrate on running. When the Gift's effects end, the Garou must eat immediately or face frenzy from hunger. A cheetah- or air-spirit teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Stamina + Athletics (difficulty 7) to activate the Gift.",
-        "source": "CB20 Pg. 90",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [3],
-        "shifter_type": "Bastet",
+		"tribe": "Simba",
         "splat": "Shifter"
     },
     {
@@ -1534,6 +750,7 @@
         "stat_type": "gift",
         "values": [3],
         "shifter_type": "Bastet",
+		"tribe": "Swara",
         "splat": "Shifter"
     },
     {
@@ -1545,6 +762,19 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [3],
+		"tribe": "Swara",
+        "shifter_type": "Bastet",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Attunement",
+        "description": "Bastet who've set up Den-Realms use this secret to view their holdings from where they stand. By going into a light trance, the werecat in question communes with the spirits in her territory and learns what's going on throughout the Den-Realm. Visitors, intruders or crises can be discovered long before they get too close to the cat herself.",
+        "system": "The player spends a Gnosis point and rolls Perception + Survival (difficulty 6). The more successes she wins, the more she learns. On a botch, the spirits lie.",
+        "source": "Revised - BB Bastet p.99",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [4],
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1597,38 +827,15 @@
         "splat": "Shifter"
     },
     {
-        "name": "Wolf's Terror",
-        "description": "As the Ahroun Gift: Silver Claws. The Bastet can establish her battlefield primacy against other werebeasts by transforming her own claws into silver.",
-        "system": "The player rolls Gnosis (difficulty 7) to activate the Gift. The transformation lasts for the scene or until the Bastet decides to end the Gift. Silver claws still do aggravated damage to all targets, and they are naturally unsoakable to the Garou and most other werebeasts. While the character manifests the claws, she suffers searing agonies. Each turn, she gains an automatic Rage point. Furthermore, all non-combat difficulties increase by one because of the distraction. When her Rage points exceed her Willpower, she must check for frenzy.",
-        "source": "W20 Changing Breeds p. 86",
+        "name": "Walking Between Worlds",
+        "description": "As the Level Four general Bastet Gift. Swara alone may buy this as a Level Two Gift. This is one of their most closely-guarded secrets. The Bastet may step sideways as Garou do.",
+        "system": "This Gift's effects are permanent once learned.",
+        "source": "CB20 Pg. 90",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Monkey's Uncle",
-        "description": "As the Glass Walker Gift: Doppelganger, although the Bastet can only take the forms of humans, great cats or Bastet. The Garou may take the exact likeness of any other human, wolf or Garou. A chameleon-spirit teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Charisma + Performance (difficulty 8). Traits aren't duplicated, but everything else, including voice, posture and scent, is identical. The effects last for one day per success.",
-        "source": "CB20 Pg. 86",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Tech Speak",
-        "description": "As the Glass Walker Gift. This Gift allows the Glass Walker to contact others through any technological device. The Garou speaks to a Pattern Spider in or near a technological device and tells them the message to be delivered and whom it should be delivered to. The Pattern Spider then finds the receiver and uses any communications technology near them to deliver the message; Telephones yell it out, (without picking up the handset), electronic billboards display it, computer printers print it out as text. If no communications technology is present, any other technology will activate, though no message will be imparted. If no technology whatsoever is present near the receiver, the Gift fails. A Pattern Spider teaches this Gift.",
-        "system": "The player spends a Gnosis point and rolls Charisma + Science. The difficulty is relevant to the distance the message needs to be sent: The next room is difficulty 4, the same building 5, one block away 6, one mile away 7, a time-zone away 8. Beyond that is difficulty 9. The more successes achieved, the longer the message can be. A single success will only allow one word to be sent, five would allow unlimited length.",
-        "source": "CB20 Pg. 86",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
+        "values": [2, 4],
+		"tribe": "Swara",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1641,42 +848,22 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Moon's Gateway",
-        "description": "As the Ragabash Gift: Open Moon Bridge. The Garou has the ability to open a moon bridge, with or without the premission of the totem of that caern. A Lune teaches this Gift.",
-        "system": "The player spends on Gnosis point. See the Rite of the Opened Bridge for more information on opening moon bridges. The maximum distance that can thereby be covered is 1,000 miles.",
-        "source": "CB20 Pg. 87",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
+		"breed": "Homid",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
 	{
         "name": "Redeem the Waste",
         "description": "Part of a Metis' roll is the salvation of despoiled wilderness. To do so, he'll often sniff around, paw at the earth, rub his scent around and urinate in various places, essentially claiming the place as his own. While this isn't a true Rite of Claiming, it resembles it in many ways. By dedicating himself to this land, he can summon forth a healing power to save it from toxins and other desecrations.",
-        "system": "The player rolls Manipulation + Survival (difficulty 7) and spends a Gnosis point. Each success makes one square half-mile of damaged, cursed or barren land fertile again; uprooted trees wont re-plant themselves, but new trees and plants will rapidly grow. This healing is permanent until someone takes the time to despoil the land agai",
+        "system": "The player rolls Manipulation + Survival (difficulty 7) and spends a Gnosis point. Each success makes one square half-mile of damaged, cursed or barren land fertile again; uprooted trees wont re-plant themselves, but new trees and plants will rapidly grow. This healing is permanent until someone takes the time to despoil the land again. (Bastet Simba Gift The Bountiful Dominion: As the Bastet Metis Gift: Redeem the Waste, except that the magic doubles crop growth, and health, purifies water immediately, and costs one Gnosis per success.)",
         "source": "Bastet BB p103",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Beast Life",
-        "description": "As the lupus Gift. The werewolf with this Gift can communicate with other wild animals and attract (or even command) them. Domesticated animals will speak with the werewolf, but they have given themselves to the ways of humans and must be persuaded to obey the Garou. Any animal spirit may teach this Gift, although Lion and Bear are most often sought as teachers. Children of Gaia: Children of Gaia who use this Gift never do so if the animals attracted would come to harm, unless the very heart of a caern is threatened.",
-        "system": "The player spends on Gnosis point and rolls Charisma + Animal Ken (difficulty 7). The character gains the ability to communicate with all animals automatically. One success can attract specific types of animals within a 10-mile radius, and those that can reach the werewolf in a reasonable amount of time will do so. Each additional success adds 10 miles (two successes indicate a 20-mile radius). All wild animals become friendly to the character. They follow any reasonable request the character makes, and many unreasonable ones as well. A character who uses this Gift to force an animal to sacrifice itself had best pay homage to its spirit or risk angering Gaia. The effect lasts for one scene, but the time may be extended by spending one Gnosis point per extra scene desired.",
-        "source": "CB20 Pg. 87",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
+        "values": [4, 5],
+		"breed": "Metis",
+		"tribe": ["Simba", "Balam"],
+		"gift_alias": ["The Bountiful Dominion", "Heal the Wounded Land"],
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1689,6 +876,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
+		"breed": "Feline",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1701,6 +889,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
+		"breed": "Feline",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1713,18 +902,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Potter's Clay",
-        "description": "As the Rank Three Bastet Homid Gift: Craft of the Maker (As the Garou Homid Gift: Reshape Object. The werewolf can shape once-living material (but not undead!) into a variety of objects instantly. Trees may become shelter, buck antlers become spears, animal hides become armor, and flowers become perfumes. The item will resemble the object from which it was shaped (e.g., the aforementioned spear is made of antler, not wood). A Pattern Spider — one of the Weaver's spirits — teaches this Gift.",
-        "system": "The player rolls Manipulation + Crafts against a variable difficulty (5 to turn a broken tree limb into a spear, 8 to turn a plant into a floatable raft) and spends a Gnosis point. The created object will last a length of time according to a specific chart. Expending an additional Gnosis point allows a created weapon to inflict aggravated damage for the scene's duration or until the object returns to its original form. This effect can be made permanent with the sacrifice of a permanent point of Gnosis if the object itself is changed permanently. Successes - Duration / One - 5 minutes Two - 10 minutes Three - One scene Four - One story Five - Permanent.",
-        "source": "PGttCB p70, Bastet BB p101",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
+		"tribe": "Bagheera",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1737,6 +915,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
+		"tribe": "Balam",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1749,30 +928,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Arms of Darkness",
-        "description": "As the Uktena Gift: Coils of the Serpent. Using this Gift, an Uktena can call forth dark tentacles of mist or fog that wrap around enemies and hold them in a viselike grip. Each coil is four feet long and possesses the same Physical characteristics as the werewolf who summons the coils. Any snake-spirit can teach this Gift.",
-        "system": "The player rolls Dexterity + Occult, difficulty 7. Each success causes a single coil to come forth from the surrounding air. The coils focus on a single target, unless the player makes attack rolls against multiple targets, with the normal penalties to the rolls for multiple actions. The coils only bind; they can't inflict damage. To break free, the victim must make a Strength roll, difficulty 7. If his successes exceed the number of coils, he's free. If not, he's still a prisoner. The tentacles last until the end of the scene or until the summoner decides to send them away.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Shadowplay",
-        "description": "As the Theurge Gift. Unlike the werewolf Gift, the Bubasti does not have to mimic the shadow's movements; once free, it can go about its business as if it were a perfect duplicate of the Bastet. Also unlike the Garou Gift, some light must be present to cast the shadow in the first place. The Theurge breathes life into her shadow, which can then perform tasks for her. The shadow moves about independently with the same abilities as its creator. The Theurge's emissary can cause lifesaving distractions, pick up remote objects and even fight battles.",
-        "system": "To activate the shadow, the player must roll Dexterity + Enigmas (difficulty 8) and spend one Gnosis point. The Theurge must act out the doings of her shadow by making “shadow puppets” with her hands. No light need be present for the shadow to be active. In all respects besides appearance, the shadow maintains the same Traits and Abilities as the Garou. The werewolf cannot create multiple shadows. The shadow can operate out of sight of the Garou; its range is ten yards per success.",
-        "source": "PGttCB p72, Bastet BB p109",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
+		"tribe": "Balam",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1785,18 +941,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Gift of Dreams",
-        "description": "As the Galliard Gift. The Galliard crafts a dream, then breathes it into a sleeping individual. A Lune teaches this Gift.",
-        "system": "The player rolls Wits + Expression (difficulty 6) to craft the dream; more successes allows for more vivid and impactful dreams. To ensure that an individual experiences this dream, the Galliard must breathe it into the target's mouth while they sleep. The player spends a Gnosis point to complete the Gift. Dreams crafted with this Gift are often unusually vivid and dramatic, often leaving even lifelong skeptics convinced that they hold some deep meaning.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
+		"tribe": "Bubasti",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1809,6 +954,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
+		"tribe": "Ceilican",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1820,20 +966,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
+        "values": [3, 4],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Call Elemental",
-        "description": "As the Uktena Gift. The Garou is able to call one of the four classic elementals to his aid (earth, air, fire or water). An elemental teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Gnosis (difficulty of the area's Gauntlet). She must then roll Manipulation + Occult (difficulty 7) to make the elemental look favorably upon the Garou. The elemental vanishes at the end of the scene.",
-        "source": "CB20 Pg. 89",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Bastet",
+		"gift_alias": "Fireroar",
+		"tribe": ["Simba", "Khan"],
         "splat": "Shifter"
     },
 	{
@@ -1845,6 +981,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
+		"tribe": "Pumonca",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1857,6 +994,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
+		"tribe": "Pumonca",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1869,66 +1007,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Chill of Early Frost",
-        "description": "As the Wendigo Gift. The werewolf calls down a mystical chill from Great Wendigo himself, freezing the surrounding lands and anyone in it. A spirit servant of Great Wendigo teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Intelligence + Occult (difficulty varies: 4 if it is already winter, 6 for spring, 9 for summer). Success drops the temperature to a bit below freezing in a five-mile radius, or even further below zero if it was already winter. All creatures without a natural coat of fur lose two dice from all pools. This Gift wreaks pure havoc in urban environments, as pipes burst and roads freeze. This Gift lasts for one hour per success. [Note: In the Get of Fenris Tribebook, it says members of Ymir's Sweat can learn “Call of the Early Frost (Level Three Wendigo)” as though it was a tribe gift. However, the core book lists Call of the Early Frost as Level Four. Out of five Camps, they're the only one with a rank change for the Gift they have access to, so it may have been be a notation error in the Tribebook.]",
-        "source": "CB20 Pg. 89",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Dancing on Air",
-        "description": "As the Bastet Metis Gift: Moon's Gateway, except that the roll is Intelligence + Enigmas. As the Ragabash Gift: Open Moon Bridge. The Garou has the ability to open a moon bridge, with or without the premission of the totem of that caern. A Lune teaches this Gift.",
-        "system": "The player spends on Gnosis point. See the Rite of the Opened Bridge for more information on opening moon bridges. The maximum distance that can thereby be covered is 1,000 miles.",
-        "source": "Bastet BB p115",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Still Breeze Blowing",
-        "description": "Like the Lupus Gift: Elemental Gift, this magic allows a Qualmi to conjure a spirit to shift the elements to her advantage. Dwelling in the North as they do, most members of this tribe favor air and ice elemental over fire or earth. The werewolf calls upon the primal force of Gaia Herself, thereby commanding the spirits of the elements to rise up, undulate forward and even engulf foes. This Gift summons an elemental spirit, not merely the raw matter of the elements, but the primal spirits possessing power enough to challenge even something as powerful as a Nexus Crawler. The elementals grant this Gift.",
-        "system": "The player spends one Gnosis point and rolls Charisma + Occult (difficulty 7). If successful, he calls an elemental who grants him the ability to control a large volume of air, earth, water or fire (in any of their forms) that is approximately 20′ by 20′ per success. The effect lasts for one scene or until the elemental leaves or is destroyed.",
-        "source": "Bastet BB p115",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "King of Beasts",
-        "description": "As the Philodox Gift, save that it affects all animals within 300 feet. The Philodox's authority extends even into the realm of beasts, such that he can command the loyalty of any specific animal. If successful, the animal follows his commands willingly and unconditionally. A lion- or falcon-spirit teaches this Gift.",
-        "system": "The Philodox must choose one target within 100 feet. The player rolls Charisma + Animal Ken against a difficulty based on the werewolf's relationship with the animal. This power works on only one animal at a time, and it does not attract animals to the Garou's vicinity (see the Level Four lupus Gift: Beast Life). Relationship Difficulty: A sibling: 3 Feed and care for: 6 Stranger: 8 Hostile: 10",
-        "source": "CB20 Pg. 90",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "The Bountiful Dominion",
-        "description": "A ruler must be prepared to provide for his subjects. By laying this Gift upon the land, a Simba can make the local crops grow quickly, the soil turn fertile and the waters run clear. This Gift comes from the land of Manu T'Chaa, who ended a famine with his wisdom and passed the secret to his descendants.",
-        "system": "As the Metis Gift: Redeem the Waste, except that the magic doubles crop growth, and health, purifies water immediately, and costs one Gnosis per success.",
-        "source": "Bastet BB p116",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [4],
+		"tribe": "Pumonca",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1941,6 +1020,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
+		"tribe": "Swara",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -1953,6 +1033,8 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4, 5],
+		"breed": "Feline",
+		"tribe": "Swara",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -2017,18 +1099,6 @@
         "splat": "Shifter"
     },
 	{
-        "name": "Madness",
-        "description": "As the metis Gift. The metis struggles his whole life to find a place, a purpose and a sense of stability in his horrifying existence. With this Gift, he can force others to face their inner demons, including insanity and madness. The nature of the derangement varies among individuals, but it will always be severe, making it impossible for the victim to function normally. Lunes, along with spirits of trickery and madness teach this Gift.",
-        "system": "The player spends a Gnosis point and rolls Manipulation + Intimidation (difficulty of the victim's Willpower). The insanity lasts a number of days equal to the successes rolled on the attempt. During this time, the metis can increase or decrease the effects of the madness, granting the victim lucidity and then driving him into psychosis. Even after the Gift has ended, the repercussions from the bout with madness often haunt the target for the rest of his life.",
-        "source": "CB20 Pg. 86",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
         "name": "Black Friday",
         "description": "This dreaded Gift, the bane of the Information Age, allows a Bastet to crash a computer network in seconds. By communing with net Spiders (see the Gift: What's the Password?) and promising a few favors, a lucky werecat can wreak system havoc without even touching a keyboard. It's rarely done because of its tendency to backfire (wiping out one's own computer files!), but causes untold headaches for the programmers of Pentex.",
         "system": "The player rolls his Manipulation + Enigmas to convince the Spiders to do his dirty work. Obviously, he has to have some way of reaching them first, such as a Gift, a short visit to the Penumbra, or a message typed into the doomed system. Once the deal is set in motion, the Spiders eat the system's data; a skillful data retriever can undo the damage, but it'll take days or weeks to fix. The Gift's difficulty depends on the size and complexity of the system in question. Protected networks add 1 to the amount of successes needed; magical system include Trinary computers or Technomagical networks (see Mage: The Ascension). A botch causes the Spiders to wreck your own data instead. Note that this kind of tampering immediately sets of alarms on guarded systems; a would-be saboteur would be wise to amscray ontopray! Network - Difficulty - Succs Needed / Small office - 6 - 1-2 Large office - 6 - 3-4 Small Corporate - 7 - 4-5 Large corporate - 8 - 4-5 International/Government - 9 - 5-10 Secret Government/Magical - 10 - 5-15.",
@@ -2037,6 +1107,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
+		"breed": "Homid",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -2049,18 +1120,8 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Wrath of Nala",
-        "description": "As the Hakken Gift: Divine Wind. The Hakken can call forth a powerful storm in a designated area. The storm uproots trees and overturns cars in its fury. An ancestor-spirit or a servant of Narukami, Lord of Thunder, teaches this Gift.",
-        "system": "The player rolls Stamina + Enigmas (difficulty 7) and spends a minimum of one Rage point. Each success equals a one-mile (1.6 km) radius for the storm. Each Rage point spent adds a success and, therefore, increases the size of the storm, which lasts for no more than one scene.",
-        "source": "CB20 Pg. 87",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
+		"breed": "Homid",
+		"tribe": "Bubasti",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -2073,6 +1134,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
+		"breed": "Metis",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -2085,6 +1147,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
+		"tribe": "Bagheera",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -2097,6 +1160,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
+		"tribe": "Bagheera",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -2109,30 +1173,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Heal the Wounded Land",
-        "description": "As the Rank Four Bastet Metis Gift: Redeem the Waste. Part of a Metis' roll is the salvation of despoiled wilderness. To do so, he'll often sniff around, paw at the earth, rub his scent around and urinate in various places, essentially claiming the place as his own. While this isn't a true Rite of Claiming, it resembles it in many ways. By dedicating himself to this land, he can summon forth a healing power to save it from toxins and other desecrations.",
-        "system": "The player rolls Manipulation + Survival (difficulty 7) and spends a Gnosis point. Each success makes one square half-mile of damaged, cursed or barren land fertile again; uprooted trees wont re-plant themselves, but new trees and plants will rapidly grow. This healing is permanent until someone takes the time to despoil the land again.",
-        "source": "PGttCB p70, Bastet BB p103",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Shadow Brethren",
-        "description": "As the Shadow Lord Gift: Shadow Pack. The Garou summons up shadowy duplicates of himself to stand by him in battle. These shadow-wolves resemble the Shadow Lord and have some of the same capabilities. A night-spirit teaches this Gift.",
-        "system": "The player rolls Gnosis (difficulty 8) and spends a variable number of Gnosis points. For each point spent, the Garou summons a shadow-duplicate. These duplicates have the same Attributes and Abilities as the Garou, but they may not use Gnosis or Willpower. Each has only one health level (i.e., any attack that is not soaked destroys it). The duplicates fade at the end of the scene.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
+		"tribe": "Balam",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -2145,18 +1186,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "The Madness of Crowds",
-        "description": "As the Bone Gnawer Gift: Riot. This Gift summons a horde of malevolent spirits to provoke the inhabitants of a city into violent rioting. The Gift plays on the hatred and fear of the down-and-outs of the city: the homeless, the poor and even stray animals. The Gnawer can direct the riot to a degree, but such things tend to escalate, and the Garou has no power to stop the riot from doing so. A rat-spirit teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Wits + Subterfuge (difficulty 8). If successful, the spirits direct their hosts against a target of the Garou's choice. The different hosts, however, will not necessarily work together — they may even begin to fight each other as the mob mentality takes over. The number of successes determines the area affected. Successes - Extent / 1 - Building 2 - Block 3 - Neighborhood 4 - District (the South Side, etc. ) 5 - Entire City.",
-        "source": "CB20 Pg. 88",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
+		"tribe": "Bubasti",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -2169,6 +1199,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
+		"tribe": "Ceilican",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -2181,18 +1212,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Call to Battle",
-        "description": "As the Garou Ahroun Gift: Strength of Will. The Ahroun with this Gift could lead his pack to the gates of Hell itself if that were what it took. A wolf-spirit or an Incarna avatar teaches this Gift.",
-        "system": "The Garou's player spends a point of Willpower and rolls Charisma + Leadership (difficulty 8). Each success grants all the Garou's allies within 100 feet an extra point of Willpower. These extra points last for the rest of the scene, and they can be spent as usual. This Gift can even raise an ally's Willpower above its maximum or even above 10. This Gift may be used only once per scene.",
-        "source": "PGttCB p72, Bastet BB p113",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
+		"tribe": "Khan",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -2205,18 +1225,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Thunderbird's Cry",
-        "description": "As the Hakken Gift: Divine Wind. The Hakken can call forth a powerful storm in a designated area. The storm uproots trees and overturns cars in its fury. An ancestor-spirit or a servant of Narukami, Lord of Thunder, teaches this Gift.",
-        "system": "The player rolls Stamina + Enigmas (difficulty 7) and spends a minimum of one Rage point. Each success equals a one-mile (1.6 km) radius for the storm. Each Rage point spent adds a success and, therefore, increases the size of the storm, which lasts for no more than one scene.",
-        "source": "CB20 Pg. 89",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
+		"tribe": "Khan",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -2230,6 +1239,7 @@
         "stat_type": "gift",
         "values": [5],
         "shifter_type": "Bastet",
+		"tribe": "Qualmi",
         "splat": "Shifter"
     },
 	{
@@ -2242,30 +1252,7 @@
         "stat_type": "gift",
         "values": [5],
         "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Obedience",
-        "description": "As the Shadow Lord Gift. With the power of this Gift, the Shadow Lord becomes the ultimate alpha, compelling all others to follow her orders. A Stormcrow teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Charisma + Leadership (difficulty 8). All in the vicinity must roll Willpower (difficulty 8) and match or exceed the Garou's successes to avoid the effects of the Gift. If the werewolf wins by one success, the targets follow any order they don't mind following. Getting three successes means that the targets will treat the Garou as their alpha and fight for him. Getting five successes means that the targets will follow him into the Abyss or perform other virtually suicidal actions.",
-        "source": "CB20 Pg. 90",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "Command the Multitude",
-        "description": "Like the Rank One Gift: Submit, except that it affects everyone in a 200 foot radius and requires a Gnosis point. To make things easy, the Storyteller may simply have the player roll three successes with Willpower (difficulty 9) to dominate a strong-willed crowd. Lesser foes, like normal humans or animals, reduce the difficulty to 6. As the Black Fury Gift: Kneel. By pointing a finger or claw at a target, a Fury can force him to his knees. Only the strongest-willed can do anything but strain and swear in response. This Gift is taught by one of Pegasus's brood.",
-        "system": "The Fury rolls Manipulation + Intimidation (difficulty of the subject's Willpower). Her target falls to his knees unless he spends a Gnosis point to resist the Gift's effects (other supernatural beings may spend their own form of mystic energy, such as blood or quintessence, but mortals remain helpless). The target kneels for one turn per success.",
-        "source": "Bastet BB p116",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Bastet",
+		"tribe": "Qualmi",
         "splat": "Shifter"
     },
 	{
@@ -2277,6 +1264,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
+		"tribe": "Simba",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     },
@@ -2289,18 +1277,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [5],
-        "shifter_type": "Bastet",
-        "splat": "Shifter"
-    },
-	{
-        "name": "All Beasts Under the Sun",
-        "description": "As the Garou Black Fury Gift: The Thousand Forms. Most trickster archetypes are shapeshifters, and the Ragabash is no different. The Garou with this Gift may change herself into any animal between the sizes of a small bird and a bison. The Garou gains all the special powers (flight, gills, poison, sensory abilities, etc.) of the animal she mimics. She may not take the form of Wyrm-beasts (not that she would wish to!), but she may take the form of mythical beasts with some extra effort. Black Furies: The Fury that chooses to risk taking the form of a mythical beast typically honors Pegasus by assuming her form.",
-        "system": "The player spends a Gnosis point and rolls Intelligence + Animal Ken. The difficulty varies, rising higher the farther removed from the Garou's natural form the desired animal is. For example, an ape or panther (mammals of roughly equal mass) might be difficulty 5, while an alligator (a reptile of slightly larger size) would be difficulty 7, and a frog (a much smaller amphibian) would be difficulty 0. Mimicking mythical animals is always difficulty 10.",
-        "source": "Bastet BB p118",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
+		"tribe": "Simba",
         "shifter_type": "Bastet",
         "splat": "Shifter"
     }

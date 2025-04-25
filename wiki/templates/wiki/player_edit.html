@@ -1,0 +1,177 @@
+{% extends "wiki/base_edit.html" %}
+{% load static %}
+
+{% block titleblock %}Edit {{ page.title }}{% endblock %}
+
+{% block content %}
+<div class="creation-form-container">
+    <h1>Edit: {{ page.title }}</h1>
+
+    {% if messages %}
+    <div class="alert-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="content">Content:</label>
+            <textarea class="form-control markdown-editor" id="content" name="content" rows="15">{{ page.content }}</textarea>
+            <small class="form-text text-muted">
+                You can use Markdown formatting for rich text. HTML is also supported.
+            </small>
+        </div>
+        
+        {% if can_upload_images %}
+        <div class="image-upload-section">
+            <h3>Page Images</h3>
+            
+            <div class="form-group">
+                <label for="featured_image">Featured Background Image:</label>
+                <input type="file" class="form-control" id="featured_image" name="featured_image" accept="image/*">
+                {% if featured_image and featured_image.image %}
+                <div class="current-image">
+                    <p>Current image: <a href="{{ featured_image.get_image_url }}" target="_blank">View</a></p>
+                    <img src="{{ featured_image.get_image_url }}" style="max-width: 150px; max-height: 100px; margin-top: 5px;">
+                </div>
+                {% endif %}
+                <small class="form-text text-muted">
+                    This image will appear as the background for your page header.
+                </small>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="form-group">
+            <label for="comment">Edit Comment:</label>
+            <input type="text" class="form-control" id="comment" name="comment" placeholder="Brief description of your changes" required>
+            <small class="form-text text-muted">
+                Please explain what you changed and why. This helps keep track of page updates.
+            </small>
+        </div>
+        
+        <div class="actions">
+            <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+            
+            {% if return_to == 'group' or page.page_type == 'group' %}
+                <a href="{% url 'wiki:group_detail' page.slug %}" class="btn btn-secondary mt-3">Cancel</a>
+            {% elif return_to == 'plot' or page.page_type == 'plot' %}
+                <a href="{% url 'wiki:plot_detail' page.slug %}" class="btn btn-secondary mt-3">Cancel</a>
+            {% else %}
+                <a href="{% url 'wiki:page_detail' page.slug %}" class="btn btn-secondary mt-3">Cancel</a>
+            {% endif %}
+            
+            <div class="preview-container mt-3">
+                <button type="button" id="preview-button" class="btn btn-info">Preview Changes</button>
+                <div id="preview-area" class="content-preview" style="display: none; margin-top: 20px; padding: 15px; border: 1px solid #ccc;">
+                    <h3>Preview</h3>
+                    <div id="preview-content"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div class="sidebar">
+    <h2>Quick Links</h2>
+    <ul>
+        {% if return_to == 'group' or page.page_type == 'group' %}
+            <li><a href="{% url 'wiki:group_detail' page.slug %}">Back to Page</a></li>
+            <li><a href="{% url 'wiki:groups_index' %}">All Groups</a></li>
+        {% elif return_to == 'plot' or page.page_type == 'plot' %}
+            <li><a href="{% url 'wiki:plot_detail' page.slug %}">Back to Page</a></li>
+            <li><a href="{% url 'wiki:plots_index' %}">All Plots</a></li>
+        {% else %}
+            <li><a href="{% url 'wiki:page_detail' page.slug %}">Back to Page</a></li>
+        {% endif %}
+        <li><a href="{% url 'wiki:page_history' page.slug %}">View History</a></li>
+    </ul>
+    
+    <h2>Editing Guidelines</h2>
+    <ul>
+        <li>Keep content factual and relevant</li>
+        <li>Respect existing information</li>
+        <li>Use appropriate language</li>
+        <li>Cite sources when possible</li>
+    </ul>
+    
+    <h2>Formatting Help</h2>
+    <ul>
+        <li>**Bold text** for <strong>bold text</strong></li>
+        <li>*Italic text* for <em>italic text</em></li>
+        <li># Heading 1</li>
+        <li>## Heading 2</li>
+        <li>- Bullet point</li>
+        <li>1. Numbered list</li>
+        <li>[Link text](URL) for links</li>
+        <li>&lt;img src="URL"&gt; for images</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize markdown editor if available
+    if (typeof SimpleMDE !== 'undefined') {
+        var simplemde = new SimpleMDE({ 
+            element: document.getElementById("content"),
+            spellChecker: false,
+            autosave: {
+                enabled: true,
+                unique_id: "edit_wiki_{{ page.slug }}",
+            }
+        });
+    }
+    
+    // Preview functionality
+    document.getElementById('preview-button').addEventListener('click', function() {
+        let content;
+        if (typeof simplemde !== 'undefined') {
+            content = simplemde.value();
+        } else {
+            content = document.getElementById('content').value;
+        }
+        
+        const previewArea = document.getElementById('preview-area');
+        const previewContent = document.getElementById('preview-content');
+        
+        // Toggle preview display
+        if (previewArea.style.display === 'none') {
+            fetch('{% url "wiki:preview" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: new URLSearchParams({
+                    'content': content
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                previewContent.innerHTML = data.html;
+                previewArea.style.display = 'block';
+                this.textContent = 'Hide Preview';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                previewContent.innerHTML = '<p>Error generating preview</p>';
+                previewArea.style.display = 'block';
+            });
+        } else {
+            previewArea.style.display = 'none';
+            this.textContent = 'Preview Changes';
+        }
+    });
+});
+</script>
+{% endblock %} 

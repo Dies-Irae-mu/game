@@ -1,0 +1,114 @@
+{% extends "wiki/base_wiki.html" %}
+{% load static %}
+
+{% block titleblock %}Create {{ page_type_name }} Page{% endblock %}
+
+{% block content %}
+<div class="creation-form-container">
+    <h1>Create New {{ page_type_name }} Page</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+        </div>
+        
+        {% if page_type == 'group' or page_type == 'plot' %}
+        <div class="form-group">
+            <label for="brief_description">Brief Description (appears on index page):</label>
+            <input type="text" class="form-control" id="brief_description" name="brief_description" maxlength="255">
+            <small class="form-text text-muted">
+                A short description (255 chars max) that will appear on the index listing.
+            </small>
+        </div>
+        {% endif %}
+        
+        <div class="form-group">
+            <label for="content">Content:</label>
+            <textarea class="form-control markdown-editor" id="content" name="content" rows="15"></textarea>
+            <small class="form-text text-muted">
+                You can use Markdown formatting for rich text. HTML is also supported.
+            </small>
+        </div>
+        
+        <div class="image-upload-section">
+            <h3>Page Images</h3>
+            
+            <div class="form-group">
+                <label for="featured_image">Featured Background Image:</label>
+                <input type="file" class="form-control" id="featured_image" name="featured_image" accept="image/*">
+                <small class="form-text text-muted">
+                    This image will appear as the background for your page header.
+                </small>
+            </div>
+            
+            <div class="form-group">
+                <label for="banner_image">Banner Image:</label>
+                <input type="file" class="form-control" id="banner_image" name="banner_image" accept="image/*">
+                <small class="form-text text-muted">
+                    This image will appear in the banner area of your page.
+                </small>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="show_texture" checked> 
+                    Show texture overlay on featured image
+                </label>
+                <small class="form-text text-muted">
+                    The texture helps text remain readable over background images.
+                </small>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary mt-3">Create Page</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div class="sidebar">
+    <h2>Quick Links</h2>
+    <ul>
+        {% if page_type == 'group' %}
+            <li><a href="{% url 'wiki:groups_index' %}">Back to Groups</a></li>
+        {% elif page_type == 'plot' %}
+            <li><a href="{% url 'wiki:plots_index' %}">Back to Plots</a></li>
+        {% else %}
+            <li><a href="{% url 'wiki:page_list' %}">Back to Wiki</a></li>
+        {% endif %}
+    </ul>
+    
+    <h2>Formatting Help</h2>
+    <ul>
+        <li>**Bold text** for <strong>bold text</strong></li>
+        <li>*Italic text* for <em>italic text</em></li>
+        <li># Heading 1</li>
+        <li>## Heading 2</li>
+        <li>- Bullet point</li>
+        <li>1. Numbered list</li>
+        <li>[Link text](URL) for links</li>
+        <li>&lt;img src="URL"&gt; for images</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize markdown editor if available
+    if (typeof SimpleMDE !== 'undefined') {
+        var simplemde = new SimpleMDE({ 
+            element: document.getElementById("content"),
+            spellChecker: false,
+            autosave: {
+                enabled: true,
+                unique_id: "new_wiki_page",
+            }
+        });
+    }
+});
+</script>
+{% endblock %} 

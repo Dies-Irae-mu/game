@@ -2,12 +2,11 @@
 {% load static %}
 {% load wiki_filters %}
 
-{% block titleblock %}Wiki Pages{% endblock %}
+{% block titleblock %}Dies Irae Wiki{% endblock %}
 
 {% block content %}
-<h1>Wiki Pages</h1>
 {% if pages %}
-    <div class="list-group">
+    <div class="list-group wiki-pages">
     {% for page in pages %}
         <a href="{% url 'wiki:page_detail' page.slug %}" class="list-group-item list-group-item-action">
             <h5 class="mb-1">{{ page.title }}</h5>
@@ -25,9 +24,14 @@
     <h2>Quick Links</h2>
     <ul>
         {% if user.is_staff %}
-        <li><a href="/admin/wiki/wikipage/add/">Create New Page</a></li>
+        <li><a href="{% url 'wiki:create_page' %}">Create Regular Page</a></li>
         {% endif %}
-        <li><a href="{% url 'wiki:page_list' %}">All Pages</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'wiki:create_group' %}">Create Group Page</a></li>
+        <li><a href="{% url 'wiki:create_plot' %}">Create Plot Page</a></li>
+        {% endif %}
+        <li><a href="{% url 'wiki:groups_index' %}">Groups</a></li>
+        <li><a href="{% url 'wiki:plots_index' %}">Plots</a></li>
     </ul>
 </div>
 {% endblock %}

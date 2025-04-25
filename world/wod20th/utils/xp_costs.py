@@ -497,12 +497,18 @@ def calculate_sorcerous_path_cost(current_rating: int, new_rating: int) -> int:
         
     Returns:
         int: Total XP cost
-        
+        New paths are 10xp, then 5xp * rating.
     Example:
-        7XP for rating 1, 14XP for rating 2, 21XP for rating 3, etc.
+        10XP for rating 1, 15XP for rating 2, 20XP for rating 3, etc.
     """
     # Sorcery uses new_rating for calculation (non-standard)
-    return new_rating * 7
+    total_cost = 0
+    if current_rating == 0:
+        total_cost = 10
+        current_rating = 1
+    for rating in range(current_rating, new_rating):
+        total_cost += rating * 5
+    return total_cost
 
 def calculate_arcanos_cost(current_rating: int, new_rating: int) -> int:
     """

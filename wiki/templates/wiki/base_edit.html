@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'wiki/css/styles.css' %}?v=1" type="text/css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+        <link rel="icon" type="image/png" href="{% static 'wiki/imgs/favicon.png' %}">
+        <title>{% block titleblock %}Dies Irae Wiki{% endblock %}</title>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+        <script src="{% static 'wiki/js/main.js' %}?v=1" defer></script>
+    </head>
+
+    <body>
+        <!-- Navigation -->
+        <nav class="main-nav">
+            <div class="nav-wrapper">
+                <div class="nav-container">
+                    <div class="nav-logo">
+                        <p>Dies Irae</p>
+                    </div>
+                    <ul class="nav-menu">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/characters/">Characters</a></li>
+                        <li class="dropdown">
+                            <a href="{% url 'wiki:page_list' %}" class="dropdown-toggle">Wiki</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'wiki:page_list' %}">All Pages</a></li>
+                                <li><a href="{% url 'wiki:groups_index' %}">Groups</a></li>
+                                <li><a href="{% url 'wiki:plots_index' %}">Plots</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="/channels/">Channels</a></li>
+                        <li><a href="/help/">Help</a></li>
+                        <li><a href="/webclient/">Play Online</a></li>
+                        {% if user.is_authenticated %}
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle">{{ user.username }}</a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/characters/">Manage Characters</a></li>
+                                    <hr />
+                                    <li><a href="/accounts/profile/">Profile</a></li>
+                                    <hr />
+                                    {% if user.is_staff %}
+                                    <li><a href="/admin/">Admin Panel</a></li>
+                                    <hr />
+                                    {% endif %}
+                                    <li><a href="/accounts/password_change/">Change Password</a></li>
+                                    <li><a href="/auth/logout/?next=/">Logout</a></li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li class="login-btn"><a href="/auth/login/?next=/">Login</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="wrapper">
+            <div class="container">
+                <!-- Content -->
+                <div class="content-container edit-mode">
+                    <div class="main-content">
+                        {% block content %}{% endblock %}
+                    </div>
+                    <div class="sidebar-content">
+                        {% block sidebar %}{% endblock %}
+                    </div>
+                </div>
+                <footer>
+                    <p>Powered by <a href="https://evennia.com">Evennia</a></p>
+                </footer>
+            </div>
+        </div>
+
+        {% block extrajs %}{% endblock %}
+    </body>
+</html> 

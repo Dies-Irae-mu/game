@@ -17,9 +17,31 @@ class WikiPage(models.Model):
     """
     Model for storing wiki pages.
     """
+    # Page type choices
+    REGULAR = 'regular'
+    GROUP = 'group'
+    PLOT = 'plot'
+    
+    PAGE_TYPE_CHOICES = [
+        (REGULAR, 'Regular'),
+        (GROUP, 'Group'),
+        (PLOT, 'Plot'),
+    ]
+    
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     content = models.TextField()
+    brief_description = models.CharField(
+        max_length=255, 
+        blank=True, 
+        help_text="A brief description that appears on index pages (255 chars max)."
+    )
+    page_type = models.CharField(
+        max_length=10,
+        choices=PAGE_TYPE_CHOICES,
+        default=REGULAR,
+        help_text="Type of wiki page (regular, group, or plot)"
+    )
     right_content = models.TextField(
         blank=True,
         null=True,
@@ -58,6 +80,16 @@ class WikiPage(models.Model):
     )
     featured_order = models.IntegerField(default=0)  # For ordering featured articles
     published = models.BooleanField(default=True)
+    
+    # Link to MUSH Group if this is a group page
+    mush_group = models.OneToOneField(
+        'groups.Group',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='wiki_page',
+        help_text="Associated MUSH Group (only for group pages)"
+    )
 
     class Meta:
         app_label = 'wiki'
@@ -69,8 +101,46 @@ class WikiPage(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        """Return the URL for viewing this page on the site."""
-        return reverse('wiki:page_detail', kwargs={'slug': self.slug})
+        """Return the URL for this page based on its type."""
+        from django.urls import reverse
+        
+        if self.page_type == self.GROUP:
+            return reverse('wiki:group_detail', kwargs={'slug': self.slug})
+        elif self.page_type == self.PLOT:
+            return reverse('wiki:plot_detail', kwargs={'slug': self.slug})
+        else:
+            return reverse('wiki:page_detail', kwargs={'slug': self.slug})
+
+    @classmethod
+    def get_groups(cls):
+        """Return all group pages."""
+        return cls.objects.filter(page_type=cls.GROUP, published=True)
+    
+    @classmethod
+    def get_plots(cls):
+        """Return all plot pages."""
+        return cls.objects.filter(page_type=cls.PLOT, published=True)
+    
+    def can_edit(self, user):
+        """
+        Check if a user can edit this page.
+        
+        - Group and Plot pages can be edited by any authenticated user
+        - Regular pages can only be edited by staff/admin users
+        """
+        if not user or not user.is_authenticated:
+            return False
+            
+        # Staff can edit any page
+        if user.is_staff:
+            return True
+            
+        # Players can edit Group and Plot pages
+        if self.page_type in [self.GROUP, self.PLOT]:
+            return True
+            
+        # Regular pages require staff permissions
+        return False
 
     def save(self, current_user=None, *args, **kwargs):
         """Override save to handle meta information and slug creation."""
@@ -101,6 +171,16 @@ class WikiPage(models.Model):
                 editor=self.creator,
                 comment="Initial creation"
             )
+
+    @classmethod
+    def get_groups_index_url(cls):
+        """Return the URL for the groups index page."""
+        return reverse('wiki:groups_index')
+    
+    @classmethod
+    def get_plots_index_url(cls):
+        """Return the URL for the plots index page."""
+        return reverse('wiki:plots_index')
 
 
 class WikiRevision(SharedMemoryModel):

@@ -980,16 +980,32 @@ class CmdNotes(MuxCommand):
         note_name = note_name.strip()
         targets = [target.strip() for target in targets.split(",")]
 
-        note = self.caller.get_note(note_name)
-        if not note:
+        # Get the note directly using the get_note_by_name_or_id method to ensure note_id is set
+        note_id, note_data = self.get_note_by_name_or_id(self.caller, note_name)
+        
+        if not note_data:
             self.caller.msg(f"Note not found: {note_name}")
             return
+        
+        # Create Note object with explicit note_id
+        note = Note(
+            name=note_data.get('name', 'Unnamed Note'),
+            text=note_data.get('text', ''),
+            category=note_data.get('category', 'General'),
+            is_public=note_data.get('is_public', False),
+            is_approved=note_data.get('is_approved', False),
+            approved_by=note_data.get('approved_by'),
+            approved_at=self.parse_date(note_data.get('approved_at')),
+            created_at=self.parse_date(note_data.get('created_at')) or datetime.now(),
+            updated_at=self.parse_date(note_data.get('updated_at')) or datetime.now(),
+            note_id=note_id
+        )
 
         for target_name in targets:
             target = self.search_for_character(target_name)
             if target:
                 self.display_note(note, target)
-                self.caller.msg(f"Note '{note_name}' shown to {target.name}.")
+                self.caller.msg(f"Note '{note.name}' shown to {target.name}.")
             else:
                 self.caller.msg(f"Could not find character '{target_name}'.")
 
@@ -1063,10 +1079,23 @@ class CmdNotes(MuxCommand):
         self.caller.msg(f"Note #{note_id} has been unapproved.")
         target.msg(f"Your note #{note_id} has been unapproved by {self.caller.name}.")
 
-    def display_note(self, note):
-        """Display a note with formatting."""
+    def display_note(self, note, target=None):
+        """Display a note with formatting.
+        
+        Args:
+            note: The note to display
+            target: Optional target to display the note to. If None, displays to self.caller
+        """
         width = 78
-        output = header(f"Note #{note.note_id}", width=width, color="|y", fillchar="|r=|n", bcolor="|b")
+        
+        # Include player name in the header when proving a note
+        if target and target != self.caller:
+            # When showing a note to someone else, include the owner's name
+            header_text = f"{self.caller.name}'s Note #{note.note_id}"
+        else:
+            header_text = f"Note #{note.note_id}"
+        
+        output = header(header_text, width=width, color="|y", fillchar="|r=|n", bcolor="|b")
 
         if note.category:
             output += f"|c{note.category}|n"
@@ -1105,7 +1134,10 @@ class CmdNotes(MuxCommand):
                 output += '\n'  # Preserve empty lines
 
         output += footer(width=width, fillchar="|r=|n")
-        self.caller.msg(output)
+        
+        # Send to the target if provided, otherwise to self.caller
+        recipient = target if target else self.caller
+        recipient.msg(output)
 
     def delete_note(self):
         """Delete a note."""

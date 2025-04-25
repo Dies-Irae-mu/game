@@ -30,18 +30,21 @@ class FeaturedImageInline(admin.StackedInline):
 class WikiPageAdmin(admin.ModelAdmin):
     """Admin interface for wiki pages."""
     
-    list_display = ('title', 'creator', 'created_at', 'last_editor', 'updated_at', 'is_featured', 'featured_order', 'published')
-    list_filter = ('created_at', 'updated_at', 'is_featured', 'is_index', 'published')
-    search_fields = ('title', 'content')
+    list_display = ('title', 'page_type', 'creator', 'created_at', 'last_editor', 'updated_at', 'is_featured', 'featured_order', 'published')
+    list_filter = ('page_type', 'created_at', 'updated_at', 'is_featured', 'is_index', 'published')
+    search_fields = ('title', 'content', 'brief_description')
     prepopulated_fields = {'slug': ('title',)}
     inlines = [FeaturedImageInline]
     filter_horizontal = ('related_to',)
     list_editable = ('is_featured', 'featured_order', 'published')
     ordering = ('featured_order', 'title')
     
+    class Media:
+        js = ('wiki/js/admin-page-type.js',)
+    
     fieldsets = (
         (None, {
-            'fields': ('title', 'slug', 'content', 'right_content')
+            'fields': ('title', 'slug', 'page_type', 'brief_description', 'content', 'right_content')
         }),
         ('Options', {
             'fields': ('is_featured', 'is_index', 'related_to'),

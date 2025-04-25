@@ -12,41 +12,53 @@
         <script>
             // Configure marked options
             marked.setOptions({
-                breaks: true,
-                gfm: true,
-                html: true,
-                headerIds: true,
-                sanitize: false,
-                listIndent: 2,
+                breaks: true,          // Add line breaks on single newlines
+                gfm: true,             // Use GitHub Flavored Markdown
+                html: true,            // Allow HTML in the source
+                headerIds: true,       // Include IDs in headers
+                sanitize: false,       // Allow HTML tags in output
+                listIndent: 2,         // Indent of nested lists
                 renderer: new marked.Renderer(),
-                pedantic: false,
-                mangle: true,
-                smartLists: true,
-                smartypants: true
+                pedantic: false,       // Don't be too strict with original markdown spec
+                mangle: true,          // Escape autolinks
+                smartLists: true,      // Use smarter list behavior
+                smartypants: true      // Use "smart" typographic punctuation
             });
 
             // Pre-process the content
             document.addEventListener('DOMContentLoaded', function() {
-                const leftContentData = `{{ page.content|escapejs }}`;
-                const rightContentData = `{{ page.right_content|escapejs }}`;
-                
-                console.log("Raw Left Content:", leftContentData);
-                console.log("Raw Right Content:", rightContentData);
-                
-                // Process left content
-                const leftContentElement = document.querySelector('.left_content');
-                if (leftContentElement && leftContentData) {
-                    const processedLeftContent = marked.parse(leftContentData);
-                    console.log("Processed Left Content:", processedLeftContent);
-                    leftContentElement.innerHTML = processedLeftContent;
-                }
-                
-                // Process right content
-                const rightContentElement = document.querySelector('.right_content');
-                if (rightContentElement && rightContentData) {
-                    const processedRightContent = marked.parse(rightContentData);
-                    console.log("Processed Right Content:", processedRightContent);
-                    rightContentElement.innerHTML = processedRightContent;
+                try {
+                    // Get content data from the template
+                    const leftContentData = `{{ page.content|escapejs }}`;
+                    const rightContentData = `{{ page.right_content|escapejs }}`;
+                    
+                    // Process left content
+                    const leftContentElement = document.querySelector('.left_content');
+                    if (leftContentElement && leftContentData && leftContentData.trim() !== '') {
+                        try {
+                            // Always use Markdown parsing - it handles HTML content properly too
+                            const processedLeftContent = marked.parse(leftContentData);
+                            leftContentElement.innerHTML = processedLeftContent;
+                        } catch (e) {
+                            console.error('Error parsing left content:', e);
+                            leftContentElement.textContent = leftContentData; // Fallback to plain text
+                        }
+                    }
+                    
+                    // Process right content
+                    const rightContentElement = document.querySelector('.right_content');
+                    if (rightContentElement && rightContentData && rightContentData.trim() !== '') {
+                        try {
+                            // Always use Markdown parsing - it handles HTML content properly too
+                            const processedRightContent = marked.parse(rightContentData);
+                            rightContentElement.innerHTML = processedRightContent;
+                        } catch (e) {
+                            console.error('Error parsing right content:', e);
+                            rightContentElement.textContent = rightContentData; // Fallback to plain text
+                        }
+                    }
+                } catch (e) {
+                    console.error('General error in content processing:', e);
                 }
             });
         </script>
@@ -68,8 +80,17 @@
                             <a href="{% url 'wiki:page_list' %}" class="dropdown-toggle">Wiki</a>
                             <ul class="dropdown-menu">
                                 <li><a href="{% url 'wiki:page_list' %}">All Pages</a></li>
+                                <li><a href="{% url 'wiki:groups_index' %}">Groups</a></li>
+                                <li><a href="{% url 'wiki:plots_index' %}">Plots</a></li>
+                                
+                                {% if user.is_authenticated %}
+                                <li class="dropdown-divider"><hr/></li>
+                                <li class="dropdown-header">Create</li>
                                 {% if user.is_staff %}
-                                <li><a href="/admin/wiki/wikipage/add/">Create Page</a></li>
+                                <li><a href="{% url 'wiki:create_page' %}">Regular Page</a></li>
+                                {% endif %}
+                                <li><a href="{% url 'wiki:create_group' %}">Group Page</a></li>
+                                <li><a href="{% url 'wiki:create_plot' %}">Plot Page</a></li>
                                 {% endif %}
                                 
                                 <!-- Featured Articles Section -->
@@ -78,7 +99,13 @@
                                 <li class="dropdown-header">Featured</li>
                                 {% for article in featured_articles %}
                                     <li {% if page.slug == article.slug %}class="highlight"{% endif %}>
-                                        <a href="{% url 'wiki:page_detail' article.slug %}">{{ article.title }}</a>
+                                        {% if article.page_type == 'group' %}
+                                            <a href="{% url 'wiki:group_detail' article.slug %}">{{ article.title }}</a>
+                                        {% elif article.page_type == 'plot' %}
+                                            <a href="{% url 'wiki:plot_detail' article.slug %}">{{ article.title }}</a>
+                                        {% else %}
+                                            <a href="{% url 'wiki:page_detail' article.slug %}">{{ article.title }}</a>
+                                        {% endif %}
                                     </li>
                                 {% endfor %}
                                 {% endif %}
@@ -89,16 +116,48 @@
                                 <li class="dropdown-header">Related</li>
                                 {% for article in related_articles %}
                                     <li {% if page.slug == article.slug %}class="highlight"{% endif %}>
-                                        <a href="{% url 'wiki:page_detail' article.slug %}">{{ article.title }}</a>
+                                        {% if article.page_type == 'group' %}
+                                            <a href="{% url 'wiki:group_detail' article.slug %}">{{ article.title }}</a>
+                                        {% elif article.page_type == 'plot' %}
+                                            <a href="{% url 'wiki:plot_detail' article.slug %}">{{ article.title }}</a>
+                                        {% else %}
+                                            <a href="{% url 'wiki:page_detail' article.slug %}">{{ article.title }}</a>
+                                        {% endif %}
                                     </li>
                                 {% endfor %}
                                 {% endif %}
                                 
                                 <!-- Admin Section -->
-                                {% if user.is_staff and page %}
+                                {% if user.is_staff or user.is_authenticated and page and can_edit %}
                                 <li class="dropdown-divider"><hr/></li>
                                 <li class="dropdown-header">Admin</li>
-                                <li><a href="/admin/wiki/wikipage/{{ page.id }}/change/">Edit This Page</a></li>
+                                <li><a href="{% url 'wiki:page_list' %}">Wiki Home</a></li>
+                                
+                                {% if page %}
+                                    {% if user.is_staff %}
+                                    <li><a href="/admin/wiki/wikipage/{{ page.id }}/change/">Edit This Page</a></li>
+                                    {% elif can_edit %}
+                                        {% if page.page_type == 'group' %}
+                                        <li><a href="{% url 'wiki:edit_group' page.slug %}">Edit This Page</a></li>
+                                        {% elif page.page_type == 'plot' %}
+                                        <li><a href="{% url 'wiki:edit_plot' page.slug %}">Edit This Page</a></li>
+                                        {% else %}
+                                        <li><a href="{% url 'wiki:edit_page' page.slug %}">Edit This Page</a></li>
+                                        {% endif %}
+                                    {% endif %}
+                                    <li><a href="{% url 'wiki:page_history' page.slug %}">View History</a></li>
+                                {% endif %}
+                                
+                                {% if user.is_authenticated %}
+                                    {% if user.is_staff %}
+                                    <li><a href="/admin/wiki/wikipage/add/?page_type=regular">Create Regular Page</a></li>
+                                    <li><a href="/admin/wiki/wikipage/add/?page_type=group">Create Group Page</a></li>
+                                    <li><a href="/admin/wiki/wikipage/add/?page_type=plot">Create Plot Page</a></li>
+                                    {% else %}
+                                    <li><a href="{% url 'wiki:create_group' %}">Create Group Page</a></li>
+                                    <li><a href="{% url 'wiki:create_plot' %}">Create Plot Page</a></li>
+                                    {% endif %}
+                                {% endif %}
                                 {% endif %}
                             </ul>
                         </li>
@@ -115,11 +174,14 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle">{{ user.username }}</a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="/characters/create/">Create Character</a></li>
                                     <li><a href="/characters/">Manage Characters</a></li>
                                     <hr />
                                     <li><a href="/accounts/profile/">Profile</a></li>
                                     <hr />
+                                    {% if user.is_staff %}
+                                    <li><a href="/admin/">Admin Panel</a></li>
+                                    <hr />
+                                    {% endif %}
                                     <li><a href="/accounts/password_change/">Change Password</a></li>
                                     <li><a href="/auth/logout/?next=/">Logout</a></li>
                                 </ul>
@@ -163,7 +225,13 @@
                             <!-- {{ featured_articles|length }} featured articles found -->
                             {% for article in featured_articles %}
                                 <li {% if page.slug == article.slug %}class="highlight"{% endif %}>
-                                    <a href="{% url 'wiki:page_detail' article.slug %}">{{ article.title }}</a>
+                                    {% if article.page_type == 'group' %}
+                                        <a href="{% url 'wiki:group_detail' article.slug %}">{{ article.title }}</a>
+                                    {% elif article.page_type == 'plot' %}
+                                        <a href="{% url 'wiki:plot_detail' article.slug %}">{{ article.title }}</a>
+                                    {% else %}
+                                        <a href="{% url 'wiki:page_detail' article.slug %}">{{ article.title }}</a>
+                                    {% endif %}
                                 </li>
                             {% endfor %}
                         {% else %}
@@ -178,19 +246,47 @@
                         <li><h4>Related</h4></li>
                         {% for article in related_articles %}
                             <li {% if page.slug == article.slug %}class="highlight"{% endif %}>
-                                <a href="{% url 'wiki:page_detail' article.slug %}">{{ article.title }}</a>
+                                {% if article.page_type == 'group' %}
+                                    <a href="{% url 'wiki:group_detail' article.slug %}">{{ article.title }}</a>
+                                {% elif article.page_type == 'plot' %}
+                                    <a href="{% url 'wiki:plot_detail' article.slug %}">{{ article.title }}</a>
+                                {% else %}
+                                    <a href="{% url 'wiki:page_detail' article.slug %}">{{ article.title }}</a>
+                                {% endif %}
                             </li>
                         {% endfor %}
                     </ul>
                     {% endif %}
 
-                    {% if user.is_staff %}
+                    {% if user.is_staff or user.is_authenticated and page and can_edit %}
                     <ul>
                         <li><h4>Admin</h4></li>
                         <li><a href="{% url 'wiki:page_list' %}">Wiki Home</a></li>
-                        <li><a href="/admin/wiki/wikipage/add/">Create New Page</a></li>
+                        
                         {% if page %}
+                            {% if user.is_staff %}
                             <li><a href="/admin/wiki/wikipage/{{ page.id }}/change/">Edit This Page</a></li>
+                            {% elif can_edit %}
+                                {% if page.page_type == 'group' %}
+                                <li><a href="{% url 'wiki:edit_group' page.slug %}">Edit This Page</a></li>
+                                {% elif page.page_type == 'plot' %}
+                                <li><a href="{% url 'wiki:edit_plot' page.slug %}">Edit This Page</a></li>
+                                {% else %}
+                                <li><a href="{% url 'wiki:edit_page' page.slug %}">Edit This Page</a></li>
+                                {% endif %}
+                            {% endif %}
+                            <li><a href="{% url 'wiki:page_history' page.slug %}">View History</a></li>
+                        {% endif %}
+                        
+                        {% if user.is_authenticated %}
+                            {% if user.is_staff %}
+                            <li><a href="/admin/wiki/wikipage/add/?page_type=regular">Create Regular Page</a></li>
+                            <li><a href="/admin/wiki/wikipage/add/?page_type=group">Create Group Page</a></li>
+                            <li><a href="/admin/wiki/wikipage/add/?page_type=plot">Create Plot Page</a></li>
+                            {% else %}
+                            <li><a href="{% url 'wiki:create_group' %}">Create Group Page</a></li>
+                            <li><a href="{% url 'wiki:create_plot' %}">Create Plot Page</a></li>
+                            {% endif %}
                         {% endif %}
                     </ul>
                     {% endif %}
@@ -239,12 +335,31 @@
                 <!-- Wiki Section -->
                 <li class="dropdown-header">Wiki</li>
                 <li><a href="{% url 'wiki:page_list' %}">All Pages</a></li>
+                <li><a href="{% url 'wiki:groups_index' %}">Groups</a></li>
+                <li><a href="{% url 'wiki:plots_index' %}">Plots</a></li>
+                
+                {% if user.is_authenticated %}
+                <li class="dropdown-divider"><hr/></li>
+                <li class="dropdown-header">Create</li>
+                {% if user.is_staff %}
+                <li><a href="{% url 'wiki:create_page' %}">Regular Page</a></li>
+                {% endif %}
+                <li><a href="{% url 'wiki:create_group' %}">Group Page</a></li>
+                <li><a href="{% url 'wiki:create_plot' %}">Plot Page</a></li>
+                {% endif %}
+                
                 {% if featured_articles %}
                     <li class="dropdown-divider"><hr/></li>
                     <li class="dropdown-header">Featured</li>
                     {% for article in featured_articles %}
                         <li {% if page.slug == article.slug %}class="highlight"{% endif %}>
-                            <a href="{% url 'wiki:page_detail' article.slug %}">{{ article.title }}</a>
+                            {% if article.page_type == 'group' %}
+                                <a href="{% url 'wiki:group_detail' article.slug %}">{{ article.title }}</a>
+                            {% elif article.page_type == 'plot' %}
+                                <a href="{% url 'wiki:plot_detail' article.slug %}">{{ article.title }}</a>
+                            {% else %}
+                                <a href="{% url 'wiki:page_detail' article.slug %}">{{ article.title }}</a>
+                            {% endif %}
                         </li>
                     {% endfor %}
                 {% endif %}
@@ -254,9 +369,47 @@
                     <li class="dropdown-header">Related</li>
                     {% for article in related_articles %}
                         <li {% if page.slug == article.slug %}class="highlight"{% endif %}>
-                            <a href="{% url 'wiki:page_detail' article.slug %}">{{ article.title }}</a>
+                            {% if article.page_type == 'group' %}
+                                <a href="{% url 'wiki:group_detail' article.slug %}">{{ article.title }}</a>
+                            {% elif article.page_type == 'plot' %}
+                                <a href="{% url 'wiki:plot_detail' article.slug %}">{{ article.title }}</a>
+                            {% else %}
+                                <a href="{% url 'wiki:page_detail' article.slug %}">{{ article.title }}</a>
+                            {% endif %}
                         </li>
                     {% endfor %}
+                {% endif %}
+                
+                {% if user.is_staff or user.is_authenticated and page and can_edit %}
+                <li class="dropdown-divider"><hr/></li>
+                <li class="dropdown-header">Admin</li>
+                <li><a href="{% url 'wiki:page_list' %}">Wiki Home</a></li>
+                
+                {% if page %}
+                    {% if user.is_staff %}
+                    <li><a href="/admin/wiki/wikipage/{{ page.id }}/change/">Edit This Page</a></li>
+                    {% elif can_edit %}
+                        {% if page.page_type == 'group' %}
+                        <li><a href="{% url 'wiki:edit_group' page.slug %}">Edit This Page</a></li>
+                        {% elif page.page_type == 'plot' %}
+                        <li><a href="{% url 'wiki:edit_plot' page.slug %}">Edit This Page</a></li>
+                        {% else %}
+                        <li><a href="{% url 'wiki:edit_page' page.slug %}">Edit This Page</a></li>
+                        {% endif %}
+                    {% endif %}
+                    <li><a href="{% url 'wiki:page_history' page.slug %}">View History</a></li>
+                {% endif %}
+                
+                {% if user.is_authenticated %}
+                    {% if user.is_staff %}
+                    <li><a href="/admin/wiki/wikipage/add/?page_type=regular">Create Regular Page</a></li>
+                    <li><a href="/admin/wiki/wikipage/add/?page_type=group">Create Group Page</a></li>
+                    <li><a href="/admin/wiki/wikipage/add/?page_type=plot">Create Plot Page</a></li>
+                    {% else %}
+                    <li><a href="{% url 'wiki:create_group' %}">Create Group Page</a></li>
+                    <li><a href="{% url 'wiki:create_plot' %}">Create Plot Page</a></li>
+                    {% endif %}
+                {% endif %}
                 {% endif %}
                 
                 <li><a href="/channels/">Channels</a></li>
@@ -269,6 +422,9 @@
                     <li><a href="/characters/create/">Create Character</a></li>
                     <li><a href="/characters/">Manage Characters</a></li>
                     <li><a href="/accounts/profile/">Profile</a></li>
+                    {% if user.is_staff %}
+                    <li><a href="/admin/">Admin Panel</a></li>
+                    {% endif %}
                     <li><a href="/accounts/password_change/">Change Password</a></li>
                     <li><a href="/auth/logout/?next=/">Logout</a></li>
                 {% else %}

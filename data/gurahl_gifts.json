@@ -1,10 +1,12 @@
 [
     {
-        "name": "Mask of the Bear Spirit",
-        "description": "The Gurahl can take on certain ursine features while in homid form, becoming more intimidating. An ancestor-spirit teaches this Gift.",
+        "name": "Nature's Plenty",
+        "description": "This Gift allows the Gurahl to always locate sufficient food and medicinal herbs to tend to an individual in need of his ministrations. Regardless of the season, enough of the required plants or herbs may be found, even if they are buried under deep snow or growing in the most unlikely of places. A raven-spirit teaches this Gift.",
+        "system": "The player spends a Gnosis point and rolls Perception + Survival, difficulty 7.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
+        "source": "CB20 Pg. 115",
         "values": [
             1
         ],
@@ -12,11 +14,132 @@
         "splat": "Shifter"
     },
     {
-        "name": "Beneath the Surface",
-        "description": "The Gurahl can sense the true emotional state of others, piercing through deception and facades. A bear-spirit teaches this Gift.",
+        "name": "Fiddlefish",
+        "description": "By invoking this Gift and scooping her hand (or paw) into a river, stream, or other body of water where fish may be found, a Gurahl can guarantee herself a nutritious dinner. Using this Gift presents the Gurahl with a fish large enough to satisfy her hunter. If a Gurahl overuses this Gift (particularly if she returns to the same spot over and over), Gaia's disapproval the implied greed or laziness manifests in a failure to procure a meal. While two or more Gurahl may each aquire a fish from one spot through using this Gift, an individual Gurahl may not snare more than one fish through the use of Fiddlefish unless she moves at least half a mile up or down stream from the original casting place.",
+        "system": "So long as she attempts to acquire a single fish, a Gurahl does not need to spend Gnosis or make a roll for this Gift to succeed. If the Gurahl wishes for more than one fish and makes the effort to relocate to another spot, the player may roll Dexterity + Athletics to see if Gaia blesses the Gurahl with additional fish. Success means that the Gurahl gains another large, tasty fish. Failure results in no additional fish, while a botch means that Gaia is displeased with the Gurahl, who must then make appropriate restitution before trying to use the Gift again. Until the Gurahl atones for a botched attempt at invoking this Gift, future uses of Fiddlefish fail automatically.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
+        "source": "Gurahl BB Pg 101",
+        "values": [
+            1
+        ],
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Ursa's Light",
+        "description": "The Gurahl may draw down the light of the stars for illumination or a directional beacon. An ancestor-spirit teaches this Gift.",
+        "system": "The Gurahl reaches toward the sky while the player makes a Charisma + Occult roll (difficulty 6). Success produces a soft light that illuminates a 100' square area, or sends a directional beacon 100 yards. If he can see either of the constellations Ursa Major or Ursa Minor, the double the affected area.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 116",
+        "values": [
+            1
+        ],
+        "breed": "Homid",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Voice of Woe",
+        "description": "The Gurahl sends out a call of distress. A bear-spirit teaches this Gift.",
+        "system": "The player spends a point of Gnosis and rolls Charisma + Primal-Urge (difficulty 6). All Gaian shapeshifters within (successes x 5) miles hear the call and know precisely what sort of creature is in trouble, how far away he is, and what direction to head in to get there.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 116",
+        "values": [
+            1
+        ],
+        "breed": "Ursine",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Walk Like a Man",
+        "description": "The Gurahl may leave human footprints or bear prints behind in any form, at his discretion. A fox-spirit teaches this Gift.",
+        "system": "The player rolls Dexterity + Larceny, difficulty 7. This Gift's effects lasts for one scene.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 116",
+        "values": [
+            1
+        ],
+        "auspice": "Arcas",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Ultimatum",
+        "description": "By pitting his will against his opponent's, the Gurahl may reduce his enemy's choices down to two options. (“Fight me now or flee like a rabbit!”) A rattlesnake-spirit teaches this Gift.",
+        "system": "The player spends a Gnosis point and makes a contested Willpower roll (difficulty 6). Success allows the Gurahl to present an enemy with two choices, and the opponent must follow one or the other. The Gurahl cannot make either of these commands suicidal or directly harmful to the opponent, nor may they both amount to slight rewordings of the same action.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 117",
+        "values": [
+            1
+        ],
+        "auspice": "Uzmati",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Stonesight",
+        "description": "The Gurahl may look through a piece of stone or rock to see its potential or composition. Aside from the obvious benefits for sculptors and builders, the Gift is also useful for uncovering hidden minerals or fossils, as well as identifying stones of mystic significance. An earth elemental teaches this Gift.",
+        "system": "The player rolls Perception + Enigmas (difficulty 5) to learn about the stone. The more successes gained, the more in-depth the knowledge.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 117",
+        "values": [
+            1
+        ],
+        "auspice": "Kojubat",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Diagnose",
+        "description": "The Gurahl can determine anyone's general health with little more than a glance. A bear-spirit teaches this Gift.",
+        "system": "The character can take Medicine actions to diagnose patients in only a single turn of inspection. This Gift's effects are permanent.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 118",
+        "values": [
+            1
+        ],
+        "auspice": "Kieh",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Befriend",
+        "description": "The Gurahl seems as a friend to all she meets. A dog-spirit teaches this Gift.",
+        "system": "The character adds one automatic success to all attempts to make a good first impression. This Gift's effects are permanent.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 118",
+        "values": [
+            1
+        ],
+        "auspice": "Rishi",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Treeshake",
+        "description": "By simply shaking a tree, the Gurahl may procure enough fruits and nuts to feed several people — regardless of what sort of tree is selected, or whether it is in season. A bear-spirit teaches this Gift.",
+        "system": "The player spends one Gnosis point, and produces enough food to sate (Succor) individuals.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 115",
         "values": [
             2
         ],
@@ -24,23 +147,133 @@
         "splat": "Shifter"
     },
     {
-        "name": "Slumber",
-        "description": "The Gurahl can cause others to fall into a deep sleep. A bear-spirit teaches this Gift.",
+        "name": "Climate Control",
+        "description": "The Gurahl can raise or lower the temperature around her. A migratory bird-spirit teaches this Gift.",
+        "system": "The player rolls Manipulation + Primal-Urge, difficulty 6. Each success allows the player to raise or lower the temperature in the area by 5 degrees.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
+        "source": "CB20 Pg. 116",
         "values": [
             2
         ],
+        "breed": "Homid",
         "shifter_type": "Gurahl",
         "splat": "Shifter"
     },
     {
-        "name": "Curse of the Bear",
-        "description": "The Gurahl can curse enemies with bad luck and misfortune. An ancestor-spirit teaches this Gift.",
+        "name": "Weather Watch",
+        "description": "The Gurahl can accurately predict the weather without any prior knowledge. A bear-spirit teaches this Gift.",
+        "system": "The Gurahl permanently gains five extra dice on Survival rolls to predict the weather.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
+        "source": "CB20 Pg. 116",
+        "values": [
+            2
+        ],
+        "breed": "Ursine",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Cajole",
+        "description": "The character uses this Gift to coax another individual into giving her something, such as food, an item, or a service. Bear- or dog-spirits teach this Gift.",
+        "system": "The player spends a Gnosis point and rolls Charisma + Empathy against a difficulty of the target's Willpower. The larger the gift or service requested, the more successes needed; five successes will cajole a human into giving up house and home.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB Pg. 117",
+        "values": [
+            2
+        ],
+        "auspice": "Arcas",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Mangi's Strong Arms",
+        "description": "The Gurahl squeezes the life from her opponent with this Gift. A bear-spirit or death-spirit teaches it.",
+        "system": "The Gurahl spends an action in concentration. Then the player spends a Rage point and rolls Strength + Primal-Urge. Each success adds one die to the Gurahl's damage on his next successful grappling attack.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB Pg. 117",
+        "values": [
+            2
+        ],
+        "auspice": "Uzmati",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Threaten",
+        "description": "The Gurahl stands upright and roars, causing her opponents to flee in terror. A bear-spirit teaches this Gift.",
+        "system": "The player spends one Rage point and rolls Charisma + Intimidation (difficulty of the victim's Willpower + 2, maximum 9). Three or more successes cause the victim to flee in terror for (Honor) turns; fewer simply induce fear, producing a –1 penalty to all actions for the same duration.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB Pg. 117",
+        "values": [
+            2
+        ],
+        "auspice": "Uzmati",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Song of Terra",
+        "description": "The Gurahl may touch the earth and hear what occurred in that spot in the recent past. A hare-spirit teaches this Gift.",
+        "system": "The player rolls Perception + Primal-Urge (difficulty 6) and spends a Gnosis point. The Gurahl hears the most significant event to occur on that spot during the last (successes rolled) days.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB Pg. 118",
+        "values": [
+            2
+        ],
+        "auspice": "Kojubat",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Refresh",
+        "description": "The Gurahl's blessing helps a target ignore pain until the end of battle. A bear-spirit teaches this Gift.",
+        "system": "The Gurahl must touch her target. The player spends a Gnosis point; the target suffers no wound penalties until the end of the combat.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB Pg. 118",
+        "values": [
+            2
+        ],
+        "auspice": "Kieh",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Compel Truth",
+        "description": "The Gurahl compels an individual to speak the truth. A falcon-spirit teaches this Gift.",
+        "system": "The player rolls Wits + Empathy (difficulty of the target's Willpower) and spends a point of Gnosis. Each success renders the target incapable of deliberate falsehood for one minute.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB Pg. 118",
+        "values": [
+            2
+        ],
+        "auspice": "Rishi",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Dreams of the Buri-Jaan",
+        "description": "The Gurahl sends dream messages to a known cub she has chosen to mentor. These dreams and visions act as both a summons and a directional guide. An ancestor-spirit teaches this Gift.",
+        "system": "The player spends a Gnosis point and rolls Wits + Occult (difficulty determined by the distance between the two — difficulty 4 if the cub is within a mile, up to difficulty 9 for a cub over a thousand miles away). Alternately, spending two Gnosis points allows the character to send dreams and visions to an unknown cub actively seeking guidance.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 115",
         "values": [
             3
         ],
@@ -48,47 +281,133 @@
         "splat": "Shifter"
     },
     {
-        "name": "Healing Sleep",
-        "description": "The Gurahl can place others in a healing trance that accelerates their natural recovery. A bear-spirit teaches this Gift.",
+        "name": "Sense Need",
+        "description": "The Gurahl can open her senses to discover someone in need or rescue or succor. An ancestor-spirit teaches this Gift.",
+        "system": "The player rolls Perception + Empathy. The number of successes rolled determines how the clarity of the pull she feels toward an individual in need within (Succor) miles, if one exists.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
+        "source": "CB20 Pg. 116",
         "values": [
             3
         ],
+        "breed": "Homid",
         "shifter_type": "Gurahl",
         "splat": "Shifter"
     },
     {
-        "name": "Rage of the Bear",
-        "description": "The Gurahl channels the legendary fury of the bear, becoming a terrifying force of destruction. A bear-spirit teaches this Gift.",
+        "name": "Pull of the Chosen Land",
+        "description": "The Gurahl can find the shortest, fastest route to his protectorate, regardless of where he is and how he got there.",
+        "system": "The player spends a point of Gnosis and rolls Perception + Primal-Urge (difficulty 7).",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
+        "source": "CB20 Pg. 116",
         "values": [
             3
         ],
+        "breed": "Ursine",
         "shifter_type": "Gurahl",
         "splat": "Shifter"
     },
     {
-        "name": "Restore the Land",
-        "description": "The Gurahl can heal damage done to the natural environment. A Gaia spirit teaches this Gift.",
+        "name": "Shelter of the Earth",
+        "description": "The Gurahl uses the local landscape as a secure hiding place. So long as the Gurahl doesn't move more than a few feet per turn and takes no sudden actions, he remains concealed. This Gift is taught by many prey animal spirits that rely on camouflage.",
+        "system": "The player spends a Gnosis point and rolls Dexterity + Stealth (difficulty 4). The Gift doesn't function if no cover is available.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
+        "source": "CB20 Pg. 116",
         "values": [
             3
         ],
+        "breed": "Ursine",
         "shifter_type": "Gurahl",
         "splat": "Shifter"
     },
     {
-        "name": "Gift of the Bear Mother",
-        "description": "The Gurahl gains tremendous healing abilities, able to cure almost any ailment. The Bear Mother herself teaches this Gift.",
+        "name": "Safe Passage",
+        "description": "The Gurahl and those traveling with him may journey without leaving any trace of their passage. A fox-spirit teaches this Gift.",
+        "system": "The player spends one Gnosis point and rolls Dexterity + Primal-Urge. Each success beyond the first allows the werebear to include another person in the Gift's effects. It lasts for one scene.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
+        "source": "CB20 Pg. 117",
+        "values": [
+            3
+        ],
+        "auspice": "Arcas",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Crush",
+        "description": "This Gift delivers a “bear-hug” from a distance, dispatching enemies without touching them. A bear-spirit teaches this Gift.",
+        "system": "The player may make grapple attacks out to a distance of (Honor) yards, as a permanent capability.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 117",
+        "values": [
+            3
+        ],
+        "auspice": "Uzmati",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Mind Sight",
+        "description": "The Gurahl may read the surface thoughts of a sentient being. Air-spirits teach this Gift.",
+        "system": "The player spends a Gnosis point and rolls Wits + Empathy (difficulty of the subject's Willpower). This mind-reading lasts for (successes rolled) turns.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 118",
+        "values": [
+            3
+        ],
+        "auspice": "Kojubat",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Waken",
+        "description": "The Gurahl may rouse an individual from supernatural sleep or unnatural slumber, including comas, vampires in torpor, Gurahl in hibernation caused by Bhernocht, and even triggering resurrection in mummies. A thunder-spirit teaches this Gift.",
+        "system": "The player spends a point of Gnosis and rolls Wits + Rituals (difficulty 7).",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 118",
+        "values": [
+            3
+        ],
+        "auspice": "Rishi",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Ways of the Tapestry",
+        "description": "The Gurahl gains insight into a mystery or puzzle, seeing how an event fits into the larger scheme of things. A cloud-spirit teaches this Gift.",
+        "system": "The player rolls Wits + Enigmas (difficulty 8). Each success provides one oblique but helpful clue about a particular problem or dilemma.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 119",
+        "values": [
+            3
+        ],
+        "auspice": "Rishi",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Masking the Hunted",
+        "description": "The Gurahl may use terrain to conceal up to 12 human or bear-sized individuals from pursuers. A bear-spirit teaches this Gift.",
+        "system": "CB20 Pg. 115",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 115",
         "values": [
             4
         ],
@@ -96,23 +415,103 @@
         "splat": "Shifter"
     },
     {
-        "name": "Strength of the Bear",
-        "description": "The Gurahl gains supernatural strength, becoming as mighty as the greatest bears. A bear-spirit teaches this Gift.",
+        "name": "Delay the Death Bear's Coming",
+        "description": "The Gurahl or a chosen ward may suffer a heroic amount of damage without dying. A cockroach-spirit teaches this Gift.",
+        "system": "The player spends a Gnosis point and rolls Wits + (Occult or Medicine), difficulty 6. Each success grants the target one additional Incapacitated health level for the rest of the scene. The Gurahl may not use this Gift on herself if she is already Incapacitated.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
+        "source": "CB20 Pg. 117",
         "values": [
             4
         ],
+        "auspice": "Uzmati",
         "shifter_type": "Gurahl",
         "splat": "Shifter"
     },
     {
-        "name": "Gift of the Spirit Bear",
-        "description": "The Gurahl transforms into a mighty spirit bear, gaining tremendous power and the ability to fight spirits directly. The most powerful bear-spirits teach this Gift.",
+        "name": "Probe Thoughts",
+        "description": "This Gift enables the Gurahl to acquire hidden thoughts from an individual. A snake-spirit teaches this Gift.",
+        "system": "The player spends a Gnosis point (and a Willpower point if the target is supernatural) and rolls Wits + Empathy (difficulty of the subject's Willpower). Each success reveals one piece of information the subject is actively attempting to conceal.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
+        "source": "CB20 Pg. 118",
+        "values": [
+            4
+        ],
+        "auspice": "Kojubat",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Spirit Healing",
+        "description": "The Gurahl may replenish the Essence of a wounded spirit in the Umbra. A bear-spirit teaches this Gift.",
+        "system": "The player rolls Charisma + Occult (difficulty of the spirit's Willpower). Success allows the Gurahl to spend Gnosis to restore the spirit's Essence, at a rate of two Essence per Gnosis spent.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 118",
+        "values": [
+            4
+        ],
+        "auspice": "Kieh",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Spirit Shape",
+        "description": "The Gurahl may assume the countenance and form of a creature native to the Umbra, appearing to other spirits as one of their own kind. A coyote-spirit teaches this Gift.",
+        "system": "This Gift only functions in the Umbra. The player spends a Gnosis point and rolls Appearance + Enigmas (difficulty 7). The Gurahl's body then assumes the desired appearance for (Wisdom) days. The Gurahl can will the Gift to end earlier if he requires.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 118",
+        "values": [
+            4
+        ],
+        "auspice": "Kieh",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Quell Mob Rage",
+        "description": "The Gurahl can diffuse the anger of a crowd, even lynch mobs and riots. A manatee-spirit teaches this Gift.",
+        "system": "The player rolls Charisma + Leadership (difficulty of the highest Willpower rating in the crowd). The degree by which (Succor x 30) individuals reduce their hostile mood depends on the successes rolled.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 119",
+        "values": [
+            4
+        ],
+        "auspice": "Rishi",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Bestow Ursa's Blessing",
+        "description": "The Gurahl may call down the blessing of the Great Bear on another individual, granting that individual the favor of a mighty spirit. A servant of Ursa Major teaches this Gift.",
+        "system": "The player spends a Gnosis point and rolls Wits + Occult (difficulty 7) while describing the blessing she wishes to bestow. This may be an automatic success when attempting a particular endeavor, or a one-point bonus to an Attribute. The blessing lasts for (Wisdom) hours.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 119",
+        "values": [
+            4
+        ],
+        "auspice": "Rishi",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Gaia's Breath",
+        "description": "With this legendary Gift, the Gurahl may return a deceased shapeshifter to life. Bear herself teaches this Gift.?",
+        "system": "The player spends one point each of permanent Gnosis and Willpower, then rolls Charisma + Occult (difficulty 6 + the number of hours since death). Success restores life to the target with one health level restored per success. A botch opens the corpse to possession by a powerful Bane. This Gift may be attempted once and only once on a single creature.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg 116.",
         "values": [
             5
         ],
@@ -120,14 +519,136 @@
         "splat": "Shifter"
     },
     {
-        "name": "Revival",
-        "description": "The Gurahl can bring the recently dead back to life, though at great cost to themselves. The Bear Mother herself teaches this Gift.",
+        "name": "Gentle Soul",
+        "description": "The werebear's nature as a bringer of comfort and release from pain finally overwhelms the Rage simmering within. A servant of Gaia Herself teaches this Gift.",
+        "system": "The character is no longer subject to the Curse (see W20, p. 262); her Rage never leaks out to alienate those around her.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
+        "source": "CB20 Pg 116.",
         "values": [
             5
         ],
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Charismatic Presence",
+        "description": "The Gurahl exudes a compelling aura of attraction to humans. In the first days, the werebears sometimes used this Gift to place themselves at the center of tribal bear-cults in Europe, Asia, and North America. They were thus able to form strong ties between Gaia and their human kinfolk.",
+        "system": "The player rolls Charisma + Empathy (difficulty 8). The number of successes indicates the size of her following, according to the following table. Affected humans (who must be within sight of the Gurahl as she uses the Gift) will not take any hostile action towards the Gurahl unless the Gural somehow breaks their trust, and they are willing to listen to whatever she has to say (-3 difficulty to any Social rolls). Successes - Size of Following / 1 - 5 individuals. 2 - 10 3 - 20 4 - 50 5+ - 100+",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "Gurahl Breedbook Pg. 91",
+        "values": [
+            5
+        ],
+        "breed": "Homid",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Natural State",
+        "description": "The Gurahl may cause a portion of the land to revert to its original wild state: fields reject planted crops, clear-cut areas regain their trees, buildings and their contents lapse into ruin and disappear. This can be used both to restore oncetainted land after cleansing it and to cause chaos directed against despoilers of the wilderness. A glade child teaches this Gift.",
+        "system": "The player spends a Gnosis point and rolls Manipulation + Primal-Urge (difficulty 8). The number of successes determines the degree of reversion the land undergoes in an (Honor x 20) yard radius.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 117",
+        "values": [
+            5
+        ],
+        "auspice": "Arcas",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Humiliate",
+        "description": "By delivering a verbal assault, the Gurahl can psychologically defastate a group of opponents. In most cases, the loss of self-esteem engendered by theis Gift causses the victims to back down from a fight or flee the vicinity. Even if the opponent manages to stand their ground and fight, their attacks suffer from the belief that they will fail. A Bear spirit teaches this Gift.",
+        "system": "After the Gurahl verbally castigates her target (which may consist of up to five individuals), her player rolls Charisma + Intimidation (difficulty 8). One success enables the opponents to continue their intended attacks on the Gurahl, but every action suffers a penalty of two dice. Two or three successes cause the opponents to back down from the confrontation. Four or more successes means that the victims flee from the area. This Gift is a stronger and more permanent form of Dolorous Countenance, since it affects multiple targets. In addition, its effects persist for several days, sometimes leaving the victims (if they fail a Willpower roll) with a permanent aversion to the Gurahl who humiliated them. This Gift only works on sentient creatures; it has no affect on animals, spirits who lack the concept of feeling ashamed, or Wyrm creatures.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "Gurahl Breedbook Pg. 94",
+        "values": [
+            5
+        ],
+        "auspice": "Arcas",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Rage of the Mother Bear",
+        "description": "The anger of Mother Bear transforms the Gurahl into a whirlwind of furious motion. Ursa Major herself teaches this Gift.",
+        "system": "The player spends a Gnosis point and rolls Dexterity + Rituals, difficulty 6. Each success grants the Gurahl one extra action in the next turn, at her full dice pool.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 117",
+        "values": [
+            5
+        ],
+        "auspice": "Uzmati",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Aversion Therapy",
+        "description": "The Gurahl may attach negative emotions to a particular desire, as a form of mental conditioning. A thief, for example, may experience terror when he contemplates theft. The effect lasts for a year and a day. A servant of Coyote teaches this Gift.",
+        "system": "The player spends a Gnosis point (and a Willpower point, if the target is supernatural) and rolls Wits + Empathy (difficulty of the target's Willpower).",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 118",
+        "values": [
+            5
+        ],
+        "auspice": "Kojubat",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Image of the Sky Bear",
+        "description": "The Great She-Bear grants the Gurahl a body that glows with seven pinpoints of light similar to the seven stars of Ursa Major's constellation, allowing the Garou to perform additional acts of healing or protection. Ursa Major teaches this Gift herself.",
+        "system": "The player spends a Gnosis point and rolls Wits + Rituals. The Gurahl may then touch targets and instantly heal five lethal or bashing damage, heal three aggravated damage, or grant the target mystic armor (equivalent to Kevlar body armor) for the rest of the scene. One of the points of light on the Gurahl's body goes out each time he uses this Gift's benefits; when all the lights are extinguished, so is the Gift.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "CB20 Pg. 118",
+        "values": [
+            5
+        ],
+        "auspice": "Kieh",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Restore Sanity",
+        "description": "This Gift allows the Gural to completely restore the mind of an individual who has suffered an intense mental catastrophe or who has been deliberately driven insane by an enemy. Unlike the common Gift: Ease the Fevered Mind, this Gift does not affect chronic mental states or permanent forms of insanity, it simply restores a traumatized mind to its former state. A Jaggling of Ursa Major teaches this Gift.",
+        "system": "The player rolls Wits + Empathy and spends a point of Gnosis. Only one success is necessary to bring the Gift's recipient back from the edge of fear or trauma-induced madness. The effects of this Gift are permanent unless something else occurs to shatter the subjects mind again. This Gift cannot heal certain permanent Derangements (such as Metis disfigurements or a Malkavian's madness), although with five successes, the Gurahl can cure Harano.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "Gurahl Breedbook Pg. 99",
+        "values": [
+            5
+        ],
+        "auspice": "Kieh",
+        "shifter_type": "Gurahl",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Words of Doom",
+        "description": "This Gift enables a Gurahl to curse an individual (or an allied group of individuals up to five in number), punishing them for some gross misdeed. Some werebears believe that the origin of the Silver Fangs' tribal insanity resulted from a curse placed upon them for their part in the War of Rage. Gurahl who use this Gift tread a thin line between serving Gaia and becoming a tool of the Pattern Breaker, since the pronouncement of a curse upon an individual or group often reflects adversely upon the speaker, touching her spirit with darkness. A worm spirit teaches this Gift.",
+        "system": "After the Gurahl states the terms of the curse, the player rolls Wits + Occult (difficulty 9) and sacrifices a point of permanent Gnosis to seal the effect. The words used must specifically describe the terms of the punishment along with the means for lifting or escaping the curse ('you and your descendants shall never know unsullied happiness until you return that which you stole from my people.'). If the nature of the curse is particularly harmful, detrimental, or far-reaching, the Storyteller may require the Gurahl character to give up to or even three points of permanent Gnosis instead of one.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "source": "Gurahl Breedbook Pg. 101",
+        "values": [
+            5
+        ],
+        "auspice": "Rishi",
         "shifter_type": "Gurahl",
         "splat": "Shifter"
     }

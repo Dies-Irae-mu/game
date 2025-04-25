@@ -1,0 +1,42 @@
+{% extends "wiki/base_wiki.html" %}
+{% load static %}
+{% load wiki_filters %}
+
+{% block titleblock %}Plot Pages{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <h1>Plot Pages</h1>
+    <p>This section contains pages for player-run stories and collaborative plots between players and staff.</p>
+    
+    <div class="header-actions">
+        {% if can_create %}
+        <a href="{% url 'wiki:create_plot' %}" class="btn">Create New Plot Page</a>
+        {% endif %}
+        <a href="{% url 'wiki:groups_index' %}" class="btn">View Groups</a>
+        <a href="{% url 'wiki:page_list' %}" class="btn">All Wiki Pages</a>
+    </div>
+</div>
+
+<div class="wiki-pages full-width">
+    {% if plots %}
+        <div class="list-group">
+        {% for page in plots %}
+            <a href="{% url 'wiki:plot_detail' page.slug %}" class="list-group-item list-group-item-action">
+                <h5 class="mb-1">{{ page.title }}</h5>
+                {% if page.brief_description %}
+                <div class="brief-description">{{ page.brief_description }}</div>
+                {% endif %}
+                <small>Last edited by {{ page.last_editor|display_username }} on {{ page.updated_at|date }}</small>
+            </a>
+        {% endfor %}
+        </div>
+    {% else %}
+        <p>No plot pages have been created yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<!-- Empty sidebar to ensure all content is in the main column -->
+{% endblock %} 
