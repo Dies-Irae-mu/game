@@ -482,12 +482,12 @@ class CmdPlaces(MuxCommand):
         +place/create <name>
         +place/delete <name>
         +place/list
-        +place/sit <name>
+        +place/join <name>
         +place/leave
     """
     
     key = "+place"
-    aliases = ["place"]
+    aliases = ["place", "places", "+places"]
     locks = "cmd:all()"
     help_category = "Building and Housing"
     
@@ -575,9 +575,9 @@ class CmdPlaces(MuxCommand):
                 )
             self.caller.msg(table)
             
-        elif switch == "sit":
+        elif switch == "join":
             if not self.args:
-                self.caller.msg("Usage: +place/sit <name>")
+                self.caller.msg("Usage: +place/join <name>")
                 return
                 
             target = self.args.strip()
@@ -600,9 +600,9 @@ class CmdPlaces(MuxCommand):
                 
             location.db.places[place_name].append(self.caller)
             self.caller.db.place = place_name
-            self.caller.msg(f"You sit at {place_name}.")
+            self.caller.msg(f"You join {place_name}. You can now use the |wtt|n command to talk privately with others at this place. Type |whelp tt|n for more information.")
             self.caller.location.msg_contents(
-                f"{self.caller.name} sits at {place_name}.",
+                f"{self.caller.name} joins {place_name}.",
                 exclude=[self.caller]
             )
             

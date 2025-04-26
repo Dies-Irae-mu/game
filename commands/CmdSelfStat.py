@@ -1622,7 +1622,7 @@ REQUIRED_INSTANCES = ['Library', 'Status', 'Influence', 'Wonder', 'Secret Weapon
                       'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish', 'Chimerical Item', 'Chimerical Companion',
                       'Dreamers', 'Digital Dreamers', 'Addiction', 'Phobia', 'Derangement',
                       'Obsession', 'Compulsion', 'Bigot', 'Ability Deficit', 'Sect Enmity', 'Camp Enmity',
-                      'Retainers', 'Sphere Inept', 'Art Affinity', 'Immunity'
+                      'Retainers', 'Sphere Inept', 'Art Affinity', 'Immunity', 'Rote Sorcerer'
                      ] 
 
 # Add the REQUIRED_SPECIALTIES constant

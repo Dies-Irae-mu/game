@@ -1,16 +1,5 @@
 [
     {
-        "name": "Coyote's Intuition",
-        "description": "By taking time to look over an individual, the Nuwisha receives a powerful gut intuition of what subject the target least wants to talk about at that moment. A coyote-spirit teaches this Gift. After a few moments of scrutiny, the player rolls Perception + Subterfuge (difficulty of the target's Willpower).",
-        "system": "After a few moments of scrutiny, the player rolls Perception + Subterfuge (difficulty of the target's Willpower).",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [1],
-        "shifter_type": "Nuwisha",
-        "splat": "Shifter"
-    },
-    {
         "name": "Eyes of the Dragon Kings",
         "description": "The Nagah gains perfect clarity of vision in any circumstances - fog, smoke, murky water, even total darkness fail to impede her. It takes a solid object to block her line of sight.",
         "system": "The player makes a Gnosis roll, difficulty 6. For the rest of the scene, the character is immune to penalties to visual Perception rolls from any source.",

@@ -85,6 +85,7 @@ from commands.CmdRoster import CmdRoster
 from commands.CmdSpecialties import CmdSpecialties
 from commands.CmdMultidesc import CmdMultidesc
 from world.wod20th.scripts.weekly_xp import CmdDebugXP
+from commands.CmdTableTalk import CmdTableTalk
 
 class CharacterCmdSet(cmdset_character.CharacterCmdSet):
     """
@@ -183,6 +184,9 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdFixStatsCapitalization())
         self.add(CmdSetWyrmTaint())
         self.add(CmdRoom())
+        self.add(CmdTableTalk())
+        self.add(CmdSummon())
+
 
 class AccountCmdSet(cmdset_account.AccountCmdSet):
     """
