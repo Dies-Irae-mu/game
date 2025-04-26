@@ -33,6 +33,8 @@ class CmdBBS(default_cmds.MuxCommand):
       +bbs/delete <board>/<post> - Delete one of your posts
       +bbs/scan                  - Show unread posts on all accessible boards
       +bbs/readall <board>       - Mark all posts in a board as read
+      +bbs/unsubscribe <board>   - Unsubscribe from a board (hide it from your listings)
+      +bbs/subscribe <board>     - Resubscribe to a board you previously unsubscribed from
       
     Admin/Builder commands:
       +bbs/create <name> = <description>[/roster=<roster1>,<roster2>...]
@@ -139,7 +141,15 @@ class CmdBBS(default_cmds.MuxCommand):
             puppet = session.get_puppet()
             if not puppet or (exclude_char and puppet == exclude_char):
                 continue
+            
+            # Check if user has access to the board
             if controller.has_access(board['id'], puppet.key):
+                # Check if user has unsubscribed from the board
+                unsubscribed_boards = puppet.attributes.get("unsubscribed_bbs_boards", [])
+                if board['id'] in unsubscribed_boards:
+                    # Skip notification for unsubscribed boards
+                    continue
+                
                 puppet.msg(f"|w{message}|n")
 
     def format_datetime(self, dt_str, target_char=None):
@@ -249,6 +259,10 @@ class CmdBBS(default_cmds.MuxCommand):
                     self.do_readall_as_player(as_player)
                 else:
                     self.do_readall()
+            elif switch == "unsubscribe":
+                self.do_unsubscribe()
+            elif switch == "subscribe":
+                self.do_subscribe()
             
             # Admin/Builder commands
             elif switch in ["create", "editboard", "editboard/rosters", "addroster", "removeroster", "listrosters", "lock", "pin", "unpin", "deleteboard", "readonly", "viewas"]:
@@ -659,6 +673,9 @@ class CmdBBS(default_cmds.MuxCommand):
             self.caller.msg("No boards available.")
             return
 
+        # Get the character's unsubscribed boards list
+        unsubscribed_boards = self.caller.attributes.get("unsubscribed_bbs_boards", [])
+
         # Count total unread posts
         total_unread = 0
         unread_boards = []
@@ -668,6 +685,10 @@ class CmdBBS(default_cmds.MuxCommand):
 
         for board_id, board in sorted_boards:
             if not controller.has_access(board_id, self.caller.key):
+                continue
+            
+            # Skip unsubscribed boards unless admin/builder
+            if board_id in unsubscribed_boards and not (self.check_admin_access() or self.check_builder_access()):
                 continue
 
             unread_posts = controller.get_unread_posts(board_id, self.caller.key)
@@ -695,6 +716,10 @@ class CmdBBS(default_cmds.MuxCommand):
         for board_id, board in sorted_boards:
             if not controller.has_access(board_id, self.caller.key):
                 continue
+            
+            # Skip unsubscribed boards unless admin/builder
+            if board_id in unsubscribed_boards and not (self.check_admin_access() or self.check_builder_access()):
+                continue
 
             unread_posts = controller.get_unread_posts(board_id, self.caller.key)
             if not unread_posts:
@@ -718,10 +743,15 @@ class CmdBBS(default_cmds.MuxCommand):
         # Add footer with capacity information
         output.append(f"{'|b-|n'*78}")
         if total_unread > 0:
-            total_posts = sum(len(b['posts']) for b in boards.values())
+            total_posts = sum(len(b['posts']) for b in boards.values() if b['id'] not in unsubscribed_boards or (self.check_admin_access() or self.check_builder_access()))
             if total_posts > 0:  # Avoid division by zero
                 capacity = (total_unread / total_posts) * 100
                 output.append(f"Total unread posts: {total_unread} ({capacity:.1f}% of all posts)")
+        
+        # Show unsubscribe reminder if there are unsubscribed boards
+        if unsubscribed_boards and (self.check_admin_access() or self.check_builder_access()):
+            output.append("Note: Some boards are hidden due to unsubscribe settings. Use +bbs/subscribe to show them again.")
+        
         output.append(f"{'|b=|n'*78}")
 
         self.caller.msg("\n".join(output))
@@ -768,6 +798,9 @@ class CmdBBS(default_cmds.MuxCommand):
             self.caller.msg("No boards available.")
             return
 
+        # Get the character's unsubscribed boards list
+        unsubscribed_boards = self.caller.attributes.get("unsubscribed_bbs_boards", [])
+
         # Table Header
         output = []
         output.append(f"{'|b=|n'*78}")
@@ -783,6 +816,10 @@ class CmdBBS(default_cmds.MuxCommand):
                 # Only admins and builders can see boards they don't have access to
                 if not (self.check_admin_access() or self.check_builder_access()):
                     continue
+                
+            # Skip unsubscribed boards unless admin/builder
+            if board_id in unsubscribed_boards and not (self.check_admin_access() or self.check_builder_access()):
+                continue
 
             # Check if user has write access, considering admin/builder status
             has_write = controller.has_write_access(board_id, self.caller.key) or self.check_admin_access() or self.check_builder_access()
@@ -818,6 +855,11 @@ class CmdBBS(default_cmds.MuxCommand):
         # Table Footer
         output.append(f"{'|b-|n'*78}")
         output.append("* = read only")
+        
+        # Show unsubscribe reminder if there are unsubscribed boards
+        if unsubscribed_boards:
+            output.append(f"Note: Some boards are hidden due to your unsubscribe settings. Use +bbs/subscribe to show them again.")
+        
         output.append(f"{'|b=|n'*78}")
 
         self.caller.msg("\n".join(output))
@@ -1233,6 +1275,85 @@ class CmdBBS(default_cmds.MuxCommand):
         self.caller.msg(f"{'|b-|n'*78}")
         self.caller.msg(f"{post['content']}")
         self.caller.msg(f"{'|b=|n'*78}")
+
+    def do_unsubscribe(self):
+        """Handle the unsubscribe switch.
+        
+        This command allows a player to unsubscribe from a bulletin board,
+        hiding it from their board listings. They will still be able to
+        access the board directly if they know its name or ID, but it
+        won't appear in their board list.
+        
+        Usage:
+            +bbs/unsubscribe <board>
+            
+        Example:
+            +bbs/unsubscribe announcements
+        """
+        if not self.args:
+            self.caller.msg("Usage: +bbs/unsubscribe <board>")
+            return
+        
+        board_ref = self.args.strip()
+        controller = get_or_create_bbs_controller()
+        board = controller.get_board(board_ref)
+        
+        if not board:
+            self.caller.msg(f"No board found with the name or number '{board_ref}'.")
+            return
+        
+        # Get the character's unsubscribed boards list
+        unsubscribed_boards = self.caller.attributes.get("unsubscribed_bbs_boards", [])
+        
+        # Check if already unsubscribed
+        if board['id'] in unsubscribed_boards:
+            self.caller.msg(f"You are already unsubscribed from '{board['name']}'.")
+            return
+        
+        # Add to unsubscribed list
+        unsubscribed_boards.append(board['id'])
+        self.caller.attributes.add("unsubscribed_bbs_boards", unsubscribed_boards)
+        
+        self.caller.msg(f"You have unsubscribed from '{board['name']}'. It will no longer appear in your board listings.")
+        self.caller.msg("You can re-subscribe at any time with +bbs/subscribe.")
+
+    def do_subscribe(self):
+        """Handle the subscribe switch.
+        
+        This command allows a player to re-subscribe to a bulletin board they
+        previously unsubscribed from, making it visible in their board listings again.
+        
+        Usage:
+            +bbs/subscribe <board>
+            
+        Example:
+            +bbs/subscribe announcements
+        """
+        if not self.args:
+            self.caller.msg("Usage: +bbs/subscribe <board>")
+            return
+        
+        board_ref = self.args.strip()
+        controller = get_or_create_bbs_controller()
+        board = controller.get_board(board_ref)
+        
+        if not board:
+            self.caller.msg(f"No board found with the name or number '{board_ref}'.")
+            return
+        
+        # Get the character's unsubscribed boards list
+        unsubscribed_boards = self.caller.attributes.get("unsubscribed_bbs_boards", [])
+        
+        # Check if already subscribed
+        if board['id'] not in unsubscribed_boards:
+            self.caller.msg(f"You are already subscribed to '{board['name']}'.")
+            return
+        
+        # Remove from unsubscribed list
+        unsubscribed_boards.remove(board['id'])
+        self.caller.attributes.add("unsubscribed_bbs_boards", unsubscribed_boards)
+        
+        self.caller.msg(f"You have re-subscribed to '{board['name']}'. It will now appear in your board listings.")
 
 # +bbs/post alias
 class CmdBBPost(default_cmds.MuxCommand):

@@ -4,6 +4,9 @@ Command for managing character specialties.
 Some abilities require specialties at level 1, while others allow specialties at higher levels.
 For abilities that don't require specialties, you get one specialty slot at 4 dots and
 two slots at 5 dots.
+
+For abilities that require specialties, you get one specialty at level 1, a second at level 4, 
+and a third at level 5, for a total of 3 possible specialties.
 """
 
 from evennia.commands.default.muxcommand import MuxCommand
@@ -30,8 +33,11 @@ class CmdSpecialties(MuxCommand):
       +specialties/del name/<stat>=<spec> - Remove specialty from another character
 
     Some abilities (like Crafts, Artistry, etc.) require a specialty as soon as you
-    put any dots in them. Other abilities allow specialties when you reach higher
-    levels (one specialty at 4 dots, two at 5 dots).
+    put any dots in them. These abilities get a second specialty at level 4 and
+    a third at level 5, for a total of 3 specialties.
+    
+    Other abilities allow specialties when you reach higher levels (one specialty 
+    at 4 dots, two at 5 dots).
     
     Buying specialties costs 1 freebie point during character generation, or 4 XP
     after approval. Specialties purchased this way do not require the skill to be 4+.
@@ -86,6 +92,25 @@ class CmdSpecialties(MuxCommand):
         """Helper method to get a character's specialties."""
         return char.db.specialties or {}
 
+    def _get_max_specialties(self, stat_title, stat_level):
+        """Helper method to calculate maximum allowed specialties for a stat."""
+        if stat_title in REQUIRED_SPECIALTIES:
+            # Required specialty skills get 1 at level 1, +1 at level 4, +1 at level 5
+            if stat_level >= 5:
+                return 3
+            elif stat_level >= 4:
+                return 2
+            else:
+                return 1
+        else:
+            # Normal skills get 1 at level 4, 2 at level 5
+            if stat_level >= 5:
+                return 2
+            elif stat_level >= 4:
+                return 1
+            else:
+                return 0
+
     def _format_specialties_display(self, char):
         """Helper method to format the specialties display."""
         specialties = self._get_specialties(char)
@@ -107,7 +132,7 @@ class CmdSpecialties(MuxCommand):
                     value = stat_data.get('perm', 0)  # Use permanent value
                     if value >= 4:
                         high_stats.append(stat_name)
-                        available_slots[stat_name.lower()] = 2 if value >= 5 else 1
+                        available_slots[stat_name.lower()] = self._get_max_specialties(stat_name, value)
                         stat_levels[stat_name] = value
         
         # Check abilities (including secondary abilities)
@@ -123,10 +148,17 @@ class CmdSpecialties(MuxCommand):
                                 required_stats_without_specialty.append(ability_name)
                             else:
                                 required_stats_with_specialty.append(ability_name)
+                                
+                            # Calculate available slots for required specialty abilities
+                            if value > 0:
+                                max_specs = self._get_max_specialties(ability_name, value)
+                                available_slots[ability_name.lower()] = max_specs
+                                stat_levels[ability_name] = value
+                                
                         # Check for high-level specialties
-                        if value >= 4 and ability_name not in REQUIRED_SPECIALTIES:
+                        elif value >= 4 and ability_name not in REQUIRED_SPECIALTIES:
                             high_stats.append(ability_name)
-                            available_slots[ability_name.lower()] = 2 if value >= 5 else 1
+                            available_slots[ability_name.lower()] = self._get_max_specialties(ability_name, value)
                             stat_levels[ability_name] = value
 
         # Format the output
@@ -184,19 +216,41 @@ class CmdSpecialties(MuxCommand):
         for stat in required_stats_without_specialty:
             available_stats.append(f"|w{stat}|n (required)")
         
-        # Add high-level abilities that can have specialties
+        # Add any stats that can have specialties
+        for stat_lower, specs in specialties.items():
+            stat = stat_lower.title()
+            # Skip if not in our available_slots dictionary (meaning it doesn't qualify for specialties)
+            if stat_lower not in available_slots:
+                continue
+                
+            current = len(specs)
+            max_slots = available_slots.get(stat_lower, 0)
+            remaining = max_slots - current
+            
+            if remaining > 0:
+                if stat in REQUIRED_SPECIALTIES and current == 0:
+                    # This is handled above in required_stats_without_specialty
+                    continue
+                    
+                if remaining > 1:
+                    available_stats.append(f"|w{stat}|n ({remaining} slots)")
+                else:
+                    available_stats.append(f"|w{stat}|n")
+                
+        # Add high-level abilities that can have specialties but don't have any yet
         if high_stats:
             for stat in sorted(high_stats):
-                if stat not in REQUIRED_SPECIALTIES:  # Skip required specialty abilities as they're handled above
-                    stat_lower = stat.lower()
-                    current = len(specialties.get(stat_lower, []))
-                    slots = available_slots.get(stat_lower, 0)
-                    remaining_slots = slots - current
-                    if remaining_slots > 0:
-                        if remaining_slots > 1:
-                            available_stats.append(f"|w{stat}|n ({remaining_slots} slots)")
-                        else:
-                            available_stats.append(f"|w{stat}|n")
+                stat_lower = stat.lower()
+                # Skip if already listed above
+                if stat_lower in specialties:
+                    continue
+                    
+                max_slots = available_slots.get(stat_lower, 0)
+                if max_slots > 0:
+                    if max_slots > 1:
+                        available_stats.append(f"|w{stat}|n ({max_slots} slots)")
+                    else:
+                        available_stats.append(f"|w{stat}|n")
         
         if available_stats:
             # Wrap the available stats line
@@ -303,11 +357,8 @@ class CmdSpecialties(MuxCommand):
             specialties = self._get_specialties(char)
             current_specs = specialties.get(stat, [])
             
-            # Calculate max specs based on whether it's a required specialty ability
-            if stat_title in REQUIRED_SPECIALTIES:
-                max_specs = 1  # Required specialty abilities always get 1 specialty
-            else:
-                max_specs = 2 if stat_level >= 5 else 1  # Normal abilities get 1 at 4, 2 at 5
+            # Calculate max specs using the helper method
+            max_specs = self._get_max_specialties(stat_title, stat_level)
             
             if len(current_specs) >= max_specs:
                 self.caller.msg(f"No more specialty slots available for '{stat}'.")

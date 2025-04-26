@@ -30,6 +30,7 @@ class CmdStaffStat(CmdSelfStat):
 
     Usage:
       +staffstat <character>=<stat>[(<instance>)]/<category>:<value>
+      +staffstat <character>=<stat>[(<instance>)]/<category.subcategory>:<value>
       +staffstat <character>=<stat>:<value>
 
     Examples:
@@ -38,9 +39,15 @@ class CmdStaffStat(CmdSelfStat):
       +staffstat Jane=Status(Camarilla)/Background:2
       +staffstat Mike=Path of Enlightenment:Road of Heaven
       +staffstat Sarah=Nature:Architect
+      +staffstat Alex=Time/powers.realm:3  (sets Time as a realm for Changeling)
+      +staffstat Alex=Time/powers.sphere:3  (sets Time as a sphere for Mage)
 
     This command allows staff to set stats on other characters, bypassing normal
     restrictions like character approval status and validation limits.
+    
+    You can explicitly specify both category and subcategory using the dot notation
+    (category.subcategory) to disambiguate stats that might exist in multiple 
+    places for different character types.
     """
 
     key = "+staffstat"
@@ -72,7 +79,16 @@ class CmdStaffStat(CmdSelfStat):
                 stat_part, value = stat_args.split(':', 1)
                 # If there's a category specified
                 if '/' in stat_part:
-                    stat_name, category = stat_part.split('/', 1)
+                    stat_name, category_part = stat_part.split('/', 1)
+                    
+                    # Check if subcategory is explicitly specified with dot notation
+                    if '.' in category_part:
+                        category, subcategory = category_part.split('.', 1)
+                        self.category = category.strip()
+                        self.stat_type = subcategory.strip()
+                    else:
+                        self.category = category_part.strip()
+                    
                     # Handle instance if present
                     if '(' in stat_name and ')' in stat_name:
                         base_name, instance = stat_name.split('(', 1)
@@ -81,7 +97,6 @@ class CmdStaffStat(CmdSelfStat):
                     else:
                         self.stat_name = stat_name.strip()
                         self.instance = None
-                    self.category = category.strip()
                 else:
                     # No category specified
                     if '(' in stat_part and ')' in stat_part:
@@ -394,6 +409,26 @@ class CmdStaffStat(CmdSelfStat):
                     if not self.category or not self.stat_type:
                         self.category, self.stat_type = self.detect_ability_category(self.stat_name)
 
+                # No dynamic overwrites for explicitly specified categories
+                if self.category == 'powers' and self.stat_type == 'realm' and self.stat_name.lower() == 'time':
+                    # Override any automatic detection if we explicitly specified powers.realm
+                    pass
+                # Special handling for Time based on character's splat type
+                elif self.stat_name.lower() == 'time' and not hasattr(self, '_explicit_category_set'):
+                    splat = self.target.get_stat('other', 'splat', 'Splat', temp=False)
+                    
+                    # For Mages, Time is a sphere power
+                    if splat == 'Mage':
+                        self.category = 'powers'
+                        self.stat_type = 'sphere'
+                    # For Changelings, Time is a realm
+                    elif splat == 'Changeling':
+                        self.category = 'powers'
+                        self.stat_type = 'realm'
+                    else:
+                        self.category = 'attributes'
+                        self.stat_type = 'physical'
+
             # Get the stat definition from the database
             stat = Stat.objects.filter(name__iexact=self.stat_name).first()
             if not stat:
@@ -423,39 +458,6 @@ class CmdStaffStat(CmdSelfStat):
                     self.category = 'powers'
                     self.stat_type = 'gift'
 
-            # Special handling for Nature based on character's splat type
-            if self.stat_name.lower() == 'nature':
-                splat = self.target.get_stat('other', 'splat', 'Splat', temp=False)
-                char_type = self.target.get_stat('identity', 'lineage', 'Type', temp=False)
-                
-                # For Changelings and Kinain, Nature is a realm power
-                if splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
-                    stat.category = 'powers'
-                    stat.stat_type = 'realm'
-                    self.category = 'powers'
-                    self.stat_type = 'realm'
-                else:
-                    stat.category = 'identity'
-                    stat.stat_type = 'personal'
-                    self.category = 'identity'
-                    self.stat_type = 'personal'
-            
-            # Special handling for Time based on character's splat type
-            elif self.stat_name.lower() == 'time':
-                splat = self.target.get_stat('other', 'splat', 'Splat', temp=False)
-                
-                # For Mages, Time is a sphere power
-                if splat == 'Mage':
-                    stat.category = 'powers'
-                    stat.stat_type = 'sphere'
-                    self.category = 'powers'
-                    self.stat_type = 'sphere'
-                else:
-                    stat.category = 'attributes'
-                    stat.stat_type = 'physical'
-                    self.category = 'attributes'
-                    self.stat_type = 'physical'
-
             # Handle instances for background stats
             requires_instance = self._requires_instance(self.stat_name, self.category)
             if requires_instance:
@@ -479,14 +481,18 @@ class CmdStaffStat(CmdSelfStat):
                 self.caller.msg(f"|rStat '{full_stat_name}' not found.|n")
                 return
 
-            # Initialize the stat structure if needed
-            if stat.category not in self.target.db.stats:
-                self.target.db.stats[stat.category] = {}
-            if stat.stat_type not in self.target.db.stats[stat.category]:
-                self.target.db.stats[stat.category][stat.stat_type] = {}
+            # Initialize the category structure if needed
+            # Always use the explicitly set category and stat_type if provided
+            category = self.category
+            subcategory = self.stat_type
+
+            if category not in self.target.db.stats:
+                self.target.db.stats[category] = {}
+            if subcategory not in self.target.db.stats[category]:
+                self.target.db.stats[category][subcategory] = {}
 
             # Clean up any duplicate flaw entries
-            if stat.category == 'flaws':
+            if category == 'flaws':
                 # Remove from flaw.flaw if it exists
                 if 'flaw' in self.target.db.stats and 'flaw' in self.target.db.stats['flaw']:
                     if full_stat_name in self.target.db.stats['flaw']['flaw']:
@@ -498,10 +504,6 @@ class CmdStaffStat(CmdSelfStat):
                             del self.target.db.stats['flaw']
 
             # Set the stat value
-
-            category = stat.category
-            subcategory = stat.stat_type
-            
             try:
                 # Special handling for Splat changes
                 if stat.name == 'Splat' and stat.category == 'other':
@@ -545,7 +547,7 @@ class CmdStaffStat(CmdSelfStat):
                 else:
                     # Normal stat handling
                     # Validate and convert the value
-                    is_valid, error_msg, new_value = self.validate_stat_value(stat.name, self.value_change, stat.category, stat.stat_type)
+                    is_valid, error_msg, new_value = self.validate_stat_value(stat.name, self.value_change, category, subcategory)
                     if not is_valid:
                         self.caller.msg(f"|r{error_msg}|n")
                         return
@@ -555,7 +557,7 @@ class CmdStaffStat(CmdSelfStat):
                         old_type = self.target.get_stat('identity', 'lineage', 'Type', temp=False)
                         
                         # Set the new type first
-                        self.target.db.stats[stat.category][stat.stat_type][full_stat_name] = {
+                        self.target.db.stats[category][subcategory][full_stat_name] = {
                             'perm': new_value,
                             'temp': new_value
                         }
@@ -587,7 +589,7 @@ class CmdStaffStat(CmdSelfStat):
                             initialize_companion_stats(self.target)
                     else:
                         # Normal stat setting
-                        self.target.db.stats[stat.category][stat.stat_type][full_stat_name] = {
+                        self.target.db.stats[category][subcategory][full_stat_name] = {
                             'perm': new_value,
                             'temp': new_value
                         }

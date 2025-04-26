@@ -10,7 +10,7 @@ from world.wod20th.utils.xp_utils import (
     process_xp_purchase, validate_xp_purchase, deduct_xp_and_log,
     check_weekly_xp_eligibility, _determine_stat_category, 
     get_current_rating, update_stat, process_xp_spend, normalize_stat_name,
-    get_canonical_stat_name, get_proper_stat_name
+    get_canonical_stat_name, get_proper_stat_name, validate_stat_for_splat
 )
 from decimal import Decimal
 from datetime import datetime
@@ -706,8 +706,10 @@ class CmdXP(default_cmds.MuxCommand):
       +xp/endscene            - Manually end current scene
       +xp/add <name>=<amt>    - Add XP to a character (Staff only)
       +xp/spend <stat> <rating>=<reason> - Spend XP (Must be in OOC area)
+      +xp/spend <stat>/<category.subcategory> <rating>=<reason> - Spend XP with explicit category
       +xp/forceweekly         - Force weekly XP distribution (Staff only)
       +xp/staffspend <name>/<stat> <rating>=<reason> - Spend XP on behalf of a character (Staff only)
+      +xp/staffspend <name>/<stat>/<category.subcategory> <rating>=<reason> - Staff spend with explicit category
       +xp/approve <name>/<amount>=<reason> - Record XP spend without cost (Staff only)
       +xp/refund <name>/<amount>=<reason> - Refund XP to a character (Staff only)
       +xp/fixstats <name>     - Fix a character's stats structure (Staff only)
@@ -717,12 +719,20 @@ class CmdXP(default_cmds.MuxCommand):
       +xp/spend Strength 3=Getting stronger
       +xp/spend Potence 2=Learning from mentor
       +xp/spend Resources 2=Business success
+      +xp/spend Time/powers.realm 3=Working with the Dreaming
       +xp/staffspend Bob/Strength 3=Staff correction
+      +xp/staffspend Bob/Time/powers.realm 3=Setting as changeling realm power
       +xp/sub Bob/5=Correcting XP error
       +xp/approve Bob/5=Learning through mentor IC
       +xp/refund Bob/3=Overcharge correction
       +xp/staffspend ryan/Dark Fate=Flaw Buyoff
       +xp/fixdata Bob         - Fix Bob's XP data structure
+      
+    Notes:
+      You can explicitly specify category.subcategory for stats that might exist
+      in multiple categories depending on character type. For example, the "Time"
+      stat can be a sphere for Mages (powers.sphere) or a realm for Changelings 
+      (powers.realm).
     """
     
     key = "+xp"
@@ -1045,20 +1055,180 @@ class CmdXP(default_cmds.MuxCommand):
             
         try:
             rating = int(stat_parts[-1])
-            stat_name = " ".join(stat_parts[:-1])
+            stat_spec = " ".join(stat_parts[:-1])
         except ValueError:
             self.caller.msg("Rating must be a number.")
             return
+        
+        # Flag to track if category was explicitly specified
+        explicit_category_specified = False
+
+        # Check if category.subcategory is explicitly specified
+        if '/' in stat_spec:
+            stat_name, category_spec = stat_spec.split('/', 1)
+            stat_name = stat_name.strip()
+            explicit_category_specified = True
+            
+            # Check if subcategory is specified with dot notation
+            if '.' in category_spec:
+                category, subcategory = category_spec.split('.', 1)
+                category = category.strip()
+                subcategory = subcategory.strip()
+            else:
+                # Just category is specified
+                category = category_spec.strip()
+                subcategory = None  # Will be determined later
+        else:
+            # No category specified, use normal determination
+            stat_name = stat_spec
+            category = None
+            subcategory = None
             
         # Store original stat name for gift alias
         original_stat_name = stat_name
+        
+        # If category/subcategory weren't explicitly specified, determine them
+        if not category:
+            category, subcategory = _determine_stat_category(stat_name)
+        elif not subcategory:
+            # If only category was specified but not subcategory
+            # Try to determine subcategory based on category and stat name
+            from world.wod20th.utils.stat_mappings import (
+                ATTRIBUTES, TALENTS, SKILLS, KNOWLEDGES,
+                SECONDARY_TALENTS, SECONDARY_SKILLS, SECONDARY_KNOWLEDGES
+            )
             
-        # Determine stat category
-        category, subcategory = _determine_stat_category(stat_name)
+            # Check for common mappings
+            if category == 'attributes':
+                if stat_name.lower() in [a.lower() for a in ATTRIBUTES['physical']]:
+                    subcategory = 'physical'
+                elif stat_name.lower() in [a.lower() for a in ATTRIBUTES['social']]:
+                    subcategory = 'social'
+                elif stat_name.lower() in [a.lower() for a in ATTRIBUTES['mental']]:
+                    subcategory = 'mental'
+            elif category == 'abilities':
+                if stat_name.lower() in [a.lower() for a in TALENTS]:
+                    subcategory = 'talent'
+                elif stat_name.lower() in [a.lower() for a in SKILLS]:
+                    subcategory = 'skill'
+                elif stat_name.lower() in [a.lower() for a in KNOWLEDGES]:
+                    subcategory = 'knowledge'
+                elif stat_name.lower() in [a.lower() for a in SECONDARY_TALENTS]:
+                    subcategory = 'secondary_talent'
+                elif stat_name.lower() in [a.lower() for a in SECONDARY_SKILLS]:
+                    subcategory = 'secondary_skill'
+                elif stat_name.lower() in [a.lower() for a in SECONDARY_KNOWLEDGES]:
+                    subcategory = 'secondary_knowledge'
+            elif category == 'powers':
+                # Determine power type based on character splat
+                splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+                if splat == 'Vampire':
+                    subcategory = 'discipline'
+                elif splat == 'Mage':
+                    subcategory = 'sphere'
+                elif splat == 'Changeling':
+                    # Try to determine if art or realm
+                    if stat_name.lower() in ['nature', 'actor', 'fae', 'prop', 'scene', 'time']:
+                        subcategory = 'realm'
+                    else:
+                        subcategory = 'art'
+                elif splat == 'Shifter':
+                    subcategory = 'gift'
+        
+        # Special handling for Time when explicitly specified
+        if stat_name.lower() == 'time' and explicit_category_specified:
+            # Respect explicitly specified category/subcategory
+            pass
+        # Special handling for Time without explicit specification
+        elif stat_name.lower() == 'time' and not explicit_category_specified:
+            # Automatically select the right category based on splat
+            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            if splat == 'Mage':
+                category = 'powers'
+                subcategory = 'sphere'
+            elif splat == 'Changeling':
+                category = 'powers'
+                subcategory = 'realm'
+        
+        # Special handling for merits and flaws - these always require staff approval
+        if category in ['merits', 'flaws']:
+            reject_message = "Merits require staff approval" if category == 'merits' else "Buying off flaws requires staff approval"
+            self.caller.msg(f"{reject_message}. Please use the +request command instead.")
+            return
+        
+        # Special handling for rites - level 1 rites can be purchased, higher need staff approval
+        if category == 'powers' and subcategory == 'rite':
+            # Check if we can determine the rite level
+            from world.wod20th.utils.stat_mappings import RITE_VALUES
+            rite_level = 1  # Default
+            
+            if stat_name in RITE_VALUES:
+                rite_values = RITE_VALUES[stat_name]
+                if isinstance(rite_values, list) and rite_values:
+                    rite_level = rite_values[0]
+                elif rite_values:
+                    rite_level = rite_values
+                
+            if rite_level > 1:
+                self.caller.msg(f"Rites above level 1 require staff approval. This is a level {rite_level} rite. Please use the +request command instead.")
+                return
+        
         if not category or not subcategory:
+            # Special case check for exact matches with common merits/flaws
+            stat_name_lower = stat_name.lower()
+            if stat_name_lower in ["acute sense", "acute senses"]:
+                self.caller.msg("Merits require staff approval. Please use the +request command instead.")
+                return
+            
+            # Before giving up, try a strict search for merits/flaws/rites
+            from world.wod20th.utils.stat_mappings import (
+                MERIT_VALUES, FLAW_VALUES, RITE_VALUES
+            )
+            
+            # Check for exact rite matches
+            for rite_name in RITE_VALUES.keys():
+                if rite_name.lower() == stat_name_lower:
+                    # Determine rite level from RITE_VALUES
+                    rite_level = 1  # Default
+                    rite_values = RITE_VALUES[rite_name]
+                    if isinstance(rite_values, list) and rite_values:
+                        rite_level = rite_values[0]
+                    elif rite_values:
+                        rite_level = rite_values
+                        
+                    # Check if rite level is too high for direct purchase
+                    if rite_level > 1:
+                        self.caller.msg(f"The rite '{rite_name}' is level {rite_level}, which requires staff approval. Only level 1 rites can be purchased directly.")
+                        return
+                    
+                    # For level 1 rites, let the purchase proceed
+                    category = 'powers'
+                    subcategory = 'rite'
+                    stat_name = rite_name  # Use the correct case
+                    break
+            
+            # Check for exact merit matches
+            for merit_name in MERIT_VALUES.keys():
+                if merit_name.lower() == stat_name_lower:
+                    self.caller.msg(f"The merit '{merit_name}' requires staff approval. Please use the +request command.")
+                    return
+                
+            # Check for exact flaw matches
+            for flaw_name in FLAW_VALUES.keys():
+                if flaw_name.lower() == stat_name_lower:
+                    self.caller.msg(f"Buying off the flaw '{flaw_name}' requires staff approval. Please use the +request command.")
+                    return
+            
+            # If we get here, truly couldn't determine the category
             self.caller.msg(f"Could not determine category for '{stat_name}'.")
             return
-            
+        
+        # Validate if the stat is appropriate for this character's splat
+        is_valid_for_splat, splat_validation_message = validate_stat_for_splat(self.caller, stat_name, category, subcategory)
+        if not is_valid_for_splat:
+            self.caller.msg(splat_validation_message)
+            return
+        
         # For gifts, get the canonical name
         if category == 'powers' and subcategory == 'gift':
             canonical_name = get_canonical_gift_name(stat_name)
@@ -1198,18 +1368,103 @@ class CmdXP(default_cmds.MuxCommand):
             self.caller.msg("You must specify both a stat name and rating.")
             return
             
-        stat_name = " ".join(stat_parts[:-1])
         try:
             rating = int(stat_parts[-1])
+            stat_spec = " ".join(stat_parts[:-1])
         except ValueError:
             self.caller.msg("Rating must be a number.")
             return
             
+        # Flag to track if category was explicitly specified
+        explicit_category_specified = False
+        
+        # Check if category.subcategory is explicitly specified
+        if '/' in stat_spec:
+            stat_name, category_spec = stat_spec.split('/', 1)
+            stat_name = stat_name.strip()
+            explicit_category_specified = True
+            
+            # Check if subcategory is specified with dot notation
+            if '.' in category_spec:
+                category, subcategory = category_spec.split('.', 1)
+                category = category.strip()
+                subcategory = subcategory.strip()
+            else:
+                # Just category is specified
+                category = category_spec.strip()
+                subcategory = None  # Will be determined later
+        else:
+            # No category specified, use normal determination
+            stat_name = stat_spec
+            category = None
+            subcategory = None
+        
         # Store the original stat name for gift aliases
         original_stat_name = stat_name
             
-        # Determine stat category
-        category, subcategory = _determine_stat_category(stat_name)
+        # If category/subcategory weren't explicitly specified, determine them
+        if not category:
+            category, subcategory = _determine_stat_category(stat_name)
+        elif not subcategory:
+            # If only category was specified but not subcategory
+            # Try to determine subcategory based on category and stat name
+            from world.wod20th.utils.stat_mappings import (
+                ATTRIBUTES, TALENTS, SKILLS, KNOWLEDGES,
+                SECONDARY_TALENTS, SECONDARY_SKILLS, SECONDARY_KNOWLEDGES
+            )
+            
+            # Check for common mappings
+            if category == 'attributes':
+                if stat_name.lower() in [a.lower() for a in ATTRIBUTES['physical']]:
+                    subcategory = 'physical'
+                elif stat_name.lower() in [a.lower() for a in ATTRIBUTES['social']]:
+                    subcategory = 'social'
+                elif stat_name.lower() in [a.lower() for a in ATTRIBUTES['mental']]:
+                    subcategory = 'mental'
+            elif category == 'abilities':
+                if stat_name.lower() in [a.lower() for a in TALENTS]:
+                    subcategory = 'talent'
+                elif stat_name.lower() in [a.lower() for a in SKILLS]:
+                    subcategory = 'skill'
+                elif stat_name.lower() in [a.lower() for a in KNOWLEDGES]:
+                    subcategory = 'knowledge'
+                elif stat_name.lower() in [a.lower() for a in SECONDARY_TALENTS]:
+                    subcategory = 'secondary_talent'
+                elif stat_name.lower() in [a.lower() for a in SECONDARY_SKILLS]:
+                    subcategory = 'secondary_skill'
+                elif stat_name.lower() in [a.lower() for a in SECONDARY_KNOWLEDGES]:
+                    subcategory = 'secondary_knowledge'
+            elif category == 'powers':
+                # Determine power type based on character splat
+                splat = target.get_stat('other', 'splat', 'Splat', temp=False)
+                if splat == 'Vampire':
+                    subcategory = 'discipline'
+                elif splat == 'Mage':
+                    subcategory = 'sphere'
+                elif splat == 'Changeling':
+                    # Try to determine if art or realm
+                    if stat_name.lower() in ['nature', 'actor', 'fae', 'prop', 'scene', 'time']:
+                        subcategory = 'realm'
+                    else:
+                        subcategory = 'art'
+                elif splat == 'Shifter':
+                    subcategory = 'gift'
+            
+        # Special handling for Time when explicitly specified
+        if stat_name.lower() == 'time' and explicit_category_specified:
+            # Respect explicitly specified category/subcategory
+            pass
+        # Special handling for Time without explicit specification
+        elif stat_name.lower() == 'time' and not explicit_category_specified:
+            # Automatically select the right category based on splat
+            splat = target.get_stat('other', 'splat', 'Splat', temp=False)
+            if splat == 'Mage':
+                category = 'powers'
+                subcategory = 'sphere'
+            elif splat == 'Changeling':
+                category = 'powers'
+                subcategory = 'realm'
+
         if not category or not subcategory:
             self.caller.msg(f"Could not determine stat category for '{stat_name}'.")
             return
@@ -1529,3 +1784,79 @@ class CmdXP(default_cmds.MuxCommand):
             self.caller.msg(f"Fixed XP data structure for {target.name}.")
         else:
             self.caller.msg(f"No XP data issues found for {target.name}.")
+
+def validate_stat_for_splat(character, stat_name, category, subcategory):
+    """
+    Validate if a stat is appropriate for the character's splat type.
+    
+    Args:
+        character: The character to validate against
+        stat_name: The name of the stat to validate
+        category: The category of the stat
+        subcategory: The subcategory of the stat
+        
+    Returns:
+        tuple: (is_valid, message)
+    """
+    try:
+        # Get character's splat
+        splat = character.get_stat('other', 'splat', 'Splat', temp=False)
+        if not splat:
+            return False, "Character's splat type is not set."
+            
+        # Special handling for Time and Nature
+        if stat_name.lower() == 'time' or stat_name.lower() == 'nature':
+            # For Changelings, Time and Nature are a realm
+            if splat == 'Changeling' and category == 'powers' and subcategory == 'realm':
+                return True, ""
+            # For Mages, Time is a sphere
+            elif splat == 'Mage' and category == 'powers' and subcategory == 'sphere':
+                return True, ""
+            # Explicitly specified but not valid for this splat
+            elif category == 'powers':
+                if splat == 'Changeling' and subcategory != 'realm':
+                    return False, f"Time must be a realm for Changelings, not a {subcategory}."
+                elif splat == 'Mage' and subcategory != 'sphere':
+                    return False, f"Time must be a sphere for Mages, not a {subcategory}."
+                else:
+                    return False, f"Time as a {subcategory} is not valid for {splat} characters."
+                    
+        # Check if the stat is valid for the character's splat
+        if category == 'powers':
+            # Each splat has different power types
+            if splat == 'Vampire':
+                valid_subcategories = ['discipline', 'thaumaturgy', 'thaum_ritual', 'necromancy', 'necromancy_ritual', 'combodiscipline']
+                if subcategory not in valid_subcategories:
+                    return False, f"Vampires do not have {subcategory} powers."
+            elif splat == 'Werewolf' or splat == 'Shifter':
+                valid_subcategories = ['gift', 'rite', 'ritual']
+                if subcategory not in valid_subcategories:
+                    return False, f"Shifters do not have {subcategory} powers."
+            elif splat == 'Mage':
+                valid_subcategories = ['sphere', 'ritual', 'rote']
+                if subcategory not in valid_subcategories:
+                    return False, f"Mages do not have {subcategory} powers."
+            elif splat == 'Changeling':
+                valid_subcategories = ['art', 'realm']
+                if subcategory not in valid_subcategories:
+                    return False, f"Changelings do not have {subcategory} powers."
+            elif splat == 'Mortal+':
+                # Check character type for Mortal+
+                char_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
+                if char_type == 'Kinfolk' and subcategory not in ['gift']:
+                    return False, f"Kinfolk do not have {subcategory} powers."
+                elif char_type == 'Ghoul' and subcategory not in ['discipline']:
+                    return False, f"Ghouls do not have {subcategory} powers."
+                elif char_type == 'Kinain' and subcategory not in ['art', 'realm']:
+                    return False, f"Kinain do not have {subcategory} powers."
+            elif splat == 'Wraith':
+                valid_subcategories = ['arcanos', 'ritual']
+                if subcategory not in valid_subcategories:
+                    return False, f"Wraiths do not have {subcategory} powers."
+                    
+        # If we got here, the stat is valid for this splat
+        return True, ""
+        
+    except Exception as e:
+        logger.log_err(f"Error validating stat for splat: {str(e)}")
+        return False, f"Error validating stat: {str(e)}"

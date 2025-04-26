@@ -34,22 +34,22 @@ class CmdRent(MuxCommand):
     # Define residence types (moved to class level for easy reference)
     APARTMENT_TYPES = {
         "Studio": {
-            "desc": "A cozy studio apartment with an open floor plan.",
+            "desc": "Welcome to your new home! See help +home for information on commands. Here's a brief overview of the important ones:\n\n|w+home/desc|n - Sets up the description of your home.\n|w+home/set|n - Sets this room as your home for use of the 'home' command.\n|w+home/lock|n - Locks the door of your home.\n|w+home/unlock|n - Unlocks the door of your home.\n|w+home/key <name>|n - Adds a keyholder to your home.\n|w+home/unkey <name>|n - Removes a keyholder from your home.\n|w+home/unfindable <on/off>|n - sets your home as unfindable.\n\nSee the full helpfile for more info.",
             "rooms": 1,
             "resource_modifier": -1
         },
         "Apartment": {
-            "desc": "A comfortable one-bedroom apartment with a separate living area.",
+            "desc": "Welcome to your new home! See help +home for information on commands. Here's a brief overview of the important ones:\n\n|w+home/desc|n - Sets up the description of your home.\n|w+home/set|n - Sets this room as your home for use of the 'home' command.\n|w+home/lock|n - Locks the door of your home.\n|w+home/unlock|n - Unlocks the door of your home.\n|w+home/key <name>|n - Adds a keyholder to your home.\n|w+home/unkey <name>|n - Removes a keyholder from your home.\n|w+home/unfindable <on/off>|n - sets your home as unfindable.\n\nSee the full helpfile for more info.",
             "rooms": 2,
             "resource_modifier": 0
         },
         "Motel Room": {
-            "desc": "A rundown motel room with a bed and a small desk.",
+            "desc": "Welcome to your new home! See help +home for information on commands. Here's a brief overview of the important ones:\n\n|w+home/desc|n - Sets up the description of your home.\n|w+home/set|n - Sets this room as your home for use of the 'home' command.\n|w+home/lock|n - Locks the door of your home.\n|w+home/unlock|n - Unlocks the door of your home.\n|w+home/key <name>|n - Adds a keyholder to your home.\n|w+home/unkey <name>|n - Removes a keyholder from your home.\n|w+home/unfindable <on/off>|n - sets your home as unfindable.\n\nSee the full helpfile for more info.",
             "rooms": 1,
             "resource_modifier": -1
         },
         "Splat Housing": {
-            "desc": "Housing for your specific splat, either in a Chantry, Freehold, Sept, or other type.",
+            "desc": "Welcome to your new home! See help +home for information on commands. Here's a brief overview of the important ones:\n\n|w+home/desc|n - Sets up the description of your home.\n|w+home/set|n - Sets this room as your home for use of the 'home' command.\n|w+home/lock|n - Locks the door of your home.\n|w+home/unlock|n - Unlocks the door of your home.\n|w+home/key <name>|n - Adds a keyholder to your home.\n|w+home/unkey <name>|n - Removes a keyholder from your home.\n|w+home/unfindable <on/off>|n - sets your home as unfindable.\n\nSee the full helpfile for more info.",
             "rooms": 1,
             "resource_modifier": -5
         }
@@ -57,12 +57,12 @@ class CmdRent(MuxCommand):
     
     RESIDENTIAL_TYPES = {
         "House": {
-            "desc": "A modest single-family home with a small yard.",
+            "desc": "Welcome to your new home! See help +home for information on commands. Here's a brief overview of the important ones:\n\n|w+home/desc|n - Sets up the description of your home.\n|w+home/set|n - Sets this room as your home for use of the 'home' command.\n|w+home/lock|n - Locks the door of your home.\n|w+home/unlock|n - Unlocks the door of your home.\n|w+home/key <name>|n - Adds a keyholder to your home.\n|w+home/unkey <name>|n - Removes a keyholder from your home.\n|w+home/unfindable <on/off>|n - sets your home as unfindable.\n\nSee the full helpfile for more info.",
             "rooms": 4,
             "resource_modifier": 0
         },
         "Encampment": {
-            "desc": "A temporary shelter in a tent or similar structure.",
+            "desc": "Welcome to your new home! See help +home for information on commands. Here's a brief overview of the important ones:\n\n|w+home/desc|n - Sets up the description of your home.\n|w+home/set|n - Sets this room as your home for use of the 'home' command.\n|w+home/lock|n - Locks the door of your home.\n|w+home/unlock|n - Unlocks the door of your home.\n|w+home/key <name>|n - Adds a keyholder to your home.\n|w+home/unkey <name>|n - Removes a keyholder from your home.\n|w+home/unfindable <on/off>|n - sets your home as unfindable.\n\nSee the full helpfile for more info.",
             "rooms": 1,
             "resource_modifier": -2
         }

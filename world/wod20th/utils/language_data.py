@@ -121,6 +121,7 @@ LANGUAGE_CATEGORIES = {
         "kiowa": "Kiowa",
         "lakota": "Lakota",
         "maya": "Maya",
+        "nahuatl": "Nahuatl",
         "pueblo": "Pueblo",
         "tlingit": "Tlingit",
         "turtle": "Turtle",
