@@ -1,0 +1,72 @@
+[
+    {
+        "name": "Middleman",
+        "description": "The Yeren can push on far past the point of exhaustion, taking strength from the activity around him.",
+        "system": "The player spends a point of Rage or Gnosis. For the remainder of the scene, the Yeren regains a point of the same trait for every two points spent within the wereapes' hearing range. Middleman only keeps the Yeren fighting on dwindling resources and cannot restore his pool above three points. The character chooses whether to focus on Rage or Gnosis when activating the Gift; both aspects may not be used in the same scene.",
+        "source": "Book of the Wyrm",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            1
+        ],
+        "shifter_type": "Yeren",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Shit Rolls Downhill",
+        "description": "The Yeren transfers all blame and negative social consequences for an activity to a chosen victim. The Yeren is praised for success, but the victim will be disciplined for any failure. Any corporate investigation, police enquiry or Garou pack that tries to find the person responsible for the project will discover the victim.",
+        "system": "The player spends one Gnosis and touches the victim. All non-supernatural enquiries to discover the Yeren's involvement with an activity will instead find solid evidence of the victim's responsibility - even if parts of a project succeed the negatives will all point to the victim and obscure the Yeren's involvement. Anyone using supernatural powers to penetrate this shield add the Yeren's Gnosis to the difficulty.",
+        "source": "Book of the Wyrm",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            1
+        ],
+        "shifter_type": "Yeren",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Fistful of Filth",
+        "description": "The Yeren flings steaming gobs of corrosive filth at its enemies. This filth smells like excrement but is produced by the Gift - the Yeren does not need to supply his own ammunition.",
+        "system": "The filth is a thrown weapon with traits equivalent to a knife (W20 p 302). Its corrosive nature continues to inflict 2 levels of lethal damage for a number of turns equal to the Yeren's Rage. The waste burns through most natural substances including wood and metal; some Yeren have come up with creative uses for this Gift as a result.",
+        "source": "Book of the Wyrm",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            2
+        ],
+        "shifter_type": "Yeren",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Dressing Down",
+        "description": "The Yeren berates a subordinate for real or imagined failures and steals her self-worth to boost the ape's confidence.",
+        "system": "The player rolls Manipulation + Leadership (difficulty 6). Each success tranfers one Willpower point from the victim to the Yeren. The Yeren can't take more Willpower points than the victim has and the same victim can't be targeted more than once per day. This power can only be used on the wereape's inferiors.",
+        "source": "Book of the Wyrm",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            3
+        ],
+        "shifter_type": "Yeren",
+        "splat": "Shifter"
+    },
+    {
+        "name": "Artist's Lament",
+        "description": "All creators instil their work with some part of themselves. The Yeren abuses this link by destroying the creation to harm its maker. This Gift applies to anything invested with time and energy by its creator, such as speeches, software, or corporate presentations.",
+        "system": "The Yeren destroys the creation and the player rolls Gnosis (difficulty equal to the victim's Willpower). Each success removes a point of an Attribute or Willpower from the victim for the remainder of the scene (though it can't reduce the trait to zero). These points return at the end of the scene. The Yeren must know the victim for this Gift to work. The Gift works best on unique items -- add 1 to the difficulty for mass-produced or widely-published works.)",
+        "source": "Book of the Wyrm",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+        "values": [
+            3
+        ],
+        "shifter_type": "Yeren",
+        "splat": "Shifter"
+    }
+]

@@ -209,17 +209,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Dance of Dionysus",
-        "description": "The target of this Gift becomes uncoordinated and extremely dizzy. His vision blurs, his ears ring, and bystanders may think he is drunk. Speech is unaffected and reasoning is possible, but all physical difficulties are increased by three. This Gift is taught by a Coyote-spirit.",
-        "system": "The Nuwisha must touch her target, while the player spends one Gnosis and one Willpower point. This Gift lasts for one turn.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers", 
-        "stat_type": "gift",
-        "values": [2],
-        "shifter_type": "Nuwisha",
-        "splat": "Shifter"
-    },
-    {
         "name": "Twisting Tongues",
         "description": "The Nuwisha may understand any written or spoken language while using this Gift. Even sign language and facial expressions offer no trouble. While under the influence of this Gift, the Nuwisha can speak with spirits, Banes, and even computers (which hardly makes for interesting conversation, but can prove worthwhile). This Gift is taught by a Trickster-spirit.",
         "system": "The player rolls Wits + Expression, difficulty 7. For every success, the character can fully comprehend the language - complete with all slang terms - for one full day. The character must employ this Gift separately for each language she wishes to comprehend.",
@@ -476,17 +465,6 @@
         "name": "Umbral Gateway",
         "description": "Umbral Danse. The Nuwisha can open a portal directly into the Umbra, through which may pass only those things the werecoyote wishes. This Gift is taught by a servant of the Trickster.",
         "system": "The player spends three Gnosis points and rolls Wits + Occult (difficulty 8). The portal stays open as long as the werecoyote desires, to a maximum of one scene.",
-        "game_line": "Werewolf: The Apocalypse",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [5],
-        "shifter_type": "Nuwisha",
-        "splat": "Shifter"
-    },
-    {
-        "name": "Fetish Doll",
-        "description": "As the Uktena Gift. Sympathetic magic is the oldest form of sorcery, and it is still effective. Although many cultures find this sort of magic repellent, the Uktena believe that the ends well justify the means. The Garou can harm his victim from afar using a specially created doll. He must have a piece of his victim or an object belonging to him, and he must then construct the doll. An ancestor-spirit teaches this Gift.",
-        "system": "The doll takes one week to construct and enchant. The player rolls Perception + Crafts (difficulty 8) to construct the doll. When the doll is complete, the player may roll Intelligence + Medicine (difficulty of the victim's Willpower). Each success inflicts one level of aggravated damage on the victim, which eh may soak if he is capable of doing so. The doll is only capable of transferring 10 levels of damage. After 10 successes, the doll is too mutilated to be of further use. A botched roll destroys the doll without inflicting any damage.",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
