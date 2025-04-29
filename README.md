@@ -4,7 +4,7 @@ If you are downloading this with the intention of creating a new game, here's wh
 
 1. Install python, if you're using linux, that's ```apt install -y python3-full```
 2. Find your home directory (best not use your root directory if you have multiple coders; if it's just you, use the root directory) and create a virtual environment using python3 -m venv (name of your environment)
-3. Launch the virtual environment (in Linux, it's 'source bin/env_name/activate').
+3. Launch the virtual environment (in Linux, it's 'source env_name/bin/activate', in windows you have to navigate to the Scripts folder, probably in like game_name/Scripts, then use 'activate.bat').
 4. Install Evennia using a virtual environment using 'pip install evennia'. It may ask you to install some dependencies.
 5. Now type evennia --init (name of game). This will create a folder in your current directory with the same name as your name of game.
 6. Navigate to that folder and hold up; download the Dies Irae files from github.
