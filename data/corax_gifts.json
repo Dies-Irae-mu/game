@@ -275,20 +275,6 @@
         "splat": "Shifter"
     },
     {
-        "name": "Plague Feather",
-        "description": "Calling upon Plague Feather allows the Buzzard to distill sickness into a single one of his pinfeathers, pluck it, and leave it behind as a trap for the unwary. The first three people to have skin contact with the feather then run the risk of falling terribly ill. Children in particular are vulnerable to Plague Feathers, as they're the most likely to find a big, black shiny feather on the ground an irresistible plaything.",
-        "system": "Using Plague Feather involves the expenditure of a point of Gnosis and a point of Willpower, as well as a successful Manipulation + Occult roll (difficulty 8). At that point, the feather is imbued with the power of sickness, and will transfer that contagion to the next three people to touch it. Resisting the disease the feather spreads requires the same roll as does fighting off the effects of Poisoned Flesh.",
-        "game_line": "Werewolf: The Apocalypse",
-        "source": "BotW p139",
-        "category": "powers",
-        "stat_type": "gift",
-        "values": [
-            3
-        ],
-        "shifter_type": "Corax",
-        "splat": "Shifter"
-    },
-    {
         "name": "Airt Sense Gift",
         "description": "As the spirit Charm. The spirit has a natural sense of the “airts” (directions) of the spirit world, and can travel about without much difficulty. The spirit can create or find spirit tracks at will.",
         "system": "The Storyteller rolls the spirit's Gnosis if it has to locate a particular place or individual in the Umbra. Even spirits aren't infallible, and a botch can lead them to an unforgiving Realm.",
