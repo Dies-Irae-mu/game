@@ -356,7 +356,6 @@ class CmdShift(default_cmds.MuxCommand):
                                     'perm': perm_value,
                                     'temp': perm_value
                                 }
-                                print(f"DEBUG: Reset {category}.{subcat}.{stat} to perm={perm_value}, temp={perm_value}")
 
     def _shift_with_roll(self, character, form):
         """Attempt to shift using a dice roll."""
@@ -530,7 +529,6 @@ class CmdShift(default_cmds.MuxCommand):
                             'perm': perm_value,
                             'temp': perm_value + boost_amount
                         }
-                        print(f"DEBUG: Reset {category}.{stat} to perm={perm_value}, temp={perm_value + boost_amount}")
             return
 
         # For non-Homid forms
@@ -664,15 +662,26 @@ class CmdShift(default_cmds.MuxCommand):
             try:
                 from world.wod20th.models import CharacterArchidTrait
                 
+                # Clear any existing Archid special rules to prevent duplication
+                character.db.archid_special_rules = []
+                
                 # Get all approved Archid traits for the character
                 archid_traits = CharacterArchidTrait.objects.filter(
                     character=character,
                     approved=True
                 )
                 
-                # Apply trait modifiers
+                self.caller.msg(f"Found {archid_traits.count()} approved Archid traits to apply")
+                
+                # Collect all trait modifiers first to apply them after the base form changes
+                trait_modifiers = {}
+                trait_special_rules = []
+                
+                # Process traits first to collect modifiers
                 for char_trait in archid_traits:
                     trait = char_trait.trait
+                    self.caller.msg(f"Collecting Archid trait modifiers: {trait.name}")
+                    
                     # Apply stat modifiers, multiplied by count for stackable traits
                     for stat, mod in trait.stat_modifiers.items():
                         if isinstance(mod, str):
@@ -682,33 +691,81 @@ class CmdShift(default_cmds.MuxCommand):
                                 mod = 0
                         total_mod = mod * char_trait.count
                         
-                        # Find the category and type for this stat
-                        try:
-                            stat_obj = Stat.objects.get(name__iexact=stat)
-                            if stat_obj.category and stat_obj.stat_type:
-                                current_value = character.db.stats.get(stat_obj.category, {}).get(stat_obj.stat_type, {}).get(stat_obj.name, {})
-                                if isinstance(current_value, dict) and 'temp' in current_value:
-                                    temp = current_value['temp']
-                                    if isinstance(temp, str):
-                                        try:
-                                            temp = int(temp)
-                                        except (ValueError, TypeError):
-                                            temp = 0
-                                    new_temp = max(0, temp + total_mod)
-                                    character.db.stats[stat_obj.category][stat_obj.stat_type][stat_obj.name]['temp'] = new_temp
-                        except Stat.DoesNotExist:
-                            continue
+                        # Convert stat name to lowercase for case-insensitive matching
+                        stat_lower = stat.lower().strip()
+                        
+                        # Add to our collected modifiers
+                        if stat_lower in trait_modifiers:
+                            trait_modifiers[stat_lower] += total_mod
+                        else:
+                            trait_modifiers[stat_lower] = total_mod
                     
-                    # Store special rules in character's attributes for reference
+                    # Collect special rules
                     if trait.special_rules:
-                        if not hasattr(character.db, 'archid_special_rules'):
-                            character.db.archid_special_rules = []
-                        character.db.archid_special_rules.append(
-                            f"{trait.name}: {trait.special_rules}"
-                        )
+                        trait_special_rules.append(f"{trait.name}: {trait.special_rules}")
                 
-            except ImportError:
-                pass  # If the models aren't available, skip Archid trait application
+                # Now apply all trait modifiers
+                
+                # Define direct mapping with proper capitalization
+                stat_mapping = {
+                    'perception': ('attributes', 'mental', 'Perception'),
+                    'appearance': ('attributes', 'social', 'Appearance'),
+                    'charisma': ('attributes', 'social', 'Charisma'),
+                    'stamina': ('attributes', 'physical', 'Stamina'),
+                    'strength': ('attributes', 'physical', 'Strength'),
+                    'dexterity': ('attributes', 'physical', 'Dexterity'),
+                    'manipulation': ('attributes', 'social', 'Manipulation'),
+                    'soak': ('other', 'combat', 'Soak')
+                }
+                
+                # DIRECTLY APPLY each stat - don't rely on mapping check
+                self.caller.msg("Applying Archid trait modifications...")
+                
+                # Handle Stamina bonus (+3 from Behemoth x1 and Tall x2)
+                if 'stamina' in trait_modifiers:
+                    stam_bonus = trait_modifiers['stamina']
+                    if 'attributes' in character.db.stats and 'physical' in character.db.stats['attributes'] and 'Stamina' in character.db.stats['attributes']['physical']:
+                        current_temp = character.db.stats['attributes']['physical']['Stamina']['temp']
+                        if isinstance(current_temp, str):
+                            try:
+                                current_temp = int(current_temp)
+                            except (ValueError, TypeError):
+                                current_temp = 0
+                        
+                        new_temp = current_temp + stam_bonus
+                        character.db.stats['attributes']['physical']['Stamina']['temp'] = new_temp
+                        self.caller.msg(f"  Modified Stamina: +{stam_bonus} bonus applied (from {current_temp} to {new_temp})")
+                
+                # Handle Appearance (+3 from Resplendent Crest)
+                if 'appearance' in trait_modifiers:
+                    app_bonus = trait_modifiers['appearance']
+                    if 'attributes' in character.db.stats and 'social' in character.db.stats['attributes'] and 'Appearance' in character.db.stats['attributes']['social']:
+                        # For Appearance in Archid form, set directly to the trait bonus value
+                        character.db.stats['attributes']['social']['Appearance']['temp'] = app_bonus
+                        self.caller.msg(f"  Set Appearance to {app_bonus} (absolute value from traits)")
+                
+                # Handle Charisma (+1 from Resplendent Crest)
+                if 'charisma' in trait_modifiers:
+                    cha_bonus = trait_modifiers['charisma']
+                    if 'attributes' in character.db.stats and 'social' in character.db.stats['attributes'] and 'Charisma' in character.db.stats['attributes']['social']:
+                        current_temp = character.db.stats['attributes']['social']['Charisma']['temp']
+                        if isinstance(current_temp, str):
+                            try:
+                                current_temp = int(current_temp)
+                            except (ValueError, TypeError):
+                                current_temp = 0
+                        
+                        new_temp = current_temp + cha_bonus
+                        character.db.stats['attributes']['social']['Charisma']['temp'] = new_temp
+                        self.caller.msg(f"  Modified Charisma: +{cha_bonus} bonus applied (from {current_temp} to {new_temp})")
+                
+                # Store special rules
+                if trait_special_rules:
+                    character.db.archid_special_rules = trait_special_rules
+                    self.caller.msg(f"Applied {len(trait_special_rules)} special rules")
+                    
+            except ImportError as e:
+                self.caller.msg(f"Error applying Archid traits: {e}")
 
     def _display_shift_message(self, character, form):
         """Display the appropriate shift message."""
@@ -1012,7 +1069,6 @@ class CmdShift(default_cmds.MuxCommand):
             if hasattr(character.db, 'original_description'):
                 # Restore the original description, ensuring it's a string
                 original_desc = character.db.original_description
-                print(f"DEBUG: Restoring original description: '{original_desc}'")
                 if original_desc == "":
                     character.db.desc = None
                     self.caller.msg("Restored your original description (which was empty).")

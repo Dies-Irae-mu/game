@@ -6,9 +6,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{% static 'wiki/css/styles.css' %}?v=1" type="text/css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
         <link rel="icon" type="image/png" href="{% static 'wiki/imgs/favicon.png' %}">
         <title>{% block titleblock %}Dies Irae Wiki{% endblock %}</title>
+        <!-- Ensure SimpleMDE is loaded synchronously before marked.js -->
+        <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        {% block header_ext %}{% endblock %}
         <script>
             // Configure marked options
             marked.setOptions({
@@ -201,18 +205,34 @@
             <div class="container">
                 <!-- Featured Image -->
                 <div class="featured-image">
+                    <!-- If there's a database image, use that -->
                     {% if page.featured_image and page.featured_image.image %}
                         <div class="featured-image-background {% if not page.featured_image.show_texture %}no-texture{% endif %}" 
-                             style="background-image: url('{{ page.featured_image.get_image_url }}');">
+                            style="background-image: url('{{ page.featured_image.get_image_url }}');">
                         </div>
                         {% if page.featured_image.show_texture %}
                             <div class="featured-image-texture"></div>
                         {% endif %}
+                    <!-- Otherwise, use the template block if available -->
                     {% else %}
-                        <div class="featured-image-background no-feature"></div>
-                        <div class="featured-image-texture"></div>
+                        <div class="featured-image-background" 
+                            data-background="{% block featured_image_url %}{% static 'wiki/imgs/nofeature.png' %}{% endblock %}">&nbsp;</div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var bg = document.querySelector('.featured-image-background[data-background]');
+                                if (bg) {
+                                    bg.style.backgroundImage = 'url("' + bg.dataset.background + '")';
+                                }
+                            });
+                        </script>
                     {% endif %}
                     <div class="featured-image-overlay"></div>
+                    
+                    <!-- Add title and subtitle using blocks -->
+                    <div class="featured-image-info">
+                        <h2>{% block featured_image_title %}{% if page %}{{ page.title }}{% else %}Dies Irae Wiki{% endif %}{% endblock %}</h2>
+                        <p>{% block featured_image_subtitle %}{% if page %}{% if page.brief_description %}{{ page.brief_description }}{% else %}{{ page.title }}{% endif %}{% else %}Welcome to the Dies Irae Wiki{% endif %}{% endblock %}</p>
+                    </div>
                 </div>
 
                 <!-- Context Menu -->

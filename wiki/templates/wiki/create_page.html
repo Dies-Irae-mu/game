@@ -1,11 +1,161 @@
 {% extends "wiki/base_wiki.html" %}
 {% load static %}
+{% load wiki_tags %}
 
 {% block titleblock %}Create {{ page_type_name }} Page{% endblock %}
 
+{% block featured_image_url %}{% static 'wiki/imgs/create_page.jpg' %}{% endblock %}
+{% block featured_image_title %}Create {{ page_type_name }} Page{% endblock %}
+{% block featured_image_subtitle %}Add a new {{ page_type_name|lower }} to the wiki{% endblock %}
+
+{% block header_ext %}
+<link rel="stylesheet" href="{% static 'wiki/css/styles.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<style>
+    .lock-dropdown {
+        display: none !important;
+        margin-top: 5px;
+        visibility: hidden;
+        height: 0;
+        opacity: 0;
+        transition: opacity 0.3s, height 0.3s, visibility 0s linear 0.3s;
+        overflow: hidden;
+    }
+    .lock-dropdown.visible {
+        display: block !important;
+        visibility: visible !important;
+        height: auto !important;
+        opacity: 1 !important;
+        transition: opacity 0.3s, height 0.3s;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        padding: 5px 0;
+        color: rgb(53, 40, 40);
+    }
+    .access-restrictions {
+        background-color: #ddd;
+        padding: 10px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        color: rgb(53, 40, 40);
+    }
+    .lock-help {
+        color: #666;
+        font-size: 0.8em;
+        margin-left: 20px;
+    }
+    .lock-item {
+        margin-bottom: 15px;
+    }
+    .lock-dropdown select {
+        color: rgb(53, 40, 40);
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 6px 10px;
+        width: 100%;
+        font-size: 14px;
+    }
+    .lock-dropdown select option {
+        color: rgb(53, 40, 40);
+        background-color: #f5f5f5;
+    }
+    .content-preview {
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 20px;
+    }
+</style>
+<script>
+function toggleLockDropdown(lockType) {
+    const checkbox = document.getElementById(`lock_${lockType}`);
+    const dropdown = document.getElementById(`lock_dropdown_${lockType}`);
+    
+    if (checkbox && dropdown) {
+        if (checkbox.checked) {
+            dropdown.classList.add('visible');
+        } else {
+            dropdown.classList.remove('visible');
+        }
+        
+        // If has_splat is selected, update has_type options
+        if (lockType === 'has_splat') {
+            updateTypeOptions();
+        }
+    } else {
+        console.error(`Element not found: lock_${lockType} or lock_dropdown_${lockType}`);
+    }
+}
+
+function updateTypeOptions() {
+    const splatDropdown = document.getElementById('lock_value_has_splat');
+    const typeDropdown = document.getElementById('lock_value_has_type');
+    
+    if (!splatDropdown || !typeDropdown) {
+        console.error('Could not find splat dropdown or type dropdown');
+        return;
+    }
+    
+    const selectedSplat = splatDropdown.value;
+    
+    // Clear current options
+    typeDropdown.innerHTML = '<option value="">Select a value</option>';
+    
+    // Populate based on selected splat
+    if (selectedSplat === 'Vampire') {
+        addOptions(typeDropdown, ['Camarilla', 'Sabbat', 'Anarch', 'Independent']);
+    } else if (selectedSplat === 'Shifter') {
+        addOptions(typeDropdown, ['Garou', 'Bastet', 'Corax', 'Gurahl', 'Mokole', 'Nagah', 'Nuwisha', 'Ratkin', 'Rokea', 'Ananasi', 'Ajaba']);
+    } else if (selectedSplat === 'Mage') {
+        addOptions(typeDropdown, ['Traditions', 'Technocracy', 'Nephandi', 'Marauder']);
+    } else if (selectedSplat === 'Changeling') {
+        addOptions(typeDropdown, ['Kithain', 'Nunnehi', 'Inanimae']);
+    } else if (selectedSplat === 'Mortal+') {
+        addOptions(typeDropdown, ['Ghoul', 'Kinfolk', 'Kinain', 'Sorcerer', 'Faithful', 'Psychic']);
+    } else if (selectedSplat === 'Possessed') {
+        addOptions(typeDropdown, ['Fomori', 'Kami']);
+    }
+    
+    // Enable the type checkbox if we have valid options
+    const typeCheckbox = document.getElementById('lock_has_type');
+    if (typeCheckbox) {
+        if (selectedSplat && typeDropdown.options.length > 1) {
+            typeCheckbox.disabled = false;
+        } else {
+            typeCheckbox.disabled = true;
+            typeCheckbox.checked = false;
+            document.getElementById('lock_dropdown_has_type').classList.remove('visible');
+        }
+    }
+}
+
+function addOptions(selectElement, options) {
+    for (const option of options) {
+        const optionElement = document.createElement('option');
+        optionElement.value = option;
+        optionElement.textContent = option;
+        selectElement.appendChild(optionElement);
+    }
+}
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="creation-form-container">
-    <h1>Create New {{ page_type_name }} Page</h1>
+    <h1>Create {{ page_type_name }} Page</h1>
+
+    {% if messages %}
+    <div class="alert-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -15,13 +165,11 @@
             <input type="text" class="form-control" id="title" name="title" required>
         </div>
         
-        {% if page_type == 'group' or page_type == 'plot' %}
+        {% if page_type != 0 %}
         <div class="form-group">
             <label for="brief_description">Brief Description (appears on index page):</label>
             <input type="text" class="form-control" id="brief_description" name="brief_description" maxlength="255">
-            <small class="form-text text-muted">
-                A short description (255 chars max) that will appear on the index listing.
-            </small>
+            <small class="form-text text-muted">A short description (255 chars max) that will appear on the index listing.</small>
         </div>
         {% endif %}
         
@@ -39,17 +187,13 @@
             <div class="form-group">
                 <label for="featured_image">Featured Background Image:</label>
                 <input type="file" class="form-control" id="featured_image" name="featured_image" accept="image/*">
-                <small class="form-text text-muted">
-                    This image will appear as the background for your page header.
-                </small>
+                <small class="form-text text-muted">This image will appear as the background for your page header.</small>
             </div>
             
             <div class="form-group">
                 <label for="banner_image">Banner Image:</label>
                 <input type="file" class="form-control" id="banner_image" name="banner_image" accept="image/*">
-                <small class="form-text text-muted">
-                    This image will appear in the banner area of your page.
-                </small>
+                <small class="form-text text-muted">This image will appear in the banner area of your page.</small>
             </div>
             
             <div class="form-group">
@@ -57,13 +201,81 @@
                     <input type="checkbox" name="show_texture" checked> 
                     Show texture overlay on featured image
                 </label>
-                <small class="form-text text-muted">
-                    The texture helps text remain readable over background images.
-                </small>
+                <small class="form-text text-muted">The texture helps text remain readable over background images.</small>
             </div>
         </div>
         
-        <button type="submit" class="btn btn-primary mt-3">Create Page</button>
+        {% if page_type != 0 %}
+        <div class="access-restrictions">
+            <h2>Access Restrictions</h2>
+            <p>Select which characters can view this {{ page_type_name|lower }} page. Only characters that match ALL selected criteria will have access.</p>
+            
+            {% for lock_type, options in available_locks.items %}
+            <div class="lock-item">
+                <input type="checkbox" id="lock_{{ lock_type }}" name="lock_{{ lock_type }}" onchange="toggleLockDropdown('{{ lock_type }}')">
+                <label for="lock_{{ lock_type }}">{{ formatted_lock_names|get:lock_type }}</label>
+                <div class="lock-help">
+                    {% if lock_type == 'has_splat' %}
+                    Only characters of the selected splat (Vampire, Shifter, Mage, etc.) can view this page.
+                    {% elif lock_type == 'has_type' %}
+                    Only characters of the selected type (e.g., Garou for Shifters, Ghoul for Mortal+) can view this page.
+                    {% elif lock_type == 'has_clan' %}
+                    Only vampires of the selected clan can view this page.
+                    {% elif lock_type == 'has_tribe' %}
+                    Only shifters of the selected tribe can view this page.
+                    {% elif lock_type == 'has_auspice' %}
+                    Only Garou of the selected auspice can view this page.
+                    {% elif lock_type == 'has_tradition' %}
+                    Only mages of the selected tradition can view this page.
+                    {% elif lock_type == 'has_affiliation' %}
+                    Only mages with the selected affiliation can view this page.
+                    {% elif lock_type == 'has_convention' %}
+                    Only technocrats of the selected convention can view this page.
+                    {% elif lock_type == 'has_nephandi_faction' %}
+                    Only Nephandi of the selected faction can view this page.
+                    {% elif lock_type == 'has_court' %}
+                    Only changelings of the selected court can view this page.
+                    {% elif lock_type == 'has_kith' %}
+                    Only changelings of the selected kith can view this page.
+                    {% else %}
+                    Only characters that meet this criteria can view this page.
+                    {% endif %}
+                </div>
+                
+                <div id="lock_dropdown_{{ lock_type }}" class="lock-dropdown">
+                    <select name="lock_value_{{ lock_type }}" id="lock_value_{{ lock_type }}" class="form-control">
+                        <option value="">Select a value</option>
+                        {% for option in options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <p class="warning-text">Note: Restricted pages are hidden from public indexes and can only be viewed by characters that meet all criteria. The page creator can always access the page.</p>
+        </div>
+        {% endif %}
+        
+        <div class="actions">
+            <button type="submit" class="btn btn-primary mt-3">Create Page</button>
+            
+            {% if page_type == 'group' %}
+                <a href="{% url 'wiki:groups_index' %}" class="btn btn-secondary mt-3">Cancel</a>
+            {% elif page_type == 'plot' %}
+                <a href="{% url 'wiki:plots_index' %}" class="btn btn-secondary mt-3">Cancel</a>
+            {% else %}
+                <a href="{% url 'wiki:page_list' %}" class="btn btn-secondary mt-3">Cancel</a>
+            {% endif %}
+            
+            <div class="preview-container mt-3">
+                <button type="button" id="preview-button" class="btn btn-info">Preview</button>
+                <div id="preview-area" class="content-preview" style="display: none; margin-top: 20px; padding: 15px; border: 1px solid #ccc;">
+                    <h3>Preview</h3>
+                    <div id="preview-content"></div>
+                </div>
+            </div>
+        </div>
     </form>
 </div>
 {% endblock %}
@@ -81,6 +293,14 @@
         {% endif %}
     </ul>
     
+    <h2>Creation Guidelines</h2>
+    <ul>
+        <li>Keep content factual and relevant</li>
+        <li>Use clear, descriptive titles</li>
+        <li>Provide sufficient detail</li>
+        <li>Include context and purpose</li>
+    </ul>
+    
     <h2>Formatting Help</h2>
     <ul>
         <li>**Bold text** for <strong>bold text</strong></li>
@@ -95,10 +315,40 @@
 </div>
 {% endblock %}
 
-{% block extrajs %}
 <script>
+// Initialize when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize markdown editor if available
+    // Set up all lock checkboxes
+    const lockCheckboxes = document.querySelectorAll('input[id^="lock_has_"]');
+    lockCheckboxes.forEach(checkbox => {
+        const lockType = checkbox.id.replace('lock_', '');
+        // Add listeners for existing checkboxes
+        checkbox.addEventListener('change', function() {
+            toggleLockDropdown(lockType);
+        });
+        
+        // Initialize dropdown visibility based on checkbox state
+        if (checkbox.checked) {
+            const dropdown = document.getElementById(`lock_dropdown_${lockType}`);
+            if (dropdown) {
+                dropdown.classList.add('visible');
+            }
+        }
+    });
+    
+    // Disable type checkbox initially
+    const typeCheckbox = document.getElementById('lock_has_type');
+    if (typeCheckbox) {
+        typeCheckbox.disabled = true;
+    }
+    
+    // Watch for changes on the splat dropdown
+    const splatDropdown = document.getElementById('lock_value_has_splat');
+    if (splatDropdown) {
+        splatDropdown.addEventListener('change', updateTypeOptions);
+    }
+    
+    // Initialize SimpleMDE if available
     if (typeof SimpleMDE !== 'undefined') {
         var simplemde = new SimpleMDE({ 
             element: document.getElementById("content"),
@@ -109,6 +359,46 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // Preview functionality
+    document.getElementById('preview-button').addEventListener('click', function() {
+        let content;
+        if (typeof simplemde !== 'undefined') {
+            content = simplemde.value();
+        } else {
+            content = document.getElementById('content').value;
+        }
+        
+        const previewArea = document.getElementById('preview-area');
+        const previewContent = document.getElementById('preview-content');
+        
+        // Toggle preview display
+        if (previewArea.style.display === 'none') {
+            fetch('{% url "wiki:preview" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: new URLSearchParams({
+                    'content': content
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                previewContent.innerHTML = data.html;
+                previewArea.style.display = 'block';
+                this.textContent = 'Hide Preview';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                previewContent.innerHTML = '<p>Error generating preview</p>';
+                previewArea.style.display = 'block';
+            });
+        } else {
+            previewArea.style.display = 'none';
+            this.textContent = 'Preview';
+        }
+    });
 });
-</script>
-{% endblock %} 
+</script> 
