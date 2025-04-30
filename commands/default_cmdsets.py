@@ -23,6 +23,9 @@ from commands.CmdInfo import CmdInfo
 from commands.CmdHurt import CmdHurt
 from commands.CmdHeal import CmdHeal
 from commands.CmdLanguage import CmdLanguage
+# Our extended mail commands need to be imported first - this order matters
+from commands.mail_ext import CmdMailExtended, CmdMailCharacterExtended
+from commands.mail_folders import CmdMailFolder
 import evennia.contrib.game_systems.mail as mail
 from commands.CmdRoll import CmdRoll
 from commands.CmdSay import CmdSay
@@ -86,6 +89,7 @@ from commands.CmdSpecialties import CmdSpecialties
 from commands.CmdMultidesc import CmdMultidesc
 from world.wod20th.scripts.weekly_xp import CmdDebugXP
 from commands.CmdTableTalk import CmdTableTalk
+from commands.diag_cmd import CmdDiagnoseMail
 
 class CharacterCmdSet(cmdset_character.CharacterCmdSet):
     """
@@ -121,8 +125,8 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdHurt())
         self.add(CmdHeal())
         self.add(CmdEvents())
-        self.add(mail.CmdMail())
-        self.add(mail.CmdMailCharacter())
+        self.add(CmdMailCharacterExtended())
+        self.add(CmdMailFolder())
         self.add(CmdRoll())
         self.add(CmdShift())
         self.add(CmdWeather())
@@ -186,6 +190,8 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdRoom())
         self.add(CmdTableTalk())
         self.add(CmdSummon())
+        # Add diagnostic command
+        self.add(CmdDiagnoseMail())
 
 
 class AccountCmdSet(cmdset_account.AccountCmdSet):
@@ -210,6 +216,11 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         # Add our custom help command
         self.add(CmdHelp())
         self.add(CmdHelpNum())
+        
+        # Add our extended mail command for account-level mail
+        from evennia.utils.logger import log_info
+        log_info("Adding CmdMailExtended to AccountCmdSet")
+        self.add(CmdMailExtended())
         
         self.add(CmdNotes())
         self.add(CmdSummon())
@@ -237,6 +248,8 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         # This allows using these commands even when not in the same room as the target
         self.add(CmdEquip())
         self.add(CmdInventory())
+        # Add diagnostic command
+        self.add(CmdDiagnoseMail())
 
 class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):
     """

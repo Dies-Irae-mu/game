@@ -9,6 +9,9 @@ import os
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
+from django.utils.safestring import mark_safe
+import markdown2
+import json
 
 
 # Create your models here.
@@ -18,9 +21,9 @@ class WikiPage(models.Model):
     Model for storing wiki pages.
     """
     # Page type choices
-    REGULAR = 'regular'
-    GROUP = 'group'
-    PLOT = 'plot'
+    REGULAR = 0
+    GROUP = 1
+    PLOT = 2
     
     PAGE_TYPE_CHOICES = [
         (REGULAR, 'Regular'),
@@ -64,6 +67,19 @@ class WikiPage(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    featured_order = models.IntegerField(default=0)
+    is_index = models.BooleanField(default=False)
+    is_featured = models.BooleanField(default=False)
+    published = models.BooleanField(default=True)
+    page_type = models.IntegerField(choices=PAGE_TYPE_CHOICES, default=REGULAR)
+    related_to = models.ManyToManyField('self', symmetrical=False, blank=True)
+    lock_settings = models.JSONField(
+        default=dict, 
+        blank=True, 
+        help_text="Lock settings for this page. Format: {'has_splat': 'Vampire', 'has_clan': 'Brujah'}. "
+                 "Supported lock types: has_splat, has_type, has_clan, has_tribe, has_auspice, "
+                 "has_tradition, has_affiliation, has_convention, has_nephandi_faction, has_court, has_kith."
+    )
     creator = models.ForeignKey(
         AccountDB,
         on_delete=models.SET_NULL,
@@ -78,9 +94,6 @@ class WikiPage(models.Model):
         related_name='edited_pages',
         help_text="The last user to edit this page."
     )
-    featured_order = models.IntegerField(default=0)  # For ordering featured articles
-    published = models.BooleanField(default=True)
-    
     # Link to MUSH Group if this is a group page
     mush_group = models.OneToOneField(
         'groups.Group',
@@ -127,6 +140,7 @@ class WikiPage(models.Model):
         
         - Group and Plot pages can be edited by any authenticated user
         - Regular pages can only be edited by staff/admin users
+        - The page creator can always edit their own pages
         """
         if not user or not user.is_authenticated:
             return False
@@ -135,8 +149,19 @@ class WikiPage(models.Model):
         if user.is_staff:
             return True
             
+        # Check if user is the creator of the page
+        if hasattr(self, 'creator') and self.creator and self.creator == user:
+            return True
+            
         # Players can edit Group and Plot pages
         if self.page_type in [self.GROUP, self.PLOT]:
+            # For pages with access restrictions, check if the user meets them
+            if self.lock_settings:
+                from .views import check_character_access
+                if check_character_access(user, self.lock_settings):
+                    return True
+                return False
+            # No lock restrictions, can edit
             return True
             
         # Regular pages require staff permissions
@@ -146,6 +171,13 @@ class WikiPage(models.Model):
         """Override save to handle meta information and slug creation."""
         if not self.slug:
             self.slug = slugify(self.title)
+            
+            # Check for duplicate slugs and handle by adding a numeric suffix
+            original_slug = self.slug
+            counter = 1
+            while WikiPage.objects.filter(slug=self.slug).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
 
         is_new = self.pk is None
         

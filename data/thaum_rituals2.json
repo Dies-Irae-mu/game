@@ -1,0 +1,182 @@
+[
+    {
+        "name": "Blood into Water",
+        "description": " Mortals have discovered clever ways to use science and technology to discover hidden traces of blood in crime scenes. A neonate Tremere in New York realized that the police department was tracking a series of murders linked to vampires via blood evidence, and crafted this ritual to remove tainted evidence from a crime scene. Once the caster has completed this ritual, all spilled blood within the ritual's reach transmutes to water. This ritual is most frequently used to remove bloodstains, whether as a result of foul play or rites that involve blood.",
+        "system": "The thaumaturge pours a cup of purified water through the fingers of her outstretched hand while chanting. The ritual transmutes all spilled blood within a radius of five feet/two meters per success on the activation roll. Blood in containers and in living things will not be affected -- only spilled blood. This power has no effect on blood used to create active or passive Discipline effects. Blood into Water could not be used to remove a ritual such as Ward Versus Ghouls (V20, p. 234) due to the magic properties of the ritual having transformed the blood, though it could be used to clean up a drawn blood circle used to bind a demon, so long as that binding is done and over with.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]        
+    },
+    {
+        "name": "Blood Mastery",
+        "description": "Kindred scholars urgently warn against allowing any blood magician to have access to your blood unless you have complete trust in her. A thaumaturge with a small quantity of vitae can focus its power into sympathetic forms. By destroying a point of blood from an enemy, the thaumaturge gains symbolic power over the target, which in turn allows her to manifest her supremacy over the victim in the next challenge.",
+        "system": "The thaumaturge must mix a tiny quantity of her own vitae (a negligible amount, less than a point) with that of her victim, and then slowly burn it in a fire or boil the blood slowly over an open flame. The caster speaks the phrases of symmetry as she finishes. Once complete, the thaumaturge gains a limited magical mastery over the victim until dawn. In the next test that the caster initiatives against the victim, the caster automatically succeeds in the attempt. If the task would require a roll, the caster garners one success automatically, but no more (and cannot roll or spend Willpower to improve the roll). This means that the caster is guaranteed a marginal success against his opponent, though it may not be in a fashion that the thaumaturge desires. For example, one success alone is not enough to completely mesmerize an enemy, but it might influence him briefly with Dominate. Similarly, if the victim takes some action first, Blood Mastery is of no help if the caster could not normally make a countering roll. For example, the caster would still be subject to an opponent's use of Presence, because he may not normally make a roll to resist. If the victim uses some Discipline that would require the caster to resist, though, then the thaumaturge automatically counters it and thus ends the power of the ritual. Blood Mastery can only guarantee success in one limited endeavor -- a thaumaturge cannot burn multiple points of blood to gain additional successes or success on multiple consecutive actions. Once the ritual is in place, it must be discharged before it can be invoked again against the same subject. Blood Mastery expires if its effects remain unused by sunrise.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Encrypt Missive",
+        "description": "Letters were once the dominant form of communication and information collection. Cautious Kindred learned to either be discreet in their dealings on paper or to send blood-bound or Dominated personal messengers. Neither option was ideal when you needed to be explicit and ensure that only your intended recipient received the message. To insure that important messages remain secure against prying eyes, the Tremere utilized this ritual to encode documents magically. This ritual is not used as often in the age of instant electronic communications, but is occasionally used to communicate between chantries or to issue important edicts.",
+        "system": "The thaumaturge writes the message in blood over the course of a night and speaks the name of the person or group that she wishes to read it. Only the writer and the target to which the letter is addressed can read the document. To any others who observe the letter, the writing appears to be gibberish. Obviously, this ritual may only be used for written communication. Encrypt Missive only works with the original document. If someone else tries to scan or copy the document, the magic holds and the message remains scrambled.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Impressive Visage",
+        "description": "Beauty and sexual magnetism have always opened doors. Influence in the Ivory Tower is won via elegant social battles of wit, elegance, and charm. Apex predators navigate these choppy waters with sly smiles to obfuscate their intentions. Rumor has it that this particular ritual was developed by a bitter plain-Jane Tremere tired of the local Toreador Harpy unduly influencing the Prince's favor with his pretty smile. When this ritual is cast, the thaumaturge gains a heightened degree of sexual attractiveness; she is much more desirable and commands attention as if she were a top model. For this ritual to take effect, the caster must wash her face with a point of virgin blood and place a sprig of dried mint in her shoe.",
+        "system": "The caster gains two dice on all Appearance related rolls for the duration of this ritual. This ritual lasts for a number of hours equal to the successes scored on the activation roll.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Learning the Mind Enslumbered",
+        "description": "This ritual is used to determine the cause of torpor in a vampiric body or the cause of destruction in a Kindred's ashen remains. To conduct this ritual, the thaumaturge places a penny or other small coin over the eye of the torpid Kindred. He can then hear -- in the vampire's voice -- the cause of her cold rest. If all that remains of the body is ashes, the thaumaturge need only lay the penny in the remains to complete the ritual.",
+        "system": "This ritual requires a half hour to cast, at the end of which the thaumaturge hears a ghostly message from the victim naming who she believes torpored or killed her. This is not a divination ritual, and therefore the information may not be accurate. If the culprit was disguised or hidden, the spirit of the victim will do her best to answer the question. This power has no effect on creatures other than Kindred.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Purify Blood",
+        "description": "The Black Death killed more than seventy-five million people across Europe during the Dark Ages. Early experimentation showed that most diseases, even blood-borne ones, rarely have any effect upon Kindred, yet vampires can carry such diseases and pass them to their victims. This devastated private herds and caused a severe blood shortage that strained the Masquerade to its breaking point. There had previously been mystical methods of cleansing blood, but they were time consuming and complicated processes. A solution came from the Tremere -- then a struggling Clan seeking to buy their way into polite society -- in the form of this simple ritual. The tainted blood must be decanted into a suitable container and then stirred with a special mixture of ash and crushed ginger as the thaumaturge chants the ritual incantation. The blood lightens slightly in color if the ritual succeeds, and the rite cleanses all poison or disease from the sample. Purify Blood does not function on blood that's still in a creature's system. The ritual therefore cannot cleanse a human of disease or make drinking from such a vessel safe; it will only purify blood that is removed from the human first. Some vampires shun this ritual because of the extra work involved in securing blood without the Kiss, and the less-than-satisfactory taste (not to mention the lack of a warm, beating pulse) definitely puts off Kindred connoisseurs. For these reasons, Purify Blood remains a ritual of last resort during desperate epidemics and not a nightly staple.",
+        "system": "Purify Blood functions on up to one point of blood. Because of the volume limitations, Purify Blood can cleanse only one blood point at a time. Poisons, diseases, and other mixtures disappear, while foreign substances bubble to the top and can be skimmed off. However, the ritual does not in any way change the potency of the blood; vitae can still cause a blood bond, and blood rendered acidic or caustic by a Discipline (like Quietus or Vicissitude) cannot be cleansed. This ritual cannot counter the Vaulderie (nor is it stealthy enough to perform unnoticed in the midst of such a rite). Rotten, solidified, or excessively befouled blood also vanishes if subjected to the ritual (at Storyteller discretion), so a vampire needn't fear gagging on old, dead blood.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Sanguineous Phial",
+        "description": "The Followers of Set have long practiced an archaic version of this ritual during their religious rites and devotions to their dark god. The Tremere streamlined the ritual to allow them to quickly hold large quantities of blood for an indefinite amount of time without it spoiling. In modern nights, it is useful for Kindred who do not have the medical knowledge or technology required to preserve blood in a more mundane fashion. A side benefit to this ritual is that it works on Kindred vitae without severing the Principle of Identity (pp. 132-133). This allows a cagey thaumaturge to store the blood of her enemies and use it at just the right moment.",
+        "system": "To prepare for this ritual, the thaumaturge buries a covered earthenware container for two nights and then unearths it. The following evening, she crumbles dried ash leaf into the empty canister and then whispers the proper incantation. Afterwards, she may pour blood into the vessel and then seal it closed with tallow melted from a candle. The blood will remain fresh until the seal is broken. After the container is opened, the blood begins to spoil at a normal rate. If the vessel is broken, the blood immediately deteriorates to the state it would have attained had it not been prese",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Sense the Mystical",
+        "description": "Blood magic creates a resonance in the space in which is it cast. This mystical energy can be detected and measured. A thaumaturge can use this ritual to sense this resonance left by magical objects and effects. This ritual was originally developed to seek out non-Tremere thaumaturges and magical artifacts, and is commonly used among the younger Tremere seeking to make a name for themselves. The thaumaturge chants over a mystically prepared candle and then lights it. All sources of blood magic within the radius of the candle light glitters visibly to all present.",
+        "system": "The effect of this ritual lasts for a number of hours equal to the successes scored on the activation roll. Sense the Mystical can detect Thaumaturgy, Necromancy, and similar blood magic if used within the radius of the candle light. This power does not distinguish between the different types of blood magic, nor does it pick up normal Disciplines. This ability lasts for one hour.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [1]
+    },
+    {
+        "name": "Craft Bloodstone",
+        "description": "A Bloodstone is a small pebble that has a sympathetic link with the thaumaturge that created it, allowing her to always know the direction and general distance of the object. This ritual was widely used by the Tremere during the many wars of the Dark Ages, when knowing the position of troops, messengers, and property could give your side an incredible tactical advantage. As technology advanced with the invention of satellite communication and GPS systems, Bloodstones fell out of favor. However, more conservative thaumaturges have returned to this older method for tracking their allies, mumbling fears about 'hackers' and 'technomancers.' To create a Bloodstone, the thaumaturge must place a small pebble into a vial filled with three points of blood from any source. (This blood does not need to be human.) Once a night, over the course of three nights, she must recite an invocation over the vial. The bloodstone slowly absorbs a single point of blood each night, and the liquid becomes slightly clearer, until on the third night it becomes as transparent as water. The thaumaturge then has a mystical connection to the stone, and knows its relative position at all times.",
+        "system": "A thaumaturge may create a number of Bloodstones up to her permanent Willpower rating. She instinctively knows the precise direction and general distance from the caster. If a Bloodstone is obfuscated or mystically hidden, the caster may follow the trail until she reaches the general location. Once there, the connection becomes blurred and she can no longer quite feel the Bloodstone. A Bloodstone that is destroyed severs its connection to the thaumaturge immediately, often with some form of painful backlash (which is distracting, but not damaging).",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [2]
+    },
+    {
+        "name": "Extinguish",
+        "description": "Fire is a primal fear for Kindred. It triggers the Beast and expels reason. Some elders still shiver when they recall the dark nights of the torch-wielding Inquisition. This ritual eliminates some of the threat fire poses. The caster is able to douse dangerous flames, leaving vampire hunters quite surprised when their torches and brands are no longer effective tools.",
+        "system": "Casting the ritual requires that the thaumaturge recite an incantation and then pinch out a candle's flame while spitting on the floor. Once completed, for the rest of the night, the thaumaturge may speak a single magical syllable to automatically extinguish a single fire up to the size of a bonfire. This power may be used a number of times equal to the number of successes on the activation roll for the ritual. The casting of this ritual may trigger a Rötschreck check (see V20, p. 299).",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [2]
+    },
+    {
+        "name": "Illusion of Peaceful Death",
+        "description": "The Masquerade can be difficult to maintain with factions of warring vampire coteries fighting for dominance and resources. A bloody murder at the wrong time can draw undue attention from the police to an already complex situation. A Tremere from Chicago created this ritual to distract local police from looking too closely at the victims of vampire attacks. This ritual heals obvious wounds on a corpse, causing a body to appear as though it died a natural death.",
+        "system": "The caster must have a pristine feather soaked in the blood of a good man that died peacefully. She must carefully dust the corpse with it while chanting the phrase 'It must have been Frank's time to go. At least he went out in his sleep.' This ritual does not add blood to a corpse, but it does reduce the chance that anyone will notice how much is gone. The body must still have at least half its original blood for this ritual to succeed. This increases the difficulty of any investigation powers or abilities used on the corpse by one per success on the ritual.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [2]
+    },
+    {
+        "name": "The Jinx",
+        "description": "Some historical records suggest that the Jinx could be one of the oldest rituals of blood magic in existence. This ritual is used to punish the enemies of the thaumaturge without directly attacking them or leaving behind evidence. The Jinx requires a point of blood, and either a part of the victim such as a lock of hair or an item of significance to her in order to properly connect the victim with the power behind the ritual. The thaumaturge must meditate for ten minutes upon her hatred and anger towards the victim and then burn the spell's components. Once completed, the victim is vexed with bad luck, causing her to fail in a mundane task. This can cause anything from minor typographical errors to automobile accidents, depending upon how the thaumaturge jinxes his mark.",
+        "system": "The thaumaturge must concentrate his anger towards the victim while burning an object that has a psychic resonance with the intended target as per the Principle of Identity (pp. 132-133). Each success gained on the activation roll for the casting of this ritual causes an automatic failure for the next roll the jinxed character makes, regardless of the outcome. If the caster achieves four successes on the activation roll, then the next four rolls for the jinxed character fail regardless of the outcome. The Jinx does not cause a botch, just a simple failure. If the Jinx is applied to a contested or extended action, the roll simply yields no successes for the current turn until the number of pending failures is expended.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [2]
+    },
+    {
+        "name": "Oinos of Dionysus",
+        "description": "This ritual allows the thaumaturge to ritually brew a special cask of spicedoinos, an ancient Greek wine believed to have been created by the god Dionysus. Mortals that consume this wine feel a pleasant drowsiness, vague ethereal happiness, and arousal, until they eventually lose consciousness and sleep for the remainder of the evening. They awake to vague pleasant memories, completely forgetting the details of everything that happened the night before. A draught of the Oinos of Dionysus serves to protect the Masquerade at special parties where vampire guests wish to feed in the open.",
+        "system": "The caster must mix at least one point of his blood with the wine and spices. Once completed, the oinos must be ingested to take effect. After imbibing the oinos, a mortal must make a successful Willpower roll (difficulty 8) to take any action, as she is overcome by an artificially induced lethargy. This effect lasts a number of hours equal to the number of successes achieved on the activation roll. Subjects may resist this effect by scoring at least three successes on a Stamina roll (difficulty 8). Vampires and other supernatural creatures are unaffected by the Oinos of Dionysus, as their blood is too potent to be overpowered by this concoction. Vampires that feed from a mortal under the effects of the Oinos of Dionysus feel a similar effect, but not one that overpowers them or impairs them. They feel an artificially inflated sense of happiness and remember nights when they were a mortal.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [2]
+    },
+    {
+        "name": "Whispers of the Ghost",
+        "description": "Communication with the physical world is difficult while astrally projecting. Astral travelers typically must spend a point of Willpower to manifest visually as a ghostlike shape in order to communicate, and this can strain the strength of even the hardiest of Kindred. The Tremere spent decades attempting to overcome this taxing cost of one of their primary Disciplines, and eventually created Whispers of the Ghost as a way to sidestep the costly requirements of astral communication. Upon completing this ritual, the thaumaturge may communicate from her Psychic Projection form into the material world. The caster can speak with anyone she encounters, but her words come as faint whisperings. People who hear these susurrations often mistake them for the words of ghosts or spirits. While astrally traveling, the thaumaturge must grip the ear of a still-living creature in the left hand of her physical body.",
+        "system": "The caster must meditate for fifteen minutes in complete silence. Then she must sever the ear of a still-living creature and hold said ear in her left hand before using Astral Projection (V20, pp. 138-139 -- the thaumaturge must possess Astral Projection in order to use this ritual). The thaumaturge may speak to the physical world in a ghostly whisper. If she wishes to be seen, she must spend a point of Willpower to manifest as normal, but that cancels the ritual. Should the 'donor' of the ear die, the ritual immediately ends. Loss of morality may apply if the donation was not voluntary.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [2]
+    },
+    {
+        "name": "A Touch of Nightshade",
+        "description": "Legends of the deadly poison nightshade stretch back to antiquity when it was used to weaken the legions of Marcus Antonius during the Parthian Wars. This ritual builds on these stories to create a poison that can punish a single victim, Kindred or kine, with only a touch.",
+        "system": "This ritual creates a skin-contact poison that may only be used once before it turns inert. If the poison is not used by the end of the evening, the power fizzles and the poison is rendered useless. The thaumaturge must apply the mystical poison to her own skin (which is immune to the poison) and then touch her intended target. The Storyteller may require a Dexterity roll or a Manipulation roll to touch the victim, depending upon the circumstances. Once per night, until the potency of the poison fades, the victim must make a Stamina + Fortitude (difficulty 8) check to resist the effects of the poison. With three or more successes, the target resists the toxic effects of the poison, but still suffers from minor headaches and feels that something is wrong. Otherwise, the victim suffers an extreme reaction to the poison, causing sweating, blurred vision, and convulsions. The difficulty for all rolls for the remainder of the evening is increased by one. (Remember that Kindred sweat blood! This can be a real problem for Kindred trying to preserve the Masquerade.) The numbers of successes on the activation roll for the ritual determines the potency of the poison. Each success adds an additional night of effectiveness for the poison.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [3]
+    },
+    {
+        "name": "The Bottled Voice",
+        "description": "To rob an enemy of her voice strikes into the heart of her identity. This ritual is often used as a public punishment for those rebel souls that refuse to moderate their behavior in court or Elysium.",
+        "system": "To cast the ritual, the thaumaturge must immobilize the victim. This can be done via staking or binding the target. The caster must have unfettered access to the victim while he attempts to draw forth the voice. Each point of Willpower the victim currently possesses extends the required casting time by fifteen minutes. Once the ritual is complete, the crystal bottle contains the essence of the victim's voice, and she may not speak nor make any verbal sound until the seal or the crystal bottle has been broken.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [3]
+    },
+    {
+        "name": "Inscription",
+        "description": "Blood magic is the ultimate advantage in the Jyhad, but not everyone can (or is allowed to) learn Thaumaturgy. The thaumaturge can craft an annotated version of a ritual, fueled with her blood, to make the formula accessible to someone else. Clan Tremere created this ritual as an aid to teach their Apprentices the basics of blood magic by practicing a specific ritual. They later used Inscription to provide a one-time ritual advantage to their allies, allowing the Tremere to force a dependence upon them for magic. The Inscription ritual allows the thaumaturge to cast any first or second level ritual onto a page or other flat surface (something portable and easy to fold is preferred). A reader can then unlock the power of that ritual by reading the inscription and following its instructions. The scribe uses her blood as a base for the ink, and her vitae's power remains in the mixture to help fuel the ritual. An inscribed ritual is in imperfect form and cannot be used to learn Thaumaturgy. It's a simplified set of instructions, with the scribe's vitae overcoming any omissions or sloppiness on the part of the practitioner.",
+        "system": "To cast the ritual, the thaumaturge must immobilize the victim. This can be done via staking or binding the target. The caster must have unfettered access to the victim while he attempts to draw forth the voice. Each point of Willpower the victim currently possesses extends the required casting time by fifteen minutes. Once the ritual is complete, the crystal bottle contains the essence of the victim's voice, and she may not speak nor make any verbal sound until the seal or the crystal bottle has been broken. The death of the thaumaturge does not break this curse. ",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [3]
+    },
+    {
+        "name": "Rutor's Hands",
+        "description": "The creation of life, twisted and obscene as it might be, has long been a goal of some thaumaturges. While Gargoyles and homunculi are among the more well-known creatures created by Thaumaturgy, the Rutor's Hands are a more obscure and horrifying creation. A thaumaturge of sufficient will can pluck out her own eye and set it atop one of her own severed hands and animate this thing as a scurrying, malevolent spy. The eye rests on the back of the hand and swivels about to watch its surroundings, while the hand scuttles about like a desiccated spider. The construct obeys the will of its owner and can relay what it sees and hears (even though it has no ears) back to its master, as the thaumaturge desires.",
+        "system": "The casting of this ritual requires that the thaumaturge cut off her hand and pluck out her eye at the conclusion of this ritual; this causes five-levels of unsoakable aggravated damage. Once this damage is healed, the Tremere regenerates her hand and eye, though the ghastly homunculus may still prowl. Completing this ritual may also require a Willpower roll at the Storyteller's discretion, simply to carry out the painful finale. The animate hand has one health level of its own and moves about with the equivalent of two dots in each Physical Attribute and in Perception (see p. 108). The caster mentally directs the thing's movement at will (so long as the thaumaturge remains conscious, of course). The Hand must have one point of blood each week, or else it crumbles to dust. Likewise, if the hand is exposed to sunlight or fire, it vanishes with a squeal, leaving behind a putrid stench.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [3]
+    },
+    {
+        "name": "Soul of the Homunculus",
+        "description": "A thaumaturge in need of assistants for research work cannot always rely upon the loyalty of apprentices, but who doubts the loyalty of one's own flesh? A homunculus is a tiny creature crafted out of the caster's blood and tissue and invested with life via Thaumaturgy. Crafting a homunculus takes several hours of uninterrupted work, and a thaumaturge can have only one homunculus at a time. The horrid little entity takes shape in a bubbling morass of oil, blood, denuded bone, and chunks of the caster's body. At the conclusion of the ritual, the homunculus crawls from its fatty birthing caul to serve its master. It can move about under its own power, and may be used as a spy or a means to fetch materials. The homunculus acts according to its master's orders, which may be issued by thought as long as the beast is in its creator's presence. Over time, some homunculi may develop their own personalities and goals.",
+        "system": "A homunculus(see p. 107)has two health levels and two dots in each Physical Attribute. It works much like a limb of the creator, as the homunculus only moves or acts if the caster so wills it. Homunculi are damaged by sunlight and fire like Kindred. A homunculus, though created from the caster's flesh, is a separate physical entity, and thus does not count as an arcane connection, nor do its bodily fluids count as its creator's blood.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [3]
+    },
+    {
+        "name": "Transubstantiation of Seven",
+        "description": "The Tremere hold a special loyalty to House and Clan, but the extent of this loyalty and the means by which it is garnered remain a secret to the Kindred at large. In reality, every Tremere Apprentice holds a partial bond to the Council of Seven through their mixed blood. After the Embrace, a Tremere neonate undergoes a formal oath-swearing of the Code of Tremere. No magic compels that oath, but the presiding regent (or higher ranking Tremere) ends the formality with the Transubstantiation. The caster fills a large chalice with his own blood and intones the syllables of the ritual. The neonate, still grappling with the new phenomenon of blood-thirst, drinks the entire contents of the chalice. As the blood enters and spreads through her system, the rite mystically transforms it into the blood of the Council of Seven. By this means, the Tremere place each neonate one step toward a full bond with the council, without the risk of having enemies steal the council's blood. Partaking of the Transubstantiation is considered a requirement for a fledgling to be recognized socially as a true member of the Tremere Clan. Those who undergo the ritual, and indeed, many who have the ability to perform it, know little of its mystical design or purpose. Obviously, the transmuted blood is that of the Council of Seven -- but how vast are their stores that they can transfuse neonates at the whims of those conducting the ritual? Where does the neonate's blood go? Whispers of a hidden vault beneath Vienna with labeled, preserved vials of vitae from every Kindred who has ever undergone this ritual can't possibly be true… can they?",
+        "system": "The caster of the Transubstantiation must sacrifice a point of her own blood. The blood placed in the chalice remains unchanged until after it's imbibed and then spread throughout the subject's system, at which point it takes on the properties of the Council of Seven. This causes one step toward a blood bond to the whole council, but guarantees that the councilors' vitae cannot be stolen. Because the blood is already in the subject's system, it counts as his own vitae if it is later drained out. In truth, there is no physical requirement that this rite be used on a new neonate. A rare few Tremere neonates escape the process. Theoretically, the rite could also be used to generate a stronger bond in older Tremere or even in ghouls or Kindred of other Clans. Kindred of the 14th or 15th generations, ghouls, and revenants cannot use this rite -- their blood is not sufficiently strong enough to channel the councilors' power.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaum_ritual",
+        "values": [3]
+    }
+]

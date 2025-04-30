@@ -104,6 +104,86 @@
         "values": [1, 2, 3, 4, 5]
     },
     {
+        "name": "Way of the Spirit",
+        "description": "This Path is rarely found outside of Old Clan Tzimisce, whose members still stalk the same ancestral lands as their sires and their sires' sires. But it has utility even for Sabbat Tzimisce, and so its knowledge spreads even to more cosmopolitan Clan-mates. The path allows the koldun to diffuse his perceptions across an increasingly large area. If the magic is performed correctly, the koldun will be able to perceive potentially everything that takes place in the affected area (which might be many square miles), though opening one's self up fully to such awareness is dangerous for all but the most strong-willed kolduns. Instead, most reflexively limit their perceptions to “all intruders” or “all potential feeding vessels” as they desire, and even the most perceptive koldun might miss something important if she has inadvertently excluded it from her gaze. While the power is active, the koldun may also target any location or person he can perceive with any other Koldunic Path power or ritual, provided that the rating of the Path power or ritual does not exceed that of the koldun's rating in The Way of the Spirit. This power also defeats the use of Obfuscate by any Kindred within the area of effect.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Way of Sorrows",
+        "description": "While a part of the broader Koldunic school, this Path does not overtly rely upon a direct connection to Kupala. Rather, it invokes a number of curses in the name of various pre-Christian Slavic deities. Then again, some Tzimisce scholars speculate that at least some of those deities are themselves merely aspects of the being which calls itself Kupala. All of these effects require the koldun to be able to directly perceive the target. They cannot generally be used at range through sympathetic magic, but they can be used against a distant target whom the koldun can perceive through powers such as The Way of the Spirit or Scry (p. 153).",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Hunter's Winds",
+        "description": "This path was originally developed by Assamite sorcerers and is rarely encountered outside of that Clan, but knowledge of it has passed into the larger pool of Dur-An-Ki lore. The Path is designed to augment a vampire's natural stealth and skill with Obfuscate. While many aspects of this Path seem redundant given the existence of Obfuscate, the Path offers a powerful advantage over that Discipline — for example, Auspex does not automatically pierce the veil provided by The Hunter's Winds. While Auspex may add to the observer's Perception-based rolls as the Storyteller sees fit, the observer does not automatically see through deceptions just because his Auspex exceeds the ashipu's Path rating, as is the case with Obfuscate or Chimerstry.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "The Evil Eye",
+        "description": "Throughout history, the ignorant and superstitious have feared the Evil Eye — a belief that some people have the power to curse their enemies, whether through the invocation of dark powers or simply through malicious will. In some places, such beliefs persist, perhaps in part because of the existence of this Path, which allows an ashipu to invoke wrathful djinn to embarrass, injure, or even kill his enemies. But this Path is not the exclusive province of Dur-An-Ki. Its ancient pedigree means that it is known to many Old Skool Anarchs who have preserved the power to curse over the ages, while its sheer vindictiveness has ensured that modern Punk Sorcerers have learned to duplicate its effects.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Ushabti",
+        "description": "Ushabti derives its name from the figurines crafted for the tombs of the wealthy and powerful in ancient Egypt. It was believed that such figurines would come to life in the Underworld to serve their masters as laborers or playthings. Each application of this Path creates a different ushabti, and each ushabti can only be activated once. The sorcerer must forge the figurine from wax or clay mixed with a point of blood. Then, he must carve Egyptian words of power onto the figurine before bathing it in honey and beer. Activating a figurine requires the sorcerer to spend a point of blood and speak an incantation, and the player rolls Willpower to determine whether the ushabti activates. If it does, the figurine expands into a life-sized, animate figure that obeys the sorcerer's will. In the case of a botch, in addition to the normal effects, the ushabti will activate but will be hostile to the sorcerer.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Praapti",
+        "description": "Praapti is the power of instantaneous travel. The Indian Sadhana practitioners developed this Path to match their mysterious Asian rivals, who have the power to travel instantly along lines of mystical force. Later, turncoat sadhus sold the secret of this Path to the Tremere, who reverse-engineered it into what they call the Path of Mercury. A handful of New Age Anarchs have also stumbled onto the secret of this path, which they simply call Teleportation.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Flow of Ashe",
+        "description": "The Flow of Ashe is unusual even among sorcery Paths in that it does not cost blood to use. Indeed, its purpose is to prevent the wangateur from requiring the use of vitae in other contexts. Derived from Yoruban herbalism, the Flow of Ashe may more accurately be described as a series of rituals which must be learned sequentially. Each ritual produces an herbal mixture which, if used properly, can take the place of blood under different circumstances. The Willpower roll is made when the blood point would normally be spent. If it fails, the vampire loses two points of blood instead of the one he would have spent had he skipped the ritual altogether. Normally, the ingredients must be mixed and then the mixture used on the next turn, but Gift of Ashe overcomes that limitation. More importantly, if circumstances allow for it, many of these mixtures may even be used on others besides the wangateur.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Fires of the Inferno",
+        "description": "Practitioners of the Fires of the Inferno may summon forth balefire that springs forth from her hands in jets or globes. Many believe that this malignant green flame is conjured from the very depths of Hades. Being burned by these fires is to taste the agonies that await them in Hell. Witnessing the conjuring of the Fires of Inferno allows anyone with mystical senses to know the source is infernal. Balefire is greatly feared, as fire is one of the surest ways to bring Final Death to a vampire.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Path of Phobos",
+        "description": "Infernalists know the power of fear and the leverage of desperation. Practitioners of this path mystically tap into the depths of their victims' psyches, prying the terrors from their minds and making them appear real. Sophisticated Sabbat infernalists prefer this path, as they enjoy the sublime effects of using the subjects' own fears against them rather than vulgar, brutal displays of fire and demonic servants. Infernalists that inflict nightmares upon others risk consuming the horrible memories that have leached from their victims, only to relive them later. Storytellers should force a Manipulation + Empathy roll (difficulty 7) on any character that utilizes the Path of Phobos more than once in a given story. Each evening while reliving the nightmares of her victims, she will wake soaked with blood; effectively costing an extra point of blood to wake due to the lack of sound sleep. Such is the price of hellish insight. The number of successes indicates how long the character must cope with the sea of stolen terrors rampaging in her mind.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
+        "name": "Taking of the Spirit",
+        "description": "By calling upon the power of Hell, this path allows the infernalist to strip away the temporary Willpower of her victim, leaving an almost soulless automaton ready to serve the infernalist without question. Some fiendish vampires have built entire legions of servants for themselves with this power. This fearsome path works on vampires and kine alike.",
+        "game_line": "Vampire: The Masquerade",
+        "category": "powers",
+        "stat_type": "thaumaturgy",
+        "values": [1, 2, 3, 4, 5]
+    },
+    {
         "name": "Animalism",
         "description": "Supernatural affinity with and control of animals.",
         "game_line": "Vampire: The Masquerade",
