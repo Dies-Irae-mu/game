@@ -1,5 +1,17 @@
 [
     {
+        "name": "Targeted Heave",
+        "description": "A trick swiped from real buzzards, Targeted Heave may well be the most disgusting weapon in the Scabs' arsenal. When cornered or just feeling ornery, a Buzzard can call upon this Gift and heave up the contents of his stomach -- digestive juices and all -- at a target up to 10 feet away.",
+		"system": "The results of this Gift are very similar to the fomori power: Stomach Pumper. The attack does two dice of damage if it hits (Dexterity + Athletics to hit, difficulty 7), but any victim struck must expend a point of Willpower to keep from stopping whatever they are doing and start gagging.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "BotW, p138",
+        "values": [1],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
         "name": "Bale Aura",
         "description": "Twisted from the grandeur of Lambent Flame, a Dancer can shroud herself in the green light of balefire. The light causes no physical damage, but shadows cast by the light seem to move of their own accord and the whispers of the Wyrm crackle within the green flames, stoking the Rage within the Garou. Furmlings and Harpies teach this Gift.",
         "system": "The player spends one Willpower point to activate the gift. The light illuminates a 50-foot area around the character for the rest of the scene. Garou and Fera require one fewer success to frenzy, and to enter Thrall of the Wyrm, as the whispers taunt them from the shadows.",
@@ -61,9 +73,10 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type": "Garou",
+        "shifter_type": ["Garou", "Yeren"],
         "splat": "Shifter",
         "tribe": "Black Spiral Dancers",
+		"gift_alias": "Venom Claws",
         "auspice": ["Philodox", "Ahroun"]
     },
     {
@@ -75,7 +88,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type": "Garou",
+        "shifter_type": ["Garou", "Yeren"],
         "splat": "Shifter",
         "tribe": "Black Spiral Dancers",
         "auspice": "Ragabash"
@@ -89,9 +102,10 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type": "Garou",
+        "shifter_type": ["Garou", "Yeren"],
         "splat": "Shifter",
         "tribe": "Black Spiral Dancers",
+		"gift_alias": "Glass Canyon Predator",
         "breed": "Lupus"
     },
     {
@@ -145,7 +159,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [1],
-        "shifter_type": "Garou",
+		"shifter_type": ["Garou", "Yeren"],
         "splat": "Shifter",
         "tribe": "Black Spiral Dancers"
     },
@@ -199,8 +213,22 @@
         "values": [1],
         "shifter_type": "Garou",
         "splat": "Shifter",
+		"gift_alias": "Blood Scent",
         "tribe": "Black Spiral Dancers"
     },
+    {
+        "name": "Poisoned Flesh",
+        "description": "By calling upon Poisoned Flesh, a Buzzard can taint the meat of a corpse -- anything from a roadkill squirrel to a human body -- so that it is poisonous. Even a Corax' legendarily tough digestive tract can't do anything with the garbage this gift leaves behind; it's sheer poison.",
+		"system": "The Buzzard invests a point of Willpower and spits on the target corpse. With a successful Manipulation + Occult roll (difficulty 7), the corpse is poisoned, and it will remain poisoned until the last bits of flesh are flensed away by the elements. Shapeshangers indulging in any portion of a cadaver tainted with this Gift get violently ill for a period of 24 hours unless she succeeds on a Stamina roll (difficulty 9, two successes needed); mortals take three Health Levels of damage. The symptoms include vomiting, dizziness (so flying is out), and occasionally hallucinations. Plus, if she botches the Stamina roll, the unfortunate gourmand smells of the Wyrm for the duration of her sickness.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "BotW, p139",
+        "values": [2],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+
     {
         "name": "Grave Claws",
         "description": "The werewolf's claws become obsidian daggers, capable of tearing the soul loose from Gaia's cycle and pinning it to the Dark Umbra. Any creature slain by this Gift is guaranteed to leave behind a ghost, which is anchored by dark magic to its killer. Outside of risky Umbral quests, only killing the Black Spiral Dancer who used this Gift can return a victim's soul to Gaia. A Nihilach teaches this Gift.",
@@ -293,7 +321,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [2],
-        "shifter_type": "Garou",
+        "shifter_type": ["Garou", "Yeren"],
         "splat": "Shifter",
         "tribe": "Black Spiral Dancers"
     },
@@ -305,6 +333,7 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
+		"tribe": "Black Spiral Dancers",
         "values": [2]
     },
     {
@@ -360,6 +389,18 @@
         "tribe": "Black Spiral Dancers"
     },
     {
+        "name": "Plague Feather",
+        "description": "Calling upon Plague Feather allows the Buzzard to distill sickness into a single one of his pinfeathers, pluck it, and leave it behind as a trap for the unwary. The first three people to have skin contact with the feather then run the risk of falling terribly ill. Children in particular are vulnerable to Plague Feathers, as they're the most likely to find a big, black shiny feather on the ground an irresistible plaything.",
+		"system": "Using Plague Feather involves the expenditure of a point of Gnosis and a point of Willpower, as well as a successful Manipulation + Occult roll (difficulty 8). At that point, the feather is imbued with the power of sickness, and will transfer that contagion to the next three people to touch it. Resisting the disease the feather spreads requires the same roll as does fighting off the effects of Poisoned Flesh.",
+        "game_line": "Werewolf: The Apocalypse",
+        "category": "powers",
+        "stat_type": "gift",
+		"source": "BotW p139",
+        "values": [3],
+        "shifter_type": "Corax",
+        "splat": "Shifter"
+    },
+    {
         "name": "Ichor Blade",
         "description": "The Spiral's arm changes into a black blade dripping with dark green poison. The ichor poisons the blood of anyone injured by the blade, causing crippling agony. Harpies and Wakshaani teach this Gift.",
         "system": "The player spends a point of Rage to transform one hand into a blade. For the rest of the scene, she may use her arm like a sword, rolling Dexterity + Melee (difficulty 6). Such attacks inflict Strength + 1 aggravated damage. The poison causes excruciating pain, forcing the target to subtract two from his dice pools for a turn per success. Resist Toxin and Resist Pain both negate the effects of the poison.",
@@ -407,7 +448,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [3],
-        "shifter_type": "Garou",
+        "shifter_type": ["Garou", "Yeren"],
         "splat": "Shifter",
         "tribe": "Black Spiral Dancers",
         "auspice": "Theurge"
@@ -473,7 +514,7 @@
     {
         "name": "Blood Omen",
         "description": "By examining the entrails of a freshly-killed creature, a Black Spiral Theurge can gain insights into a possible future. As expected, the vision is almost always tragic or violent. A Theurge can receive this Gift during the Dance of Cunning. Sometimes this visionquest involves the dismemberment of the mystic, who watches the violation of her own body. This grants her insights into her true nature by an examination of her own internal organs.",
-        "system": "This burns one point of Gnosis and requires an Intelligence + Enigmas roll; the difficulty depends on the type of creature used — 7 for a Garou, wolf or human, or 9 for any other warm-blooded creature. More successes will grant a clearer picture of the possible atrocity to come.",
+        "system": "This burns one point of Gnosis and requires an Intelligence + Enigmas roll; the difficulty depends on the type of creature used -- 7 for a Garou, wolf or human, or 9 for any other warm-blooded creature. More successes will grant a clearer picture of the possible atrocity to come.",
         "source": "Book of the Wyrm",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -645,7 +686,7 @@
     {
         "name": "Silver Reprisal",
         "description": "Luna's servants only rarely extend her blessing to those who have danced the Black Spiral, but some Banes can add their own retributive curse to the Garou's vulnerability to silver. Rather than protecting the Dancer, as Luna's Blessing does to Gaian Garou, this Gift causes silver to burn its wielder in the same moment it harms the werewolf. A Furmling teaches this Gift.",
-        "system": "The player spends one point of Gnosis. For the rest of the scene, anyone who uses silver to inflict damage on the character suffers debilitating pain and burns on the hand used to strike the blow, receiving one level of unsoakable aggravated damage — as if caused by silver, in the case of Garou — per damaging attack delivered. The attacker must make a Stamina roll against difficulty 8 or drop whatever they're holding in that hand; even if she succeeds, increase the difficulty of all attacks using that hand by 2.",
+        "system": "The player spends one point of Gnosis. For the rest of the scene, anyone who uses silver to inflict damage on the character suffers debilitating pain and burns on the hand used to strike the blow, receiving one level of unsoakable aggravated damage -- as if caused by silver, in the case of Garou -- per damaging attack delivered. The attacker must make a Stamina roll against difficulty 8 or drop whatever they're holding in that hand; even if she succeeds, increase the difficulty of all attacks using that hand by 2.",
         "source": "Book of the Wyrm W20",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -706,7 +747,7 @@
         "category": "powers",
         "stat_type": "gift",
         "values": [4],
-        "shifter_type": "Garou",
+        "shifter_type": ["Garou", "Yeren"],
         "splat": "Shifter",
         "tribe": "Black Spiral Dancers"
     },
@@ -778,7 +819,7 @@
     {
         "name": "The White Howl",
         "description": "Once the most sacred blessing of the White Howlers, this mighty Gift is still passed down among the ranks of the Black Spiral Dancers as a reminder of the past to their Garou enemies. The sound of the White Howl is sufficient to rend both the workings of the Wyrm, and the hearts of Garou who hear it and realize how much Gaia has lost. It was once taught by an avatar of Lion, but no spirit teaches this Gift in the modern age; it survives entirely through a history of Black Spiral Dancers handing it down from warlord to warlord.",
-        "system": "The player spends two points each of Gnosis and Rage. The character spends a turn unleashing a mighty, full-throated howl, and the player rolls Charisma + Primal Urge (difficulty 6). Every Wyrm-tainted being within earshot suffers a number of levels of unsoakable lethal damage equal to the successes rolled — including the Black Spiral Dancer herself — and any of her nearby packmates. Each Gaian Garou who hears the howl, by contrast, loses one point of Willpower per success rolled, as they recognize the lost purity of the White Howlers, and must face the reality of all that Gaia has lost to the hunger of the Wyrm. Any Garou reduced to 0 Willpower by this Charm (sp) falls into Harano.",
+        "system": "The player spends two points each of Gnosis and Rage. The character spends a turn unleashing a mighty, full-throated howl, and the player rolls Charisma + Primal Urge (difficulty 6). Every Wyrm-tainted being within earshot suffers a number of levels of unsoakable lethal damage equal to the successes rolled -- including the Black Spiral Dancer herself -- and any of her nearby packmates. Each Gaian Garou who hears the howl, by contrast, loses one point of Willpower per success rolled, as they recognize the lost purity of the White Howlers, and must face the reality of all that Gaia has lost to the hunger of the Wyrm. Any Garou reduced to 0 Willpower by this Charm (sp) falls into Harano.",
         "source": "Book of the Wyrm W20",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -832,7 +873,7 @@
     },
     {
         "name": "Instincts Unbound",
-        "description": "Gaia's warriors must explain the behavior of their fallen cousins as madness – why else would a wolf seek to despoil the world? the greatest among Black Spiral lupus use this Gift to teach the Garou the folly of their thinking by showing them the joys of unbound freedom. Psychomachia teach this Gift.",
+        "description": "Gaia's warriors must explain the behavior of their fallen cousins as madness -- why else would a wolf seek to despoil the world? the greatest among Black Spiral lupus use this Gift to teach the Garou the folly of their thinking by showing them the joys of unbound freedom. Psychomachia teach this Gift.",
         "system": "The Black Spiral Dancer's player spends one Gnosis point and one Rage point, and rolls Wits + Primal Urge against a difficulty of her victim's Willpower. For one day per success, the target cannot resist her instincts. She takes what she wants, kills when the urge is upon her, and give in to her least impulse. If the target possesses Rage, all Rage rolls are at difficulty 4; if the target is a vampire, all rolls to resist or control frenzy are against difficulty 9. The target may reduce the duration of this Gift by 12 hours per point of Willpower spent.",
         "source": "Book of the Wyrm W20",
         "game_line": "Werewolf: The Apocalypse",
@@ -846,7 +887,7 @@
     },
     {
         "name": "Totem Form",
-        "description": "This powerful Gift allows a Black Spiral to take on the appearance — and much of the power — of her pack's Bane totem. For instance, a Dancer sword to the Dark Fungus might sprout slime molds and toadstools in place of fur, radiating a cloud of halluciongenic spores, while a bastard of the Green Dragon might swell into a draconian war form the equal of any Mokolé. This Gift is only taught by the pack's totem spirit, and only to the Dancer who shows the most promise. Some packmates have been known to horribly maim one another in the process of proving who is worthy to learn this Gift.",
+        "description": "This powerful Gift allows a Black Spiral to take on the appearance -- and much of the power -- of her pack's Bane totem. For instance, a Dancer sword to the Dark Fungus might sprout slime molds and toadstools in place of fur, radiating a cloud of halluciongenic spores, while a bastard of the Green Dragon might swell into a draconian war form the equal of any Mokolé. This Gift is only taught by the pack's totem spirit, and only to the Dancer who shows the most promise. Some packmates have been known to horribly maim one another in the process of proving who is worthy to learn this Gift.",
         "system": "The Dancer must spend a point of Willpower and roll Stamina + Primal-Urge (difficulty 7) to make the shift. It takes a full turn to transform, although the form lasts for the duration of the scene. The Storyteller must best adjudicate the appearance and abilities of the totem form; for instance, one of the Hakkan's bastards might radiate fear so intense that opponents have to make Willpower rolls just to act against him, much less confront him. The result, of course, should always be impressive.",
         "source": "Book of the Wyrm",
         "game_line": "Werewolf: The Apocalypse",
@@ -859,7 +900,7 @@
     },
     {
         "name": "Balefire",
-        "description": "The Dancer can hurl balls of sickly green flame at her enemies. Balefire, as the very lifeblood of the Wyrm, is very dangerous to werewolves. It often inflicts hideous and life-threatening mutations, as well as tainting the victim heavily. It's impossible to dodge Balefire — it moves with a malicious intelligence. It can only be resisted.",
+        "description": "The Dancer can hurl balls of sickly green flame at her enemies. Balefire, as the very lifeblood of the Wyrm, is very dangerous to werewolves. It often inflicts hideous and life-threatening mutations, as well as tainting the victim heavily. It's impossible to dodge Balefire -- it moves with a malicious intelligence. It can only be resisted.",
         "system": "Roll Dexterity + Athletics, taking the standard ranged-combat modifier into account. The victim resists with Stamina (difficulty 8), and his roll must equal or exceed the Dancer's successes. If the victim fails to resist, the Balefire's influence mutates her. Treat each success over resistance as one level of aggravated damage for the purposes of healing/rejecting the mutation. This damage is not soakable (the resistance roll is the soak roll). Afflicted werewolves may grow extra (useless) eyes, lose all of her fur and hair, go blind, deaf or anosmic (no sense of taste or smell) temporarily. Until she rejects the mutations and undergoes a Rite of Cleansing, she registers a strong taint to the Gift: Sense Wyrm.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",

@@ -3,10 +3,10 @@ This is the source code for Dies Irae, a World of Darkness MUSH set in the city 
 If you are downloading this with the intention of creating a new game, here's what you need to do from the jump:
 
 1. Install python, if you're using linux, that's ```apt install -y python3-full```
-2. Find your home directory (best not use your root directory if you have multiple coders; if it's just you, use the root directory) and create a virtual environment using python3 -m venv <name of your environment>
-3. Launch the virtual environment (in Linux, it's 'source bin/env_name/activate').
+2. Find your home directory (best not use your root directory if you have multiple coders; if it's just you, use the root directory) and create a virtual environment using python3 -m venv (name of your environment)
+3. Launch the virtual environment (in Linux, it's 'source env_name/bin/activate', in windows you have to navigate to the Scripts folder, probably in like game_name/Scripts, then use 'activate.bat').
 4. Install Evennia using a virtual environment using 'pip install evennia'. It may ask you to install some dependencies.
-5. Now type evennia --init <name of game>. This will create a folder in your current directory with the same name as your name of game.
+5. Now type evennia --init (name of game). This will create a folder in your current directory with the same name as your name of game.
 6. Navigate to that folder and hold up; download the Dies Irae files from github.
 7.  Make sure to run through and change the MUSH name from Dies Irae to the name of your choosing. There are several files where you'll want to do this. In VSCode if you load up the diesirae code you can just do a find and replace for Dies Irae with whatever it is you're going to name the game. It doesn't change anything that's necessary for the game to function.
 8. Include the following in INSTALLED_APPS in your settings.py file:
