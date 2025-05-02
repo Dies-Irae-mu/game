@@ -1,0 +1,212 @@
+"""
+DEPRECATED - DO NOT USE
+
+This file has been replaced by mail_ext.py and mail_folders.py.
+It is kept for reference only.
+"""
+
+from evennia import CmdSet
+from evennia.contrib.game_systems.mail.mail import CmdMail, CmdMailCharacter
+from evennia.utils import evtable, datetime_format
+from evennia.utils.logger import log_info
+from evennia.comms.models import Msg
+
+# This entire file is deprecated - we now use mail_ext.py and mail_folders.py instead
+
+class CmdMailExtended(CmdMail):
+    """
+    Communicate with others by sending mail.
+
+    Usage:
+      @mail       - Displays all the mail an account has in your mailbox
+      @mail <#>   - Displays a specific message
+      @mail <accounts>=<subject>/<message>
+              - Sends a message to the comma separated list of accounts.
+      @mail/delete <#> - Deletes a specific message
+      @mail/forward <account list>=<#>[/<Message>]
+              - Forwards an existing message to the specified list of accounts,
+                original message is delivered with optional Message prepended.
+      @mail/reply <#>=<message>
+              - Replies to a message #. Prepends message to the original
+                message text.
+      @mail/sent  - Shows all messages you've sent
+      @mail/sent <#> - Shows a specific sent message
+
+    Switches:
+      delete  - deletes a message
+      forward - forward a received message to another object with an optional message attached.
+      reply   - Replies to a received message, appending the original message to the bottom.
+      sent    - View messages you've sent
+
+    Examples:
+      @mail 2
+      @mail Griatch=New mail/Hey man, I am sending you a message!
+      @mail/delete 6
+      @mail/forward feend78 Griatch=4/You guys should read this.
+      @mail/reply 9=Thanks for the info!
+      @mail/sent - View all sent messages
+      @mail/sent 3 - View sent message #3
+    """
+    
+    key = "@mail"
+    aliases = ["mail"]
+    lock = "cmd:all()"
+    help_category = "General"
+    
+    # Make sure we use the correct database model
+    db_model = Msg
+    
+    def get_sent_mail(self):
+        """
+        Returns a list of all the messages sent by the caller.
+
+        Returns:
+            messages (QuerySet): Matching Msg objects.
+        """
+        if self.caller_is_account:
+            return self.db_model.objects.get_by_tag(category="mail").filter(db_senders_accounts=self.caller)
+        else:
+            return self.db_model.objects.get_by_tag(category="mail").filter(db_senders_objects=self.caller)
+
+    def func(self):
+        """Extends the mail functionality with sent mailbox"""
+        # Debug logging
+        log_info(f"Mail command called by {self.caller}. Switches: {self.switches}, Args: {self.args}")
+        
+        try:
+            if "sent" in self.switches:
+                # Handle the sent folder
+                all_sent = self.get_sent_mail()
+                
+                if not self.args:
+                    # Display list of sent messages
+                    if all_sent:
+                        table = evtable.EvTable(
+                            "|wID|n",
+                            "|wTo|n",
+                            "|wSubject|n",
+                            "|wSent|n",
+                            table=None,
+                            border="header",
+                            header_line_char="-",
+                            width=78,
+                        )
+                        index = 1
+                        for message in all_sent:
+                            # Get list of recipients
+                            recipients = []
+                            if message.receivers_accounts.all():
+                                recipients.extend([recv.get_display_name(self.caller) for recv in message.receivers_accounts.all()])
+                            if message.receivers_objects.all():
+                                recipients.extend([recv.get_display_name(self.caller) for recv in message.receivers_objects.all()])
+                            
+                            to_str = ", ".join(recipients) if recipients else "Unknown"
+                            
+                            table.add_row(
+                                index,
+                                to_str,
+                                message.header,
+                                datetime_format(message.db_date_created)
+                            )
+                            index += 1
+
+                        table.reformat_column(0, width=6)
+                        table.reformat_column(1, width=20)
+                        table.reformat_column(2, width=34)
+                        table.reformat_column(3, width=18)
+
+                        self.caller.msg("-" * 78)
+                        self.caller.msg("|wSent Messages:|n")
+                        self.caller.msg(str(table))
+                        self.caller.msg("-" * 78)
+                    else:
+                        self.caller.msg("You haven't sent any messages.")
+                else:
+                    # Display a specific sent message
+                    try:
+                        if not all_sent:
+                            self.caller.msg("You haven't sent any messages.")
+                            return
+                            
+                        mind_max = max(0, all_sent.count() - 1)
+                        mind = max(0, min(mind_max, int(self.args) - 1))
+                        message = all_sent[mind]
+                        
+                        if message:
+                            # Format the message display
+                            messageForm = []
+                            messageForm.append("-" * 78)
+                            
+                            # Build recipient list
+                            recipients = []
+                            if message.receivers_accounts.all():
+                                recipients.extend([recv.get_display_name(self.caller) for recv in message.receivers_accounts.all()])
+                            if message.receivers_objects.all():
+                                recipients.extend([recv.get_display_name(self.caller) for recv in message.receivers_objects.all()])
+                            
+                            to_str = ", ".join(recipients) if recipients else "Unknown"
+                            
+                            messageForm.append(f"|wTo:|n {to_str}")
+                            day = message.db_date_created.day
+                            messageForm.append(
+                                "|wSent:|n %s"
+                                % message.db_date_created.strftime(f"%b {day}, %Y - %H:%M:%S")
+                            )
+                            messageForm.append("|wSubject:|n %s" % message.header)
+                            messageForm.append("-" * 78)
+                            messageForm.append(message.message)
+                            messageForm.append("-" * 78)
+                            
+                            self.caller.msg("\n".join(messageForm))
+                        else:
+                            raise IndexError
+                    except (ValueError, IndexError):
+                        self.caller.msg("That message does not exist.")
+                return
+            
+            # Debug log before calling parent
+            log_info(f"Calling parent mail implementation for {self.caller}")
+            
+            # Call the parent implementation for all other mail functionality
+            super().func()
+        except Exception as e:
+            # Catch any errors and log them
+            log_info(f"Error in mail command: {e}")
+            self.caller.msg(f"An error occurred with the mail command: {e}")
+
+
+class CmdMailCharacterExtended(CmdMailCharacter, CmdMailExtended):
+    """
+    Character-specific version of the @mail command with sent message support.
+    Inherits functionality from both the original character mail command
+    and our extended version.
+    """
+    # Ensure we use the correct parent key and aliases
+    key = "@mail"
+    aliases = ["mail"]
+    account_caller = False
+    
+    def func(self):
+        log_info(f"Character mail command called by {self.caller}. Switches: {self.switches}, Args: {self.args}")
+        try:
+            # Call the extended mail functionality
+            super().func()
+        except Exception as e:
+            # Catch any errors and log them
+            log_info(f"Error in character mail command: {e}")
+            self.caller.msg(f"An error occurred with the mail command: {e}")
+
+
+class MailCmdSet(CmdSet):
+    """
+    Cmdset for mail commands.
+    """
+    key = "mail_commands"
+    priority = 1
+    
+    def at_cmdset_creation(self):
+        """
+        Add the extended mail commands to the cmdset.
+        """
+        self.add(CmdMailExtended())
+        self.add(CmdMailCharacterExtended()) 

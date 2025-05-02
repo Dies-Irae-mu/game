@@ -4,22 +4,18 @@ Extended mail commands for diesirae
 
 import re
 from evennia.comms.models import Msg
-from evennia.utils import evtable, create, datetime_format
-from evennia.utils.logger import log_info, log_err
+from evennia.utils import evtable, create, datetime_format, make_iter
+from evennia.utils.logger import log_err
 from evennia.contrib.game_systems.mail.mail import CmdMail, CmdMailCharacter
-from commands.mail_folders import CmdMailFolder
 from typeclasses.characters import Character
+from evennia import AccountDB, ObjectDB, default_cmds
 
 """
 Mail extension for Dies Irae.
 
 This module extends the Evennia mail system to store sent messages and
-allow viewing them with the /sent switch, as well as organizing mail into folders.
+allow viewing them with the /sent switch.
 """
-
-from evennia.contrib.game_systems.mail.mail import CmdMail, CmdMailCharacter
-from evennia.utils import create, evtable, datetime_format
-from evennia.utils.logger import log_info, log_err
 
 class CmdMailExtended(CmdMail):
     """
@@ -39,16 +35,14 @@ class CmdMailExtended(CmdMail):
                 message text.
       @mail/sent          - Shows all messages you've sent
       @mail/sent <#>      - Shows a specific sent message
-
-      |wFolder commands are not currently supported.|n
-      @mail/folder <name> - View messages in the specified folder (see 'help folder' for more info)
-      @mail/folder <name>=<#>  - View a specific message in a folder
+      @mail/debug         - Shows detailed debugging information about all messages
 
     Switches:
       delete  - deletes a message
       forward - forward a received message to another object with an optional message attached.
       reply   - Replies to a received message, appending the original message to the bottom.
       sent    - View messages you've sent
+      debug   - Show detailed message debugging information
     """
 
     def send_mail(self, recipients, subject, message, caller):
@@ -93,12 +87,7 @@ class CmdMailExtended(CmdMail):
                 sent_message.tags.add("mail", category="mail")
                 sent_message.tags.add("sent", category="mail")
                 
-                # Initialize sent folder if needed
-                if not hasattr(caller, 'db') or not caller.db.mail_folders:
-                    caller.db.mail_folders = ["Incoming", "Sent"]
-                
                 caller.msg("You sent your message. It's stored in your sent folder.")
-                log_info(f"{caller} sent mail to {', '.join(recipient_names)}")
                 return True
             else:
                 caller.msg("No valid target(s) found. Cannot send message.")
@@ -108,118 +97,202 @@ class CmdMailExtended(CmdMail):
             caller.msg(f"An error occurred while sending mail: {e}")
             return False
 
-    def get_all_mail(self):
-        """Returns a list of all the messages received by the caller."""
+    def search_targets(self, namelist):
+        """
+        Search a list of targets of the same type as caller.
+
+        Args:
+            namelist (list): List of strings for objects to search for.
+
+        Returns:
+            list: Any target matches.
+        """
         try:
-            from evennia.comms.models import Msg
-            log_info(f"Getting mail for {self.caller}")
+            # Use direct code instead of regex for simpler debugging
+            if not namelist:
+                return []
+                
+            matches = []
             
-            # Determine if we're dealing with an account or a character
-            account_receiver = None
-            object_receiver = None
+            # Process each name in the list
+            for name in namelist:
+                name = name.strip()
+                if not name:
+                    continue
+                
+                # Search for account first
+                from evennia.accounts.models import AccountDB
+                account_matches = AccountDB.objects.filter(username__iexact=name)
+                
+                if account_matches:
+                    matches.append(account_matches[0])
+                    continue
+                    
+                # If no account match, try character
+                from evennia.objects.models import ObjectDB
+                character_matches = ObjectDB.objects.filter(db_key__iexact=name, db_typeclass_path__contains="character")
+                
+                if character_matches:
+                    matches.append(character_matches[0])
+                    continue
+                
+            return matches
+            
+        except Exception as e:
+            log_err(f"Error in search_targets: {e}")
+            return []
+
+    def get_all_mail(self):
+        """
+        Returns a list of all the messages where the caller is a recipient. These
+            are all messages tagged with tags of the `mail` category.
+
+        Returns:
+            messages (QuerySet): Matching Msg objects.
+
+        """
+        try:
+            # Get all messages with mail category that are received by caller
+            # This matches the original Evennia mail command's behavior exactly
+            mail_messages = []
             
             if self.caller_is_account:
-                account_receiver = self.caller
-                log_info(f"Caller is an account, searching with account receiver {account_receiver}")
+                messages = list(Msg.objects.get_by_tag(category="mail").filter(db_receivers_accounts=self.caller))
+                mail_messages.extend(messages)
             else:
-                object_receiver = self.caller
-                log_info(f"Caller is an object, searching with object receiver {object_receiver}")
+                messages = list(Msg.objects.get_by_tag(category="mail").filter(db_receivers_objects=self.caller))
+                mail_messages.extend(messages)
                 
-                # Also get the account if available for better coverage
+                # If the character has an account, also check messages for that account
                 if hasattr(self.caller, 'account') and self.caller.account:
-                    account_receiver = self.caller.account
-                    log_info(f"Also using account {account_receiver} for character")
+                    account_messages = list(Msg.objects.get_by_tag(category="mail").filter(db_receivers_accounts=self.caller.account))
                     
-            # Start with basic query for messages where the caller is a receiver
-            if account_receiver:
-                messages = list(Msg.objects.filter(db_receivers_accounts=account_receiver))
-                log_info(f"Found {len(messages)} messages for account {account_receiver}")
-            else:
-                messages = list(Msg.objects.filter(db_receivers_objects=object_receiver))
-                log_info(f"Found {len(messages)} messages for object {object_receiver}")
-            
-            # For new mail system (post-fix), return all messages since they are properly identified by tags
-            log_info(f"Returning all {len(messages)} messages for {self.caller}")
-            return messages
+                    # Add unique messages only
+                    existing_ids = {msg.id for msg in mail_messages}
+                    for msg in account_messages:
+                        if msg.id not in existing_ids:
+                            mail_messages.append(msg)
+                            existing_ids.add(msg.id)
+                            
+            # Aggressive filtering to catch all page messages
+            filtered_mail = []
+            for msg in mail_messages:
+                # First check - messages with comms category tag
+                has_comms_tag = False
+                for tag in msg.tags.all():
+                    if hasattr(tag, 'db_category') and tag.db_category == "comms":
+                        has_comms_tag = True
+                        break
+                    # Also check for page tags in any form
+                    if isinstance(tag, str) and tag == "page":
+                        has_comms_tag = True
+                        break
+                    elif hasattr(tag, 'db_key') and tag.db_key == "page":
+                        has_comms_tag = True
+                        break
+                
+                if has_comms_tag:
+                    continue
+                    
+                # Second check - skip sent mail copies (we'll display these separately)
+                header = msg.header or ""
+                if header.startswith("TO:"):
+                    continue
+                
+                # Third check - empty or None subjects (common in page messages)
+                if not header or header == "None":
+                    # Skip messages with empty subjects only if they don't have job updates
+                    if "job" not in msg.message.lower() and "update" not in msg.message.lower():
+                        continue
+                
+                # Fourth check - messages that start with typical page format 
+                if msg.message and hasattr(msg, 'senders') and msg.senders and msg.message.startswith(msg.senders[0].key) and (" " in msg.message[:20]):
+                    continue
+                    
+                # If passed all filters, add to final list
+                filtered_mail.append(msg)
+                
+            # Sort messages by date (oldest first)
+            filtered_mail.sort(key=lambda x: x.db_date_created)
+            return filtered_mail
             
         except Exception as e:
             log_err(f"Error in get_all_mail: {e}")
+            import traceback
+            log_err(traceback.format_exc())
             return []
 
     def get_sent_mail(self):
         """Returns a list of all the messages sent by the caller."""
         try:
-            log_info(f"Getting sent mail for {self.caller}")
+            # We need to find messages that were actually SENT by this caller,
+            # not just messages with a 'sent' tag that were received by the caller
             
-            # Use direct database queries to find all sent messages
             from evennia.comms.models import Msg
-            
             sent_messages = []
             
-            # Start with account and character sender checks
+            # Check if caller is an account or character
             if self.caller_is_account:
-                # Get messages sent by this account
-                sent_db_msgs = Msg.objects.filter(db_sender_accounts=self.caller)
-                sent_messages = list(sent_db_msgs)
-                log_info(f"Found {len(sent_messages)} messages with account as sender")
+                # Get messages where caller is the sender account
+                sent_msgs = Msg.objects.get_by_tag(category="mail", db_key="sent").filter(
+                    db_sender_accounts=self.caller
+                )
+                sent_messages.extend(sent_msgs)
             else:
-                # Try account first if available
-                if hasattr(self.caller, 'account') and self.caller.account:
-                    sent_db_msgs = Msg.objects.filter(db_sender_accounts=self.caller.account)
-                    sent_messages.extend(list(sent_db_msgs))
-                    log_info(f"Found {len(sent_db_msgs)} messages with associated account as sender")
+                # Get messages where caller is the sender object
+                sent_msgs = Msg.objects.get_by_tag(category="mail", db_key="sent").filter(
+                    db_sender_objects=self.caller
+                )
+                sent_messages.extend(sent_msgs)
                 
-                # Also try character as sender
-                char_msgs = Msg.objects.filter(db_sender_objects=self.caller)
-                if char_msgs:
-                    # Add only unique messages not already in the list
-                    existing_ids = set(msg.id for msg in sent_messages)
-                    for msg in char_msgs:
+                # If character has an account, also check for messages sent by that account
+                if hasattr(self.caller, 'account') and self.caller.account:
+                    account_sent_msgs = Msg.objects.get_by_tag(category="mail", db_key="sent").filter(
+                        db_sender_accounts=self.caller.account
+                    )
+                    
+                    # Avoid duplicates by checking IDs
+                    existing_ids = {msg.id for msg in sent_messages}
+                    for msg in account_sent_msgs:
                         if msg.id not in existing_ids:
                             sent_messages.append(msg)
-                    log_info(f"Found {char_msgs.count()} messages with character as sender")
             
-            # If we found any sent messages, make sure they have sent tags
-            if sent_messages:
-                # Add 'sent' tags to make them easier to find in the future
-                for msg in sent_messages:
-                    has_sent_tag = False
-                    for tag in msg.tags.all():
-                        if (isinstance(tag, str) and tag == "sent") or \
-                           (hasattr(tag, 'db_key') and hasattr(tag, 'db_category') and 
-                            tag.db_category == "mail" and tag.db_key == "sent"):
-                            has_sent_tag = True
-                            break
-                    if not has_sent_tag:
-                        msg.tags.add("sent", category="mail")
-                        msg.tags.add("mail", category="mail")
-                        log_info(f"Added 'sent' tag to message {msg.id}")
-                
-                # Sort messages by date (newest first)
-                sent_messages.sort(key=lambda x: x.db_date_created, reverse=True)
-                return sent_messages
-            
-            # If direct DB search found nothing, try finding messages with 'sent' tag
-            all_mail = self.get_all_mail()
-            sent_by_tag = []
-            
-            for msg in all_mail:
-                has_sent_tag = False
+            # Aggressive filtering for production environment to catch all page messages
+            filtered_sent = []
+            for msg in sent_messages:
+                # First check - messages with comms category tag
+                has_comms_tag = False
                 for tag in msg.tags.all():
-                    if (isinstance(tag, str) and tag == "sent") or \
-                       (hasattr(tag, 'db_key') and hasattr(tag, 'db_category') and 
-                        tag.db_category == "mail" and tag.db_key == "sent"):
-                        has_sent_tag = True
-                        sent_by_tag.append(msg)
+                    if hasattr(tag, 'db_category') and tag.db_category == "comms":
+                        has_comms_tag = True
                         break
+                    # Also check for page tags in any form
+                    if isinstance(tag, str) and tag == "page":
+                        has_comms_tag = True
+                        break
+                    elif hasattr(tag, 'db_key') and tag.db_key == "page":
+                        has_comms_tag = True
+                        break
+                
+                if has_comms_tag:
+                    continue
+                
+                # Second check - empty or None subjects (common in page messages)
+                if not msg.header or msg.header == "None":
+                    # Skip messages with empty subjects only if they don't have job updates
+                    if "job" not in msg.message.lower() and "update" not in msg.message.lower():
+                        continue
+                
+                # Third check - messages that start with typical page format
+                if msg.message and msg.message.startswith(self.caller.key) and (" " in msg.message[:20]):
+                    continue
                     
-            log_info(f"Found {len(sent_by_tag)} messages with 'sent' tag")
+                # If passed all filters, add to final list
+                filtered_sent.append(msg)
             
-            # Sort messages by date (newest first)
-            sent_by_tag.sort(key=lambda x: x.db_date_created, reverse=True)
-            
-            # Return what we found, preferring DB sender search over tag search
-            return sent_messages or sent_by_tag
+            # Sort messages by date (oldest first)
+            filtered_sent.sort(key=lambda x: x.db_date_created)
+            return filtered_sent
             
         except Exception as e:
             log_err(f"Error in get_sent_mail: {e}")
@@ -228,30 +301,15 @@ class CmdMailExtended(CmdMail):
             return []
 
     def func(self):
-        """Extends the mail functionality with sent mailbox and folders"""
+        """Main mail functionality without folder support"""
         try:
-            # Always log command details when mail is run
-            log_info(f"Mail command executed by {self.caller}")
-            log_info(f"- Args: '{self.args}'")
-            log_info(f"- Switches: {self.switches}")
-            log_info(f"- LHS: '{self.lhs}'")
-            log_info(f"- RHS: '{self.rhs}'")
-            
-            # Initialize folders if they don't exist
-            if not hasattr(self.caller, 'db') or not self.caller.db.mail_folders:
-                self.caller.db.mail_folders = ["Incoming", "Sent"]
-            
-            # Handle folder switch
-            if "folder" in self.switches:
-                return self.handle_folder_switch()
+            # Make sure Msg is available throughout this method
+            from evennia.comms.models import Msg
             
             # If the sent switch is active, show only sent messages
             if "sent" in self.switches:
-                log_info(f"Processing mail/sent for {self.caller}")
-                
                 # Get sent messages for this caller
                 sent_mail = self.get_sent_mail()
-                log_info(f"Found {len(sent_mail)} sent messages for {self.caller}")
                 
                 if not self.args:
                     # Display list of sent messages
@@ -277,7 +335,6 @@ class CmdMailExtended(CmdMail):
                             if hasattr(message, 'db') and hasattr(message.db, 'mail_recipients'):
                                 if message.db.mail_recipients:
                                     recipients = ", ".join(message.db.mail_recipients)
-                                    log_info(f"Found recipients in message attributes: {recipients}")
                             
                             # If still unknown, check if there are specific receivers in the message
                             if recipients == "Unknown" and hasattr(message, 'receivers') and message.receivers:
@@ -306,9 +363,6 @@ class CmdMailExtended(CmdMail):
                                     recipients = header_parts[0]
                                 subject = header_parts[1] if len(header_parts) > 1 else header
                             
-                            # Log what we found
-                            log_info(f"Message {message.id}: To={recipients}, Subject={subject}")
-                            
                             table.add_row(
                                 index,
                                 recipients,
@@ -322,10 +376,10 @@ class CmdMailExtended(CmdMail):
                         table.reformat_column(2, width=34)
                         table.reformat_column(3, width=18)
 
-                        self.caller.msg("-" * 78)
+                        self.caller.msg("|b-|n" * 78)
                         self.caller.msg("|wSent Messages:|n")
                         self.caller.msg(str(table))
-                        self.caller.msg("-" * 78)
+                        self.caller.msg("|b-|n" * 78)
                     else:
                         self.caller.msg("You haven't sent any messages.")
                 else:
@@ -335,14 +389,24 @@ class CmdMailExtended(CmdMail):
                             self.caller.msg("You haven't sent any messages.")
                             return
                             
-                        mind_max = max(0, len(sent_mail) - 1)
-                        mind = max(0, min(mind_max, int(self.args) - 1))
-                        message = sent_mail[mind]
+                        try:
+                            msg_num = int(self.args)
+                        except ValueError:
+                            self.caller.msg(f"'{self.args}' is not a valid mail id.")
+                            return
+                            
+                        # Check if the message number is valid
+                        if msg_num < 1 or msg_num > len(sent_mail):
+                            self.caller.msg(f"Message {msg_num} not found.")
+                            return
+                            
+                        # Get the specific message
+                        message = sent_mail[msg_num - 1]
                         
                         if message:
                             # Format the message display
                             messageForm = []
-                            messageForm.append("-" * 78)
+                            messageForm.append("|b-|n" * 78)
                             
                             # Try to extract recipient info in various ways
                             header = message.header or "None"
@@ -353,7 +417,6 @@ class CmdMailExtended(CmdMail):
                             if hasattr(message, 'db') and hasattr(message.db, 'mail_recipients'):
                                 if message.db.mail_recipients:
                                     recipients = ", ".join(message.db.mail_recipients)
-                                    log_info(f"Found recipients in message attributes: {recipients}")
                             
                             # If still unknown, check if there are specific receivers in the message
                             if recipients == "Unknown" and hasattr(message, 'receivers') and message.receivers:
@@ -389,9 +452,9 @@ class CmdMailExtended(CmdMail):
                                 % message.db_date_created.strftime(f"%b {day}, %Y - %H:%M:%S")
                             )
                             messageForm.append(f"|wSubject:|n {subject}")
-                            messageForm.append("-" * 78)
+                            messageForm.append("|b-|n" * 78)
                             messageForm.append(message.message)
-                            messageForm.append("-" * 78)
+                            messageForm.append("|b-|n" * 78)
                             
                             self.caller.msg("\n".join(messageForm))
                         else:
@@ -400,102 +463,240 @@ class CmdMailExtended(CmdMail):
                         self.caller.msg("That message does not exist.")
                 return
                 
+            # Debug command to show detailed info about all messages
+            elif "debug" in self.switches:
+                # Direct database queries to analyze message status
+                
+                # Get all messages directly from database
+                if self.caller_is_account:
+                    # Messages where the account is a receiver
+                    receiver_msgs = list(Msg.objects.filter(db_receivers_accounts=self.caller))
+                    # Messages where the account is a sender
+                    sender_msgs = list(Msg.objects.filter(db_sender_accounts=self.caller))
+                else:
+                    # Messages where the character is a receiver
+                    receiver_msgs = list(Msg.objects.filter(db_receivers_objects=self.caller))
+                    # Messages where the character is a sender
+                    sender_msgs = list(Msg.objects.filter(db_sender_objects=self.caller))
+                    
+                    # If character has an account, also check account messages
+                    if hasattr(self.caller, 'account') and self.caller.account:
+                        account_receiver_msgs = list(Msg.objects.filter(db_receivers_accounts=self.caller.account))
+                        account_sender_msgs = list(Msg.objects.filter(db_sender_accounts=self.caller.account))
+                        
+                        # Add unique messages only
+                        existing_ids = {msg.id for msg in receiver_msgs}
+                        for msg in account_receiver_msgs:
+                            if msg.id not in existing_ids:
+                                receiver_msgs.append(msg)
+                                existing_ids.add(msg.id)
+                                
+                        existing_ids = {msg.id for msg in sender_msgs}
+                        for msg in account_sender_msgs:
+                            if msg.id not in existing_ids:
+                                sender_msgs.append(msg)
+                                existing_ids.add(msg.id)
+                
+                # Create sets of message IDs for quick lookup
+                received_ids = {msg.id for msg in receiver_msgs}
+                sent_ids = {msg.id for msg in sender_msgs}
+                
+                # Get all messages with mail category tags
+                mail_tagged_msgs = list(Msg.objects.get_by_tag(category="mail"))
+                mail_tagged_ids = {msg.id for msg in mail_tagged_msgs}
+                
+                # Get messages with 'mail' tag
+                mail_key_msgs = list(Msg.objects.get_by_tag(category="mail", db_key="mail"))
+                mail_key_ids = {msg.id for msg in mail_key_msgs}
+                
+                # Get messages with 'sent' tag
+                sent_tag_msgs = list(Msg.objects.get_by_tag(category="mail", db_key="sent"))
+                sent_tag_ids = {msg.id for msg in sent_tag_msgs}
+                
+                # Get messages with 'new' tag
+                new_tag_msgs = list(Msg.objects.get_by_tag(category="mail", db_key="new"))
+                new_tag_ids = {msg.id for msg in new_tag_msgs}
+                
+                # Display summary information
+                self.caller.msg("|b-|n" * 78)
+                self.caller.msg("|wMail System Debug Information:|n")
+                self.caller.msg("|b-|n" * 78)
+                self.caller.msg(f"|wTotal messages where you are a receiver:|n {len(receiver_msgs)}")
+                self.caller.msg(f"|wTotal messages where you are a sender:|n {len(sender_msgs)}")
+                self.caller.msg(f"|wTotal messages with any 'mail' category tag:|n {len(mail_tagged_msgs)}")
+                self.caller.msg(f"|wMessages with 'mail' tag (key):|n {len(mail_key_msgs)}")
+                self.caller.msg(f"|wMessages with 'sent' tag:|n {len(sent_tag_msgs)}")
+                self.caller.msg(f"|wMessages with 'new' tag:|n {len(new_tag_msgs)}")
+                self.caller.msg("|b-|n" * 78)
+                
+                # Create a detailed table of messages
+                table = evtable.EvTable(
+                    "|wID|n",
+                    "|wReceiver?|n",
+                    "|wSender?|n",
+                    "|wMail Tag|n",
+                    "|wSent Tag|n",
+                    "|wNew Tag|n",
+                    "|wFrom|n", 
+                    "|wSubject|n",
+                    "|wDate|n",
+                    table=None,
+                    border="header",
+                    header_line_char="-",
+                )
+                
+                # Collect all unique message IDs
+                all_ids = received_ids.union(sent_ids).union(mail_tagged_ids)
+                all_msgs = []
+                
+                # Retrieve all unique messages
+                for msg_id in all_ids:
+                    try:
+                        msg = Msg.objects.get(id=msg_id)
+                        all_msgs.append(msg)
+                    except Msg.DoesNotExist:
+                        continue
+                
+                # Sort by date (oldest first)
+                all_msgs.sort(key=lambda x: x.db_date_created)
+                
+                # Add each message to the table
+                for msg in all_msgs:
+                    # Get sender name
+                    sender_name = "Unknown"
+                    if msg.senders:
+                        sender_name = msg.senders[0].key
+                    
+                    # Check flags for this message
+                    is_receiver = "Yes" if msg.id in received_ids else "No"
+                    is_sender = "Yes" if msg.id in sent_ids else "No"
+                    has_mail_tag = "Yes" if msg.id in mail_key_ids else "No"
+                    has_sent_tag = "Yes" if msg.id in sent_tag_ids else "No"
+                    has_new_tag = "Yes" if msg.id in new_tag_ids else "No"
+                    
+                    # Add row to table
+                    table.add_row(
+                        msg.id,
+                        is_receiver,
+                        is_sender,
+                        has_mail_tag,
+                        has_sent_tag,
+                        has_new_tag,
+                        sender_name,
+                        msg.header,
+                        datetime_format(msg.db_date_created),
+                    )
+                
+                # Format the table
+                table.reformat_column(0, width=5)
+                table.reformat_column(1, width=9)
+                table.reformat_column(2, width=8)
+                table.reformat_column(3, width=9)
+                table.reformat_column(4, width=9)
+                table.reformat_column(5, width=8)
+                table.reformat_column(6, width=12)
+                table.reformat_column(7, width=30)
+                table.reformat_column(8, width=12)
+                
+                # Display the table
+                self.caller.msg(str(table))
+                self.caller.msg("|b-|n" * 78)
+                self.caller.msg("This information should help diagnose mail system issues.")
+                return
+                
             # Handle simple @mail with no args - list all mail
             elif not self.args and not self.switches:
-                log_info(f"Listing mail messages for {self.caller}")
-                messages = self.get_all_mail()
-                log_info(f"Found {len(messages)} mail messages for {self.caller}")
+                # SIMPLIFIED APPROACH: Get all messages directly from the database where caller is a receiver
+                # This matches the debug table's "Receiver? = Yes" entries
+                if self.caller_is_account:
+                    # Messages where the account is a receiver
+                    inbox_messages = list(Msg.objects.get_by_tag(category="mail").filter(db_receivers_accounts=self.caller))
+                else:
+                    # Messages where the character is a receiver
+                    inbox_messages = list(Msg.objects.get_by_tag(category="mail").filter(db_receivers_objects=self.caller))
+                    
+                    # If character has an account, also check account messages
+                    if hasattr(self.caller, 'account') and self.caller.account:
+                        account_receiver_msgs = list(Msg.objects.get_by_tag(category="mail").filter(db_receivers_accounts=self.caller.account))
+                        
+                        # Add unique messages only
+                        existing_ids = {msg.id for msg in inbox_messages}
+                        for msg in account_receiver_msgs:
+                            if msg.id not in existing_ids:
+                                inbox_messages.append(msg)
+                                existing_ids.add(msg.id)
                 
-                if messages:
-                    # Format and show messages
+                # Filter out messages with subjects starting with "TO:" - these are sent mail copies
+                filtered_inbox = []
+                for msg in inbox_messages:
+                    header = msg.header or ""
+                    if header.startswith("TO:"):
+                        continue
+                    
+                    # Also explicitly filter out any messages with 'comms' category
+                    # This ensures page messages don't show up in mail
+                    has_comms_tag = False
+                    for tag in msg.tags.all():
+                        if hasattr(tag, 'db_category') and tag.db_category == "comms":
+                            has_comms_tag = True
+                            break
+                    
+                    if not has_comms_tag:
+                        filtered_inbox.append(msg)
+                
+                # Sort messages by date (oldest first)
+                filtered_inbox.sort(key=lambda x: x.db_date_created)
+                
+                # Now display the messages
+                if filtered_inbox:
+                    # Format the table
                     table = evtable.EvTable(
                         "|wID|n",
                         "|wFrom|n",
                         "|wSubject|n",
                         "|wArrived|n",
-                        "",
+                        "|wStatus|n",  # Explicitly name the column
                         table=None,
                         border="header",
                         header_line_char="-",
                         width=78,
                     )
-                    index = 1
-                    for message in messages:
-                        # Skip sent messages in the normal inbox view
-                        try:
-                            # Check if message has a 'sent' tag, handling both object tags and string tags
-                            all_tags = message.tags.all()
-                            has_sent = False
-                            for tag in all_tags:
-                                # Check if tag is a string or has db_category/db_key attributes
-                                if isinstance(tag, str):
-                                    if tag == "sent":
-                                        has_sent = True
-                                        break
-                                elif hasattr(tag, 'db_category') and hasattr(tag, 'db_key'):
-                                    if tag.db_category == "mail" and tag.db_key == "sent":
-                                        has_sent = True
-                                        break
-                            
-                            # Skip messages that have a folder tag other than Incoming
-                            has_folder = False
-                            for tag in all_tags:
-                                if isinstance(tag, str) and tag.startswith("folder_"):
-                                    # Skip if it's not explicitly in Incoming
-                                    if tag != "folder_Incoming":
-                                        has_folder = True
-                                        break
-                                elif hasattr(tag, 'db_key') and hasattr(tag, 'db_category'):
-                                    if tag.db_category == "mail" and tag.db_key.startswith("folder_"):
-                                        # Skip if it's not explicitly in Incoming
-                                        if tag.db_key != "folder_Incoming":
-                                            has_folder = True
-                                            break
-                            
-                            if has_sent or has_folder:
-                                continue
-                                
-                            # Check for NEW status
-                            status = ""
-                            for tag in all_tags:
-                                if isinstance(tag, str):
-                                    if tag.upper() == "NEW":
-                                        status = "|gNEW|n"
-                                        break
-                                elif hasattr(tag, 'db_category') and hasattr(tag, 'db_key'):
-                                    if tag.db_category == "mail" and tag.db_key == "new":
-                                        status = "|gNEW|n"
-                                        break
-                        except Exception as e:
-                            log_err(f"Error checking mail tags: {e}")
-                            continue
-                            
+                    
+                    # Add each message as a row
+                    for i, msg in enumerate(filtered_inbox, start=1):
+                        # Get sender name
                         sender_name = "Unknown"
-                        if hasattr(message, 'senders') and message.senders:
-                            sender_name = message.senders[0].get_display_name(self.caller)
-
-                        table.add_row(
-                            index,
-                            sender_name,
-                            message.header,
-                            datetime_format(message.db_date_created),
-                            status,
-                        )
-                        index += 1
-
-                    if index > 1:  # Only display if there are non-sent messages
-                        table.reformat_column(0, width=6)
-                        table.reformat_column(1, width=18)
-                        table.reformat_column(2, width=34)
-                        table.reformat_column(3, width=13)
-                        table.reformat_column(4, width=7)
-
-                        self.caller.msg("-" * 78)
-                        self.caller.msg("|wIncoming Mail (Inbox):|n")
-                        self.caller.msg(str(table))
-                        self.caller.msg("-" * 78)
-                    else:
-                        self.caller.msg("There are no messages in your inbox.")
+                        if msg.senders:
+                            sender_name = msg.senders[0].get_display_name(self.caller)
+                        
+                        # Get arrival time
+                        arrival = datetime_format(msg.db_date_created)
+                        
+                        # Check if message is new
+                        is_new = False
+                        for tag in msg.tags.all():
+                            tag_key = tag if isinstance(tag, str) else tag.db_key
+                            if tag_key == "new":
+                                is_new = True
+                                break
+                        
+                        status = "|gNEW|n" if is_new else ""
+                        
+                        # Add the row to the table
+                        table.add_row(i, sender_name, msg.header, arrival, status)
+                    
+                    # Format the columns
+                    table.reformat_column(0, width=6)
+                    table.reformat_column(1, width=18)
+                    table.reformat_column(2, width=34)
+                    table.reformat_column(3, width=13)
+                    table.reformat_column(4, width=7)
+                    
+                    # Display the table
+                    self.caller.msg("|b-|n" * 78)
+                    self.caller.msg("|wIncoming Mail (Inbox):|n")
+                    self.caller.msg(str(table))
+                    self.caller.msg("|b-|n" * 78)
                 else:
                     self.caller.msg("There are no messages in your inbox.")
                 return
@@ -503,114 +704,97 @@ class CmdMailExtended(CmdMail):
             # Handle @mail <#> - viewing a specific message
             elif self.args and not self.switches and not self.rhs:
                 try:
-                    log_info(f"Viewing specific mail {self.args} for {self.caller}")
-                    all_mail = self.get_all_mail()
-                    # Filter out sent messages for normal viewing
-                    inbox_mail = []
-                    for msg in all_mail:
-                        try:
-                            # Check if message has a 'sent' tag
-                            all_tags = msg.tags.all()
-                            has_sent = False
-                            for tag in all_tags:
-                                # Check if tag is a string or has db_category/db_key attributes
-                                if isinstance(tag, str):
-                                    if tag == "sent":
-                                        has_sent = True
-                                        break
-                                elif hasattr(tag, 'db_category') and hasattr(tag, 'db_key'):
-                                    if tag.db_category == "mail" and tag.db_key == "sent":
-                                        has_sent = True
-                                        break
-                                        
-                            # Also filter out messages that have a folder tag that isn't Incoming
-                            has_folder = False
-                            for tag in all_tags:
-                                if isinstance(tag, str) and tag.startswith("folder_"):
-                                    # Skip if it's not explicitly in Incoming
-                                    if tag != "folder_Incoming":
-                                        has_folder = True
-                                        break
-                                elif hasattr(tag, 'db_key') and hasattr(tag, 'db_category'):
-                                    if tag.db_category == "mail" and tag.db_key.startswith("folder_"):
-                                        # Skip if it's not explicitly in Incoming
-                                        if tag.db_key != "folder_Incoming":
-                                            has_folder = True
-                                            break
+                    # SIMPLIFIED APPROACH: Get all messages directly from the database where caller is a receiver
+                    # This matches the debug table's "Receiver? = Yes" entries
+                    if self.caller_is_account:
+                        # Messages where the account is a receiver
+                        inbox_messages = list(Msg.objects.filter(db_receivers_accounts=self.caller))
+                    else:
+                        # Messages where the character is a receiver
+                        inbox_messages = list(Msg.objects.filter(db_receivers_objects=self.caller))
+                        
+                        # If character has an account, also check account messages
+                        if hasattr(self.caller, 'account') and self.caller.account:
+                            account_receiver_msgs = list(Msg.objects.filter(db_receivers_accounts=self.caller.account))
                             
-                            if not has_sent and not has_folder:
-                                inbox_mail.append(msg)
-                        except Exception as e:
-                            log_err(f"Error checking mail tags: {e}")
-                            continue
+                            # Add unique messages only
+                            existing_ids = {msg.id for msg in inbox_messages}
+                            for msg in account_receiver_msgs:
+                                if msg.id not in existing_ids:
+                                    inbox_messages.append(msg)
+                                    existing_ids.add(msg.id)
                     
-                    mind_max = max(0, len(inbox_mail) - 1)
+                    # Sort messages by date (oldest first)
+                    inbox_messages.sort(key=lambda x: x.db_date_created)
+                    
+                    # Filter out messages with subjects starting with "TO:" - these are sent mail copies
+                    filtered_inbox = []
+                    for msg in inbox_messages:
+                        header = msg.header or ""
+                        if header.startswith("TO:"):
+                            continue
+                        filtered_inbox.append(msg)
+                    
+                    # Make sure we have messages
+                    if not filtered_inbox:
+                        self.caller.msg("There are no messages in your inbox.")
+                        return
+                        
+                    # Get the message number from the user's input
                     try:
-                        mind = max(0, min(mind_max, int(self.args) - 1))
+                        msg_num = int(self.args)
                     except ValueError:
                         self.caller.msg(f"'{self.args}' is not a valid mail id.")
                         return
                         
-                    if mind_max < 0:
-                        self.caller.msg("There are no messages in your inbox.")
+                    # Check if the message number is valid
+                    if msg_num < 1 or msg_num > len(filtered_inbox):
+                        self.caller.msg(f"Message {msg_num} not found.")
                         return
                         
-                    message = inbox_mail[mind]
+                    # Get the specific message
+                    message = filtered_inbox[msg_num - 1]
                     
-                    if message:
-                        messageForm = []
-                        messageForm.append("-" * 78)
-                        # Add safety check for empty senders list
-                        sender_name = "Unknown"
-                        if hasattr(message, 'senders') and message.senders:
-                            sender_name = message.senders[0].get_display_name(self.caller)
-                        messageForm.append("|wFrom:|n %s" % sender_name)
-                        # note that we cannot use %-d format here since Windows does not support it
-                        day = message.db_date_created.day
-                        messageForm.append(
-                            "|wSent:|n %s"
-                            % message.db_date_created.strftime(f"%b {day}, %Y - %H:%M:%S")
-                        )
-                        messageForm.append("|wSubject:|n %s" % message.header)
-                        messageForm.append("-" * 78)
-                        messageForm.append(message.message)
-                        messageForm.append("-" * 78)
-                        self.caller.msg("\n".join(messageForm))
-                        
-                        # Mark as read by removing new tag and adding - tag
-                        try:
-                            # Check if message has a 'new' tag
-                            all_tags = message.tags.all()
-                            has_new = False
-                            for tag in all_tags:
-                                # Check if tag is a string or has db_category/db_key attributes
-                                if isinstance(tag, str):
-                                    if tag.upper() == "NEW":
-                                        has_new = True
-                                        break
-                                elif hasattr(tag, 'db_category') and hasattr(tag, 'db_key'):
-                                    if tag.db_category == "mail" and tag.db_key == "new":
-                                        has_new = True
-                                        break
-                                        
-                            if has_new:
-                                message.tags.remove("new", category="mail")
-                                message.tags.add("-", category="mail")
-                        except Exception as e:
-                            log_err(f"Error updating message read status: {e}")
-                            pass
+                    # Format the message for display
+                    messageForm = []
+                    messageForm.append("|b-|n" * 78)
+                    
+                    # Add sender info
+                    sender_name = "Unknown"
+                    if hasattr(message, 'senders') and message.senders:
+                        sender_name = message.senders[0].get_display_name(self.caller)
+                    messageForm.append(f"|wFrom:|n {sender_name}")
+                    
+                    # Add date
+                    day = message.db_date_created.day
+                    messageForm.append(
+                        f"|wSent:|n {message.db_date_created.strftime(f'%b {day}, %Y - %H:%M:%S')}"
+                    )
+                    
+                    # Add subject
+                    messageForm.append(f"|wSubject:|n {message.header}")
+                    
+                    # Add body
+                    messageForm.append("|b-|n" * 78)
+                    messageForm.append(message.message)
+                    messageForm.append("|b-|n" * 78)
+                    
+                    # Send the formatted message to the player
+                    self.caller.msg("\n".join(messageForm))
+                    
+                    # Mark as read by removing new tag and adding - tag
+                    message.tags.remove("new", category="mail")
+                    message.tags.add("-", category="mail")
                 except Exception as e:
                     log_err(f"Error viewing mail: {e}")
                     self.caller.msg(f"Error viewing mail: {e}")
                 return
                 
-            # Handle sending mail: @mail <name>=<subject>/<message>
+            # Handle sending mail: @mail <n>=<subject>/<message>
             elif self.lhs and self.rhs:
-                log_info(f"Sending mail: LHS={self.lhs}, RHS={self.rhs}")
                 try:
                     # Parse out the recipients
                     recipients = self.search_targets(self.lhslist)
-                    log_info(f"Found recipients: {recipients}")
                     
                     if not recipients:
                         self.caller.msg("No valid recipients found.")
@@ -622,8 +806,6 @@ class CmdMailExtended(CmdMail):
                     else:
                         subject = ""
                         body = self.rhs
-                    
-                    log_info(f"Sending mail with subject: '{subject}', body length: {len(body)}")
                     
                     # Use our send_mail method
                     success = self.send_mail(recipients, subject, body, self.caller)
@@ -637,7 +819,6 @@ class CmdMailExtended(CmdMail):
                 
             # For other mail functionality, use the parent implementation
             else:
-                log_info(f"Using parent mail implementation for {self.caller}")
                 super().func()
         except Exception as e:
             log_err(f"Error in CmdMailExtended.func: {e}")
@@ -645,402 +826,6 @@ class CmdMailExtended(CmdMail):
             import traceback
             log_err(traceback.format_exc())
 
-    def handle_folder_switch(self):
-        """Handle mail/folder command"""
-        caller = self.caller
-        log_info(f"Processing mail/folder for {caller} with args: {self.args}")
-        
-        if not self.args:
-            caller.msg("You must specify a folder name. Use 'folder' to list available folders.")
-            return
-            
-        # Handle folder=number syntax
-        if "=" in self.args:
-            folder_name, message_num = self.args.split("=", 1)
-            folder_name = folder_name.strip()
-            
-            # Make sure folders exist
-            if not hasattr(caller, 'db') or not caller.db.mail_folders:
-                caller.db.mail_folders = ["Incoming", "Sent"]
-                
-            # Check if folder exists (case-insensitive)
-            folder_exists = False
-            real_folder_name = folder_name  # Use this to preserve case
-            for f in caller.db.mail_folders:
-                if f.lower() == folder_name.lower():
-                    folder_exists = True
-                    real_folder_name = f  # Use the actual case from the folder list
-                    break
-                    
-            if not folder_exists:
-                caller.msg(f"Folder '{folder_name}' doesn't exist.")
-                return
-                
-            try:
-                message_num = int(message_num.strip())
-            except ValueError:
-                caller.msg("Message number must be a number.")
-                return
-                
-            # Get all mail messages
-            all_mail = self.get_all_mail()
-            
-            # Debug: log message IDs and their tags
-            for i, msg in enumerate(all_mail):
-                tag_info = []
-                for tag in msg.tags.all():
-                    if isinstance(tag, str):
-                        tag_info.append(f"str:{tag}")
-                    elif hasattr(tag, 'db_key') and hasattr(tag, 'db_category'):
-                        tag_info.append(f"obj:{tag.db_key}(cat:{tag.db_category})")
-                log_info(f"Message ID {msg.id} #{i+1} tags: {tag_info}")
-                
-            # Filter messages by folder
-            folder_contents = []
-            
-            # For default folders (Incoming, Sent)
-            if real_folder_name.lower() == "incoming":
-                # Include messages without folder tags and not in Sent
-                for msg in all_mail:
-                    has_folder = False
-                    is_sent = False
-                    
-                    for tag in msg.tags.all():
-                        if isinstance(tag, str):
-                            if tag.startswith("folder_"):
-                                has_folder = True
-                                break
-                            elif tag == "sent":
-                                is_sent = True
-                        elif hasattr(tag, 'db_key'):
-                            if tag.db_key.startswith("folder_"):
-                                has_folder = True
-                                break
-                            elif tag.db_key == "sent":
-                                is_sent = True
-                        elif hasattr(tag, 'db_category') and hasattr(tag, 'db_key') and tag.db_category == "mail" and tag.db_key == "sent":
-                            is_sent = True
-                                
-                    if not has_folder and not is_sent:
-                        folder_contents.append(msg)
-                        
-            elif real_folder_name.lower() == "sent":
-                # Use get_sent_mail to find sent messages
-                folder_contents = self.get_sent_mail()
-                log_info(f"Got {len(folder_contents)} sent messages using get_sent_mail")
-            else:
-                # Custom folder - look for folder tag
-                folder_tag = f"folder_{real_folder_name}"
-                log_info(f"Looking for messages with folder tag: {folder_tag}")
-                
-                for msg in all_mail:
-                    # Debug output to see tag information
-                    tag_info = []
-                    for tag in msg.tags.all():
-                        if isinstance(tag, str):
-                            tag_info.append(f"str:{tag}")
-                        elif hasattr(tag, 'db_key') and hasattr(tag, 'db_category'):
-                            tag_info.append(f"obj:{tag.db_key}(cat:{tag.db_category})")
-                    log_info(f"Message ID {msg.id} tags: {tag_info}")
-                    
-                    found_in_folder = False
-                    for tag in msg.tags.all():
-                        if isinstance(tag, str) and tag == folder_tag:
-                            log_info(f"Found message with string tag {tag}")
-                            found_in_folder = True
-                            break
-                        elif hasattr(tag, 'db_key') and hasattr(tag, 'db_category'):
-                            if tag.db_category == "mail" and tag.db_key == folder_tag:
-                                log_info(f"Found message with object tag {tag.db_key} (category: {tag.db_category})")
-                                found_in_folder = True
-                                break
-                            elif tag.db_category == "mail" and tag.db_key.lower() == folder_tag.lower():
-                                log_info(f"Found message with case-insensitive tag match: {tag.db_key}")
-                                found_in_folder = True
-                                break
-                    
-                    if found_in_folder:
-                        folder_contents.append(msg)
-                        log_info(f"Added message ID {msg.id} to folder contents")
-
-            # Display the specific message
-            if not folder_contents:
-                caller.msg(f"No messages found in folder '{folder_name}'.")
-                return
-                
-            if 1 <= message_num <= len(folder_contents):
-                message = folder_contents[message_num - 1]
-                
-                messageForm = []
-                messageForm.append("-" * 78)
-                # Add safety check for empty senders list
-                sender_name = "Unknown"
-                if hasattr(message, 'senders') and message.senders:
-                    sender_name = message.senders[0].get_display_name(caller)
-                messageForm.append("|wFrom:|n %s" % sender_name)
-                # note that we cannot use %-d format here since Windows does not support it
-                day = message.db_date_created.day
-                messageForm.append(
-                    "|wSent:|n %s"
-                    % message.db_date_created.strftime(f"%b {day}, %Y - %H:%M:%S")
-                )
-                messageForm.append("|wSubject:|n %s" % message.header)
-                messageForm.append("|wFolder:|n %s" % folder_name)
-                messageForm.append("-" * 78)
-                messageForm.append(message.message)
-                messageForm.append("-" * 78)
-                caller.msg("\n".join(messageForm))
-                
-                # Mark as read by removing new tag and adding - tag
-                try:
-                    # Check if message has a 'new' tag
-                    all_tags = message.tags.all()
-                    has_new = False
-                    for tag in all_tags:
-                        # Check if tag is a string or has db_category/db_key attributes
-                        if isinstance(tag, str):
-                            if tag.upper() == "NEW":
-                                has_new = True
-                                break
-                        elif hasattr(tag, 'db_category') and hasattr(tag, 'db_key'):
-                            if tag.db_category == "mail" and tag.db_key == "new":
-                                has_new = True
-                                break
-                                
-                    if has_new:
-                        message.tags.remove("new", category="mail")
-                        message.tags.add("-", category="mail")
-                except Exception as e:
-                    log_err(f"Error updating message read status: {e}")
-                    pass
-            else:
-                caller.msg(f"Message {message_num} not found in folder '{folder_name}'.")
-            return
-                
-        # Just show folder contents
-        folder_name = self.args.strip()
-        
-        # Make sure folders exist
-        if not hasattr(caller, 'db') or not caller.db.mail_folders:
-            caller.db.mail_folders = ["Incoming", "Sent"]
-            
-        # Check if folder exists (case-insensitive)
-        folder_exists = False
-        real_folder_name = folder_name  # Use this to preserve case
-        for f in caller.db.mail_folders:
-            if f.lower() == folder_name.lower():
-                folder_exists = True
-                real_folder_name = f  # Use the actual case from the folder list
-                break
-                
-        if not folder_exists:
-            caller.msg(f"Folder '{folder_name}' doesn't exist.")
-            return
-            
-        try:
-            # Get all mail messages
-            all_mail = self.get_all_mail()
-                
-            # Filter messages by folder
-            folder_contents = []
-            
-            # For default folders (Incoming, Sent)
-            if real_folder_name.lower() == "incoming":
-                # Include messages without folder tags and not in Sent
-                for msg in all_mail:
-                    has_folder = False
-                    is_sent = False
-                    
-                    for tag in msg.tags.all():
-                        if isinstance(tag, str):
-                            if tag.startswith("folder_"):
-                                has_folder = True
-                                break
-                            elif tag == "sent":
-                                is_sent = True
-                        elif hasattr(tag, 'db_key'):
-                            if tag.db_key.startswith("folder_"):
-                                has_folder = True
-                                break
-                            elif tag.db_key == "sent":
-                                is_sent = True
-                        elif hasattr(tag, 'db_category') and hasattr(tag, 'db_key') and tag.db_category == "mail" and tag.db_key == "sent":
-                            is_sent = True
-                                
-                    if not has_folder and not is_sent:
-                        folder_contents.append(msg)
-                        
-            elif real_folder_name.lower() == "sent":
-                # Use get_sent_mail to find sent messages
-                folder_contents = self.get_sent_mail()
-                log_info(f"Got {len(folder_contents)} sent messages using get_sent_mail")
-            else:
-                # Custom folder - look for folder tag
-                folder_tag = f"folder_{real_folder_name}"
-                log_info(f"Looking for messages with folder tag: {folder_tag}")
-                
-                for msg in all_mail:
-                    # Check each tag for a match
-                    found_in_folder = False
-                    for tag in msg.tags.all():
-                        # For string tags (direct comparison)
-                        if isinstance(tag, str) and tag == folder_tag:
-                            log_info(f"Found message with string tag {tag}")
-                            found_in_folder = True
-                            break
-                        # For object tags (with db_key and db_category)
-                        elif hasattr(tag, 'db_key') and hasattr(tag, 'db_category'):
-                            # Try exact match first
-                            if tag.db_category == "mail" and tag.db_key == folder_tag:
-                                log_info(f"Found message with object tag {tag.db_key} (category: {tag.db_category})")
-                                found_in_folder = True
-                                break
-                            # Then try case-insensitive match
-                            elif tag.db_category == "mail" and tag.db_key.lower() == folder_tag.lower():
-                                log_info(f"Found message with case-insensitive tag match: {tag.db_key}")
-                                found_in_folder = True
-                                break
-                    
-                    if found_in_folder:
-                        folder_contents.append(msg)
-                        log_info(f"Added message {msg.id} to folder contents")
-
-            # Display folder contents
-            if folder_contents:
-                # Format and show messages
-                table = evtable.EvTable(
-                    "|wID|n",
-                    "|wFrom|n",
-                    "|wSubject|n",
-                    "|wArrived|n",
-                    "",
-                    table=None,
-                    border="header",
-                    header_line_char="-",
-                    width=78,
-                )
-                
-                for i, message in enumerate(folder_contents, start=1):
-                    status = ""
-                    for tag in message.tags.all():
-                        if isinstance(tag, str) and tag.upper() == "NEW":
-                            status = "|gNEW|n"
-                            break
-                        elif hasattr(tag, 'db_key') and tag.db_key.upper() == "NEW":
-                            status = "|gNEW|n"
-                            break
-
-                    sender_name = "Unknown"
-                    if hasattr(message, 'senders') and message.senders:
-                        sender_name = message.senders[0].get_display_name(caller)
-
-                    table.add_row(
-                        i,
-                        sender_name,
-                        message.header,
-                        message.db_date_created.strftime("%b %d, %Y"),
-                        status,
-                    )
-
-                table.reformat_column(0, width=6)
-                table.reformat_column(1, width=18)
-                table.reformat_column(2, width=34)
-                table.reformat_column(3, width=13)
-                table.reformat_column(4, width=7)
-
-                caller.msg("-" * 78)
-                caller.msg(f"|wFolder: {folder_name}|n")
-                caller.msg(str(table))
-                caller.msg("-" * 78)
-            else:
-                caller.msg(f"Folder '{folder_name}' is empty.")
-                
-        except Exception as e:
-            log_err(f"Error showing folder contents: {e}")
-            caller.msg(f"Error showing folder contents: {e}")
-
-    def search_targets(self, namelist):
-        """
-        Search a list of targets of the same type as caller.
-
-        Args:
-            namelist (list): List of strings for objects to search for.
-
-        Returns:
-            list: Any target matches.
-        """
-        from evennia.utils.logger import log_info, log_err
-        try:
-            log_info(f"Searching for targets: {namelist}")
-            
-            # Use direct code instead of regex for simpler debugging
-            if not namelist:
-                return []
-                
-            matches = []
-            
-            # Process each name in the list
-            for name in namelist:
-                name = name.strip()
-                if not name:
-                    continue
-                    
-                log_info(f"Searching for target: '{name}'")
-                
-                # Search for account first
-                from evennia.accounts.models import AccountDB
-                account_matches = AccountDB.objects.filter(username__iexact=name)
-                
-                if account_matches:
-                    log_info(f"Found account match: {account_matches[0]}")
-                    matches.append(account_matches[0])
-                    continue
-                    
-                # If no account match, try character
-                from evennia.objects.models import ObjectDB
-                character_matches = ObjectDB.objects.filter(db_key__iexact=name, db_typeclass_path__contains="character")
-                
-                if character_matches:
-                    log_info(f"Found character match: {character_matches[0]}")
-                    matches.append(character_matches[0])
-                    continue
-                    
-                log_info(f"No matches found for: '{name}'")
-                
-            log_info(f"Final matches: {matches}")
-            return matches
-            
-        except Exception as e:
-            log_err(f"Error in search_targets: {e}")
-            return []
-
-class CmdMailCharacterExtended(CmdMailCharacter, CmdMailExtended):
-    """
-    Communicate with others by sending mail.
-
-    Usage:
-      @mail                - Displays all the mail an account has in their inbox
-      @mail <#>           - Displays a specific message
-      @mail <accounts>=<subject>/<message>
-              - Sends a message to the comma separated list of accounts.
-      @mail/delete <#>    - Deletes a specific message
-      @mail/forward <account list>=<#>[/<Message>]
-              - Forwards an existing message to the specified list of accounts,
-                original message is delivered with optional Message prepended.
-      @mail/reply <#>=<message>
-              - Replies to a message #. Prepends message to the original
-                message text.
-      @mail/sent          - Shows all messages you've sent
-      @mail/sent <#>      - Shows a specific sent message
-
-      |wFolder commands are not currently supported.|n
-      @mail/folder <name> - View messages in the specified folder (see 'help folder' for more info)
-      @mail/folder <name>=<#>  - View a specific message in a folder
-
-    Switches:
-      delete  - deletes a message
-      forward - forward a received message to another object with an optional message attached.
-      reply   - Replies to a received message, appending the original message to the bottom.
-      sent    - View messages you've sent
-    """
+# character - level version of the command
+class CmdMailCharacterExtended(CmdMailExtended):
     account_caller = False 

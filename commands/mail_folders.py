@@ -123,28 +123,35 @@ class CmdMailFolder(MuxCommand):
                 folder_name = None
                 
                 for tag in msg.tags.all():
-                    if isinstance(tag, str) and tag.startswith("folder_"):
+                    if isinstance(tag, str) and tag.lower().startswith("folder_"):
                         folder_name = tag[7:]  # Remove 'folder_' prefix
                         found_folder = True
                         break
-                    elif hasattr(tag, 'db_key') and tag.db_key.startswith("folder_"):
+                    elif hasattr(tag, 'db_key') and tag.db_key.lower().startswith("folder_"):
                         folder_name = tag.db_key[7:]  # Remove 'folder_' prefix
                         found_folder = True
                         break
                 
-                # Now increment the count for the right folder
-                if found_folder and folder_name in folder_counts:
-                    folder_counts[folder_name] += 1
-                    log_info(f"Counting message {msg.id} in folder '{folder_name}'")
+                # Now increment the count for the right folder (case-insensitive matching)
+                if found_folder and folder_name:
+                    # Find a case-insensitive match in the folder list
+                    matched_folder = None
+                    for folder in folder_counts:
+                        if folder.lower() == folder_name.lower():
+                            matched_folder = folder
+                            break
+                            
+                    if matched_folder:
+                        folder_counts[matched_folder] += 1
+                        log_info(f"Counting message {msg.id} in folder '{matched_folder}' (matched '{folder_name}')")
+                    else:
+                        # No matching folder, count in Incoming
+                        folder_counts["Incoming"] += 1
+                        log_info(f"Counting message {msg.id} in Incoming folder (no matching folder for '{folder_name}')")
                 # If no folder found and not sent, it's in Incoming
                 elif not found_folder and not is_sent:
                     folder_counts["Incoming"] += 1
                     log_info(f"Counting message {msg.id} in Incoming folder")
-            
-            # Add sent message counts from the direct database query
-            if 'Sent' in folder_counts:
-                log_info(f"Adding {sent_msgs.count()} messages to Sent folder count")
-                folder_counts['Sent'] = sent_msgs.count()
             
             # Create a nicely formatted table
             table = evtable.EvTable(
