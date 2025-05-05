@@ -345,12 +345,6 @@ class CmdRenown(MuxCommand):
                 temp_value = character.get_stat('advantages', 'renown', renown_type, temp=True)
                 if temp_value is None:
                     temp_value = 0
-                # Convert temp_value to int if it's a string
-                if isinstance(temp_value, str):
-                    temp_value = int(temp_value)
-                # Convert perm_value to int if it's a string
-                if isinstance(perm_value, str):
-                    perm_value = int(perm_value)
                 
                 # Calculate new temporary value
                 new_temp = temp_value + amount
@@ -533,9 +527,6 @@ class CmdRenown(MuxCommand):
                 temp_value = character.get_stat('advantages', 'renown', renown_type, temp=True)
                 if temp_value is None:
                     temp_value = 0
-                # Convert temp_value to int if it's a string
-                if isinstance(temp_value, str):
-                    temp_value = int(temp_value)
                 
                 # Ensure we don't remove more than exists
                 if amount > temp_value:
@@ -785,9 +776,6 @@ class CmdRenown(MuxCommand):
         temp_value = self.caller.get_stat('advantages', 'renown', renown_type, temp=True)
         if temp_value is None:
             temp_value = 0
-        # Convert temp_value to int if it's a string
-        if isinstance(temp_value, str):
-            temp_value = int(temp_value)
 
         # Check if adding and already at 10
         if amount > 0 and temp_value >= 10:
@@ -974,9 +962,6 @@ class CmdRenown(MuxCommand):
                         temp = character.get_stat('advantages', 'renown', r_type, temp=True)
                         if temp is None:
                             temp = 0
-                        # Convert temp to int if it's a string
-                        if isinstance(temp, str):
-                            temp = int(temp)
                         output.append(f"{r_type}: Permanent {perm}, Temporary {temp}")
                 
                 output.append("")  # Blank line before history
@@ -1064,9 +1049,6 @@ class CmdRenown(MuxCommand):
                 temp = self.caller.get_stat('advantages', 'renown', r_type, temp=True)
                 if temp is None:
                     temp = 0
-                # Convert temp to int if it's a string
-                if isinstance(temp, str):
-                    temp = int(temp)
                 output.append(f"{r_type}: Permanent {perm}, Temporary {temp}")
         
         output.append("")  # Blank line before history
