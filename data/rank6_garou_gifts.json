@@ -2,15 +2,18 @@
     {
         "name": "Firebringer",
         "description": "This powerful Gift allows a Ragabash to pull the ultimate stunt, stealing a supernatural power and turning it into a Gift. Moreover, the Gift can be taught to others, as if the New Moon was a spirit teacher. The difficult part is that the Ragabash has to endure having the power used on her first, but after that, she makes it her own to teach, but alas, not to use herself. A powerful spirit, such as the avatar of a trickster Incarna, teaches this Gift.",
-        "system": "Survival, smarts and sacrifice are key to acquiring this Gift, though no specific dice rolls are needed. First, the Ragabash must suffer through the effects of the power (such as vampiric Discipline, or a mage's rote) being successfully used on her. Then, she can take her experiences, work with the appropriate spirit and turn the power into a Gift she can teach to others. The Ragabash cannot herself use the Gift, and moreover, she now has a vulnerability to its effects. The next time she encounters another supernatural using the power, the enemy is at one difficulty less to use it on the New Moon (the power more easily affects the Ragabash). Any supernatural power can be co-opted in this way, including Wyrm-tainted powers. In this way, the werewolves can turn the might of the Wyrm back on itself. Because of the sacrifice involved, the New Moon usually gains considerable Renown for not only \"stealing\" the knowledge of the supernatural power, but also teaching it to others. Storytellers should feel free to be creative and innovative in bringing powers from other games (Such as Vampire and Mage) into the Werewolf universe. The Storyteller determines the level of any Gift gained in this manner, as appropriate.",
+        "system": "Survival, smarts and sacrifice are key to acquiring this Gift, though no specific dice rolls are needed. First, the Ragabash must suffer through the effects of the power (such as vampiric Discipline, or a mage's rote) being successfully used on her. Then, she can take her experiences, work with the appropriate spirit and turn the power into a Gift she can teach to others. The Ragabash cannot herself use the Gift, and moreover, she now has a vulnerability to its effects. The next time she encounters another supernatural using the power, the enemy is at one difficulty less to use it on the New Moon (the power more easily affects the Ragabash). Any supernatural power can be co-opted in this way, including Wyrm-tainted powers. In this way, the werewolves can turn the might of the Wyrm back on itself. Because of the sacrifice involved, the New Moon usually gains considerable Renown for not only 'stealing' the knowledge of the supernatural power, but also teaching it to others. Storytellers should feel free to be creative and innovative in bringing powers from other games (Such as Vampire and Mage) into the Werewolf universe. The Storyteller determines the level of any Gift gained in this manner, as appropriate.",
         "source": "Book of Auspices",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [6],
-        "shifter_type": ["Garou"],
+        "values": [
+            6
+        ],
+        "shifter_type": ["Garou", "Ananasi"],
         "splat": "Shifter",
-        "auspice": "Ragabash"
+		"tribe": ["Kumo", "Black Spiral Dancers"],
+        "auspice": ["Ragabash"]
     },
     {
         "name": "Rebirthing",
@@ -20,22 +23,29 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [6],
+        "values": [
+            6
+        ],
         "shifter_type": ["Garou"],
         "splat": "Shifter",
+		"tribe": "Black Spiral Dancers",
         "auspice": "Theurge"
     },
     {
         "name": "As In the Beginning",
-        "description": "The Theurge can tear away aeons of the Weaver's works for a short while. This Gift rips down the Gauntlet entirely, merging the worlds of flesh and spirit as they were in the days of legend. Moreover, this mended region acts as a shining beacon to Gaian spirits, calling a flood of nature-spirits and other allies to assist the Theurge.",
-        "system": "The player spends three points of Gnosis and rolls Wits + Occult (difficulty of the local Gauntlet). The Gauntlet is torn open within the local area. The thinner the Gauntlet, the wider the rip: from a few rooms in the midst of a skyscraper to an entire mile of landscape in the depths of the Amazon. Friendly spirits of the Storyteller's choosing come flooding out to aid the Theurge - the more successes, the greater the number or power. The Gauntlet is permanently lowered by 1 in an area where this Gift has been used; this benefit doesn't stack with repeated use.",
+        "description": "The Theurge can tear away aeons of the Weaver's works for a short while. This Gift rips down the Gauntlet entirely, merging the worlds of flesh and spirit as they were in the days of legend. Moreover, this mended region acts as a shining beacon to Gaian spirits, calling a flood of nature-spirits and other allies to assist the Theurge. BSD version called Prelude to Apocalypse; this version might be learned by a Black Spiral Theurge and summons Wyrm-spirits of all kinds. No Black Spiral Theurge has yet learned this Gift, but it might be taught by a Maeljin Incarna.",
+        "system": "The player spends three points of Gnosis and rolls Wits + Occult (difficulty of the local Gauntlet). The Gauntlet is torn open within the local area. The thinner the Gauntlet, the wider the rip: from a few rooms in the midst of a skyscraper to an entire mile of landscape in the depths of the Amazon. Friendly spirits of the Storyteller's choosing come flooding out to aid the Theurge - the more successes, the greater the number or power. The Gauntlet is permanently lowered by 1 in an area where this Gift has been used; this benefit doesn't stack with repeated use.\n\nBlack Spiral Dancer Version: Prelude to Apocalypse - As the Gaian Gift: As In the Beginning, this version might be learned by a Black Spiral Theurge and summons Wyrm-spirits of all kinds. No Black Spiral Theurge has yet learned this Gift, but it might be taught by a Maeljin Incarna.",
         "source": "20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [6],
+        "values": [
+            6
+        ],
         "shifter_type": ["Garou"],
         "splat": "Shifter",
+		"tribe": "Black Spiral Dancers",
+		"gift_alias": "Prelude to Apocalypse",
         "auspice": "Theurge"
     },
     {
@@ -46,23 +56,33 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [6],
+        "values": [
+            6
+        ],
         "shifter_type": ["Garou"],
         "splat": "Shifter",
+		"tribe": "Black Spiral Dancers",
         "auspice": "Theurge"
     },
     {
         "name": "Break the Bonds",
         "description": "Called Release from Bondage in older versions. There are many ways to mystically blend the will of another. This Gift shatters all such bonds, from the blood domination of a vampire to a mage's mind control or a Half Moon's geas. Those who know this Gift may use it on any being, including themselves. This Gift is only granted by an Incarna or equally powerful spirit, usually as a reward for some great service.",
-        "system": "The Garou is automatically immune to any supernatural coercion save from any being more powerful than an Incarna. The Gifted one may break another's mystic compulsion by touching her, spending a Gnosis point and rolling Manipulation + Leadership (difficulty 11 - the target's Willpower).",
+        "system": "The Garou is automatically immune to any supernatural coercion save from any being more powerful than an Incarna. The Gifted one may break another's mystic compulsion by touching her, spending a Gnosis point and rolling Manipulation + Leadership (difficulty 11 – the target's Willpower).\n\nNote: Previously called 'Release from Bondage' in earlier editions.",
         "source": "Book of Auspices / 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [6],
+        "values": [
+            6
+        ],
         "shifter_type": ["Garou"],
         "splat": "Shifter",
-        "auspice": ["Philodox", "Galliard"]
+		"tribe": "Black Spiral Dancers",
+		"gift_alias": "Release from Bondage",
+        "auspice": [
+            "Philodox",
+            "Galliard"
+        ]
     },
     {
         "name": "Storyteller",
@@ -72,22 +92,28 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [6],
+        "values": [
+            6
+        ],
         "shifter_type": ["Garou"],
         "splat": "Shifter",
+		"tribe": "Black Spiral Dancers",
         "auspice": "Galliard"
     },
     {
         "name": "Unstoppable Warrior",
         "description": "A Garou who uses this potent Gift can regenerate aggravated damage. This works against all attacks except those from silver weapons.",
         "system": "Each turn, roll Stamina + Primal-Urge against a difficulty 8; if successful, then spend one point of Rage per Health Level healed (much like a vampiric Blood Pool).",
-		"source": "Rage Across the Amazon",
+        "source": "Rage Across the Amazon",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [6],
+        "values": [
+            6
+        ],
         "shifter_type": ["Garou"],
         "splat": "Shifter",
+		"tribe": "Black Spiral Dancers",
         "auspice": "Ahroun"
     },
     {
@@ -98,10 +124,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [6],
-		"splat": "Shifter",
-		"auspice": "Ahroun",
-        "shifter_type": ["Garou"]
+        "values": [
+            6
+        ],
+        "splat": "Shifter",
+        "auspice": "Ahroun",
+		"tribe": "Black Spiral Dancers",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Sleep of the Hero",
@@ -111,23 +142,31 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [6],
-		"splat": "Shifter",
+        "values": [
+            6
+        ],
+        "splat": "Shifter",
         "tribe": "Fianna",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Call Great Fenris",
-        "description": "As the ultimate expression of the pact between tribe and totem, the greatest Get heroes my summon the war-avatar of their tribal totem to aid them in their hour of need. The avatar joins in combat, slaying all that are not Get of Fenris or under their protection. However, Great Fenris demands a sacrifice for his intervention - usually the left hand of the summoner. It's said that if the war-avatar is called for no good reason, it will devour the summoner entirely before departing - but there are no concrete tales of any Get of Fenris wise and mighty enough to attain this Gift yet foolish enough to abuse it. This Gift is taught by a wolf-spirit.",
+        "description": "As the ultimate expression of the pact between tribe and totem, the greatest Get heroes my summon the war-avatar of their tribal totem to aid them in their hour of need. The avatar joins in combat, slaying all that are not Get of Fenris or under their protection. However, Great Fenris demands a sacrifice for his intervention – usually the left hand of the summoner. It's said that if the war-avatar is called for no good reason, it will devour the summoner entirely before departing – but there are no concrete tales of any Get of Fenris wise and mighty enough to attain this Gift yet foolish enough to abuse it. This Gift is taught by a wolf-spirit.",
         "system": "The player spends one Gnosis point and rolls Stamina + Occult (difficulty 6). Success summons the war-avatar of Great Fenris, who will fight at the Fenrir's side for the duration of the scene. At the combat's end, the summoner automatically gains the Battle Scar: Maimed Limb (Werewolf, pg. 190) as the war-avatar claims Fenris' due; even if the Garou already possessed that Battle Scar, he gains it a second time as Fenris devours another limb.",
         "source": "Tribebook: Get of Fenris (Revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [6],
-		"splat": "Shifter",
+        "values": [
+            6
+        ],
+        "splat": "Shifter",
         "tribe": "Get of Fenris",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Renew the Cycle",
@@ -137,10 +176,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [6],
-		"splat": "Shifter",
+        "values": [
+            6
+        ],
+        "splat": "Shifter",
         "tribe": "Silver Fangs",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Thought-Form of the Twelve Ministers",
@@ -150,20 +193,28 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [6],
-		"splat": "Shifter",
+        "values": [
+            6
+        ],
+        "splat": "Shifter",
         "tribe": "Stargazers",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Becoming Uktena",
         "description": "The legends of the Cherokee say that a man was transformed into the Great Uktena to try to kill the sun. Great Uktena was around long before the Cherokee, but Garou have taken the form of his children on two or three occasions. Great Uktena teaches this Gift only to the most worthy of his Uktena followers; with it, the hero may transform into a creature even a Thunderwyrm would fear. After the crisis is resolved (assuming he lives), the new uktena slips into the nearest body of water and into the umbra, forever parting with his Garou brethren to join his father in Galunlati. Such a glorious end to an already legendary career is worthy of fireside retellings for generations. System: Once taught the Gift, the Uktena may call upon it at any time by invoking Great Uktena. The initial stage of the transformation takes three full turns, during which the werewolf's body grows and changes to a 20 foot horned serpent. The new uktena still retains the personality of the Garou at this point. After a period of time (usually no more than a scene), the final stage of the transformation begins as the mind of the Garou recedes and the uktena mindset takes over.",
         "game_line": "Werewolf: The Apocalypse",
-		"source": "Tribebook Uktena",
+        "source": "Tribebook Uktena",
         "category": "powers",
         "stat_type": "gift",
-        "values": [6],
-        "shifter_type": ["Garou"],
+        "values": [
+            6
+        ],
+        "shifter_type": [
+            "Garou"
+        ],
         "splat": "Shifter",
         "tribe": "Uktena"
     },
@@ -172,24 +223,34 @@
         "description": "The Garou can become so attuned to the laws and rhythms of Gaia that the Weaver's laws cease to have any affect on her. This Gift can only be used once by any Garou who learns it; its effects are permanent. The Garou becomes immune to the effects of one form of technology, such as bullets, photography (i.e., cannot be photographed), electricity, chemical toxins, etc. This Gift is taught by an avatar of Griffin.",
         "system": "The Garou spends a permanent point of Gnosis and chooses the one form of technology to which she will be immune. It is up to the Storyteller to determine exactly what is and is not included in the protection afforded by this Gift. For example, Garou who choose immunity to flame-throwers would not be burned by them, but other flames will act normally upon her. This Gift does apply against Wyrm-tainted technology, although not Wyrm substances. For instance, a Garou who is immune to chemical toxins may not be harmed by the Pentex acid, but the Bane in the acid can still try to possess her.",
         "game_line": "Werewolf: The Apocalypse",
-		"source": "Tribebook Red Talons",
+        "source": "Tribebook Red Talons",
         "category": "powers",
         "stat_type": "gift",
-        "values": [5, 6],
+        "values": [
+            5,
+            6
+        ],
         "shifter_type": ["Garou", "Rokea"],
         "splat": "Shifter",
+		"auspice": "Darkwater",
         "tribe": "Red Talons",
-        "gift_alias": ["C'et's Shell"]
+        "gift_alias": [
+            "C'et's Shell"
+        ]
     },
     {
         "name": "Home in All Lands",
         "description": "Legends among the Red Talons state that the wolves with the greatest connection to the Progenitor Wolf were not bound by distance, but indeed could appear anywhere where wolves were found. This was long thought to be simply lore, but in fact an elder Red Talon with strong enough lineage might well learn to fade from one location and appear anywhere else in the Realm or the Umbra, provided that the Progenitor has been there before him. Only the Progenitor Wolf himself teaches this Gift. System: The player must roll Gnosis as though her character were stepping sideways. If successful, the character may appear at any location on Earth where wolves might be found naturally (whether or not any may still exist) or any location that boasts Garou. She may instead choose to appear in any Umbral Realm that she has previously visited. A Red Talon must have Pure Breed 5 to learn this Gift.",
         "game_line": "Werewolf: The Apocalypse",
-		"source": "Tribebook Red Talons",
+        "source": "Tribebook Red Talons",
         "category": "powers",
         "stat_type": "gift",
-        "values": [6],
-        "shifter_type": ["Garou"],
+        "values": [
+            6
+        ],
+        "shifter_type": [
+            "Garou"
+        ],
         "splat": "Shifter",
         "tribe": "Red Talons"
     }

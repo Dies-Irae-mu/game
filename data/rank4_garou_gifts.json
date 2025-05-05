@@ -7,10 +7,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Fianna",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Warp Spasm",
@@ -20,10 +24,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Fianna",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Song of the Dire",
@@ -33,10 +41,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Fianna",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Balor's Gaze",
@@ -46,11 +58,16 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Fianna",
-        "shifter_type":  ["Garou", "Mokole"],
-        "gift_alias": ["Raptor's Gaze"]
+		"auspice": "Noonday Sun Unshading",
+        "shifter_type": ["Garou", "Mokole"],
+        "gift_alias": [
+            "Raptor's Gaze"
+        ]
     },
     {
         "name": "Phantasm",
@@ -60,11 +77,18 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [3, 4], 
+        "values": [
+            3,
+            4
+        ],
         "splat": "Shifter",
-        "tribe": "Fianna",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Nagah", "Nuwisha", "Ratkin"],
-        "gift_alias": ["Veil of Maya", "Whispered Dreams"]
+	    "tribe": ["Fianna", "Ceilican"],
+        "shifter_type": ["Garou", "Ajaba", "Bastet", "Nagah", "Nuwisha", "Ratkin"],
+		"auspice": ["Midnight", "Kartikeya", "Munchmausen"],
+        "gift_alias": [
+            "Veil of Maya",
+            "Whispered Dreams"
+        ]
     },
     {
         "name": "Calm Before the Storm",
@@ -74,24 +98,32 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Black Furies",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Blizzard of Arrows",
-        "description": "The Black Fury who uses this Gift truly shows herself the equal of any man - or machine - on the battlefield. Once Blizzard of Arrows is activated, the Garou deals out nightmarish pain to the hordes that oppose her. Heroes with this Gift might single-handedly have turned cavalry charges, in the days when such things still took place. For today, however, the Fury with this Gift is the perfect ally when faced by hordes of Wyrm-creatures. This Gift is taught by a Porcupine-spirit.",
+        "description": "The Black Fury who uses this Gift truly shows herself the equal of any man – or machine – on the battlefield. Once Blizzard of Arrows is activated, the Garou deals out nightmarish pain to the hordes that oppose her. Heroes with this Gift might single-handedly have turned cavalry charges, in the days when such things still took place. For today, however, the Fury with this Gift is the perfect ally when faced by hordes of Wyrm-creatures. This Gift is taught by a Porcupine-spirit.",
         "system": "Spend a point of Willpower and two points of Rage, and you may take a single arrow shot (at no multi-action penalty) at every at every foe within 100 yards, to a maximum of 20 enemies. Simply roll to hit once, using the sight and range penalties for the hardest to hit foe in range, and apply that number of successes against each enemy, which may soak, dodge, etc, as the Storyteller sees fit. This Gift is limited by the number of arrows you have on hand: all arrows that you intend to shoot must be someplace that can easily be nocked and shot from (in a quiver on the back or waist, or stuck point-first into the ground in front of you;  lying scattered nearby will not suffice). The bow and arrows may be of modern manufacture, but cannot use any exceptional Weaver-based equipment (such as laser sights or explosive tips) to gain any accuracy or damage boost. However, a fetise bow shooting talen arrows is certainly acceptable.",
         "source": "Tribebook: Black Furies (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Black Furies",
         "camp": "Amazons of Diana",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Bolster the True Name",
@@ -101,23 +133,30 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Black Furies",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Wasp Talons",
         "description": "The Fury with this talent can fire her claws from her hand like darts. She is incapable of using claw attacks with that hand until her claws regenerate, however. A wasp-spirit teaches this Gift.",
-        "system": "The player spends a Rage point and rolls Dexterity + Brawl to hit. The difficulty is figured as though the character was using a fire-arm; the medium range is 20 yards. Damage is figured normally for a claw-strike. The Garou's claws take one full turn to regenerate.",
+        "system": "The player spends a Rage point and rolls Dexterity + Brawl to hit. The difficulty is figured as though the character was using a fire-arm; the medium range is 20 yards. Damage is figured normally for a claw-strike. The Garou's claws take one full turn to regenerate.\n\nNagah Gift Darting Fangs: As per the Black Furies Gift: Wasp Talons, save that the barbs carry the Nagah's standard venom. The Nagah grows venomous barbs on her forearms, which she may fire at her opponents.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Black Furies",
-        "shifter_type":  ["Garou"]
+		"gift_alias": "Darting Fangs",
+        "shifter_type": ["Garou", "Nagah"]
     },
     {
         "name": "Body Wrack",
@@ -127,10 +166,13 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Black Furies",
-        "shifter_type":  ["Garou", "Ratkin"]
+		"breed": "Homid",
+        "shifter_type": ["Garou", "Ratkin"]
     },
     {
         "name": "Blink",
@@ -140,10 +182,13 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Bone Gnawers",
-        "shifter_type":  ["Garou", "Ratkin"]
+		"breed": "Homid",
+        "shifter_type": ["Garou", "Ratkin"]
     },
     {
         "name": "Cliche Curse",
@@ -153,10 +198,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Bone Gnawers",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Trust Me",
@@ -166,10 +215,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Bone Gnawers",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Face in the Crowd",
@@ -179,10 +232,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Bone Gnawers",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Shadow of the Rat",
@@ -192,10 +249,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Bone Gnawers",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Infest",
@@ -205,25 +266,37 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Bone Gnawers",
-        "shifter_type":  ["Garou", "Mokole", "Ratkin"]
+		"auspice": ["Decorated Suns Gathering", "Twitchers"],
+        "shifter_type": ["Garou", "Mokole", "Ratkin"]
     },
     {
         "name": "Attunement",
         "description": "The Garou may commune with the spirits of a city or town and gain information about the area from them, including rough population, enclaves of Garou or other being and secret tunnels. This Gift does not function in the wilderness, since the Bone Gnawers have lost the knack for conversing with such spirits easily. A rat-spirit teaches this Gift.",
         "system": "The player spends one Gnosis and rolls Perception + Streetwise. The amount and accuracy of the information depends on the number of successes rolled. On a botch, playful spirits lie (which can be fatal, depending on the nature of misinformation).",
-        "source": "Core book revised / Tribebook: Uktena (revised)",   
+        "source": "Core book revised / Tribebook: Uktena (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [3, 4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "breed": "Lupus",
-		"tribe": ["Silent Striders", "Glass Walkers", "Uktena"],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin", "Ananasi", "Corax", "Mokole"],
-        "gift_alias": ["Lay of the Land"]
+        "tribe": [
+            "Bone Gnawers",
+            "Silent Striders",
+            "Glass Walkers",
+            "Uktena"
+        ],
+		"auspice": "Viskr",
+        "shifter_type": ["Garou", "Ananasi", "Corax", "Mokole", "Ratkin"],
+        "gift_alias": [
+            "Lay of the Land"
+        ]
     },
     {
         "name": "Uncaught Since the Primal Morn",
@@ -233,10 +306,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Children of Gaia",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Serenity",
@@ -246,11 +323,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Children of Gaia",
-		"gift_alias": "Harmony of the Soul",
-        "shifter_type":  ["Garou", "Mokole"]
+        "gift_alias": "Harmony of the Soul",
+		"varna": "Zhong Lung",
+        "shifter_type": ["Garou", "Mokole"]
     },
     {
         "name": "Serpent-Driving",
@@ -260,10 +340,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Children of Gaia",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Unicorn's Grace",
@@ -273,10 +357,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Children of Gaia",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Strike the Air",
@@ -286,11 +374,17 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "tribe": ["Children of Gaia", "Stargazers"],
-        "shifter_type":  ["Garou", "Rokea"],
-		"gift_alias": "Quick Currents"
+		"auspice": "Dimwater",
+        "tribe": [
+            "Children of Gaia",
+            "Stargazers"
+        ],
+        "shifter_type": ["Garou", "Rokea"],
+        "gift_alias": "Quick Currents"
     },
     {
         "name": "Beast Life",
@@ -300,12 +394,21 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"tribe": ["Children of Gaia", "Black Furies"],
+        "values": [
+            4
+        ],
+        "tribe": [
+            "Children of Gaia",
+			"Black Spiral Dancers",
+            "Black Furies"
+        ],
         "splat": "Shifter",
-        "breed": "Lupus",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
-        "gift_alias": ["Rat Emperor's Wisdom", "Forest Lord"]
+        "breed": ["Lupus", "Arachnid", "Hyaenid", "Feline", "Ursine", "Roko", "Latrani", "Suchid", "Vasuki", "Rodens"],
+		"shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"],
+        "gift_alias": [
+            "Rat Emperor's Wisdom",
+            "Forest Lord"
+        ]
     },
     {
         "name": "Heart of the Mountain",
@@ -315,11 +418,17 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "tribe": ["Get of Fenris", "Glass Walkers", "Boli Zouhisze"],
-		"shifter_type":  ["Garou", "Gurahl"],
-		"gift_alias": "Yu's Endurance"
+        "tribe": [
+            "Get of Fenris",
+            "Glass Walkers",
+            "Boli Zouhisze"
+        ],
+        "shifter_type": ["Garou", "Gurahl"],
+        "gift_alias": "Yu's Endurance"
     },
     {
         "name": "Body Shift",
@@ -329,12 +438,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "tribe": ["Get of Fenris"], 
-        "breed": "Homid",
-		"auspice": "Ahroun",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
+        "tribe": ["Get of Fenris", "Black Spiral Dancers"],
+        "breed": ["Homid", "Kojin", "Balaram"],
+        "auspice": "Ahroun",
+		"shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
         "name": "Glory-Scars",
@@ -344,10 +455,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Get of Fenris",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Scream of Gaia",
@@ -357,11 +472,18 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-		"breed": "Lupus",
-        "tribe": ["Get of Fenris", "Wendigo"],
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin", "Mokole"]
+        "breed": ["Lupus", "Arachnid", "Hyaenid", "Feline", "Ursine", "Roko", "Latrani", "Suchid", "Vasuki", "Rodens"],
+        "tribe": [
+            "Get of Fenris",
+			"Black Spiral Dancers",
+            "Wendigo"
+        ],
+		"auspice": "Rising Sun Striking",
+		"shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
         "name": "Hero's Stand",
@@ -371,27 +493,39 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "tribe": ["Get of Fenris", "Wendigo"],
-        "shifter_type":  ["Garou", "Gurahl"],
-        "gift_alias": ["Strength of the Earth"]
+        "tribe": [
+            "Get of Fenris",
+			"Black Spiral Dancers",
+            "Wendigo"
+        ],
+        "shifter_type": ["Garou", "Gurahl"],
+		"auspice": "Uzmati",
+        "gift_alias": [
+            "Strength of the Earth"
+        ]
     },
     {
         "name": "Avalanche",
         "description": "The Garou must be in a mountainous or otherwise tectonically unstable area. The Garou causes an avalanche, mudslide, etc. to engulf his foes. The Gift is taught by an earth elemental.",
-        "system": "The Garou spends one Gnosis point and then rolls Manipulation + Survival (difficulty determined by the Storyteller based on the instability of the terrain). The more successes, the more powerful the effect. On a botch, the Garou is caught in the avalanche.",
+        "system": "The Garou spends one Gnosis point and then rolls Manipulation + Survival (difficulty determined by the Storyteller based on the instability of the terrain). The more successes, the more powerful the effect. On a botch, the Garou is caught in the avalanche.\n\nRokea General Rank 4 Gift: Inundate - As the Rank 4 Red Talon Gift: Avalanche, but Inundate concentrates moisture from the air to surround a target.",
         "source": "Corebook 2nd edition/Breed Book: Rokea",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "breed": "Lupus",
-		"tribe": "Red Talons",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin", "Rokea"],
-        "gift_alias": ["Inundate"]
-    },  
+        "tribe": "Red Talons",
+        "shifter_type": ["Garou", "Rokea"],
+        "gift_alias": [
+            "Inundate"
+        ]
+    },
     {
         "name": "Form of Akhlut",
         "description": "Inuit myth tells of Akhlut, a killer whale that turned into a wolf to walk on land. The legends are almost right, of course. This Gift allows a Red Talon to take on an aquatic form such as a fish, dolphin or whale. It is believed by some that this Gift is how the Red Talons spread from their original lands to other continents. The Gift is taught by the spirit of an appropriate pelagic animal, although the Red Talons respect the orca most of all.",
@@ -400,10 +534,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Red Talons",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Pain of the Land",
@@ -413,11 +551,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Red Talons",
-		"camp": "Dying Cubs",
-        "shifter_type": ["Garou"]
+        "camp": "Dying Cubs",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Howl of Death",
@@ -427,10 +569,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "tribe": "Red Talons",
-        "shifter_type":  ["Garou"]
+		"auspice": "Galliard",
+        "tribe": ["Red Talons", "Black Spiral Dancers"],
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Quicksand",
@@ -440,11 +587,20 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [3, 4], 
+        "values": [
+            3,
+            4
+        ],
         "splat": "Shifter",
-        "tribe": ["Red Talons", "Bunyip"],
-        "shifter_type":  ["Garou", "Bastet"],
-        "gift_alias": ["Bayou's Embrace"]
+        "tribe": [
+            "Red Talons",
+			"Pumonca",
+            "Bunyip"
+        ],
+        "shifter_type": ["Garou", "Bastet"],
+        "gift_alias": [
+            "Bayou's Embrace"
+        ]
     },
     {
         "name": "Gorge",
@@ -454,10 +610,10 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [3, 4],
         "splat": "Shifter",
         "tribe": "Red Talons",
-        "shifter_type":  ["Garou", "Ajaba"]
+        "shifter_type": ["Garou", "Ajaba", "Yeren"]
     },
     {
         "name": "Clenched Jaw",
@@ -467,13 +623,21 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [3, 4], 
+        "values": [
+            3,
+            4
+        ],
         "splat": "Shifter",
-        "auspice": "Ahroun",
-		"camp": "Mjolnir's Thunder",
-		"tribe": ["Get of Fenris", "Red Talons", "Kucha Ekundu"],
-        "shifter_type":  ["Garou", "Ajaba", "Mokole", "Rokea"],
-		"gift_alias": "Iron Jaws"
+        "auspice": ["Ahroun", "Setting Sun Warding"],
+        "camp": "Mjolnir's Thunder",
+        "tribe": [
+            "Get of Fenris",
+            "Red Talons",
+            "Kucha Ekundu",
+			"Black Spiral Dancers"
+        ],
+        "shifter_type": ["Garou", "Ajaba", "Mokole"],
+        "gift_alias": "Iron Jaws"
     },
     {
         "name": "Umbral Motorcade",
@@ -483,11 +647,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Glass Walkers",
         "camp": "Wise Guys",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Corner Shot",
@@ -497,11 +665,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Glass Walkers",
         "camp": "Wise Guys",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Signal Rider",
@@ -511,10 +683,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Glass Walkers",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Call the City's Wolves",
@@ -524,10 +700,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Glass Walkers",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Tractor Beam",
@@ -537,10 +717,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Glass Walkers",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Virtual Umbra",
@@ -550,10 +734,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Glass Walkers",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Tech Speak",
@@ -563,24 +751,35 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Glass Walkers",
-        "shifter_type":  ["Garou", "Bastet"]
+		"breed": "Homid",
+        "shifter_type": ["Garou", "Bastet"]
     },
     {
         "name": "Doppelganger",
         "description": "The Garou may take the exact likeness of any other human, wolf or Garou. A chameleon-spirit teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Charisma + Performance (difficulty 8). Traits aren't duplicated, but everything else, including voice, posture and scent, is identical. The effects last for one day per success.",
+        "system": "The player spends one Gnosis point and rolls Charisma + Performance (difficulty 8). Traits aren't duplicated, but everything else, including voice, posture and scent, is identical. The effects last for one day per success. (Bastet Rank 4 Homid Gift Monkey's Uncle): As the Glass Walker Gift: Doppelganger, although the Bastet can only take the forms of humans, great cats or Bastet.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [3, 4], 
+        "values": [
+            3,
+            4
+        ],
         "splat": "Shifter",
-        "tribe": "Glass Walkers",
-        "shifter_type":  ["Garou", "Bastet", "Nagah", "Kitsune", "Ratkin"],
-        "gift_alias": ["Monkey's Uncle", "Moon-Fan-Face-Shadow"]
+        "tribe": ["Glass Walkers", "Black Spiral Dancers"],
+		"breed": "Homid",
+		"auspice": ["Gukutsushi", "Kamsa", "Knife Skulkers"],
+        "shifter_type": ["Garou", "Bastet", "Kitsune", "Nagah", "Ratkin"],
+        "gift_alias": [
+            "Monkey's Uncle",
+            "Moon-Fan-Face-Shadow"
+        ]
     },
     {
         "name": "Assassin's Strike",
@@ -590,11 +789,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Shadow Lords",
         "camp": "Judges of Doom",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Durance",
@@ -604,10 +807,17 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "tribe": ["Shadow Lords", "Uktena"],
-        "shifter_type":  ["Garou"]
+        "tribe": [
+            "Shadow Lords",
+            "Uktena"
+        ],
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Ubiquitous Presence",
@@ -617,10 +827,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Shadow Lords",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Seeds of Doubt",
@@ -630,10 +844,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Shadow Lords",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Call the Storm",
@@ -643,11 +861,22 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4, 5], 
+        "values": [
+            4,
+            5
+        ],
         "splat": "Shifter",
-        "tribe": ["Shadow Lords", "Wendigo", "Bunyip"],
-        "shifter_type":  ["Garou", "Mokole"],
-        "gift_alias": ["Invoke the Spirits of the Storm", "Anger of the Wani"]
+        "tribe": [
+            "Shadow Lords",
+            "Wendigo",
+            "Bunyip"
+        ],
+		"auspice": "Rising Sun Striking",
+        "shifter_type": ["Garou", "Mokole"],
+        "gift_alias": [
+            "Invoke the Spirits of the Storm",
+            "Anger of the Wani"
+        ]
     },
     {
         "name": "Strength of the Dominator",
@@ -657,10 +886,13 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Shadow Lords",
-        "shifter_type":  ["Garou", "Mokole"]
+		"auspice": "Noonday Sun Unshading",
+        "shifter_type": ["Garou", "Mokole"]
     },
     {
         "name": "Open Wounds",
@@ -670,10 +902,13 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "tribe": "Shadow Lords",
-        "shifter_type":  ["Garou", "Ajaba", "Nagah", "Ratkin"]
+		"auspice": ["Dusk", "Kamsa", "Knife Skulkers"],
+        "tribe": ["Shadow Lords", "Black Spiral Dancers"],
+        "shifter_type": ["Garou", "Ajaba", "Nagah", "Ratkin"]
     },
     {
         "name": "Black Mark",
@@ -683,10 +918,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Silent Striders",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Guiding Hand of Djeheuty",
@@ -696,10 +935,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Silent Striders",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Touch of Death",
@@ -709,11 +952,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Silent Striders",
-		"camp": "Eaters of the Dead",
-        "shifter_type": ["Garou"]
+        "camp": "Eaters of the Dead",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Dam the Heartflood",
@@ -723,10 +970,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Silent Striders",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Mindblock",
@@ -736,11 +987,19 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-		"camp": "Swords of Night",
-        "tribe": ["Silent Striders", "Silver Fangs", "Stargazers"],
-        "shifter_type":  ["Garou", "Nagah", "Ananasi", "Nagah"]
+        "camp": "Swords of Night",
+		"auspice": "Kali",
+        "tribe": [
+            "Silent Striders",
+            "Silver Fangs",
+			"Kumoti",
+            "Stargazers"
+        ],
+        "shifter_type": ["Garou", "Ananasi", "Nagah"]
     },
     {
         "name": "Speed Beyond Thought",
@@ -750,10 +1009,13 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [3, 4], 
+        "values": [
+            3,
+            4
+        ],
         "splat": "Shifter",
-        "tribe": "Silent Striders",
-        "shifter_type":  ["Garou", "Bastet"]
+        "tribe": ["Silent Striders", "Swara"],
+        "shifter_type": ["Garou", "Bastet"]
     },
     {
         "name": "Crescent Moon Fata",
@@ -763,11 +1025,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Silver Fangs",
-		"camp": "Moon",
-        "shifter_type": ["Garou"]
+        "camp": "Moon",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Gibbous Moon's Understanding",
@@ -777,11 +1043,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Silver Fangs",
-		"camp": "Moon",
-        "shifter_type": ["Garou"]
+        "camp": "Moon",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Leshii's Boon",
@@ -791,11 +1061,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Silver Fangs",
-		"camp": "Crescent Moon",
-        "shifter_type": ["Garou"]
+        "camp": "Crescent Moon",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Sidestep Death",
@@ -805,11 +1079,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Silver Fangs",
-		"gift_alias": "Ignore Death Blow",
-        "shifter_type":  ["Garou"]
+        "gift_alias": "Ignore Death Blow",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Mastery",
@@ -819,10 +1097,13 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Silver Fangs",
-        "shifter_type":  ["Garou", "Mokole"]
+		"auspice": "Solar Eclipse Crowning",
+        "shifter_type": ["Garou", "Mokole"]
     },
     {
         "name": "Imaginal Mantra",
@@ -832,62 +1113,82 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Stargazers",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Visuddha",
-        "description": "Awakening the Serpent Fire Gift: The Serpent Fire gifts must be learned in order, from 1 - 5. The throat chakra stirs, allowing the character immense control over his voice and breath. He can halt others with a bellow or command them to heed his words.",
+        "description": "Awakening the Serpent Fire Gift: The Serpent Fire gifts must be learned in order, from 1 – 5. The throat chakra stirs, allowing the character immense control over his voice and breath. He can halt others with a bellow or command them to heed his words.",
         "system": "The player rolls Manipulation + Expression and spends one Gnosis point. For the next scene, anything the Stargazer says has a commanding quality to it. Each success on the roll lowers the difficulty on any roll to command others, and he may even ask them to act in ways contrary to their nature (although not acts which will directly harm them). In addition, he may issue a resounding Ki-ai at any time, a bellow meant to scare opponents and give the Stargazer the initiative in combat. Roll Stamina + Expression; each success lowers an opponent's initiative and attack Dice Pools by one die for three turns. The ki'ai does not require a separate action; characters do not have to split their Dice Pools to issue one in the same turn in which they attack. A Ki-ai may be effective against a single opponent only once per scene.",
         "source": "Stargazers Tribebook (revised, 1st ed.)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Stargazers",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Seeking the Void",
-        "description": "The spoken mantra for this Gift is Aum-Ha-Sa-Kha-Prem. The Umbra, also called the Mirror Lands, is a void empty of true matter and built of little more than the ephemeral whorls of spirit substance. Many Garou are reliant upon hard travel within the Umbra. They must find their destination and get to it via moon paths or sniffing out spirit tracks. Stargazers using this Gift have a somewhat easier time getting somewhere in the Mirror Lands - provided that another Garou or spirit is already there. Using this Gift takes the werewolf directly to the location of the chosen individual, no matter where they are at that moment. The Stargazer must be in the Umbra to use this Gift. It is taught by a shadow-spirit.",
+        "description": "The spoken mantra for this Gift is Aum-Ha-Sa-Kha-Prem. The Umbra, also called the Mirror Lands, is a void empty of true matter and built of little more than the ephemeral whorls of spirit substance. Many Garou are reliant upon hard travel within the Umbra. They must find their destination and get to it via moon paths or sniffing out spirit tracks. Stargazers using this Gift have a somewhat easier time getting somewhere in the Mirror Lands – provided that another Garou or spirit is already there. Using this Gift takes the werewolf directly to the location of the chosen individual, no matter where they are at that moment. The Stargazer must be in the Umbra to use this Gift. It is taught by a shadow-spirit.",
         "system": "The Stargazer utilizing this Gift must speak the mantra while actually in the Umbra. She also must have with her some piece of the Garou she's “traveling” to, usually a part of the werewolf's body (a tuft of hair, a tooth, a claw) or one of the Garou's possessions (a weapon, an article of clothing). In the case of traveling to a specific spirit, the Stargazer can only travel to spirits she has literally battled with. (Though “battled” can be a battle of wits and intelligence, and doesn't necessarily need to be a combative conflict.) The player then rolls Wits + Enigmas. The difficulty for the roll is reliant upon the location of the target individual. If the target is in the Penumbra, it's difficulty 6. If the target is in the Near Umbra, difficulty 7. In the Deep Umbra, difficulty 8. And finally, in the Dark Umbra, difficulty 9.",
         "source": "Stargazers Tribebook (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Stargazers",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "The Silken Cloth",
         "description": "This Gift takes its name from an ancient Stargazer tradition. It's believe that those who are not shapechangers cannot enter the Mirror Lands of the Umbra because they are impure. They do not have a kernel of the celestial substance of cosmos within them, as the Garou and the other Fera do. But many Stargazers still wished to show mortals (or others unable to access the Umbra) the hidden truths and puzzles found only in the Mirror Lands. Once, Stargazers could purify others with a silken cloth, rubbing them with it, so that they may enter the Umbra together. Now, that ability has been made into a Gift. This Gift lets a Stargazer bring one other human (or otherwise Umbra-banned individual) with her when she Steps Sideways. This Gift is taught by an Engling.",
-        "system": "The player must make two stepping sideways rolls: one for the Stargazer, and one for her “guest.” However, the Stargazer must spend one Gnosis point for the guest to come through with her. If the roll to bring her guest across botches, the poor soul is lost somewhere in the Umbra - even someplace as horrible as the Abyss or the Atrocity Realm.",
+        "system": "The player must make two stepping sideways rolls: one for the Stargazer, and one for her “guest.” However, the Stargazer must spend one Gnosis point for the guest to come through with her. If the roll to bring her guest across botches, the poor soul is lost somewhere in the Umbra – even someplace as horrible as the Abyss or the Atrocity Realm.",
         "source": "Stargazers Tribebook (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Stargazers",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Summon the Chu-Mong",
         "description": "A long time ago, the Stargazers of Tibet made a pact with an ancient tribe of mountain spirits called the Chu-Mong (snow goblins). The pact was one of mutual protection, and a Stargazer using this Gift can reawaken the usefulness of the pact, at least temporarily. It summons the spirit of a Chu-Mong to help protect the Stargazer in question. Only a Chu-Mong can teach this Gift.",
-        "system": "The player spends a Gnosis point and rolls the Stargazer's Gnosis. The difficulty isn't the area's Gauntlet - the difficulty is actually reliant upon the temperature. The warmer the temperature, the harder it is to summon a Chu-Mong. Temperature - Difficulty / Below 0F - 5 0-32F - 6 32-49F - 7 49-65F - 8 65-80 - 9 Above 80F - 10.",
+        "system": "The player spends a Gnosis point and rolls the Stargazer's Gnosis. The difficulty isn't the area's Gauntlet – the difficulty is actually reliant upon the temperature. The warmer the temperature, the harder it is to summon a Chu-Mong. Temperature - Difficulty / Below 0F - 5 0-32F - 6 32-49F - 7 49-65F - 8 65-80 - 9 Above 80F - 10.",
         "source": "Stargazers Tribebook (revised)",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Stargazers",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Avoid Fate",
@@ -897,10 +1198,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Stargazers",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Preternatural Awareness",
@@ -910,11 +1215,16 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Stargazers",
-        "shifter_type":  ["Garou", "Camazotz", "Ratkin"],
-        "gift_alias": ["Persecution Complex"]
+        "shifter_type": ["Garou", "Camazotz", "Ratkin"],
+		"auspice": "Warriors",
+        "gift_alias": [
+            "Persecution Complex"
+        ]
     },
     {
         "name": "Curse of Corruption",
@@ -924,11 +1234,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "tribe": "Uktena",
-		"camp": "Bane Tender",
-        "shifter_type":  ["Garou"]
+        "camp": "Bane Tender",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Bare the Heart",
@@ -938,11 +1252,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Uktena",
-		"camp": "Earth Guide",
-        "shifter_type": ["Garou"]
+        "camp": "Earth Guide",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Guardian's Fortitude",
@@ -952,10 +1270,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Uktena",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Spirit's Horse",
@@ -965,8 +1287,12 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type": ["Garou"],
+        "values": [
+            4
+        ],
+        "shifter_type": [
+            "Garou"
+        ],
         "splat": "Shifter",
         "tribe": "Uktena"
     },
@@ -978,10 +1304,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"tribe": "Uktena",
-		"shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "tribe": "Uktena",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Pointing the Bone",
@@ -991,10 +1321,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Uktena",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Hand of the Earth Lords",
@@ -1004,24 +1338,33 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Uktena",
+		"auspice": "Setting Sun Warding",
         "shifter_type": ["Garou", "Mokole"]
     },
     {
         "name": "Call Elemental",
         "description": "The Garou is able to call one of the four classic elementals to his aid (earth, air, fire or water). An elemental teaches this Gift.",
-        "system": "The player spends one Gnosis point and rolls Gnosis (difficulty of the area's Gauntlet). She must then roll Manipulation + Occult (difficulty 7) to make the elemental look favorably upon the Garou. The elemental vanishes at the end of the scene.",
+        "system": "The player spends one Gnosis point and rolls Gnosis (difficulty of the area's Gauntlet). She must then roll Manipulation + Occult (difficulty 7) to make the elemental look favorably upon the Garou. The elemental vanishes at the end of the scene.\n\nNagah Ahi Rank 3 Gift: Command Water Spirit - As the Uktena Gift: Call Elemental, but only water-spirits can be called.",
         "source": "Core book revised / 20th Anniversary Edition",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [3, 4], 
+        "values": [
+            3,
+            4
+        ],
         "splat": "Shifter",
-        "tribe": "Uktena",
-        "shifter_type":  ["Garou", "Bastet", "Nagah"],
-        "gift_alias": ["Command Water Spirit"]
+        "tribe": ["Uktena", "Pumonca", "Black Spiral Dancers"],
+		"breed": "Ahi",
+        "shifter_type": ["Garou", "Bastet", "Nagah"],
+        "gift_alias": [
+            "Command Water Spirit"
+        ]
     },
     {
         "name": "Words Like Wind",
@@ -1031,10 +1374,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "auspice": "Galliard",
-        "shifter_type":  ["Garou"]
+		"tribe": "Black Spiral Dancers",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Gift of Dreams",
@@ -1044,10 +1392,16 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "auspice": "Galliard",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet"]
+        "auspice": [
+            "Galliard",
+			"Midnight"
+        ],
+		"tribe": ["Ceilican", "Black Spiral Dancers"],
+        "shifter_type": ["Garou", "Ajaba", "Bastet"]
     },
     {
         "name": "Book of Years",
@@ -1057,10 +1411,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "auspice": "Galliard",
-        "shifter_type":  ["Garou"]
+		"tribe": "Black Spiral Dancers",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Shadows by the Firelight",
@@ -1070,10 +1429,13 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "auspice": "Galliard",
-        "shifter_type":  ["Garou", "Gurahl", "Mokole", "Kitsune"]
+        "auspice": ["Galliard", "Kojubat", "Kataribe", "Decorated Suns Gathering", "Midnight Sun Shining"],
+		"tribe": "Black Spiral Dancers",
+        "shifter_type": ["Garou", "Gurahl", "Kitsune", "Mokole"]
     },
     {
         "name": "Bridge Walker",
@@ -1083,10 +1445,16 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "auspice": "Galliard",
-        "shifter_type":  ["Garou", "Nuwisha"]
+		"tribe": "Black Spiral Dancers",
+        "shifter_type": [
+            "Garou",
+			"Nuwisha"
+        ]
     },
     {
         "name": "Call the Ice",
@@ -1096,10 +1464,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Wendigo",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Wsitiplaju's Bow",
@@ -1109,10 +1481,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Wendigo",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Bark of Willow",
@@ -1122,10 +1498,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Wendigo",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Last Stand",
@@ -1135,10 +1515,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Wendigo",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Shelter of Needles",
@@ -1148,10 +1532,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Wendigo",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Curse of Harano",
@@ -1161,10 +1549,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Wendigo",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Chill of Early Frost",
@@ -1174,14 +1566,24 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "tribe": ["Wendigo", "Get of Fenris"],
-		"camp": "Ymir's Sweat",
-        "shifter_type":  ["Garou", "Bastet", "Nagah"],
-        "gift_alias": ["Cooling System", "Song of Winter"]
+        "tribe": [
+            "Wendigo",
+			"Qualmi",
+            "Get of Fenris"
+        ],
+        "camp": "Ymir's Sweat",
+		"auspice": "Kali",
+        "shifter_type": ["Garou", "Bastet", "Nagah"],
+        "gift_alias": [
+            "Cooling System",
+            "Song of Winter"
+        ]
     },
-	{
+    {
         "name": "Call of the Cannibal Spirit",
         "description": "By dancing under the night sky, the werewolf can summon an avatar of Great Wendigo to hunt down a target of the Garou's choice. The Garou must possess a piece of his target whose heart the Wendigo devours.",
         "system": "The Garou must dance for three full turns. The player spends one Rage point and one Gnosis point, then rolls Charisma + Occult (difficulty 8). If the roll botches, or if the Wendigo is somehow prevented from killing its target, it will return to kill the summoner.",
@@ -1189,11 +1591,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-        "shifter_type":  ["Garou"],
+        "values": [
+            4
+        ],
+        "shifter_type": [
+            "Garou"
+        ],
         "splat": "Shifter",
         "tribe": "Wendigo",
-		"gift_alias": "Call the Cannibal Spirit"
+        "gift_alias": "Call the Cannibal Spirit"
     },
     {
         "name": "Black Mamba Strike",
@@ -1203,10 +1609,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "auspice": "Ahroun",
-        "shifter_type":  ["Garou"]
+		"tribe": "Black Spiral Dancers",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Full Moon's Light",
@@ -1216,10 +1627,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "auspice": "Ahroun",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Touch of Rage",
@@ -1229,10 +1644,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "auspice": "Ahroun",
-        "shifter_type":  ["Garou"]
+		"tribe": "Black Spiral Dancers",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Stoking Fury's Furnace",
@@ -1242,11 +1662,24 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "auspice": "Ahroun",
-        "shifter_type":  ["Garou", "Ajaba", "Nagah"],
-        "gift_alias": ["Blood Running Hot"]
+        "auspice": [
+            "Ahroun",
+			"Dawn",
+			"Kartikeya"
+        ],
+        "shifter_type": [
+            "Garou",
+			"Ajaba",
+			"Nagah"
+        ],
+		"tribe": "Black Spiral Dancers",
+        "gift_alias": [
+            "Blood Running Hot"
+        ]
     },
     {
         "name": "Misdirection",
@@ -1256,10 +1689,18 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "auspice": "Ragabash",
-        "shifter_type":  ["Garou"]
+		"tribe": ["Kumo", "Black Spiral Dancers"],
+        "auspice": [
+            "Ragabash"
+        ],
+        "shifter_type": [
+            "Garou",
+			"Ananasi"
+        ]
     },
     {
         "name": "Umbral Dodge",
@@ -1269,10 +1710,18 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "auspice": "Ragabash",
-        "shifter_type":  ["Garou"]
+		"tribe": ["Kumo", "Black Spiral Dancers"],
+        "auspice": [
+            "Ragabash"
+        ],
+        "shifter_type": [
+            "Garou",
+			"Ananasi"
+        ]
     },
     {
         "name": "Fog of War",
@@ -1282,11 +1731,18 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"auspice": ["Ragabash", "Galliard"],
-        "tribe": "Fianna",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "auspice": [
+            "Ragabash",
+            "Galliard"
+        ],
+        "tribe": ["Fianna", "Kumo", "Black Spiral Dancers"],
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Madness Season",
@@ -1296,10 +1752,18 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "auspice": "Ragabash",
-        "shifter_type":  ["Garou"]
+		"tribe": ["Kumo", "Black Spiral Dancers"],
+        "auspice": [
+            "Ragabash"
+        ],
+        "shifter_type": [
+            "Garou",
+			"Ananasi"
+        ]
     },
     {
         "name": "Whelp Body",
@@ -1309,11 +1773,19 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
-        "splat": "Shifter",
-        "auspice": "Ragabash",
-		"gift_alias": "Drying Bite",
-        "shifter_type":  ["Garou", "Ananasi", "Kitsune", "Ratkin"]
+        "values": [
+            4
+        ],
+        "splat": ["Shifter", "Black Spiral Dancers"],
+		"tribe": "Kumo",
+		"breed": "Metis",
+        "auspice": [
+            "Ragabash",
+			"Gukutsushi",
+			"Auspice"
+        ],
+        "gift_alias": "Drying Bite",
+        "shifter_type": ["Garou", "Ananasi", "Kitsune", "Ratkin"]
     },
     {
         "name": "Luna's Blessing",
@@ -1323,11 +1795,19 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "auspice": "Ragabash",
-        "shifter_type": ["Garou", "Gurahl"],
-        "gift_alias": ["Favor of Ursa Minor"]
+		"tribe": "Kumo",
+        "auspice": [
+            "Ragabash",
+			"Arcas"
+        ],
+        "shifter_type": ["Garou", "Ananasi", "Gurahl"],
+        "gift_alias": [
+            "Favor of Ursa Minor"
+        ]
     },
     {
         "name": "Rebirth",
@@ -1337,23 +1817,33 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "auspice": "Philodox",
-        "shifter_type":  ["Garou"]
+		"tribe": "Black Spiral Dancers",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Reality's Path",
         "description": "Perception is subjective, but the Philodox cannot afford that luxury. This Gift allows the user to sense whether what the subject believes to be true is actually false. A Jaggling of Falcon teaches this Gift.",
-        "system": "The player rolls Perception + Enigmas (difficulty 7). A single success determines if what the subject is telling an unintended untruth. Three successes will discover if the subject was deliberately misled. Five successes or more will reveal the truth of the lie at its simplest level (it might tell who perpetrated a crime, but not why or who the perp was working for). Note that this Gift only works when a subject speaks what he truly believes; packmates can't go on \"fishing expeditions\" by throwing out names to determine who really committed a deed, for example. Reality's path deals with knowable facts (\"She never intended to return\", \"despite his boast, your brother didn't kill the Bane single-handed\"), not greater spiritual truths.",
+        "system": "The player rolls Perception + Enigmas (difficulty 7). A single success determines if what the subject is telling an unintended untruth. Three successes will discover if the subject was deliberately misled. Five successes or more will reveal the truth of the lie at its simplest level (it might tell who perpetrated a crime, but not why or who the perp was working for). Note that this Gift only works when a subject speaks what he truly believes; packmates can't go on 'fishing expeditions' by throwing out names to determine who really committed a deed, for example. Reality's path deals with knowable facts ('She never intended to return', 'despite his boast, your brother didn't kill the Bane single-handed'), not greater spiritual truths.",
         "source": "Book of Auspices",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
+		"tribe": "Black Spiral Dancers",
         "auspice": "Philodox",
-        "shifter_type":  ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Take the True Form",
@@ -1363,10 +1853,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4, 5], 
+        "values": [
+            4,
+            5
+        ],
         "splat": "Shifter",
-        "auspice": "Philodox",
-        "shifter_type":  ["Garou", "Mokole"]
+        "auspice": ["Philodox", "Midnight Sun Shining"],
+		"tribe": "Black Spiral Dancers",
+        "shifter_type": ["Garou", "Mokole"]
     },
     {
         "name": "Scent of Beyond",
@@ -1376,10 +1870,17 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
+		"breed": "Shinju",
         "auspice": "Philodox",
-        "shifter_type":  ["Garou", "Kitsune"]
+		"tribe": "Black Spiral Dancers",
+        "shifter_type": [
+            "Garou",
+			"Kitsune"
+        ]
     },
     {
         "name": "Roll Over",
@@ -1389,12 +1890,18 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-		"tribe": "Shadow Lords",
-		"camp": "Lords of the Summit",
+        "tribe": ["Shadow Lords", "Black Spiral Dancers"],
+        "camp": "Lords of the Summit",
         "auspice": "Philodox",
-        "shifter_type":  ["Garou", "Kitsune"]
+		"breed": "Shinju",
+        "shifter_type": [
+            "Garou",
+			"Kitsune"
+        ]
     },
     {
         "name": "Spirit Blossom",
@@ -1404,10 +1911,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"auspice": "Theurge",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "auspice": "Theurge",
+		"tribe": "Black Spiral Dancers",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Blurring the Mirror",
@@ -1417,11 +1929,16 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-		"auspice": "Theurge", 
-        "shifter_type":  ["Garou", "Nuwisha"],
-        "gift_alias": ["Locked Door"]
+        "auspice": "Theurge",
+		"tribe": "Black Spiral Dancers",
+        "shifter_type": ["Garou", "Nuwisha"],
+        "gift_alias": [
+            "Locked Door"
+        ]
     },
     {
         "name": "Prophecy",
@@ -1431,10 +1948,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"auspice": "Theurge",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "auspice": "Theurge",
+		"tribe": "Black Spiral Dancers",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Placation",
@@ -1444,10 +1966,15 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"auspice": "Theurge",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "auspice": "Theurge",
+		"tribe": "Black Spiral Dancers",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Shadowplay",
@@ -1457,10 +1984,16 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
+        "values": [
+            4
+        ],
         "splat": "Shifter",
         "auspice": "Theurge",
-        "shifter_type":  ["Garou", "Bastet"]
+		"tribe": ["Bubasti", "Black Spiral Dancers"],
+        "shifter_type": [
+            "Garou",
+            "Bastet"
+        ]
     },
     {
         "name": "Spirit Drain",
@@ -1470,10 +2003,13 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "auspice": "Theurge",
-        "shifter_type":  ["Garou", "Kitsune"]
+        "auspice": ["Theurge", "Doshi"],
+		"tribe": "Black Spiral Dancers",
+        "shifter_type": ["Garou", "Kitsune"]
     },
     {
         "name": "Grasp the Beyond",
@@ -1483,10 +2019,18 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4, 5], 
+        "values": [
+            4,
+            5
+        ],
         "splat": "Shifter",
-        "auspice": "Theurge",
-        "shifter_type":  ["Garou", "Ajaba", "Nuwisha", "Kitsune", "Mokole"]
+        "auspice": [
+            "Theurge",
+			"Dawn",
+			"Doshi"
+        ],
+		"tribe": "Black Spiral Dancers",
+        "shifter_type": ["Garou", "Ajaba", "Kitsune", "Mokole", "Nuwisha"]
     },
     {
         "name": "Web of Knowledge",
@@ -1496,10 +2040,13 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "breed": "Homid",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
+        "breed": ["Homid", "Kojin", "Balaram"],
+		"tribe": "Black Spiral Dancers",
+		"shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
         "name": "Bury the Wolf",
@@ -1509,11 +2056,16 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "breed": "Homid",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
-        "gift_alias": ["Hide the Bear"]
+        "breed": ["Homid", "Kojin", "Balaram"],
+		"tribe": "Black Spiral Dancers",
+		"shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"],
+        "gift_alias": [
+            "Hide the Bear"
+        ]
     },
     {
         "name": "Spirit Ward",
@@ -1523,12 +2075,19 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [2, 4], 
+        "values": [
+            2,
+            4
+        ],
         "splat": "Shifter",
-        "breed": "Homid",
-		"auspice": "Theurge",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"],
-        "gift_alias": ["Spirit Barrier", "Spirit Shield"]
+        "breed": ["Homid", "Kojin", "Balaram"],
+        "auspice": ["Theurge", "Doshi"],
+		"tribe": ["Bubasti", "Black Spiral Dancers"],
+		"shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"],
+        "gift_alias": [
+            "Spirit Barrier",
+            "Spirit Shield"
+        ]
     },
     {
         "name": "Cocoon",
@@ -1538,11 +2097,18 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [3, 4], 
+        "values": [
+            3,
+            4
+        ],
         "splat": "Shifter",
-        "breed": "Homid",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin", "Mokole", "Ananasi"],
-        "gift_alias": ["Ursa's Coat"]
+        "breed": ["Homid", "Kojin", "Balaram"],
+		"auspice": "Viskr",
+		"shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"],
+		"tribe": "Black Spiral Dancers",
+        "gift_alias": [
+            "Ursa's Coat"
+        ]
     },
     {
         "name": "Hibernation",
@@ -1552,10 +2118,13 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [2, 4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "breed": "Lupus",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
+        "breed": ["Lupus", "Arachnid", "Hyaenid", "Feline", "Ursine", "Roko", "Latrani", "Suchid", "Vasuki", "Rodens"],
+		"tribe": "Black Spiral Dancers",
+		"shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
         "name": "Terror of the Dire Wolf",
@@ -1565,10 +2134,13 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "breed": "Lupus",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
+        "breed": ["Lupus", "Arachnid", "Hyaenid", "Feline", "Ursine", "Roko", "Latrani", "Suchid", "Vasuki", "Rodens"],
+		"tribe": "Black Spiral Dancers",
+		"shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
         "name": "Venom",
@@ -1578,10 +2150,13 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "breed": "Lupus",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
+        "breed": ["Lupus", "Arachnid", "Hyaenid", "Feline", "Ursine", "Roko", "Latrani", "Suchid", "Vasuki", "Rodens"],
+		"tribe": "Black Spiral Dancers",
+		"shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"]
     },
     {
         "name": "Gnaw",
@@ -1591,11 +2166,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "breed": "Lupus",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nuwisha", "Nagah", "Ratkin"]
-    },	
+        "breed": ["Lupus", "Arachnid", "Hyaenid", "Feline", "Ursine", "Roko", "Latrani", "Suchid", "Vasuki", "Rodens"],
+		"tribe": "Black Spiral Dancers",
+		"shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Mokole", "Nuwisha", "Nagah", "Ratkin"]
+    },
     {
         "name": "Tenacious Fury",
         "description": "Survival at any cost and victory at any price; these are the tenets that keep the Garou fighting in the face of overwhelming adversity, and the metis understands them well. He can pour his Rage into the single-minded pursuit of his goal, keeping himself going when many others would have fallen. Spirits of fury or servants of Boar teach this Gift.",
@@ -1604,10 +2182,13 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "breed": "Metis",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
+		"tribe": "Black Spiral Dancers",
+        "breed": ["Metis", "Shinju", "Ahi"],
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
     },
     {
         "name": "Lash of Rage",
@@ -1617,10 +2198,13 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"breed": "Metis",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+		"breed": ["Metis", "Shinju", "Ahi"],
+		"tribe": "Black Spiral Dancers",
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
     },
     {
         "name": "Rattler's Bite",
@@ -1630,10 +2214,13 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "breed": "Metis",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
+		"tribe": "Black Spiral Dancers",
+        "breed": ["Metis", "Shinju", "Ahi"],
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
     },
     {
         "name": "Badger's Heart",
@@ -1643,10 +2230,13 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "breed": "Metis",
-        "shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
+		"tribe": "Black Spiral Dancers",
+        "breed": ["Metis", "Shinju", "Ahi"],
+		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
     },
     {
         "name": "Wither Limb",
@@ -1656,24 +2246,37 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4], 
+        "values": [
+            4
+        ],
         "splat": "Shifter",
-        "breed": "Metis",
-        "shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
+        "breed": ["Metis", "Shinju", "Ahi"],
+		"auspice": ["Wyrsta", "Knife Skulkers"],
+		"tribe": "Black Spiral Dancers",
+		"shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"]
     },
     {
         "name": "Gift of the Porcupine",
         "description": "When using this Gift, the werewolf undergoes a startling transformation. Her fur becomes elongated, bristly and sharp like the quills of a porcupine. This change makes her an even more fearsome killing machine. A werewolf must be in Crinos, Hispo or Lupus form to use this Gift. Porcupine teaches this Gift, and he has a great fondness for metis.",
-        "system": "The character spends a Gnosis point to sharpen his fur. Anyone whom the metis tackles, grapples or immobilizes takes aggravated damage from his new found quills (Strength +1). Furthermore, anyone who strikes him with bare flesh (and scoring fewer than five successes on the attack roll) takes damage based on the attacker's own Strength, although the metis still takes normal damage. This Gift lasts for one scene or until the werewolf wills his fur to return to normal.",
+        "system": "The character spends a Gnosis point to sharpen his fur. Anyone whom the metis tackles, grapples or immobilizes takes aggravated damage from his new found quills (Strength +1). Furthermore, anyone who strikes him with bare flesh (and scoring fewer than five successes on the attack roll) takes damage based on the attacker's own Strength, although the metis still takes normal damage. This Gift lasts for one scene or until the werewolf wills his fur to return to normal.\n\nRatkin Metis Breed Rank 2 Gift: Spirit of the Spiny Rat - As the metis Gift: Gift of the Porcupine, usable only in Rodens form.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [1, 2, 4],
-		"splat": "Shifter",
-		"breed": "Metis",
-        "shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin", "Rokea"],
-		"gift_alias": ["Teeth of the Skin", "Spines", "Spirit of the Spiny Rat"]
+        "values": [
+            1,
+            2,
+            4
+        ],
+        "splat": "Shifter",
+        "breed": ["Metis", "Shinju", "Ahi", "Homid"],
+		"tribe": "Black Spiral Dancers",
+		"shifter_type":  ["Garou", "Ajaba", "Ananasi", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin", "Rokea"],
+        "gift_alias": [
+            "Teeth of the Skin",
+            "Spines",
+            "Spirit of the Spiny Rat"
+        ]
     },
     {
         "name": "Underearth",
@@ -1683,10 +2286,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Croatan",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Stronger on Stone",
@@ -1696,10 +2303,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Croatan",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Hunter's Horn",
@@ -1709,10 +2320,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"tribe": "Planetary",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "tribe": "Planetary",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Shantar's Loom",
@@ -1722,23 +2337,31 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"tribe": "Planetary",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "tribe": "Planetary",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Blank Slate",
-        "description": "The Garou can completely remove a single piece of information from her own mind or from that of another. This Gift becomes useful in situations where an individual has come across some dangerous knowledge that might lead to her death for possessing it. The Garou may not only remove the information - such as the identity of the Garou mole within a hostile group or the location of a safe house for ecoterrorists - but she may also smooth over the edges of the victim's memory so that he does not realize anything is missing. The Garou may also use this Gift to alter her own memories in situations where she feels that this is necessary.",
+        "description": "The Garou can completely remove a single piece of information from her own mind or from that of another. This Gift becomes useful in situations where an individual has come across some dangerous knowledge that might lead to her death for possessing it. The Garou may not only remove the information – such as the identity of the Garou mole within a hostile group or the location of a safe house for ecoterrorists – but she may also smooth over the edges of the victim's memory so that he does not realize anything is missing. The Garou may also use this Gift to alter her own memories in situations where she feels that this is necessary.",
         "system": "The player spends a point of Gnosis and rolls Manipulation + Empathy (difficulty of the victim's Willpower). A single success allows the character to excise the desired piece of information. Additional successes enable the character to make secondary adjustments to the target's memory to hide the fact that something is missing. No successes means that the victim retains the memory although she may not be aware that someone has tried to tamper with her mind. A botch may either remove the memory along with other chunks of information or else alert the victim to the unsuccessful attempt so that she knows who has tried to erase parts of her memory.",
         "source": "Rage Across the Heavens",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"tribe": "Planetary",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "tribe": "Planetary",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Harmonious Slumber",
@@ -1748,23 +2371,31 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"tribe": "Planetary",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "tribe": "Planetary",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Enthronement",
-        "description": "The Garou can create small or simple objects out of thin air - including mist, clouds or wind. By shaping the air around him with his hands, the Garou may form a solid block of matter to serve as a chair, create a bowl or cup for holding liquid or construct some other useful item. Alternatively, the Garou can form small, stone-sized balls of air to use as hurled weapons against his enemies. The items last until the Garou disperses them.",
+        "description": "The Garou can create small or simple objects out of thin air – including mist, clouds or wind. By shaping the air around him with his hands, the Garou may form a solid block of matter to serve as a chair, create a bowl or cup for holding liquid or construct some other useful item. Alternatively, the Garou can form small, stone-sized balls of air to use as hurled weapons against his enemies. The items last until the Garou disperses them.",
         "system": "The player simply rolls Dexterity + Repair (difficulty 7). The character may form one small item of solidified air for each success, or use two or more successes to shape a larger item (such as a throne-like seat). “Air-stones” used as weapons do the character's Strength + 1 normal damage, and dissipate upon contact with their target (or any other solid substance). In addition, the victim must make a Stamina roll (difficulty 8) to remain on her feet when the “air-stone” discharges its mass. If she fails the Stamina roll, the victim is stunned for the remainder of the round and can take no action.",
         "source": "Rage Across the Heavens",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"tribe": "Planetary",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "tribe": "Planetary",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Sleep's Travels",
@@ -1774,10 +2405,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"tribe": "Planetary",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "tribe": "Planetary",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Motherly Guardian",
@@ -1787,10 +2422,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"tribe": "Planetary",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "tribe": "Planetary",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Whisper in the Dark",
@@ -1800,10 +2439,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"tribe": "Planetary",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "tribe": "Planetary",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Hand of the Sun",
@@ -1813,23 +2456,31 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"tribe": "Planetary",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "tribe": "Planetary",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Mooncat",
-        "description": "This Gift allows the Garou to assume form of a small white cat (one of Sokhta's favored animals). This ability can prove useful for getting into small places (or escaping from such) and remaining hidden. The Garou has the senses of a cat for the duration of the Gift, including good night sight, the ability to absorb information through her whiskers and extreme flexibility of movement - however, she also retains the power of a full-fledged Garou, and is much more dangerous than she looks. Anyone studying the cat closely can tell that it is not a normal feline because the cat's eyes always reflect the current phase of the moon regardless of the surrounding light sources.",
+        "description": "This Gift allows the Garou to assume form of a small white cat (one of Sokhta's favored animals). This ability can prove useful for getting into small places (or escaping from such) and remaining hidden. The Garou has the senses of a cat for the duration of the Gift, including good night sight, the ability to absorb information through her whiskers and extreme flexibility of movement – however, she also retains the power of a full-fledged Garou, and is much more dangerous than she looks. Anyone studying the cat closely can tell that it is not a normal feline because the cat's eyes always reflect the current phase of the moon regardless of the surrounding light sources.",
         "system": "The player spends a point of Gnosis and rolls Dexterity + Animal Ken (difficulty 7). Each success allows the character to remain in cat form for one scene, although she can end the gift at any time before the duration runs out. While in cat form, the Garou retains her Lupus-form Attributes, may soak silver as if it were ordinary damage (although silver damage is still aggravated), and can inflict aggravated damage with claw and bite attacks as usual. No successes means that the Gift fails, while a botch results in a transformation into a misshapen creature somewhere between a cat and a wolf. The character may choose to end the Gift immediately if this happens.",
         "source": "Rage Across the Heavens",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"tribe": "Planetary",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "tribe": "Planetary",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Mercurial Messenger",
@@ -1839,10 +2490,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"tribe": "Planetary",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "tribe": "Planetary",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Lore of the Land",
@@ -1852,23 +2507,31 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"tribe": "Planetary",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "tribe": "Planetary",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Challenge of Single Combat",
-        "description": "By invoking the name of the Ice Warrior and issuing a direct challenge to an enemy, the Garou can force her opponent to fight one-on-one according to the tacit rules of fair play. The opponent can launch no surprise attacks, employ dirty tricks or accept extra help from comrades or pack mates. However, the Garou using this Gift accepts the same restrictions - neither combatant can break off from the fight until one participant either concedes victory to the other or dies.",
+        "description": "By invoking the name of the Ice Warrior and issuing a direct challenge to an enemy, the Garou can force her opponent to fight one-on-one according to the tacit rules of fair play. The opponent can launch no surprise attacks, employ dirty tricks or accept extra help from comrades or pack mates. However, the Garou using this Gift accepts the same restrictions – neither combatant can break off from the fight until one participant either concedes victory to the other or dies.",
         "system": "After the character has issued the challenge, the player spends a point of Rage and rolls Manipulation + Leadership (difficulty of the target's Willpower). A single success forces the target to forego any unfair tactics and meet the Garou in single combat as described above. No successes means the Gift fails while a botch inspires the target to launch an immediate attack — usually with the help of the opponent's friends.",
         "source": "Rage Across the Heavens",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
-		"tribe": "Planetary",
-        "shifter_type": ["Garou"]
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
+        "tribe": "Planetary",
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Living Treasure",
@@ -1878,9 +2541,12 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Hakken",
+		"auspice": "Shrouded Sun Concealing",
         "shifter_type": ["Garou", "Mokole"]
     },
     {
@@ -1891,10 +2557,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Fianna",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Guardians of the Dreamtime",
@@ -1904,10 +2574,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Bunyip",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Dance of the Lightning Snakes",
@@ -1917,10 +2591,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Bunyip",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Gnowee's Torch",
@@ -1930,10 +2608,14 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4],
-		"splat": "Shifter",
+        "values": [
+            4
+        ],
+        "splat": "Shifter",
         "tribe": "Bunyip",
-        "shifter_type": ["Garou"]
+        "shifter_type": [
+            "Garou"
+        ]
     },
     {
         "name": "Song of the Siren",
@@ -1943,13 +2625,22 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [3, 4], 
+        "values": [
+            3,
+            4
+        ],
         "splat": "Shifter",
         "auspice": "Galliard",
-		"tribe": ["Black Furies", "Fianna"],
-        "shifter_type":  ["Garou"]
+        "tribe": [
+            "Black Furies",
+			"Black Spiral Dancers",
+            "Fianna"
+        ],
+        "shifter_type": [
+            "Garou"
+        ]
     },
-	{
+    {
         "name": "Ultimate Argument of Logic",
         "description": "Those who speak with the Garou leave convinced of some fact might otherwise have disbelieved. If successful, the Garou can cause the target to believe implicitly in one aspect of existence (true or false) - from the fact that the sun revolves around the Earth to the truism that the wolf's inherent nature is that of the pawn. This Gift is taught by a Coyote-spirit.",
         "system": "The Garou needs three successes on a Manipulation + Performance roll (difficulty of the target's Wits + Enigmas).",
@@ -1957,11 +2648,17 @@
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
         "stat_type": "gift",
-        "values": [4, 5],
+        "values": [
+            4,
+            5
+        ],
         "splat": "Shifter",
-        "tribe": ["Stargazers"],
-        "auspice": "Theurge",
-		"gift_alias": "Fooling the Tiger",
-	    "shifter_type":  ["Garou", "Nuwisha", "Kitsune"]
+        "tribe": [
+			"Black Spiral Dancers",
+            "Stargazers"
+        ],
+        "auspice": ["Theurge", "Doshi"],
+        "gift_alias": "Fooling the Tiger",
+        "shifter_type": ["Garou", "Kitsune", "Nuwisha"]
     }
 ]
