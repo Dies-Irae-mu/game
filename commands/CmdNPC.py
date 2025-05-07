@@ -18,12 +18,14 @@ class NameGenerator:
     
     # List of available nationalities/ethnicities
     available_nationalities = [
-        "american", "arabic", "brazilian", "chechen", "chinese", "czech", 
-        "danish", "filipino", "finnish", "french", "german", "greek", 
-        "hungarian", "irish", "italian", "jamaican", "japanese", "korean", 
-        "mongolian", "north_indian", "portuguese", "prison", "roma", "russian", 
-        "senegalese", "sicilian", "spanish", "thai", "united_kingdom", "nahuatl", 
-        "persian", "polish", "polynesian", "maori", "vietnamese", "slovene"
+        "american", "arabic", "argentine", "australian", "brazilian", "canadian",
+        "chechen", "chinese", "czech", "danish", "filipino", "finnish", "french", 
+        "german", "greek", "hungarian", "irish", "italian", "jamaican", "japanese", 
+        "korean", "latvian", "mexican", "mongolian", "north_indian", "portuguese", 
+        "prison", "roma", "russian", "serbian", "spanish", "swedish", "thai", 
+        "turkish", "ukrainian", "vietnamese", "yugoslavian", "senegalese", "sicilian", 
+        "united_kingdom", "nahuatl", "persian", "polish", 
+        "polynesian", "maori", "slovene"
     ]
     
     @classmethod
@@ -49,57 +51,93 @@ class NameGenerator:
             return False
     
     @classmethod
-    def generate_name(cls, nationality=None, gender=None):
+    def get_available_nationalities(cls):
+        """Return a list of nationalities that actually have data files"""
+        available = []
+        for nationality in cls.available_nationalities:
+            if cls.load_name_list(nationality):
+                available.append(nationality)
+        return available
+    
+    @classmethod
+    def generate_name(cls, first_nationality=None, gender=None, last_nationality=None):
         """
-        Generate a random name of a specific nationality.
+        Generate a random name of a specific nationality or mixed nationalities.
         
         Args:
-            nationality (str, optional): Specific nationality for the name. 
-                                         If None, one is randomly chosen.
+            first_nationality (str, optional): Specific nationality for the first name. 
+                                              If None, one is randomly chosen.
             gender (str, optional): "male", "female", or None for random
+            last_nationality (str, optional): Specific nationality for the last name.
+                                             If None, uses the same as first name.
         
         Returns:
-            tuple: (first_name, last_name, nationality)
+            tuple: (first_name, last_name, first_name_nationality, last_name_nationality)
         """
+        # Check if we have any available nationalities with data files
+        available_nationalities = cls.get_available_nationalities()
+        if not available_nationalities:
+            return None, None, None, None
+            
         # If no nationality specified, choose one randomly
-        if not nationality:
-            nationality = random.choice(cls.available_nationalities)
+        if not first_nationality:
+            first_nationality = random.choice(available_nationalities)
         
         # Normalize nationality string
-        nationality = nationality.lower().replace(" ", "_")
+        first_nationality = first_nationality.lower().replace(" ", "_")
         
         # Check if it's a valid nationality
-        if nationality not in cls.available_nationalities:
-            return None, None, None
+        if first_nationality not in cls.available_nationalities:
+            return None, None, None, None
         
         # Load name list if not already loaded
-        if not cls.load_name_list(nationality):
-            return None, None, None
+        if not cls.load_name_list(first_nationality):
+            # If can't load specified nationality, choose a random one
+            if available_nationalities:
+                first_nationality = random.choice(available_nationalities)
+                cls.load_name_list(first_nationality)
+            else:
+                return None, None, None, None
         
-        name_data = cls.name_lists[nationality]
+        # Determine last name nationality
+        if last_nationality:
+            last_nationality = last_nationality.lower().replace(" ", "_")
+            if last_nationality not in cls.available_nationalities:
+                last_nationality = first_nationality
+            
+            # Load last name nationality data
+            if not cls.load_name_list(last_nationality):
+                # If can't load specified nationality, use first name nationality
+                last_nationality = first_nationality
+        else:
+            last_nationality = first_nationality
         
         # Determine gender if not specified
         if not gender:
             gender = random.choice(["male", "female"])
         
+        # Get name data
+        first_name_data = cls.name_lists[first_nationality]
+        last_name_data = cls.name_lists[last_nationality]
+        
         # Get first name based on gender
-        if gender == "male" and "male_first" in name_data:
-            first_name = random.choice(name_data["male_first"])
-        elif gender == "female" and "female_first" in name_data:
-            first_name = random.choice(name_data["female_first"])
-        elif "first_names" in name_data:
+        if gender == "male" and "male_first" in first_name_data:
+            first_name = random.choice(first_name_data["male_first"])
+        elif gender == "female" and "female_first" in first_name_data:
+            first_name = random.choice(first_name_data["female_first"])
+        elif "first_names" in first_name_data:
             # Fallback to generic first names
-            first_name = random.choice(name_data["first_names"])
+            first_name = random.choice(first_name_data["first_names"])
         else:
             first_name = "Unknown"
         
         # Get last name
-        if "last_names" in name_data:
-            last_name = random.choice(name_data["last_names"])
+        if "last_names" in last_name_data:
+            last_name = random.choice(last_name_data["last_names"])
         else:
             last_name = ""
         
-        return first_name, last_name, nationality
+        return first_name, last_name, first_nationality, last_nationality
 
     @classmethod
     def format_name(cls, first_name, last_name):
@@ -111,7 +149,10 @@ class NameGenerator:
     @classmethod
     def list_nationalities(cls):
         """Return a formatted list of available nationalities"""
-        return ", ".join(nat.replace("_", " ").title() for nat in cls.available_nationalities)
+        available = cls.get_available_nationalities()
+        if not available:
+            return "No nationality data files found"
+        return ", ".join(nat.replace("_", " ").title() for nat in available)
 
 
 class CmdNPC(default_cmds.MuxCommand):
@@ -125,8 +166,8 @@ class CmdNPC(default_cmds.MuxCommand):
       +npc/heal <name>=<type>/<amount>          - Heal an NPC's damage
       +npc/health <name>                        - View NPC's current health levels
       +npc/list                                 - List all NPCs in the scene
-      +npc/name [nationality] [gender]          - Generate a random name
-      +npc/name <name>=<nationality> [gender]   - Rename an NPC with random name
+      +npc/name [nationality] [nationality2] [gender]  - Generate a random name
+      +npc/name <name>=<nationality> [nationality2] [gender]   - Rename an NPC with random name
       +npc/nationalities                        - List available nationalities for names
 
     Examples:
@@ -137,6 +178,9 @@ class CmdNPC(default_cmds.MuxCommand):
       +npc/health Guard                - Show Guard's current health levels
       +npc/name                        - Generate a random name from any nationality
       +npc/name russian male           - Generate a Russian male name
+      +npc/name russian japanese male  - Generate a Russian first name with Japanese last name
+      +npc/name russian/japanese       - Generate a Russian first name with Japanese last name
+      +npc/name female                 - Generate a random female name from any nationality
       +npc/name Guard=japanese         - Rename "Guard" with a random Japanese name
     """
 
@@ -194,14 +238,64 @@ class CmdNPC(default_cmds.MuxCommand):
         elif "health" in self.switches:
             self.show_health(name)
 
+    def parse_name_args(self, args_string):
+        """
+        Parse arguments for name generation: nationality, second nationality, and gender.
+        Handles multiple formats including space-separated and slash-separated nationalities.
+        
+        Returns:
+            tuple: (first_nationality, gender, second_nationality)
+        """
+        first_nat = None
+        second_nat = None
+        gender = None
+        
+        # Check for slash-separated nationalities (american/japanese)
+        if "/" in args_string and " " not in args_string.split("/")[0] and " " not in args_string.split("/")[1]:
+            parts = args_string.split("/", 1)
+            first_nat = parts[0].strip()
+            
+            # Check if second part contains a gender
+            second_parts = parts[1].strip().split()
+            second_nat = second_parts[0]
+            
+            if len(second_parts) > 1 and second_parts[1].lower() in ["male", "female"]:
+                gender = second_parts[1].lower()
+            
+            return first_nat, gender, second_nat
+        
+        # Handle space-separated arguments
+        args = args_string.strip().split()
+        
+        # Check if the only argument is a gender
+        if len(args) == 1 and args[0].lower() in ["male", "female"]:
+            gender = args[0].lower()
+            return None, gender, None
+        
+        # Process normal arguments
+        if args:
+            first_nat = args[0]
+            
+        if len(args) >= 2:
+            # Check if second arg is gender or nationality
+            if args[1].lower() in ["male", "female"]:
+                gender = args[1].lower()
+            else:
+                second_nat = args[1]
+                
+            if len(args) >= 3 and args[2].lower() in ["male", "female"]:
+                gender = args[2].lower()
+                
+        return first_nat, gender, second_nat
+
     def generate_name(self):
         """Generate a random name with optional nationality and gender."""
         if not self.args:
             # Just generate a random name
-            first_name, last_name, nationality = NameGenerator.generate_name()
+            first_name, last_name, first_nat, last_nat = NameGenerator.generate_name()
             if first_name:
                 full_name = NameGenerator.format_name(first_name, last_name)
-                nationality_display = nationality.replace("_", " ").title()
+                nationality_display = first_nat.replace("_", " ").title()
                 self.caller.msg(f"Generated name: |w{full_name}|n ({nationality_display})")
             else:
                 self.caller.msg("Error: Could not generate name. Name data files not found.")
@@ -217,15 +311,16 @@ class CmdNPC(default_cmds.MuxCommand):
                 self.caller.msg(f"No NPC named '{npc_name}' found in this scene.")
                 return
                 
-            # Parse nationality and optional gender
-            args = params.strip().split()
-            nationality = args[0] if args else None
-            gender = args[1] if len(args) > 1 else None
+            # Parse name parameters
+            first_nat, gender, second_nat = self.parse_name_args(params)
             
             # Generate new name
-            first_name, last_name, nationality_used = NameGenerator.generate_name(nationality, gender)
+            first_name, last_name, first_nat_used, last_nat_used = NameGenerator.generate_name(
+                first_nat, gender, second_nat
+            )
+            
             if not first_name:
-                self.caller.msg(f"Error: Could not generate name with nationality '{nationality}'.")
+                self.caller.msg(f"Error: Could not generate name with the specified parameters.")
                 return
                 
             # Update NPC name
@@ -238,25 +333,38 @@ class CmdNPC(default_cmds.MuxCommand):
             self.caller.location.db_npcs[new_full_name] = npc_data
             
             # Inform about the name change
-            nationality_display = nationality_used.replace("_", " ").title()
-            self.caller.location.msg_contents(
-                f"NPC |w{old_name}|n is now known as |w{new_full_name}|n ({nationality_display})."
-            )
+            first_nat_display = first_nat_used.replace("_", " ").title()
+            if first_nat_used != last_nat_used:
+                last_nat_display = last_nat_used.replace("_", " ").title()
+                self.caller.location.msg_contents(
+                    f"NPC |w{old_name}|n is now known as |w{new_full_name}|n ({first_nat_display}/{last_nat_display})."
+                )
+            else:
+                self.caller.location.msg_contents(
+                    f"NPC |w{old_name}|n is now known as |w{new_full_name}|n ({first_nat_display})."
+                )
             return
             
         # Otherwise, just generate a name with specified parameters
-        args = self.args.strip().split()
-        nationality = args[0] if args else None
-        gender = args[1] if len(args) > 1 else None
+        first_nat, gender, second_nat = self.parse_name_args(self.args)
         
-        first_name, last_name, nationality_used = NameGenerator.generate_name(nationality, gender)
+        # Generate the name
+        first_name, last_name, first_nat_used, last_nat_used = NameGenerator.generate_name(
+            first_nat, gender, second_nat
+        )
+        
         if first_name:
             full_name = NameGenerator.format_name(first_name, last_name)
-            nationality_display = nationality_used.replace("_", " ").title()
-            self.caller.msg(f"Generated name: |w{full_name}|n ({nationality_display})")
+            first_nat_display = first_nat_used.replace("_", " ").title()
+            
+            if first_nat_used != last_nat_used:
+                last_nat_display = last_nat_used.replace("_", " ").title()
+                self.caller.msg(f"Generated name: |w{full_name}|n ({first_nat_display}/{last_nat_display})")
+            else:
+                self.caller.msg(f"Generated name: |w{full_name}|n ({first_nat_display})")
         else:
-            if nationality:
-                self.caller.msg(f"Error: Could not generate name with nationality '{nationality}'.")
+            if first_nat or second_nat:
+                self.caller.msg(f"Error: Could not generate name with the specified parameters.")
             else:
                 self.caller.msg("Error: Could not generate name. Name data files not found.")
 
