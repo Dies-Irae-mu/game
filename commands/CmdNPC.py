@@ -19,13 +19,12 @@ class NameGenerator:
     # List of available nationalities/ethnicities
     available_nationalities = [
         "american", "arabic", "argentine", "australian", "brazilian", "canadian",
-        "chechen", "chinese", "czech", "danish", "filipino", "finnish", "french", 
+        "chechen", "chilean", "chinese", "czech", "danish", "dutch", "filipino", "finnish", "french", 
         "german", "greek", "hungarian", "irish", "italian", "jamaican", "japanese", 
-        "korean", "latvian", "mexican", "mongolian", "north_indian", "portuguese", 
-        "prison", "roma", "russian", "serbian", "spanish", "swedish", "thai", 
-        "turkish", "ukrainian", "vietnamese", "yugoslavian", "senegalese", "sicilian", 
-        "united_kingdom", "nahuatl", "persian", "polish", 
-        "polynesian", "maori", "slovene"
+        "korean", "latvian", "maori", "mexican", "mongolian", "nahuatl", "indian", "norwegian", "pakistani",
+        "persian", "polish", "portuguese", "prison", "roma", "romanian", "russian", "senegalese",
+        "serbian", "sicilian", "slovene", "spanish", "thai", "turkish", "ukrainian", "united_kingdom", 
+        "venezuelan", "vietnamese", "yugoslavian"
     ]
     
     @classmethod
