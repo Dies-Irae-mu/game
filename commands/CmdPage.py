@@ -191,6 +191,9 @@ class CmdPage(DefaultCmdPage):
 
         # Get caller's character name if available
         caller_name = caller.name
+        # Get caller's alias if available
+        caller_alias = caller.attributes.get("alias", None)
+        caller_display = f"{caller_name}({caller_alias})" if caller_alias else caller_name
 
         # Tell the accounts they got a message
         received = []
@@ -200,47 +203,64 @@ class CmdPage(DefaultCmdPage):
                 continue
             
             # Get the character name if available
-            char_name = target.puppet.name if target.puppet else target.name
+            char = target.puppet if target.puppet else target
+            char_name = char.name
+            # Get character's alias if available
+            char_alias = char.attributes.get("alias", None)
+            char_display = f"{char_name}({char_alias})" if char_alias else char_name
             
             # Format recipients list for header
-            other_recipients = [
-                t.puppet.name if t.puppet else t.name 
-                for t in account_recipients
-                if t != target
-            ]
+            other_recipients = []
+            for t in account_recipients:
+                if t != target:
+                    t_char = t.puppet if t.puppet else t
+                    t_name = t_char.name
+                    t_alias = t_char.attributes.get("alias", None)
+                    t_display = f"{t_name}({t_alias})" if t_alias else t_name
+                    other_recipients.append(t_display)
             
             # Format the header
             if other_recipients:
                 others = f"{', '.join(other_recipients[:-1])} and {other_recipients[-1]}" if len(other_recipients) > 1 else other_recipients[0]
-                header = f"From afar, (To {char_name} and {others}),"
+                header = f"From afar, (To {char_display} and {others}),"
             else:
                 header = f"From afar,"
             
             # Format and send the message
             if message.startswith(":"):
-                formatted_message = f"{header} {caller_name} {message[1:].strip()}"
+                formatted_message = f"{header} {caller_display} {message[1:].strip()}"
             else:
-                formatted_message = f"{header} {caller_name} pages: {message}"
+                formatted_message = f"{header} {caller_display} pages: {message}"
                 
             target.msg(formatted_message)
-            received.append(f"|c{char_name}|n")
+            received.append(f"|c{char_display}|n")
 
         # Format the confirmation message
         if received:
             if len(received) == 1:
                 if message.startswith(":"):
-                    self.msg(f"Long distance to {received[0]}: {caller_name} {message[1:].strip()}")
+                    self.msg(f"Long distance to {received[0]}: {caller_display} {message[1:].strip()}")
                 else:
                     # Get the character name for the confirmation message
-                    char_name = account_recipients[0].puppet.name if account_recipients[0].puppet else account_recipients[0].name
-                    self.msg(f"You paged {char_name} with: '{message}'")
+                    t_char = account_recipients[0].puppet if account_recipients[0].puppet else account_recipients[0]
+                    char_name = t_char.name
+                    char_alias = t_char.attributes.get("alias", None)
+                    char_display = f"{char_name}({char_alias})" if char_alias else char_name
+                    self.msg(f"You paged {char_display} with: '{message}'")
             else:
                 # Get character names for all recipients
-                char_names = [t.puppet.name if t.puppet else t.name for t in account_recipients]
+                char_displays = []
+                for t in account_recipients:
+                    t_char = t.puppet if t.puppet else t
+                    t_name = t_char.name
+                    t_alias = t_char.attributes.get("alias", None)
+                    t_display = f"{t_name}({t_alias})" if t_alias else t_name
+                    char_displays.append(t_display)
+                    
                 if message.startswith(":"):
-                    self.msg(f"To ({', '.join(char_names)}): {caller_name} {message[1:].strip()}")
+                    self.msg(f"To ({', '.join(char_displays)}): {caller_display} {message[1:].strip()}")
                 else:
-                    self.msg(f"To ({', '.join(char_names)}) you paged: '{message}'")
+                    self.msg(f"To ({', '.join(char_displays)}) you paged: '{message}'")
 
         # Report any offline/not-found users
         if offline_recipients:
