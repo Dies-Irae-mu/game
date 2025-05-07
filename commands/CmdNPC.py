@@ -2,10 +2,121 @@ from evennia import default_cmds
 from evennia.utils.ansi import ANSIString
 from world.wod20th.utils.dice_rolls import roll_dice, interpret_roll_results
 import random
+import os
+import json
+
+# Path to the name files
+NAME_DATA_PATH = "world/wod20th/data/names"
+
+class NameGenerator:
+    """
+    Handles generation of random names from various cultural backgrounds.
+    """
+    
+    # Dictionary to hold name lists once loaded
+    name_lists = {}
+    
+    # List of available nationalities/ethnicities
+    available_nationalities = [
+        "american", "arabic", "brazilian", "chechen", "chinese", "czech", 
+        "danish", "filipino", "finnish", "french", "german", "greek", 
+        "hungarian", "irish", "italian", "jamaican", "japanese", "korean", 
+        "mongolian", "north_indian", "portuguese", "prison", "roma", "russian", 
+        "senegalese", "sicilian", "spanish", "thai", "united_kingdom", "nahuatl", 
+        "persian", "polish", "polynesian", "maori", "vietnamese", "slovene"
+    ]
+    
+    @classmethod
+    def load_name_list(cls, nationality):
+        """
+        Load a name list file for a specific nationality if it exists.
+        
+        Args:
+            nationality (str): The nationality to load
+            
+        Returns:
+            bool: True if loaded successfully, False otherwise
+        """
+        if nationality in cls.name_lists:
+            return True
+            
+        file_path = os.path.join(NAME_DATA_PATH, f"{nationality}.json")
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                cls.name_lists[nationality] = json.load(f)
+            return True
+        except (FileNotFoundError, json.JSONDecodeError):
+            return False
+    
+    @classmethod
+    def generate_name(cls, nationality=None, gender=None):
+        """
+        Generate a random name of a specific nationality.
+        
+        Args:
+            nationality (str, optional): Specific nationality for the name. 
+                                         If None, one is randomly chosen.
+            gender (str, optional): "male", "female", or None for random
+        
+        Returns:
+            tuple: (first_name, last_name, nationality)
+        """
+        # If no nationality specified, choose one randomly
+        if not nationality:
+            nationality = random.choice(cls.available_nationalities)
+        
+        # Normalize nationality string
+        nationality = nationality.lower().replace(" ", "_")
+        
+        # Check if it's a valid nationality
+        if nationality not in cls.available_nationalities:
+            return None, None, None
+        
+        # Load name list if not already loaded
+        if not cls.load_name_list(nationality):
+            return None, None, None
+        
+        name_data = cls.name_lists[nationality]
+        
+        # Determine gender if not specified
+        if not gender:
+            gender = random.choice(["male", "female"])
+        
+        # Get first name based on gender
+        if gender == "male" and "male_first" in name_data:
+            first_name = random.choice(name_data["male_first"])
+        elif gender == "female" and "female_first" in name_data:
+            first_name = random.choice(name_data["female_first"])
+        elif "first_names" in name_data:
+            # Fallback to generic first names
+            first_name = random.choice(name_data["first_names"])
+        else:
+            first_name = "Unknown"
+        
+        # Get last name
+        if "last_names" in name_data:
+            last_name = random.choice(name_data["last_names"])
+        else:
+            last_name = ""
+        
+        return first_name, last_name, nationality
+
+    @classmethod
+    def format_name(cls, first_name, last_name):
+        """Format the full name properly"""
+        if last_name:
+            return f"{first_name} {last_name}"
+        return first_name
+    
+    @classmethod
+    def list_nationalities(cls):
+        """Return a formatted list of available nationalities"""
+        return ", ".join(nat.replace("_", " ").title() for nat in cls.available_nationalities)
+
 
 class CmdNPC(default_cmds.MuxCommand):
     """
-    Manage NPCs in a scene, including health and dice rolls.
+    Manage NPCs in a scene, including health, dice rolls, and name generation.
     See 'help init' for more information on initiative.
 
     Usage:
@@ -14,6 +125,9 @@ class CmdNPC(default_cmds.MuxCommand):
       +npc/heal <name>=<type>/<amount>          - Heal an NPC's damage
       +npc/health <name>                        - View NPC's current health levels
       +npc/list                                 - List all NPCs in the scene
+      +npc/name [nationality] [gender]          - Generate a random name
+      +npc/name <name>=<nationality> [gender]   - Rename an NPC with random name
+      +npc/nationalities                        - List available nationalities for names
 
     Examples:
       +npc/roll Guard=5/6              - Roll 5 dice for the Guard with difficulty 6
@@ -21,6 +135,9 @@ class CmdNPC(default_cmds.MuxCommand):
       +npc/hurt Guard=bashing/2        - Apply 2 bashing damage to Guard
       +npc/heal Guard=bashing/1        - Heal 1 bashing damage from Guard
       +npc/health Guard                - Show Guard's current health levels
+      +npc/name                        - Generate a random name from any nationality
+      +npc/name russian male           - Generate a Russian male name
+      +npc/name Guard=japanese         - Rename "Guard" with a random Japanese name
     """
 
     key = "+npc"
@@ -38,6 +155,15 @@ class CmdNPC(default_cmds.MuxCommand):
 
         if "list" in self.switches:
             self.list_npcs()
+            return
+            
+        if "nationalities" in self.switches:
+            self.caller.msg(f"Available nationalities: {NameGenerator.list_nationalities()}")
+            return
+
+        if "name" in self.switches:
+            # Handle name generation
+            self.generate_name()
             return
 
         if not self.args:
@@ -67,6 +193,72 @@ class CmdNPC(default_cmds.MuxCommand):
             self.heal_npc(name, params)
         elif "health" in self.switches:
             self.show_health(name)
+
+    def generate_name(self):
+        """Generate a random name with optional nationality and gender."""
+        if not self.args:
+            # Just generate a random name
+            first_name, last_name, nationality = NameGenerator.generate_name()
+            if first_name:
+                full_name = NameGenerator.format_name(first_name, last_name)
+                nationality_display = nationality.replace("_", " ").title()
+                self.caller.msg(f"Generated name: |w{full_name}|n ({nationality_display})")
+            else:
+                self.caller.msg("Error: Could not generate name. Name data files not found.")
+            return
+            
+        # Check if this is a rename command (name=nationality)
+        if "=" in self.args:
+            npc_name, params = self.args.split("=", 1)
+            npc_name = npc_name.strip()
+            
+            # Check if NPC exists
+            if not hasattr(self.caller.location, "db_npcs") or npc_name not in self.caller.location.db_npcs:
+                self.caller.msg(f"No NPC named '{npc_name}' found in this scene.")
+                return
+                
+            # Parse nationality and optional gender
+            args = params.strip().split()
+            nationality = args[0] if args else None
+            gender = args[1] if len(args) > 1 else None
+            
+            # Generate new name
+            first_name, last_name, nationality_used = NameGenerator.generate_name(nationality, gender)
+            if not first_name:
+                self.caller.msg(f"Error: Could not generate name with nationality '{nationality}'.")
+                return
+                
+            # Update NPC name
+            new_full_name = NameGenerator.format_name(first_name, last_name)
+            old_name = npc_name
+            
+            # Create a new entry with the generated name and copy the old data
+            npc_data = self.caller.location.db_npcs[old_name].copy()
+            del self.caller.location.db_npcs[old_name]
+            self.caller.location.db_npcs[new_full_name] = npc_data
+            
+            # Inform about the name change
+            nationality_display = nationality_used.replace("_", " ").title()
+            self.caller.location.msg_contents(
+                f"NPC |w{old_name}|n is now known as |w{new_full_name}|n ({nationality_display})."
+            )
+            return
+            
+        # Otherwise, just generate a name with specified parameters
+        args = self.args.strip().split()
+        nationality = args[0] if args else None
+        gender = args[1] if len(args) > 1 else None
+        
+        first_name, last_name, nationality_used = NameGenerator.generate_name(nationality, gender)
+        if first_name:
+            full_name = NameGenerator.format_name(first_name, last_name)
+            nationality_display = nationality_used.replace("_", " ").title()
+            self.caller.msg(f"Generated name: |w{full_name}|n ({nationality_display})")
+        else:
+            if nationality:
+                self.caller.msg(f"Error: Could not generate name with nationality '{nationality}'.")
+            else:
+                self.caller.msg("Error: Could not generate name. Name data files not found.")
 
     def list_npcs(self):
         """List all NPCs in the scene."""
@@ -228,17 +420,17 @@ class CmdNPC(default_cmds.MuxCommand):
         
         if total_damage == 0:
             return "Healthy"
-        elif total_damage <= 2:
+        elif total_damage <= 1:
             return "Bruised"
-        elif total_damage <= 4:
+        elif total_damage <= 2:
             return "Hurt"
-        elif total_damage <= 6:
+        elif total_damage <= 3:
             return "Injured"
-        elif total_damage <= 8:
+        elif total_damage <= 4:
             return "Wounded"
-        elif total_damage <= 10:
+        elif total_damage <= 5:
             return "Mauled"
-        elif total_damage <= 12:
+        elif total_damage <= 6:
             return "Crippled"
         else:
-            return "Incapacitated" 
+            return "Incapacitated"

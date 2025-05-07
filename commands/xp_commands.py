@@ -22,6 +22,7 @@ from datetime import datetime
 from django.db import transaction
 import re
 import decimal
+from utils.search_helpers import search_character
 
 """
 Helper functions
@@ -994,7 +995,8 @@ class CmdXP(default_cmds.MuxCommand):
             self.caller.msg("Amount must be a valid number (e.g. 5 or 5.5).")
             return
             
-        target = self.caller.search(name, global_search=True)
+        # Use search_character instead of self.caller.search
+        target = search_character(self.caller, name, global_search=True)
         if not target:
             return
             
