@@ -1,0 +1,53 @@
+{
+    "male_first": [
+      "Akira", 
+      "Daisuke", 
+      "Haruki", 
+      "Hayato", 
+      "Hiroshi", 
+      "Kazuki", 
+      "Kenji", 
+      "Masaki", 
+      "Ryota", 
+      "Satoshi", 
+      "Takashi", 
+      "Toru", 
+      "Yasuhiro", 
+      "Yuki", 
+      "Yuuma"
+    ],
+    "female_first": [
+      "Aiko", 
+      "Emi", 
+      "Haruka", 
+      "Hikari", 
+      "Kaori", 
+      "Mai", 
+      "Mio", 
+      "Misaki", 
+      "Nanami", 
+      "Rin", 
+      "Sakura", 
+      "Sora", 
+      "Yui", 
+      "Yuna", 
+      "Yuriko"
+    ],
+    "last_names": [
+      "Sato", 
+      "Suzuki", 
+      "Takahashi", 
+      "Tanaka", 
+      "Watanabe", 
+      "Ito", 
+      "Yamamoto", 
+      "Nakamura", 
+      "Kobayashi", 
+      "Kato", 
+      "Yoshida", 
+      "Yamada", 
+      "Sasaki", 
+      "Yamaguchi", 
+      "Matsumoto"
+    ]
+} 

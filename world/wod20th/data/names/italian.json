@@ -1,0 +1,53 @@
+{
+  "male_first": [
+    "Alessandro", 
+    "Andrea", 
+    "Antonio", 
+    "Francesco", 
+    "Giovanni", 
+    "Giuseppe", 
+    "Lorenzo", 
+    "Luca", 
+    "Marco", 
+    "Mario", 
+    "Matteo", 
+    "Paolo", 
+    "Roberto", 
+    "Salvatore", 
+    "Stefano"
+  ],
+  "female_first": [
+    "Alessandra", 
+    "Angela", 
+    "Anna", 
+    "Chiara", 
+    "Francesca", 
+    "Giovanna", 
+    "Giulia", 
+    "Laura", 
+    "Lucia", 
+    "Maria", 
+    "Paola", 
+    "Rosa", 
+    "Sofia", 
+    "Teresa", 
+    "Valentina"
+  ],
+  "last_names": [
+    "Rossi", 
+    "Russo", 
+    "Ferrari", 
+    "Esposito", 
+    "Bianchi", 
+    "Romano", 
+    "Colombo", 
+    "Ricci", 
+    "Marino", 
+    "Greco", 
+    "Bruno", 
+    "Gallo", 
+    "Conti", 
+    "De Luca", 
+    "Costa"
+  ]
+} 
