@@ -18,6 +18,7 @@ import copy
 from evennia.help.models import HelpEntry
 from world.equipment.models import Equipment, PlayerInventory, InventoryItem
 from evennia.accounts.models import AccountDB
+from evennia.comms.models import Msg
 
 class CmdJobs(MuxCommand):
     """
@@ -378,11 +379,23 @@ class CmdJobs(MuxCommand):
                 
                 # Notify the assignee
                 if queue.automatic_assignee != self.caller.account:
-                    self.caller.execute_cmd(
-                        f"@mail {queue.automatic_assignee.username}"
-                        f"=Job #{job.id} Auto-assigned"
-                        f"/You have been automatically assigned to Job #{job.id}: {title}"
+                    subject = f"Job #{job.id} Auto-assigned"
+                    mail_body = f"You have been automatically assigned to Job #{job.id}: {title}"
+                    
+                    from evennia.utils import create
+                    
+                    # Create the mail message
+                    new_mail = create.create_message(
+                        self.caller.account,  # sender
+                        mail_body,            # message
+                        receivers=queue.automatic_assignee,  # receiver
+                        header=subject        # subject
                     )
+                    
+                    # Tag it as new
+                    new_mail.tags.add("new", category="mail")
+                    
+                    self.caller.msg(f"Auto-assignment notification sent to {queue.automatic_assignee.username}.")
 
         except Exception as e:
             self.caller.msg(f"|rError creating job: {str(e)}|n")
@@ -464,11 +477,23 @@ class CmdJobs(MuxCommand):
                 
                 # Notify the assignee
                 if queue.automatic_assignee != self.caller.account:
-                    self.caller.execute_cmd(
-                        f"@mail {queue.automatic_assignee.username}"
-                        f"=Job #{job.id} Auto-assigned"
-                        f"/You have been automatically assigned to Job #{job.id}: {title}"
+                    subject = f"Job #{job.id} Auto-assigned"
+                    mail_body = f"You have been automatically assigned to Job #{job.id}: {title}"
+                    
+                    from evennia.utils import create
+                    
+                    # Create the mail message
+                    new_mail = create.create_message(
+                        self.caller.account,  # sender
+                        mail_body,            # message
+                        receivers=queue.automatic_assignee,  # receiver
+                        header=subject        # subject
                     )
+                    
+                    # Tag it as new
+                    new_mail.tags.add("new", category="mail")
+                    
+                    self.caller.msg(f"Auto-assignment notification sent to {queue.automatic_assignee.username}.")
 
         except Exception as e:
             self.caller.msg(f"|rError creating job: {str(e)}|n")
@@ -1301,9 +1326,19 @@ class CmdJobs(MuxCommand):
                 subject = f"Job #{job.id} Update"
                 mail_body = f"Job #{job.id}: {job.title}\n\n{message}"
                 
-                # Use the mail command's proper format
-                mail_cmd = f"@mail {recipient.username}={subject}/{mail_body}"
-                self.caller.execute_cmd(mail_cmd)
+                # Use Evennia's mail API properly
+                from evennia.utils import create
+                
+                # Create the mail message
+                new_mail = create.create_message(
+                    self.caller.account,  # sender
+                    mail_body,            # message
+                    receivers=recipient,  # receiver
+                    header=subject        # subject
+                )
+                
+                # Tag it as new
+                new_mail.tags.add("new", category="mail")
                 
                 # Only show success message if we actually sent the mail
                 if recipient.username:
@@ -1312,6 +1347,8 @@ class CmdJobs(MuxCommand):
                     self.caller.msg("Could not send notification - invalid recipient username.")
                     
             except Exception as e:
+                from evennia.utils import logger
+                logger.log_err(f"Failed to send job notification: {str(e)}")
                 self.caller.msg(f"Failed to send notification: {str(e)}")
 
     def send_mail_to_all_participants(self, job, message, exclude_account=None):
@@ -1340,9 +1377,43 @@ class CmdJobs(MuxCommand):
         if self.caller.account in participants:
             participants.remove(self.caller.account)
             
-        # Send mail to each participant
-        for participant in participants:
-            self.send_mail_notification(job, message, to_account=participant)
+        # If we don't have any recipients, return early
+        if not participants:
+            return
+        
+        # Send mail to all participants using the proper mail API
+        try:
+            subject = f"Job #{job.id} Update"
+            mail_body = f"Job #{job.id}: {job.title}\n\n{message}"
+            
+            from evennia.utils import create
+            
+            # Create and send mail to each participant (create_message only takes one receiver at a time)
+            participant_names = []
+            for participant in participants:
+                if participant.username:
+                    # Create a mail message
+                    new_mail = create.create_message(
+                        self.caller.account,  # sender
+                        mail_body,            # message
+                        receivers=participant, # receiver
+                        header=subject        # subject
+                    )
+                    
+                    # Tag it as new
+                    new_mail.tags.add("new", category="mail")
+                    
+                    participant_names.append(participant.username)
+            
+            if participant_names:
+                self.caller.msg(f"Notifications sent to: {', '.join(participant_names)}")
+            
+        except Exception as e:
+            from evennia.utils import logger
+            logger.log_err(f"Failed to send job notifications: {str(e)}")
+            self.caller.msg(f"Failed to send notifications: {str(e)}")
+            
+            # No need for fallback sending since we're already sending individually
 
     def complete_job(self):
         self._change_job_status("completed")

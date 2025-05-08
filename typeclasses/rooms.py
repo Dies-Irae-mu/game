@@ -176,6 +176,17 @@ class RoomParent(DefaultRoom):
                     shortdesc = ""
                 string += " " + ANSIString(f"{obj.get_display_name(looker)}").ljust(25) + ANSIString(f"{shortdesc}").ljust(53, ' ') + "\n"
 
+        # List all NPCs in the room
+        npcs = []
+        for obj in self.contents:
+            if obj.is_npc:
+                npcs.append(obj)
+
+        if npcs:
+            string += divider("NPCs", width=78, fillchar=ANSIString(f"{border_color}-|n")) + "\n"
+            for npc in npcs:
+                string += f" {ANSIString(npc.get_display_name(looker))}\n"
+
         # List all exits that are accessible in the current reality layer
         exits = []
         for ex in self.contents:

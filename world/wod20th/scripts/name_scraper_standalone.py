@@ -3,18 +3,10 @@ from bs4 import BeautifulSoup
 import json
 import os
 import re
-from django.core.management.base import BaseCommand
 
 # Directory to save name data files
 SAVE_DIR = "world/wod20th/data/names"
 
-class Command(BaseCommand):
-    help = "Scrape name lists from various sources and save them as JSON files"
-    
-    def handle(self, *args, **options):
-        self.stdout.write(self.style.SUCCESS("Starting name scraper..."))
-        scrape_all_name_lists()
-        
 # Create directory if it doesn't exist
 os.makedirs(SAVE_DIR, exist_ok=True)
 
@@ -180,5 +172,6 @@ def scrape_all_name_lists():
     
     print("Scraping complete!")
 
+# Run the scraper when the script is executed directly
 if __name__ == "__main__":
     scrape_all_name_lists() 
