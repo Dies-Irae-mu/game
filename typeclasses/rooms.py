@@ -179,7 +179,7 @@ class RoomParent(DefaultRoom):
         # List all NPCs in the room
         npcs = []
         for obj in self.contents:
-            if obj.is_npc:
+            if hasattr(obj, 'is_npc') and obj.is_npc:
                 npcs.append(obj)
 
         if npcs:

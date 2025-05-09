@@ -28,6 +28,11 @@ class Character(DefaultCharacter):
     ...
     """
 
+    @property
+    def is_npc(self):
+        """Return False for regular characters to distinguish from NPCs."""
+        return False
+
     def at_object_creation(self):
         """
         Called when object is first created.

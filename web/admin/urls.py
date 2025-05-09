@@ -6,14 +6,17 @@ The main web/urls.py includes these routes for all urls starting with `admin/`
 
 """
 
-from django.urls import path
-
+from django.urls import path, include
+from django.contrib import admin
 from evennia.web.admin.urls import urlpatterns as evennia_admin_urlpatterns
+
+# Register NPC admin models
+admin.autodiscover()
 
 # add patterns here
 urlpatterns = [
-    # path("url-pattern", imported_python_view),
-    # path("url-pattern", imported_python_view),
+    # Custom NPC admin links
+    path('npcs/', include('world.npc_manager.urls')),
 ]
 
 # read by Django

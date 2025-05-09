@@ -1,0 +1,160 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<h1>NPC Group: {{ group.db_key }}</h1>
+
+<div style="display: flex; gap: 20px; margin-bottom: 20px;">
+    <!-- Basic Info -->
+    <div style="flex: 2; border: 1px solid #ccc; padding: 15px; border-radius: 5px;">
+        <h3>Basic Information</h3>
+        <table style="width: 100%;">
+            <tr>
+                <th style="text-align: left; padding: 8px; width: 150px;">Name:</th>
+                <td style="padding: 8px;">{{ group.db_key }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left; padding: 8px;">Type:</th>
+                <td style="padding: 8px;">{{ group.db_group_type }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left; padding: 8px;">Splat:</th>
+                <td style="padding: 8px;">{{ group.db_splat|title }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left; padding: 8px;">Difficulty:</th>
+                <td style="padding: 8px;">{{ group.db_difficulty }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left; padding: 8px;">Territory:</th>
+                <td style="padding: 8px;">{{ group.db_territory }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left; padding: 8px;">Resources:</th>
+                <td style="padding: 8px;">{{ group.db_resources }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left; padding: 8px;">Influence:</th>
+                <td style="padding: 8px;">{{ group.db_influence }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left; padding: 8px;">Description:</th>
+                <td style="padding: 8px;">{{ group.db_description|linebreaks }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left; padding: 8px;">Created:</th>
+                <td style="padding: 8px;">{{ group.db_date_created }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left; padding: 8px;">Created By:</th>
+                <td style="padding: 8px;">{{ group.db_creator|default:"-" }}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- Actions & Links -->
+    <div style="flex: 1; border: 1px solid #ccc; padding: 15px; border-radius: 5px;">
+        <h3>Actions</h3>
+        <div style="margin-bottom: 15px;">
+            <a href="{% url 'admin:npc_manager_npcgroup_change' group.id %}" class="btn btn-primary">Edit Group</a>
+            <a href="{% url 'npc_manager:group_list' %}" class="btn btn-secondary">Back to List</a>
+        </div>
+        
+        <h4>In-Game Object</h4>
+        {% if group.db_object %}
+        <p>This Group has a linked in-game object:</p>
+        <p><strong>DB Ref:</strong> <a href="{% url 'admin:objects_objectdb_change' group.db_object.id %}">#{{ group.db_object.id }}</a></p>
+        {% else %}
+        <p>No in-game object exists yet for this Group.</p>
+        <form method="post" action="{% url 'admin:npc_manager_npcgroup_changelist' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="create_in_game_objects">
+            <input type="hidden" name="_selected_action" value="{{ group.id }}">
+            <button type="submit" class="btn btn-success">Create In-Game Object</button>
+        </form>
+        {% endif %}
+        
+        <h4>Member Count</h4>
+        <p>This group has {{ npcs|length }} member NPCs.</p>
+    </div>
+</div>
+
+<!-- Goals -->
+{% if goals.exists %}
+<div style="margin-top: 20px; border: 1px solid #ccc; padding: 15px; border-radius: 5px;">
+    <h3>Group Goals</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">#</th>
+                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Goal</th>
+                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for goal in goals %}
+            <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ goal.db_order }}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ goal.db_text }}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                    {% if goal.db_completed %}
+                    <span style="color: green;">Completed</span>
+                    {% else %}
+                    <span style="color: orange;">In Progress</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<!-- NPCs in this group -->
+{% if npcs %}
+<div style="margin-top: 20px; border: 1px solid #ccc; padding: 15px; border-radius: 5px;">
+    <h3>Group Members</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Name</th>
+                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Position</th>
+                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Splat</th>
+                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Difficulty</th>
+                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Temporary</th>
+                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for npc in npcs %}
+            <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ npc.db_key }}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                    {% for position in npc.positions.all %}
+                    {% if position.npc_group == group %}
+                    {{ position.db_title }}
+                    {% endif %}
+                    {% empty %}
+                    -
+                    {% endfor %}
+                </td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ npc.db_splat|title }}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ npc.db_difficulty }}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ npc.db_is_temporary|yesno }}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                    <a href="{% url 'npc_manager:npc_detail' npc.id %}" class="btn btn-primary btn-sm">View</a>
+                    <a href="{% url 'admin:npc_manager_npc_change' npc.id %}" class="btn btn-secondary btn-sm">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div style="margin-top: 20px; border: 1px solid #ccc; padding: 15px; border-radius: 5px;">
+    <h3>Group Members</h3>
+    <p>This group has no members yet. You can add NPCs to this group through the admin interface.</p>
+</div>
+{% endif %}
+
+{% endblock %} 

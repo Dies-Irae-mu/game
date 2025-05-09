@@ -1,0 +1,23 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<h1>Sync NPCs and NPC Groups</h1>
+
+<div class="card" style="max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px;">
+    <p>This will scan for all in-game NPCs and NPC Groups and create corresponding database records. Use this if:</p>
+    
+    <ul>
+        <li>NPCs created in-game are not appearing in the admin interface</li>
+        <li>NPC Groups created in-game are not appearing in the admin interface</li>
+        <li>You want to ensure all data is synchronized</li>
+    </ul>
+    
+    <form method="post" action="{% url 'npc_manager:sync_npcs' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Run Sync</button>
+        <a href="{% url 'npc_manager:index' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+{% endblock %} 

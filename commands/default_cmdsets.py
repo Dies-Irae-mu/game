@@ -39,7 +39,7 @@ from commands.CmdRoomLog import CmdRoomLog
 
 from commands.CmdUmbraInteraction import CmdUmbraInteraction
 from commands.communication import CmdMeet, CmdPlusIc, CmdPlusOoc, CmdOOC, CmdSummon, CmdJoin
-from commands.admin import CmdApprove, CmdUnapprove, CmdAdminLook, CmdTestLock, CmdPuppetFreeze, CmdMassUnapprove, CmdReturn, CmdCheckGhosts
+from commands.admin import CmdApprove, CmdUnapprove, CmdAdminLook, CmdTestLock, CmdPuppetFreeze, CmdMassUnapprove, CmdReturn, CmdCheckGhosts, CmdForceDeleteObject
 from commands.CmdPump import CmdPump
 from commands.CmdSpendGain import CmdSpendGain
 from commands.where import CmdWhere
@@ -87,6 +87,7 @@ from commands.CmdSpecialties import CmdSpecialties
 from commands.CmdMultidesc import CmdMultidesc
 from world.wod20th.scripts.weekly_xp import CmdDebugXP
 from commands.CmdTableTalk import CmdTableTalk
+from commands.CmdNPCGroup import CmdOrganization
 
 class CharacterCmdSet(cmdset_character.CharacterCmdSet):
     """
@@ -223,6 +224,7 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdTestLock())
         self.add(CmdResetBBS())
         self.add(CmdNPC())
+        self.add(CmdOrganization())
         self.add(CmdRoomLog())
         self.add(CmdDesc())
         self.add(CmdStaffStat())
@@ -238,6 +240,7 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         # This allows using these commands even when not in the same room as the target
         self.add(CmdEquip())
         self.add(CmdInventory())
+        self.add(CmdForceDeleteObject())
 
 class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):
     """

@@ -4,6 +4,7 @@ from world.wod20th.utils.dice_rolls import roll_dice, interpret_roll_results
 import random
 import os
 import json
+import re
 
 # Path to the name files
 NAME_DATA_PATH = "world/wod20th/data/names"
@@ -173,6 +174,15 @@ class CmdNPC(default_cmds.MuxCommand):
       +npc/inhabit <name or #n>                       - Take control of an NPC (staff only)
       +npc/uninhabit <name or #n>                     - Release control of an NPC (staff only)
       +npc/list                                       - List all NPCs in the scene
+      +npc/listall                                    - List all NPCs in the game (staff only)
+      +npc/listall/loc                                - Group NPCs by location
+      +npc/listall/splat                              - Group NPCs by splat type
+      +npc/listall/temp                               - Show only temporary NPCs
+      +npc/listall/perm                               - Show only permanent NPCs
+      +npc/remove <name or #n>                        - Remove an NPC from the scene (staff only)
+      +npc/remove/force <name or #n>                  - Force-remove a stubborn NPC (staff only)
+      +npc/create [name] [splat=<type>] [diff=<level>] - Create a permanent NPC (staff only)
+      +npc/sheet <name or #n>                         - View an NPC's character sheet
       +npc/name [nationality] [nationality2] [gender] - Generate a random name
       +npc/name <n>=<nationality> [nationality2] [gender]   - Rename an NPC with random name
       +npc/nationalities                        - List available nationalities for names
@@ -194,6 +204,12 @@ class CmdNPC(default_cmds.MuxCommand):
       +npc/name russian/japanese       - Generate a Russian first name with Japanese last name
       +npc/name female                 - Generate a random female name from any nationality
       +npc/name Guard=japanese         - Rename "Guard" with a random Japanese name
+      +npc/create                      - Create a random mortal NPC with medium difficulty
+      +npc/create Sadie splat=mage     - Create a mage NPC named Sadie
+      +npc/create splat=vampire diff=high - Create a high-difficulty vampire with random name
+      +npc/sheet Guard                 - View Guard's character sheet
+      +npc/remove Guard                - Remove Guard from the scene
+      +npc/remove/force #1             - Force-remove NPC #1 when normal removal fails
     """
 
     key = "+npc"
@@ -213,6 +229,16 @@ class CmdNPC(default_cmds.MuxCommand):
             self.list_npcs()
             return
             
+        if "listall" in self.switches or "global" in self.switches:
+            # Check permissions for global listing
+            if not (self.caller.check_permstring("Builder") or 
+                    self.caller.check_permstring("Admin") or 
+                    self.caller.check_permstring("Storyteller")):
+                self.caller.msg("You don't have permission to list all NPCs.")
+                return
+            self.list_all_npcs()
+            return
+            
         if "nationalities" in self.switches:
             self.caller.msg(f"Available nationalities: {NameGenerator.list_nationalities()}")
             return
@@ -220,6 +246,18 @@ class CmdNPC(default_cmds.MuxCommand):
         if "name" in self.switches:
             # Handle name generation
             self.generate_name()
+            return
+
+        if "remove" in self.switches:
+            self.remove_npc(self.args)
+            return
+
+        if "create" in self.switches:
+            self.create_npc(self.args)
+            return
+
+        if "sheet" in self.switches:
+            self.view_sheet(self.args)
             return
 
         if not self.args:
@@ -861,3 +899,469 @@ class CmdNPC(default_cmds.MuxCommand):
             return True
             
         return False
+
+    def remove_npc(self, name):
+        """Remove an NPC from the scene."""
+        # Check permissions
+        if not (self.caller.check_permstring("Builder") or 
+                self.caller.check_permstring("Admin") or 
+                self.caller.check_permstring("Storyteller")):
+            self.caller.msg("You don't have permission to remove NPCs.")
+            return
+            
+        # Check for force switch
+        force_mode = "force" in self.switches
+        
+        # Resolve NPC name
+        resolved_name = self.resolve_npc_name(name)
+        if not resolved_name:
+            self.caller.msg(f"No NPC matching '{name}' found in this scene.")
+            return
+            
+        # Get the NPC object
+        npc_data = self.caller.location.db_npcs.get(resolved_name, {})
+        npc_object = npc_data.get("npc_object")
+        
+        if not npc_object:
+            self.caller.msg(f"Could not find NPC object for '{resolved_name}'.")
+            # Try to clean up the reference at least
+            if resolved_name in self.caller.location.db_npcs:
+                del self.caller.location.db_npcs[resolved_name]
+            return
+            
+        # First clean up the reference in the room
+        if resolved_name in self.caller.location.db_npcs:
+            del self.caller.location.db_npcs[resolved_name]
+        
+        # Get NPC info for reporting
+        npc_id = npc_object.id
+        npc_dbref = npc_object.dbref
+        
+        # Now try to delete the NPC object with increasing aggressiveness
+        try:
+            self.caller.msg(f"Attempting to delete NPC '{resolved_name}' (#{npc_id})...")
+            
+            if force_mode:
+                self.caller.msg("Using force mode for deletion...")
+                
+                # Try force cleanup first
+                try:
+                    # Clear all attributes
+                    for attr in list(npc_object.attributes.all()):
+                        try:
+                            npc_object.attributes.remove(attr.key)
+                        except Exception as e:
+                            self.caller.msg(f"Error removing attribute {attr.key}: {e}")
+                    
+                    # Clear all tags
+                    for tag in list(npc_object.tags.all()):
+                        try:
+                            npc_object.tags.remove(tag.key, tag.category)
+                        except Exception as e:
+                            self.caller.msg(f"Error removing tag {tag.key}: {e}")
+                    
+                    # Clear all command sets
+                    try:
+                        npc_object.cmdset.clear()
+                        npc_object.cmdset.remove_default()
+                    except Exception as e:
+                        self.caller.msg(f"Error clearing command sets: {e}")
+                    
+                    # Remove from any locations
+                    try:
+                        old_location = npc_object.location
+                        npc_object.location = None
+                        if old_location and hasattr(old_location, 'msg'):
+                            old_location.msg_contents(f"{npc_object.name} vanishes.")
+                    except Exception as e:
+                        self.caller.msg(f"Error removing from location: {e}")
+                        
+                    # Explicitly unregister from all rooms
+                    if hasattr(npc_object, 'db'):
+                        try:
+                            registered_rooms = list(npc_object.db.registered_in_rooms) if hasattr(npc_object.db, 'registered_in_rooms') else []
+                            for room_dbref in registered_rooms:
+                                try:
+                                    from evennia.utils.search import search_object
+                                    room = search_object(room_dbref)
+                                    if room and len(room) > 0:
+                                        room = room[0]
+                                        if hasattr(room, 'db_npcs') and npc_object.key in room.db_npcs:
+                                            del room.db_npcs[npc_object.key]
+                                except Exception as e:
+                                    self.caller.msg(f"Error unregistering from room {room_dbref}: {e}")
+                            
+                            # Clear the registered rooms
+                            npc_object.attributes.remove('registered_in_rooms')
+                        except Exception as e:
+                            self.caller.msg(f"Error handling registered rooms: {e}")
+                except Exception as e:
+                    self.caller.msg(f"Error during force cleanup: {e}")
+                
+                # Now try a real force delete
+                success = npc_object.delete(force=True)
+            else:
+                # Normal deletion
+                success = npc_object.delete()
+            
+            if success:
+                self.caller.msg(f"NPC |w{resolved_name}|n (#{npc_id}) has been removed.")
+                return True
+            else:
+                self.caller.msg(f"Failed to delete NPC {resolved_name}. Try using +npc/remove/force.")
+                
+                # Try database-level deletion in force mode
+                if force_mode:
+                    self.caller.msg("Attempting direct database deletion...")
+                    try:
+                        from django.apps import apps
+                        ObjectDB = apps.get_model('objects', 'ObjectDB')
+                        count, _ = ObjectDB.objects.filter(id=npc_id).delete()
+                        if count > 0:
+                            self.caller.msg(f"Successfully deleted NPC from database directly. Removed {count} records.")
+                            return True
+                        else:
+                            self.caller.msg(f"Database deletion reported no records removed. This may indicate the NPC was already deleted at the database level.")
+                    except Exception as e:
+                        self.caller.msg(f"Database-level deletion failed: {e}")
+                        import traceback
+                        traceback.print_exc()
+                        
+                return False
+                
+        except Exception as e:
+            self.caller.msg(f"Error deleting NPC: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return False
+
+    def create_npc(self, args):
+        """Create a permanent NPC."""
+        # Check permissions
+        if not (self.caller.check_permstring("Builder") or 
+                self.caller.check_permstring("Admin") or
+                self.caller.check_permstring("Storyteller")):
+            self.caller.msg("You don't have permission to create permanent NPCs.")
+            return
+            
+        # Parse arguments
+        splat_type = "mortal"  # Default splat type
+        difficulty = "MEDIUM"  # Default difficulty
+        name = None  
+        
+        # Check for named parameters in format splat=value or diff=value
+        splat_match = re.search(r'splat=(\w+)', args, re.IGNORECASE)
+        if splat_match:
+            splat_type = splat_match.group(1).lower()
+            # Remove the splat parameter from args
+            args = args.replace(splat_match.group(0), "").strip()
+            
+        diff_match = re.search(r'diff=(\w+)', args, re.IGNORECASE)
+        if diff_match:
+            diff_value = diff_match.group(1).lower()
+            if diff_value in ["low", "l"]:
+                difficulty = "LOW"
+            elif diff_value in ["med", "medium", "m"]:
+                difficulty = "MEDIUM"
+            elif diff_value in ["high", "h"]:
+                difficulty = "HIGH"
+            # Remove the diff parameter from args
+            args = args.replace(diff_match.group(0), "").strip()
+        
+        # Any remaining text is the name
+        name = args.strip()
+        
+        # If no name provided, generate a random one
+        if not name:
+            first_name, last_name, _, _ = NameGenerator.generate_name()
+            if first_name and last_name:
+                name = f"{first_name} {last_name}"
+            else:
+                # Fallback if name generation fails
+                name = f"NPC_{random.randint(1000, 9999)}"
+        
+        # Validate splat type
+        valid_splats = ["mortal", "vampire", "mage", "shifter", "changeling", 
+                        "hunter", "demon", "psychic", "mummy", "spirit", 
+                        "mortal+", "wraith"]
+        if splat_type not in valid_splats:
+            self.caller.msg(f"Invalid splat type '{splat_type}'. Using 'mortal' instead.")
+            splat_type = "mortal"
+            
+        try:
+            # Import the NPC class
+            from typeclasses.npcs import NPC
+            
+            # Create the NPC
+            self.caller.msg(f"Creating NPC: {name} ({splat_type}, {difficulty})")
+            
+            # Create the NPC object in the caller's location
+            npc = NPC.create(
+                key=name,
+                location=self.caller.location,
+                attributes=[
+                    ("desc", f"A {splat_type} NPC."),
+                ],
+            )
+            
+            # Initialize the NPC with the specified splat and difficulty
+            npc.initialize_npc_stats(splat_type, difficulty)
+            
+            # Set as permanent NPC and set creator
+            npc.db.is_temporary = False
+            npc.db.creator = self.caller
+            
+            # Register the NPC in the current room
+            npc.register_in_room(self.caller.location)
+            
+            self.caller.msg(f"Created permanent NPC |w{name}|n (Splat: {splat_type}, Difficulty: {difficulty})")
+            
+            # Announce to the room
+            self.caller.location.msg_contents(
+                f"{self.caller.name} has created NPC |w{name}|n.",
+                exclude=[self.caller]
+            )
+            
+        except Exception as e:
+            self.caller.msg(f"Error creating NPC: {str(e)}")
+            import traceback
+            traceback.print_exc()
+
+    def view_sheet(self, name):
+        """View an NPC's character sheet."""
+        if not name:
+            self.caller.msg("Usage: +npc/sheet <name or #n>")
+            return
+            
+        # Resolve NPC name
+        resolved_name = self.resolve_npc_name(name)
+        if not resolved_name:
+            self.caller.msg(f"No NPC matching '{name}' found in this scene.")
+            return
+            
+        # Get NPC object
+        npc_data = self.caller.location.db_npcs.get(resolved_name, {})
+        npc_object = npc_data.get("npc_object")
+        
+        if not npc_object:
+            self.caller.msg(f"Could not find NPC object for '{resolved_name}'.")
+            return
+            
+        # Check permissions - only creator, staff, and storytellers can view the sheet
+        if not (self.caller == npc_data.get("creator") or
+                self.caller.check_permstring("Builder") or
+                self.caller.check_permstring("Admin") or
+                self.caller.check_permstring("Storyteller")):
+            self.caller.msg("You don't have permission to view this NPC's sheet.")
+            return
+            
+        # Format and display the character sheet
+        try:
+            stats = npc_object.db.stats
+            
+            # Build the sheet
+            sheet = [
+                f"|c{'=' * 78}|n",
+                f"|c{' ' * 30}NPC SHEET: {resolved_name}{' ' * 30}|n",
+                f"|c{'=' * 78}|n",
+                "",
+                f"|wSplat:|n {stats.get('splat', 'Unknown').capitalize()}",
+                f"|wDifficulty:|n {stats.get('difficulty', 'MEDIUM')}",
+                f"|wCreator:|n {npc_object.db.creator.key if npc_object.db.creator else 'Unknown'}",
+                f"|wTemporary:|n {'Yes' if npc_object.db.is_temporary else 'No'}",
+                "",
+                f"|c{'-' * 78}|n",
+                "|wAttributes:|n"
+            ]
+            
+            # Add attributes
+            if 'attributes' in stats:
+                for category in ['physical', 'social', 'mental']:
+                    if category in stats['attributes']:
+                        sheet.append(f"  |c{category.capitalize()}:|n")
+                        for attr, value in stats['attributes'][category].items():
+                            sheet.append(f"    {attr.capitalize()}: {value['perm'] if isinstance(value, dict) else value}")
+            
+            # Add abilities
+            sheet.append("")
+            sheet.append(f"|c{'-' * 78}|n")
+            sheet.append("|wAbilities:|n")
+            
+            if 'abilities' in stats:
+                for category in ['talents', 'skills', 'knowledges']:
+                    if category in stats['abilities']:
+                        sheet.append(f"  |c{category.capitalize()}:|n")
+                        for ability, value in stats['abilities'][category].items():
+                            sheet.append(f"    {ability.capitalize()}: {value['perm'] if isinstance(value, dict) else value}")
+            
+            # Add powers if any
+            if 'powers' in stats:
+                sheet.append("")
+                sheet.append(f"|c{'-' * 78}|n")
+                sheet.append("|wPowers:|n")
+                
+                for power_type, powers in stats['powers'].items():
+                    if powers:
+                        sheet.append(f"  |c{power_type.capitalize()}:|n")
+                        if isinstance(powers, dict):
+                            for power, value in powers.items():
+                                sheet.append(f"    {power.capitalize()}: {value['perm'] if isinstance(value, dict) else value}")
+                        else:
+                            sheet.append(f"    {', '.join(powers)}")
+            
+            # Add health info
+            sheet.append("")
+            sheet.append(f"|c{'-' * 78}|n")
+            sheet.append("|wHealth:|n")
+            health_status = npc_object.get_health_status()
+            health = stats.get("health", {"bashing": 0, "lethal": 0, "aggravated": 0})
+            sheet.append(f"  Status: {health_status}")
+            sheet.append(f"  Bashing: {health['bashing']}")
+            sheet.append(f"  Lethal: {health['lethal']}")
+            sheet.append(f"  Aggravated: {health['aggravated']}")
+            
+            # Send the formatted sheet to the caller
+            self.caller.msg("\n".join(sheet))
+            
+        except Exception as e:
+            self.caller.msg(f"Error displaying NPC sheet: {str(e)}")
+            import traceback
+            traceback.print_exc()
+
+    def list_all_npcs(self):
+        """List all NPCs in the game (staff only)"""
+        from evennia.utils.search import search_object
+        from evennia.utils import evtable
+        
+        # Search for all NPC objects
+        npcs = search_object(None, typeclass="typeclasses.npcs.NPC")
+        
+        if not npcs:
+            self.caller.msg("No NPCs found in the game.")
+            return
+            
+        # Process switches for display options
+        by_location = "loc" in self.switches
+        by_splat = "splat" in self.switches
+        only_temp = "temp" in self.switches
+        only_perm = "perm" in self.switches
+        
+        # Filter by temporary/permanent status if needed
+        if only_temp:
+            npcs = [npc for npc in npcs if npc.db.is_temporary]
+        elif only_perm:
+            npcs = [npc for npc in npcs if not npc.db.is_temporary]
+            
+        # Create table
+        if by_location:
+            # Group by location
+            locations = {}
+            for npc in npcs:
+                loc = npc.location
+                loc_name = loc.key if loc else "No Location"
+                
+                if loc_name not in locations:
+                    locations[loc_name] = []
+                locations[loc_name].append(npc)
+                
+            # Display by location
+            table = evtable.EvTable(
+                "|wLocation|n",
+                "|wNPC|n",
+                "|wSplat|n",
+                "|wCreator|n",
+                "|wTemp?|n",
+                border="table",
+                width=78
+            )
+            
+            for loc_name, loc_npcs in sorted(locations.items()):
+                for i, npc in enumerate(loc_npcs):
+                    splat = npc.db.stats.get('splat', 'Unknown') if hasattr(npc.db, 'stats') else 'Unknown'
+                    creator = npc.db.creator.key if npc.db.creator else "Unknown"
+                    temp = "Yes" if npc.db.is_temporary else "No"
+                    
+                    # Only show location name in first row of each location group
+                    if i == 0:
+                        table.add_row(loc_name, npc.key, splat, creator, temp)
+                    else:
+                        table.add_row("", npc.key, splat, creator, temp)
+                
+                # Add separator between locations
+                if loc_name != list(sorted(locations.keys()))[-1]:
+                    table.add_row("-", "-", "-", "-", "-")
+                    
+        elif by_splat:
+            # Group by splat type
+            splats = {}
+            for npc in npcs:
+                splat = npc.db.stats.get('splat', 'Unknown') if hasattr(npc.db, 'stats') else 'Unknown'
+                
+                if splat not in splats:
+                    splats[splat] = []
+                splats[splat].append(npc)
+                
+            # Display by splat
+            table = evtable.EvTable(
+                "|wSplat|n",
+                "|wNPC|n", 
+                "|wLocation|n",
+                "|wCreator|n",
+                "|wTemp?|n",
+                border="table",
+                width=78
+            )
+            
+            for splat_name, splat_npcs in sorted(splats.items()):
+                for i, npc in enumerate(splat_npcs):
+                    loc = npc.location.key if npc.location else "No Location"
+                    creator = npc.db.creator.key if npc.db.creator else "Unknown"
+                    temp = "Yes" if npc.db.is_temporary else "No"
+                    
+                    # Only show splat name in first row of each splat group
+                    if i == 0:
+                        table.add_row(splat_name.capitalize(), npc.key, loc, creator, temp)
+                    else:
+                        table.add_row("", npc.key, loc, creator, temp)
+                
+                # Add separator between splats
+                if splat_name != list(sorted(splats.keys()))[-1]:
+                    table.add_row("-", "-", "-", "-", "-")
+                    
+        else:
+            # Default view: flat list
+            table = evtable.EvTable(
+                "|wNPC|n", 
+                "|wLocation|n",
+                "|wSplat|n",
+                "|wCreator|n", 
+                "|wTemp?|n",
+                border="table",
+                width=78
+            )
+            
+            for npc in sorted(npcs, key=lambda x: x.key):
+                loc = npc.location.key if npc.location else "No Location"
+                splat = npc.db.stats.get('splat', 'Unknown') if hasattr(npc.db, 'stats') else 'Unknown'
+                creator = npc.db.creator.key if npc.db.creator else "Unknown"
+                temp = "Yes" if npc.db.is_temporary else "No"
+                
+                table.add_row(npc.key, loc, splat, creator, temp)
+                
+        # Send formatted table
+        header = f"|wAll NPCs in Game|n ({len(npcs)} total)"
+        if only_temp:
+            header = f"|wTemporary NPCs|n ({len(npcs)} total)"
+        elif only_perm:
+            header = f"|wPermanent NPCs|n ({len(npcs)} total)"
+            
+        self.caller.msg(f"\n{header}\n{table}")
+        
+        if npcs:
+            # Show quick help for further filtering
+            help_text = "\nTo filter results:"
+            help_text += "\n+npc/listall/loc - Group by location"
+            help_text += "\n+npc/listall/splat - Group by splat type"
+            help_text += "\n+npc/listall/temp - Show only temporary NPCs"
+            help_text += "\n+npc/listall/perm - Show only permanent NPCs"
+            self.caller.msg(help_text)

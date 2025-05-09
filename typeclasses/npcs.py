@@ -34,12 +34,16 @@ from evennia.locks.lockhandler import LockException
 from evennia.utils.utils import inherits_from
 import uuid
 import random
+from evennia.typeclasses.attributes import AttributeProperty
 
 
 class NPC(DefaultCharacter):
     """
     A base class for all NPCs.
     """
+    # Make is_npc a queryable property
+    is_npc = AttributeProperty(True, autocreate=True)
+
     def at_object_creation(self):
         """
         Called when object is first created.
@@ -61,8 +65,8 @@ class NPC(DefaultCharacter):
         # Initialize tracking for which rooms this NPC is registered in
         self.db.registered_in_rooms = set()
         
-        # Store the dbref as a string for easier reference
-        self.db.dbref_str = f"#{self.id}"
+        # Store the dbref as a string for easier reference - use a distinct format
+        self.db.dbref_str = f"#NPC{self.id}"
         
         # Initialize basic stats as a mortal
         self.initialize_npc_stats("mortal", "LOW")
@@ -73,6 +77,36 @@ class NPC(DefaultCharacter):
         # Initialize speaking language to English
         self.db.speaking_language = "English"
         self.db.languages = ["English"]
+
+        # Create database entry for this NPC
+        self.create_db_model()
+
+    def create_db_model(self):
+        """
+        Create a database model for this NPC.
+        Called after the object is created to ensure it's registered in the database.
+        """
+        try:
+            # Defer import to avoid circular import issues
+            from evennia.utils.utils import lazy_import
+            npc_manager_utils = lazy_import("world.npc_manager.utils")
+            
+            # Create the database entry
+            npc_model, created = npc_manager_utils.get_or_create_npc_model(self)
+            if created:
+                pass  # Could log success here if needed
+        except Exception as e:
+            from evennia.utils import logger
+            logger.log_err(f"Error creating database model for NPC {self.key}: {str(e)}")
+
+    def at_cmdset_creation(self):
+        """
+        Override to prevent NPCs from inheriting character commands.
+        This prevents command duplication in rooms with NPCs.
+        """
+        # Don't call super() to avoid inheriting player character commands
+        # Any NPC-specific commands would be added here
+        pass
 
     def initialize_npc_stats(self, splat_type="mortal", difficulty="LOW"):
         """
@@ -721,7 +755,7 @@ class NPC(DefaultCharacter):
         # Show NPC status to staff
         temp_status = " (Temp)" if self.db.is_temporary else ""
         inhabited = f" [Inhabited by {self.db.inhabited_by.key}]" if self.db.inhabited_by else ""
-        id_display = f" (#{self.db.npc_number})" if self.db.npc_number else ""
+        id_display = f" (NPC#{self.db.npc_number})" if self.db.npc_number else ""
         
         return f"{self.key}{id_display}{temp_status}{inhabited}"
 
@@ -804,14 +838,44 @@ class NPC(DefaultCharacter):
         # Unregister from all rooms
         from evennia import search_object
         
-        for room_dbref in list(self.db.registered_in_rooms):
-            room = search_object(room_dbref)
-            if room and len(room) > 0:
-                room = room[0]
-                self.unregister_from_room(room)
+        try:
+            # Clear all command sets to make sure nothing persists
+            try:
+                self.cmdset.clear()
+                self.cmdset.remove_default()
+                # Also force-deactivate any custom command sets
+                for cmdset in self.cmdset.get():
+                    self.cmdset.remove(cmdset)
+            except Exception as e:
+                from evennia.utils import logger
+                logger.log_err(f"Error clearing command sets for NPC {self.key}: {e}")
+            
+            # Get a safe copy of registered rooms
+            registered_rooms = set(self.db.registered_in_rooms) if hasattr(self.db, "registered_in_rooms") else set()
+            
+            # Clear the attribute first in case something fails
+            self.attributes.remove("registered_in_rooms")
+            
+            # Now try to unregister from each room
+            for room_dbref in registered_rooms:
+                try:
+                    room = search_object(room_dbref)
+                    if room and len(room) > 0:
+                        room = room[0]
+                        if hasattr(room, "db_npcs") and self.key in room.db_npcs:
+                            del room.db_npcs[self.key]
+                except Exception as e:
+                    from evennia.utils import logger
+                    logger.log_err(f"Error unregistering NPC {self.key} from room {room_dbref}: {e}")
+                    # Continue to next room even if there's an error
                 
-        # Call parent method
-        super().at_object_delete()
+            # Call parent method
+            super().at_object_delete()
+        except Exception as e:
+            from evennia.utils import logger
+            logger.log_err(f"Error in at_object_delete for NPC {self.key}: {e}")
+            # Even if there's an error, try to call the parent method
+            super().at_object_delete()
 
     def get_health_status(self):
         """Get a text representation of health status."""
@@ -953,4 +1017,44 @@ class NPC(DefaultCharacter):
         # Send message to room
         if self.location:
             self.location.msg_contents(emote_msg, exclude=[])
+
+    @classmethod
+    def create(cls, *args, **kwargs):
+        """Create a new NPC object with database entry."""
+        new_npc = super(NPC, cls).create(*args, **kwargs)
+        
+        # Ensure the database model is created
+        if new_npc:
+            new_npc.create_db_model()
+            
+        return new_npc
+
+    def at_post_puppet(self):
+        """
+        Called just after a player puppets this object.
+        
+        Since NPCs aren't meant to be puppeted, we'll add a warning.
+        """
+        self.msg_contents(f"{self.key} has been possessed by {self.account}.")
+        self.account.msg("|rWarning:|n You have puppeted an NPC. This is usually not recommended.")
+        super().at_post_puppet()
+
+    def at_pre_unpuppet(self):
+        """
+        Called just before a player stops puppeting this object.
+        """
+        self.msg_contents(f"{self.key} has been released from {self.account}'s control.")
+        super().at_pre_unpuppet()
+
+    def at_heartbeat(self):
+        """
+        Called regularly by the server.
+        
+        We use this to check if temporary NPCs should be cleaned up.
+        """
+        # Check if this is a temporary NPC with expiration
+        if self.db.is_temporary and self.db.expiration_time:
+            now = datetime.now()
+            if now >= self.db.expiration_time:
+                self.delete()
 

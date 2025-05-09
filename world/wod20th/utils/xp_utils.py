@@ -1440,6 +1440,12 @@ def _determine_stat_category(stat_name):
     """
     logger.log_info(f"Determining category for stat: {stat_name}")
 
+    # Special handling for Time - need to check character splat
+    if stat_name.lower() == 'time':
+        # We don't have character context here, so we'll need to specify the category explicitly
+        # Default to sphere, but it should be overridden by explicit specification
+        return ('powers', 'sphere')
+
     # Import merit, flaw, and rite data structures for comprehensive checking
     from world.wod20th.utils.stat_mappings import (
         MERIT_VALUES, FLAW_VALUES, 
@@ -2736,6 +2742,9 @@ def process_xp_spend(character, stat_name, new_rating, category, subcategory, re
         # Store the original stat name for later use with gift aliases
         original_stat_name = stat_name
         
+        # Flag to track if category was explicitly specified
+        explicit_category_specified = category is not None and subcategory is not None
+        
         # Determine category and subcategory if not provided
         if not category or not subcategory:
             cat_subcat = _determine_stat_category(stat_name)
@@ -2800,6 +2809,25 @@ def process_xp_spend(character, stat_name, new_rating, category, subcategory, re
                 # If still not found
                 if not category:
                     return False, f"Could not determine category for {stat_name}", 0
+
+        # Special handling for Time stat to set the right category based on character splat
+        if stat_name.lower() == 'time' and not explicit_category_specified:
+            # Get character's splat
+            splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+            
+            # Override category and subcategory based on splat
+            if splat == 'Mage':
+                category = 'powers'
+                subcategory = 'sphere'
+                logger.log_info(f"Time stat detected for Mage character. Setting category to powers.sphere")
+            elif splat == 'Changeling':
+                category = 'powers'
+                subcategory = 'realm'
+                logger.log_info(f"Time stat detected for Changeling character. Setting category to powers.realm")
+            else:
+                category = 'attributes'
+                subcategory = 'physical'
+                logger.log_info(f"Time stat detected for {splat} character. Setting category to attributes.physical")
 
         # Early rejection for merits and flaws for non-staff users
         if category in ['merits', 'flaws'] and not is_staff_spend:
@@ -3629,6 +3657,22 @@ def validate_stat_for_splat(character, stat_name, category, subcategory):
     if not splat:
         return True, ""  # If splat is not set, don't validate
     
+    # Special handling for Time based on category and subcategory
+    if stat_name.lower() == 'time':
+        # If explicitly specified as a realm for Changelings
+        if category == 'powers' and subcategory == 'realm' and splat == 'Changeling':
+            return True, ""
+        # If explicitly specified as a sphere for Mages
+        elif category == 'powers' and subcategory == 'sphere' and splat == 'Mage':
+            return True, ""
+        # Special check for powers category validation
+        elif category == 'powers':
+            if subcategory == 'realm' and splat != 'Changeling' and splat != 'Mortal+':
+                return False, f"Time as a realm is only available to Changeling characters, not {splat}."
+            elif subcategory == 'sphere' and splat != 'Mage':
+                return False, f"Time as a sphere is only available to Mage characters, not {splat}."
+            # If we reach here, Time is either specified correctly for the splat or something else is wrong
+    
     # Define splat-specific validation rules
     # Format: stat_name.lower(): [list of valid splats]
     stat_name_lower = stat_name.lower()
@@ -3658,7 +3702,7 @@ def validate_stat_for_splat(character, stat_name, category, subcategory):
         'mind': ['Mage'],
         'prime': ['Mage'],
         'spirit': ['Mage'],
-        'time': ['Mage'],
+        # Remove Time from this list as it's handled specially above
         'dimensional science': ['Mage'],
         'primal utility': ['Mage'],
         'data': ['Mage'],
@@ -3730,6 +3774,10 @@ def validate_stat_for_splat(character, stat_name, category, subcategory):
     
     # Handle splat-specific powers by category
     if category == 'powers':
+        # Special case for Time stat already handled above
+        if stat_name.lower() == 'time':
+            return True, ""
+            
         if subcategory == 'sphere' and splat != 'Mage':
             return False, f"Spheres are only available to Mage characters, not {splat}."
         

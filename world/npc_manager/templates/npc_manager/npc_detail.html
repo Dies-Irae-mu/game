@@ -1,0 +1,112 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<h1>NPC: {{ npc.db_key }}</h1>
+
+<div style="display: flex; gap: 20px; margin-bottom: 20px;">
+    <!-- Basic Info -->
+    <div style="flex: 2; border: 1px solid #ccc; padding: 15px; border-radius: 5px;">
+        <h3>Basic Information</h3>
+        <table style="width: 100%;">
+            <tr>
+                <th style="text-align: left; padding: 8px; width: 150px;">Name:</th>
+                <td style="padding: 8px;">{{ npc.db_key }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left; padding: 8px;">Splat:</th>
+                <td style="padding: 8px;">{{ npc.db_splat|title }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left; padding: 8px;">Difficulty:</th>
+                <td style="padding: 8px;">{{ npc.db_difficulty }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left; padding: 8px;">Temporary:</th>
+                <td style="padding: 8px;">{{ npc.db_is_temporary|yesno }}</td>
+            </tr>
+            {% if npc.db_is_temporary and npc.db_expiration_time %}
+            <tr>
+                <th style="text-align: left; padding: 8px;">Expires:</th>
+                <td style="padding: 8px;">{{ npc.db_expiration_time }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <th style="text-align: left; padding: 8px;">Group:</th>
+                <td style="padding: 8px;">
+                    {% if npc.db_group %}
+                    <a href="{% url 'npc_manager:group_detail' npc.db_group.id %}">{{ npc.db_group.db_key }}</a>
+                    {% else %}
+                    -
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th style="text-align: left; padding: 8px;">Description:</th>
+                <td style="padding: 8px;">{{ npc.db_description|linebreaks }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left; padding: 8px;">Created:</th>
+                <td style="padding: 8px;">{{ npc.db_date_created }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left; padding: 8px;">Created By:</th>
+                <td style="padding: 8px;">{{ npc.db_creator|default:"-" }}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- Actions & Links -->
+    <div style="flex: 1; border: 1px solid #ccc; padding: 15px; border-radius: 5px;">
+        <h3>Actions</h3>
+        <div style="margin-bottom: 15px;">
+            <a href="{% url 'admin:npc_manager_npc_change' npc.id %}" class="btn btn-primary">Edit NPC</a>
+            <a href="{% url 'npc_manager:npc_list' %}" class="btn btn-secondary">Back to List</a>
+        </div>
+        
+        <h4>In-Game Object</h4>
+        {% if npc.db_object %}
+        <p>This NPC has a linked in-game object:</p>
+        <p><strong>DB Ref:</strong> <a href="{% url 'admin:objects_objectdb_change' npc.db_object.id %}">#{{ npc.db_object.id }}</a></p>
+        {% else %}
+        <p>No in-game object exists yet for this NPC.</p>
+        <form method="post" action="{% url 'admin:npc_manager_npc_changelist' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="create_in_game_objects">
+            <input type="hidden" name="_selected_action" value="{{ npc.id }}">
+            <button type="submit" class="btn btn-success">Create In-Game Object</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<!-- NPC Positions -->
+{% if npc.positions.exists %}
+<div style="margin-top: 20px; border: 1px solid #ccc; padding: 15px; border-radius: 5px;">
+    <h3>Positions</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Title</th>
+                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Group</th>
+                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Rank</th>
+                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for position in npc.positions.all %}
+            <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ position.db_title }}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                    <a href="{% url 'npc_manager:group_detail' position.npc_group.id %}">{{ position.npc_group.db_key }}</a>
+                </td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ position.db_order }}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ position.db_description|truncatechars:50 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% endblock %} 

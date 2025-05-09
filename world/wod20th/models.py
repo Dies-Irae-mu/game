@@ -403,7 +403,7 @@ class MokoleArchidTrait(models.Model):
             'Binocular Vision': {
                 'description': '+2 on all visual-based Perception rolls. -2 to opponents attempts to surprise.',
                 'can_stack': False,
-                'stat_modifiers': {},
+                'stat_modifiers': {'perception': 2},
                 'special_rules': '+2 visual Perception, -2 to surprise'
             },
             'Bladed Tail': {
@@ -513,6 +513,12 @@ class MokoleArchidTrait(models.Model):
                 'can_stack': False,
                 'stat_modifiers': {},
                 'special_rules': 'Tail can be used as hand'
+            },
+            'Resplendent Crest': {
+                'description': '+3 appearance and +1 charisma in Archid form.',
+                'can_stack': False,
+                'stat_modifiers': {'appearance': 3, 'charisma': 1},
+                'special_rules': '+3 appearance, +1 charisma'
             },
             'Royal Crest': {
                 'description': '+2 to Social rolls involving Nagah or any Mokolé stream.',

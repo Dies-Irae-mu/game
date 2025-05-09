@@ -68,7 +68,6 @@
         "splat": "Shifter",
         "tribe": [
             "Black Furies",
-            "Croatan"
         ],
         "gift_alias": [
             "Unsea's Blessing"
@@ -853,7 +852,6 @@
             "Get of Fenris",
 			"Ceilican",
 			"Black Spiral Dancers",
-            "Croatan"
         ],
         "gift_alias": [
             "Banish Burning"
@@ -2488,7 +2486,7 @@
         ],
         "shifter_type": ["Garou", "Ajaba", "Ananasi", "Gurahl", "Kitsune", "Nagah"],
         "splat": "Shifter",
-        "tribe": ["Croatan", "Black Spiral Dancers"],
+        "tribe": ["Black Spiral Dancers"],
         "auspice": [
             "Galliard",
 			"Viskr",

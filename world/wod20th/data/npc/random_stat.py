@@ -2,10 +2,10 @@ import random
 import json
 import os
 from commands.CmdNPC import NameGenerator
-from utils.possessed_utils import POSSESSED_POWERS
-from utils.companion_utils import COMPANION_POWERS
-from utils.sheet_constants import POWERS
-from utils.stat_mappings import SPECIAL_ADVANTAGES, COMBAT_SPECIAL_ADVANTAGES, ARTS, REALMS
+from world.wod20th.utils.possessed_utils import POSSESSED_POWERS
+from world.wod20th.utils.companion_utils import COMPANION_POWERS
+from world.wod20th.utils.sheet_constants import POWERS
+from world.wod20th.utils.stat_mappings import SPECIAL_ADVANTAGES, COMBAT_SPECIAL_ADVANTAGES, ARTS, REALMS
 
 # Path to the data files
 DATA_PATH = "world/wod20th/data"
