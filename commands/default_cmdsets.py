@@ -123,7 +123,6 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdHurt())
         self.add(CmdHeal())
         self.add(CmdEvents())
-        self.add(CmdMail())  # Our fixed mail command
         self.add(CmdMailCharacter())  # Our fixed mail character command
         self.add(CmdRoll())
         self.add(CmdShift())
@@ -213,6 +212,9 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         # Add our custom help command
         self.add(CmdHelp())
         self.add(CmdHelpNum())
+        
+        # Add mail command to AccountCmdSet
+        self.add(CmdMail())
         
         self.add(CmdNotes())
         self.add(CmdSummon())

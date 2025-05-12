@@ -32,12 +32,56 @@ class CmdMail(EvenniaCmdMail):
       @mail/reply 9=Thanks for the info!
     """
 
+    def get_all_mail(self):
+        """
+        Overridden get_all_mail method to ensure proper ordering and retrieval
+        of all mail messages.
+        """
+        from evennia.utils import logger
+        
+        # Get the mail messages using the parent class implementation
+        # The original EvenniaCmdMail.get_all_mail() method
+        from evennia.utils.utils import make_iter
+        from evennia.comms.models import Msg
+        
+        # This is how Evennia's mail command gets messages
+        if self.account_caller:
+            receiver = self.caller
+        else:
+            receiver = self.caller.account
+        
+        # Get all messages where this account is a receiver
+        messages = Msg.objects.get_by_tag(category="mail").filter(db_receivers_accounts=receiver)
+        
+        # Safety check for messages directly
+        direct_messages = Msg.objects.filter(db_receivers_accounts=receiver)
+        if direct_messages.exists():
+            # Check each message to ensure it has proper mail tags
+            for msg in direct_messages:
+                # If message doesn't have mail tag, add it
+                if not msg.tags.get(category='mail'):
+                    msg.tags.add("mail", category="mail")
+                
+                # Check if it's new (for display purposes)
+                is_new = False
+                for tag in msg.tags.all():
+                    if hasattr(tag, 'db_category') and tag.db_category == "mail" and tag.db_key == "new":
+                        is_new = True
+                        break
+        
+        # Order by oldest first (ascending) so new messages appear at the bottom
+        messages = sorted(messages, key=lambda x: x.db_date_created)
+        
+        return messages
+
     def func(self):
         """
         Overridden func method to fix status display.
         """
+        from evennia.utils import logger
+        
         if not self.switches and not self.args:
-            # list messages - this is the part we're overriding
+            # List messages - this is the part we're overriding
             messages = self.get_all_mail()
 
             if messages:
@@ -65,18 +109,43 @@ class CmdMail(EvenniaCmdMail):
                             is_new = True
                             break
                     
-                    status = "|gNEW|n" if is_new else ""
+                    status_marker = " *" if is_new else ""
                     
                     # Add safety check for empty senders list
                     sender_name = "Unknown"
-                    if message.senders:
-                        sender_name = message.senders[0].get_display_name(self.caller)
-
+                    # Handle senders being either a list or a queryset
+                    if hasattr(message, 'senders'):
+                        if isinstance(message.senders, list):
+                            if message.senders:
+                                sender = message.senders[0]
+                                if hasattr(sender, 'get_display_name'):
+                                    sender_name = sender.get_display_name(self.caller)
+                                elif hasattr(sender, 'username'):
+                                    sender_name = sender.username
+                                else:
+                                    sender_name = str(sender)
+                        else:
+                            # Assume it's a queryset
+                            try:
+                                # Check if it has a first() method (queryset)
+                                if hasattr(message.senders, 'first') and message.senders.first():
+                                    sender = message.senders.first()
+                                    sender_name = sender.get_display_name(self.caller)
+                                # Check if exists() method is available (queryset)
+                                elif hasattr(message.senders, 'exists') and message.senders.exists():
+                                    sender = message.senders.all()[0]
+                                    sender_name = sender.get_display_name(self.caller)
+                            except Exception as e:
+                                logger.log_err(f"Error getting sender name: {str(e)}")
+                    
+                    # Include NEW marker in subject for new messages
+                    subject = f"{message.header}{status_marker}"
+                    
                     # Add row without the extra status column
                     table.add_row(
                         index,
                         sender_name,
-                        message.header,
+                        subject,
                         message.db_date_created.strftime("%b %d"),
                     )
                     index += 1
@@ -95,12 +164,26 @@ class CmdMail(EvenniaCmdMail):
         elif not self.switches and self.args and not self.rhs:
             # Viewing a specific message by ID
             all_mail = self.get_all_mail()
-            mind_max = max(0, all_mail.count() - 1)
+            
+            # Make sure we have messages
+            if not all_mail:
+                self.caller.msg("You have no messages.")
+                return
+                
+            # Convert all_mail to a list if it's not already
+            all_mail = list(all_mail)
+            
+            # Validate the message ID
             try:
-                mind = max(0, min(mind_max, int(self.lhs) - 1))
+                mind = int(self.lhs) - 1  # Convert to 0-based index
+                # Ensure index is within valid range
+                if mind < 0 or mind >= len(all_mail):
+                    self.caller.msg(f"'{self.lhs}' is not a valid mail id.")
+                    return
+                    
                 message = all_mail[mind]
-            except (ValueError, IndexError):
-                self.caller.msg("'%s' is not a valid mail id." % self.lhs)
+            except (ValueError, IndexError) as e:
+                self.caller.msg(f"'{self.lhs}' is not a valid mail id.")
                 return
 
             messageForm = []
@@ -112,8 +195,31 @@ class CmdMail(EvenniaCmdMail):
                 messageForm.append(_HEAD_CHAR * _WIDTH)
                 # Add safety check for empty senders list
                 sender_name = "Unknown"
-                if message.senders:
-                    sender_name = message.senders[0].get_display_name(self.caller)
+                # Handle senders being either a list or a queryset
+                if hasattr(message, 'senders'):
+                    if isinstance(message.senders, list):
+                        if message.senders:
+                            sender = message.senders[0]
+                            if hasattr(sender, 'get_display_name'):
+                                sender_name = sender.get_display_name(self.caller)
+                            elif hasattr(sender, 'username'):
+                                sender_name = sender.username
+                            else:
+                                sender_name = str(sender)
+                    else:
+                        # Assume it's a queryset
+                        try:
+                            # Check if it has a first() method (queryset)
+                            if hasattr(message.senders, 'first') and message.senders.first():
+                                sender = message.senders.first()
+                                sender_name = sender.get_display_name(self.caller)
+                            # Check if exists() method is available (queryset)
+                            elif hasattr(message.senders, 'exists') and message.senders.exists():
+                                sender = message.senders.all()[0]
+                                sender_name = sender.get_display_name(self.caller)
+                        except Exception as e:
+                            logger.log_err(f"Error getting sender name: {str(e)}")
+                            
                 messageForm.append("|wFrom:|n %s" % sender_name)
                 # note that we cannot use %-d format here since Windows does not support it
                 day = message.db_date_created.day
@@ -125,9 +231,15 @@ class CmdMail(EvenniaCmdMail):
                 messageForm.append(_SUB_HEAD_CHAR * _WIDTH)
                 messageForm.append(message.message)
                 messageForm.append(_HEAD_CHAR * _WIDTH)
+                
+                # Mark as read
+                try:
+                    message.tags.remove("new", category="mail")
+                    message.tags.add("mail", category="mail")  # Ensure mail tag is present
+                except Exception as e:
+                    logger.log_err(f"Error marking message as read: {str(e)}")
+                
             self.caller.msg("\n".join(messageForm))
-            message.tags.remove("new", category="mail")
-            message.tags.add("-", category="mail")
         else:
             # call the original method for all other cases
             super().func()

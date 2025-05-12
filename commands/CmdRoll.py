@@ -525,39 +525,74 @@ class CmdRoll(default_cmds.MuxCommand):
         """Send a mail notification to all participants in a job."""
         from evennia.utils import logger
         
-        logger.log_info(f"ROLL DEBUG: Sending roll result notification for Job #{job.id}")
-        
         # Collect all unique accounts involved with the job
         participants = set()
+        staff_participants = set()
         
         # Add requester if exists
         if job.requester:
-            participants.add(job.requester)
-            logger.log_info(f"ROLL DEBUG: Added requester {job.requester.username} to recipient list")
+            try:
+                if job.requester.check_permstring("Admin"):
+                    staff_participants.add(job.requester)
+                else:
+                    participants.add(job.requester)
+            except Exception as e:
+                logger.log_err(f"Error checking requester permission: {str(e)}")
             
         # Add assignee if exists
         if job.assignee:
-            participants.add(job.assignee)
-            logger.log_info(f"ROLL DEBUG: Added assignee {job.assignee.username} to recipient list")
+            try:
+                if job.assignee.check_permstring("Admin"):
+                    staff_participants.add(job.assignee)
+                else:
+                    participants.add(job.assignee)
+            except Exception as e:
+                logger.log_err(f"Error checking assignee permission: {str(e)}")
             
-        # Add all participants
-        for participant in job.participants.all():
-            participants.add(participant)
-            logger.log_info(f"ROLL DEBUG: Added participant {participant.username} to recipient list")
+        # Add all participants - use try/except to handle potential errors
+        try:
+            for participant in job.participants.all():
+                try:
+                    if participant.check_permstring("Admin"):
+                        staff_participants.add(participant)
+                    else:
+                        participants.add(participant)
+                except Exception as e:
+                    # If we can't check permissions, default to treating as regular participant
+                    participants.add(participant)
+                    logger.log_err(f"Error checking participant permission: {str(e)}")
+        except Exception as e:
+            logger.log_err(f"Error accessing job participants: {str(e)}")
             
         # Remove the caller to avoid self-notification
-        if self.caller.account in participants:
-            participants.remove(self.caller.account)
-            logger.log_info(f"ROLL DEBUG: Excluded caller {self.caller.account.username} from recipient list")
+        try:
+            if self.caller.account in participants:
+                participants.remove(self.caller.account)
+        except Exception as e:
+            logger.log_err(f"Error removing caller from participants: {str(e)}")
+        
+        try:
+            if self.caller.account in staff_participants:
+                staff_participants.remove(self.caller.account)
+        except Exception as e:
+            logger.log_err(f"Error removing caller from staff participants: {str(e)}")
             
-        # If we don't have any recipients, return early
+        # First handle staff notifications (direct message, no mail)
+        for staff in staff_participants:
+            try:
+                if staff.is_connected:
+                    # Send a direct notification about the job update
+                    action_by = self.caller.name if hasattr(self.caller, 'name') else self.caller.key
+                    for session in staff.sessions.all():
+                        session.msg(f"|yA roll has been posted by {action_by} on Job #{job.id}.|n")
+            except Exception as e:
+                logger.log_err(f"Error sending staff notification: {str(e)}")
+            
+        # If we don't have any non-staff recipients, return early
         if not participants:
-            logger.log_info(f"ROLL DEBUG: No participants to notify for Job #{job.id}")
             return
             
-        logger.log_info(f"ROLL DEBUG: Found {len(participants)} participants to notify")
-        
-        # Send mail to all participants using the proper mail API
+        # Send mail to non-staff participants using the proper mail API
         try:
             subject = f"Job #{job.id} Update"
             mail_body = f"Job #{job.id}: {job.title}\n\n{message}"
@@ -570,10 +605,8 @@ class CmdRoll(default_cmds.MuxCommand):
             
             for participant in participants:
                 if not participant.username:
-                    logger.log_err(f"ROLL DEBUG: Participant has no username, skipping")
+                    logger.log_err(f"Participant has no username, skipping")
                     continue
-                    
-                logger.log_info(f"ROLL DEBUG: Creating mail for {participant.username}")
                 
                 try:
                     # Create a mail message
@@ -585,35 +618,29 @@ class CmdRoll(default_cmds.MuxCommand):
                     )
                     
                     if not new_mail:
-                        logger.log_err(f"ROLL DEBUG: Failed to create message for {participant.username}")
+                        logger.log_err(f"Failed to create message for {participant.username}")
                         continue
                         
                     # Tag it as new
                     new_mail.tags.add("new", category="mail")
-                    logger.log_info(f"ROLL DEBUG: Added 'new' tag to mail for {participant.username}")
                     
                     participant_names.append(participant.username)
                     success_count += 1
                     
                     # If participant is online, notify them directly
                     if participant.is_connected:
-                        logger.log_info(f"ROLL DEBUG: Participant {participant.username} is connected")
                         # Notify the connected player directly that they have mail
-                        # Fix the job.id variable in the notification message
                         for session in participant.sessions.all():
                             session.msg(f"|yYou have received new mail about job #{job.id}. Type '@mail' to view.|n")
                     
                 except Exception as e:
-                    logger.log_err(f"ROLL DEBUG: Error sending to {participant.username}: {str(e)}")
+                    logger.log_err(f"Error sending to {participant.username}: {str(e)}")
             
             if participant_names:
                 self.caller.msg(f"Roll notification sent to: {', '.join(participant_names)}")
-                logger.log_info(f"ROLL DEBUG: Successfully sent {success_count} notifications")
-            else:
-                logger.log_err(f"ROLL DEBUG: Failed to send any notifications")
             
         except Exception as e:
-            logger.log_err(f"ROLL DEBUG: Failed to send job notifications: {str(e)}")
+            logger.log_err(f"Failed to send job notifications: {str(e)}")
             self.caller.msg(f"Failed to send notifications: {str(e)}")
 
     def get_stat_value_and_name(self, stat_name):
@@ -849,12 +876,10 @@ class CmdRoll(default_cmds.MuxCommand):
         return 0
 
     def post_to_jobs_channel(self, player_name, job_id, action):
-        """Post a message to the Jobs channel."""
+        """Post a message to the Jobs channel for admin visibility."""
         from evennia.comms.models import ChannelDB
         from evennia.utils import create
         from evennia.utils import logger
-        
-        logger.log_info(f"ROLL DEBUG: Posting to jobs channel about Job #{job_id}")
         
         channel_names = ["Jobs", "Requests", "Req"]
         channel = None
@@ -862,12 +887,17 @@ class CmdRoll(default_cmds.MuxCommand):
         for name in channel_names:
             found_channel = ChannelDB.objects.channel_search(name)
             if found_channel:
-                channel = found_channel[0]
-                logger.log_info(f"ROLL DEBUG: Found channel: {name}")
-                break
+                # Check if the channel has the correct locks for admin-only viewing
+                if found_channel[0].locks.check_lockstring(found_channel[0], "listen:perm(Admin)"):
+                    channel = found_channel[0]
+                    break
+                else:
+                    # Update locks to ensure admin-only access
+                    found_channel[0].locks.add("listen:perm(Admin)")
+                    channel = found_channel[0]
+                    break
 
         if not channel:
-            logger.log_info(f"ROLL DEBUG: No Jobs channel found, creating one")
             # Create channel with admin-only permissions
             channel = create.create_channel(
                 "Jobs",
@@ -879,4 +909,3 @@ class CmdRoll(default_cmds.MuxCommand):
 
         message = f"{player_name} {action} Job #{job_id}"
         channel.msg(f"[Job System] {message}")
-        logger.log_info(f"ROLL DEBUG: Message sent to channel: {message}")
