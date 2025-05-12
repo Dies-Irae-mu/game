@@ -563,9 +563,22 @@ class CmdPlaces(MuxCommand):
                 # Clean up stale occupants
                 valid_occupants = []
                 for occ in occupants:
-                    if (occ and occ.location == location and 
-                        occ.db.place == place):
+                    # Skip invalid entries
+                    if not occ:
+                        continue
+                    
+                    # Handle string references by converting to object
+                    if isinstance(occ, str):
+                        occ = self.caller.search(occ, quiet=True)
+                        
+                    # Skip if we couldn't find a valid object
+                    if not occ or not hasattr(occ, 'location'):
+                        continue
+                    
+                    # Check if the occupant is still valid
+                    if occ.location == location and hasattr(occ, 'db') and occ.db.place == place:
                         valid_occupants.append(occ)
+                
                 location.db.places[place] = valid_occupants
                 
                 # Add to table
