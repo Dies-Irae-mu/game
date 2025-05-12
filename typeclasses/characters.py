@@ -28,6 +28,11 @@ class Character(DefaultCharacter):
     ...
     """
 
+    @property
+    def is_npc(self):
+        """Return False for regular characters to distinguish from NPCs."""
+        return False
+
     def at_object_creation(self):
         """
         Called when object is first created.
@@ -154,15 +159,21 @@ class Character(DefaultCharacter):
         if not self.sessions.count():
             # only remove this char from grid if no sessions control it anymore.
             if self.location:
-                def message(obj, from_obj):
-                    obj.msg(
-                        "{name} has disconnected{reason}.".format(
-                            name=self.get_display_name(obj),
-                            reason=kwargs.get("reason", ""),
-                        ),
-                        from_obj=from_obj,
-                    )
-                self.location.for_contents(message, exclude=[self], from_obj=self)
+                # Send a customized message using msg_contents_quiet_filter
+                disconnect_msg = "{name} has disconnected{reason}.".format(
+                    name=self.name,
+                    reason=kwargs.get("reason", "")
+                )
+                
+                # Use special quiet filter method if available
+                if hasattr(self.location, 'msg_contents_quiet_filter'):
+                    self.location.msg_contents_quiet_filter(disconnect_msg, exclude=[self], from_obj=self)
+                else:
+                    # Fallback to standard method
+                    def message(obj, from_obj):
+                        obj.msg(disconnect_msg, from_obj=from_obj)
+                    self.location.for_contents(message, exclude=[self], from_obj=self)
+                
                 self.db.prelogout_location = self.location
                 self.location = None
                 
@@ -175,10 +186,6 @@ class Character(DefaultCharacter):
                 ip_addr = isinstance(session.address, tuple) and session.address[0] or session.address
                 self.attributes.add("last_ip", ip_addr)
 
-            # Notification now handled by signal system
-            # from commands.CmdWatch import notify_watchers
-            # notify_watchers(self, False)
-
     def at_post_puppet(self, **kwargs):
         """
         Called just after puppeting has been completed and all
@@ -189,14 +196,17 @@ class Character(DefaultCharacter):
         
         # Send connection message to room
         if self.location:
-            def message(obj, from_obj):
-                obj.msg(
-                    "{name} has connected.".format(
-                        name=self.get_display_name(obj),
-                    ),
-                    from_obj=from_obj,
-                )
-            self.location.for_contents(message, exclude=[self], from_obj=self)
+            # Create the connection message
+            connect_msg = "{name} has connected.".format(name=self.name)
+            
+            # Use special quiet filter method if available
+            if hasattr(self.location, 'msg_contents_quiet_filter'):
+                self.location.msg_contents_quiet_filter(connect_msg, exclude=[self], from_obj=self)
+            else:
+                # Fallback to standard method
+                def message(obj, from_obj):
+                    obj.msg(connect_msg, from_obj=from_obj)
+                self.location.for_contents(message, exclude=[self], from_obj=self)
 
             # Show room description
             self.msg((self.at_look(self.location)))
@@ -205,10 +215,6 @@ class Character(DefaultCharacter):
         logger.log_info(f"About to call display_login_notifications for {self.key}")
         self.display_login_notifications()
         logger.log_info(f"Finished display_login_notifications for {self.key}")
-
-        # Notification now handled by signal system
-        # from commands.CmdWatch import notify_watchers
-        # notify_watchers(self, True)
 
     @property
     def notification_settings(self):
