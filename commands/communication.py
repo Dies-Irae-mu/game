@@ -106,6 +106,16 @@ class CmdPlusIc(MuxCommand):
 
     def func(self):
         caller = self.caller
+        
+        # Check if the room is a Quiet Room
+        if hasattr(caller.location, 'db') and caller.location.db.roomtype == "Quiet Room":
+            caller.msg("|rYou cannot use the +ic command from a Quiet Room.|n")
+            return
+            
+        # Check if the room is an RP Room
+        if hasattr(caller.location, 'db') and caller.location.db.roomtype and "RP Room" in caller.location.db.roomtype:
+            caller.msg("|rYou cannot use the +ic command from an RP Room. Please return to the OOC nexus first.|n")
+            return
 
         # Check if the character is approved - check both tag and attribute
         is_approved = (caller.tags.has("approved", category="approval") or 
@@ -144,15 +154,22 @@ class CmdPlusIc(MuxCommand):
 
         # Notify the player they're moving
         caller.msg(f"Returning to IC ({target_location.name})...")
+        
+        # Ensure all sessions know we're moving to prevent ghosts
+        for session in caller.sessions.all():
+            if session:
+                session.msg(text=f"Moving to {target_location.name}...")
             
         # Move the character to the new location
         caller.move_to(target_location, quiet=True)
         
-        # Make sure location is fully updated
+        # Make sure location is fully updated for all sessions
         caller.location = target_location
-        
-        # Force a look to update the client's view
-        caller.execute_cmd("look")
+
+        # Force locations in ndb for all sessions to update
+        for session in caller.sessions.all():
+            if session and hasattr(session, 'puppet') and session.puppet == caller:
+                session.ndb._prod_location = target_location
         
         # Announce arrival at new location
         caller.msg(f"You return to the IC area ({target_location.name}).")
@@ -178,6 +195,17 @@ class CmdPlusOoc(MuxCommand):
 
     def func(self):
         caller = self.caller
+        
+        # Check if the room is a Quiet Room
+        if hasattr(caller.location, 'db') and caller.location.db.roomtype == "Quiet Room":
+            caller.msg("|rYou cannot use the +ooc command from a Quiet Room.|n")
+            return
+            
+        # Check if the room is an RP Room
+        if hasattr(caller.location, 'db') and caller.location.db.roomtype and "RP Room" in caller.location.db.roomtype:
+            caller.msg("|rYou cannot use the +ooc command from an RP Room. Please return to the grid first.|n")
+            return
+            
         current_location = caller.location
 
         # Store the current location as an attribute
@@ -198,6 +226,11 @@ class CmdPlusOoc(MuxCommand):
         
         # Notify the player they're moving
         caller.msg("Moving to OOC area...")
+        
+        # Ensure all sessions know we're moving to prevent ghosts
+        for session in caller.sessions.all():
+            if session:
+                session.msg(text=f"Moving to OOC area...")
                 
         # Move the character to the new location
         caller.move_to(ooc_nexus, quiet=True)
@@ -205,8 +238,10 @@ class CmdPlusOoc(MuxCommand):
         # Make sure location is fully updated
         caller.location = ooc_nexus
         
-        # Force a look to update the client's view
-        caller.execute_cmd("look")
+        # Force locations in ndb for all sessions to update
+        for session in caller.sessions.all():
+            if session and hasattr(session, 'puppet') and session.puppet == caller:
+                session.ndb._prod_location = ooc_nexus
         
         # Announce arrival at new location
         caller.msg(f"You move to the OOC area.")
@@ -247,6 +282,11 @@ class CmdMeet(MuxCommand):
     def func(self):
         caller = self.caller
         
+        # Check if the room is a Quiet Room
+        if hasattr(caller.location, 'db') and caller.location.db.roomtype == "Quiet Room":
+            caller.msg("|rYou cannot use the +meet command from a Quiet Room.|n")
+            return
+        
         # Check if caller is staff - admin, builder, or storyteller
         is_staff = False
         if hasattr(caller, 'check_permstring'):
@@ -265,6 +305,7 @@ class CmdMeet(MuxCommand):
             caller.msg("Usage: +meet <player> or +meet/accept or +meet/reject")
             return
 
+        # Handle accepting meet requests
         if "accept" in self.switches:
             if not caller.ndb.meet_request:
                 caller.msg("You have no pending meet requests.")
@@ -278,14 +319,21 @@ class CmdMeet(MuxCommand):
             # Announce departure before moving
             old_location.msg_contents(f"{caller.name} has left to meet {requester.name}.", exclude=caller)
             
+            # Ensure all sessions know we're moving to prevent ghosts
+            for session in caller.sessions.all():
+                if session:
+                    session.msg(text=f"Moving to {requester.name}'s location...")
+            
             # Move the character to the new location
             caller.move_to(requester.location, quiet=True)
             
             # Make sure location is fully updated
             caller.location = requester.location
             
-            # Force a look to update the client's view
-            caller.execute_cmd("look")
+            # Force locations in ndb for all sessions to update
+            for session in caller.sessions.all():
+                if session and hasattr(session, 'puppet') and session.puppet == caller:
+                    session.ndb._prod_location = requester.location
             
             # Announce arrival at new location
             caller.msg(f"You accept the meet request from {requester.name} and join them.")
@@ -296,6 +344,7 @@ class CmdMeet(MuxCommand):
             caller.ndb.meet_request = None
             return
 
+        # Handle rejecting meet requests
         if "reject" in self.switches:
             if not caller.ndb.meet_request:
                 caller.msg("You have no pending meet requests.")
@@ -305,6 +354,17 @@ class CmdMeet(MuxCommand):
             requester.msg(f"{caller.name} has rejected your meet request.")
             caller.ndb.meet_request = None
             return
+        
+        # For new meet requests, check location restrictions
+        # Only proceed if not in OOC area or Quiet Room (or if staff)
+        if not is_staff:
+            if current_location and hasattr(current_location, 'db'):
+                if current_location.db.roomtype == "OOC Area":
+                    caller.msg("|rYou cannot send meet requests from OOC areas. Use +ic first to return to IC areas.|n")
+                    return
+                if current_location.db.roomtype == "Quiet Room":
+                    caller.msg("|rYou cannot send meet requests from a Quiet Room.|n")
+                    return
 
         target = self.search_for_character(self.args)
         if not target:
@@ -398,6 +458,11 @@ class CmdSummon(AdminCommand):
         # First, let the target know they're being summoned
         target.msg(f"You are being summoned by {caller.name}...")
         
+        # Ensure all sessions know we're moving to prevent ghosts
+        for session in target.sessions.all():
+            if session:
+                session.msg(text=f"Being summoned by {caller.name}...")
+        
         # Announce departure at the old location before moving
         old_location.msg_contents(f"{target.name} has been summoned by {caller.name}.", exclude=target)
                 
@@ -407,8 +472,10 @@ class CmdSummon(AdminCommand):
         # Make sure location is fully updated
         target.location = caller.location
         
-        # Force a look to update the client's view
-        target.execute_cmd("look")
+        # Force locations in ndb for all sessions to update
+        for session in target.sessions.all():
+            if session and hasattr(session, 'puppet') and session.puppet == target:
+                session.ndb._prod_location = caller.location
         
         # Announce arrival at the new location
         caller.msg(f"You have summoned {target.name} to your location.")
@@ -496,6 +563,11 @@ class CmdJoin(AdminCommand):
         # Notify caller they are joining the target
         caller.msg(f"Joining {target.name}...")
         
+        # Ensure all sessions know we're moving to prevent ghosts
+        for session in caller.sessions.all():
+            if session:
+                session.msg(text=f"Joining {target.name}...")
+        
         # Announce departure at the old location before moving
         old_location.msg_contents(f"{caller.name} has left to join {target.name}.", exclude=caller)
 
@@ -505,8 +577,10 @@ class CmdJoin(AdminCommand):
         # Make sure location is fully updated
         caller.location = target.location
         
-        # Force a look to update the client's view
-        caller.execute_cmd("look")
+        # Force locations in ndb for all sessions to update
+        for session in caller.sessions.all():
+            if session and hasattr(session, 'puppet') and session.puppet == caller:
+                session.ndb._prod_location = target.location
         
         # Announce arrival at the new location
         caller.msg(f"You have joined {target.name} at their location.")
