@@ -6,6 +6,8 @@ from evennia.utils import evtable, logger
 from evennia.comms.models import Msg
 from django.db.models import Q
 import datetime
+from django.utils import timezone
+from evennia.accounts.models import AccountDB
 
 class CmdMail(EvenniaCmdMail):
     """
@@ -23,49 +25,18 @@ class CmdMail(EvenniaCmdMail):
       @mail/reply <#>=<message>
                               - Replies to a message #. Prepends message to the original
                                 message text.
-      @mail/sent               - Shows messages you have sent
-      @mail/sent <#>           - Shows a specific sent message by its number
     Switches:
       delete  - deletes a message
       forward - forward a received message to another object with an optional message attached.
       reply   - Replies to a received message, appending the original message to the bottom.
-      sent    - display messages you have sent or view a specific sent message
     """
 
     def func(self):
         """
         Override func to handle mail operations with improved feedback.
         """
-        # Case: List sent messages (sent switch, no args)
-        if "sent" in self.switches and not self.args:
-            self.display_sent_mail()
-            return
-            
-        # Case: View individual sent message (sent switch with a number)
-        elif "sent" in self.switches and self.args:
-            try:
-                # Try to convert to an integer
-                mind = int(self.args) - 1
-                
-                # Get all sent mail messages
-                sent_messages = self.get_sent_mail()
-                
-                # Check if the index is valid
-                if 0 <= mind < len(sent_messages):
-                    message = sent_messages[mind]
-                    
-                    # Display sent message with custom formatting
-                    self.display_sent_message(message)
-                    return
-                else:
-                    self.caller.msg(f"'{self.args}' is not a valid sent mail id.")
-                    return
-            except ValueError:
-                self.caller.msg(f"Invalid mail id. Use a number to specify the mail message.")
-                return
-            
         # Case 1: Mail sending (no switches, args with =, possibly with /)
-        elif not self.switches and self.args and "=" in self.args:
+        if not self.switches and self.args and "=" in self.args:
             try:
                 # Log mail attempt 
                 logger.log_info(f"Mail send attempt: {self.args}")
@@ -80,43 +51,30 @@ class CmdMail(EvenniaCmdMail):
                 recipients = [r.strip() for r in lhs.split(",")]
                 logger.log_info(f"Recipients: {recipients}")
                 
-                # Save the current Msg.create method to restore after our override
-                original_create = Msg.create
+                # Parse subject and message if the / is present
+                subject = ""
+                message = rhs
+                if "/" in rhs:
+                    parts = rhs.split("/", 1)
+                    subject = parts[0].strip()
+                    message = parts[1].strip()
+                    logger.log_info(f"Subject: {subject}, Message length: {len(message)}")
+                    
+                    # Let's explicitly log the full subject for debugging
+                    logger.log_info(f"Full subject extracted: '{subject}'")
                 
-                # Override Msg.create to add custom tagging
-                def custom_create_hook(*args, **kwargs):
-                    # Call the original create method
-                    msg = original_create(*args, **kwargs)
-                    
-                    try:
-                        # Add mail and sent tags to the message
-                        if msg:
-                            # Try to add tags if this method exists
-                            if hasattr(msg, 'tags') and hasattr(msg.tags, 'add'):
-                                msg.tags.add("mail", category="mail")
-                                msg.tags.add("sent", category="mail")
-                                logger.log_info(f"Added mail and sent tags to message {msg.id} in create hook")
-                    except Exception as e:
-                        logger.log_err(f"Error adding tags in custom create hook: {str(e)}")
-                    
-                    return msg
+                # Store target recipients explicitly for later verification
+                target_recipients = [r.lower().strip() for r in lhs.split(",")]
+                logger.log_info(f"Target recipients (normalized): {target_recipients}")
                 
-                # Replace the create method with our custom version
-                try:
-                    Msg.create = custom_create_hook
-                    
-                    # Call original implementation for mail sending
-                    original_func = super().func
-                    result = original_func()
-                    
-                    # Provide feedback to sender
-                    self.caller.msg("Mail sent successfully.")
-                    logger.log_info("Mail sent successfully")
-                finally:
-                    # Restore the original create method no matter what
-                    Msg.create = original_create
+                # Instead of trying to override Msg.create which may not exist,
+                # we'll call the parent implementation and then tag the message afterward
                 
-                # Find the actual sent message as a backup in case our hook didn't work
+                # Call original implementation for mail sending
+                original_func = super().func
+                result = original_func()
+                
+                # Find the actual sent message
                 if self.account_caller:
                     sender = self.caller
                 else:
@@ -124,32 +82,99 @@ class CmdMail(EvenniaCmdMail):
                 
                 # Look for the most recently sent message
                 try:
-                    timestamp_threshold = datetime.datetime.now() - datetime.timedelta(seconds=10)
+                    timestamp_threshold = timezone.now() - datetime.timedelta(seconds=10)
                     recent_messages = Msg.objects.filter(
                         db_sender_accounts=sender,
                         db_date_created__gte=timestamp_threshold
                     ).order_by('-db_date_created')
                     
-                    # Try to find the exact message based on recipients and content
-                    found_message = None
-                    for msg in recent_messages[:5]:  # Check the 5 most recent messages
-                        # Check if header starts with TO: 
-                        if msg.db_header and msg.db_header.startswith("TO:"):
-                            # Look for recipient matches in the header
-                            recipient_matched = any(r.lower() in msg.db_header.lower() for r in recipients)
-                            if recipient_matched:
-                                found_message = msg
-                                break
+                    # Log all recent messages for debugging
+                    logger.log_info(f"Found {recent_messages.count()} messages in last 10 seconds")
+                    for idx, msg in enumerate(recent_messages[:5]):
+                        header = msg.db_header or "No header"
+                        msg_content = msg.db_message[:30] + "..." if msg.db_message and len(msg.db_message) > 30 else msg.db_message
+                        logger.log_info(f"Message {idx+1}: ID={msg.id}, Header='{header}', Content='{msg_content}'")
+                        
+                        # Log receivers if possible
+                        if hasattr(msg, 'receivers'):
+                            try:
+                                if isinstance(msg.receivers, list):
+                                    receiver_list = [r.username if hasattr(r, 'username') else str(r) for r in msg.receivers]
+                                else:
+                                    receiver_list = [r.username if hasattr(r, 'username') else str(r) for r in msg.receivers.all()]
+                                logger.log_info(f"  Receivers: {receiver_list}")
+                            except Exception as e:
+                                logger.log_info(f"  Error getting receivers: {str(e)}")
                     
-                    # If we found a specific match, use it; otherwise use the most recent
-                    recent_sent = found_message or recent_messages.first()
+                    # SIMPLIFIED APPROACH: Just use the most recent message
+                    # This is more reliable than trying complex matching which might fail
+                    if recent_messages.exists():
+                        recent_sent = recent_messages.first()
+                        logger.log_info(f"Using most recent message {recent_sent.id}")
+                    else:
+                        recent_sent = None
+                        logger.log_info("No recent messages found")
                     
                     if recent_sent:
+                        # Store the original header for logging
+                        original_header = recent_sent.db_header
+                        
+                        # Before modifying, explicitly store recipients (only if attributes are supported)
+                        if hasattr(recent_sent, 'attributes') and hasattr(recent_sent.attributes, 'add'):
+                            try:
+                                recent_sent.attributes.add("mail_recipients", target_recipients)
+                                logger.log_info(f"Stored original recipients: {target_recipients}")
+                            except Exception as e:
+                                logger.log_err(f"Error storing recipients: {str(e)}")
+                        
                         # Ensure it has the mail tag - add both mail and sent tags
                         if hasattr(recent_sent, 'tags') and hasattr(recent_sent.tags, 'add'):
-                            recent_sent.tags.add("mail", category="mail")
-                            recent_sent.tags.add("sent", category="mail")
-                            logger.log_info(f"Added mail and sent tags to message {recent_sent.id} in backup tagging")
+                            # First clear any existing tags to avoid duplicates
+                            try:
+                                recent_sent.tags.clear(category="mail")
+                                # Add our tags
+                                recent_sent.tags.add("mail", category="mail")
+                                recent_sent.tags.add("sent", category="mail")
+                                logger.log_info(f"Added mail and sent tags to message {recent_sent.id}")
+                                
+                                # Add a special tag to make sure we can find it in get_sent_mail
+                                recent_sent.tags.add("recent_sent", category="mail")
+                                logger.log_info(f"Added recent_sent tag for easy retrieval")
+                            except Exception as e:
+                                logger.log_err(f"Error managing tags: {str(e)}")
+                        
+                        # Special handling for subject
+                        # Always set the subject if we have one, regardless of current header format
+                        if subject:
+                            if recent_sent.db_header and recent_sent.db_header.startswith("TO:"):
+                                # Format as "TO: recipient: subject"
+                                header_parts = recent_sent.db_header.split(":", 2)
+                                if len(header_parts) >= 2:
+                                    # Construct new header with subject
+                                    new_header = f"{header_parts[0]}:{header_parts[1]}: {subject}"
+                                    recent_sent.db_header = new_header
+                                    recent_sent.save()
+                                    logger.log_info(f"Updated header from '{original_header}' to '{new_header}'")
+                            else:
+                                # For non-standard headers, add subject if possible
+                                new_header = f"{recent_sent.db_header or 'Subject'}: {subject}"
+                                recent_sent.db_header = new_header
+                                recent_sent.save()
+                                logger.log_info(f"Set non-standard header from '{original_header}' to '{new_header}'")
+                                
+                            # Also store subject in an attribute (only if attributes are supported)
+                            if hasattr(recent_sent, 'attributes') and hasattr(recent_sent.attributes, 'add'):
+                                try:
+                                    recent_sent.attributes.add("mail_subject", subject)
+                                    logger.log_info(f"Added mail_subject attribute: {subject}")
+                                except Exception as e:
+                                    logger.log_err(f"Error adding subject attribute: {str(e)}")
+                            
+                        # Force refresh our in-memory reference to ensure changes are visible
+                        try:
+                            recent_sent = Msg.objects.get(id=recent_sent.id)
+                        except Exception as e:
+                            logger.log_err(f"Error refreshing message: {str(e)}")
                         
                         # Debug: Add TO tag for extra identification
                         if all(hasattr(recent_sent, attr) for attr in ('db_header', 'db_message')):
@@ -179,6 +204,9 @@ class CmdMail(EvenniaCmdMail):
                     logger.log_err(f"Error tagging sent mail: {str(e)}")
                     logger.log_err("Full error details:", exc_info=True)
                 
+                # Provide feedback to sender
+                self.caller.msg("Mail sent successfully.")
+                logger.log_info("Mail sent successfully")
                 return result
             except Exception as e:
                 # Log any errors in mail sending
@@ -322,170 +350,6 @@ class CmdMail(EvenniaCmdMail):
         else:
             self.caller.msg("There are no messages in your inbox.")
 
-    def display_sent_mail(self):
-        """
-        Display messages sent by the caller.
-        """
-        messages = self.get_sent_mail()
-
-        if messages:
-            # Create table
-            _HEAD_CHAR = "|-"
-            _WIDTH = 78
-            
-            # Display header
-            self.caller.msg("|015" + "-" * _WIDTH + "|n")
-            self.caller.msg(f"|ySent Mail:|n {len(messages)} messages")
-            
-            # Create table with headers
-            table = evtable.EvTable(
-                "|wID|n",
-                "|wTo|n",
-                "|wSubject|n",
-                "|wSent|n",
-                table=None,
-                border="header",
-                width=_WIDTH
-            )
-            
-            # Add each message
-            for i, message in enumerate(messages, 1):
-                # Get recipient names
-                recipient_names = []
-                if hasattr(message, 'receivers'):
-                    if isinstance(message.receivers, list):
-                        for receiver in message.receivers:
-                            if hasattr(receiver, 'get_display_name'):
-                                recipient_names.append(receiver.get_display_name(self.caller))
-                            elif hasattr(receiver, 'username'):
-                                recipient_names.append(receiver.username)
-                            else:
-                                recipient_names.append(str(receiver))
-                    else:
-                        # Handle message.receivers as a queryset
-                        try:
-                            for receiver in message.receivers.all():
-                                if hasattr(receiver, 'get_display_name'):
-                                    recipient_names.append(receiver.get_display_name(self.caller))
-                                elif hasattr(receiver, 'username'):
-                                    recipient_names.append(receiver.username)
-                                else:
-                                    recipient_names.append(str(receiver))
-                        except Exception as e:
-                            logger.log_err(f"Error retrieving recipients: {str(e)}")
-                            
-                # If we couldn't determine recipients from receivers attribute,
-                # try to extract from the header
-                if not recipient_names and message.db_header and message.db_header.startswith("TO:"):
-                    try:
-                        # Extract recipient names from TO: header
-                        to_part = message.db_header[3:].strip()
-                        recipient_names = [name.strip() for name in to_part.split(",")]
-                    except Exception as e:
-                        logger.log_err(f"Error extracting recipients from header: {str(e)}")
-                
-                recipient_str = ", ".join(recipient_names) if recipient_names else "Unknown"
-                
-                # Format subject 
-                subject = message.db_header or ""
-                # Remove "TO:" prefix if present
-                if subject.startswith("TO:"):
-                    # Extract the actual subject after recipient names
-                    parts = subject[3:].split(":", 1)
-                    if len(parts) > 1:
-                        # If there's a colon after the recipients, use what follows as subject
-                        subject = parts[1].strip()
-                    else:
-                        # Otherwise, just use the cleaned TO part
-                        subject = parts[0].strip()
-                
-                # Format date
-                date_str = message.db_date_created.strftime("%b %d %H:%M")
-                
-                # Add row to table
-                table.add_row(
-                    i,
-                    recipient_str[:16] + "..." if len(recipient_str) > 19 else recipient_str,
-                    subject[:27] + "..." if len(subject) > 30 else subject, 
-                    date_str
-                )
-            
-            # Format columns
-            table.reformat_column(0, width=6)
-            table.reformat_column(1, width=18)
-            table.reformat_column(2, width=30)
-            table.reformat_column(3, width=24)
-            
-            # Display table
-            self.caller.msg(str(table))
-            self.caller.msg("|015" + "-" * _WIDTH + "|n")
-        else:
-            self.caller.msg("You haven't sent any messages.")
-            # Add some debug info to help diagnose issues
-            if not self.account_caller:
-                self.caller.msg("Debug: Using character account for sender")
-            
-            try:
-                # Log some debug info to help diagnose issues
-                if self.account_caller:
-                    sender = self.caller
-                else:
-                    sender = self.caller.account
-                
-                # Try to find messages with TO: header
-                to_messages = Msg.objects.filter(
-                    db_sender_accounts=sender,
-                    db_header__startswith="TO:"
-                ).count()
-                
-                # Try to find messages with mail tags
-                mail_messages = Msg.objects.filter(
-                    db_sender_accounts=sender,
-                    db_tags__db_category="mail",
-                    db_tags__db_key="mail"
-                ).count()
-                
-                # Find messages with sent tag
-                sent_messages = Msg.objects.filter(
-                    db_sender_accounts=sender,
-                    db_tags__db_category="mail",
-                    db_tags__db_key="sent"
-                ).count()
-                
-                # Count all messages from this sender
-                all_sent = Msg.objects.filter(db_sender_accounts=sender).count()
-                
-                # Send debug to player
-                self.caller.msg(f"Debug: Found {all_sent} total messages, {to_messages} with TO: header, "
-                               f"{mail_messages} with mail tag, {sent_messages} with sent tag")
-                
-                # Also log for server logs
-                logger.log_info(f"Sender {sender.username} has {all_sent} total msgs, {to_messages} with TO: header, "
-                              f"{mail_messages} with mail tag, {sent_messages} with sent tag")
-                
-                # Check recent messages (last 30 days)
-                one_month_ago = datetime.datetime.now() - datetime.timedelta(days=30)
-                recent_msgs = Msg.objects.filter(
-                    db_sender_accounts=sender,
-                    db_date_created__gte=one_month_ago
-                ).count()
-                self.caller.msg(f"Debug: Found {recent_msgs} messages sent in the last 30 days")
-                
-                # Check the last 5 messages for additional debugging
-                last_msgs = Msg.objects.filter(
-                    db_sender_accounts=sender
-                ).order_by('-db_date_created')[:5]
-                
-                if last_msgs:
-                    self.caller.msg("Debug: Last 5 message info:")
-                    for i, msg in enumerate(last_msgs):
-                        header = msg.db_header if msg.db_header else "None"
-                        date = msg.db_date_created.strftime("%Y-%m-%d %H:%M:%S")
-                        self.caller.msg(f"  {i+1}. ID: {msg.id}, Header: {header}, Date: {date}")
-                
-            except Exception as e:
-                self.caller.msg(f"Debug: Error checking messages: {e}")
-
     def display_message(self, message):
         """
         Display an individual mail message with proper formatting.
@@ -546,87 +410,6 @@ class CmdMail(EvenniaCmdMail):
             message.tags.add("mail", category="mail")  # Ensure mail tag is present
         except Exception as e:
             logger.log_err(f"Error marking message as read: {str(e)}")
-        
-        # Display the formatted message
-        self.caller.msg("\n".join(messageForm))
-
-    def display_sent_message(self, message):
-        """
-        Display an individual sent mail message with proper formatting.
-        """
-        _HEAD_CHAR = "|015-|n"
-        _SUB_HEAD_CHAR = "-"
-        _WIDTH = 78
-        
-        messageForm = []
-        messageForm.append(_HEAD_CHAR * _WIDTH)
-        
-        # Get recipient names
-        recipient_names = []
-        if hasattr(message, 'receivers'):
-            if isinstance(message.receivers, list):
-                for receiver in message.receivers:
-                    if hasattr(receiver, 'get_display_name'):
-                        recipient_names.append(receiver.get_display_name(self.caller))
-                    elif hasattr(receiver, 'username'):
-                        recipient_names.append(receiver.username)
-                    else:
-                        recipient_names.append(str(receiver))
-            else:
-                # Handle message.receivers as a queryset
-                try:
-                    for receiver in message.receivers.all():
-                        if hasattr(receiver, 'get_display_name'):
-                            recipient_names.append(receiver.get_display_name(self.caller))
-                        elif hasattr(receiver, 'username'):
-                            recipient_names.append(receiver.username)
-                        else:
-                            recipient_names.append(str(receiver))
-                except Exception as e:
-                    logger.log_err(f"Error retrieving recipients: {str(e)}")
-        
-        # If we couldn't determine recipients from receivers attribute,
-        # try to extract from the header
-        if not recipient_names and message.db_header and message.db_header.startswith("TO:"):
-            try:
-                # Extract recipient names from TO: header
-                to_part = message.db_header[3:].strip()
-                # If there's a colon, the recipient is before it
-                if ":" in to_part:
-                    to_part = to_part.split(":", 1)[0]
-                recipient_names = [name.strip() for name in to_part.split(",")]
-            except Exception as e:
-                logger.log_err(f"Error extracting recipients from header: {str(e)}")
-        
-        recipient_str = ", ".join(recipient_names) if recipient_names else "Unknown"
-        
-        messageForm.append("|wTo:|n %s" % recipient_str)
-        
-        # Format date
-        day = message.db_date_created.day
-        messageForm.append(
-            "|wSent:|n %s"
-            % message.db_date_created.strftime(f"%b {day}, %Y - %H:%M:%S")
-        )
-        
-        # Add subject - extract it from the TO: header if possible
-        subject = message.db_header or ""
-        if subject.startswith("TO:"):
-            # Extract the actual subject after recipient names
-            parts = subject[3:].split(":", 1)
-            if len(parts) > 1:
-                # If there's a colon after the recipients, use what follows as subject
-                subject = parts[1].strip()
-            else:
-                # Otherwise, just use the cleaned TO part
-                subject = parts[0].strip()
-        
-        messageForm.append("|wSubject:|n %s" % subject)
-        messageForm.append(_SUB_HEAD_CHAR * _WIDTH)
-        
-        # Add message content
-        messageForm.append(message.db_message)
-        messageForm.append(_HEAD_CHAR * _WIDTH)
         
         # Display the formatted message
         self.caller.msg("\n".join(messageForm))
@@ -700,7 +483,7 @@ class CmdMail(EvenniaCmdMail):
             
         # APPROACH 5: Get recent messages (last 24 hours)
         try:
-            one_day_ago = datetime.datetime.now() - datetime.timedelta(days=1)
+            one_day_ago = timezone.now() - datetime.timedelta(days=1)
             recent_messages = Msg.objects.filter(
                 db_receivers_accounts=receiver,
                 db_date_created__gte=one_day_ago
@@ -751,252 +534,6 @@ class CmdMail(EvenniaCmdMail):
         # Sort by date created, oldest first
         filtered_messages = sorted(filtered_messages, key=lambda x: x.db_date_created)
             
-        return filtered_messages
-
-    def get_sent_mail(self):
-        """
-        Get messages sent by the caller.
-        """
-        # Get sender account
-        if self.account_caller:
-            sender = self.caller
-        else:
-            sender = self.caller.account
-            
-        # Get messages where the caller is the sender
-        try:
-            # Main query - find messages with the sent tag
-            sent_tagged = Msg.objects.filter(
-                db_sender_accounts=sender,
-                db_tags__db_category="mail",
-                db_tags__db_key="sent"
-            ).distinct()
-            
-            logger.log_info(f"Found {sent_tagged.count()} sent-tagged messages for {sender.username}")
-            
-            # Also find messages with mail tag
-            mail_tagged = Msg.objects.filter(
-                db_sender_accounts=sender,
-                db_tags__db_category="mail",
-                db_tags__db_key="mail"
-            ).distinct()
-            
-            logger.log_info(f"Found {mail_tagged.count()} mail-tagged messages for {sender.username}")
-            
-            # As a backup, also find messages with TO: in header
-            to_messages = Msg.objects.filter(
-                db_sender_accounts=sender,
-                db_header__startswith="TO:"
-            ).distinct()
-            
-            logger.log_info(f"Found {to_messages.count()} messages with TO: header for {sender.username}")
-            
-            # Combine all queries, avoiding duplicates
-            combined_messages = list(sent_tagged)
-            msg_ids = {msg.id for msg in combined_messages}
-            
-            # Add mail-tagged messages
-            for msg in mail_tagged:
-                if msg.id not in msg_ids:
-                    combined_messages.append(msg)
-                    msg_ids.add(msg.id)
-            
-            # Add TO: header messages
-            for msg in to_messages:
-                if msg.id not in msg_ids:
-                    combined_messages.append(msg)
-                    msg_ids.add(msg.id)
-            
-            logger.log_info(f"Combined total: {len(combined_messages)} messages")
-            
-            # If we still don't have any messages, try a more generic approach
-            if not combined_messages:
-                # Look for any messages sent in the last month
-                one_month_ago = datetime.datetime.now() - datetime.timedelta(days=30)
-                recent_sent = Msg.objects.filter(
-                    db_sender_accounts=sender,
-                    db_date_created__gte=one_month_ago
-                ).distinct()
-                
-                logger.log_info(f"Fallback query found {recent_sent.count()} recent messages")
-                combined_messages = list(recent_sent)
-            
-        except Exception as e:
-            logger.log_err(f"Error retrieving sent mail: {str(e)}")
-            return []
-            
-        # Filter out page messages, keeping only genuine mail
-        filtered_messages = []
-        
-        # Track filtering stats for debugging
-        excluded_count = {
-            "page_tag": 0,
-            "page_content": 0,
-            "job_notification": 0,
-            "not_mail_like": 0,
-            "system_message": 0
-        }
-        
-        for msg in combined_messages:
-            try:
-                # Initialize debugging info for this message
-                message_debug = {
-                    "id": msg.id,
-                    "header": msg.db_header,
-                    "date": msg.db_date_created.strftime("%Y-%m-%d %H:%M:%S"),
-                    "tags": [],
-                    "reason_excluded": None
-                }
-                
-                # Get all tags for debugging - safely handle different tag types
-                try:
-                    for tag in msg.tags.all():
-                        # Handle tag object which might be a string or a DB object
-                        if isinstance(tag, str):
-                            tag_info = tag
-                        else:
-                            try:
-                                # Try to access tag.db_key - this is a DB object
-                                tag_key = tag.db_key if hasattr(tag, 'db_key') else str(tag)
-                                tag_category = tag.db_category if hasattr(tag, 'db_category') else "None"
-                                tag_info = f"{tag_key}:{tag_category}"
-                            except AttributeError:
-                                # Fallback to string representation
-                                tag_info = str(tag)
-                        
-                        message_debug["tags"].append(tag_info)
-                except Exception as e:
-                    logger.log_err(f"Error processing tags for message {msg.id}: {str(e)}")
-                    message_debug["tags"].append("Error processing tags")
-                
-                # Prioritize messages with sent tag - skip filtering for these
-                has_sent_tag = False
-                try:
-                    for tag in msg.tags.all():
-                        # Check if this is the sent tag
-                        if isinstance(tag, str) and tag == "sent":
-                            has_sent_tag = True
-                            break
-                        elif hasattr(tag, 'db_key') and hasattr(tag, 'db_category'):
-                            if tag.db_category == "mail" and tag.db_key == "sent":
-                                has_sent_tag = True
-                                break
-                except Exception as e:
-                    logger.log_err(f"Error checking sent tag for message {msg.id}: {str(e)}")
-                
-                # Also check if this has a TO: header, which is a strong indicator of sent mail
-                has_to_header = msg.db_header and msg.db_header.startswith("TO:")
-                
-                if has_sent_tag or has_to_header:
-                    # We're certain this is a sent mail - add it without further filtering
-                    filtered_messages.append(msg)
-                    logger.log_info(f"Including message {msg.id} based on sent tag or TO: header")
-                    continue
-                
-                # 1. Skip messages with page tag or other non-mail tags
-                is_page = False
-                is_mail = False
-                
-                try:
-                    for tag in msg.tags.all():
-                        if isinstance(tag, str):
-                            # String tag
-                            if tag == "page":
-                                is_page = True
-                                break
-                            elif tag in ["mail", "new", "sent"]:
-                                is_mail = True
-                        else:
-                            # DB object tag
-                            try:
-                                tag_key = tag.db_key if hasattr(tag, 'db_key') else str(tag)
-                                tag_category = tag.db_category if hasattr(tag, 'db_category') else None
-                                
-                                if tag_key == "page":
-                                    is_page = True
-                                    break
-                                elif tag_category == "mail" and tag_key in ["mail", "new", "sent"]:
-                                    is_mail = True
-                            except AttributeError:
-                                # Skip tags that don't have the expected attributes
-                                continue
-                except Exception as e:
-                    logger.log_err(f"Error processing tags for filtering: {str(e)}")
-                
-                # Skip messages with non-mail tags unless they have a TO: header
-                if is_page:
-                    excluded_count["page_tag"] += 1
-                    message_debug["reason_excluded"] = "has page tag"
-                    continue
-                
-                # 2. Skip messages that look like pages based on content
-                if msg.db_message and isinstance(msg.db_message, str):
-                    message_content = msg.db_message.lower()
-                    if any(marker in message_content for marker in [
-                        "from afar,", "pages:", "pages you", "page to",
-                        "to afar,", "long-distance to", "remotely to", 
-                        "whispers to you", "whispers,"
-                    ]):
-                        excluded_count["page_content"] += 1
-                        message_debug["reason_excluded"] = "content looks like page"
-                        continue
-                
-                # 3. Skip job notifications (that aren't direct messages)
-                if ((msg.db_message and "Job #" in msg.db_message) or 
-                    (msg.db_header and "Job #" in msg.db_header)):
-                    if not (msg.db_header and msg.db_header.startswith("TO:")):
-                        excluded_count["job_notification"] += 1
-                        message_debug["reason_excluded"] = "job notification"
-                        continue
-                
-                # 4. Verify this is an actual mail-like message
-                is_mail_like = False
-                
-                # Messages with TO: header are definitely mail
-                if msg.db_header and msg.db_header.startswith("TO:"):
-                    is_mail_like = True
-                # Messages with mail tag are mail
-                elif is_mail:
-                    is_mail_like = True
-                # Check for receivers as a mail criterion
-                elif hasattr(msg, 'receivers') and msg.receivers:
-                    is_mail_like = True
-                
-                if not is_mail_like:
-                    excluded_count["not_mail_like"] += 1
-                    message_debug["reason_excluded"] = "not mail-like"
-                    continue
-                
-                # 5. Skip system messages that aren't mail
-                if (not is_mail and not msg.db_header) or (msg.db_header == "System"):
-                    excluded_count["system_message"] += 1
-                    message_debug["reason_excluded"] = "system message"
-                    continue
-                
-                # Include message if it passed all filters
-                filtered_messages.append(msg)
-                
-                # Debug: Log info about each included message
-                logger.log_info(f"Including message {msg.id} with header '{msg.db_header}'")
-                
-            except Exception as e:
-                # Log any errors processing individual messages but continue
-                logger.log_err(f"Error processing message {msg.id}: {str(e)}")
-                continue
-        
-        # Log filtering stats
-        logger.log_info(f"Filtering stats: {excluded_count}")
-        logger.log_info(f"After filtering, found {len(filtered_messages)} sent messages for {sender.username}")
-        
-        # Sort by date, newest first (for sent mail it's more useful to see recent first)
-        filtered_messages = sorted(filtered_messages, key=lambda x: x.db_date_created, reverse=True)
-        
-        # As a fallback, if no messages passed filtering but we found TO: header messages, include them
-        if not filtered_messages and to_messages:
-            logger.log_info("No messages passed filtering - using TO: header messages as fallback")
-            filtered_messages = list(to_messages)
-            filtered_messages = sorted(filtered_messages, key=lambda x: x.db_date_created, reverse=True)
-        
         return filtered_messages
 
 class CmdMailCharacter(CmdMail):
