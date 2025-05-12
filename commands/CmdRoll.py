@@ -9,6 +9,7 @@ import re
 from difflib import get_close_matches
 from datetime import datetime
 from random import randint
+from evennia.utils import logger
 
 class CmdRoll(default_cmds.MuxCommand):
     """
@@ -442,20 +443,12 @@ class CmdRoll(default_cmds.MuxCommand):
         private_output = f"|rRoll> |yYou roll |n{private_description} |yvs {difficulty} |r=>|n {result}"
         builder_output = f"|rRoll> |n{self.caller.db.gradient_name or self.caller.key} rolls {private_description} |yvs {difficulty}|r =>|n {result}"
 
-        # Send outputs
+        # Always send the result to the roller
         self.caller.msg(private_output)
         if warnings:
             self.caller.msg("\n".join(warnings))
 
-        # Send builder to builders, and public to everyone else
-        for obj in self.caller.location.contents:
-            if inherits_from(obj, "typeclasses.characters.Character") and obj != self.caller:
-                if obj.locks.check_lockstring(obj, "perm(Builder)"):
-                    obj.msg(builder_output)
-                else:
-                    obj.msg(public_output)
-
-        # After sending outputs and before logging, handle job comment if needed
+        # Handle job comment if needed
         if job_id is not None:
             try:
                 job = Job.objects.get(id=job_id)
@@ -479,17 +472,43 @@ class CmdRoll(default_cmds.MuxCommand):
                 # Only send the roll result to the caller when rolling to a job
                 self.caller.msg(f"Roll result added as comment to job #{job_id}.")
                 
+                # Post to the jobs channel
+                self.post_to_jobs_channel(self.caller.name, job_id, "added a roll to")
+                
                 # Send mail notification to all participants about the roll
                 self.send_mail_to_all_participants(job, f"{self.caller.name} has added a roll to Job #{job_id}: {comment_text}")
                 
-                # Don't log the roll to the room if it's to a job
+                # Log the roll but don't announce it to the room when --job is used
+                try:
+                    # Format the log description to include total dice count
+                    log_description = f"Rolling {dice_pool} dice vs {difficulty} (to job #{job_id})"
+                    # Initialize roll_log if it doesn't exist
+                    if not hasattr(self.caller.location.db, 'roll_log') or self.caller.location.db.roll_log is None:
+                        self.caller.location.db.roll_log = []
+                    self.caller.location.log_roll(self.caller.key, log_description, result)
+                except Exception as e:
+                    # Log the error but don't let it interrupt the roll command
+                    self.caller.msg("|rWarning: Could not log roll.|n")
+                    print(f"Roll logging error: {e}")
+                
+                # Return early to prevent room announcement
                 return
+                
             except Job.DoesNotExist:
                 self.caller.msg(f"Error: Job #{job_id} not found.")
             except Exception as e:
                 self.caller.msg(f"|rError adding comment to job: {str(e)}|n")
 
-        # After processing the roll, log it
+        # Only send to the room if not rolling to a job
+        # Send builder view to builders, and public view to everyone else
+        for obj in self.caller.location.contents:
+            if inherits_from(obj, "typeclasses.characters.Character") and obj != self.caller:
+                if obj.locks.check_lockstring(obj, "perm(Builder)"):
+                    obj.msg(builder_output)
+                else:
+                    obj.msg(public_output)
+
+        # Log the room roll
         try:
             # Format the log description to include total dice count
             log_description = f"Rolling {dice_pool} dice vs {difficulty}"
@@ -504,36 +523,98 @@ class CmdRoll(default_cmds.MuxCommand):
             
     def send_mail_to_all_participants(self, job, message):
         """Send a mail notification to all participants in a job."""
+        from evennia.utils import logger
+        
+        logger.log_info(f"ROLL DEBUG: Sending roll result notification for Job #{job.id}")
+        
         # Collect all unique accounts involved with the job
         participants = set()
         
         # Add requester if exists
         if job.requester:
             participants.add(job.requester)
+            logger.log_info(f"ROLL DEBUG: Added requester {job.requester.username} to recipient list")
             
         # Add assignee if exists
         if job.assignee:
             participants.add(job.assignee)
+            logger.log_info(f"ROLL DEBUG: Added assignee {job.assignee.username} to recipient list")
             
         # Add all participants
         for participant in job.participants.all():
             participants.add(participant)
+            logger.log_info(f"ROLL DEBUG: Added participant {participant.username} to recipient list")
             
         # Remove the caller to avoid self-notification
         if self.caller.account in participants:
             participants.remove(self.caller.account)
+            logger.log_info(f"ROLL DEBUG: Excluded caller {self.caller.account.username} from recipient list")
             
-        # Send mail to each participant
-        for participant in participants:
-            try:
-                subject = f"Job #{job.id} Update"
-                mail_body = f"Job #{job.id}: {job.title}\n\n{message}"
+        # If we don't have any recipients, return early
+        if not participants:
+            logger.log_info(f"ROLL DEBUG: No participants to notify for Job #{job.id}")
+            return
+            
+        logger.log_info(f"ROLL DEBUG: Found {len(participants)} participants to notify")
+        
+        # Send mail to all participants using the proper mail API
+        try:
+            subject = f"Job #{job.id} Update"
+            mail_body = f"Job #{job.id}: {job.title}\n\n{message}"
+            
+            from evennia.utils import create
+            
+            # Create and send mail to each participant
+            participant_names = []
+            success_count = 0
+            
+            for participant in participants:
+                if not participant.username:
+                    logger.log_err(f"ROLL DEBUG: Participant has no username, skipping")
+                    continue
+                    
+                logger.log_info(f"ROLL DEBUG: Creating mail for {participant.username}")
                 
-                # Use the mail command's proper format
-                mail_cmd = f"@mail {participant.username}={subject}/{mail_body}"
-                self.caller.execute_cmd(mail_cmd)
-            except Exception as e:
-                self.caller.msg(f"Failed to send notification to {participant.username}: {str(e)}")
+                try:
+                    # Create a mail message
+                    new_mail = create.create_message(
+                        self.caller.account,  # sender
+                        mail_body,            # message
+                        receivers=participant, # receiver
+                        header=subject        # subject
+                    )
+                    
+                    if not new_mail:
+                        logger.log_err(f"ROLL DEBUG: Failed to create message for {participant.username}")
+                        continue
+                        
+                    # Tag it as new
+                    new_mail.tags.add("new", category="mail")
+                    logger.log_info(f"ROLL DEBUG: Added 'new' tag to mail for {participant.username}")
+                    
+                    participant_names.append(participant.username)
+                    success_count += 1
+                    
+                    # If participant is online, notify them directly
+                    if participant.is_connected:
+                        logger.log_info(f"ROLL DEBUG: Participant {participant.username} is connected")
+                        # Notify the connected player directly that they have mail
+                        # Fix the job.id variable in the notification message
+                        for session in participant.sessions.all():
+                            session.msg(f"|yYou have received new mail about job #{job.id}. Type '@mail' to view.|n")
+                    
+                except Exception as e:
+                    logger.log_err(f"ROLL DEBUG: Error sending to {participant.username}: {str(e)}")
+            
+            if participant_names:
+                self.caller.msg(f"Roll notification sent to: {', '.join(participant_names)}")
+                logger.log_info(f"ROLL DEBUG: Successfully sent {success_count} notifications")
+            else:
+                logger.log_err(f"ROLL DEBUG: Failed to send any notifications")
+            
+        except Exception as e:
+            logger.log_err(f"ROLL DEBUG: Failed to send job notifications: {str(e)}")
+            self.caller.msg(f"Failed to send notifications: {str(e)}")
 
     def get_stat_value_and_name(self, stat_name):
         """
@@ -766,3 +847,36 @@ class CmdRoll(default_cmds.MuxCommand):
             return total_health  # Effectively prevents any dice rolling
         
         return 0
+
+    def post_to_jobs_channel(self, player_name, job_id, action):
+        """Post a message to the Jobs channel."""
+        from evennia.comms.models import ChannelDB
+        from evennia.utils import create
+        from evennia.utils import logger
+        
+        logger.log_info(f"ROLL DEBUG: Posting to jobs channel about Job #{job_id}")
+        
+        channel_names = ["Jobs", "Requests", "Req"]
+        channel = None
+
+        for name in channel_names:
+            found_channel = ChannelDB.objects.channel_search(name)
+            if found_channel:
+                channel = found_channel[0]
+                logger.log_info(f"ROLL DEBUG: Found channel: {name}")
+                break
+
+        if not channel:
+            logger.log_info(f"ROLL DEBUG: No Jobs channel found, creating one")
+            # Create channel with admin-only permissions
+            channel = create.create_channel(
+                "Jobs",
+                typeclass="typeclasses.channels.Channel",
+                locks="control:perm(Admin);listen:perm(Admin);send:perm(Admin)"
+            )
+            # Subscribe the creator after channel is created
+            channel.connect(self.caller)
+
+        message = f"{player_name} {action} Job #{job_id}"
+        channel.msg(f"[Job System] {message}")
+        logger.log_info(f"ROLL DEBUG: Message sent to channel: {message}")

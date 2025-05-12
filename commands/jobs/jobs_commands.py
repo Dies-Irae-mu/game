@@ -18,6 +18,7 @@ import copy
 from evennia.help.models import HelpEntry
 from world.equipment.models import Equipment, PlayerInventory, InventoryItem
 from evennia.accounts.models import AccountDB
+from evennia.comms.models import Msg
 
 class CmdJobs(MuxCommand):
     """
@@ -369,6 +370,11 @@ class CmdJobs(MuxCommand):
             # Post to the jobs channel for staff notification
             self.post_to_jobs_channel(self.caller.name, job.id, f"created in {category}")
 
+            # Send a mail notification to the requester confirming job creation
+            # Always send mail to the requester, regardless of admin status
+            confirmation_message = f"Your job request has been submitted:\n\nTitle: {title}\nCategory: {category}\nJob ID: {job.id}\n\nStaff has been notified and will review your request."
+            self.send_mail_notification(job, confirmation_message, to_account=self.caller.account)
+
             # Handle automatic assignment if configured
             if queue.automatic_assignee:
                 job.assignee = queue.automatic_assignee
@@ -378,11 +384,23 @@ class CmdJobs(MuxCommand):
                 
                 # Notify the assignee
                 if queue.automatic_assignee != self.caller.account:
-                    self.caller.execute_cmd(
-                        f"@mail {queue.automatic_assignee.username}"
-                        f"=Job #{job.id} Auto-assigned"
-                        f"/You have been automatically assigned to Job #{job.id}: {title}"
+                    subject = f"Job #{job.id} Auto-assigned"
+                    mail_body = f"You have been automatically assigned to Job #{job.id}: {title}"
+                    
+                    from evennia.utils import create
+                    
+                    # Create the mail message
+                    new_mail = create.create_message(
+                        self.caller.account,  # sender
+                        mail_body,            # message
+                        receivers=queue.automatic_assignee,  # receiver
+                        header=subject        # subject
                     )
+                    
+                    # Tag it as new
+                    new_mail.tags.add("new", category="mail")
+                    
+                    self.caller.msg(f"Auto-assignment notification sent to {queue.automatic_assignee.username}.")
 
         except Exception as e:
             self.caller.msg(f"|rError creating job: {str(e)}|n")
@@ -455,6 +473,11 @@ class CmdJobs(MuxCommand):
             # Post to the jobs channel for staff notification
             self.post_to_jobs_channel(self.caller.name, job.id, f"created in {category}")
 
+            # Send a mail notification to the requester confirming job creation
+            # Always send mail to the requester, regardless of admin status
+            confirmation_message = f"Your job request has been submitted:\n\nTitle: {title}\nCategory: {category}\nJob ID: {job.id}\n\nStaff has been notified and will review your request."
+            self.send_mail_notification(job, confirmation_message, to_account=self.caller.account)
+
             # Handle automatic assignment if configured
             if queue.automatic_assignee:
                 job.assignee = queue.automatic_assignee
@@ -464,11 +487,23 @@ class CmdJobs(MuxCommand):
                 
                 # Notify the assignee
                 if queue.automatic_assignee != self.caller.account:
-                    self.caller.execute_cmd(
-                        f"@mail {queue.automatic_assignee.username}"
-                        f"=Job #{job.id} Auto-assigned"
-                        f"/You have been automatically assigned to Job #{job.id}: {title}"
+                    subject = f"Job #{job.id} Auto-assigned"
+                    mail_body = f"You have been automatically assigned to Job #{job.id}: {title}"
+                    
+                    from evennia.utils import create
+                    
+                    # Create the mail message
+                    new_mail = create.create_message(
+                        self.caller.account,  # sender
+                        mail_body,            # message
+                        receivers=queue.automatic_assignee,  # receiver
+                        header=subject        # subject
                     )
+                    
+                    # Tag it as new
+                    new_mail.tags.add("new", category="mail")
+                    
+                    self.caller.msg(f"Auto-assignment notification sent to {queue.automatic_assignee.username}.")
 
         except Exception as e:
             self.caller.msg(f"|rError creating job: {str(e)}|n")
@@ -507,7 +542,13 @@ class CmdJobs(MuxCommand):
 
             self.caller.msg(f"Comment added to job #{job_id}.")
             self.post_to_jobs_channel(self.caller.name, job.id, "commented on")
-            self.send_mail_notification(job, f"{self.caller.name} commented on Job #{job.id}: {comment}")
+            
+            # Create a notification message that includes the comment
+            notification_message = f"{self.caller.name} commented on Job #{job.id}:\n\n{comment}"
+            
+            # Send notification to all participants (excluding the commenter)
+            # This already includes the requester, so we don't need to send a separate notification
+            self.send_mail_to_all_participants(job, notification_message, exclude_account=self.caller.account)
 
         except (ValueError, Job.DoesNotExist):
             self.caller.msg("Invalid job ID.")
@@ -733,6 +774,11 @@ class CmdJobs(MuxCommand):
 
             self.caller.msg(f"You have claimed job #{job_id}.")
             self.post_to_jobs_channel(self.caller.name, job.id, "claimed")
+            
+            # Send notification to job requester and all participants
+            # The requester will be included in send_mail_to_all_participants
+            notification_message = f"{self.caller.name} has claimed Job #{job.id}. They will be handling your request."
+            self.send_mail_to_all_participants(job, notification_message, exclude_account=self.caller.account)
 
         except (ValueError, Job.DoesNotExist):
             self.caller.msg("Invalid job ID.")
@@ -753,6 +799,9 @@ class CmdJobs(MuxCommand):
             if job.status != 'claimed' or job.assignee != self.caller.account:
                 self.caller.msg("You can't unclaim this job.")
                 return
+                
+            # Store assignee name before unclaiming
+            previous_assignee = self.caller.name
 
             job.assignee = None
             job.status = 'open'
@@ -760,6 +809,11 @@ class CmdJobs(MuxCommand):
 
             self.caller.msg(f"You have unclaimed job #{job_id}.")
             self.post_to_jobs_channel(self.caller.name, job.id, "unclaimed")
+            
+            # Send notification to job requester and all participants
+            # The requester will be included in send_mail_to_all_participants
+            notification_message = f"{previous_assignee} has unclaimed Job #{job.id}. The job is now open for other staff to claim."
+            self.send_mail_to_all_participants(job, notification_message, exclude_account=self.caller.account)
 
         except (ValueError, Job.DoesNotExist):
             self.caller.msg("Invalid job ID.")
@@ -1283,7 +1337,7 @@ class CmdJobs(MuxCommand):
             channel = create.create_channel(
                 "Jobs",
                 typeclass="typeclasses.channels.Channel",
-                locks="control:perm(Admin);listen:all();send:all()"
+                locks="control:perm(Admin);listen:perm(Admin);send:perm(Admin)"
             )
             # Subscribe the creator after channel is created
             channel.connect(self.caller)
@@ -1294,55 +1348,170 @@ class CmdJobs(MuxCommand):
 
     def send_mail_notification(self, job, message, to_account=None):
         """Send a mail notification to a specific account."""
+        from evennia.utils import logger
+        
         recipient = to_account if to_account else job.requester
         
-        if recipient and recipient != self.caller.account:  # Don't send mail if you're acting on your own job
-            try:
-                subject = f"Job #{job.id} Update"
-                mail_body = f"Job #{job.id}: {job.title}\n\n{message}"
+        logger.log_info(f"MAIL DEBUG: Attempting to send mail notification for Job #{job.id}")
+        logger.log_info(f"MAIL DEBUG: Recipient: {recipient.username if recipient else 'None'}")
+        
+        if not recipient:
+            logger.log_err(f"MAIL DEBUG: No recipient found for Job #{job.id}")
+            return
+            
+        # If to_account is explicitly provided, send mail even if it's the caller
+        force_send = to_account is not None
+        
+        # Don't send mail if you're acting on your own job, unless force_send is True
+        if recipient == self.caller.account and not force_send:
+            logger.log_info(f"MAIL DEBUG: Skipping self-notification to {recipient.username}")
+            return
+            
+        try:
+            subject = f"Job #{job.id} Update"
+            mail_body = f"Job #{job.id}: {job.title}\n\n{message}"
+            
+            logger.log_info(f"MAIL DEBUG: Creating mail with subject '{subject}' for {recipient.username}")
+            
+            # Import at function level to avoid circular imports
+            from evennia.utils import create
+            
+            # Create the mail message
+            new_mail = create.create_message(
+                self.caller.account,  # sender
+                mail_body,            # message
+                receivers=recipient,  # receiver
+                header=subject        # subject
+            )
+            
+            if not new_mail:
+                logger.log_err(f"MAIL DEBUG: Failed to create message object for {recipient.username}")
+                return
                 
-                # Use the mail command's proper format
-                mail_cmd = f"@mail {recipient.username}={subject}/{mail_body}"
-                self.caller.execute_cmd(mail_cmd)
+            logger.log_info(f"MAIL DEBUG: Mail created with ID {new_mail.id}")
+            
+            # Tag it as new - this is crucial for mail to appear in mailbox
+            new_mail.tags.add("new", category="mail")
+            logger.log_info(f"MAIL DEBUG: Added 'new' tag to mail {new_mail.id}")
+            
+            # Log success
+            logger.log_info(f"MAIL DEBUG: Successfully sent notification to {recipient.username} for Job #{job.id}")
+            
+            # Only show success message if we actually sent the mail
+            if recipient.is_connected:
+                logger.log_info(f"MAIL DEBUG: Recipient {recipient.username} is connected")
+                # Notify the connected player directly that they have mail
+                recipient.msg(f"|yYou have received new mail about job #{job.id}. Type '@mail' to view.|n")
+            
+            self.caller.msg(f"Notification sent to {recipient.username}.")
                 
-                # Only show success message if we actually sent the mail
-                if recipient.username:
-                    self.caller.msg(f"Notification sent to {recipient.username}.")
-                else:
-                    self.caller.msg("Could not send notification - invalid recipient username.")
+        except Exception as e:
+            logger.log_err(f"MAIL DEBUG: Failed to send job notification: {str(e)}")
+            logger.log_err("MAIL DEBUG: Full error details:", exc_info=True)
+            self.caller.msg(f"Failed to send notification: {str(e)}")
                     
-            except Exception as e:
-                self.caller.msg(f"Failed to send notification: {str(e)}")
-
     def send_mail_to_all_participants(self, job, message, exclude_account=None):
         """Send a mail notification to all participants in a job."""
+        from evennia.utils import logger
+        
+        logger.log_info(f"MAIL DEBUG: Sending mail to all participants for Job #{job.id}")
+        
         # Collect all unique accounts involved with the job
         participants = set()
         
         # Add requester if exists
         if job.requester:
             participants.add(job.requester)
+            logger.log_info(f"MAIL DEBUG: Added requester {job.requester.username} to recipient list")
             
         # Add assignee if exists
         if job.assignee:
             participants.add(job.assignee)
+            logger.log_info(f"MAIL DEBUG: Added assignee {job.assignee.username} to recipient list")
             
         # Add all participants
         for participant in job.participants.all():
             participants.add(participant)
+            logger.log_info(f"MAIL DEBUG: Added participant {participant.username} to recipient list")
             
         # Remove the excluded account if specified
         if exclude_account:
             # Make sure to check by username to handle different account objects with same username
+            before_count = len(participants)
             participants = {p for p in participants if p.username != exclude_account.username}
+            if before_count > len(participants):
+                logger.log_info(f"MAIL DEBUG: Excluded {exclude_account.username} from recipient list")
             
         # Remove the caller to avoid self-notification
         if self.caller.account in participants:
             participants.remove(self.caller.account)
+            logger.log_info(f"MAIL DEBUG: Excluded caller {self.caller.account.username} from recipient list")
             
-        # Send mail to each participant
-        for participant in participants:
-            self.send_mail_notification(job, message, to_account=participant)
+        # If we don't have any recipients, return early
+        if not participants:
+            logger.log_info(f"MAIL DEBUG: No participants to notify for Job #{job.id}")
+            return
+            
+        logger.log_info(f"MAIL DEBUG: Found {len(participants)} participants to notify")
+        
+        # Send mail to all participants using the proper mail API
+        try:
+            subject = f"Job #{job.id} Update"
+            mail_body = f"Job #{job.id}: {job.title}\n\n{message}"
+            
+            from evennia.utils import create
+            
+            # Create and send mail to each participant (create_message only takes one receiver at a time)
+            participant_names = []
+            success_count = 0
+            
+            for participant in participants:
+                if not participant.username:
+                    logger.log_err(f"MAIL DEBUG: Participant has no username, skipping")
+                    continue
+                    
+                logger.log_info(f"MAIL DEBUG: Creating mail for {participant.username}")
+                
+                try:
+                    # Create a mail message
+                    new_mail = create.create_message(
+                        self.caller.account,  # sender
+                        mail_body,            # message
+                        receivers=participant, # receiver
+                        header=subject        # subject
+                    )
+                    
+                    if not new_mail:
+                        logger.log_err(f"MAIL DEBUG: Failed to create message for {participant.username}")
+                        continue
+                        
+                    # Tag it as new
+                    new_mail.tags.add("new", category="mail")
+                    logger.log_info(f"MAIL DEBUG: Added 'new' tag to mail {new_mail.id} for {participant.username}")
+                    
+                    participant_names.append(participant.username)
+                    success_count += 1
+                    
+                    # If participant is online, notify them directly
+                    if participant.is_connected:
+                        logger.log_info(f"MAIL DEBUG: Participant {participant.username} is connected")
+                        # Notify the connected player directly that they have mail
+                        for session in participant.sessions.all():
+                            session.msg(f"|yYou have received new mail about job #{job.id}. Type '@mail' to view.|n")
+                    
+                except Exception as e:
+                    logger.log_err(f"MAIL DEBUG: Error sending to {participant.username}: {str(e)}")
+            
+            if participant_names:
+                self.caller.msg(f"Notifications sent to: {', '.join(participant_names)}")
+                logger.log_info(f"MAIL DEBUG: Successfully sent {success_count} notifications")
+            else:
+                logger.log_err(f"MAIL DEBUG: Failed to send any notifications")
+            
+        except Exception as e:
+            logger.log_err(f"MAIL DEBUG: Failed to send job notifications: {str(e)}")
+            logger.log_err("MAIL DEBUG: Full error details:", exc_info=True)
+            self.caller.msg(f"Failed to send notifications: {str(e)}")
 
     def complete_job(self):
         self._change_job_status("completed")
@@ -1414,9 +1583,9 @@ class CmdJobs(MuxCommand):
 
             self.caller.msg(f"Job #{job_id} has been {new_status} and archived.")
             
-            # Send mail notifications
+            # Send mail notifications to all participants
             notification_message = f"Job #{job_id} has been {new_status}.\n\nReason: {reason}"
-            self.send_mail_notification(job, notification_message)
+            self.send_mail_to_all_participants(job, notification_message, exclude_account=self.caller.account)
             
             self.post_to_jobs_channel(self.caller.name, job.id, new_status)
 
