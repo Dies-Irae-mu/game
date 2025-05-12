@@ -1,0 +1,118 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<h1>Manage NPCs</h1>
+
+<div style="display: flex; gap: 20px; margin-bottom: 20px;">
+    <!-- Filter Form -->
+    <div style="flex: 1; border: 1px solid #ccc; padding: 15px; border-radius: 5px;">
+        <h3>Filters</h3>
+        <form method="get" action="{% url 'npc_manager:npc_list' %}">
+            <div style="margin-bottom: 10px;">
+                <label for="q">Search:</label>
+                <input type="text" name="q" id="q" value="{{ query|default:'' }}" style="width: 100%;">
+            </div>
+            
+            <div style="margin-bottom: 10px;">
+                <label for="splat">Splat Type:</label>
+                <select name="splat" id="splat" style="width: 100%;">
+                    <option value="">All</option>
+                    {% for s in splat_types %}
+                    <option value="{{ s }}" {% if s == splat %}selected{% endif %}>{{ s|title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 10px;">
+                <label for="temporary">Temporary:</label>
+                <select name="temporary" id="temporary" style="width: 100%;">
+                    <option value="">All</option>
+                    <option value="true" {% if temporary == 'true' %}selected{% endif %}>Yes</option>
+                    <option value="false" {% if temporary == 'false' %}selected{% endif %}>No</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 10px;">
+                <label for="group">Group:</label>
+                <input type="text" name="group" id="group" value="{{ group|default:'' }}" style="width: 100%;">
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+            <a href="{% url 'npc_manager:npc_list' %}" class="btn btn-secondary">Clear</a>
+        </form>
+    </div>
+    
+    <!-- Add NPC Section -->
+    <div style="flex: 1; border: 1px solid #ccc; padding: 15px; border-radius: 5px;">
+        <h3>Admin Actions</h3>
+        <p>You can create and manage NPCs through the Django Admin:</p>
+        <a href="{% url 'admin:npc_manager_npc_add' %}" class="btn btn-success">Create New NPC</a>
+        <a href="{% url 'admin:npc_manager_npc_changelist' %}" class="btn btn-primary">NPC Admin</a>
+        <a href="{% url 'npc_manager:sync_npcs' %}" class="btn btn-warning">Sync NPCs</a>
+    </div>
+</div>
+
+<!-- NPC List -->
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Name</th>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Splat</th>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Difficulty</th>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Group</th>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Temporary</th>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for npc in npcs %}
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ npc.db_key }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ npc.db_splat|title }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ npc.db_difficulty }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                {% if npc.db_group %}
+                <a href="{% url 'npc_manager:group_detail' npc.db_group.id %}">{{ npc.db_group.db_key }}</a>
+                {% else %}
+                -
+                {% endif %}
+            </td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ npc.db_is_temporary|yesno }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                <a href="{% url 'npc_manager:npc_detail' npc.id %}" class="btn btn-primary btn-sm">View</a>
+                <a href="{% url 'admin:npc_manager_npc_change' npc.id %}" class="btn btn-secondary btn-sm">Edit</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" style="padding: 8px; text-align: center;">No NPCs found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Pagination -->
+{% if npcs.has_other_pages %}
+<div style="margin-top: 20px; text-align: center;">
+    <div class="pagination">
+        <span class="step-links">
+            {% if npcs.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ npcs.previous_page_number }}">previous</a>
+            {% endif %}
+            
+            <span class="current">
+                Page {{ npcs.number }} of {{ npcs.paginator.num_pages }}.
+            </span>
+            
+            {% if npcs.has_next %}
+                <a href="?page={{ npcs.next_page_number }}">next</a>
+                <a href="?page={{ npcs.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %} 

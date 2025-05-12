@@ -1,0 +1,13 @@
+{% extends "admin/base.html" %}
+
+{% block nav-global %}
+<div class="module">
+    <h2>NPCs & Groups</h2>
+    <ul>
+        <li><a href="{% url 'npc_manager:index' %}">NPC Dashboard</a></li>
+        <li><a href="{% url 'npc_manager:npc_list' %}">Manage NPCs</a></li>
+        <li><a href="{% url 'npc_manager:group_list' %}">Manage NPC Groups</a></li>
+        <li><a href="{% url 'npc_manager:sync_npcs' %}">Sync NPCs</a></li>
+    </ul>
+</div>
+{% endblock %} 

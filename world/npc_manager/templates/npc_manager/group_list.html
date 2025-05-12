@@ -1,0 +1,110 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<h1>Manage NPC Groups</h1>
+
+<div style="display: flex; gap: 20px; margin-bottom: 20px;">
+    <!-- Filter Form -->
+    <div style="flex: 1; border: 1px solid #ccc; padding: 15px; border-radius: 5px;">
+        <h3>Filters</h3>
+        <form method="get" action="{% url 'npc_manager:group_list' %}">
+            <div style="margin-bottom: 10px;">
+                <label for="q">Search:</label>
+                <input type="text" name="q" id="q" value="{{ query|default:'' }}" style="width: 100%;">
+            </div>
+            
+            <div style="margin-bottom: 10px;">
+                <label for="type">Group Type:</label>
+                <select name="type" id="type" style="width: 100%;">
+                    <option value="">All</option>
+                    {% for t in group_types %}
+                    <option value="{{ t }}" {% if t == type %}selected{% endif %}>{{ t }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 10px;">
+                <label for="splat">Splat Type:</label>
+                <select name="splat" id="splat" style="width: 100%;">
+                    <option value="">All</option>
+                    {% for s in splat_types %}
+                    <option value="{{ s }}" {% if s == splat %}selected{% endif %}>{{ s|title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+            <a href="{% url 'npc_manager:group_list' %}" class="btn btn-secondary">Clear</a>
+        </form>
+    </div>
+    
+    <!-- Add Group Section -->
+    <div style="flex: 1; border: 1px solid #ccc; padding: 15px; border-radius: 5px;">
+        <h3>Admin Actions</h3>
+        <p>You can create and manage NPC Groups through the Django Admin:</p>
+        <a href="{% url 'admin:npc_manager_npcgroup_add' %}" class="btn btn-success">Create New Group</a>
+        <a href="{% url 'admin:npc_manager_npcgroup_changelist' %}" class="btn btn-primary">Group Admin</a>
+        <a href="{% url 'npc_manager:sync_npcs' %}" class="btn btn-warning">Sync Groups</a>
+    </div>
+</div>
+
+<!-- Group List -->
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Name</th>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Type</th>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Splat</th>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Difficulty</th>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">NPCs</th>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Territory</th>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for group in groups %}
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ group.db_key }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ group.db_group_type }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ group.db_splat|title }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ group.db_difficulty }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ group.npcs.count }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ group.db_territory|truncatechars:30 }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                <a href="{% url 'npc_manager:group_detail' group.id %}" class="btn btn-primary btn-sm">View</a>
+                <a href="{% url 'admin:npc_manager_npcgroup_change' group.id %}" class="btn btn-secondary btn-sm">Edit</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" style="padding: 8px; text-align: center;">No NPC Groups found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Pagination -->
+{% if groups.has_other_pages %}
+<div style="margin-top: 20px; text-align: center;">
+    <div class="pagination">
+        <span class="step-links">
+            {% if groups.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ groups.previous_page_number }}">previous</a>
+            {% endif %}
+            
+            <span class="current">
+                Page {{ groups.number }} of {{ groups.paginator.num_pages }}.
+            </span>
+            
+            {% if groups.has_next %}
+                <a href="?page={{ groups.next_page_number }}">next</a>
+                <a href="?page={{ groups.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %} 

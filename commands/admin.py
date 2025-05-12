@@ -14,6 +14,10 @@ from datetime import datetime
 from world.wod20th.models import Roster, RosterMember
 from django.utils import timezone
 from utils.search_helpers import search_character
+from evennia import default_cmds
+from evennia.utils.search import search_object
+from evennia.utils import evtable
+from evennia.utils.utils import crop
 
 
 class CmdApprove(AdminCommand):
@@ -1000,3 +1004,192 @@ class CmdCheckGhosts(MuxCommand):
                 caller.msg("Cleanup attempt completed. You may need to run this command again.")
             else:
                 caller.msg("Use /cleanup switch to attempt automatic cleanup of ghost characters.")
+
+class CmdForceDeleteObject(MuxCommand):
+    """
+    Force-delete an object that refuses to be deleted normally.
+    
+    Usage:
+      @forcedelete <#dbref>
+      @forcedelete/quiet <#dbref>
+      @forcedelete/uuid <uuid_string>
+      
+    Options:
+      quiet - Don't show detailed debugging information
+      uuid  - Delete by UUID instead of dbref
+      
+    This admin-only command bypasses normal deletion checks and goes straight
+    to the database level to remove objects that resist normal deletion.
+    Particularly useful for NPCs that get stuck in the database.
+    
+    For NPC objects, it will also try to stop any scripts and clear their
+    registrations from rooms.
+    """
+    
+    key = "@forcedelete"
+    aliases = ["@forcedel", "@fdel"]
+    locks = "cmd:perm(Admin)"
+    help_category = "Admin Commands"
+    
+    def func(self):
+        """Implements the command"""
+        caller = self.caller
+        args = self.args.strip()
+        quiet = "quiet" in self.switches
+        use_uuid = "uuid" in self.switches
+        
+        if not args:
+            caller.msg("Usage: @forcedelete <#dbref or uuid>")
+            return
+            
+        # Identify target
+        target = None
+        
+        if use_uuid:
+            # Search by UUID attribute
+            from evennia.utils.search import search_object
+            matches = []
+            for obj in search_object(None):  # Search all objects
+                if hasattr(obj, 'db') and obj.db.npc_id == args:
+                    matches.append(obj)
+            
+            if not matches:
+                caller.msg(f"No objects found with UUID {args}")
+                return
+            elif len(matches) > 1:
+                caller.msg(f"Multiple objects found with UUID {args}, please use dbref")
+                for obj in matches:
+                    caller.msg(f" - {obj.name} ({obj.dbref})")
+                return
+            else:
+                target = matches[0]
+        else:
+            # Standard search by dbref
+            target = caller.search(args)
+            
+        if not target:
+            return
+        
+        # Show object details
+        if not quiet:
+            caller.msg(f"Found object: {target.name} ({target.dbref})")
+            caller.msg(f"Typeclass: {target.typeclass_path}")
+            
+        # Special handling for NPCs
+        is_npc = False
+        if hasattr(target, 'is_npc') and target.is_npc:
+            is_npc = True
+            if not quiet:
+                caller.msg("Object is an NPC, performing special cleanup...")
+                
+            # Step 1: Stop any scripts on the NPC
+            for script in target.scripts.all():
+                if not quiet:
+                    caller.msg(f"Stopping script: {script.key}")
+                try:
+                    script.stop()
+                except Exception as e:
+                    caller.msg(f"Error stopping script {script.key}: {e}")
+            
+            # Step 2: Unregister from all rooms
+            if hasattr(target, 'db') and hasattr(target.db, 'registered_in_rooms'):
+                registered_rooms = list(target.db.registered_in_rooms) if target.db.registered_in_rooms else []
+                for room_dbref in registered_rooms:
+                    if not quiet:
+                        caller.msg(f"Unregistering from room: {room_dbref}")
+                    try:
+                        from evennia.utils.search import search_object
+                        room = search_object(room_dbref)
+                        if room and len(room) > 0:
+                            room = room[0]
+                            if hasattr(room, 'db_npcs') and target.key in room.db_npcs:
+                                del room.db_npcs[target.key]
+                    except Exception as e:
+                        caller.msg(f"Error unregistering from room {room_dbref}: {e}")
+            
+            # Step 3: Clear all attributes
+            if not quiet:
+                caller.msg("Clearing attributes...")
+            for attr in list(target.attributes.all()):
+                try:
+                    target.attributes.remove(attr.key)
+                except Exception as e:
+                    if not quiet:
+                        caller.msg(f"Error removing attribute {attr.key}: {e}")
+            
+            # Step 4: Clear all locks
+            if not quiet:
+                caller.msg("Clearing locks...")
+            target.locks.clear()
+            
+            # Step 5: Remove from location
+            if target.location:
+                if not quiet:
+                    caller.msg(f"Removing from location: {target.location}")
+                old_location = target.location
+                target.location = None
+        
+        # Attempt standard deletion first
+        if not quiet:
+            caller.msg("Attempting standard deletion...")
+        try:
+            deleted = target.delete()
+            if deleted:
+                caller.msg(f"Successfully deleted {target.name} ({target.dbref}) via standard method.")
+                return
+            else:
+                if not quiet:
+                    caller.msg("Standard deletion failed, trying database-level deletion...")
+        except Exception as e:
+            if not quiet:
+                caller.msg(f"Error during standard deletion: {e}")
+        
+        # Fallback to direct database deletion
+        try:
+            obj_id = target.id
+            obj_name = target.name
+            obj_dbref = target.dbref
+            
+            from django.apps import apps
+            from django.db import connection
+            
+            # First try using the ORM
+            ObjectDB = apps.get_model('objects', 'ObjectDB')
+            count, details = ObjectDB.objects.filter(id=obj_id).delete()
+            
+            if count > 0:
+                caller.msg(f"Successfully deleted {obj_name} ({obj_dbref}) from database. Affected {count} records.")
+                if not quiet and details:
+                    caller.msg(f"Deletion details: {details}")
+                return
+            else:
+                if not quiet:
+                    caller.msg("ORM deletion reported no records removed, trying raw SQL...")
+                
+                # If ORM delete fails, try raw SQL
+                with connection.cursor() as cursor:
+                    # Delete related attributes first
+                    cursor.execute("DELETE FROM objects_objectdb_attributes WHERE objectdb_id = %s", [obj_id])
+                    attr_count = cursor.rowcount
+                    
+                    # Delete tags
+                    cursor.execute("DELETE FROM objects_objectdb_tags WHERE objectdb_id = %s", [obj_id])
+                    tag_count = cursor.rowcount
+                    
+                    # Delete the object itself
+                    cursor.execute("DELETE FROM objects_objectdb WHERE id = %s", [obj_id])
+                    obj_count = cursor.rowcount
+                    
+                    if obj_count > 0:
+                        caller.msg(f"Successfully deleted {obj_name} ({obj_dbref}) via raw SQL.")
+                        caller.msg(f"Removed {attr_count} attributes, {tag_count} tags, and {obj_count} object records.")
+                        return
+                    else:
+                        caller.msg(f"Failed to delete {obj_name} ({obj_dbref}) - no database records found.")
+        except Exception as e:
+            caller.msg(f"Database-level deletion failed: {e}")
+            if not quiet:
+                import traceback
+                caller.msg(traceback.format_exc())
+                
+        caller.msg(f"All deletion methods failed for {target.name}. This object may require database maintenance.")

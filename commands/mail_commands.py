@@ -81,10 +81,10 @@ class CmdMail(EvenniaCmdMail):
                     )
                     index += 1
 
-                # Format columns without the 5th column
+                # Format columns with widths that sum to 78
                 table.reformat_column(0, width=6)
                 table.reformat_column(1, width=18)
-                table.reformat_column(2, width=34)
+                table.reformat_column(2, width=41)  # Increased from 34 to make total width 78
                 table.reformat_column(3, width=13)
 
                 self.caller.msg(_HEAD_CHAR * _WIDTH)
@@ -92,6 +92,42 @@ class CmdMail(EvenniaCmdMail):
                 self.caller.msg(_HEAD_CHAR * _WIDTH)
             else:
                 self.caller.msg("There are no messages in your inbox.")
+        elif not self.switches and self.args and not self.rhs:
+            # Viewing a specific message by ID
+            all_mail = self.get_all_mail()
+            mind_max = max(0, all_mail.count() - 1)
+            try:
+                mind = max(0, min(mind_max, int(self.lhs) - 1))
+                message = all_mail[mind]
+            except (ValueError, IndexError):
+                self.caller.msg("'%s' is not a valid mail id." % self.lhs)
+                return
+
+            messageForm = []
+            if message:
+                _HEAD_CHAR = "|015-|n"
+                _SUB_HEAD_CHAR = "-"
+                _WIDTH = 78
+                
+                messageForm.append(_HEAD_CHAR * _WIDTH)
+                # Add safety check for empty senders list
+                sender_name = "Unknown"
+                if message.senders:
+                    sender_name = message.senders[0].get_display_name(self.caller)
+                messageForm.append("|wFrom:|n %s" % sender_name)
+                # note that we cannot use %-d format here since Windows does not support it
+                day = message.db_date_created.day
+                messageForm.append(
+                    "|wSent:|n %s"
+                    % message.db_date_created.strftime(f"%b {day}, %Y - %H:%M:%S")
+                )
+                messageForm.append("|wSubject:|n %s" % message.header)
+                messageForm.append(_SUB_HEAD_CHAR * _WIDTH)
+                messageForm.append(message.message)
+                messageForm.append(_HEAD_CHAR * _WIDTH)
+            self.caller.msg("\n".join(messageForm))
+            message.tags.remove("new", category="mail")
+            message.tags.add("-", category="mail")
         else:
             # call the original method for all other cases
             super().func()
