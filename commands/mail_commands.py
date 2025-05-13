@@ -74,6 +74,36 @@ class CmdMail(EvenniaCmdMail):
                 original_func = super().func
                 result = original_func()
                 
+                # Find the actual sent message and ensure recipients have it tagged as 'new'
+                if self.account_caller:
+                    sender = self.caller
+                else:
+                    sender = self.caller.account
+                
+                # Look for the most recently sent message
+                try:
+                    timestamp_threshold = timezone.now() - datetime.timedelta(seconds=10)
+                    recent_messages = Msg.objects.filter(
+                        db_sender_accounts=sender,
+                        db_date_created__gte=timestamp_threshold
+                    ).order_by('-db_date_created')
+                    
+                    # If we found a message, ensure it's tagged as 'new' for recipients
+                    if recent_messages.exists():
+                        recent_msg = recent_messages.first()
+                        logger.log_info(f"Ensuring message {recent_msg.id} is tagged as new for recipients")
+                        
+                        # Ensure 'new' tag is set for recipients
+                        if hasattr(recent_msg, 'tags') and hasattr(recent_msg.tags, 'add'):
+                            try:
+                                # Add 'new' tag for recipients
+                                recent_msg.tags.add("new", category="mail")
+                                logger.log_info(f"Added 'new' tag to message {recent_msg.id}")
+                            except Exception as e:
+                                logger.log_err(f"Error adding 'new' tag: {str(e)}")
+                except Exception as e:
+                    logger.log_err(f"Error ensuring message is marked as new: {str(e)}")
+                
                 # Find the actual sent message
                 if self.account_caller:
                     sender = self.caller
@@ -296,6 +326,9 @@ class CmdMail(EvenniaCmdMail):
                     if hasattr(tag, 'db_category') and tag.db_category == "mail" and tag.db_key == "new":
                         is_new = True
                         break
+                    elif isinstance(tag, str) and tag == "new":
+                        is_new = True
+                        break
                 
                 # Get sender name
                 sender_name = "Unknown"
@@ -325,17 +358,28 @@ class CmdMail(EvenniaCmdMail):
                 # Format date
                 date_str = message.db_date_created.strftime("%b %d")
                 
-                # Add tag indicator
-                tag_display = "|gNEW|n" if is_new else "MAIL"
-                if is_job:
-                    tag_display = "|gNEW JOB|n" if is_new else "|mJOB|n"
+                # Add row to table with unread indicator
+                if is_new:
+                    # Highlight unread messages
+                    row_id = f"|g{i}|n"
+                    row_sender = f"|g{sender_name}|n"
+                    row_subject = subject if is_job else f"|g{subject}|n"
+                    row_date = f"|g{date_str}|n"
+                    
+                    # Add STATUS indicator for unread
+                    row_subject = f"|g[UNREAD]|n {row_subject}"
+                else:
+                    # Regular formatting for read messages 
+                    row_id = str(i)
+                    row_sender = sender_name
+                    row_subject = subject
+                    row_date = date_str
                 
-                # Add row to table
                 table.add_row(
-                    i,
-                    sender_name,
-                    subject, 
-                    date_str
+                    row_id,
+                    row_sender,
+                    row_subject, 
+                    row_date
                 )
             
             # Format columns
@@ -404,10 +448,60 @@ class CmdMail(EvenniaCmdMail):
         messageForm.append(message.db_message)
         messageForm.append(_HEAD_CHAR * _WIDTH)
         
-        # Mark as read
+        # Mark as read by removing 'new' tag and ensuring 'mail' tag is present
         try:
-            message.tags.remove("new", category="mail")
-            message.tags.add("mail", category="mail")  # Ensure mail tag is present
+            has_new_tag = False
+            
+            # Check if message has 'new' tag
+            for tag in message.tags.all():
+                if (hasattr(tag, 'db_category') and hasattr(tag, 'db_key') and 
+                    tag.db_category == "mail" and tag.db_key == "new"):
+                    has_new_tag = True
+                    break
+                elif isinstance(tag, str) and tag == "new":
+                    has_new_tag = True
+                    break
+            
+            # If message was new, remove 'new' tag and add tracking for this read
+            if has_new_tag:
+                logger.log_info(f"Marking message {message.id} as read")
+                
+                # Try different ways to remove the tag since 'new' might be stored differently
+                try:
+                    message.tags.remove("new", category="mail")
+                except Exception as e:
+                    logger.log_err(f"Error removing new tag (first attempt): {str(e)}")
+                    
+                    # Second attempt - try without category
+                    try:
+                        message.tags.remove("new")
+                    except Exception as e2:
+                        logger.log_err(f"Error removing new tag (second attempt): {str(e2)}")
+                        
+                        # Last attempt - try to clear all 'new' tags
+                        try:
+                            # Find and remove any tag with db_key='new'
+                            for tag in message.tags.all():
+                                if hasattr(tag, 'db_key') and tag.db_key == "new":
+                                    message.tags.remove(tag)
+                        except Exception as e3:
+                            logger.log_err(f"Error removing new tag (final attempt): {str(e3)}")
+                
+                # Add a read timestamp attribute if possible
+                if hasattr(message, 'attributes') and hasattr(message.attributes, 'add'):
+                    try:
+                        read_time = timezone.now()
+                        message.attributes.add("read_at", read_time)
+                        logger.log_info(f"Added read timestamp: {read_time}")
+                    except Exception as e:
+                        logger.log_err(f"Error adding read timestamp: {str(e)}")
+            
+            # Always ensure 'mail' tag is present
+            try:
+                message.tags.add("mail", category="mail")
+            except Exception as e:
+                logger.log_err(f"Error ensuring mail tag: {str(e)}")
+                
         except Exception as e:
             logger.log_err(f"Error marking message as read: {str(e)}")
         
