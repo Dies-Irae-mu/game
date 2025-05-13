@@ -30,6 +30,9 @@ class CmdMail(EvenniaCmdMail):
       forward - forward a received message to another object with an optional message attached.
       reply   - Replies to a received message, appending the original message to the bottom.
     """
+    
+    key = "@mail"
+    help_category = "comms"
 
     def func(self):
         """
@@ -632,6 +635,24 @@ class CmdMail(EvenniaCmdMail):
 
 class CmdMailCharacter(CmdMail):
     """
-    Character-level mail command.
+    Communicate with others by sending mail.
+
+    Usage:
+      @mail             - Displays all the mail an account has in their mailbox
+      @mail <#>         - Displays a specific message
+      @mail <accounts>=<subject>/<message>
+                        - Sends a message to the comma separated list of accounts.
+      @mail/delete <#>  - Deletes a specific message
+      @mail/forward <accounts>=<#>[/<Message>]
+                        - Forwards an existing message to the specified 
+                        list of accounts, original message is delivered
+                        with optional Message prepended.
+      @mail/reply <#>=<message>
+                        - Replies to a message #. Prepends message
+                         to the original message text.
+    Switches:
+      delete  - deletes a message
+      forward - forward a received message to another object with an optional message attached.
+      reply   - Replies to a received message, appending the original message to the bottom.
     """
     account_caller = False

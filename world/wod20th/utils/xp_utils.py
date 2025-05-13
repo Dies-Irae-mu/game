@@ -6,6 +6,7 @@ from world.wod20th.utils.sheet_constants import (
     SECONDARY_TALENTS, SECONDARY_SKILLS, SECONDARY_KNOWLEDGES,
     BACKGROUNDS, BLESSINGS, CHARMS
 )
+from world.wod20th.utils.shifter_gift_restrictions import SHIFTER_GIFT_RESTRICTIONS
 from world.wod20th.utils.stat_mappings import (
     MAGE_SPHERES, ARTS, REALMS, SPECIAL_ADVANTAGES, COMBAT_SPECIAL_ADVANTAGES,
     MERIT_CATEGORIES, FLAW_CATEGORIES, MERIT_VALUES, FLAW_VALUES, UNIVERSAL_BACKGROUNDS, VAMPIRE_BACKGROUNDS, CHANGELING_BACKGROUNDS, MAGE_BACKGROUNDS,
@@ -581,9 +582,17 @@ GENERAL_SHIFTER_GIFTS = {
     'Ratkin': [
         'City Running',
         'Cloak of Shadows',
-        'Darksight Gift',
+        'Darksight',
         'Spirit of the Lizard',
         'Deep Pockets',
+        'Shadow Throw',
+        'Resist Toxin',
+        'Smell Poison',
+        'Stash Cache',
+        'Snitch',
+        'Mind the Tunnels',
+        'Perfect Poison',
+        'Plague Bite',
         'Backbite',
         'Squeeze',
         'Attunement',
@@ -614,6 +623,7 @@ GENERAL_SHIFTER_GIFTS = {
         'Whirlpool Maw'
     ]   
 }
+
 
 def _get_primary_thaumaturgy_path(character):
     """Get the primary thaumaturgy path for a character. This is the first path purchased and the one that is the highest rating. 
@@ -1439,6 +1449,12 @@ def _determine_stat_category(stat_name):
     Determine the category and type of a stat based on its name.
     """
     logger.log_info(f"Determining category for stat: {stat_name}")
+
+    # Special handling for Time - need to check character splat
+    if stat_name.lower() == 'time':
+        # We don't have character context here, so we'll need to specify the category explicitly
+        # Default to sphere, but it should be overridden by explicit specification
+        return ('powers', 'sphere')
 
     # Import merit, flaw, and rite data structures for comprehensive checking
     from world.wod20th.utils.stat_mappings import (
@@ -2716,7 +2732,7 @@ def normalize_stat_name(stat_name, category, subcategory):
     # For attributes, abilities, etc. use proper title case
     return normalized_name
 
-def process_xp_spend(character, stat_name, new_rating, category, subcategory, reason="", is_staff_spend=False):
+def process_xp_spend(character, stat_name, new_rating, category=None, subcategory=None, reason="", is_staff_spend=False):
     """
     Process an XP spend request.
     
@@ -2735,6 +2751,9 @@ def process_xp_spend(character, stat_name, new_rating, category, subcategory, re
     try:
         # Store the original stat name for later use with gift aliases
         original_stat_name = stat_name
+        
+        # Flag to track if category was explicitly specified
+        explicit_category_specified = category is not None and subcategory is not None
         
         # Determine category and subcategory if not provided
         if not category or not subcategory:
@@ -2801,6 +2820,25 @@ def process_xp_spend(character, stat_name, new_rating, category, subcategory, re
                 if not category:
                     return False, f"Could not determine category for {stat_name}", 0
 
+        # Special handling for Time stat to set the right category based on character splat
+        if stat_name.lower() == 'time' and not explicit_category_specified:
+            # Get character's splat
+            splat = character.db.stats.get('other', {}).get('splat', {}).get('Splat', {}).get('perm', '')
+            
+            # Override category and subcategory based on splat
+            if splat == 'Mage':
+                category = 'powers'
+                subcategory = 'sphere'
+                logger.log_info(f"Time stat detected for Mage character. Setting category to powers.sphere")
+            elif splat == 'Changeling':
+                category = 'powers'
+                subcategory = 'realm'
+                logger.log_info(f"Time stat detected for Changeling character. Setting category to powers.realm")
+            else:
+                category = 'attributes'
+                subcategory = 'physical'
+                logger.log_info(f"Time stat detected for {splat} character. Setting category to attributes.physical")
+
         # Early rejection for merits and flaws for non-staff users
         if category in ['merits', 'flaws'] and not is_staff_spend:
             reject_message = "Merits require staff approval" if category == 'merits' else "Buying off flaws requires staff approval"
@@ -2853,6 +2891,65 @@ def process_xp_spend(character, stat_name, new_rating, category, subcategory, re
                 # We found a gift by alias
                 canonical_gift_name = gift.name
                 logger.log_info(f"Found gift by alias: {stat_name} -> {canonical_gift_name}")
+                
+            # Special validation for gifts - check if level is valid
+            gift_name_to_check = canonical_gift_name or stat_name
+            gift_to_validate = Stat.objects.filter(
+                name__iexact=gift_name_to_check,
+                category='powers',
+                stat_type='gift'
+            ).first()
+            
+            if gift_to_validate:
+                # Check for shifter-specific level restrictions
+                shifter_type = character.db.stats.get('identity', {}).get('lineage', {}).get('Type', {}).get('perm', '')
+                if shifter_type and gift_name_to_check in SHIFTER_GIFT_RESTRICTIONS and shifter_type in SHIFTER_GIFT_RESTRICTIONS[gift_name_to_check]:
+                    min_level = SHIFTER_GIFT_RESTRICTIONS[gift_name_to_check][shifter_type]
+                    if new_rating < min_level:
+                        return False, f"For {shifter_type}, {gift_name_to_check} is only available at level {min_level} or higher", 0
+                
+                # Check if the requested level (new_rating) is valid for this gift
+                valid_levels = []
+                if hasattr(gift_to_validate, 'values') and gift_to_validate.values:
+                    # Handle cases where values might be stored in different formats
+                    if isinstance(gift_to_validate.values, (list, tuple)):
+                        valid_levels = gift_to_validate.values
+                    elif isinstance(gift_to_validate.values, str) and '[' in gift_to_validate.values:
+                        # Parse JSON-like string
+                        import json
+                        try:
+                            valid_levels = json.loads(gift_to_validate.values.replace("'", '"'))
+                        except:
+                            # If parsing fails, try to extract numbers directly
+                            import re
+                            valid_levels = [int(val) for val in re.findall(r'\d+', gift_to_validate.values)]
+                    else:
+                        # If it's a single value
+                        try:
+                            valid_levels = [int(gift_to_validate.values)]
+                        except:
+                            valid_levels = []
+                
+                # If no valid levels found but rank field exists, use that
+                if not valid_levels and hasattr(gift_to_validate, 'rank') and gift_to_validate.rank:
+                    # If rank is provided, that's the minimum level
+                    try:
+                        if isinstance(gift_to_validate.rank, (int, float)):
+                            valid_levels = [int(gift_to_validate.rank)]
+                        elif isinstance(gift_to_validate.rank, str) and gift_to_validate.rank.isdigit():
+                            valid_levels = [int(gift_to_validate.rank)]
+                    except:
+                        pass
+                
+                # If we have valid levels, check if requested level is valid
+                if valid_levels:
+                    if new_rating not in valid_levels:
+                        valid_str = ", ".join(str(v) for v in sorted(valid_levels))
+                        return False, f"Invalid level for {gift_name_to_check}. Valid values are: {valid_str}", 0
+                    
+                    # If valid level but higher than 1, check if staff approval is needed
+                    if new_rating > 1 and not is_staff_spend:
+                        return False, f"Gifts above Rank 1 require staff approval. Please use the +request command instead.", 0
         
         # Get current rating
         current_rating = get_current_rating(character, category, subcategory, canonical_gift_name or stat_name, temp=False)
@@ -3629,6 +3726,22 @@ def validate_stat_for_splat(character, stat_name, category, subcategory):
     if not splat:
         return True, ""  # If splat is not set, don't validate
     
+    # Special handling for Time based on category and subcategory
+    if stat_name.lower() == 'time':
+        # If explicitly specified as a realm for Changelings
+        if category == 'powers' and subcategory == 'realm' and splat == 'Changeling':
+            return True, ""
+        # If explicitly specified as a sphere for Mages
+        elif category == 'powers' and subcategory == 'sphere' and splat == 'Mage':
+            return True, ""
+        # Special check for powers category validation
+        elif category == 'powers':
+            if subcategory == 'realm' and splat != 'Changeling' and splat != 'Mortal+':
+                return False, f"Time as a realm is only available to Changeling characters, not {splat}."
+            elif subcategory == 'sphere' and splat != 'Mage':
+                return False, f"Time as a sphere is only available to Mage characters, not {splat}."
+            # If we reach here, Time is either specified correctly for the splat or something else is wrong
+    
     # Define splat-specific validation rules
     # Format: stat_name.lower(): [list of valid splats]
     stat_name_lower = stat_name.lower()
@@ -3658,7 +3771,7 @@ def validate_stat_for_splat(character, stat_name, category, subcategory):
         'mind': ['Mage'],
         'prime': ['Mage'],
         'spirit': ['Mage'],
-        'time': ['Mage'],
+        # Remove Time from this list as it's handled specially above
         'dimensional science': ['Mage'],
         'primal utility': ['Mage'],
         'data': ['Mage'],
@@ -3730,6 +3843,10 @@ def validate_stat_for_splat(character, stat_name, category, subcategory):
     
     # Handle splat-specific powers by category
     if category == 'powers':
+        # Special case for Time stat already handled above
+        if stat_name.lower() == 'time':
+            return True, ""
+            
         if subcategory == 'sphere' and splat != 'Mage':
             return False, f"Spheres are only available to Mage characters, not {splat}."
         
