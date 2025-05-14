@@ -1142,7 +1142,7 @@ class CmdSelfStat(MuxCommand):
             return 'identity', 'personal'
         elif stat_title in IDENTITY_LINEAGE:
             return 'identity', 'lineage'
-        elif stat_title in ['House', 'Fae Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
+        elif stat_title in ['House', 'Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
                           'Type', 'Tribe', 'Breed', 'Kinfolk Breed', 'Auspice', 'Clan', 'Generation', 'Affiliation',
                           'Tradition', 'Convention', 'Methodology', 'Traditions Subfaction',
                           'Nephandi Faction', 'Possessed Type', 'Companion Type', 'Pryio', 'Lodge',
@@ -2018,7 +2018,7 @@ class CmdSelfStat(MuxCommand):
             return 'identity', 'personal'
         elif stat_title in IDENTITY_LINEAGE:
             return 'identity', 'lineage'
-        elif stat_title in ['House', 'Fae Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
+        elif stat_title in ['House', 'Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
                           'Type', 'Tribe', 'Breed', 'Auspice', 'Clan', 'Generation', 'Affiliation',
                           'Tradition', 'Convention', 'Methodology', 'Traditions Subfaction',
                           'Nephandi Faction', 'Possessed Type', 'Companion Type', 'Pryio', 'Lodge',
@@ -2178,7 +2178,7 @@ class CmdSelfStat(MuxCommand):
             return 'identity', 'personal'
         elif stat_title in IDENTITY_LINEAGE:
             return 'identity', 'lineage'
-        elif stat_title in ['House', 'Fae Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
+        elif stat_title in ['House', 'Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
                           'Type', 'Tribe', 'Breed', 'Auspice', 'Clan', 'Generation', 'Affiliation',
                           'Tradition', 'Convention', 'Methodology', 'Traditions Subfaction',
                           'Nephandi Faction', 'Possessed Type', 'Companion Type', 'Pryio', 'Lodge',
@@ -2788,7 +2788,8 @@ class CmdSelfStat(MuxCommand):
                 # Initialize possessed-specific stats for the chosen type
                 initialize_possessed_stats(self.caller, self.value_change.title())
                 self.caller.msg(f"|gSet Possessed type to {self.value_change.title()} and initialized appropriate stats.|n")
-                return
+                self.category = 'identity'
+                self.stat_type = 'lineage'
             elif splat and splat.lower() == 'shifter':
                 # Convert tuple list to just the type names for validation
                 valid_types = [t[1] for t in SHIFTER_TYPE_CHOICES if t[1] != 'None']
@@ -2801,7 +2802,8 @@ class CmdSelfStat(MuxCommand):
                 # Initialize shifter-specific stats for the chosen type
                 initialize_shifter_type(self.caller, self.value_change.title())
                 self.caller.msg(f"|gSet shifter type to {self.value_change.title()} and initialized appropriate stats.|n")
-                return
+                self.category = 'identity'
+                self.stat_type = 'lineage'
         # Special handling for mage affiliation/tradition/convention setting
         if self.stat_name.lower() in ['affiliation', 'tradition', 'convention', 'nephandi faction']:
             if splat and splat.lower() == 'mage':
@@ -2814,7 +2816,9 @@ class CmdSelfStat(MuxCommand):
                     self.value_change = matched_value
                     # Initialize mage-specific stats for the chosen affiliation
                     initialize_mage_stats(self.caller, matched_value)
-                    return ('identity', 'lineage')
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                    return
 
                 # Handle tradition/convention/faction based on affiliation
                 if not self.affiliation:
@@ -2890,6 +2894,11 @@ class CmdSelfStat(MuxCommand):
                     self.caller.msg(error_msg)
                     return
                 self.value_change = matched_value
+                # Initialize changeling stats with the new kith
+                initialize_changeling_stats(self.caller, matched_value)
+                self.category = 'identity'
+                self.stat_type = 'lineage'
+                return
 
         # When setting clan for vampires
         if self.stat_name.lower() == 'clan':
@@ -2924,7 +2933,9 @@ class CmdSelfStat(MuxCommand):
                     self.value_change = matched_value
                     # Initialize changeling stats with the new kith
                     initialize_changeling_stats(self.caller, matched_value)
-                    return ('identity', 'lineage')
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                    return
 
                 elif self.stat_name.lower() == 'seeming':
                     is_valid, matched_value = self.case_insensitive_in(self.value_change, SEEMING)
@@ -2932,7 +2943,8 @@ class CmdSelfStat(MuxCommand):
                         self.caller.msg(f"|rInvalid seeming. Valid seemings are: {', '.join(sorted(SEEMING))}|n")
                         return
                     self.value_change = matched_value
-                    return ('identity', 'lineage')
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
 
                 elif self.stat_name.lower() == 'phyla':
                     kith = self.caller.get_stat('identity', 'lineage', 'Kith', temp=False)
@@ -2942,7 +2954,8 @@ class CmdSelfStat(MuxCommand):
                             self.caller.msg(f"|rInvalid phyla. Valid phyla are: {', '.join(sorted(PHYLA))}|n")
                             return
                         self.value_change = matched_value
-                        return ('identity', 'lineage')
+                        self.category = 'identity'
+                        self.stat_type = 'lineage'
                     else:
                         self.caller.msg("|rOnly Inanimae can set their Phyla.|n")
                         return
@@ -2953,7 +2966,8 @@ class CmdSelfStat(MuxCommand):
                         self.caller.msg(f"|rInvalid Seelie Legacy. Valid legacies are: {', '.join(sorted(SEELIE_LEGACIES))}|n")
                         return
                     self.value_change = matched_value
-                    return ('identity', 'lineage')
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
 
                 elif self.stat_name.lower() == 'unseelie legacy':
                     is_valid, matched_value = self.case_insensitive_in(self.value_change, UNSEELIE_LEGACIES)
@@ -2961,14 +2975,16 @@ class CmdSelfStat(MuxCommand):
                         self.caller.msg(f"|rInvalid Unseelie Legacy. Valid legacies are: {', '.join(sorted(UNSEELIE_LEGACIES))}|n")
                         return
                     self.value_change = matched_value
-                    return ('identity', 'lineage')
-                elif self.stat_name.lower() == 'fae court':
-                    is_valid, matched_value = self.case_insensitive_in(self.value_change, UNSEELIE_LEGACIES)
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                elif self.stat_name.lower() == 'court':
+                    is_valid, matched_value = self.case_insensitive_in(self.value_change, FAE_COURTS)
                     if not is_valid:
-                        self.caller.msg(f"|rInvalid Fae Court. Valid courts are: {', '.join(sorted(FAE_COURTS))}|n")
+                        self.caller.msg(f"|rInvalid Court. Valid courts are: {', '.join(sorted(FAE_COURTS))}|n")
                         return
                     self.value_change = matched_value
-                    return ('identity', 'lineage')
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
                 elif self.stat_name.lower() == 'house':
                     is_valid, matched_value = self.case_insensitive_in(self.value_change, HOUSES)
                     if not is_valid:
@@ -2998,9 +3014,11 @@ class CmdSelfStat(MuxCommand):
                     
                     # Determine if it's an Art or Realm
                     if self.stat_name.lower() in [art.lower() for art in ARTS]:
-                        return ('powers', 'art')
+                        self.category = 'powers'
+                        self.stat_type = 'art'
                     else:
-                        return ('powers', 'realm')
+                        self.category = 'powers'
+                        self.stat_type = 'realm'
                 except ValueError:
                     self.caller.msg(f"|r{self.stat_name} rating must be a number.|n")
                     return
@@ -3016,7 +3034,8 @@ class CmdSelfStat(MuxCommand):
                     self.caller.msg(error_msg)
                     return
                 self.value_change = matched_value
-                return ('identity', 'lineage')
+                self.category = 'identity'
+                self.stat_type = 'lineage'
 
         # When setting Shifter-specific stats
         elif self.stat_name.lower() in ['breed', 'auspice', 'tribe', 'aspect', 'rank']:
@@ -3032,7 +3051,8 @@ class CmdSelfStat(MuxCommand):
                             self.caller.msg("|rRank must be between 0 and 5.|n")
                             return
                         self.value_change = rank_value
-                        return ('identity', 'lineage')
+                        self.category = 'identity'
+                        self.stat_type = 'lineage'
                     except ValueError:
                         self.caller.msg("|rRank must be a number.|n")
                         return
@@ -3048,7 +3068,8 @@ class CmdSelfStat(MuxCommand):
                     self.caller.set_stat('identity', 'lineage', 'Breed', matched_value, temp=True)
                     # Then update pools based on breed
                     update_shifter_pools_on_stat_change(self.caller, 'breed', matched_value)
-                    return ('identity', 'lineage')
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
 
                 # Auspice validation
                 elif self.stat_name.lower() == 'auspice':
@@ -3061,7 +3082,8 @@ class CmdSelfStat(MuxCommand):
                     self.value_change = matched_value
                     # Update pools based on auspice
                     update_shifter_pools_on_stat_change(self.caller, 'auspice', matched_value)
-                    return ('identity', 'lineage')
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
 
                 # Tribe validation for Garou
                 elif self.stat_name.lower() == 'tribe' and shifter_type == 'Garou':
@@ -3074,7 +3096,8 @@ class CmdSelfStat(MuxCommand):
                     self.value_change = matched_value
                     # Update pools based on tribe
                     update_shifter_pools_on_stat_change(self.caller, 'tribe', matched_value)
-                    return ('identity', 'lineage')
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
 
                 # Tribe validation for Bastet
                 elif self.stat_name.lower() == 'tribe' and shifter_type == 'Bastet':
@@ -3087,7 +3110,8 @@ class CmdSelfStat(MuxCommand):
                     self.value_change = matched_value
                     # Update pools based on tribe
                     update_shifter_pools_on_stat_change(self.caller, 'tribe', matched_value)
-                    return ('identity', 'lineage')
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
 
                 # Aspect validation
                 elif self.stat_name.lower() == 'aspect':
@@ -3100,7 +3124,8 @@ class CmdSelfStat(MuxCommand):
                     self.value_change = matched_value
                     # Update pools based on aspect
                     update_shifter_pools_on_stat_change(self.caller, 'aspect', matched_value)
-                    return ('identity', 'lineage')
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
 
         # Special handling for Kinfolk Breed
         elif self.stat_name.lower() == 'kinfolk breed':
@@ -3125,7 +3150,8 @@ class CmdSelfStat(MuxCommand):
                 self.caller.set_stat('identity', 'lineage', 'Kinfolk Breed', matched_value, temp=False)
                 self.caller.set_stat('identity', 'lineage', 'Kinfolk Breed', matched_value, temp=True)
                 self.caller.msg(f"|gSet Kinfolk Breed to {matched_value}.|n")
-                return ('identity', 'lineage')
+                self.category = 'identity'
+                self.stat_type = 'lineage'
             else:
                 # Add debug information
                 self.caller.msg(f"|rOnly Mortal+ Kinfolk characters can set Kinfolk Breed. Current splat: {splat}, Type: {char_type}|n")
@@ -3145,7 +3171,8 @@ class CmdSelfStat(MuxCommand):
                 self.value_change = matched_value
                 # Initialize companion stats with the new type
                 initialize_companion_stats(self.caller, matched_value)
-                return ('identity', 'lineage')
+                self.category = 'identity'
+                self.stat_type = 'lineage'
 
         # When setting Companion special advantages
         elif self.stat_name.lower() in [adv.lower() for adv in SPECIAL_ADVANTAGES.keys()] or self.stat_name.lower() in [adv.lower() for adv in COMBAT_SPECIAL_ADVANTAGES.keys()]:
@@ -3191,7 +3218,9 @@ class CmdSelfStat(MuxCommand):
                     
                     # Set the proper name for storage
                     self.stat_name = proper_name
-                    return ('powers', 'special_advantage')
+                    self.category = 'powers'
+                    self.stat_type = 'special_advantage'
+                    return
                 except ValueError:
                     self.caller.msg("|rSpecial advantage value must be a number.|n")
                     return
@@ -3210,7 +3239,9 @@ class CmdSelfStat(MuxCommand):
                 self.value_change = matched_value
                 # Initialize possessed stats with the new type
                 initialize_possessed_stats(self.caller, matched_value)
-                return ('identity', 'lineage')
+                self.category = 'identity'
+                self.stat_type = 'lineage'
+                return
 
         # When setting Possessed powers (blessings and charms)
         elif self.stat_name.lower() in ['blessing', 'charm']:
