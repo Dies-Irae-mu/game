@@ -3057,7 +3057,7 @@ class CmdSelfStat(MuxCommand):
                 self.stat_type = 'lineage'
 
         # When setting Shifter-specific stats
-        elif self.stat_name.lower() in ['breed', 'auspice', 'tribe', 'aspect', 'rank']:
+        elif self.stat_name.lower() in ['breed', 'auspice', 'tribe', 'aspect', 'rank', 'kitsune path', 'varna']:
             splat = self.caller.get_stat('identity', 'personal', 'Splat', temp=False)
             shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
             
@@ -3075,45 +3075,226 @@ class CmdSelfStat(MuxCommand):
                     except ValueError:
                         self.caller.msg("|rRank must be a number.|n")
                         return
+                
+                # Handle Kitsune Path
+                elif self.stat_name.lower() == 'kitsune path' and shifter_type.lower() == 'kitsune':
+                    # Set the Kitsune Path first
+                    self.caller.set_stat('identity', 'lineage', 'Kitsune Path', self.value_change, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'Kitsune Path', self.value_change, temp=True)
+                    
+                    # Update pools based on Kitsune Path
+                    update_shifter_pools_on_stat_change(self.caller, 'kitsune path', self.value_change)
+                    
+                    # Display appropriate message
+                    KITSUNE_PATH_RAGE = {
+                        'kataribe': 2,
+                        'gukutsushi': 2,
+                        'doshi': 3,
+                        'eji': 4
+                    }
+                    path_lower = self.value_change.lower()
+                    if path_lower in KITSUNE_PATH_RAGE:
+                        self.caller.msg(f"|gRage set to {KITSUNE_PATH_RAGE[path_lower]} for {self.value_change} path.|n")
+                    
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                    return
+                    
+                # Handle Varna
+                elif self.stat_name.lower() == 'varna' and shifter_type.lower() == 'mokole':
+                    # Set the Varna first
+                    self.caller.set_stat('identity', 'lineage', 'Varna', self.value_change, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'Varna', self.value_change, temp=True)
+                    
+                    # Update pools based on Varna
+                    update_shifter_pools_on_stat_change(self.caller, 'varna', self.value_change)
+                    
+                    # Display appropriate message
+                    MOKOLE_VARNA_RAGE = {
+                        'champsa': 3,
+                        'gharial': 4,
+                        'halpatee': 4,
+                        'karna': 3,
+                        'makara': 3,
+                        'ora': 5,
+                        'piasa': 4,
+                        'syrta': 4,
+                        'unktehi': 5
+                    }
+                    varna_lower = self.value_change.lower()
+                    if varna_lower in MOKOLE_VARNA_RAGE:
+                        self.caller.msg(f"|gRage set to {MOKOLE_VARNA_RAGE[varna_lower]} for {self.value_change} varna.|n")
+                    
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                    return
+               
                 # Breed validation
-                if self.stat_name.lower() == 'breed':
+                elif self.stat_name.lower() == 'breed':
                     is_valid, matched_value, error_msg = self._validate_breed(shifter_type, self.value_change)
                     if not is_valid:
                         self.caller.msg(f"|r{error_msg}|n")
                         return
+                    
                     self.value_change = matched_value
                     # Set the breed first
                     self.caller.set_stat('identity', 'lineage', 'Breed', matched_value, temp=False)
                     self.caller.set_stat('identity', 'lineage', 'Breed', matched_value, temp=True)
+                    
                     # Then update pools based on breed
                     update_shifter_pools_on_stat_change(self.caller, 'breed', matched_value)
+                    
+                    # Display appropriate message based on shifter type
+                    if shifter_type.lower() == 'garou':
+                        if matched_value.lower() == 'homid':
+                            self.caller.msg("|gGnosis set to 1 for homid breed.|n")
+                        elif matched_value.lower() == 'metis':
+                            self.caller.msg("|gGnosis set to 3 for metis breed.|n")
+                        elif matched_value.lower() == 'lupus':
+                            self.caller.msg("|gGnosis set to 5 for lupus breed.|n")
+                    elif shifter_type.lower() == 'bastet':
+                        if matched_value.lower() == 'homid':
+                            self.caller.msg("|gGnosis set to 1 for homid breed.|n")
+                        elif matched_value.lower() == 'metis':
+                            self.caller.msg("|gGnosis set to 3 for metis breed.|n")
+                        elif matched_value.lower() == 'feline':
+                            self.caller.msg("|gGnosis set to 5 for feline breed.|n")
+                    elif shifter_type.lower() == 'ananasi':
+                        if matched_value.lower() == 'homid':
+                            self.caller.msg("|gGnosis set to 1 and Willpower set to 3 for homid breed.|n")
+                        elif matched_value.lower() in ['arachnid', 'animal-born']:
+                            self.caller.msg("|gGnosis set to 5 and Willpower set to 4 for arachnid breed.|n")
+                        self.caller.msg("|gBlood set to 10 for Ananasi. Rage removed.|n")
+                    elif shifter_type.lower() == 'nuwisha':
+                        if matched_value.lower() == 'homid':
+                            self.caller.msg("|gGnosis set to 1 for homid breed.|n")
+                        elif matched_value.lower() in ['latrani', 'animal-born']:
+                            self.caller.msg("|gGnosis set to 5 for latrani breed.|n")
+                        self.caller.msg("|gRage removed for Nuwisha.|n")
+                            
                     self.category = 'identity'
                     self.stat_type = 'lineage'
-
+                
                 # Auspice validation
                 elif self.stat_name.lower() == 'auspice':
                     is_valid, matched_value, error_msg = self._validate_auspice(shifter_type, self.value_change)
                     if not is_valid:
                         self.caller.msg(f"|r{error_msg}|n")
                         return
+                    
                     self.value_change = matched_value
+                    # Set the auspice first
+                    self.caller.set_stat('identity', 'lineage', 'Auspice', matched_value, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'Auspice', matched_value, temp=True)
+                    
                     # Update pools based on auspice
                     update_shifter_pools_on_stat_change(self.caller, 'auspice', matched_value)
+                    
+                    # Display appropriate message based on shifter type
+                    if shifter_type.lower() == 'garou':
+                        GAROU_AUSPICE_RAGE = {
+                            'ahroun': 5, 'galliard': 4, 'philodox': 3,
+                            'theurge': 2, 'ragabash': 1
+                        }
+                        auspice_lower = matched_value.lower()
+                        if auspice_lower in GAROU_AUSPICE_RAGE:
+                            self.caller.msg(f"|gRage set to {GAROU_AUSPICE_RAGE[auspice_lower]} for {matched_value} auspice.|n")
+                    elif shifter_type.lower() == 'rokea':
+                        ROKEA_AUSPICE_RAGE = {
+                            'brightwater': 5, 'dimwater': 4, 'darkwater': 3
+                        }
+                        auspice_lower = matched_value.lower()
+                        if auspice_lower in ROKEA_AUSPICE_RAGE:
+                            self.caller.msg(f"|gRage set to {ROKEA_AUSPICE_RAGE[auspice_lower]} for {matched_value} auspice.|n")
+                    elif shifter_type.lower() == 'nagah':
+                        NAGAH_AUSPICE_RAGE = {
+                            'kamakshi': 3, 'kartikeya': 4, 'kamsa': 3, 'kali': 4
+                        }
+                        auspice_lower = matched_value.lower()
+                        if auspice_lower in NAGAH_AUSPICE_RAGE:
+                            self.caller.msg(f"|gRage set to {NAGAH_AUSPICE_RAGE[auspice_lower]} for {matched_value} auspice.|n")
+                    elif shifter_type.lower() == 'mokole':
+                        MOKOLE_AUSPICE_WILLPOWER = {
+                            'rising sun': 3, 'noonday sun': 5, 'setting sun': 3,
+                            'shrouded sun': 4, 'midnight sun': 4, 'decorated sun': 5,
+                            'solar eclipse': 5
+                        }
+                        auspice_lower = matched_value.lower()
+                        if auspice_lower in MOKOLE_AUSPICE_WILLPOWER:
+                            self.caller.msg(f"|gWillpower set to {MOKOLE_AUSPICE_WILLPOWER[auspice_lower]} for {matched_value} auspice.|n")
+                    elif shifter_type.lower() == 'gurahl':
+                        GURAHL_AUSPICE_STATS = {
+                            'arcas': {'rage': 4, 'willpower': 3},
+                            'uzmati': {'rage': 3, 'willpower': 4},
+                            'kojubat': {'rage': 2, 'willpower': 5},
+                            'kieh': {'rage': 1, 'willpower': 6},
+                            'rishi': {'rage': 5, 'willpower': 2}
+                        }
+                        auspice_lower = matched_value.lower()
+                        if auspice_lower in GURAHL_AUSPICE_STATS:
+                            stats = GURAHL_AUSPICE_STATS[auspice_lower]
+                            self.caller.msg(f"|gRage set to {stats['rage']} and Willpower set to {stats['willpower']} for {matched_value} auspice.|n")
+                    
                     self.category = 'identity'
                     self.stat_type = 'lineage'
-
-                # Tribe validation for Garou
+                
+                # Tribe validation
                 elif self.stat_name.lower() == 'tribe':
                     is_valid, matched_value, error_msg = self._validate_tribe(shifter_type, self.value_change)
                     if not is_valid:
                         self.caller.msg(f"|r{error_msg}|n")
                         return
+                    
                     self.value_change = matched_value
+                    # Set the tribe first
+                    self.caller.set_stat('identity', 'lineage', 'Tribe', matched_value, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'Tribe', matched_value, temp=True)
+                    
                     # Update pools based on tribe
                     update_shifter_pools_on_stat_change(self.caller, 'tribe', matched_value)
+                    
+                    # Display appropriate message based on shifter type
+                    if shifter_type.lower() == 'garou':
+                        # Handle Black Spiral Dancer special renown
+                        if matched_value.lower() == 'black spiral dancers':
+                            self.caller.msg("|gRenown set to Power, Infamy, and Cunning for Black Spiral Dancers.|n")
+                        else:
+                            # Check if changing from BSD
+                            if 'advantages' in self.caller.db.stats and 'renown' in self.caller.db.stats['advantages']:
+                                current_renown = set(self.caller.db.stats['advantages']['renown'].keys())
+                                if current_renown == {'Power', 'Infamy', 'Cunning'}:
+                                    self.caller.msg("|gRenown reset to Glory, Honor, and Wisdom for standard Garou.|n")
+                        
+                        # Willpower message for Garou tribes
+                        GAROU_TRIBE_WILLPOWER = {
+                            'black furies': 3, 'bone gnawers': 4, 'children of gaia': 4,
+                            'fianna': 3, 'get of fenris': 3, 'glass walkers': 3,
+                            'red talons': 3, 'shadow lords': 3, 'silent striders': 3,
+                            'silver fangs': 3, 'stargazers': 4, 'uktena': 3, 'wendigo': 4,
+                            'black spiral dancers': 3
+                        }
+                        tribe_lower = matched_value.lower()
+                        if tribe_lower in GAROU_TRIBE_WILLPOWER:
+                            self.caller.msg(f"|gWillpower set to {GAROU_TRIBE_WILLPOWER[tribe_lower]} for {matched_value} tribe.|n")
+                    elif shifter_type.lower() == 'bastet':
+                        BASTET_TRIBE_STATS = {
+                            'balam': {'rage': 4, 'willpower': 3},
+                            'bubasti': {'rage': 1, 'willpower': 5},
+                            'ceilican': {'rage': 3, 'willpower': 3},
+                            'khan': {'rage': 5, 'willpower': 2},
+                            'pumonca': {'rage': 4, 'willpower': 4},
+                            'qualmi': {'rage': 2, 'willpower': 5},
+                            'simba': {'rage': 5, 'willpower': 2},
+                            'swara': {'rage': 2, 'willpower': 4}
+                        }
+                        tribe_lower = matched_value.lower()
+                        if tribe_lower in BASTET_TRIBE_STATS:
+                            stats = BASTET_TRIBE_STATS[tribe_lower]
+                            self.caller.msg(f"|gRage set to {stats['rage']} and Willpower set to {stats['willpower']} for {matched_value} tribe.|n")
+                    
                     self.category = 'identity'
                     self.stat_type = 'lineage'
-
+                
                 # Aspect validation
                 elif self.stat_name.lower() == 'aspect':
                     valid_aspects = ASPECT_CHOICES_DICT.get(shifter_type, [])
@@ -3122,9 +3303,36 @@ class CmdSelfStat(MuxCommand):
                         valid_aspects_str = ', '.join(sorted(valid_aspects))
                         self.caller.msg(f"|rInvalid aspect for {shifter_type}. Valid aspects are: {valid_aspects_str}|n")
                         return
+                    
                     self.value_change = matched_value
+                    # Set the aspect first
+                    self.caller.set_stat('identity', 'lineage', 'Aspect', matched_value, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'Aspect', matched_value, temp=True)
+                    
                     # Update pools based on aspect
                     update_shifter_pools_on_stat_change(self.caller, 'aspect', matched_value)
+                    
+                    # Display appropriate message based on shifter type
+                    if shifter_type.lower() == 'ajaba':
+                        AJABA_ASPECT_STATS = {
+                            'dawn': {'rage': 5, 'gnosis': 1},
+                            'midnight': {'rage': 3, 'gnosis': 3},
+                            'dusk': {'rage': 1, 'gnosis': 5}
+                        }
+                        aspect_lower = matched_value.lower()
+                        if aspect_lower in AJABA_ASPECT_STATS:
+                            stats = AJABA_ASPECT_STATS[aspect_lower]
+                            self.caller.msg(f"|gRage set to {stats['rage']} and Gnosis set to {stats['gnosis']} for {matched_value} aspect.|n")
+                    elif shifter_type.lower() == 'ratkin':
+                        RATKIN_ASPECT_RAGE = {
+                            'tunnel runner': 1, 'shadow seer': 2, 'knife skulker': 3,
+                            'warrior': 5, 'engineer': 2, 'plague lord': 3,
+                            'munchmausen': 4, 'twitcher': 5
+                        }
+                        aspect_lower = matched_value.lower()
+                        if aspect_lower in RATKIN_ASPECT_RAGE:
+                            self.caller.msg(f"|gRage set to {RATKIN_ASPECT_RAGE[aspect_lower]} for {matched_value} aspect.|n")
+                    
                     self.category = 'identity'
                     self.stat_type = 'lineage'
 
@@ -4866,6 +5074,7 @@ class CmdSelfStat(MuxCommand):
             valid_tribes = [t[1] for t in BASTET_TRIBE_CHOICES if t[1] != 'None']
         elif shifter_type.lower() == 'gurahl':
             valid_tribes = [t[1] for t in GURAHL_TRIBE_CHOICES if t[1] != 'None']
+
         else:
             return False, None, f"{shifter_type} characters do not have tribes"
         
@@ -4885,3 +5094,77 @@ class CmdSelfStat(MuxCommand):
         # If no match found, return error with valid tribes
         error_msg = f"Invalid tribe for {shifter_type}. Valid tribes are: {', '.join(sorted(valid_tribes))}"
         return False, None, error_msg
+
+def _validate_kitsune_path_mokole_varna(self, stat_name: str, value: str) -> tuple[bool, str, str]:
+        if self.stat_name.lower() in ['breed', 'auspice', 'tribe', 'aspect', 'rank', 'kitsune path', 'varna']:
+            splat = self.caller.get_stat('identity', 'personal', 'Splat', temp=False)
+            shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+            
+            if splat and splat.lower() == 'shifter' and shifter_type:
+                # Additional handling for Kitsune Path
+                if self.stat_name.lower() == 'kitsune path' and shifter_type.lower() == 'kitsune':
+                    # Set the stat first
+                    self.caller.set_stat('identity', 'lineage', 'Kitsune Path', self.value_change, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'Kitsune Path', self.value_change, temp=True)
+                    
+                    # Update pools based on Kitsune Path
+                    update_shifter_pools_on_stat_change(self.caller, 'kitsune path', self.value_change)
+                    
+                    # Display appropriate message
+                    KITSUNE_PATH_RAGE = {
+                        'kataribe': 2,
+                        'gukutsushi': 2,
+                        'doshi': 3,
+                        'eji': 4
+                    }
+                    path_lower = self.value_change.lower()
+                    if path_lower in KITSUNE_PATH_RAGE:
+                        self.caller.msg(f"|gRage set to {KITSUNE_PATH_RAGE[path_lower]} for {self.value_change} path.|n")
+                    
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                    return
+                
+                # Additional handling for Varna
+                elif self.stat_name.lower() == 'varna' and shifter_type.lower() == 'mokole':
+                    # Set the stat first
+                    self.caller.set_stat('identity', 'lineage', 'Varna', self.value_change, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'Varna', self.value_change, temp=True)
+                    
+                    # Update pools based on Varna
+                    update_shifter_pools_on_stat_change(self.caller, 'varna', self.value_change)
+                    
+                    # Display appropriate message
+                    MOKOLE_VARNA_RAGE = {
+                        'champsa': 3,
+                        'gharial': 4,
+                        'halpatee': 4,
+                        'karna': 3,
+                        'makara': 3,
+                        'ora': 5,
+                        'piasa': 4,
+                        'syrta': 4,
+                        'unktehi': 5
+                    }
+                    varna_lower = self.value_change.lower()
+                    if varna_lower in MOKOLE_VARNA_RAGE:
+                        self.caller.msg(f"|gRage set to {MOKOLE_VARNA_RAGE[varna_lower]} for {self.value_change} varna.|n")
+                    
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                    return
+                
+                # Handle Rank
+                elif self.stat_name.lower() == 'rank':
+                    try:
+                        rank_value = int(self.value_change)
+                        if rank_value < 0 or rank_value > 5:
+                            self.caller.msg("|rRank must be between 0 and 5.|n")
+                            return
+                        self.value_change = rank_value
+                        self.category = 'identity'
+                        self.stat_type = 'lineage'
+                    except ValueError:
+                        self.caller.msg("|rRank must be a number.|n")
+                        return
+
