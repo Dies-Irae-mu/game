@@ -33,7 +33,7 @@ from world.wod20th.utils.mage_utils import (
 )
 from world.wod20th.utils.shifter_utils import (
     SHIFTER_RENOWN, initialize_shifter_type, SHIFTER_TYPE_CHOICES, BREED_CHOICES_DICT,
-    AUSPICE_CHOICES, GAROU_TRIBE_CHOICES, BASTET_TRIBE_CHOICES, 
+    AUSPICE_CHOICES, GAROU_TRIBE_CHOICES, BASTET_TRIBE_CHOICES, GURAHL_TRIBE_CHOICES,
     update_shifter_pools_on_stat_change, SHIFTER_IDENTITY_STATS, 
     BREED_CHOICES, ASPECT_CHOICES_DICT, AUSPICE_CHOICES_DICT,
     validate_shifter_stats
@@ -54,7 +54,7 @@ from world.wod20th.utils.possessed_utils import (
 )
 from world.wod20th.utils.companion_utils import (
     initialize_companion_stats, COMPANION_TYPE_CHOICES,
-    COMPANION_POWERS, validate_companion_stats
+    COMPANION_POWERS, validate_companion_stats, validate_elemental_affinity
 )
 from world.wod20th.utils.virtue_utils import (
     calculate_willpower, calculate_path, PATH_VIRTUES
@@ -182,10 +182,28 @@ class CmdSelfStat(MuxCommand):
         Returns:
             Tuple of (is_valid, matched_value, error_message)
         """
+        from world.wod20th.utils.shifter_utils import BREED_CHOICES_DICT
+        
         valid_breeds = BREED_CHOICES_DICT.get(shifter_type, [])
-        is_valid, matched_value = self.case_insensitive_in(value, set(valid_breeds))
-        error_msg = f"|rInvalid breed for {shifter_type}. Valid breeds are: {', '.join(sorted(valid_breeds))}|n"
-        return is_valid, matched_value, error_msg
+        if not valid_breeds:
+            return False, None, f"No valid breeds found for {shifter_type}"
+        
+        # Try direct match first (case-insensitive)
+        value_lower = value.lower()
+        for breed in valid_breeds:
+            if breed.lower() == value_lower:
+                return True, breed, ""
+        
+        # Try word matching for multi-word breeds
+        for breed in valid_breeds:
+            breed_words = breed.lower().split()
+            value_words = value_lower.split()
+            if all(w in breed_words for w in value_words):
+                return True, breed, ""
+                
+        # If no match found, suggest similar values
+        error_msg = f"Invalid breed for {shifter_type}. Valid breeds are: {', '.join(sorted(valid_breeds))}"
+        return False, None, error_msg
 
     def _validate_splat_type(self, splat: str) -> tuple[bool, str]:
         """
@@ -2708,7 +2726,7 @@ class CmdSelfStat(MuxCommand):
 
         # Special handling for type setting
         if self.stat_name.lower() in ['type', 'possessed type', 'mortal+ type']:
-            # Check if this is a Mortal+ type
+            # First check if this is a Mortal+ type
             if splat and splat.lower() == 'mortal+':
                 # Get valid Mortal+ types
                 valid_types = [t[1] for t in MORTALPLUS_TYPE_CHOICES if t[1] != 'None']
@@ -2719,7 +2737,45 @@ class CmdSelfStat(MuxCommand):
                 # Initialize mortal+-specific stats for the chosen type
                 initialize_mortalplus_stats(self.caller, mortalplus_type)
                 self.caller.msg(f"|gSet Mortal+ type to {mortalplus_type} and initialized appropriate stats.|n")
-                return
+                
+                # Skip further stat setting since initialize_mortalplus_stats already sets the Type
+                self.category = 'identity'
+                self.stat_type = 'lineage'
+                return  # Return early to avoid further processing
+                
+            elif splat and splat.lower() == 'possessed':
+                # Convert tuple list to just the type names for validation
+                valid_types = [t[0] for t in POSSESSED_TYPE_CHOICES if t[0] != 'None']
+                if self.value_change.title() not in valid_types:
+                    self.caller.msg(f"|rInvalid Possessed type. Valid types are: {', '.join(valid_types)}|n")
+                    return
+                
+                # Initialize possessed-specific stats for the chosen type first
+                # This will also set the Type stat and handle any banality updates
+                initialize_possessed_stats(self.caller, self.value_change.title())
+                self.caller.msg(f"|gSet Possessed type to {self.value_change.title()} and initialized appropriate stats.|n")
+                
+                # Skip further stat setting since initialize_possessed_stats already sets the Type
+                self.category = 'identity'
+                self.stat_type = 'lineage'
+                return  # Return early to avoid further processing
+                
+            elif splat and splat.lower() == 'shifter':
+                # Convert tuple list to just the type names for validation
+                valid_types = [t[1] for t in SHIFTER_TYPE_CHOICES if t[1] != 'None']
+                if self.value_change.title() not in valid_types:
+                    self.caller.msg(f"|rInvalid shifter type. Valid types are: {', '.join(valid_types)}|n")
+                    return
+                
+                # Initialize shifter-specific stats for the chosen type first
+                # This will also set the Type stat and handle any banality updates
+                initialize_shifter_type(self.caller, self.value_change.title())
+                self.caller.msg(f"|gSet shifter type to {self.value_change.title()} and initialized appropriate stats.|n")
+                
+                # Skip the normal set_stat call since initialize_shifter_type already sets the Type stat
+                self.category = 'identity'
+                self.stat_type = 'lineage'
+                return  # Return early to avoid further processing
 
         # Special handling for Nature/Demeanor
         elif self.stat_name.lower() in ['nature', 'demeanor']:
@@ -2763,47 +2819,6 @@ class CmdSelfStat(MuxCommand):
                 self.category = 'identity'
                 self.stat_type = 'lineage'
 
-        # When setting type for the first time or resetting stats
-        if self.stat_name.lower() in ['type', 'possessed type', 'mortal+ type']:
-            # First check if this is a Mortal+ type
-            if splat and splat.lower() == 'mortal+':
-                # Get valid Mortal+ types
-                valid_types = [t[1] for t in MORTALPLUS_TYPE_CHOICES if t[1] != 'None']
-                mortalplus_type = next((t for t in valid_types if t.lower() == self.value_change.lower()), None)
-                if not mortalplus_type:
-                    self.caller.msg(f"|rInvalid Mortal+ type. Valid types are: {', '.join(sorted(valid_types))}|n")
-                    return
-                # Initialize mortal+-specific stats for the chosen type
-                initialize_mortalplus_stats(self.caller, mortalplus_type)
-                self.caller.msg(f"|gSet Mortal+ type to {mortalplus_type} and initialized appropriate stats.|n")
-            elif splat and splat.lower() == 'possessed':
-                # Convert tuple list to just the type names for validation
-                valid_types = [t[0] for t in POSSESSED_TYPE_CHOICES if t[0] != 'None']
-                if self.value_change.title() not in valid_types:
-                    self.caller.msg(f"|rInvalid Possessed type. Valid types are: {', '.join(valid_types)}|n")
-                    return
-                # Set the type in identity/lineage
-                self.caller.set_stat('identity', 'lineage', 'Possessed Type', self.value_change.title(), temp=False)
-                self.caller.set_stat('identity', 'lineage', 'Possessed Type', self.value_change.title(), temp=True)
-                # Initialize possessed-specific stats for the chosen type
-                initialize_possessed_stats(self.caller, self.value_change.title())
-                self.caller.msg(f"|gSet Possessed type to {self.value_change.title()} and initialized appropriate stats.|n")
-                self.category = 'identity'
-                self.stat_type = 'lineage'
-            elif splat and splat.lower() == 'shifter':
-                # Convert tuple list to just the type names for validation
-                valid_types = [t[1] for t in SHIFTER_TYPE_CHOICES if t[1] != 'None']
-                if self.value_change.title() not in valid_types:
-                    self.caller.msg(f"|rInvalid shifter type. Valid types are: {', '.join(valid_types)}|n")
-                    return
-                # Set the type in identity/lineage
-                self.caller.set_stat('identity', 'lineage', 'Type', self.value_change.title(), temp=False)
-                self.caller.set_stat('identity', 'lineage', 'Type', self.value_change.title(), temp=True)
-                # Initialize shifter-specific stats for the chosen type
-                initialize_shifter_type(self.caller, self.value_change.title())
-                self.caller.msg(f"|gSet shifter type to {self.value_change.title()} and initialized appropriate stats.|n")
-                self.category = 'identity'
-                self.stat_type = 'lineage'
         # Special handling for mage affiliation/tradition/convention setting
         if self.stat_name.lower() in ['affiliation', 'tradition', 'convention', 'nephandi faction']:
             if splat and splat.lower() == 'mage':
@@ -2815,10 +2830,14 @@ class CmdSelfStat(MuxCommand):
                         return
                     self.value_change = matched_value
                     # Initialize mage-specific stats for the chosen affiliation
+                    # This will also set the Affiliation stat and handle any banality updates
                     initialize_mage_stats(self.caller, matched_value)
+                    self.caller.msg(f"|gSet Mage Affiliation to {matched_value} and initialized appropriate stats.|n")
+                    
+                    # Skip further stat setting since initialize_mage_stats already sets the Affiliation
                     self.category = 'identity'
                     self.stat_type = 'lineage'
-                    return
+                    return  # Return early to avoid further processing
 
                 # Handle tradition/convention/faction based on affiliation
                 if not self.affiliation:
@@ -3060,7 +3079,7 @@ class CmdSelfStat(MuxCommand):
                 if self.stat_name.lower() == 'breed':
                     is_valid, matched_value, error_msg = self._validate_breed(shifter_type, self.value_change)
                     if not is_valid:
-                        self.caller.msg(error_msg)
+                        self.caller.msg(f"|r{error_msg}|n")
                         return
                     self.value_change = matched_value
                     # Set the breed first
@@ -3073,11 +3092,9 @@ class CmdSelfStat(MuxCommand):
 
                 # Auspice validation
                 elif self.stat_name.lower() == 'auspice':
-                    valid_auspices = AUSPICE_CHOICES_DICT.get(shifter_type, [])
-                    is_valid, matched_value = self.case_insensitive_in(self.value_change, set(valid_auspices))
+                    is_valid, matched_value, error_msg = self._validate_auspice(shifter_type, self.value_change)
                     if not is_valid:
-                        valid_auspices_str = ', '.join(sorted(valid_auspices))
-                        self.caller.msg(f"|rInvalid auspice for {shifter_type}. Valid auspices are: {valid_auspices_str}|n")
+                        self.caller.msg(f"|r{error_msg}|n")
                         return
                     self.value_change = matched_value
                     # Update pools based on auspice
@@ -3086,26 +3103,10 @@ class CmdSelfStat(MuxCommand):
                     self.stat_type = 'lineage'
 
                 # Tribe validation for Garou
-                elif self.stat_name.lower() == 'tribe' and shifter_type == 'Garou':
-                    valid_tribes = [t[1] for t in GAROU_TRIBE_CHOICES if t[1] != 'None']
-                    is_valid, matched_value = self.case_insensitive_in(self.value_change, set(valid_tribes))
+                elif self.stat_name.lower() == 'tribe':
+                    is_valid, matched_value, error_msg = self._validate_tribe(shifter_type, self.value_change)
                     if not is_valid:
-                        valid_tribes_str = ', '.join(sorted(valid_tribes))
-                        self.caller.msg(f"|rInvalid Garou tribe. Valid tribes are: {valid_tribes_str}|n")
-                        return
-                    self.value_change = matched_value
-                    # Update pools based on tribe
-                    update_shifter_pools_on_stat_change(self.caller, 'tribe', matched_value)
-                    self.category = 'identity'
-                    self.stat_type = 'lineage'
-
-                # Tribe validation for Bastet
-                elif self.stat_name.lower() == 'tribe' and shifter_type == 'Bastet':
-                    valid_tribes = [t[1] for t in BASTET_TRIBE_CHOICES if t[1] != 'None']
-                    is_valid, matched_value = self.case_insensitive_in(self.value_change, set(valid_tribes))
-                    if not is_valid:
-                        valid_tribes_str = ', '.join(sorted(valid_tribes))
-                        self.caller.msg(f"|rInvalid Bastet tribe. Valid tribes are: {valid_tribes_str}|n")
+                        self.caller.msg(f"|r{error_msg}|n")
                         return
                     self.value_change = matched_value
                     # Update pools based on tribe
@@ -4810,3 +4811,77 @@ class CmdSelfStat(MuxCommand):
             self.caller.msg(f"|gReinitialized {splat_title} character sheet.|n")
         else:
             self.caller.msg(f"|gInitialized {splat_title} character sheet.|n")
+
+    def _validate_auspice(self, shifter_type: str, value: str) -> tuple[bool, str, str]:
+        """
+        Validate auspice value for a given shifter type.
+        
+        Args:
+            shifter_type: The type of shifter
+            value: The auspice value to validate
+            
+        Returns:
+            Tuple of (is_valid, matched_value, error_message)
+        """
+        from world.wod20th.utils.shifter_utils import AUSPICE_CHOICES_DICT
+        
+        valid_auspices = AUSPICE_CHOICES_DICT.get(shifter_type, [])
+        if not valid_auspices:
+            return False, None, f"{shifter_type} characters do not have auspices"
+        
+        # Try direct match first (case-insensitive)
+        value_lower = value.lower()
+        for auspice in valid_auspices:
+            if auspice.lower() == value_lower:
+                return True, auspice, ""
+        
+        # Try word matching for multi-word auspices
+        for auspice in valid_auspices:
+            auspice_words = auspice.lower().split()
+            value_words = value_lower.split()
+            if all(w in auspice_words for w in value_words):
+                return True, auspice, ""
+                
+        # If no match found, return error with valid auspices
+        error_msg = f"Invalid auspice for {shifter_type}. Valid auspices are: {', '.join(sorted(valid_auspices))}"
+        return False, None, error_msg
+
+    def _validate_tribe(self, shifter_type: str, value: str) -> tuple[bool, str, str]:
+        """
+        Validate tribe value for a given shifter type.
+        
+        Args:
+            shifter_type: The type of shifter
+            value: The tribe value to validate
+            
+        Returns:
+            Tuple of (is_valid, matched_value, error_message)
+        """
+        from world.wod20th.utils.shifter_utils import GAROU_TRIBE_CHOICES, BASTET_TRIBE_CHOICES, GURAHL_TRIBE_CHOICES
+        
+        valid_tribes = []
+        if shifter_type.lower() == 'garou':
+            valid_tribes = [t[1] for t in GAROU_TRIBE_CHOICES if t[1] != 'None']
+        elif shifter_type.lower() == 'bastet':
+            valid_tribes = [t[1] for t in BASTET_TRIBE_CHOICES if t[1] != 'None']
+        elif shifter_type.lower() == 'gurahl':
+            valid_tribes = [t[1] for t in GURAHL_TRIBE_CHOICES if t[1] != 'None']
+        else:
+            return False, None, f"{shifter_type} characters do not have tribes"
+        
+        # Try direct match first (case-insensitive)
+        value_lower = value.lower()
+        for tribe in valid_tribes:
+            if tribe.lower() == value_lower:
+                return True, tribe, ""
+        
+        # Try word matching for multi-word tribes (e.g., "Shadow Lords")
+        for tribe in valid_tribes:
+            tribe_words = tribe.lower().split()
+            value_words = value_lower.split()
+            if all(w in tribe_words for w in value_words):
+                return True, tribe, ""
+                
+        # If no match found, return error with valid tribes
+        error_msg = f"Invalid tribe for {shifter_type}. Valid tribes are: {', '.join(sorted(valid_tribes))}"
+        return False, None, error_msg

@@ -462,6 +462,18 @@ def calculate_gift_cost(character, gift_name, new_rating, current_rating=None) -
 
 def initialize_shifter_type(character, shifter_type):
     """Initialize specific stats for a given shifter type."""
+    # Normalize shifter_type to title case
+    if shifter_type:
+        # Try direct match first
+        for choice in SHIFTER_TYPE_CHOICES:
+            if choice[1].lower() == shifter_type.lower():
+                shifter_type = choice[1]
+                break
+        
+        # If not found, capitalize first letter of each word
+        if all(c[1].lower() != shifter_type.lower() for c in SHIFTER_TYPE_CHOICES):
+            shifter_type = ' '.join(word.capitalize() for word in shifter_type.split())
+    
     # Initialize or clear gift_aliases
     if not hasattr(character.db, 'gift_aliases'):
         character.db.gift_aliases = {}
@@ -587,7 +599,7 @@ def initialize_shifter_type(character, shifter_type):
     banality = get_default_banality('Shifter', subtype=shifter_type)
     if banality:
         character.db.stats['pools']['dual']['Banality'] = {'perm': banality, 'temp': banality}
-        character.msg(f"|gBanality set to {banality} (permanent).")
+        character.msg(f"|gBanality set to {banality} for {shifter_type.lower()}.|n")
 
     return renown_message
 
@@ -922,6 +934,17 @@ def initialize_garou(character, breed):
     tribe = character.get_stat('identity', 'lineage', 'Tribe')
     tribe = tribe.lower() if tribe else ''
     
+    # Set default Willpower for all Garou to avoid gaps
+    character.set_stat('pools', 'dual', 'Willpower', 3, temp=False)
+    character.set_stat('pools', 'dual', 'Willpower', 3, temp=True)
+    
+    # Initialize rage, gnosis, and other pools to avoid gaps
+    character.set_stat('pools', 'dual', 'Rage', 1, temp=False)
+    character.set_stat('pools', 'dual', 'Rage', 1, temp=True)
+    
+    character.set_stat('pools', 'dual', 'Gnosis', 1, temp=False)
+    character.set_stat('pools', 'dual', 'Gnosis', 1, temp=True)
+    
     # Set Auspice-based Rage
     GAROU_AUSPICE_RAGE = {
         'ahroun': 5,
@@ -934,11 +957,13 @@ def initialize_garou(character, breed):
         character.set_stat('pools', 'dual', 'Rage', GAROU_AUSPICE_RAGE[auspice], temp=False)
         character.set_stat('pools', 'dual', 'Rage', GAROU_AUSPICE_RAGE[auspice], temp=True)
         character.msg(f"|gRage set to {GAROU_AUSPICE_RAGE[auspice]} for {auspice} auspice.")
+    
     # Set Breed-based Gnosis
     if breed in COMMON_BREED_GNOSIS:
         character.set_stat('pools', 'dual', 'Gnosis', COMMON_BREED_GNOSIS[breed], temp=False)
         character.set_stat('pools', 'dual', 'Gnosis', COMMON_BREED_GNOSIS[breed], temp=True)
         character.msg(f"|gGnosis set to {COMMON_BREED_GNOSIS[breed]} for {breed} breed.")
+    
     # Set Tribe-based Willpower
     GAROU_TRIBE_WILLPOWER = {
         'black furies': 3,
@@ -960,6 +985,23 @@ def initialize_garou(character, breed):
         character.set_stat('pools', 'dual', 'Willpower', GAROU_TRIBE_WILLPOWER[tribe], temp=False)
         character.set_stat('pools', 'dual', 'Willpower', GAROU_TRIBE_WILLPOWER[tribe], temp=True)
         character.msg(f"|gWillpower set to {GAROU_TRIBE_WILLPOWER[tribe]} for {tribe} tribe.")
+    
+    # Initialize Renown
+    if 'advantages' not in character.db.stats:
+        character.db.stats['advantages'] = {}
+    if 'renown' not in character.db.stats['advantages']:
+        character.db.stats['advantages']['renown'] = {}
+    
+    # Set appropriate renown based on tribe
+    if tribe == 'black spiral dancers':
+        renown_types = ["Power", "Infamy", "Cunning"]
+    else:
+        renown_types = ["Glory", "Honor", "Wisdom"]
+    
+    for renown_type in renown_types:
+        character.db.stats['advantages']['renown'][renown_type] = {'perm': 0, 'temp': 0}
+        
+    character.msg(f"|gInitialized Renown: {', '.join(renown_types)}")
 
 def get_shifter_identity_stats(shifter_type: str) -> List[str]:
     """Get the identity stats for a specific shifter type."""
@@ -993,7 +1035,8 @@ def update_shifter_pools_on_stat_change(character, stat_name, new_value):
             character.msg(f"|gBanality set to {banality} for {new_value}.|n")
             
         # When shifter type is set/changed, call the appropriate initialize function
-        initialize_shifter_type(character, new_value)
+        # Commented out to prevent duplicate initialization - already called in CmdSelfStat.py
+        # initialize_shifter_type(character, new_value)
     elif stat_name == 'breed':
         update_breed_stats(character, new_value, shifter_type)
     elif stat_name == 'aspect':
@@ -1341,11 +1384,22 @@ def validate_shifter_breed(shifter_type: str, value: str) -> tuple[bool, str, st
     if value_title in valid_breeds:
         return True, "", value_title
         
+    # Case-insensitive matching
     value_lower = value.lower()
     for breed in valid_breeds:
         if breed.lower() == value_lower:
             return True, "", breed
-            
+    
+    # Special case for "animal-born" mappings
+    if value_lower in ["lupus", "feline", "squamus", "ursine", "latrani", "rodens", "corvid", 
+                      "arachnid", "suchid", "hyaenid", "roko"]:
+        if shifter_type in ["Garou", "Bastet", "Corax", "Gurahl", "Nuwisha", "Ratkin", 
+                           "Ananasi", "Mokole", "Rokea", "Ajaba", "Kitsune"]:
+            for breed in valid_breeds:
+                if breed.lower() in ["lupus", "feline", "squamus", "ursine", "latrani", "rodens", 
+                                    "corvid", "arachnid", "suchid", "hyaenid", "roko"]:
+                    return True, "", breed
+    
     # If no match found, return full list of valid breeds
     return False, f"Invalid breed for {shifter_type}. Valid breeds are: {', '.join(sorted(valid_breeds))}", None
 
@@ -1353,13 +1407,14 @@ def validate_shifter_auspice(shifter_type: str, value: str) -> tuple[bool, str, 
     """Validate a shifter's auspice based on their type."""
     valid_auspices = AUSPICE_CHOICES_DICT.get(shifter_type, [])
     if not valid_auspices:
-        return False, f"{shifter_type} characters do not have auspices", None
+        return False, f"{shifter_type.lower()} characters do not have auspices", None
     
     # Try title case and case-insensitive match
     value_title = value.title()
     if value_title in valid_auspices:
         return True, "", value_title
         
+    # Case-insensitive matching
     value_lower = value.lower()
     for auspice in valid_auspices:
         if auspice.lower() == value_lower:
@@ -1370,23 +1425,30 @@ def validate_shifter_auspice(shifter_type: str, value: str) -> tuple[bool, str, 
 
 def validate_shifter_tribe(shifter_type: str, value: str) -> tuple[bool, str, str]:
     """Validate a shifter's tribe based on their type."""
-    if shifter_type == 'Garou':
+    valid_tribes = []
+    
+    if shifter_type.lower() == 'garou':
         valid_tribes = [t[1] for t in GAROU_TRIBE_CHOICES if t[1] != 'None']
-    elif shifter_type == 'Bastet':
+    elif shifter_type.lower() == 'bastet':
         valid_tribes = [t[1] for t in BASTET_TRIBE_CHOICES if t[1] != 'None']
-    elif shifter_type == 'Gurahl':
+    elif shifter_type.lower() == 'gurahl':
         valid_tribes = [t[1] for t in GURAHL_TRIBE_CHOICES if t[1] != 'None']
     else:
-        return False, f"{shifter_type} characters do not have tribes", None
+        return False, f"{shifter_type.lower()} characters do not have tribes", None
     
     # Try title case and case-insensitive match
     value_title = value.title()
-    if value_title in valid_tribes:
-        return True, "", value_title
-        
-    value_lower = value.lower()
+    
+    # Special case for multi-word tribes like "Shadow Lords"
     for tribe in valid_tribes:
-        if tribe.lower() == value_lower:
+        if tribe.lower() == value.lower():
+            return True, "", tribe
+    
+    # Try to match individual words
+    for tribe in valid_tribes:
+        tribe_words = tribe.lower().split()
+        value_words = value.lower().split()
+        if all(w in tribe_words for w in value_words):
             return True, "", tribe
             
     # If no match found, return full list of valid tribes

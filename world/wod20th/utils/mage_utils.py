@@ -371,17 +371,10 @@ def update_mage_pools_on_stat_change(character, stat_name: str, new_value: str) 
     if stat_name == 'avatar':
         try:
             avatar_value = int(new_value)
-            # Update Quintessence pool
-            quintessence = avatar_value + 1
-            character.set_stat('pools', 'dual', 'Quintessence', quintessence, temp=False)
-            character.set_stat('pools', 'dual', 'Quintessence', quintessence, temp=True)
-            character.msg(f"|gQuintessence pool set to {quintessence} based on Avatar {new_value}.|n")
-            
-            # Update Paradox pool - max capacity is Avatar + 3
-            paradox_max = avatar_value + 3
-            paradox_current = min(character.get_stat_value('pools', 'single', 'Paradox'), paradox_max)
-            character.set_stat('pools', 'single', 'Paradox', paradox_current, max_value=paradox_max)
-            character.msg(f"|gParadox pool maximum set to {paradox_max} based on Avatar {new_value}.|n")
+            # Update Quintessence pool - equal to Avatar rating
+            character.set_stat('pools', 'dual', 'Quintessence', avatar_value, temp=False)
+            character.set_stat('pools', 'dual', 'Quintessence', avatar_value, temp=True)
+            character.msg(f"|gQuintessence pool set to {avatar_value} based on Avatar {avatar_value}.|n")
         except ValueError:
             character.msg("|rError updating pools - invalid Avatar value.|n")
             return
@@ -390,10 +383,10 @@ def update_mage_pools_on_stat_change(character, stat_name: str, new_value: str) 
     # These affect the Banality value
     elif stat_name in ['affiliation', 'tradition', 'convention', 'nephandi faction']:
         # Get current values
-        affiliation = character.get_stat_value('identity', 'mage', 'affiliation')
-        tradition = character.get_stat_value('identity', 'mage', 'tradition')
-        convention = character.get_stat_value('identity', 'mage', 'convention')
-        nephandi_faction = character.get_stat_value('identity', 'mage', 'nephandi faction')
+        affiliation = character.get_stat('identity', 'lineage', 'Affiliation', temp=False)
+        tradition = character.get_stat('identity', 'lineage', 'Tradition', temp=False)
+        convention = character.get_stat('identity', 'lineage', 'Convention', temp=False)
+        nephandi_faction = character.get_stat('identity', 'lineage', 'Nephandi Faction', temp=False)
         
         # Update the relevant parameter based on the stat that changed
         if stat_name == 'affiliation':
