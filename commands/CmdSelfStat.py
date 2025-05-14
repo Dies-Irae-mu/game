@@ -75,7 +75,7 @@ REQUIRED_INSTANCES = ['Library', 'Status', 'Influence', 'Wonder', 'Secret Weapon
                       'Sphere Natural', 'Phobia', 'Addiction', 'Allies', 'Contacts', 'Caretaker',
                       'Alternate Identity', 'Equipment', 'Professional Certification', 'Allergic',
                       'Impediment', 'Enemy', 'Mentor', 'Old Flame', 'Additional Discipline', 
-                      'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish', 'Chimerical Item', 'Chimerical Companion',
+                      'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish', 'Chimerical Companion',
                       'Dreamers', 'Digital Dreamers', 'Addiction', 'Phobia', 'Derangement',
                       'Obsession', 'Compulsion', 'Bigot', 'Ability Deficit', 'Sect Enmity', 'Camp Enmity',
                       'Retainers', 'Sphere Inept', 'Art Affinity', 'Immunity'
@@ -2502,6 +2502,11 @@ class CmdSelfStat(MuxCommand):
             self.caller.msg("|rUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
             return
 
+        # Check if parsing failed (stat_name is None)
+        if self.stat_name is None:
+            # The error message was already shown in the parse method
+            return
+
         # Special handling for "+selfstat type" to reinitialize stats while keeping current splat
         if self.stat_name.lower() == 'type' and self.value_change is None:
             # Get the current splat
@@ -2513,7 +2518,7 @@ class CmdSelfStat(MuxCommand):
                 return
             else:
                 self.caller.msg("|rError: No splat set. Use +selfstat splat=<splat> to set a splat first.|n")
-                return
+            return
 
         # Capture the raw input for gift aliases before any transformations
         if '=' in self.args:
@@ -5095,7 +5100,53 @@ class CmdSelfStat(MuxCommand):
         error_msg = f"Invalid tribe for {shifter_type}. Valid tribes are: {', '.join(sorted(valid_tribes))}"
         return False, None, error_msg
 
-def _validate_kitsune_path_mokole_varna(self, stat_name: str, value: str) -> tuple[bool, str, str]:
+    def _validate_clan(self, value: str) -> tuple[bool, str, str]:
+        """
+        Validate a vampire clan name.
+        
+        Args:
+            value: The clan name to validate
+            
+        Returns:
+            Tuple of (is_valid, matched_value, error_message)
+        """
+        from world.wod20th.utils.vampire_utils import CLAN
+        
+        # Try direct match first (case-insensitive)
+        value_lower = value.lower()
+        for clan in CLAN:
+            if clan.lower() == value_lower:
+                return True, clan, ""
+        
+        # Try word matching for multi-word clans
+        for clan in CLAN:
+            clan_words = clan.lower().split()
+            value_words = value_lower.split()
+            if all(w in clan_words for w in value_words):
+                return True, clan, ""
+                
+        # If no match found, suggest similar values
+        error_msg = f"Invalid clan. Valid clans are: {', '.join(sorted(CLAN))}"
+        return False, None, error_msg
+
+    def _update_clan_stats(self, clan: str) -> None:
+        """
+        Update clan-specific stats when a clan is set.
+        
+        Args:
+            clan: The clan name that was set
+        """
+        from world.wod20th.utils.vampire_utils import get_clan_disciplines, initialize_vampire_stats
+        
+        # Call initialize_vampire_stats with the clan to set up in-clan disciplines and other clan-specific values
+        initialize_vampire_stats(self.caller, clan)
+        
+        # Get in-clan disciplines and inform the user
+        clan_disciplines = get_clan_disciplines(clan)
+        if clan_disciplines:
+            self.caller.msg(f"|gIn-clan disciplines for {clan}: {', '.join(clan_disciplines)}|n")
+
+    def _validate_kitsune_path_mokole_varna(self, stat_name: str, value: str) -> tuple[bool, str, str]:
         if self.stat_name.lower() in ['breed', 'auspice', 'tribe', 'aspect', 'rank', 'kitsune path', 'varna']:
             splat = self.caller.get_stat('identity', 'personal', 'Splat', temp=False)
             shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
