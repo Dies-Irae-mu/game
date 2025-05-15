@@ -19,6 +19,7 @@ class CmdMail(EvenniaCmdMail):
       @mail <accounts>=<subject>/<message>
                               - Sends a message to the comma separated list of accounts.
       @mail/delete <#>         - Deletes a specific message
+      @mail/delete <#>-<#>     - Deletes a range of messages (e.g. 5-10)
       @mail/forward <accounts>=<#>[/<Message>]
                               - Forwards an existing message to the specified list of accounts,
                                 original message is delivered with optional Message prepended.
@@ -26,7 +27,7 @@ class CmdMail(EvenniaCmdMail):
                               - Replies to a message #. Prepends message to the original
                                 message text.
     Switches:
-      delete  - deletes a message
+      delete  - deletes a message or range of messages
       forward - forward a received message to another object with an optional message attached.
       reply   - Replies to a received message, appending the original message to the bottom.
     """
@@ -274,6 +275,296 @@ class CmdMail(EvenniaCmdMail):
             except ValueError:
                 # If not an integer, let parent handle it
                 pass
+        
+        # Case 4: Handle delete operations with batch support
+        elif "delete" in self.switches or "del" in self.switches:
+            try:
+                if not self.args:
+                    self.caller.msg("No Message ID given. Unable to delete.")
+                    return
+                
+                # Get all mail messages
+                all_mail = self.get_all_mail()
+                
+                # Check if we have a range notation (e.g., "5-10")
+                if "-" in self.args:
+                    try:
+                        # Parse range format
+                        start_str, end_str = self.args.split("-", 1)
+                        start_idx = int(start_str.strip()) - 1  # Convert to 0-based index
+                        end_idx = int(end_str.strip()) - 1      # Convert to 0-based index
+                        
+                        # Validate range
+                        if start_idx < 0 or end_idx < 0:
+                            self.caller.msg("Invalid mail ID range. IDs must be positive numbers.")
+                            return
+                        
+                        if start_idx > end_idx:
+                            self.caller.msg("Invalid range: starting ID must be less than ending ID.")
+                            return
+                        
+                        if end_idx >= len(all_mail):
+                            self.caller.msg(f"Invalid range: highest valid mail ID is {len(all_mail)}.")
+                            return
+                        
+                        # Get messages to delete
+                        messages_to_delete = all_mail[start_idx:end_idx+1]
+                        
+                        # Confirm deletion
+                        count = len(messages_to_delete)
+                        if count == 0:
+                            self.caller.msg("No messages found in that range.")
+                            return
+                            
+                        self.caller.msg(f"Deleting {count} messages (IDs {start_idx+1} to {end_idx+1})...")
+                        
+                        # Delete messages
+                        deleted_count = 0
+                        for msg in messages_to_delete:
+                            msg.delete()
+                            deleted_count += 1
+                        
+                        # Provide feedback
+                        self.caller.msg(f"Successfully deleted {deleted_count} messages.")
+                        return
+                    
+                    except ValueError:
+                        self.caller.msg("Invalid mail ID range. Format should be: @mail/delete start-end")
+                        return
+                else:
+                    # Single message delete
+                    try:
+                        mind = int(self.args) - 1  # Convert to 0-based index
+                        
+                        # Validate index
+                        if mind < 0 or mind >= len(all_mail):
+                            self.caller.msg(f"'{self.args}' is not a valid mail id.")
+                            return
+                        
+                        # Get message to delete
+                        message = all_mail[mind]
+                        
+                        # Delete the message directly
+                        message.delete()
+                        self.caller.msg(f"Message {mind+1} deleted.")
+                        return
+                    
+                    except ValueError:
+                        self.caller.msg("Usage: @mail/delete <message ID> or @mail/delete <start>-<end>")
+                        return
+            except Exception as e:
+                logger.log_err(f"Error in mail deletion: {str(e)}")
+                self.caller.msg(f"Error deleting mail: {str(e)}")
+                return
+        
+        # Case 5: Handle forward operations
+        elif "forward" in self.switches or "fwd" in self.switches:
+            try:
+                # Check for valid arguments
+                if not self.lhs:
+                    self.caller.msg("You must specify recipients to forward to.")
+                    return
+                if not self.rhs:
+                    self.caller.msg("You must specify a message ID to forward.")
+                    return
+                
+                # Get all mail messages
+                all_mail = self.get_all_mail()
+                
+                # Check if we have optional message text
+                message_number = self.rhs
+                prepend_text = ""
+                
+                if "/" in self.rhs:
+                    message_number, prepend_text = self.rhs.split("/", 1)
+                    prepend_text = prepend_text.strip() + "\n\n"
+                
+                try:
+                    # Get the message to forward
+                    mind = int(message_number.strip()) - 1
+                    
+                    # Validate message index
+                    if mind < 0 or mind >= len(all_mail):
+                        self.caller.msg(f"'{message_number}' is not a valid mail id.")
+                        return
+                    
+                    # Get the original message
+                    original_message = all_mail[mind]
+                    
+                    # Prepare recipients
+                    recipients = [r.strip() for r in self.lhs.split(",")]
+                    
+                    # Find account objects for recipients
+                    target_accounts = []
+                    for recipient in recipients:
+                        account = AccountDB.objects.filter(username__iexact=recipient).first()
+                        if account:
+                            target_accounts.append(account)
+                        else:
+                            self.caller.msg(f"Recipient '{recipient}' not found.")
+                    
+                    if not target_accounts:
+                        self.caller.msg("No valid recipients found. Cannot forward message.")
+                        return
+                    
+                    # Create forward header
+                    forward_subject = f"FWD: {original_message.db_header}"
+                    
+                    # Create forward message content
+                    forward_content = (
+                        f"{prepend_text}---- Original Message ----\n"
+                        f"From: {self.get_sender_name(original_message)}\n"
+                        f"Subject: {original_message.db_header}\n\n"
+                        f"{original_message.db_message}"
+                    )
+                    
+                    # Send to each recipient
+                    sender_name = self.caller
+
+                    for account in target_accounts:
+                        # Create new message
+                        if self.account_caller:
+                            sender = self.caller
+                        else:
+                            sender = self.caller.account
+                            
+                        from evennia.utils import create
+                        new_message = create.create_message(
+                            sender, 
+                            forward_content,
+                            receivers=account, 
+                            header=forward_subject
+                        )
+                        
+                        # Tag the message
+                        new_message.tags.add("mail", category="mail")
+                        new_message.tags.add("new", category="mail")
+                        
+                        # Notify recipient
+                        account.msg(f"You have received a new @mail from {sender_name}")
+                    
+                    # Mark original as forwarded
+                    try:
+                        original_message.tags.add("fwd", category="mail")
+                    except Exception as e:
+                        logger.log_err(f"Error marking message as forwarded: {str(e)}")
+                    
+                    # Provide feedback
+                    self.caller.msg(f"Message forwarded to: {', '.join(recipients)}")
+                    return
+                    
+                except ValueError:
+                    self.caller.msg("Usage: @mail/forward <recipients>=<message ID>[/<additional text>]")
+                    return
+                    
+            except Exception as e:
+                logger.log_err(f"Error in mail forwarding: {str(e)}")
+                self.caller.msg(f"Error forwarding mail: {str(e)}")
+                return
+        
+        # Case 6: Handle reply operations
+        elif "reply" in self.switches or "rep" in self.switches:
+            try:
+                # Check for valid arguments
+                if not self.lhs:
+                    self.caller.msg("You must specify a message ID to reply to.")
+                    return
+                if not self.rhs:
+                    self.caller.msg("You must include a reply message.")
+                    return
+                
+                # Get all mail messages
+                all_mail = self.get_all_mail()
+                
+                try:
+                    # Get the message to reply to
+                    mind = int(self.lhs.strip()) - 1
+                    
+                    # Validate message index
+                    if mind < 0 or mind >= len(all_mail):
+                        self.caller.msg(f"'{self.lhs}' is not a valid mail id.")
+                        return
+                    
+                    # Get the original message
+                    original_message = all_mail[mind]
+                    
+                    # Get sender(s) from original message
+                    if hasattr(original_message, 'senders'):
+                        if isinstance(original_message.senders, list):
+                            # Handle list of senders
+                            original_senders = original_message.senders
+                        else:
+                            # Handle queryset of senders
+                            original_senders = list(original_message.senders.all())
+                    else:
+                        # Try to get db_sender_accounts directly
+                        original_senders = list(original_message.db_sender_accounts.all())
+                    
+                    if not original_senders:
+                        self.caller.msg("Cannot determine who to reply to. Original sender information missing.")
+                        return
+                    
+                    # Create reply subject
+                    original_subject = original_message.db_header or "No Subject"
+                    reply_subject = f"RE: {original_subject}"
+                    if reply_subject.startswith("RE: RE:"):
+                        # Don't stack RE: prefixes
+                        reply_subject = original_subject
+                    
+                    # Create reply message content with original included
+                    reply_content = (
+                        f"{self.rhs.strip()}\n\n"
+                        f"---- Original Message ----\n"
+                        f"From: {self.get_sender_name(original_message)}\n"
+                        f"Subject: {original_subject}\n\n"
+                        f"{original_message.db_message}"
+                    )
+                    sender_name = self.caller
+                    # Send to original sender(s)
+                    if self.account_caller:
+                        sender = self.caller
+                    else:
+                        sender = self.caller.account
+                        
+                    from evennia.utils import create
+                    for recipient in original_senders:
+                        new_message = create.create_message(
+                            sender, 
+                            reply_content,
+                            receivers=recipient, 
+                            header=reply_subject
+                        )
+                        
+                        # Tag the message
+                        new_message.tags.add("mail", category="mail")
+                        new_message.tags.add("new", category="mail")
+                        
+                        # Notify recipient
+                        if hasattr(recipient, 'msg'):
+                            recipient.msg(f"You have received a new @mail from {sender_name}")
+                    
+                    # Mark original as replied to
+                    try:
+                        # Remove new tag if present
+                        original_message.tags.remove("new", category="mail")
+                        # Add replied tag
+                        original_message.tags.add("replied", category="mail")
+                    except Exception as e:
+                        logger.log_err(f"Error marking message as replied: {str(e)}")
+                    
+                    # Provide feedback
+                    recipient_names = [r.username if hasattr(r, 'username') else str(r) for r in original_senders]
+                    self.caller.msg(f"Replied to: {', '.join(recipient_names)}")
+                    return
+                    
+                except ValueError:
+                    self.caller.msg("Usage: @mail/reply <message ID>=<reply text>")
+                    return
+                    
+            except Exception as e:
+                logger.log_err(f"Error in mail reply: {str(e)}")
+                self.caller.msg(f"Error replying to mail: {str(e)}")
+                return
         
         # For all other cases, let the parent handle it
         super().func()
@@ -633,6 +924,38 @@ class CmdMail(EvenniaCmdMail):
             
         return filtered_messages
 
+    def get_sender_name(self, message):
+        """
+        Helper method to get sender name from a message.
+        """
+        sender_name = "Unknown"
+        
+        if hasattr(message, 'senders'):
+            if isinstance(message.senders, list):
+                if message.senders:
+                    sender = message.senders[0]
+                    if hasattr(sender, 'get_display_name'):
+                        sender_name = sender.get_display_name(self.caller)
+                    elif hasattr(sender, 'username'):
+                        sender_name = sender.username
+                    else:
+                        sender_name = str(sender)
+            else:
+                # Assume it's a queryset
+                try:
+                    # Check if it has a first() method (queryset)
+                    if hasattr(message.senders, 'first') and message.senders.first():
+                        sender = message.senders.first()
+                        sender_name = sender.get_display_name(self.caller)
+                    # Check if exists() method is available (queryset)
+                    elif hasattr(message.senders, 'exists') and message.senders.exists():
+                        sender = message.senders.all()[0]
+                        sender_name = sender.get_display_name(self.caller)
+                except Exception as e:
+                    logger.log_err(f"Error getting sender name: {str(e)}")
+                    
+        return sender_name
+
 class CmdMailCharacter(CmdMail):
     """
     Communicate with others by sending mail.
@@ -643,6 +966,7 @@ class CmdMailCharacter(CmdMail):
       @mail <accounts>=<subject>/<message>
                         - Sends a message to the comma separated list of accounts.
       @mail/delete <#>  - Deletes a specific message
+      @mail/delete <#>-<#> - Deletes a range of messages (e.g. 5-10)
       @mail/forward <accounts>=<#>[/<Message>]
                         - Forwards an existing message to the specified 
                         list of accounts, original message is delivered
@@ -651,7 +975,7 @@ class CmdMailCharacter(CmdMail):
                         - Replies to a message #. Prepends message
                          to the original message text.
     Switches:
-      delete  - deletes a message
+      delete  - deletes a message or range of messages
       forward - forward a received message to another object with an optional message attached.
       reply   - Replies to a received message, appending the original message to the bottom.
     """

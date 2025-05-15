@@ -154,19 +154,19 @@ class CmdSelfStat(MuxCommand):
         
         # Provide more specific guidance based on the stat type
         if category == 'merits':
-            self.caller.msg(f"|rThe merit '{stat_name}' requires an instance. Use format: {stat_name}(instance)/{stat_type}=value|n")
-            self.caller.msg(f"|yFor example: {stat_name}(Sabbat)/{stat_type}=3|n")
-            self.caller.msg(f"|yThe category is '{category}' and the stat type is one of: 'physical', 'social', 'mental', or 'supernatural'.|n")
+            self.caller.msg(f"|rWarning|n: The merit '{stat_name}' requires an instance.")
+            self.caller.msg(f"For example: {stat_name}(Sabbat)/{stat_type}=3")
+            self.caller.msg(f"The category is '{category}' and the stat type is one of: 'physical', 'social', 'mental', or 'supernatural'.")
         elif category == 'flaws':
-            self.caller.msg(f"|rThe flaw '{stat_name}' requires an instance. Use format: {stat_name}(instance)/{stat_type}=value|n")
-            self.caller.msg(f"|yFor example: {stat_name}(Sabbat)/{stat_type}=3|n")
-            self.caller.msg(f"|yThe category is '{category}' and the stat type is one of: 'physical', 'social', 'mental', or 'supernatural'.|n")
+            self.caller.msg(f"|rWarning|n: The flaw '{stat_name}' requires an instance.")
+            self.caller.msg(f"For example: {stat_name}(Sabbat)/{stat_type}=3")
+            self.caller.msg(f"The category is '{category}' and the stat type is one of: 'physical', 'social', 'mental', or 'supernatural'.")
         elif category == 'backgrounds':
-            self.caller.msg(f"|rThe background '{stat_name}' requires an instance. Use format: {stat_name}(instance)/background=value|n")
-            self.caller.msg(f"|yFor example: {stat_name}(Camarilla)/background=3|n")
+            self.caller.msg(f"|rWarning|n: The background '{stat_name}' requires an instance.")
+            self.caller.msg(f"For example: {stat_name}(Camarilla)/background=3")
         else:
-            self.caller.msg(f"|rThe stat '{stat_name}' requires an instance. Use format: {stat_name}(instance)=value|n")
-            self.caller.msg(f"|yFor example: {stat_name}(Specific)/category=value|n")
+            self.caller.msg(f"|rWarning|n: The stat '{stat_name}' requires an instance.")
+            self.caller.msg(f"For example: {stat_name}(Specific)/category=value")
         
         # Add usage information
         self.caller.msg(f"|yUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
@@ -377,15 +377,15 @@ class CmdSelfStat(MuxCommand):
         
         # Check if this is a splat-specific background
         if stat_title in (bg.title() for bg in VAMPIRE_BACKGROUNDS):
-            return True, "Vampire", f"The background '{stat_name}' is only available to Vampire characters."
+            return True, "Vampire", f"|rWarning|n: The background '{stat_name}' is only available to Vampire characters."
         elif stat_title in (bg.title() for bg in CHANGELING_BACKGROUNDS):
-            return True, "Changeling", f"The background '{stat_name}' is only available to Changeling characters."
+            return True, "Changeling", f"|rWarning|n: The background '{stat_name}' is only available to Changeling characters."
         elif stat_title in (bg.title() for bg in MAGE_BACKGROUNDS + TECHNOCRACY_BACKGROUNDS + TRADITIONS_BACKGROUNDS + NEPHANDI_BACKGROUNDS):
-            return True, "Mage", f"The background '{stat_name}' is only available to Mage characters."
+            return True, "Mage", f"|rWarning|n: The background '{stat_name}' is only available to Mage characters."
         elif stat_title in (bg.title() for bg in SHIFTER_BACKGROUNDS):
-            return True, "Shifter", f"The background '{stat_name}' is only available to Shifter characters."
+            return True, "Shifter", f"|rWarning|n: The background '{stat_name}' is only available to Shifter characters."
         elif stat_title in (bg.title() for bg in SORCERER_BACKGROUNDS):
-            return True, "Mortal+", f"The background '{stat_name}' is only available to Mortal+ characters."
+            return True, "Mortal+", f"|rWarning|n: The background '{stat_name}' is only available to Mortal+ characters."
             
         return False, "", ""
 
@@ -403,16 +403,16 @@ class CmdSelfStat(MuxCommand):
         # Get kinfolk's tribe
         kinfolk_tribe = self.caller.get_stat('identity', 'lineage', 'Tribe', temp=False)
         if not kinfolk_tribe:
-            return False, "Must set tribe before learning gifts", None
+            return False, "|rWarning|n: Must set tribe before learning gifts", None
         
         # If value provided, validate gift level (Kinfolk can only learn level 1-2)
         if value is not None:
             try:
                 gift_value = int(value)
                 if gift_value > 2:
-                    return False, "Kinfolk can only learn level 1-2 gifts", None
+                    return False, "|rWarning|n: Kinfolk can only learn level 1-2 gifts", None
             except ValueError:
-                return False, "Gift value must be a number", None
+                return False, "|rWarning|n: Gift value must be a number", None
         
         # Check if it's a homid gift
         if gift.shifter_type:
@@ -432,7 +432,7 @@ class CmdSelfStat(MuxCommand):
                 if kinfolk_tribe.lower() in [t.lower() for t in allowed_tribes]:
                     return True, "", gift.name
         
-        return False, f"Kinfolk can only learn Homid gifts or gifts from their tribe ({kinfolk_tribe})", None
+        return False, f"|rWarning|n: Kinfolk can only learn Homid gifts or gifts from their tribe ({kinfolk_tribe})", None
 
     def _check_gift_alias(self, gift_name: str) -> tuple[bool, str]:
         """
@@ -634,7 +634,14 @@ class CmdSelfStat(MuxCommand):
             return False, "", None
         
         if stat and stat.category == 'backgrounds':
-            # For backgrounds, validate the value is numeric and in range
+            # For backgrounds, check splat-specific restrictions first
+            is_restricted, required_splat, error_msg = self.get_background_splat_restriction(stat_name)
+            char_splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            
+            if is_restricted and char_splat != required_splat:
+                return False, error_msg, None
+                
+            # Then validate the value is numeric and in range
             try:
                 bg_value = int(value)
                 if bg_value < 0 or bg_value > 10:
@@ -3404,7 +3411,7 @@ class CmdSelfStat(MuxCommand):
                 # Check if this advantage requires an instance
                 if self._requires_instance(proper_name):
                     if not self.instance:
-                        self.caller.msg(f"|rThe special advantage '{proper_name}' requires an instance. Use format: {proper_name}(instance)/special_advantage=value|n")
+                        self.caller.msg(f"|rWarning|n: The special advantage '{proper_name}' requires an instance.")
                         self.caller.msg(f"|yFor example: {proper_name}(poison)/special_advantage=5|n")
                         self.caller.msg(f"|yUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
                         return
@@ -3532,7 +3539,12 @@ class CmdSelfStat(MuxCommand):
                 self.caller.msg(f"\n|rPlease specify a complete stat name or provide more specific search criteria.|n")
                 return
             
-            self.caller.msg(f"|rStat '{self.stat_name}' not found.|n")
+            # Check if the stat exists in the database at all first
+            if not Stat.objects.filter(name__iexact=self.stat_name).exists():
+                self.caller.msg(f"|rStat '{self.stat_name}' not found in the stat database, please reach out to staff if this is incorrect.|n")
+            else:
+                # Stat exists in database but not on character's sheet
+                self.caller.msg(f"|rStat '{self.stat_name}' not found on your sheet.|n")
             return
             
         # Handle instances for background stats
@@ -3551,9 +3563,12 @@ class CmdSelfStat(MuxCommand):
         if self.value_change == '':
             # For backgrounds, validate splat access even during removal
             if stat and stat.stat_type == 'background':
+                # Get character's actual splat for background restriction checking
+                char_splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+                
                 # Check splat-specific background restrictions
                 is_restricted, required_splat, error_msg = self.get_background_splat_restriction(self.stat_name)
-                if is_restricted and splat != required_splat:
+                if is_restricted and char_splat != required_splat:
                     self.caller.msg(error_msg)
                     return
             # Get the canonical name for the stat
@@ -3572,10 +3587,6 @@ class CmdSelfStat(MuxCommand):
                         del self.caller.db.stats[category][stat_type][canonical_name]
                         self.caller.msg(f"Removed stat '{canonical_name}'.")
                         return
-            
-            # If we get here, the stat wasn't found
-            self.caller.msg(f"Stat '{canonical_name}' not found.")
-            
             # Special handling for special advantages during removal
             if 'powers' in self.caller.db.stats and 'special_advantage' in self.caller.db.stats['powers']:
                 # Case-insensitive search for special advantages, using full_stat_name to include instances
@@ -3624,7 +3635,12 @@ class CmdSelfStat(MuxCommand):
                         # Update any dependent stats after removal
                         self._update_dependent_stats(full_stat_name, None)
                         return
-            self.caller.msg(f"|rStat '{full_stat_name}' not found.|n")
+            # Check if the stat exists in the database
+            if not Stat.objects.filter(name__iexact=self.stat_name).exists():
+                self.caller.msg(f"|rStat '{full_stat_name}' not found in the stat database, please reach out to staff if this is incorrect.|n")
+            else:
+                # Stat exists in database but not on character's sheet
+                self.caller.msg(f"|rStat '{full_stat_name}' not found on your sheet.|n")
             return
 
         # Validate the stat if it's being set (not removed)
