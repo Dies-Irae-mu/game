@@ -696,7 +696,7 @@ class CmdSelfStat(MuxCommand):
                         allowed_types = [merit.shifter_type.lower()]
                     
                     # Check if character's type is allowed
-                    if allowed_types and char_type.lower() not in allowed_types:
+                    if allowed_types and isinstance(char_type, str) and char_type.lower() not in allowed_types:
                         # Check if they already have this merit
                         current_value = self.caller.get_stat('merits', stat_type, merit.name, temp=False)
                         if current_value is None:  # Only block if they don't already have it
@@ -4332,9 +4332,17 @@ class CmdSelfStat(MuxCommand):
                             if splat.lower() not in [s.lower() for s in allowed_splats]:
                                 self.caller.msg(f"|rThe merit '{stat_name}' is only available to {', '.join(allowed_splats)} characters.|n")
                                 return
-                        if restriction['splat_type'] and char_type and restriction['splat_type'].lower() != char_type.lower():
-                            self.caller.msg(f"|rThe merit '{stat_name}' is only available to {restriction['splat_type']} characters.|n")
-                            return
+                        if restriction['splat_type'] and char_type:
+                            # Handle when splat_type is a list
+                            if isinstance(restriction['splat_type'], list):
+                                allowed_types = [t.lower() for t in restriction['splat_type']]
+                                if isinstance(char_type, str) and char_type.lower() not in allowed_types:
+                                    self.caller.msg(f"|rThe merit '{stat_name}' is only available to {', '.join(restriction['splat_type'])} characters.|n")
+                                    return
+                            # Handle when splat_type is a string
+                            elif isinstance(restriction['splat_type'], str) and isinstance(char_type, str) and restriction['splat_type'].lower() != char_type.lower():
+                                self.caller.msg(f"|rThe merit '{stat_name}' is only available to {restriction['splat_type']} characters.|n")
+                                return
 
                     # Find the merit type and store the merit
                     for merit_type, merits in MERIT_CATEGORIES.items():
