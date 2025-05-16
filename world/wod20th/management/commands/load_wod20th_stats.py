@@ -1,5 +1,6 @@
 import json
 import os
+import time
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ValidationError
 from django.db import transaction, connection, IntegrityError
@@ -30,10 +31,12 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--dir', type=str, default='data', help='Directory containing JSON files')
         parser.add_argument('--file', type=str, help='Specific JSON file to load (optional)')
+        parser.add_argument('--delay', type=int, default=5, help='Delay in seconds between processing files (default: 5)')
 
     def handle(self, *args, **options):
         data_dir = options['dir']
         specific_file = options['file']
+        delay = options['delay']
 
         if specific_file:
             # Process single file
@@ -45,11 +48,17 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR(f'Directory not found: {data_dir}'))
                 return
 
-            self.stdout.write(self.style.NOTICE(f'Processing JSON files in {data_dir}...'))
-            for filename in os.listdir(data_dir):
-                if filename.endswith('.json'):
-                    file_path = os.path.join(data_dir, filename)
-                    self.process_file(file_path)
+            self.stdout.write(self.style.NOTICE(f'Processing JSON files in {data_dir} with {delay} second delay between files...'))
+            json_files = [f for f in os.listdir(data_dir) if f.endswith('.json')]
+            
+            for i, filename in enumerate(json_files):
+                file_path = os.path.join(data_dir, filename)
+                self.process_file(file_path)
+                
+                # Add delay between files (except after the last file)
+                if i < len(json_files) - 1 and delay > 0:
+                    self.stdout.write(self.style.NOTICE(f'Waiting {delay} seconds before processing next file...'))
+                    time.sleep(delay)
 
         # Display summary at the end
         self.display_summary()
