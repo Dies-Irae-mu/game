@@ -330,3 +330,8 @@ CMDSET_FALLBACKS = {
     CMDSET_SESSION: "evennia.commands.default.cmdset_session.SessionCmdSet",
     CMDSET_UNLOGGEDIN: "evennia.commands.default.cmdset_unloggedin.UnloggedinCmdSet",
 }
+
+# GitHub integration settings
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY")
+GITHUB_BASE_URL = os.getenv("GITHUB_BASE_URL", "https://api.github.com")

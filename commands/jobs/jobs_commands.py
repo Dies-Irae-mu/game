@@ -364,6 +364,15 @@ class CmdJobs(MuxCommand):
                 status='open'
             )
 
+            if queue.name.lower() in ("bug", "code"):
+                from world.jobs.github_integration import create_issue
+                issue_title = f"Job {job.id}: {title}"
+                num = create_issue(issue_title, description)
+                if num:
+                    job.github_issue_number = num
+                    job.save()
+                    self.caller.msg(f"GitHub issue #{num} created.")
+
             # Notify the creator
             self.caller.msg(f"|gJob '{title}' created with ID {job.id} in category {category}.|n")
             
@@ -529,6 +538,11 @@ class CmdJobs(MuxCommand):
                 job.comments = []
             job.comments.append(new_comment)
             job.save()
+
+            if job.github_issue_number:
+                from world.jobs.github_integration import add_comment
+                body = f"**{self.caller.account.username}** commented:\n\n{comment}"
+                add_comment(job.github_issue_number, body)
 
             self.caller.msg(f"Comment added to job #{job_id}.")
             self.post_to_jobs_channel(self.caller.name, job.id, "commented on")
