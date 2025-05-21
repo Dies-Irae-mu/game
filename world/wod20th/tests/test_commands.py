@@ -7,7 +7,9 @@ from django.test.utils import override_settings
 from evennia.utils.test_resources import EvenniaTest
 from commands.CmdSheet import CmdSheet
 from commands.CmdSelfStat import CmdSelfStat
+from commands.CmdSpendGain import CmdSpendGain  # Added import
 from world.wod20th.models import Stat
+from world.wod20th.utils.mage_utils import initialize_mage_stats # Added import
 
 class EvenniaTransactionTestCase(EvenniaTest):
     """Base test case that combines EvenniaTest functionality with transaction support."""
@@ -804,4 +806,104 @@ class TestCmdSelfStat(EvenniaTransactionTestCase):
         self.cmd.func()
         
         # Verify error message
-        self.char1.msg.assert_called_with("|rValue must be between 1 and 5.|n") 
+        self.char1.msg.assert_called_with("|rValue must be between 1 and 5.|n")
+
+
+class TestMageParadoxCommands(EvenniaTransactionTestCase):
+    """Test +gain and +spend commands for Mage Paradox."""
+
+    def setUp(self):
+        """Set up a Mage character for testing."""
+        super().setUp()
+        # Use self.char1 as the Mage character
+        self.char = self.char1 # Use a shorter alias for convenience
+        self.account = self.account1
+
+        # Ensure db.stats is initialized (it should be by parent setUp)
+        if not hasattr(self.char.db, 'stats') or not self.char.db.stats:
+            self._initialize_stat_structure(self.char) # Call if not initialized
+
+        # Set character as Mage
+        self.char.db.stats['other']['splat']['Splat'] = {'perm': 'Mage', 'temp': 'Mage'}
+        
+        # Initialize Mage specific stats, including Paradox
+        # Mock set_stat, del_stat, and msg for initialize_mage_stats
+        original_set_stat = self.char.set_stat
+        original_del_stat = getattr(self.char, 'del_stat', None) # Save original del_stat if it exists
+        original_msg = self.char.msg
+
+        self.char.set_stat = Mock()
+        self.char.del_stat = Mock()
+        self.char.msg = Mock() # Mock msg before calling initialize_mage_stats
+
+        initialize_mage_stats(self.char, affiliation="Traditions", tradition="Order of Hermes")
+
+        # Restore original methods and ensure Paradox is set correctly in the mock's view
+        # The actual character.db.stats will be updated by initialize_mage_stats via direct dict manipulation
+        # or its own calls to a (potentially non-mocked) set_stat.
+        # For the purpose of the test, we need to ensure the mock set_stat has recorded Paradox.
+        
+        # We need to simulate what initialize_mage_stats does to char.db.stats
+        # because the mocked set_stat won't actually update char.db.stats
+        # initialize_mage_stats directly sets char.db.stats items for some things.
+        # Let's ensure the Paradox part is correctly reflected in the actual db.stats
+        # as initialize_mage_stats might use direct dict access for some parts.
+        
+        # Re-mock msg for command testing after setup
+        self.char.msg = Mock()
+        
+        # Manually ensure Paradox is set as expected after initialize_mage_stats
+        # This is because initialize_mage_stats uses char.set_stat which was mocked during its run.
+        # We need to put the *actual* values into char.db.stats for the CmdSpendGain to read.
+        if 'pools' not in self.char.db.stats: self.char.db.stats['pools'] = {}
+        if 'dual' not in self.char.db.stats['pools']: self.char.db.stats['pools']['dual'] = {}
+        self.char.db.stats['pools']['dual']['Paradox'] = {'perm': 10, 'temp': 0}
+        self.char.db.stats['pools']['dual']['Willpower'] = {'perm': 5, 'temp': 5} # Example, ensure it exists
+
+        # Restore original methods if they existed
+        self.char.set_stat = original_set_stat
+        if original_del_stat:
+            self.char.del_stat = original_del_stat
+        # self.char.msg is kept as a new Mock for command testing.
+
+
+    def test_gain_paradox(self):
+        """Test gaining Paradox."""
+        self.assertEqual(self.char.db.stats['pools']['dual']['Paradox']['temp'], 0)
+        self.assertEqual(self.char.db.stats['pools']['dual']['Paradox']['perm'], 10)
+
+        # Gain 5 Paradox
+        self.call(CmdSpendGain(), "paradox=5", caller=self.char, cmdstring="+gain")
+        self.assertEqual(self.char.db.stats['pools']['dual']['Paradox']['temp'], 5)
+        self.char.msg.assert_called_with("You have gained 5 points of paradox. New paradox value: 5/10")
+
+        # Gain another 5 Paradox
+        self.call(CmdSpendGain(), "paradox=5", caller=self.char, cmdstring="+gain")
+        self.assertEqual(self.char.db.stats['pools']['dual']['Paradox']['temp'], 10)
+        self.char.msg.assert_called_with("You have gained 5 points of paradox. New paradox value: 10/10")
+
+        # Try to gain 1 more Paradox (should not exceed max)
+        self.call(CmdSpendGain(), "paradox=1", caller=self.char, cmdstring="+gain")
+        self.assertEqual(self.char.db.stats['pools']['dual']['Paradox']['temp'], 10)
+        self.char.msg.assert_called_with("You are already at maximum paradox (10).")
+
+    def test_spend_paradox(self):
+        """Test spending Paradox."""
+        # Set initial temporary Paradox to 10 for spending tests
+        self.char.db.stats['pools']['dual']['Paradox']['temp'] = 10
+        self.assertEqual(self.char.db.stats['pools']['dual']['Paradox']['perm'], 10)
+
+        # Spend 3 Paradox
+        self.call(CmdSpendGain(), "paradox=3", caller=self.char, cmdstring="+spend")
+        self.assertEqual(self.char.db.stats['pools']['dual']['Paradox']['temp'], 7)
+        self.char.msg.assert_called_with("You have spent 3 points of paradox. New paradox value: 7/10")
+
+        # Spend 7 Paradox
+        self.call(CmdSpendGain(), "paradox=7", caller=self.char, cmdstring="+spend")
+        self.assertEqual(self.char.db.stats['pools']['dual']['Paradox']['temp'], 0)
+        self.char.msg.assert_called_with("You have spent 7 points of paradox. New paradox value: 0/10")
+
+        # Try to spend 1 more Paradox (should not go below 0)
+        self.call(CmdSpendGain(), "paradox=1", caller=self.char, cmdstring="+spend")
+        self.assertEqual(self.char.db.stats['pools']['dual']['Paradox']['temp'], 0)
+        self.char.msg.assert_called_with("You don't have enough paradox. Current paradox: 0")

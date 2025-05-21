@@ -262,7 +262,9 @@ def initialize_mage_stats(character, affiliation, tradition=None, convention=Non
         character.db.stats['virtues']['synergy'][virtue] = {'perm': 0, 'temp': 0}
     
     # Initialize Paradox pool
-    character.set_stat('pools', 'dual', 'Paradox', 0, temp=False)
+    # Permanent Paradox starts at 10 (as a buffer before Quiet)
+    # Temporary Paradox starts at 0
+    character.set_stat('pools', 'dual', 'Paradox', 10, temp=False)
     character.set_stat('pools', 'dual', 'Paradox', 0, temp=True)
     
     if affiliation.lower() == 'technocracy':

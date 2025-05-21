@@ -8,6 +8,7 @@ from world.wod20th.utils.mage_utils import (
     validate_mage_tradition, validate_mage_convention,
     validate_mage_methodology, validate_mage_subfaction,
     validate_mage_sphere, validate_mage_backgrounds,
+    initialize_mage_stats,  # Added import
     AFFILIATION, TRADITION, CONVENTION, METHODOLOGIES,
     TRADITION_SUBFACTION, MAGE_SPHERES
 )
@@ -143,4 +144,48 @@ class TestMageValidation(TestCase):
         # Test background validation
         self.assertTrue(validate_mage_stats(
             self.mock_character, 'Avatar', '3', 'backgrounds', 'background'
-        )[0]) 
+        )[0])
+
+    def test_initialize_mage_paradox(self):
+        """Test Paradox initialization for a new Mage character."""
+        char = Mock()
+        char.db = {}  # Initialize db attribute
+        char.db.stats = {}  # Initialize stats dictionary
+        char.set_stat = Mock()
+        char.del_stat = Mock()
+        char.msg = Mock()
+
+        # Call initialize_mage_stats for a Traditions Mage
+        initialize_mage_stats(char, affiliation="Traditions", tradition="Order of Hermes")
+
+        # Assert Paradox values
+        # Check if 'pools' and 'dual' keys exist before accessing 'Paradox'
+        self.assertIn('pools', char.db.stats, "char.db.stats missing 'pools' key")
+        self.assertIn('dual', char.db.stats['pools'], "char.db.stats['pools'] missing 'dual' key")
+        self.assertIn('Paradox', char.db.stats['pools']['dual'], "char.db.stats['pools']['dual'] missing 'Paradox' key")
+        
+        paradox_pool = char.db.stats['pools']['dual']['Paradox']
+        self.assertEqual(paradox_pool.get('perm'), 10)
+        self.assertEqual(paradox_pool.get('temp'), 0)
+
+        # Call initialize_mage_stats for a Technocracy Mage
+        char.db.stats = {} # Reset stats for the next test
+        initialize_mage_stats(char, affiliation="Technocracy", convention="Iteration X")
+        self.assertIn('pools', char.db.stats, "char.db.stats missing 'pools' key for Technocracy")
+        self.assertIn('dual', char.db.stats['pools'], "char.db.stats['pools'] missing 'dual' key for Technocracy")
+        self.assertIn('Paradox', char.db.stats['pools']['dual'], "char.db.stats['pools']['dual'] missing 'Paradox' key for Technocracy")
+
+        paradox_pool_technocracy = char.db.stats['pools']['dual']['Paradox']
+        self.assertEqual(paradox_pool_technocracy.get('perm'), 10)
+        self.assertEqual(paradox_pool_technocracy.get('temp'), 0)
+
+        # Call initialize_mage_stats for a Nephandi Mage
+        char.db.stats = {} # Reset stats for the next test
+        initialize_mage_stats(char, affiliation="Nephandi", nephandi_faction="Malfean")
+        self.assertIn('pools', char.db.stats, "char.db.stats missing 'pools' key for Nephandi")
+        self.assertIn('dual', char.db.stats['pools'], "char.db.stats['pools'] missing 'dual' key for Nephandi")
+        self.assertIn('Paradox', char.db.stats['pools']['dual'], "char.db.stats['pools']['dual'] missing 'Paradox' key for Nephandi")
+
+        paradox_pool_nephandi = char.db.stats['pools']['dual']['Paradox']
+        self.assertEqual(paradox_pool_nephandi.get('perm'), 10)
+        self.assertEqual(paradox_pool_nephandi.get('temp'), 0)
