@@ -30,6 +30,7 @@ class Job(SharedMemoryModel):
     attached_objects = models.ManyToManyField(ObjectDB, through='JobAttachment', related_name="attached_jobs", blank=True)
     template = models.ForeignKey('JobTemplate', on_delete=models.SET_NULL, null=True, blank=True, related_name='jobs')
     last_viewed = models.JSONField(default=dict)  # Store last viewed timestamps per user
+    github_issue_number = models.IntegerField(null=True, blank=True)
 
     class Meta:
         app_label = 'jobs'
