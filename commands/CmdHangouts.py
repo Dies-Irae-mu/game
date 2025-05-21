@@ -310,9 +310,34 @@ class CmdHangout(MuxCommand):
                 
                 # Move the character
                 self.caller.move_to(room, quiet=True)
+
+                # --- Umbra State Synchronization ---
+                room_is_umbra = room.db.umbra_only or False # Default to False if attribute doesn't exist
+                character_was_in_umbra = self.caller.db.in_umbra or False # Default to False
+
+                if room_is_umbra and not character_was_in_umbra:
+                    # Character moved from Material to Umbra
+                    self.caller.attributes.add('in_umbra', True)
+                    self.caller.tags.remove("in_material", category="state")
+                    self.caller.tags.add("in_umbra", category="state")
+                    # Optional: message about entering Umbra if not covered by hangout messages
+                    # self.caller.msg("You feel a strange sensation as you cross into the Umbra.")
+                elif not room_is_umbra and character_was_in_umbra:
+                    # Character moved from Umbra to Material
+                    self.caller.attributes.add('in_umbra', False)
+                    self.caller.tags.remove("in_umbra", category="state")
+                    self.caller.tags.add("in_material", category="state")
+                    # Optional: message about entering Material if not covered by hangout messages
+                    # self.caller.msg("You feel a shift as you return to the material world.")
+                # --- End Umbra State Synchronization ---
                 
-                # Announce arrival to the new room
-                room.msg_contents(f"{self.caller.name} has arrived.")
+                # Announce arrival to the new room (respecting Umbra state)
+                # The room's msg_contents should ideally handle plane-specific messaging
+                # or CmdHangouts can send to self.caller.location which is now the new room.
+                # For simplicity, using room.msg_contents which is already in use.
+                # Note: Ensure room.msg_contents correctly filters by Umbra state.
+                # Based on rooms.py, msg_contents filters by plane.
+                self.caller.location.msg_contents(f"{self.caller.name} has arrived.")
                 
                 # Message to the character
                 self.caller.msg(f"You teleport to {hangout.key}.")
