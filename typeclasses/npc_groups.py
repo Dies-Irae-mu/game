@@ -392,10 +392,63 @@ class NPCGroup(DefaultObject):
             string += f"\n|wMembers ({len(npcs)}):|n\n"
             for npc in npcs:
                 position = ""
-                for pos, members in self.db.hierarchy.items():
-                    if str(npc.id) in members:
+                # Determine position
+                for pos, members_in_pos in self.db.hierarchy.items(): # Renamed 'members' to avoid conflict
+                    if str(npc.id) in members_in_pos:
                         position = f" - {pos}"
                         break
-                string += f"  |w{npc.key}|n{position}\n"
+                
+                # Get NPC stats safely
+                npc_stats = npc.db.stats if hasattr(npc.db, 'stats') and npc.db.stats else {}
+                splat = npc_stats.get('splat', 'N/A').capitalize()
+                difficulty = npc_stats.get('difficulty', 'N/A')
+                
+                # Get health status using the NPC's method if available
+                health_status = "N/A"
+                if hasattr(npc, 'get_health_status') and callable(npc.get_health_status):
+                    try:
+                        health_status = npc.get_health_status()
+                    except Exception:
+                        health_status = "Error" # Or some other indicator
+
+                string += f"  |w{npc.key}|n{position} ({splat}, {difficulty}, Health: {health_status})\n"
+                
+                # Display a summary of key attributes (e.g., highest physical, social, mental)
+                attributes_summary = []
+                if isinstance(npc_stats.get('attributes'), dict):
+                    for category_name, cat_attrs in npc_stats['attributes'].items():
+                        if isinstance(cat_attrs, dict) and cat_attrs:
+                            # Find the attribute with the highest value in this category
+                            # Sort by value, then by name if values are equal
+                            sorted_attrs = sorted(cat_attrs.items(), key=lambda item: (item[1], item[0]), reverse=True)
+                            if sorted_attrs:
+                                highest_attr_name, highest_attr_val = sorted_attrs[0]
+                                attributes_summary.append(f"{highest_attr_name.capitalize()[:3]}: {highest_attr_val}")
+                if attributes_summary:
+                    string += f"    |cAttrs:|n {', '.join(attributes_summary)}\n"
+
+                # Display a summary of key powers (e.g., first 2-3 powers)
+                powers_summary = []
+                if isinstance(npc_stats.get('powers'), dict):
+                    power_count = 0
+                    for power_type, power_list in npc_stats['powers'].items():
+                        if isinstance(power_list, dict):
+                            for power_name, power_val in power_list.items():
+                                if power_count < 3:
+                                    powers_summary.append(f"{power_name.capitalize()}: {power_val}")
+                                    power_count += 1
+                                else:
+                                    break
+                        elif isinstance(power_list, list): # For charms
+                            for power_name in power_list:
+                                if power_count < 3:
+                                    powers_summary.append(f"{power_name.capitalize()}")
+                                    power_count += 1
+                                else:
+                                    break
+                        if power_count >= 3:
+                            break
+                if powers_summary:
+                    string += f"    |cPowers:|n {', '.join(powers_summary)}\n"
                 
         return string 

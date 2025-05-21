@@ -156,7 +156,7 @@ class RoomParent(DefaultRoom):
         # List all objects in the room that are in the same reality layer
         objects = []
         for obj in self.contents:
-            if not obj.has_account and not obj.destination:
+            if not obj.has_account and not obj.destination and not (hasattr(obj, 'is_npc') and obj.is_npc):
                 # Check if object is visible in current reality layer
                 # If object has no reality layer tags, assume it's in material plane
                 is_in_material = not (obj.tags.get("in_umbra", category="state") or 

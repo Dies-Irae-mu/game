@@ -35,6 +35,7 @@ from evennia.utils.utils import inherits_from
 import uuid
 import random
 from evennia.typeclasses.attributes import AttributeProperty
+from evennia.utils import logger
 
 
 class NPC(DefaultCharacter):
@@ -106,7 +107,7 @@ class NPC(DefaultCharacter):
         """
         # Don't call super() to avoid inheriting player character commands
         # Any NPC-specific commands would be added here
-        pass
+        self.cmdset.clear()
 
     def initialize_npc_stats(self, splat_type="mortal", difficulty="LOW"):
         """
@@ -123,40 +124,40 @@ class NPC(DefaultCharacter):
         # Default point allocations based on difficulty
         point_allocations = {
             "LOW": {
-                "attributes": 15,
-                "abilities": 20,
-                "disciplines": 3,
-                "gifts": 3,
-                "spheres": 4,
-                "numina": 5,
-                "charms": 5,
+                "attributes": 12,
+                "abilities": 15,
+                "disciplines": 2,
+                "gifts": 2,
+                "spheres": 2,
+                "numina": 3,
+                "charms": 3,
                 "willpower": 3,
                 "rage": 2,
                 "gnosis": 2,
             },
             "MEDIUM": {
-                "attributes": 20,
-                "abilities": 30,
+                "attributes": 18,
+                "abilities": 25,
                 "disciplines": 4,
                 "gifts": 4,
-                "spheres": 5,
-                "numina": 7,
-                "charms": 7,
+                "spheres": 4,
+                "numina": 5,
+                "charms": 5,
                 "willpower": 5,
                 "rage": 4,
                 "gnosis": 4,
             },
             "HIGH": {
-                "attributes": 30,
-                "abilities": 50,
-                "disciplines": 5,
-                "gifts": 5,
+                "attributes": 25,
+                "abilities": 40,
+                "disciplines": 6,
+                "gifts": 6,
                 "spheres": 6,
-                "numina": 9,
-                "charms": 9,
+                "numina": 8,
+                "charms": 8,
                 "willpower": 7,
-                "rage": 6,
-                "gnosis": 6,
+                "rage": 7,
+                "gnosis": 7,
             }
         }
         
@@ -305,6 +306,7 @@ class NPC(DefaultCharacter):
             splat_type (str): The type of supernatural character
             points (dict): Points to allocate to powers
         """
+        logger.log_info(f"[NPC Power Gen] _init_powers called for splat: {splat_type}, points: {points}")
         # Initialize powers structure
         stats["powers"] = {}
         
@@ -332,6 +334,7 @@ class NPC(DefaultCharacter):
 
     def _init_vampire_powers(self, stats, points):
         """Initialize vampire disciplines."""
+        logger.log_info(f"[NPC Power Gen] Initializing powers for {stats.get('splat', 'UnknownSplat')} with points: {points}")
         # Common disciplines
         disciplines = [
             "potence", "auspex", "celerity", "dominate", "fortitude",
@@ -382,9 +385,11 @@ class NPC(DefaultCharacter):
         # Add vampire-specific traits
         stats["blood_pool"] = 10
         stats["generation"] = random.randint(8, 13)  # Typically 8-13th generation
+        logger.log_info(f"[NPC Power Gen] {stats.get('splat', 'UnknownSplat')} powers generated: {stats['powers']}")
 
     def _init_mage_powers(self, stats, points):
         """Initialize mage spheres."""
+        logger.log_info(f"[NPC Power Gen] Initializing powers for {stats.get('splat', 'UnknownSplat')} with points: {points}")
         # All spheres
         spheres = [
             "correspondence", "forces", "life", "matter", "entropy",
@@ -416,9 +421,11 @@ class NPC(DefaultCharacter):
         stats["arete"] = random.randint(2, 4)
         stats["quintessence"] = stats["arete"]
         stats["paradox"] = 0
+        logger.log_info(f"[NPC Power Gen] {stats.get('splat', 'UnknownSplat')} powers generated: {stats['powers']}")
 
     def _init_shifter_powers(self, stats, points):
         """Initialize shifter gifts and traits."""
+        logger.log_info(f"[NPC Power Gen] Initializing powers for {stats.get('splat', 'UnknownSplat')} with points: {points}")
         # Create gift structure
         stats["powers"]["gift"] = {}
         
@@ -439,9 +446,11 @@ class NPC(DefaultCharacter):
         stats["glory"] = random.randint(0, 3)
         stats["honor"] = random.randint(0, 3)
         stats["wisdom"] = random.randint(0, 3)
+        logger.log_info(f"[NPC Power Gen] {stats.get('splat', 'UnknownSplat')} powers generated: {stats['powers']}")
 
     def _init_psychic_powers(self, stats, points):
         """Initialize psychic numina."""
+        logger.log_info(f"[NPC Power Gen] Initializing powers for {stats.get('splat', 'UnknownSplat')} with points: {points}")
         # List of numina
         numina = [
             "Telepathy", "Psychokinesis", "Pyrokinesis", "Clairvoyance",
@@ -469,9 +478,11 @@ class NPC(DefaultCharacter):
             value = min(random.randint(1, 3), remaining_points)
             stats["powers"]["numina"][numen] = value
             remaining_points -= value
+        logger.log_info(f"[NPC Power Gen] {stats.get('splat', 'UnknownSplat')} powers generated: {stats['powers']}")
 
     def _init_spirit_powers(self, stats, points):
         """Initialize spirit charms."""
+        logger.log_info(f"[NPC Power Gen] Initializing powers for {stats.get('splat', 'UnknownSplat')} with points: {points}")
         # List of common charms
         charms = [
             "Materialize", "Awe", "Fear", "Blast", "Armor",
@@ -500,6 +511,7 @@ class NPC(DefaultCharacter):
         stats["gnosis"] = points["gnosis"]
         stats["rage"] = points["rage"]
         stats["essence"] = random.randint(5, 15)
+        logger.log_info(f"[NPC Power Gen] {stats.get('splat', 'UnknownSplat')} powers generated: {stats['powers']}")
 
     def set_splat(self, splat_type, difficulty="MEDIUM"):
         """
@@ -760,60 +772,101 @@ class NPC(DefaultCharacter):
         return f"{self.key}{id_display}{temp_status}{inhabited}"
 
     def return_appearance(self, looker, **kwargs):
-        """
-        This formats a description. It is the hook a 'look' command
-        should call.
-        """
         if not looker:
             return ""
             
-        # Start with the name
-        string = f"|c{self.get_display_name(looker)}|n\n"
-
-        # Get and format the description
+        string = f"|c{self.get_display_name(looker)}|n\n" # Name
         desc = self.db.desc
         if desc:
-            string += f"{desc}\n"
-            
-        # For staff, show NPC stats
-        if looker.check_permstring("Builder"):
-            string += "\n|yNPC Information:|n\n"
-            string += f"  |wSplat:|n {self.db.stats.get('splat', 'unknown').title()}\n"
-            string += f"  |wDifficulty:|n {self.db.stats.get('difficulty', 'MEDIUM')}\n"
-            string += f"  |wNPC ID:|n {self.db.npc_id}\n"
-            string += f"  |wDBRef:|n {self.db.dbref_str}\n"
-            string += f"  |wCreator:|n {self.db.creator.key if self.db.creator else 'N/A'}\n"
-            
-            # Show some basic stats
-            if "attributes" in self.db.stats:
-                string += "  |wKey Attributes:|n "
-                attrs = []
-                for category in ["physical", "social", "mental"]:
-                    if category in self.db.stats["attributes"]:
-                        for attr, val in self.db.stats["attributes"][category].items():
-                            if val >= 3:  # Only show high attributes
-                                attrs.append(f"{attr.title()}: {val}")
-                string += ", ".join(attrs[:5]) + "\n"  # Limit to 5 attributes
-                
-            # Show supernatural powers if any
-            if "powers" in self.db.stats:
-                for power_type, powers in self.db.stats["powers"].items():
-                    if powers:
-                        string += f"  |w{power_type.title()}s:|n "
-                        if isinstance(powers, dict):
-                            power_list = [f"{p.title()}: {v}" for p, v in powers.items()]
-                            string += ", ".join(power_list) + "\n"
-                        elif isinstance(powers, list):
-                            string += ", ".join([p for p in powers]) + "\n"
-            
-            if self.db.is_temporary:
-                expiration = self.db.expiration_time
-                if expiration:
-                    now = datetime.now()
-                    time_left = expiration - now
-                    hours_left = max(0, time_left.total_seconds() / 3600)
-                    string += f"  |wExpires:|n In {hours_left:.1f} hours\n"
+            string += f"{desc}\n" # Description
 
+        npc_stats = self.db.stats if hasattr(self.db, 'stats') and self.db.stats else {}
+
+        if looker.check_permstring("Builder"):
+            string += "\n|yNPC Information (Staff View):|n\n"
+            string += f"  |wSplat:|n {npc_stats.get('splat', 'unknown').title()}\n"
+            string += f"  |wDifficulty:|n {npc_stats.get('difficulty', 'MEDIUM')}\n"
+            string += f"  |wNPC ID:|n {self.db.npc_id if hasattr(self.db, 'npc_id') else 'N/A'}\n"
+            string += f"  |wDBRef:|n {self.db.dbref_str if hasattr(self.db, 'dbref_str') else 'N/A'}\n"
+            string += f"  |wCreator:|n {self.db.creator.key if hasattr(self.db, 'creator') and self.db.creator else 'N/A'}\n"
+            
+            # Display all attributes for staff
+            if isinstance(npc_stats.get('attributes'), dict):
+                for cat_name, cat_attrs in npc_stats['attributes'].items():
+                    if isinstance(cat_attrs, dict):
+                        string += f"  |c{cat_name.capitalize()} Attributes:|n "
+                        attr_list = [f"{name.capitalize()}: {val}" for name, val in cat_attrs.items()]
+                        string += ", ".join(attr_list) + "\n"
+            
+            # Display all powers for staff
+            if isinstance(npc_stats.get('powers'), dict):
+                for power_type, powers_data in npc_stats['powers'].items():
+                    if powers_data:
+                        string += f"  |c{power_type.capitalize()}:|n "
+                        if isinstance(powers_data, dict):
+                            power_list = [f"{name.capitalize()}: {val}" for name, val in powers_data.items()]
+                            string += ", ".join(power_list) + "\n"
+                        elif isinstance(powers_data, list):
+                            string += ", ".join([p.capitalize() for p in powers_data]) + "\n"
+            
+            if hasattr(self.db, 'is_temporary') and self.db.is_temporary:
+                expiration = self.db.expiration_time if hasattr(self.db, 'expiration_time') else None
+                if expiration:
+                    now = datetime.now() # Make sure datetime is imported
+                    if isinstance(expiration, (float, int)): # If expiration_time is a timestamp
+                        expiration = datetime.fromtimestamp(expiration)
+                    
+                    if now < expiration:
+                         time_left = expiration - now
+                         hours_left = max(0, time_left.total_seconds() / 3600)
+                         string += f"  |wExpires:|n In {hours_left:.1f} hours\n"
+                    else:
+                         string += f"  |wExpires:|n Expired\n"
+
+
+        elif hasattr(self, 'can_be_controlled_by') and self.can_be_controlled_by(looker):
+            string += "\n|yNPC Summary:|n\n"
+            splat = npc_stats.get('splat', 'N/A').capitalize()
+            difficulty = npc_stats.get('difficulty', 'N/A')
+            health_status = self.get_health_status() if hasattr(self, 'get_health_status') else 'N/A'
+
+            string += f"  |wSplat:|n {splat}\n"
+            string += f"  |wDifficulty:|n {difficulty}\n"
+            string += f"  |wHealth:|n {health_status}\n"
+
+            attributes_summary = []
+            if isinstance(npc_stats.get('attributes'), dict):
+                for category_name, cat_attrs in npc_stats['attributes'].items():
+                    if isinstance(cat_attrs, dict) and cat_attrs:
+                        sorted_attrs = sorted(cat_attrs.items(), key=lambda item: (item[1] if isinstance(item[1], (int, float)) else 0, item[0]), reverse=True)
+                        if sorted_attrs:
+                            highest_attr_name, highest_attr_val = sorted_attrs[0]
+                            attributes_summary.append(f"{highest_attr_name.capitalize()[:3]}: {highest_attr_val}")
+            if attributes_summary:
+                string += f"  |cAttributes:|n {', '.join(attributes_summary)}\n"
+
+            powers_summary = []
+            if isinstance(npc_stats.get('powers'), dict):
+                power_count = 0
+                for power_type_to_show in ["discipline", "gift", "sphere", "numina", "charm"]: # Prioritized order
+                    if power_type_to_show in npc_stats['powers']:
+                        power_list = npc_stats['powers'][power_type_to_show]
+                        if isinstance(power_list, dict):
+                            for power_name, power_val in power_list.items():
+                                if power_count < 2:
+                                    powers_summary.append(f"{power_name.capitalize()}: {power_val}")
+                                    power_count += 1
+                                else: break
+                        elif isinstance(power_list, list):
+                            for power_name in power_list:
+                                if power_count < 2:
+                                    powers_summary.append(power_name.capitalize())
+                                    power_count += 1
+                                else: break
+                    if power_count >= 2: break
+            if powers_summary:
+                string += f"  |cKey Powers:|n {', '.join(powers_summary)}\n"
+        
         return string
 
     def at_pre_puppet(self, puppeteer, **kwargs):
