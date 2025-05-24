@@ -565,6 +565,58 @@ class CmdRoll(default_cmds.MuxCommand):
         # Create capitalized versions for exact matching
         capitalized_name = capitalize_hyphenated(stat_name)
 
+        # First check for special stats in other category
+        special_stats = {
+            'enlightenment': 'Enlightenment',
+            'arete': 'Arete',
+            'gnosis': 'Gnosis',
+            'rage': 'Rage',
+            'willpower': 'Willpower',
+            'blood_potency': 'Blood Potency',
+            'humanity': 'Humanity',
+            'path': 'Path',
+            'virtue': 'Virtue',
+            'vice': 'Vice'
+        }
+
+        # Check if this is a special stat
+        if normalized_nospace in special_stats:
+            special_stat_name = special_stats[normalized_nospace]
+            
+            # Check all possible locations for special stats
+            locations_to_check = [
+                # Check in other category
+                ('other', special_stat_name),
+                # Check in pools.dual
+                ('pools', 'dual', special_stat_name),
+                # Check in pools.other
+                ('pools', 'other', special_stat_name),
+                # Check in pools.moral
+                ('pools', 'moral', special_stat_name),
+                # Check in pools.advantage
+                ('pools', 'advantage', special_stat_name)
+            ]
+            
+            for location in locations_to_check:
+                if len(location) == 2:
+                    # Check in other category
+                    if location[0] in character_stats:
+                        stat_data = character_stats[location[0]].get(location[1], {})
+                        if stat_data:
+                            if 'temp' in stat_data and stat_data['temp'] != 0:
+                                return stat_data['temp'], special_stat_name
+                            return stat_data.get('perm', 0), special_stat_name
+                else:
+                    # Check in nested locations (pools)
+                    if (location[0] in character_stats and 
+                        location[1] in character_stats[location[0]] and 
+                        location[2] in character_stats[location[0]][location[1]]):
+                        stat_data = character_stats[location[0]][location[1]][location[2]]
+                        if stat_data:
+                            if 'temp' in stat_data and stat_data['temp'] != 0:
+                                return stat_data['temp'], special_stat_name
+                            return stat_data.get('perm', 0), special_stat_name
+
         # First try exact match with properly capitalized name
         if 'abilities' in character_stats:
             for ability_type, abilities in character_stats['abilities'].items():
