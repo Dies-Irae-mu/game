@@ -778,6 +778,40 @@ class Character(DefaultCharacter):
         # Send message directly to the room
         self.location.msg_contents(string, exclude=[self], from_obj=self)
 
+    def move_to(self, destination, **kwargs):
+        """
+        Moves the character to a new location, overriding the default
+        to include Umbra state synchronization.
+        """
+        # Call the parent move_to method
+        success = super().move_to(destination, **kwargs)
+
+        if success:
+            # Umbra State Synchronization
+            # self.location is now the destination room
+            if self.location: # Ensure we have a location after the move
+                room_is_umbra = self.location.db.umbra_only or False
+                character_current_umbra_state = self.db.in_umbra or False
+
+                if room_is_umbra and not character_current_umbra_state:
+                    # Character moved from Material to Umbra
+                    self.attributes.add('in_umbra', True)
+                    self.tags.remove("in_material", category="state")
+                    self.tags.add("in_umbra", category="state")
+                    # Optional: self.msg("You sense the world shift as you cross into the Umbra.")
+                elif not room_is_umbra and character_current_umbra_state:
+                    # Character moved from Umbra to Material
+                    self.attributes.add('in_umbra', False)
+                    self.tags.remove("in_umbra", category="state")
+                    self.tags.add("in_material", category="state")
+                    # Optional: self.msg("You sense the world shift as you return to the material realm.")
+            else:
+                # This case should ideally not happen if success is True,
+                # but good to log if it does.
+                logger.log_warn(f"Character {self.key} successfully moved but self.location is None.")
+        
+        return success
+
     def at_say(self, message, msg_self=None, msg_location=None, receivers=None, msg_receivers=None, **kwargs):
         """Hook method for the say command."""
         if not self.location:
