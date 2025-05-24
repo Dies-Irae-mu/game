@@ -12,7 +12,7 @@ from world.wod20th.utils.ansi_utils import wrap_ansi
 from world.wod20th.utils.formatting import header, footer, divider, format_stat
 from textwrap import fill
 from django.utils import timezone
-from django.db.models import Max, F
+from world.jobs.github_integration import create_issue
 import json
 import copy
 from evennia.help.models import HelpEntry
@@ -363,9 +363,9 @@ class CmdJobs(MuxCommand):
                 queue=queue,
                 status='open'
             )
+            self.caller.msg(f"Job created: {job.id}")
 
             if queue.name.lower() in ("bug", "code"):
-                from world.jobs.github_integration import create_issue
                 issue_title = f"Job {job.id}: {title}"
                 num = create_issue(issue_title, description)
                 if num:
@@ -470,6 +470,17 @@ class CmdJobs(MuxCommand):
                 queue=queue,
                 status='open'
             )
+
+            self.caller.msg(f"Job created: {job.id}")
+
+            if category.lower() in ("bug", "code"):
+                issue_title = f"Job {job.id}: {title}"
+                num = create_issue(issue_title, description)
+                if num:
+                    job.github_issue_number = num
+                    job.save()
+                    self.caller.msg(f"GitHub issue #{num} created.")
+
 
             # Notify the creator
             self.caller.msg(f"|gJob '{title}' created with ID {job.id} in category {category}.|n")
@@ -1494,6 +1505,22 @@ class CmdJobs(MuxCommand):
                     'text': f"{new_status.title()}: {reason}",
                     'created_at': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
                 })
+
+                # Close the GitHub issue if one exists and the job is being cancelled
+                if new_status == "cancelled" and job.github_issue_number:
+                    try:
+                        from world.jobs.github_integration import close_issue, add_comment
+                        
+                        # Add a comment indicating why the issue was cancelled
+                        comment_body = f"Job was cancelled by {self.caller.account.username}\n\nReason: {reason}"
+                        add_comment(job.github_issue_number, comment_body)
+                        
+                        # Close the issue
+                        close_issue(job.github_issue_number)
+                        self.caller.msg(f"GitHub issue #{job.github_issue_number} has been closed.")
+                    except Exception as e:
+                        logger.error(f"Error closing GitHub issue: {e}")
+                        self.caller.msg(f"Warning: Failed to close GitHub issue: {e}")
 
                 job.save()
 

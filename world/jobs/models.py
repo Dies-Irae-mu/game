@@ -6,9 +6,12 @@ from evennia.utils.idmapper.models import SharedMemoryModel
 from django.utils.functional import lazy
 from django.db.models import Max
 from evennia.accounts.models import AccountDB
+import logging
 
 # Remove this line:
 # from evennia.utils import create
+
+logger = logging.getLogger(__name__)
 
 class Job(SharedMemoryModel):
     id = models.AutoField(primary_key=True)
@@ -60,6 +63,22 @@ class Job(SharedMemoryModel):
         self.status = "closed" if self.approved else "rejected"
         self.closed_at = timezone.now()
         self.save()
+
+        # Close the GitHub issue if one exists
+        if self.github_issue_number:
+            try:
+                from world.jobs.github_integration import close_issue, add_comment
+                
+                # Add a comment indicating why the issue was closed
+                comment_body = f"Job was {self.status} by {closer.username}"
+                if reason:
+                    comment_body += f"\n\nReason: {reason}"
+                add_comment(self.github_issue_number, comment_body)
+                
+                # Close the issue
+                close_issue(self.github_issue_number)
+            except Exception as e:
+                logger.error(f"Error closing GitHub issue: {e}")
 
         # Archive the job
         comments_text = "\n\n".join([f"{comment['author']} [{comment['created_at']}]: {comment['text']}" for comment in self.comments])
