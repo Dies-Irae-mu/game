@@ -300,19 +300,25 @@ class CmdHangout(MuxCommand):
                 
                 # Announce departure to the old room
                 old_location.msg_contents(f"{self.caller.name} has left for hangout {hangout_id}.")
-                    
-                # Ensure we're not leaving a ghost character behind by clearing any session references
-                # to the old location
+                
+                # Properly handle session state
                 for session in self.caller.sessions.all():
                     if hasattr(session, 'puppet') and session.puppet == self.caller:
-                        # Make sure the session knows we're moving
+                        # Clear any existing location references
+                        if hasattr(session, 'location'):
+                            delattr(session, 'location')
+                        # Update session state
                         session.msg(text=f"Moving to {hangout.key}...")
                 
-                # Move the character
-                self.caller.move_to(room, quiet=True)
+                # Move the character with proper state handling
+                self.caller.move_to(room, quiet=False)  # Don't use quiet to ensure proper state updates
                 
-                # Announce arrival to the new room
-                room.msg_contents(f"{self.caller.name} has arrived.")
+                # Ensure character state is properly updated
+                self.caller.at_after_move(old_location)
+                
+                # Small delay to ensure state is settled
+                from evennia.scripts.tasks import Task
+                Task.add_delay(0.1, self._announce_arrival, self.caller, room)
                 
                 # Message to the character
                 self.caller.msg(f"You teleport to {hangout.key}.")
@@ -420,4 +426,9 @@ class CmdHangout(MuxCommand):
             
         except ValueError:
             self.caller.msg("Please specify a valid hangout number.")
+
+    def _announce_arrival(self, character, room):
+        """Announce character arrival after state is settled."""
+        if character and room and character.location == room:
+            room.msg_contents(f"{character.name} has arrived.")
     
