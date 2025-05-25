@@ -76,6 +76,11 @@ class Exit(DefaultExit):
     Custom exit class for Dies Irae.
     """
     
+    @property
+    def is_npc(self):
+        """Return False for exits to distinguish from NPCs."""
+        return False
+        
     def at_object_creation(self):
         """
         Called when exit is first created.

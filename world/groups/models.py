@@ -72,7 +72,7 @@ class GroupRole(SharedMemoryModel):
         return f"{self.name} - {self.group.name}"
 
 class GroupMembership(SharedMemoryModel):
-    character = models.ForeignKey(CharacterSheet, on_delete=models.CASCADE, related_name='group_memberships')
+    character = models.ForeignKey(CharacterSheet, on_delete=models.CASCADE, related_name='group_memberships', null=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     role = models.ForeignKey(GroupRole, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=100, blank=True, help_text="Character's title in the group")
@@ -83,7 +83,7 @@ class GroupMembership(SharedMemoryModel):
     def __str__(self):
         title_str = f" ({self.title})" if self.title else ""
         role_str = f" - {self.role.name}" if self.role else ""
-        return f"{self.character.full_name}{title_str} - {self.group.name}{role_str}"
+        return f"{self.character.full_name if self.character else 'Unknown'}{title_str} - {self.group.name}{role_str}"
 
 class GroupJoinRequest(SharedMemoryModel):
     character = models.ForeignKey(CharacterSheet, on_delete=models.CASCADE, related_name='join_requests')
