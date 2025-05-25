@@ -2499,7 +2499,7 @@
         "values": [3],
 		"shifter_type":  ["Garou", "Ajaba", "Bastet", "Gurahl", "Kitsune", "Nagah", "Ratkin"],
         "splat": "Shifter",
-        "tribe": ["Croatan", "Black Spiral Dancers"],
+        "tribe": ["Wendigo", "Uktena", "Black Spiral Dancers"],
         "breed": ["Metis", "Shinju", "Ahi"]
     },
     {

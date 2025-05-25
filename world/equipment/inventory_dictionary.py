@@ -54,8 +54,8 @@ inventory_dictionary = {
         is_unique=False,
         requires_approval=False
     ),
-    "Greate Axe": MeleeWeapon(
-        name="Greate Axe",
+    "Great Axe": MeleeWeapon(
+        name="Great Axe",
         description="A great axe is a double-bladed axe that requires a great deal of strength to wield (minimum 3). It is a powerful weapon that can deal significant damage to enemies.",
         damage="Strength+6",
         damage_type="Lethal",

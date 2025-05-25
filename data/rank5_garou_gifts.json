@@ -1288,7 +1288,7 @@
         "stat_type": "gift",
         "values": [5], 
         "splat": "Shifter",
-        "tribe": ["Bone Gnawers", "Croatan"],
+        "tribe": ["Bone Gnawers", "Uktena", "Wendigo"],
         "shifter_type": ["Garou", "Ajaba", "Ananasi", "Ratkin"]
     },
     {

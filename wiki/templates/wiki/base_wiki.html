@@ -34,18 +34,27 @@
                 try {
                     // Get content data from the template
                     const leftContentData = `{{ page.content|escapejs }}`;
+                    const processedContentData = `{{ page.processed_content|escapejs }}`;
                     const rightContentData = `{{ page.right_content|escapejs }}`;
                     
                     // Process left content
                     const leftContentElement = document.querySelector('.left_content');
-                    if (leftContentElement && leftContentData && leftContentData.trim() !== '') {
+                    if (leftContentElement) {
                         try {
-                            // Always use Markdown parsing - it handles HTML content properly too
-                            const processedLeftContent = marked.parse(leftContentData);
-                            leftContentElement.innerHTML = processedLeftContent;
+                            // Check if we have server-processed content (with mermaid diagrams)
+                            if (processedContentData && processedContentData.trim() !== '') {
+                                // Use the server-processed content which includes rendered mermaid diagrams
+                                leftContentElement.innerHTML = processedContentData;
+                            } else if (leftContentData && leftContentData.trim() !== '') {
+                                // Fall back to client-side markdown parsing if no processed content
+                                const processedLeftContent = marked.parse(leftContentData);
+                                leftContentElement.innerHTML = processedLeftContent;
+                            }
                         } catch (e) {
                             console.error('Error parsing left content:', e);
-                            leftContentElement.textContent = leftContentData; // Fallback to plain text
+                            if (leftContentData) {
+                                leftContentElement.textContent = leftContentData; // Fallback to plain text
+                            }
                         }
                     }
                     

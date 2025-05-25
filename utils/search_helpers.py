@@ -30,9 +30,28 @@ def search_character(searcher, search_string, global_search=True, quiet=False):
         return matching_chars[0]
         
     # If still no match, try alias as last resort
+    # First try using the Character's class method
     target = Character.get_by_alias(search_string.lower())
     if target:
         return target
+        
+    # If that doesn't work, fallback to direct attribute search
+    alias_matches = search_object(
+        search_string,
+        typeclass=Character,
+        attribute_name="alias", 
+        attribute_value=search_string
+    )
+    if alias_matches:
+        return alias_matches[0]
+        
+    # Also try case-insensitive attribute search as a last resort
+    all_chars = search_object("*", typeclass=Character)
+    for char in all_chars:
+        if hasattr(char, 'attributes') and char.attributes.has('alias'):
+            alias = char.attributes.get('alias')
+            if alias and alias.lower() == search_string.lower():
+                return char
         
     # If we get here, no valid character was found
     if not quiet:

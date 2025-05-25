@@ -73,6 +73,35 @@ body {
     padding: 0;
 }
 
+/* Mermaid diagram styles */
+.mermaid-diagram {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    overflow: auto;
+}
+
+.mermaid-diagram svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.mermaid-error {
+    padding: 15px;
+    margin: 20px 0;
+    background-color: rgba(255, 0, 0, 0.1);
+    color: #ff6b6b;
+    border-left: 4px solid #ff6b6b;
+    font-family: monospace;
+}
+
+.lock_has_splat {
+    color: rgb(53, 40, 40);
+}
+
 /* Typography */
 h1, h2, h4 {
     color: #fff;
@@ -2022,3 +2051,59 @@ input:required, textarea:required {
     display: block;
 }
 
+/* This is for the edit page that players have access to */
+.lock-dropdown {
+    display: none !important;
+    margin-top: 5px;
+    visibility: hidden;
+    height: 0;
+    opacity: 0;
+    transition: opacity 0.3s, height 0.3s, visibility 0s linear 0.3s;
+    overflow: hidden;
+}
+.lock-dropdown.visible {
+    display: block !important;
+    visibility: visible !important;
+    height: auto !important;
+    opacity: 1 !important;
+    transition: opacity 0.3s, height 0.3s;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px 0;
+    color: rgb(53, 40, 40);
+}
+.access-restrictions {
+    background-color: black;
+    padding: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    color: antiquewhite;
+}
+.lock-help {
+    color: #f0e6e6;
+    font-size: 0.8em;
+    margin-left: 20px;
+}
+.lock-item {
+    margin-bottom: 15px;
+}
+.lock-dropdown select {
+    color: rgb(53, 40, 40);
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 6px 10px;
+    width: 100%;
+    font-size: 14px;
+}
+.lock-dropdown select option {
+    color: rgb(53, 40, 40);
+    background-color: #f5f5f5;
+}
+.content-preview {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    margin-top: 20px;
+}

@@ -71,3 +71,6 @@ backups/
 # Media Files
 media/
 media/**/*/
+
+.env
+secret_settings.py

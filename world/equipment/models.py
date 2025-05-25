@@ -49,6 +49,10 @@ class EquipmentManager(models.Manager):
             'fetish': Fetish,
             'talen': Talen,
             'artifact': Artifact,
+            'chimerical_melee': ChimericalMelee,
+            'chimerical_armor': ChimericalArmor,
+            'chimerical_ranged': ChimericalRanged,
+            'chimerical_thrown': ChimericalThrown
         }
         
         # If the category has a specialized model, try to get it
@@ -294,7 +298,43 @@ class ThrownWeapon(Equipment):
 
     def __str__(self):
         return self.name
+    
+class ChimericalMelee(Equipment):
+    damage = models.CharField(max_length=100)
+    damage_type = models.CharField(max_length=100)
+    difficulty = models.PositiveIntegerField()
 
+    def __str__(self):
+        return self.name
+
+class ChimericalRanged(Equipment):
+    damage = models.CharField(max_length=100)
+    damage_type = models.CharField(max_length=100)
+    range = models.CharField(max_length=100)
+    rate = models.CharField(max_length=100)
+    clip = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.name
+
+class ChimericalThrown(Equipment):
+    damage = models.CharField(max_length=100)
+    damage_type = models.CharField(max_length=100)
+    range = models.CharField(max_length=100)
+    difficulty = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.name
+
+class ChimericalArmor(Equipment):
+    rating = models.PositiveIntegerField(default=0)  # Protection rating
+    dexterity_penalty = models.IntegerField(default=0)  # Penalty to Dexterity rolls
+    is_shield = models.BooleanField(default=False)  # Whether this is a shield
+    shield_bonus = models.PositiveIntegerField(default=0)  # Additional bonus for shields
+
+    def __str__(self):
+        return self.name
+    
 class ImprovisedWeapon(Equipment):
     damage = models.CharField(max_length=100)
     damage_type = models.CharField(max_length=100)
@@ -539,9 +579,6 @@ class Periapt(Equipment):
         return self.name
 
 class Chimerical(Equipment):
-    power_level = models.PositiveIntegerField()
-    activation_requirements = models.TextField()
-    duration = models.CharField(max_length=100)
     special_effects = models.TextField()
 
     def __str__(self):
@@ -731,8 +768,49 @@ class MartialArtsWeaponDetails(SharedMemoryModel):
     style_requirements = models.TextField(blank=True)
     special_techniques = models.TextField(blank=True)
     
+    # New fields for martial arts maneuvers integration
+    difficulty_modifier = models.IntegerField(default=0, help_text="Difficulty modifier for martial arts maneuvers")
+    damage_modifier = models.IntegerField(default=0, help_text="Damage modifier for martial arts maneuvers")
+    enhanced_maneuvers = models.TextField(blank=True, help_text="Comma-separated list of maneuvers enhanced by this weapon")
+    style_compatibility = models.CharField(max_length=100, default="any", 
+                                          help_text="Which martial arts styles this weapon works with (hard, soft, any)")
+    
     def __str__(self):
         return f"Details for {self.equipment.name}"
+        
+    def get_enhanced_maneuvers_list(self):
+        """Return a list of maneuvers enhanced by this weapon"""
+        if not self.enhanced_maneuvers:
+            return []
+        return [m.strip() for m in self.enhanced_maneuvers.split(',')]
+    
+    def is_compatible_with_style(self, style):
+        """Check if this weapon is compatible with a martial arts style"""
+        if self.style_compatibility.lower() == "any":
+            return True
+        return style.lower() in [s.strip().lower() for s in self.style_compatibility.split(',')]
+        
+    def get_maneuver_bonuses(self, maneuver_name):
+        """Get bonuses for a specific maneuver
+        
+        Args:
+            maneuver_name (str): Name of the maneuver
+            
+        Returns:
+            dict: Dictionary with bonuses
+        """
+        bonuses = {
+            "difficulty_mod": self.difficulty_modifier,
+            "damage_mod": self.damage_modifier,
+            "extra_damage_dice": 0
+        }
+        
+        # Additional bonuses for enhanced maneuvers
+        if maneuver_name in self.get_enhanced_maneuvers_list():
+            bonuses["difficulty_mod"] -= 1
+            bonuses["damage_mod"] += 1
+            
+        return bonuses
 
 class SpyingDeviceDetails(SharedMemoryModel):
     """Specialized details for spying devices using composition pattern"""
