@@ -9,37 +9,44 @@ import re
 from difflib import get_close_matches
 from datetime import datetime
 from random import randint
+from evennia.utils import logger
 
 class CmdRoll(default_cmds.MuxCommand):
     """
     Roll dice for World of Darkness 20th Anniversary Edition.
 
-    Usage:
+    Usage (aliases are after the pipe symbol):
       +roll <expression> [vs <difficulty>] [--job <id>]
           Note that you must put a space between the stat name and the + or - operator,
           otherwise it will be interpreted as part of the stat name (like a hyphen).
-      +roll/log - This will display the last 10 rolls made in this location, but will
-                  not show the stat names or values, just the results.
-      +roll/specialty <expression> [vs <difficulty>] [--job <id>]
+      +roll/log|l - This will display the last 10 rolls made in this location.
+      +roll/specialty|spec|s <expression> [vs <difficulty>] [--job <id>]
+          This will count any 10s rolled as 2 successes. You can also use this as an
+          additional switch on top of another roll, such as +roll/10/specialty 
+          or +roll/reflexive/specialty.
+          Aliases are +roll/spec, +roll/s.
+      +roll/10|10s|tens|ten <expression> [vs <difficulty>] [--job <id>]
           This will use the "exploding 10s" rule, where any 10 rolled will generate
           an additional die roll. If that roll is also a 10, it explodes again, and
           so on until no more 10s are rolled.
+      +roll/reflexive|ref|r <expression> [vs <difficulty>] [--job <id>]
+          This will roll for a reflexive action, which does not apply health penalties.
 
       Changling-specific Command:    
-      +roll/nightmare/[<number>] <expression> [vs <difficulty>] [--job <id>]
-          You can use this in two ways: if you specify a number it will use that many
+      +roll/nightmare|night|n/[<number>] <expression> [vs <difficulty>] [--job <id>]
+          You can use this in two ways: if you specify a positive number it will use that many
           Nightmare dice, otherwise it will use the character's current Nightmare rating.
-          If you specify a number, it must be a positive integer.
 
     Examples:
       +roll strength + dexterity + 3 - 2
       +roll stre + dex + 3- 2 vs 7
       +roll/specialty dexterity + brawl vs 6
+      +roll/10/specialty strength + melee vs 6
       +roll/nightmare Legerdemain + Prop vs 6
       +roll/nightmare/3 Legerdemain + Prop vs 6
       +roll/log
-      +roll strength + dexterity + 3 - 2 --job 123
-      +roll str + dex + 3 - 2 vs 7 --job 123
+      +roll/ref/specialty Stamina + Primal-Urge vs 6
+      +roll strength + brawl vs 7 --job 42
 
     This command allows you to roll dice based on your character's stats
     and any modifiers. You can specify stats by their full name or abbreviation.
@@ -98,22 +105,62 @@ class CmdRoll(default_cmds.MuxCommand):
 
         # Check if in a Quiet Room - only allow with job option
         if (hasattr(self.caller.location, 'db') and 
-            hasattr(self.caller.location, 'is_command_restricted_in_quiet_room')):
-            # Pass the switches to check for special handling of --job
-            if self.caller.location.is_command_restricted_in_quiet_room(self.cmdstring, ['--job'] if rolling_to_job else None):
-                self.caller.msg("|rYou are in a Quiet Room. You can only roll with the --job option.|n")
-                return
+            hasattr(self.caller.location.db, 'roomtype') and
+            self.caller.location.db.roomtype == 'Quiet Room' and
+            not rolling_to_job):
+            # Only allow rolls in Quiet Rooms with the --job option
+            self.caller.msg("|rYou are in a Quiet Room. You can only roll with the --job option.|n")
+            return
 
         # Store original args and restore after job check
         self.args = args
 
-        # Check for specialty switch for exploding 10s
-        use_specialty = 'specialty' in self.switches if self.switches else False
+        # Define valid switches
+        valid_switches = [
+            '10', '10s', 'tens', 'ten',           # Exploding 10s (unsure if this is used often in wod20th; here for completion)
+            'specialty', 'spec', 's',             # Specialty (double 10s)
+            'reflexive', 'ref', 'reflex', 'r',    # Reflexive (no health penalty)
+            'nightmare', 'night', 'n',            # Nightmare (Changeling only)
+            'log', 'l'                             # Roll log
+        ]
+        
+        # Check for invalid switches
+        if self.switches:
+            # Look for numeric nightmare dice specification (e.g., nightmare/3)
+            nightmare_number_switch = False
+            if len(self.switches) >= 2 and self.switches[0] in ['nightmare', 'night', 'n']:
+                try:
+                    int(self.switches[1])  # Just try to convert to int to verify it's a number
+                    nightmare_number_switch = True
+                except ValueError:
+                    pass
+            
+            # Check each switch to see if it's valid
+            invalid_switches = []
+            for switch in self.switches:
+                # Skip the numeric part of nightmare/N
+                if nightmare_number_switch and self.switches[0] in ['nightmare', 'night', 'n'] and self.switches.index(switch) == 1:
+                    if not switch.isdigit():
+                        invalid_switches.append(switch)
+                # Check all other switches
+                elif switch not in valid_switches:
+                    invalid_switches.append(switch)
+            
+            # If there are invalid switches, show an error
+            if invalid_switches:
+                self.caller.msg(f"|rError: Invalid switch(es): {', '.join(invalid_switches)}|n")
+                self.caller.msg("Valid switches are: log, specialty (spec, s), 10 (10s, tens, ten), reflexive (ref, reflex, r), nightmare (night, n)")
+                return
+
+        # Check for various switches
+        use_10s = any(s in ['10', '10s', 'tens', 'ten'] for s in self.switches) if self.switches else False
+        use_specialty = any(s in ['specialty', 'spec', 's'] for s in self.switches) if self.switches else False
+        use_reflexive = any(s in ['reflexive', 'ref', 'reflex', 'r'] for s in self.switches) if self.switches else False
 
         # Handle Nightmare dice
         nightmare_dice = 0
         force_nightmare_dice = None
-        if self.switches and any(s.startswith('nightmare') for s in self.switches):
+        if self.switches and any(s in ['nightmare', 'night', 'n'] for s in self.switches):
             # Check if character is a Changeling
             if not self.caller.db.stats:
                 self.caller.msg("Error: Character has no stats.")
@@ -153,7 +200,7 @@ class CmdRoll(default_cmds.MuxCommand):
 
             # First check for forced nightmare dice
             has_forced_dice = False
-            if len(self.switches) >= 2 and self.switches[0] == 'nightmare':
+            if len(self.switches) >= 2 and self.switches[0] in ['nightmare', 'night', 'n']:
                 try:
                     force_nightmare_dice = int(self.switches[1])
                     has_forced_dice = True
@@ -168,11 +215,9 @@ class CmdRoll(default_cmds.MuxCommand):
                 nightmare_exists = ('Nightmare' in self.caller.db.stats.get('pools', {}).get('other', {}))
                 if nightmare_exists:
                     # Get the rating (which might be 0)
-                    nightmare_rating = self.caller.db.stats['pools']['other']['Nightmare'].get('temp', 0)
-                    if not nightmare_rating:
-                        nightmare_rating = self.caller.db.stats['pools']['other']['Nightmare'].get('perm', 0)
+                    nightmare_rating = self.caller.db.stats['pools']['other']['Nightmare'].get('perm', 0)
                     
-                    if 'nightmare' in self.switches:
+                    if any(s in ['nightmare', 'night', 'n'] for s in self.switches):
                         if nightmare_rating > 0:
                             nightmare_dice = nightmare_rating
                         else:
@@ -214,7 +259,7 @@ class CmdRoll(default_cmds.MuxCommand):
         
         # If the components are empty, something went wrong
         if not components:
-            self.caller.msg("Could not parse roll expression. Try a simpler format like 'stat1+stat2'.")
+            self.caller.msg("Could not parse roll expression. Try a simpler format like 'stat1 + stat2'.")
             return
         
         dice_pool = 0
@@ -275,20 +320,29 @@ class CmdRoll(default_cmds.MuxCommand):
 
         # Apply health penalties
         health_penalty = self.get_health_penalty(self.caller)
-        if health_penalty > 0:
+        
+        # For reflexive actions, ignore health penalties completely
+        if use_reflexive:
+            # Don't apply the health penalty
+            health_penalty_description = f"|c(Reflexive: Ignoring health penalty of {health_penalty})|n"
+            if health_penalty > 0:
+                description.append(health_penalty_description)
+                detailed_description.append(health_penalty_description)
+            # Reset health_penalty to 0 for reflexive actions
+            health_penalty = 0
+        elif health_penalty > 0:
             original_pool = dice_pool
             dice_pool = max(0, dice_pool - health_penalty)
             description.append(f"-|r{health_penalty}|n |w(Health Penalty)|n")
             detailed_description.append(f"-|r{health_penalty}|n |w(Health Penalty)|n")
+            # Only add a warning about reduced dice pool if it's reduced to zero
             if dice_pool == 0 and original_pool > 0:
                 warnings.append("|rWarning: Health penalties have reduced your dice pool to 0.|n")
 
         # After calculating dice_pool, adjust nightmare dice if needed
         if nightmare_dice > 0:
             # Get current Nightmare rating for reference
-            current_nightmare = self.caller.db.stats.get('pools', {}).get('other', {}).get('Nightmare', {}).get('temp', 0)
-            if not current_nightmare:
-                current_nightmare = self.caller.db.stats.get('pools', {}).get('other', {}).get('Nightmare', {}).get('perm', 0)
+            current_nightmare = self.caller.db.stats.get('pools', {}).get('other', {}).get('Nightmare', {}).get('perm', 0)
 
             # If using forced dice, add them to current rating
             if has_forced_dice:
@@ -329,9 +383,7 @@ class CmdRoll(default_cmds.MuxCommand):
             
             # Update nightmare pool if 10s were rolled
             if nightmare_tens > 0:
-                current_nightmare = self.caller.db.stats.get('pools', {}).get('other', {}).get('Nightmare', {}).get('temp', 0)
-                if not current_nightmare:
-                    current_nightmare = self.caller.db.stats.get('pools', {}).get('other', {}).get('Nightmare', {}).get('perm', 0)
+                current_nightmare = self.caller.db.stats.get('pools', {}).get('other', {}).get('Nightmare', {}).get('perm', 0)
                 new_nightmare = min(10, current_nightmare + nightmare_tens)
                 
                 # Ensure the stats structure exists
@@ -353,9 +405,7 @@ class CmdRoll(default_cmds.MuxCommand):
                     self.caller.db.stats['pools']['other']['Nightmare']['perm'] = 0
                     
                     # Add Willpower Imbalance
-                    current_imbalance = self.caller.db.stats.get('pools', {}).get('other', {}).get('Willpower Imbalance', {}).get('temp', 0)
-                    if not current_imbalance:
-                        current_imbalance = self.caller.db.stats.get('pools', {}).get('other', {}).get('Willpower Imbalance', {}).get('perm', 0)
+                    current_imbalance = self.caller.db.stats.get('pools', {}).get('other', {}).get('Willpower Imbalance', {}).get('perm', 0)
                     
                     new_imbalance = min(10, current_imbalance + 1)
                     
@@ -367,7 +417,7 @@ class CmdRoll(default_cmds.MuxCommand):
                     # Add one point of Glamour
                     if 'pools' in self.caller.db.stats and 'dual' in self.caller.db.stats['pools']:
                         glamour_data = self.caller.db.stats['pools']['dual'].get('Glamour', {})
-                        current_glamour = glamour_data.get('temp', glamour_data.get('perm', 0))
+                        current_glamour = glamour_data.get('temp', 0)
                         max_glamour = glamour_data.get('perm', 0)
                         if current_glamour < max_glamour:
                             self.caller.db.stats['pools']['dual']['Glamour']['temp'] = current_glamour + 1
@@ -383,8 +433,67 @@ class CmdRoll(default_cmds.MuxCommand):
                 description.append(f"|r({nightmare_dice} Nightmare dice)|n")
                 detailed_description.append(f"|r({nightmare_dice} Nightmare dice - {nightmare_rolls})|n")
         else:
-            # For specialty/exploding dice
-            if use_specialty:
+            # For 10s/exploding dice and specialty rolls
+            if use_10s and use_specialty:
+                # Handle combined 10s and specialty
+                all_rolls = []
+                extra_rolls = []
+                extra_successes = 0
+                specialty_bonus = 0
+                
+                # Initial roll
+                initial_rolls, initial_successes, initial_ones = roll_dice(dice_pool, difficulty)
+                all_rolls.extend(initial_rolls)
+                
+                # Count 10s for specialty bonus
+                tens_count = sum(1 for roll in initial_rolls if roll == 10)
+                specialty_bonus = tens_count
+                
+                # Add specialty bonus
+                successes = initial_successes + specialty_bonus
+                ones = initial_ones
+                
+                # Handle exploding 10s - reroll any 10s
+                tens_to_reroll = [i for i, roll in enumerate(initial_rolls) if roll == 10]
+                reroll_generation = 1
+                
+                while tens_to_reroll:
+                    current_rerolls = []
+                    for _ in tens_to_reroll:
+                        roll = randint(1, 10)
+                        current_rerolls.append(roll)
+                        if roll >= difficulty:
+                            extra_successes += 1
+                            successes += 1
+                        # Don't count 1s from rerolls against successes
+                        # Rerolled 1s don't cancel successes in exploding 10s
+                        # Also count 10s in rerolls for specialty
+                        if roll == 10 and use_specialty:
+                            specialty_bonus += 1
+                            successes += 1
+                    
+                    # Add this generation's rolls to the extras
+                    extra_rolls.append(current_rerolls)
+                    
+                    # Check for new 10s to reroll
+                    tens_to_reroll = [i for i, roll in enumerate(current_rerolls) if roll == 10]
+                    reroll_generation += 1
+                
+                # Format rolls for display
+                rolls = initial_rolls
+                
+                # Add exploding 10s info to descriptions
+                if extra_rolls:
+                    flattened_extras = [roll for generation in extra_rolls for roll in generation]
+                    description.append(f"|c(Exploding 10s: +{extra_successes} from rerolls)|n")
+                    detailed_description.append(f"|c(Exploding 10s: {extra_successes} extra successes from {flattened_extras})|n")
+                
+                # Add specialty info to descriptions
+                if specialty_bonus > 0:
+                    description.append(f"|m(Specialty: +{specialty_bonus} from 10s)|n")
+                    detailed_description.append(f"|m(Specialty: {specialty_bonus} extra successes from {tens_count} 10s)|n")
+                                        
+            elif use_10s:
                 all_rolls = []
                 extra_rolls = []
                 extra_successes = 0
@@ -407,8 +516,8 @@ class CmdRoll(default_cmds.MuxCommand):
                         if roll >= difficulty:
                             extra_successes += 1
                             successes += 1
-                        if roll == 1:
-                            ones += 1
+                        # Don't count 1s from rerolls against successes
+                        # Rerolled 1s don't cancel successes in exploding 10s
                     
                     # Add this generation's rolls to the extras
                     extra_rolls.append(current_rerolls)
@@ -420,11 +529,27 @@ class CmdRoll(default_cmds.MuxCommand):
                 # Format rolls for display
                 rolls = initial_rolls
                 
-                # Add specialty info to descriptions
+                # Add exploding 10s info to descriptions
                 if extra_rolls:
                     flattened_extras = [roll for generation in extra_rolls for roll in generation]
-                    description.append(f"|c(Specialty: +{extra_successes} from rerolls)|n")
-                    detailed_description.append(f"|c(Specialty: {extra_successes} extra successes from {flattened_extras})|n")
+                    description.append(f"|c(Exploding 10s: +{extra_successes} from rerolls)|n")
+                    detailed_description.append(f"|c(Exploding 10s: {extra_successes} extra successes from {flattened_extras})|n")
+            
+            elif use_specialty:
+                # Regular roll with specialty (10s count as 2 successes)
+                rolls, base_successes, ones = roll_dice(dice_pool, difficulty)
+                
+                # Count how many 10s were rolled
+                tens_count = sum(1 for roll in rolls if roll == 10)
+                specialty_bonus = tens_count
+                
+                # Add the specialty bonus to successes
+                successes = base_successes + specialty_bonus
+                
+                # Add specialty info to descriptions
+                if specialty_bonus > 0:
+                    description.append(f"|m(Specialty: +{specialty_bonus} from 10s)|n")
+                    detailed_description.append(f"|m(Specialty: {specialty_bonus} extra successes from {tens_count} 10s)|n")
             else:
                 # Regular roll without Nightmare dice or specialty
                 rolls, successes, ones = roll_dice(dice_pool, difficulty)
@@ -438,24 +563,37 @@ class CmdRoll(default_cmds.MuxCommand):
         public_description = " ".join(description)
         private_description = " ".join(detailed_description)
         
+        # For exploding 10s, add the rerolled dice to the result display
+        if use_10s and 'extra_rolls' in locals() and extra_rolls:
+            # Format each generation of rerolls
+            reroll_generations = []
+            for i, gen_rolls in enumerate(extra_rolls):
+                if gen_rolls:  # Only add non-empty generations
+                    reroll_generations.append(f"Roll {i+1}: [{' '.join(str(r) for r in gen_rolls)}]")
+            
+            if reroll_generations:
+                reroll_display = f" -> {' -> '.join(reroll_generations)}"
+            else:
+                reroll_display = ""
+        else:
+            reroll_display = ""
+            
         public_output = f"|rRoll>|n {self.caller.db.gradient_name or self.caller.key} |yrolls |n{public_description} |yvs {difficulty} |r=>|n {result}"
-        private_output = f"|rRoll> |yYou roll |n{private_description} |yvs {difficulty} |r=>|n {result}"
-        builder_output = f"|rRoll> |n{self.caller.db.gradient_name or self.caller.key} rolls {private_description} |yvs {difficulty}|r =>|n {result}"
+        private_output = f"|rRoll> |yYou roll |n{private_description} |yvs {difficulty} |r=>|n {result}{reroll_display}"
+        builder_output = f"|rRoll> |n{self.caller.db.gradient_name or self.caller.key} rolls {private_description} |yvs {difficulty}|r =>|n {result}{reroll_display}"
 
-        # Send outputs
+        # Always send the result to the roller
         self.caller.msg(private_output)
         if warnings:
-            self.caller.msg("\n".join(warnings))
+            # Filter out health penalty warnings when this is a reflexive action
+            if use_reflexive:
+                filtered_warnings = [w for w in warnings if "health penalties" not in w.lower()]
+                if filtered_warnings:
+                    self.caller.msg("\n".join(filtered_warnings))
+            else:
+                self.caller.msg("\n".join(warnings))
 
-        # Send builder to builders, and public to everyone else
-        for obj in self.caller.location.contents:
-            if inherits_from(obj, "typeclasses.characters.Character") and obj != self.caller:
-                if obj.locks.check_lockstring(obj, "perm(Builder)"):
-                    obj.msg(builder_output)
-                else:
-                    obj.msg(public_output)
-
-        # After sending outputs and before logging, handle job comment if needed
+        # Handle job comment if needed
         if job_id is not None:
             try:
                 job = Job.objects.get(id=job_id)
@@ -479,17 +617,43 @@ class CmdRoll(default_cmds.MuxCommand):
                 # Only send the roll result to the caller when rolling to a job
                 self.caller.msg(f"Roll result added as comment to job #{job_id}.")
                 
+                # Post to the jobs channel
+                self.post_to_jobs_channel(self.caller.name, job_id, "added a roll to")
+                
                 # Send mail notification to all participants about the roll
                 self.send_mail_to_all_participants(job, f"{self.caller.name} has added a roll to Job #{job_id}: {comment_text}")
                 
-                # Don't log the roll to the room if it's to a job
+                # Log the roll but don't announce it to the room when --job is used
+                try:
+                    # Format the log description to include total dice count
+                    log_description = f"Rolling {dice_pool} dice vs {difficulty} (to job #{job_id})"
+                    # Initialize roll_log if it doesn't exist
+                    if not hasattr(self.caller.location.db, 'roll_log') or self.caller.location.db.roll_log is None:
+                        self.caller.location.db.roll_log = []
+                    self.caller.location.log_roll(self.caller.key, log_description, result)
+                except Exception as e:
+                    # Log the error but don't let it interrupt the roll command
+                    self.caller.msg("|rWarning: Could not log roll.|n")
+                    print(f"Roll logging error: {e}")
+                
+                # Return early to prevent room announcement
                 return
+                
             except Job.DoesNotExist:
                 self.caller.msg(f"Error: Job #{job_id} not found.")
             except Exception as e:
                 self.caller.msg(f"|rError adding comment to job: {str(e)}|n")
 
-        # After processing the roll, log it
+        # Only send to the room if not rolling to a job
+        # Send builder view to builders, and public view to everyone else
+        for obj in self.caller.location.contents:
+            if inherits_from(obj, "typeclasses.characters.Character") and obj != self.caller:
+                if obj.locks.check_lockstring(obj, "perm(Builder)"):
+                    obj.msg(builder_output)
+                else:
+                    obj.msg(public_output)
+
+        # Log the room roll
         try:
             # Format the log description to include total dice count
             log_description = f"Rolling {dice_pool} dice vs {difficulty}"
@@ -504,42 +668,132 @@ class CmdRoll(default_cmds.MuxCommand):
             
     def send_mail_to_all_participants(self, job, message):
         """Send a mail notification to all participants in a job."""
+        from evennia.utils import logger
+        
         # Collect all unique accounts involved with the job
         participants = set()
+        staff_participants = set()
         
         # Add requester if exists
         if job.requester:
-            participants.add(job.requester)
+            try:
+                if job.requester.check_permstring("Admin"):
+                    staff_participants.add(job.requester)
+                else:
+                    participants.add(job.requester)
+            except Exception as e:
+                logger.log_err(f"Error checking requester permission: {str(e)}")
             
         # Add assignee if exists
         if job.assignee:
-            participants.add(job.assignee)
+            try:
+                if job.assignee.check_permstring("Admin"):
+                    staff_participants.add(job.assignee)
+                else:
+                    participants.add(job.assignee)
+            except Exception as e:
+                logger.log_err(f"Error checking assignee permission: {str(e)}")
             
-        # Add all participants
-        for participant in job.participants.all():
-            participants.add(participant)
+        # Add all participants - use try/except to handle potential errors
+        try:
+            for participant in job.participants.all():
+                try:
+                    if participant.check_permstring("Admin"):
+                        staff_participants.add(participant)
+                    else:
+                        participants.add(participant)
+                except Exception as e:
+                    # If we can't check permissions, default to treating as regular participant
+                    participants.add(participant)
+                    logger.log_err(f"Error checking participant permission: {str(e)}")
+        except Exception as e:
+            logger.log_err(f"Error accessing job participants: {str(e)}")
             
         # Remove the caller to avoid self-notification
-        if self.caller.account in participants:
-            participants.remove(self.caller.account)
+        try:
+            if self.caller.account in participants:
+                participants.remove(self.caller.account)
+        except Exception as e:
+            logger.log_err(f"Error removing caller from participants: {str(e)}")
+        
+        try:
+            if self.caller.account in staff_participants:
+                staff_participants.remove(self.caller.account)
+        except Exception as e:
+            logger.log_err(f"Error removing caller from staff participants: {str(e)}")
             
-        # Send mail to each participant
-        for participant in participants:
+        # First handle staff notifications (direct message, no mail)
+        for staff in staff_participants:
             try:
-                subject = f"Job #{job.id} Update"
-                mail_body = f"Job #{job.id}: {job.title}\n\n{message}"
-                
-                # Use the mail command's proper format
-                mail_cmd = f"@mail {participant.username}={subject}/{mail_body}"
-                self.caller.execute_cmd(mail_cmd)
+                if staff.is_connected:
+                    # Send a direct notification about the job update
+                    action_by = self.caller.name if hasattr(self.caller, 'name') else self.caller.key
+                    for session in staff.sessions.all():
+                        session.msg(f"|yA roll has been posted by {action_by} on Job #{job.id}.|n")
             except Exception as e:
-                self.caller.msg(f"Failed to send notification to {participant.username}: {str(e)}")
+                logger.log_err(f"Error sending staff notification: {str(e)}")
+            
+        # If we don't have any non-staff recipients, return early
+        if not participants:
+            return
+            
+        # Send mail to non-staff participants using the proper mail API
+        try:
+            subject = f"Job #{job.id} Update"
+            mail_body = f"Job #{job.id}: {job.title}\n\n{message}"
+            
+            from evennia.utils import create
+            
+            # Create and send mail to each participant
+            participant_names = []
+            success_count = 0
+            
+            for participant in participants:
+                if not participant.username:
+                    logger.log_err(f"Participant has no username, skipping")
+                    continue
+                
+                try:
+                    # Create a mail message
+                    new_mail = create.create_message(
+                        self.caller.account,  # sender
+                        mail_body,            # message
+                        receivers=participant, # receiver
+                        header=subject        # subject
+                    )
+                    
+                    if not new_mail:
+                        logger.log_err(f"Failed to create message for {participant.username}")
+                        continue
+                        
+                    # Tag it as new
+                    new_mail.tags.add("new", category="mail")
+                    
+                    participant_names.append(participant.username)
+                    success_count += 1
+                    
+                    # If participant is online, notify them directly
+                    if participant.is_connected:
+                        # Notify the connected player directly that they have mail
+                        for session in participant.sessions.all():
+                            session.msg(f"|yYou have received new mail about job #{job.id}. Type '@mail' to view.|n")
+                    
+                except Exception as e:
+                    logger.log_err(f"Error sending to {participant.username}: {str(e)}")
+            
+            if participant_names:
+                self.caller.msg(f"Roll notification sent to: {', '.join(participant_names)}")
+            
+        except Exception as e:
+            logger.log_err(f"Failed to send job notifications: {str(e)}")
+            self.caller.msg(f"Failed to send notifications: {str(e)}")
 
     def get_stat_value_and_name(self, stat_name):
         """
         Retrieve the value and full name of a stat for the character by searching the character's stats.
         Uses fuzzy matching to handle abbreviations and partial matches.
         Always uses 'temp' value if available, otherwise uses 'perm'.
+        For pools, always use 'perm' value.
         """
         if not inherits_from(self.caller, "typeclasses.characters.Character"):
             self.caller.msg("Error: This command can only be used by characters.")
@@ -573,6 +827,21 @@ class CmdRoll(default_cmds.MuxCommand):
                     if 'temp' in stat_data and stat_data['temp'] != 0:
                         return stat_data['temp'], capitalized_name
                     return stat_data.get('perm', 0), capitalized_name
+
+        # Check if this is a pool stat - for pools, always use 'perm' value
+        is_pool = False
+        
+        # Check in dual pools
+        if 'pools' in character_stats and 'dual' in character_stats['pools'] and capitalized_name in character_stats['pools']['dual']:
+            is_pool = True
+            pool_data = character_stats['pools']['dual'][capitalized_name]
+            return pool_data.get('perm', 0), capitalized_name
+            
+        # Check in other pools
+        if 'pools' in character_stats and 'other' in character_stats['pools'] and capitalized_name in character_stats['pools']['other']:
+            is_pool = True
+            pool_data = character_stats['pools']['other'][capitalized_name]
+            return pool_data.get('perm', 0), capitalized_name
 
         # First try exact match in the most relevant category based on splat
         if splat.lower() == 'changeling':
@@ -666,6 +935,10 @@ class CmdRoll(default_cmds.MuxCommand):
                 continue  # Skip here, we already handled secondary abilities
             for stat_type, stats in cat_stats.items():
                 for stat, stat_data in stats.items():
+                    # Skip pools as we already handled them separately
+                    if category == 'pools':
+                        continue
+                        
                     normalized_name = stat.lower()
                     normalized_nospace_name = normalized_name.replace('-', '').replace(' ', '')
                     all_stats.append((normalized_name, normalized_nospace_name, stat, category, stat_type, stat_data))
@@ -694,6 +967,20 @@ class CmdRoll(default_cmds.MuxCommand):
             if 'temp' in stat_data:
                 return stat_data['temp'], full_name
             return stat_data.get('perm', 0), full_name
+
+        # Try checking for pools again by prefix matching
+        if 'pools' in character_stats:
+            for pool_type in ['dual', 'other']:
+                if pool_type in character_stats['pools']:
+                    for pool_name, pool_data in character_stats['pools'][pool_type].items():
+                        pool_normalized = pool_name.lower()
+                        pool_normalized_nospace = pool_normalized.replace('-', '').replace(' ', '')
+                        
+                        if pool_normalized == normalized_input or pool_normalized_nospace == normalized_nospace:
+                            return pool_data.get('perm', 0), pool_name
+                        
+                        if pool_normalized.startswith(normalized_input) or pool_normalized_nospace.startswith(normalized_nospace):
+                            return pool_data.get('perm', 0), pool_name
 
         # If still no match, return with proper capitalization
         return 0, capitalized_name
@@ -753,6 +1040,10 @@ class CmdRoll(default_cmds.MuxCommand):
         # Get the current injury level
         injury_level = character.db.injury_level or "Healthy"
         
+        # Note: We'll handle reflexive actions in the main func method
+        # so that the penalty calculation is available but we can choose
+        # not to apply it
+                
         # Apply penalty based on injury level
         if injury_level == "Healthy" or injury_level == "Bruised":
             return 0
@@ -766,3 +1057,38 @@ class CmdRoll(default_cmds.MuxCommand):
             return total_health  # Effectively prevents any dice rolling
         
         return 0
+
+    def post_to_jobs_channel(self, player_name, job_id, action):
+        """Post a message to the Jobs channel for admin visibility."""
+        from evennia.comms.models import ChannelDB
+        from evennia.utils import create
+        from evennia.utils import logger
+        
+        channel_names = ["Jobs", "Requests", "Req"]
+        channel = None
+
+        for name in channel_names:
+            found_channel = ChannelDB.objects.channel_search(name)
+            if found_channel:
+                # Check if the channel has the correct locks for admin-only viewing
+                if found_channel[0].locks.check_lockstring(found_channel[0], "listen:perm(Admin)"):
+                    channel = found_channel[0]
+                    break
+                else:
+                    # Update locks to ensure admin-only access
+                    found_channel[0].locks.add("listen:perm(Admin)")
+                    channel = found_channel[0]
+                    break
+
+        if not channel:
+            # Create channel with admin-only permissions
+            channel = create.create_channel(
+                "Jobs",
+                typeclass="typeclasses.channels.Channel",
+                locks="control:perm(Admin);listen:perm(Admin);send:perm(Admin)"
+            )
+            # Subscribe the creator after channel is created
+            channel.connect(self.caller)
+
+        message = f"{player_name} {action} Job #{job_id}"
+        channel.msg(f"[Job System] {message}")

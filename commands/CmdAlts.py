@@ -114,10 +114,34 @@ class CmdAlts(default_cmds.MuxCommand):
     
     def list_own_alts(self):
         """List the caller's own alts."""
+        from evennia.utils import logger
         caller = self.caller
         
+        # Force refresh from database to ensure we have the most current data
+        caller.flush_from_cache(force=True)
+        
         # Get the list of alts from the caller's attributes
-        alts = caller.db.public_alts or []
+        alts = caller.attributes.get('public_alts', [])
+        logger.log_info(f"{caller.name}'s public_alts attribute before check: {alts}")
+        
+        # Check if alts need to be converted to a list (don't reset if it's already list-like)
+        try:
+            # Try to iterate and access elements like a list
+            list_like = hasattr(alts, '__iter__') and hasattr(alts, '__getitem__')
+            if not list_like or not alts:
+                # Only reset if not list-like at all
+                alts = []
+                logger.log_info(f"Initializing {caller.name}'s public_alts as empty list")
+                caller.attributes.add('public_alts', alts)
+                caller.save()
+        except Exception as e:
+            logger.log_err(f"Error checking alts list type: {e}")
+            alts = []
+            caller.attributes.add('public_alts', alts)
+            caller.save()
+            
+        # Log what we found for debugging
+        logger.log_info(f"{caller.name}'s public_alts attribute after check: {alts}")
         
         # Get blocked list
         blocks = caller.attributes.get('alt_blocks', [])
@@ -173,6 +197,7 @@ class CmdAlts(default_cmds.MuxCommand):
     
     def list_public_alts(self):
         """List another character's public alts."""
+        from evennia.utils import logger
         caller = self.caller
         args = self.args.strip()
         
@@ -187,8 +212,31 @@ class CmdAlts(default_cmds.MuxCommand):
             
         target = target[0]  # Get the first (and only) match
         
+        # Force refresh from database to ensure we have the most current data
+        target.flush_from_cache(force=True)
+        
         # Get the list of alts from the target's attributes
-        alts = target.db.public_alts or []
+        alts = target.attributes.get('public_alts', [])
+        logger.log_info(f"{target.name}'s public_alts attribute before check: {alts}")
+        
+        # Check if alts need to be converted to a list (don't reset if it's already list-like)
+        try:
+            # Try to iterate and access elements like a list
+            list_like = hasattr(alts, '__iter__') and hasattr(alts, '__getitem__')
+            if not list_like or not alts:
+                # Only reset if not list-like at all
+                alts = []
+                logger.log_info(f"Initializing {target.name}'s public_alts as empty list")
+                target.attributes.add('public_alts', alts)
+                target.save()
+        except Exception as e:
+            logger.log_err(f"Error checking alts list type: {e}")
+            alts = []
+            target.attributes.add('public_alts', alts)
+            target.save()
+            
+        # Log what we found for debugging
+        logger.log_info(f"{target.name}'s public_alts attribute after check: {alts}")
         
         # Build the display
         total_width = 78
@@ -317,14 +365,20 @@ class CmdAlts(default_cmds.MuxCommand):
             caller.msg("You cannot add a staff character as your alt.")
             return
         
-        # Initialize public_alts attribute if it doesn't exist
-        if not caller.db.public_alts:
-            caller.db.public_alts = []
-        if not target.db.public_alts:
-            target.db.public_alts = []
+        # Get current alt lists and ensure they're properly initialized
+        caller.flush_from_cache(force=True)
+        target.flush_from_cache(force=True)
+        
+        caller_alts = caller.attributes.get('public_alts', [])
+        if not isinstance(caller_alts, list):
+            caller_alts = []
+            
+        target_alts = target.attributes.get('public_alts', [])
+        if not isinstance(target_alts, list):
+            target_alts = []
         
         # Check if the character is already in the list
-        if target.name in caller.db.public_alts:
+        if target.name in caller_alts:
             caller.msg(f"{target.name} is already listed as your alt.")
             return
               
@@ -365,6 +419,10 @@ class CmdAlts(default_cmds.MuxCommand):
         # Log the storage operation
         logger.log_info(f"Saved pending request for {target.name}: {pending_requests}")
         logger.log_info(f"Verifying target's pending requests: {target.attributes.get('pending_alt_requests')}")
+        
+        # Force immediate saves to ensure persistence
+        caller.save()
+        target.save()
         
         # Send mail to the target using @mail command (like jobs system)
         try:
@@ -420,12 +478,51 @@ This request will expire in 7 days.
         if not args:
             caller.msg("Usage: +alts/confirm <code>")
             return
-            
-        # Retrieve pending alt requests and validate the confirmation code
-        pending_requests = caller.attributes.get("pending_alt_requests", {})
-        logger.log_info(f"{caller.name} has {len(pending_requests)} pending alt requests")
         
-        if not pending_requests:
+        # Force refresh from database to ensure we have the most current data
+        caller.flush_from_cache(force=True)
+            
+        # Retrieve pending alt requests using both method - attribute API and direct DB query
+        pending_requests = caller.attributes.get("pending_alt_requests", {})
+        
+        # Debug dump of the exact pending_requests value
+        logger.log_info(f"PENDING REQUESTS DUMP: type={type(pending_requests)}, value={pending_requests!r}")
+        
+        # Try using direct DB query as a backup
+        try:
+            from evennia.utils.dbserialize import deserialize
+            from evennia.typeclasses.attributes import Attribute
+            
+            db_attr = Attribute.objects.filter(
+                db_key='pending_alt_requests',
+                objectdb=caller.id
+            ).first()
+            
+            if db_attr:
+                try:
+                    db_value = deserialize(db_attr.db_value)
+                    logger.log_info(f"DB direct query for pending_alt_requests: {db_value}")
+                    logger.log_info(f"DB value type: {type(db_value)}")
+                    
+                    # If the attribute API didn't return a proper dict but DB has data, use the DB data
+                    if not isinstance(pending_requests, dict) or not pending_requests:
+                        if isinstance(db_value, dict) and db_value:
+                            logger.log_info(f"Using DB value instead of attribute API value")
+                            pending_requests = db_value
+                except Exception as e:
+                    logger.log_err(f"Error deserializing pending_alt_requests: {e}")
+        except Exception as e:
+            logger.log_err(f"Error querying database: {e}")
+        
+        # Check if we have any pending requests
+        have_requests = False
+        if isinstance(pending_requests, dict) and pending_requests:
+            have_requests = True
+            logger.log_info(f"{caller.name} has {len(pending_requests)} pending alt requests")
+        else:
+            logger.log_info(f"{caller.name} does not have any valid pending alt requests. Got: {type(pending_requests)} - {pending_requests}")
+        
+        if not have_requests:
             caller.msg("You have no pending alt requests to confirm.")
             return
             
@@ -433,14 +530,20 @@ This request will expire in 7 days.
         logger.log_info(f"Pending alt requests for {caller.name}: {pending_requests}")
         
         # Find the requester who sent this confirmation code
-        confirmation_code = args
+        confirmation_code = args.strip().upper()  # Normalize the code
         requester_name = None
         request_data = None
         
         # Detailed logging of each pending request for debugging
         for name, req in pending_requests.items():
             logger.log_info(f"Checking request from {name}: {req}")
-            stored_code = req.get("code")
+            
+            # Safety check - ensure req is a dict
+            if not isinstance(req, dict):
+                logger.log_err(f"Invalid request format from {name}: {req}")
+                continue
+                
+            stored_code = req.get("code", "").strip().upper()  # Normalize for comparison
             logger.log_info(f"Stored code: {stored_code}, User entered: {confirmation_code}")
             
             if stored_code == confirmation_code:
@@ -454,7 +557,7 @@ This request will expire in 7 days.
             logger.log_info(f"{caller.name} attempted to confirm with invalid code: {confirmation_code}")
             
             # List available codes to help debugging
-            available_codes = [req.get("code", "NO_CODE") for req in pending_requests.values()]
+            available_codes = [req.get("code", "NO_CODE") for req in pending_requests.values() if isinstance(req, dict)]
             logger.log_info(f"Available codes: {available_codes}")
             return
             
@@ -466,18 +569,53 @@ This request will expire in 7 days.
             caller.msg(f"Error: Could not find character '{requester_name}'. The alt confirmation failed.")
             logger.log_err(f"Cannot find requester '{requester_name}' for alt confirmation")
             return
-            
+         
+        # Log what we're about to do
+        logger.log_info(f"About to process confirmation: {caller.name} confirming {requester_name} as alt")
+
         # Process the confirmation
-        success = self._process_alt_confirmation(caller, requester, request_data)
+        try:
+            success = self._process_alt_confirmation(caller, requester, request_data)
         
-        if success:
-            caller.msg(f"You have confirmed {requester.name} as your alt. You are now linked as alts.")
-            # Force save to ensure persistence
-            caller.save()
-            requester.save()
-            logger.log_info(f"Successfully confirmed and saved alt relationship between {caller.name} and {requester.name}")
-        else:
-            caller.msg(f"There was a problem confirming {requester.name} as your alt. Please contact staff.")
+            if success:
+                # Force-check the alts list to verify it was saved properly
+                caller_alts = caller.attributes.get('public_alts', [])
+                logger.log_info(f"After confirmation, {caller.name}'s alts: {caller_alts}")
+                requester_alts = requester.attributes.get('public_alts', [])
+                logger.log_info(f"After confirmation, {requester.name}'s alts: {requester_alts}")
+                
+                # Clear the pending request
+                try:
+                    # Clean up the pending request using direct attribute manipulation
+                    pending_requests = caller.attributes.get("pending_alt_requests", {})
+                    if isinstance(pending_requests, dict) and requester_name in pending_requests:
+                        del pending_requests[requester_name]
+                        logger.log_info(f"Successfully removed {requester_name} from pending requests")
+                        caller.attributes.add("pending_alt_requests", pending_requests)
+                        caller.save()
+                    
+                    # Clean up the outgoing request on the requester side
+                    outgoing_requests = requester.attributes.get("outgoing_alt_requests", {})
+                    if isinstance(outgoing_requests, dict) and caller.name in outgoing_requests:
+                        del outgoing_requests[caller.name]
+                        logger.log_info(f"Successfully removed {caller.name} from outgoing requests")
+                        requester.attributes.add("outgoing_alt_requests", outgoing_requests)
+                        requester.save()
+                except Exception as e:
+                    logger.log_err(f"Error cleaning up requests: {e}")
+                
+                caller.msg(f"You have confirmed {requester.name} as your alt. You are now linked as alts.")
+                # Force save to ensure persistence
+                caller.save()
+                requester.save()
+                logger.log_info(f"Successfully confirmed and saved alt relationship between {caller.name} and {requester.name}")
+            else:
+                caller.msg(f"There was a problem confirming {requester.name} as your alt. Please contact staff.")
+        except Exception as e:
+            caller.msg(f"Error processing alt confirmation: {e}")
+            logger.log_err(f"Exception in confirming alt: {e}")
+            import traceback
+            logger.log_err(traceback.format_exc())
     
     def _process_alt_confirmation(self, confirmer, requester, request):
         """
@@ -497,16 +635,94 @@ This request will expire in 7 days.
         logger.log_info(f"Request data: {request}")
         
         try:
-            # Get alt lists for both characters, initializing if needed
-            confirmer_alts = confirmer.db.public_alts or []
-            if not isinstance(confirmer_alts, list):
-                confirmer_alts = []
-                logger.log_info(f"Initializing empty public_alts list for {confirmer.name}")
+            # Explicitly load current alt lists from the database to ensure we have the latest data
+            confirmer.flush_from_cache(force=True)
+            requester.flush_from_cache(force=True)
+            
+            # Get alt lists for both characters directly from attributes
+            # First check directly from database to ensure we're getting the most current data
+            from evennia.utils.dbserialize import deserialize
+            from evennia.typeclasses.attributes import Attribute
+            
+            # Try to get the confirmer's alts directly from the database
+            db_confirmer_attr = Attribute.objects.filter(
+                db_key='public_alts',
+                objectdb=confirmer.id
+            ).first()
+            
+            if db_confirmer_attr:
+                try:
+                    db_confirmer_alts = deserialize(db_confirmer_attr.db_value)
+                    logger.log_info(f"DB direct query for {confirmer.name}'s alts: {db_confirmer_alts}")
+                except Exception as e:
+                    logger.log_err(f"Error deserializing {confirmer.name}'s alts: {e}")
+                    db_confirmer_alts = None
+            else:
+                logger.log_info(f"No public_alts attribute found directly in DB for {confirmer.name}")
+                db_confirmer_alts = None
                 
-            requester_alts = requester.db.public_alts or []
-            if not isinstance(requester_alts, list):
-                requester_alts = []
-                logger.log_info(f"Initializing empty public_alts list for {requester.name}")
+            # Try to get the requester's alts directly from the database
+            db_requester_attr = Attribute.objects.filter(
+                db_key='public_alts',
+                objectdb=requester.id
+            ).first()
+            
+            if db_requester_attr:
+                try:
+                    db_requester_alts = deserialize(db_requester_attr.db_value)
+                    logger.log_info(f"DB direct query for {requester.name}'s alts: {db_requester_alts}")
+                except Exception as e:
+                    logger.log_err(f"Error deserializing {requester.name}'s alts: {e}")
+                    db_requester_alts = None
+            else:
+                logger.log_info(f"No public_alts attribute found directly in DB for {requester.name}")
+                db_requester_alts = None
+            
+            # Now get via the normal attribute API
+            confirmer_alts = confirmer.attributes.get('public_alts', [])
+            logger.log_info(f"Initial confirmer alts via API: {confirmer_alts}")
+            
+            # Check if we need to convert or initialize the confirmer's alts list
+            if db_confirmer_alts and (not confirmer_alts or not isinstance(confirmer_alts, list)):
+                # Use DB results if better than what we got from the API
+                logger.log_info(f"Using DB-queried alts for {confirmer.name}")
+                confirmer_alts = db_confirmer_alts
+            elif not isinstance(confirmer_alts, list):
+                # Try to convert to list if it's list-like
+                try:
+                    if hasattr(confirmer_alts, '__iter__') and hasattr(confirmer_alts, '__getitem__'):
+                        # It's list-like, convert it to a proper list
+                        confirmer_alts = list(confirmer_alts)
+                    else:
+                        # Not list-like, initialize as empty
+                        confirmer_alts = []
+                        logger.log_info(f"Initializing empty public_alts list for {confirmer.name}")
+                except Exception:
+                    confirmer_alts = []
+                    logger.log_info(f"Initializing empty public_alts list for {confirmer.name}")
+            
+            # Get requester's alts
+            requester_alts = requester.attributes.get('public_alts', [])
+            logger.log_info(f"Initial requester alts via API: {requester_alts}")
+            
+            # Check if we need to convert or initialize the requester's alts list
+            if db_requester_alts and (not requester_alts or not isinstance(requester_alts, list)):
+                # Use DB results if better than what we got from the API
+                logger.log_info(f"Using DB-queried alts for {requester.name}")
+                requester_alts = db_requester_alts
+            elif not isinstance(requester_alts, list):
+                # Try to convert to list if it's list-like
+                try:
+                    if hasattr(requester_alts, '__iter__') and hasattr(requester_alts, '__getitem__'):
+                        # It's list-like, convert it to a proper list
+                        requester_alts = list(requester_alts)
+                    else:
+                        # Not list-like, initialize as empty
+                        requester_alts = []
+                        logger.log_info(f"Initializing empty public_alts list for {requester.name}")
+                except Exception:
+                    requester_alts = []
+                    logger.log_info(f"Initializing empty public_alts list for {requester.name}")
                 
             # Add each character to the other's alt list if not already present
             if confirmer.name not in requester_alts:
@@ -521,27 +737,56 @@ This request will expire in 7 days.
             else:
                 logger.log_info(f"{requester.name} already in {confirmer.name}'s public_alts list")
                 
+            # Log the final alt lists before saving
+            logger.log_info(f"FINAL ALT LIST FOR {confirmer.name}: {confirmer_alts}")
+            logger.log_info(f"FINAL ALT LIST FOR {requester.name}: {requester_alts}")
+                
             # Clean up pending requests for confirmer
             pending_requests = confirmer.attributes.get("pending_alt_requests", {})
-            if requester.name in pending_requests:
+            if isinstance(pending_requests, dict) and requester.name in pending_requests:
+                # Just remove the specific entry, not the whole dict
                 del pending_requests[requester.name]
                 logger.log_info(f"Removed pending request from {requester.name} in {confirmer.name}'s list")
                 confirmer.attributes.add("pending_alt_requests", pending_requests)
                 
             # Clean up outgoing requests for requester
             outgoing_requests = requester.attributes.get("outgoing_alt_requests", {})
-            if confirmer.name in outgoing_requests:
+            if isinstance(outgoing_requests, dict) and confirmer.name in outgoing_requests:
+                # Just remove the specific entry, not the whole dict
                 del outgoing_requests[confirmer.name]
                 logger.log_info(f"Removed outgoing request to {confirmer.name} in {requester.name}'s list")
                 requester.attributes.add("outgoing_alt_requests", outgoing_requests)
                 
-            # Save updated alt lists to both characters using db
-            confirmer.db.public_alts = confirmer_alts
-            requester.db.public_alts = requester_alts
+            # Save updated alt lists to both characters using attributes.add for consistency
+            logger.log_info(f"Saving {confirmer.name}'s alts. List has {len(confirmer_alts)} alts: {confirmer_alts}")
+            logger.log_info(f"Saving {requester.name}'s alts. List has {len(requester_alts)} alts: {requester_alts}")
             
-            # Force saves to ensure persistence
+            # Important: Use attributes.add to ensure values are saved to the database
+            confirmer.attributes.add('public_alts', confirmer_alts)
+            requester.attributes.add('public_alts', requester_alts)
+            
+            # Log all alt-related attributes for debugging
+            logger.log_info(f"==== ATTRIBUTE DUMP ====")
+            logger.log_info(f"Confirmer {confirmer.name} all attributes: {confirmer.attributes.all()}")
+            logger.log_info(f"Requester {requester.name} all attributes: {requester.attributes.all()}")
+            
+            # Verify that the attributes were properly set
+            confirmer_check = confirmer.attributes.get('public_alts', [])
+            requester_check = requester.attributes.get('public_alts', [])
+            logger.log_info(f"After setting, confirmer {confirmer.name}'s alts are: {confirmer_check}")
+            logger.log_info(f"After setting, requester {requester.name}'s alts are: {requester_check}")
+            
+            # Force-save the entire character objects
             confirmer.save()
             requester.save()
+            
+            # Perform a final verification that attributes were saved
+            confirmer.flush_from_cache(force=True)
+            requester.flush_from_cache(force=True)
+            final_confirmer_alts = confirmer.attributes.get('public_alts', [])
+            final_requester_alts = requester.attributes.get('public_alts', [])
+            logger.log_info(f"FINAL CHECK - confirmer {confirmer.name}'s alts: {final_confirmer_alts}")
+            logger.log_info(f"FINAL CHECK - requester {requester.name}'s alts: {final_requester_alts}")
             
             # Notify the requester that their alt was confirmed, if they're online
             if requester.has_account and requester.sessions.count() > 0:
@@ -622,11 +867,51 @@ This request will expire in 7 days.
         from time import time
         from evennia.utils import logger
         
+        # Force refresh from database to ensure we have the most current data
+        caller.flush_from_cache(force=True)
+        
         # Check incoming requests - use attributes.get for consistency
         has_pending = False
         pending_msg = "Pending Alt Requests:\n"
         
+        # Get pending requests and debug their state
         pending_requests = caller.attributes.get('pending_alt_requests', {})
+        logger.log_info(f"==== PENDING REQUESTS DEBUG ====")
+        logger.log_info(f"Type: {type(pending_requests)}")
+        logger.log_info(f"Raw value: {pending_requests!r}")
+        logger.log_info(f"Dict check: {isinstance(pending_requests, dict)}")
+        logger.log_info(f"Boolean check: {bool(pending_requests)}")
+        if isinstance(pending_requests, dict):
+            logger.log_info(f"Length: {len(pending_requests)}")
+            logger.log_info(f"Keys: {list(pending_requests.keys())}")
+        
+        # Try using direct DB query
+        try:
+            from evennia.utils.dbserialize import deserialize
+            from evennia.typeclasses.attributes import Attribute
+            
+            db_attr = Attribute.objects.filter(
+                db_key='pending_alt_requests',
+                objectdb=caller.id
+            ).first()
+            
+            if db_attr:
+                try:
+                    db_value = deserialize(db_attr.db_value)
+                    logger.log_info(f"DB direct query: {db_value}")
+                    logger.log_info(f"DB value type: {type(db_value)}")
+                    
+                    # If the attribute API didn't return a proper dict but DB has data, use the DB data
+                    if not isinstance(pending_requests, dict) or not pending_requests:
+                        if isinstance(db_value, dict) and db_value:
+                            logger.log_info(f"Using DB value instead of attribute API value")
+                            pending_requests = db_value
+                except Exception as e:
+                    logger.log_err(f"Error deserializing pending_alt_requests: {e}")
+        except Exception as e:
+            logger.log_err(f"Error querying database: {e}")
+        
+        # Now process the pending requests
         if isinstance(pending_requests, dict) and pending_requests:
             has_pending = True
             pending_msg += "\nIncoming Requests:\n"
@@ -643,8 +928,34 @@ This request will expire in 7 days.
                 code = request.get('code', 'NO_CODE')
                 pending_msg += f"• {requester} (requested {time_str}) - Code: {code}\n"
         
-        # Check outgoing requests
+        # Check outgoing requests 
         outgoing_requests = caller.attributes.get('outgoing_alt_requests', {})
+        logger.log_info(f"==== OUTGOING REQUESTS DEBUG ====")
+        logger.log_info(f"Type: {type(outgoing_requests)}")
+        logger.log_info(f"Raw value: {outgoing_requests!r}")
+        
+        # Try using direct DB query for outgoing requests
+        try:
+            db_attr = Attribute.objects.filter(
+                db_key='outgoing_alt_requests',
+                objectdb=caller.id
+            ).first()
+            
+            if db_attr:
+                try:
+                    db_value = deserialize(db_attr.db_value)
+                    logger.log_info(f"DB direct query for outgoing: {db_value}")
+                    
+                    # If the attribute API didn't return a proper dict but DB has data, use the DB data
+                    if not isinstance(outgoing_requests, dict) or not outgoing_requests:
+                        if isinstance(db_value, dict) and db_value:
+                            logger.log_info(f"Using DB value instead of attribute API value for outgoing")
+                            outgoing_requests = db_value
+                except Exception as e:
+                    logger.log_err(f"Error deserializing outgoing_alt_requests: {e}")
+        except Exception as e:
+            logger.log_err(f"Error querying database for outgoing requests: {e}")
+        
         if isinstance(outgoing_requests, dict) and outgoing_requests:
             has_pending = True
             pending_msg += "\nOutgoing Requests:\n"
@@ -680,7 +991,9 @@ This request will expire in 7 days.
             return
         
         # Get the list of alts from the caller's attributes
-        alts = caller.db.public_alts or []
+        alts = caller.attributes.get('public_alts', [])
+        if not isinstance(alts, list):
+            alts = []
         
         # Check if the character is in the list
         if args not in alts:
@@ -689,16 +1002,19 @@ This request will expire in 7 days.
         
         # Remove the character from the caller's alts
         alts.remove(args)
-        caller.db.public_alts = alts
+        caller.attributes.add('public_alts', alts)
         
         # Try to find the target character to remove the two-way relationship
         target = search_object(args, typeclass="typeclasses.characters.Character")
         if target and len(target) == 1:
             target = target[0]
-            target_alts = target.db.public_alts or []
+            target_alts = target.attributes.get('public_alts', [])
+            if not isinstance(target_alts, list):
+                target_alts = []
+                
             if caller.name in target_alts:
                 target_alts.remove(caller.name)
-                target.db.public_alts = target_alts
+                target.attributes.add('public_alts', target_alts)
                 target.msg(f"{caller.name} has removed you from their list of alts.")
         
         caller.msg(f"Removed {args} from your list of alts.")
@@ -804,16 +1120,22 @@ This request will expire in 7 days.
         character2 = character2[0]
         
         # Remove from first character's alt list
-        char1_alts = character1.db.public_alts or []
+        char1_alts = character1.attributes.get('public_alts', [])
+        if not isinstance(char1_alts, list):
+            char1_alts = []
+            
         if character2.name in char1_alts:
             char1_alts.remove(character2.name)
-            character1.db.public_alts = char1_alts
+            character1.attributes.add('public_alts', char1_alts)
         
         # Remove from second character's alt list
-        char2_alts = character2.db.public_alts or []
+        char2_alts = character2.attributes.get('public_alts', [])
+        if not isinstance(char2_alts, list):
+            char2_alts = []
+            
         if character1.name in char2_alts:
             char2_alts.remove(character1.name)
-            character2.db.public_alts = char2_alts
+            character2.attributes.add('public_alts', char2_alts)
             
         return f"Removed alt relationship between {character1.name} and {character2.name}."
     
@@ -843,6 +1165,9 @@ This request will expire in 7 days.
             return
             
         target = target[0]  # Get the first (and only) match
+        
+        # Force refresh from database to ensure we have current data
+        target.flush_from_cache(force=True)
         
         # Log to help debug issues
         logger.log_info(f"+alts/staff: Checking alts for {target.name} (#{target.id})")
@@ -1127,8 +1452,38 @@ This request will expire in 7 days.
         dash_count = (total_width - title_len) // 2
         msg += f"\n{'|b-|n' * dash_count}{pub_title}{'|b-|n' * (total_width - dash_count - title_len)}\n"
         
-        # Get the list of public alts
-        public_alts = target.db.public_alts or []
+        # Get the list of public alts with direct DB query for maximum reliability
+        from evennia.utils.dbserialize import deserialize
+        from evennia.typeclasses.attributes import Attribute
+        
+        db_attr = Attribute.objects.filter(
+            db_key='public_alts',
+            objectdb=target.id
+        ).first()
+        
+        public_alts = []
+        
+        if db_attr:
+            try:
+                db_value = deserialize(db_attr.db_value)
+                if isinstance(db_value, list):
+                    public_alts = db_value
+                logger.log_info(f"+alts/staff: DB direct query for public_alts: {db_value}")
+            except Exception as e:
+                logger.log_err(f"Error deserializing public_alts: {e}")
+                
+        # If no DB value, try via attribute API
+        if not public_alts:
+            api_alts = target.attributes.get('public_alts', [])
+            # Try to convert to list if not already
+            try:
+                if hasattr(api_alts, '__iter__') and hasattr(api_alts, '__getitem__'):
+                    public_alts = list(api_alts)
+            except Exception as e:
+                logger.log_err(f"Error converting alts to list: {e}")
+        
+        logger.log_info(f"+alts/staff: Target's public alts: {public_alts}")
+        
         if not public_alts:
             msg += f"{target.name} has not declared any alt characters."
         else:

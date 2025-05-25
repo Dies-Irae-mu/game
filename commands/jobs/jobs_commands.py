@@ -19,6 +19,7 @@ from evennia.help.models import HelpEntry
 from world.equipment.models import Equipment, PlayerInventory, InventoryItem
 from evennia.accounts.models import AccountDB
 from evennia.comms.models import Msg
+from evennia.comms.models import Msg
 
 class CmdJobs(MuxCommand):
     """
@@ -379,6 +380,11 @@ class CmdJobs(MuxCommand):
             # Post to the jobs channel for staff notification
             self.post_to_jobs_channel(self.caller.name, job.id, f"created in {category}")
 
+            # Send a mail notification to the requester confirming job creation
+            # Always send mail to the requester, regardless of admin status
+            confirmation_message = f"Your job request has been submitted:\n\nTitle: {title}\nCategory: {category}\nJob ID: {job.id}\n\nStaff has been notified and will review your request."
+            self.send_mail_notification(job, confirmation_message, to_account=self.caller.account)
+
             # Handle automatic assignment if configured
             if queue.automatic_assignee:
                 job.assignee = queue.automatic_assignee
@@ -488,6 +494,11 @@ class CmdJobs(MuxCommand):
             # Post to the jobs channel for staff notification
             self.post_to_jobs_channel(self.caller.name, job.id, f"created in {category}")
 
+            # Send a mail notification to the requester confirming job creation
+            # Always send mail to the requester, regardless of admin status
+            confirmation_message = f"Your job request has been submitted:\n\nTitle: {title}\nCategory: {category}\nJob ID: {job.id}\n\nStaff has been notified and will review your request."
+            self.send_mail_notification(job, confirmation_message, to_account=self.caller.account)
+
             # Handle automatic assignment if configured
             if queue.automatic_assignee:
                 job.assignee = queue.automatic_assignee
@@ -557,7 +568,13 @@ class CmdJobs(MuxCommand):
 
             self.caller.msg(f"Comment added to job #{job_id}.")
             self.post_to_jobs_channel(self.caller.name, job.id, "commented on")
-            self.send_mail_notification(job, f"{self.caller.name} commented on Job #{job.id}: {comment}")
+            
+            # Create a notification message that includes the comment
+            notification_message = f"{self.caller.name} commented on Job #{job.id}:\n\n{comment}"
+            
+            # Send notification to all participants (excluding the commenter)
+            # This already includes the requester, so we don't need to send a separate notification
+            self.send_mail_to_all_participants(job, notification_message, exclude_account=self.caller.account)
 
         except (ValueError, Job.DoesNotExist):
             self.caller.msg("Invalid job ID.")
@@ -605,55 +622,80 @@ class CmdJobs(MuxCommand):
         
         try:
             job_id = int(job_id)
-            # Debug message for job lookup
-            self.caller.msg(f"Looking for job #{job_id}...")
             job = Job.objects.get(id=job_id)
-            self.caller.msg(f"Found job: {job.title}")
 
             if not (job.requester == self.caller.account or self.caller.check_permstring("Admin")):
                 self.caller.msg("You don't have permission to add players to this job.")
                 return
 
-            # Debug message for player search
-            self.caller.msg(f"Searching for player: {player_name}")
             player = search_account(player_name)
             if not player:
                 self.caller.msg(f"Could not find account '{player_name}'.")
                 return
             
             if len(player) > 1:
-                # Show matching accounts for debugging
+                # Show matching accounts
                 matches = ", ".join([p.username for p in player])
                 self.caller.msg(f"Multiple matches found: {matches}")
                 self.caller.msg("Please be more specific.")
                 return
                 
             player = player[0]
-            self.caller.msg(f"Found player: {player.username}")
 
-            # Check if player is already a participant
-            if player in job.participants.all():
+            # Check if player is already a participant - safely
+            is_participant = False
+            try:
+                # Check if player is in participants 
+                if job.participants.filter(id=player.id).exists():
+                    is_participant = True
+            except Exception as e:
+                # Fallback manual check
+                participants_list = list(job.participants.all())
+                if player in participants_list:
+                    is_participant = True
+            
+            if is_participant:
                 self.caller.msg(f"{player.username} is already a participant in this job.")
                 return
 
-            # Add the player and verify
+            # Add the player
             job.participants.add(player)
+            
+            # Create a comment in the job about the addition
+            new_comment = {
+                "author": self.caller.account.username,
+                "text": f"Added {player.username} to this job.",
+                "created_at": timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+            }
+            
+            if not job.comments:
+                job.comments = []
+            job.comments.append(new_comment)
             job.save()
-
-            # Verify the addition
-            if player in job.participants.all():
-                self.caller.msg(f"Player {player.username} successfully added to job #{job_id}.")
-                self.post_to_jobs_channel(self.caller.name, job.id, f"added {player.username} to")
-                
-                # Send separate notification to the newly added player first
-                player_notification = f"You have been added to Job #{job_id}: {job.title} by {self.caller.name}"
-                self.send_mail_notification(job, player_notification, to_account=player)
-                
-                # Then send mail notifications to all other participants explicitly excluding the newly added player
-                notification_message = f"{self.caller.name} has added {player.username} to Job #{job_id}: {job.title}"
-                self.send_mail_to_all_participants(job, notification_message, exclude_account=player)
-            else:
-                self.caller.msg(f"Failed to add {player.username} to job #{job_id}. Please contact an administrator.")
+            
+            self.caller.msg(f"Player {player.username} successfully added to job #{job_id}.")
+            self.post_to_jobs_channel(self.caller.name, job.id, f"added {player.username} to")
+            
+            # Send separate notification to the newly added player
+            notification_message = f"You have been added to Job #{job_id}: {job.title} by {self.caller.name}"
+            
+            try:
+                # Use send_mail_notification for the new player
+                self.send_mail_notification(job, notification_message, to_account=player)
+            except Exception as e:
+                self.caller.msg(f"Failed to send notification: {str(e)}")
+                logger.log_err(f"Failed to send notification to new participant: {str(e)}")
+            
+            # Send notification to existing participants about the new addition
+            notification_to_others = f"{self.caller.name} has added {player.username} to Job #{job_id}: {job.title}"
+            
+            try:
+                # Use send_mail_to_multiple_participants to notify everyone else
+                exclude_accounts = [self.caller.account, player]
+                self.send_mail_to_multiple_participants(job, notification_to_others, exclude_accounts=exclude_accounts)
+            except Exception as e:
+                self.caller.msg(f"Failed to send notifications to other participants: {str(e)}")
+                logger.log_err(f"Failed to send notifications to other participants: {str(e)}")
 
         except ValueError:
             self.caller.msg(f"Invalid job ID: {job_id}")
@@ -661,6 +703,7 @@ class CmdJobs(MuxCommand):
             self.caller.msg(f"Job #{job_id} not found.")
         except Exception as e:
             self.caller.msg(f"Error adding player: {str(e)}")
+            logger.log_err(f"Error in add_player: {str(e)}", exc_info=True)
 
     def remove_player(self):
         if not self.args or "=" not in self.args:
@@ -668,6 +711,8 @@ class CmdJobs(MuxCommand):
             return
 
         job_id, player_name = self.args.split("=", 1)
+        job_id = job_id.strip()
+        player_name = player_name.strip()
         
         try:
             job_id = int(job_id)
@@ -684,35 +729,81 @@ class CmdJobs(MuxCommand):
                 return
             
             if len(player) > 1:
-                self.caller.msg("Multiple matches found. Please be more specific.")
+                matches = ", ".join([p.username for p in player])
+                self.caller.msg(f"Multiple matches found: {matches}")
+                self.caller.msg("Please be more specific.")
                 return
                 
             player = player[0]
 
-            if player not in job.participants.all():
+            # Check if player is in participants - safely
+            is_participant = False
+            try:
+                # Check if player is in participants 
+                if job.participants.filter(id=player.id).exists():
+                    is_participant = True
+            except Exception as e:
+                # Fallback manual check
+                participants_list = list(job.participants.all())
+                if player in participants_list:
+                    is_participant = True
+            
+            if not is_participant:
                 self.caller.msg(f"{player.username} is not added to this job.")
                 return
 
             # Store the player information before removing
             player_username = player.username
             
-            # Send notification before removing the player
-            notification_message = f"{self.caller.name} has removed {player_username} from Job #{job_id}: {job.title}"
-            self.send_mail_to_all_participants(job, notification_message, exclude_account=None)
+            # Create a comment in the job about the removal
+            new_comment = {
+                "author": self.caller.account.username,
+                "text": f"Removed {player.username} from this job.",
+                "created_at": timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+            }
+            
+            if not job.comments:
+                job.comments = []
+            job.comments.append(new_comment)
             
             # Send notification to the removed player
             removed_notification = f"You have been removed from Job #{job_id}: {job.title} by {self.caller.name}"
-            self.send_mail_notification(job, removed_notification, to_account=player)
             
-            # Now remove the player
-            job.participants.remove(player)
-            job.save()
+            try:
+                # Use send_mail_notification for the removed player
+                self.send_mail_notification(job, removed_notification, to_account=player)
+            except Exception as e:
+                self.caller.msg(f"Failed to send notification to removed player: {str(e)}")
+                logger.log_err(f"Failed to send notification to removed player: {str(e)}")
+                
+            # Send notification to other participants about the removal
+            notification_to_others = f"{self.caller.name} has removed {player_username} from Job #{job_id}: {job.title}"
+            
+            try:
+                # Use send_mail_to_multiple_participants to notify everyone else
+                exclude_accounts = [self.caller.account, player]
+                self.send_mail_to_multiple_participants(job, notification_to_others, exclude_accounts=exclude_accounts)
+            except Exception as e:
+                self.caller.msg(f"Failed to send notifications to participants: {str(e)}")
+                logger.log_err(f"Failed to send notifications to participants: {str(e)}")
+            
+            # Now remove the player and save the job
+            try:
+                job.participants.remove(player)
+                job.save()
+                self.caller.msg(f"Player {player_username} removed from job #{job_id}.")
+                self.post_to_jobs_channel(self.caller.name, job.id, f"removed {player_username} from")
+            except Exception as e:
+                self.caller.msg(f"Error removing player from job: {str(e)}")
+                logger.log_err(f"Error removing player from job: {str(e)}")
 
-            self.caller.msg(f"Player {player_username} removed from job #{job_id}.")
-            self.post_to_jobs_channel(self.caller.name, job.id, f"removed {player_username} from")
-
-        except (ValueError, Job.DoesNotExist):
-            self.caller.msg("Invalid job ID.")
+        except ValueError:
+            self.caller.msg(f"Invalid job ID: {job_id}")
+        except Job.DoesNotExist:
+            self.caller.msg(f"Job #{job_id} not found.")
+        except Exception as e:
+            self.caller.msg(f"Error removing player: {str(e)}")
+            logger.log_err(f"Error in remove_player: {str(e)}", exc_info=True)
 
     def assign_job(self):
         if not self.args or "=" not in self.args:
@@ -783,6 +874,11 @@ class CmdJobs(MuxCommand):
 
             self.caller.msg(f"You have claimed job #{job_id}.")
             self.post_to_jobs_channel(self.caller.name, job.id, "claimed")
+            
+            # Send notification to job requester and all participants
+            # The requester will be included in send_mail_to_all_participants
+            notification_message = f"{self.caller.name} has claimed Job #{job.id}. They will be handling your request."
+            self.send_mail_to_all_participants(job, notification_message, exclude_account=self.caller.account)
 
         except (ValueError, Job.DoesNotExist):
             self.caller.msg("Invalid job ID.")
@@ -803,6 +899,9 @@ class CmdJobs(MuxCommand):
             if job.status != 'claimed' or job.assignee != self.caller.account:
                 self.caller.msg("You can't unclaim this job.")
                 return
+                
+            # Store assignee name before unclaiming
+            previous_assignee = self.caller.name
 
             job.assignee = None
             job.status = 'open'
@@ -810,6 +909,11 @@ class CmdJobs(MuxCommand):
 
             self.caller.msg(f"You have unclaimed job #{job_id}.")
             self.post_to_jobs_channel(self.caller.name, job.id, "unclaimed")
+            
+            # Send notification to job requester and all participants
+            # The requester will be included in send_mail_to_all_participants
+            notification_message = f"{previous_assignee} has unclaimed Job #{job.id}. The job is now open for other staff to claim."
+            self.send_mail_to_all_participants(job, notification_message, exclude_account=self.caller.account)
 
         except (ValueError, Job.DoesNotExist):
             self.caller.msg("Invalid job ID.")
@@ -1319,21 +1423,33 @@ class CmdJobs(MuxCommand):
                 self.caller.msg(f"Archived job #{job_id} not found.")
 
     def post_to_jobs_channel(self, player_name, job_id, action):
+        """Post a message to the Jobs channel for admin visibility."""
+        from evennia.comms.models import ChannelDB
+        from evennia.utils import create
+        
         channel_names = ["Jobs", "Requests", "Req"]
         channel = None
 
         for name in channel_names:
             found_channel = ChannelDB.objects.channel_search(name)
             if found_channel:
-                channel = found_channel[0]
-                break
+                # Check if the channel has the correct locks for admin-only viewing
+                # Using check_lockstring instead of check to avoid missing argument error
+                if found_channel[0].locks.check_lockstring(found_channel[0], "listen:perm(Admin)"):
+                    channel = found_channel[0]
+                    break
+                else:
+                    # Update locks to ensure admin-only access
+                    found_channel[0].locks.add("listen:perm(Admin)")
+                    channel = found_channel[0]
+                    break
 
         if not channel:
-            # Create channel without auto_subscribe
+            # Create channel with admin-only permissions
             channel = create.create_channel(
                 "Jobs",
                 typeclass="typeclasses.channels.Channel",
-                locks="control:perm(Admin);listen:all();send:all()"
+                locks="control:perm(Admin);listen:perm(Admin);send:perm(Admin)"
             )
             # Subscribe the creator after channel is created
             channel.connect(self.caller)
@@ -1344,69 +1460,116 @@ class CmdJobs(MuxCommand):
 
     def send_mail_notification(self, job, message, to_account=None):
         """Send a mail notification to a specific account."""
+        from evennia.utils import logger
+        
         recipient = to_account if to_account else job.requester
         
-        if recipient and recipient != self.caller.account:  # Don't send mail if you're acting on your own job
-            try:
-                subject = f"Job #{job.id} Update"
-                mail_body = f"Job #{job.id}: {job.title}\n\n{message}"
+        if not recipient:
+            logger.log_err(f"No recipient found for Job #{job.id}")
+            return
+            
+        # If to_account is explicitly provided, send mail even if it's the caller
+        force_send = to_account is not None
+        
+        # Don't send mail if you're acting on your own job, unless force_send is True
+        if recipient == self.caller.account and not force_send:
+            return
+            
+        try:
+            subject = f"Job #{job.id} Update"
+            mail_body = f"Job #{job.id}: {job.title}\n\n{message}"
+            
+            # Import at function level to avoid circular imports
+            from evennia.utils import create
+            from evennia.comms.models import Msg
+            
+            # Create the mail message
+            new_mail = create.create_message(
+                self.caller.account,  # sender
+                mail_body,            # message
+                receivers=recipient,  # receiver
+                header=subject        # subject
+            )
+            
+            if not new_mail:
+                logger.log_err(f"Failed to create message object for {recipient.username}")
+                return
                 
-                # Use Evennia's mail API properly
-                from evennia.utils import create
+            # Explicitly save to ensure changes are persisted
+            new_mail.save()
+            
+            # Tag it as new - this is crucial for mail to appear in mailbox
+            new_mail.tags.add("new", category="mail")
+            
+            # Only show success message if we actually sent the mail
+            if recipient.is_connected:
+                # Notify the connected player directly that they have mail
+                recipient.msg(f"|yYou have received new mail about job #{job.id}. Type '@mail' to view.|n")
+            
+            self.caller.msg(f"Notification sent to {recipient.username}.")
                 
-                # Create the mail message
-                new_mail = create.create_message(
-                    self.caller.account,  # sender
-                    mail_body,            # message
-                    receivers=recipient,  # receiver
-                    header=subject        # subject
-                )
-                
-                # Tag it as new
-                new_mail.tags.add("new", category="mail")
-                
-                # Only show success message if we actually sent the mail
-                if recipient.username:
-                    self.caller.msg(f"Notification sent to {recipient.username}.")
-                else:
-                    self.caller.msg("Could not send notification - invalid recipient username.")
-                    
-            except Exception as e:
-                from evennia.utils import logger
-                logger.log_err(f"Failed to send job notification: {str(e)}")
-                self.caller.msg(f"Failed to send notification: {str(e)}")
+        except Exception as e:
+            logger.log_err(f"Failed to send job notification: {str(e)}")
+            self.caller.msg(f"Failed to send notification: {str(e)}")
 
     def send_mail_to_all_participants(self, job, message, exclude_account=None):
         """Send a mail notification to all participants in a job."""
+        from evennia.utils import logger
+        
         # Collect all unique accounts involved with the job
         participants = set()
+        staff_participants = set()
         
         # Add requester if exists
         if job.requester:
-            participants.add(job.requester)
+            if job.requester.check_permstring("Admin"):
+                staff_participants.add(job.requester)
+            else:
+                participants.add(job.requester)
             
         # Add assignee if exists
         if job.assignee:
-            participants.add(job.assignee)
+            if job.assignee.check_permstring("Admin"):
+                staff_participants.add(job.assignee)
+            else:
+                participants.add(job.assignee)
             
         # Add all participants
         for participant in job.participants.all():
-            participants.add(participant)
+            if participant.check_permstring("Admin"):
+                staff_participants.add(participant)
+            else:
+                participants.add(participant)
             
         # Remove the excluded account if specified
         if exclude_account:
             # Make sure to check by username to handle different account objects with same username
+            before_count = len(participants)
             participants = {p for p in participants if p.username != exclude_account.username}
+            
+            before_count = len(staff_participants)
+            staff_participants = {p for p in staff_participants if p.username != exclude_account.username}
             
         # Remove the caller to avoid self-notification
         if self.caller.account in participants:
             participants.remove(self.caller.account)
+        
+        if self.caller.account in staff_participants:
+            staff_participants.remove(self.caller.account)
             
-        # If we don't have any recipients, return early
+        # First handle staff notifications (direct message, no mail)
+        for staff in staff_participants:
+            if staff.is_connected:
+                # Send a direct notification about the job update
+                action_by = self.caller.name if hasattr(self.caller, 'name') else self.caller.key
+                for session in staff.sessions.all():
+                    session.msg(f"|yJob #{job.id} update: {action_by} has made changes to this job.|n")
+            
+        # If we don't have any non-staff recipients, return early
         if not participants:
             return
-        
-        # Send mail to all participants using the proper mail API
+            
+        # Send mail to non-staff participants using the proper mail API
         try:
             subject = f"Job #{job.id} Update"
             mail_body = f"Job #{job.id}: {job.title}\n\n{message}"
@@ -1415,8 +1578,14 @@ class CmdJobs(MuxCommand):
             
             # Create and send mail to each participant (create_message only takes one receiver at a time)
             participant_names = []
+            success_count = 0
+            
             for participant in participants:
-                if participant.username:
+                if not participant.username:
+                    logger.log_err(f"Participant has no username, skipping")
+                    continue
+                
+                try:
                     # Create a mail message
                     new_mail = create.create_message(
                         self.caller.account,  # sender
@@ -1425,20 +1594,31 @@ class CmdJobs(MuxCommand):
                         header=subject        # subject
                     )
                     
+                    if not new_mail:
+                        logger.log_err(f"Failed to create message for {participant.username}")
+                        continue
+                        
                     # Tag it as new
                     new_mail.tags.add("new", category="mail")
                     
                     participant_names.append(participant.username)
+                    success_count += 1
+                    
+                    # If participant is online, notify them directly
+                    if participant.is_connected:
+                        # Notify the connected player directly that they have mail
+                        for session in participant.sessions.all():
+                            session.msg(f"|yYou have received new mail about job #{job.id}. Type '@mail' to view.|n")
+                    
+                except Exception as e:
+                    logger.log_err(f"Error sending to {participant.username}: {str(e)}")
             
             if participant_names:
                 self.caller.msg(f"Notifications sent to: {', '.join(participant_names)}")
             
         except Exception as e:
-            from evennia.utils import logger
             logger.log_err(f"Failed to send job notifications: {str(e)}")
             self.caller.msg(f"Failed to send notifications: {str(e)}")
-            
-            # No need for fallback sending since we're already sending individually
 
     def complete_job(self):
         self._change_job_status("completed")
@@ -1526,9 +1706,9 @@ class CmdJobs(MuxCommand):
 
             self.caller.msg(f"Job #{job_id} has been {new_status} and archived.")
             
-            # Send mail notifications
+            # Send mail notifications to all participants
             notification_message = f"Job #{job_id} has been {new_status}.\n\nReason: {reason}"
-            self.send_mail_notification(job, notification_message)
+            self.send_mail_to_all_participants(job, notification_message, exclude_account=self.caller.account)
             
             self.post_to_jobs_channel(self.caller.name, job.id, new_status)
 
@@ -2156,6 +2336,115 @@ class CmdJobs(MuxCommand):
         except Exception as e:
             self.caller.msg(f"Error listing jobs for player: {str(e)}")
             logger.log_err(f"Error in list_jobs_from_player: {str(e)}", exc_info=True)
+
+    def send_mail_to_multiple_participants(self, job, message, exclude_accounts=None):
+        """Send a mail notification to participants, excluding specified accounts."""
+        from evennia.utils import logger
+        
+        # If exclude_accounts is None, initialize as empty list
+        if exclude_accounts is None:
+            exclude_accounts = []
+        
+        # Ensure exclude_accounts is a list even if a single account is passed
+        if not isinstance(exclude_accounts, list):
+            exclude_accounts = [exclude_accounts]
+        
+        # Collect all unique accounts involved with the job
+        participants = set()
+        staff_participants = set()
+        
+        # Add requester if exists
+        if job.requester:
+            if job.requester.check_permstring("Admin"):
+                staff_participants.add(job.requester)
+            else:
+                participants.add(job.requester)
+            
+        # Add assignee if exists
+        if job.assignee:
+            if job.assignee.check_permstring("Admin"):
+                staff_participants.add(job.assignee)
+            else:
+                participants.add(job.assignee)
+            
+        # Add all participants
+        for participant in job.participants.all():
+            if participant.check_permstring("Admin"):
+                staff_participants.add(participant)
+            else:
+                participants.add(participant)
+            
+        # Remove the excluded accounts
+        for account in exclude_accounts:
+            if account in participants:
+                participants.remove(account)
+            if account in staff_participants:
+                staff_participants.remove(account)
+            
+        # Handle staff notifications (direct message, no mail)
+        for staff in staff_participants:
+            if staff.is_connected:
+                # Send a direct notification about the job update
+                action_by = self.caller.name if hasattr(self.caller, 'name') else self.caller.key
+                for session in staff.sessions.all():
+                    session.msg(f"|yA change has been made by {action_by} on Job #{job.id}.|n")
+            
+        # If we don't have any non-staff recipients, return early
+        if not participants:
+            return
+            
+        # Send mail to non-staff participants using the proper mail API
+        try:
+            subject = f"Job #{job.id} Update"
+            mail_body = f"Job #{job.id}: {job.title}\n\n{message}"
+            
+            from evennia.utils import create
+            
+            # Create and send mail to each participant
+            participant_names = []
+            success_count = 0
+            
+            for participant in participants:
+                if not participant.username:
+                    logger.log_err(f"Participant has no username, skipping")
+                    continue
+                    
+                try:
+                    # Create a mail message
+                    new_mail = create.create_message(
+                        self.caller.account,  # sender
+                        mail_body,            # message
+                        receivers=participant, # receiver
+                        header=subject        # subject
+                    )
+                    
+                    if not new_mail:
+                        logger.log_err(f"Failed to create message for {participant.username}")
+                        continue
+                        
+                    # Tag it as new
+                    new_mail.tags.add("new", category="mail")
+                    
+                    participant_names.append(participant.username)
+                    success_count += 1
+                    
+                    # If participant is online, notify them directly
+                    if participant.is_connected:
+                        # Notify the connected player directly that they have mail
+                        for session in participant.sessions.all():
+                            session.msg(f"|yYou have received new mail about job #{job.id}. Type '@mail' to view.|n")
+                    
+                except Exception as e:
+                    logger.log_err(f"Error sending to {participant.username}: {str(e)}")
+            
+            if participant_names:
+                self.caller.msg(f"Notifications sent to: {', '.join(participant_names)}")
+            else:
+                logger.log_err(f"Failed to send any notifications")
+            
+        except Exception as e:
+            logger.log_err(f"Failed to send job notifications: {str(e)}")
+            self.caller.msg(f"Failed to send notifications: {str(e)}")
 
 class JobSystemCmdSet(CmdSet):
     """

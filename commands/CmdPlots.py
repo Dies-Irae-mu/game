@@ -5,6 +5,8 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 import pytz
 from world.wod20th.utils.time_utils import TIME_MANAGER
+from world.wod20th.events import get_or_create_event_scheduler
+from world.wod20th.utils.bbs_utils import get_or_create_bbs_controller
 
 class CmdPlots(MuxCommand):
     """
@@ -12,19 +14,25 @@ class CmdPlots(MuxCommand):
 
     Usage:
         +plots                          - List all active plots
-        +plot/add <title>/<payout>/<risk>/<genre>=<desc>  
-                                      - Add a new plot
+        +plot/create <title>/<payout>/<risk>/<genre>=<desc>  
+                                       - Create a new plot
         +plot/secret <#>=<text>        - Add secret info to a plot
         +plot/claim <#>                - Claim a plot to run
-        +plot/assign <#>=<n>        - Assign a plot to someone
+        +plot/assign <#>=<n>           - Assign a plot to someone
         +plot/return <#>               - Return a plot to the queue
         +plot/done <#>                 - Mark a plot as completed
         +plot/view <#>                 - View detailed plot information
 
     Session Management:
-        +plot/sessions <#>             - List all sessions for a plot
-        +plot/session/add <#>/<date>/<time>/<duration>/<location>=<desc>
+        +plot/sessions <#>            - List all sessions for a plot
+                                      - Also shows the event ID if it exists
+        +plot/session/create <#>/<date>/<time>/<duration>/<location>=<desc>
                                       - Add a new session to a plot
+                                      - Also creates an event for the session
+                                      - Event ID is displayed in the session list
+                                      - Genre and difficulty default to the plot's
+                                            genre and risk level.
+                                      - Genre and difficulty can be overridden
         +plot/session/secret <#>/<session#>=<text>
                                       - Add secret info to a session
         +plot/session/addplayer <#>/<session#>=<n>
@@ -36,7 +44,7 @@ class CmdPlots(MuxCommand):
                                       - Fields: date, time, duration, location, description
 
     Example:
-        +plot/session/add 1/2025-01-19/19:00/2 hours/The docks=Players intercept the shipment
+        +plot/session/create 1/2025-01-19/19:00/2 hours/The docks=Players intercept the shipment
         +plot/session/edit 1/1/location=The Warehouse
     """
 
@@ -55,8 +63,8 @@ class CmdPlots(MuxCommand):
         
         # Handle session commands specially
         if self.switches:
-            # Check for session/add pattern
-            if "session/add" in raw_cmd or "session/secret" in raw_cmd or \
+            # Check for session/create pattern
+            if "session/create" in raw_cmd or "session/secret" in raw_cmd or \
                "session/addplayer" in raw_cmd or "session/remplayer" in raw_cmd or \
                "session/edit" in raw_cmd:
                 # Extract the command after session/
@@ -132,14 +140,14 @@ class CmdPlots(MuxCommand):
         self.caller.msg("")  # Empty line
         self.caller.msg(header)
 
-    def add_plot(self):
-        """Add a new plot"""
+    def create_plot(self):
+        """Create a new plot"""
         if not self.caller.check_permstring("builders"):
             self.caller.msg("You don't have permission to add plots.")
             return
 
         if not self.args or len(self.lhs.split("/")) != 4:
-            self.caller.msg("Usage: +plot/add <title>/<payout>/<risk>/<genre>=<description>")
+            self.caller.msg("Usage: +plot/create <title>/<payout>/<risk>/<genre>=<description>")
             return
 
         title, payout, risk, genre = self.lhs.split("/")
@@ -337,6 +345,11 @@ class CmdPlots(MuxCommand):
             self.caller.msg(f"|wDuration:|n            {session.duration}")
             self.caller.msg(f"|wLocation:|n            {session.location}")
             self.caller.msg(f"|wParticipants:|n        {participants}")
+            
+            # Show event ID if one exists
+            if session.event_id:
+                self.caller.msg(f"|wEvent ID:|n            {session.event_id}")
+                
             self.caller.msg(f"|b=================================>|n |yDescription|n |b<==================================|n")
             self.caller.msg(f"{session.description}")
             if self.caller.check_permstring("builders") or plot.storyteller == self.caller.account:
@@ -359,10 +372,32 @@ class CmdPlots(MuxCommand):
         else:
             self.caller.msg(f"Unknown session command: {switch}")
 
+    def post_event_to_bbs(self, event, action):
+        """Post event information to the Events board."""
+        # Get or create the Events board
+        bbs_controller = get_or_create_bbs_controller()
+        events_board = bbs_controller.get_board("Events")
+        if not events_board:
+            events_board = bbs_controller.create_board("Events", "A board for game events", public=True)
+            
+        title = f"{action.capitalize()}: {event.db.title}"
+        content = f"Event: {event.db.title}\n"
+        content += f"Organizer: {event.db.organizer}\n"
+        content += f"Date/Time: {self.format_datetime(event.db.date_time)}\n"
+        content += f"Status: {event.db.status}\n"
+        content += f"Description: {event.db.description}\n"
+        content += f"Participants: {', '.join([str(p) for p in event.db.participants]) if event.db.participants else 'None'}\n"
+        if event.db.genre:
+            content += f"Genre: {event.db.genre}\n"
+        if event.db.difficulty:
+            content += f"Difficulty: {event.db.difficulty}\n"
+        
+        bbs_controller.create_post("Events", title, content, self.caller.key)
+
     def add_session(self):
-        """Add a new session to a plot"""
+        """Add a new session to a plot and create an associated event"""
         if not self.args or not self.rhs:
-            self.caller.msg("Usage: +plot/session/add <plot #>/<date>/<time>/<duration>/<location>=<description>")
+            self.caller.msg("Usage: +plot/session/create <plot #>/<date>/<time>/<duration>/<location>=<description>")
             return
 
         try:
@@ -377,7 +412,13 @@ class CmdPlots(MuxCommand):
             return
 
         try:
-            _, date_str, time_str, duration_str, location = self.lhs.split('/')
+            parts = self.lhs.split('/')
+            if len(parts) < 5:
+                self.caller.msg("Not enough parameters provided.")
+                return
+                
+            _, date_str, time_str, duration_str, location = parts[:5]
+            
             # Create datetime in UTC
             date_time = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
             date_time = date_time.replace(tzinfo=timezone.utc)
@@ -389,6 +430,7 @@ class CmdPlots(MuxCommand):
             self.caller.msg("Invalid date/time format. Use: YYYY-MM-DD/HH:MM/X hours/location")
             return
 
+        # Create the session first
         session = Session.objects.create(
             plot=plot,
             date=date_time,
@@ -397,7 +439,52 @@ class CmdPlots(MuxCommand):
             description=self.rhs,
             secrets=""
         )
-        self.caller.msg(f"Added session {session.id} to plot {plot.id}")
+        
+        # Now create an associated event
+        event_scheduler = get_or_create_event_scheduler()
+        if event_scheduler:
+            # Create event title based on plot title
+            event_title = f"Plot: {plot.title} - Session {session.id}"
+            
+            # Create event description 
+            event_description = f"Plot Session: {self.rhs}\nLocation: {location}"
+            
+            # Use plot's genre and risk level as the event's genre and difficulty
+            genre = plot.genre
+            difficulty = plot.risk_level
+            
+            # Calculate expiration date (2 days after the event)
+            expiration_date = date_time + timedelta(days=2)
+            
+            # Create the event
+            new_event = event_scheduler.create_event(
+                event_title, 
+                event_description, 
+                self.caller, 
+                date_time, 
+                genre=genre, 
+                difficulty=difficulty,
+                expiration_date=expiration_date
+            )
+            
+            if new_event:
+                # Store the event ID in the session
+                session.event_id = new_event.id
+                session.save()
+                
+                # Post to the BBS
+                self.post_event_to_bbs(new_event, "created")
+                
+                self.caller.msg(f"Added session {session.id} to plot {plot.id} with event ID {new_event.id}")
+            else:
+                self.caller.msg(f"Added session {session.id} to plot {plot.id}, but failed to create associated event.")
+        else:
+            self.caller.msg(f"Added session {session.id} to plot {plot.id}, but event system is not available.")
+            
+        # Update the plot's next_session field if this session is sooner
+        if not plot.next_session or date_time < plot.next_session:
+            plot.next_session = date_time
+            plot.save()
 
     def add_session_secret(self):
         """Add secret information to a session"""
@@ -478,7 +565,7 @@ class CmdPlots(MuxCommand):
         self.caller.msg(f"Removed {char.key} from session {session.id}")
 
     def edit_session(self):
-        """Edit session details"""
+        """Edit session details and update associated event if it exists"""
         if not self.args or not self.rhs:
             self.caller.msg("Usage: +plot/session/edit <plot #>/<session #>/<field>=<value>")
             return
@@ -496,6 +583,9 @@ class CmdPlots(MuxCommand):
             return
 
         field = field.lower()
+        update_event = False
+        new_date_time = None
+        
         if field in ['date', 'time']:
             try:
                 if field == 'date':
@@ -511,6 +601,8 @@ class CmdPlots(MuxCommand):
                         hour=new_time.hour,
                         minute=new_time.minute
                     )
+                new_date_time = session.date
+                update_event = True
             except ValueError:
                 self.caller.msg("Invalid date/time format. Use YYYY-MM-DD for date or HH:MM for time.")
                 return
@@ -523,14 +615,52 @@ class CmdPlots(MuxCommand):
                 return
         elif field == 'location':
             session.location = self.rhs
+            update_event = True
         elif field == 'description':
             session.description = self.rhs
+            update_event = True
         else:
             self.caller.msg("Invalid field. Choose from: date, time, duration, location, description")
             return
 
         session.save()
         self.caller.msg(f"Updated {field} for session {session.id}")
+        
+        # Update the associated event if it exists
+        if session.event_id and update_event:
+            event_scheduler = get_or_create_event_scheduler()
+            if event_scheduler:
+                event = event_scheduler.get_event_by_id(session.event_id)
+                if event:
+                    if new_date_time:
+                        event.db.date_time = new_date_time
+                        # Update expiration date (2 days after the event)
+                        event.db.expiration_date = new_date_time + timedelta(days=2)
+                        
+                    if field == 'location' or field == 'description':
+                        # Update event description to include new location/description
+                        event_description = f"Plot Session: {session.description}\nLocation: {session.location}"
+                        event.db.description = event_description
+                        
+                    event.save()
+                    
+                    # Post update to BBS
+                    self.post_event_to_bbs(event, "updated")
+                    
+                    self.caller.msg(f"Updated associated event (ID: {session.event_id}) to match session changes.")
+        
+        # Update the plot's next_session field if needed
+        if field in ['date', 'time']:
+            # Get all future sessions
+            future_sessions = Session.objects.filter(
+                plot=plot, 
+                date__gte=timezone.now()
+            ).order_by('date')
+            
+            if future_sessions:
+                # Set next_session to the earliest future session
+                plot.next_session = future_sessions.first().date
+                plot.save()
 
     def func(self):
         """Main function for plot commands"""
@@ -550,8 +680,8 @@ class CmdPlots(MuxCommand):
 
         switch = self.switches[0].lower()  # Convert to lowercase for consistent matching
 
-        if switch == "add":
-            self.add_plot()
+        if switch == "create":
+            self.create_plot()
         elif switch == "claim":
             self.claim_plot()
         elif switch == "assign":
@@ -566,7 +696,7 @@ class CmdPlots(MuxCommand):
             self.add_secret()
         elif switch == "sessions":
             self.list_sessions()
-        elif switch == "session/add":
+        elif switch == "session/create":
             self.add_session()
         elif switch == "session/secret":
             self.add_session_secret()

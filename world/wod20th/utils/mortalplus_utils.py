@@ -778,74 +778,90 @@ def validate_mortalplus_backgrounds(character, background_name: str, value: str)
 
 def update_mortalplus_pools_on_stat_change(character, stat_name: str, new_value: str) -> None:
     """
-    Update mortal+ pools when relevant stats change.
-    Called by CmdSelfStat after setting stats.
+    Update mortalplus pools and resources when relevant stats change.
+    
+    Args:
+        character: Character object to update
+        stat_name (str): The name of the stat that changed
+        new_value (str): The new value for the stat
     """
     stat_name = stat_name.lower()
     
-    # Get character's mortal+ type
-    mortalplus_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
-    if not mortalplus_type:
-        return
+    # Convert mortalplus_type to proper case
+    proper_type = next((t[1] for t in MORTALPLUS_TYPE_CHOICES if t[0].lower() == new_value.lower()), new_value)
     
-    # Handle Type changes
+    # Handle Type changes - only update pools and banality, don't reinitialize
     if stat_name == 'type':
-        # Get default Banality based on mortal+ type
-        banality = get_default_banality('Mortal+', subtype=new_value)
-        if banality:
-            character.set_stat('pools', 'dual', 'Banality', banality, temp=False)
-            character.set_stat('pools', 'dual', 'Banality', banality, temp=True)
-            character.msg(f"|gBanality set to {banality} for {new_value}.|n")
-        
-        # Set type-specific pools
-        if new_value in MORTALPLUS_POOLS:
-            pools = MORTALPLUS_POOLS[new_value]
-            for pool_name, pool_data in pools.items():
-                # Skip Willpower if it's already set to a non-zero value
-                if pool_name == 'Willpower' and character.get_stat('pools', 'dual', 'Willpower', temp=False) > 0:
-                    continue
-                
-                # Set both permanent and temporary values
-                character.set_stat('pools', 'dual', pool_name, pool_data['default'], temp=False)
-                character.set_stat('pools', 'dual', pool_name, pool_data['default'], temp=True)
-                character.msg(f"|g{pool_name} set to {pool_data['default']} for {new_value}.|n")
-    
-    # Handle Gnosis Merit for Kinfolk
-    elif stat_name == 'gnosis' and mortalplus_type == 'Kinfolk':
-        try:
-            merit_value = int(new_value)
-            if merit_value >= 5:
-                gnosis_value = min(3, max(1, merit_value - 4))  # 5->1, 6->2, 7->3
-                character.set_stat('pools', 'dual', 'Gnosis', gnosis_value, temp=False)
-                character.set_stat('pools', 'dual', 'Gnosis', gnosis_value, temp=True)
-                character.msg(f"|gGnosis set to {gnosis_value} based on Merit value {merit_value}.|n")
-        except (ValueError, TypeError):
-            character.msg("|rError updating Gnosis pool - invalid Merit value.|n")
-            return
-    
-    # Handle Fae Blood background for Kinain
-    elif stat_name == 'faerie blood' and mortalplus_type == 'Kinain':
-        try:
-            bg_value = int(new_value)
-            # Always set Glamour to 2 for Kinain (their maximum)
+        # Update Banality
+        banality_value = get_default_banality('Mortal+', subtype=proper_type)
+        if banality_value:
+            character.set_stat('pools', 'dual', 'Banality', banality_value, temp=False)
+            character.set_stat('pools', 'dual', 'Banality', banality_value, temp=True)
+            character.msg(f"|gBanality set to {banality_value} for {proper_type}.|n")
+            
+        # Update pools based on type
+        if proper_type == 'Ghoul':
+            # Set blood pool
+            character.set_stat('pools', 'dual', 'Blood', 3, temp=False)
+            character.set_stat('pools', 'dual', 'Blood', 3, temp=True)
+            character.msg("|gBlood pool set to 3 for Ghoul.|n")
+            
+        elif proper_type == 'Kinain':
+            # Set base Glamour
             character.set_stat('pools', 'dual', 'Glamour', 2, temp=False)
             character.set_stat('pools', 'dual', 'Glamour', 2, temp=True)
-            character.msg("|gGlamour set to 2 (maximum for Kinain).|n")
-            
-            # Calculate maximum allowed Arts
-            max_arts = {
-                0: 1,  # Can take 1 Art at Faerie Blood 0
-                1: 2,  # Can take 2 Arts at Faerie Blood 1
-                2: 3,  # Can take 3 Arts at Faerie Blood 2
-                3: 4,  # Can take 4 Arts at Faerie Blood 3
-                4: 5,  # Can take 5 Arts at Faerie Blood 4
-                5: 6   # Can take 6 Arts at Faerie Blood 5
-            }[bg_value]
-            
-            character.msg(f"|gWith Faerie Blood {bg_value}, you can learn up to {max_arts} Arts at maximum rating 3.|n")
-        except (ValueError, TypeError):
-            character.msg("|rError updating pools - invalid Faerie Blood value.|n")
-            return 
+            character.msg("|gGlamour pool set to 2 for Kinain.|n")
+    
+    # Handle Kinain Faerie Blood background changes
+    elif stat_name == 'faerie blood' or stat_name == 'fae blood':
+        if character.get_stat('identity', 'lineage', 'Type', temp=False) == 'Kinain':
+            try:
+                bg_value = int(new_value)
+                # Adjust Glamour pool
+                glamour = min(10, 2 + bg_value)  # Base 2 plus background value
+                character.set_stat('pools', 'dual', 'Glamour', glamour, temp=False)
+                character.set_stat('pools', 'dual', 'Glamour', glamour, temp=True)
+                character.msg(f"|gGlamour pool set to {glamour} based on Faerie Blood {bg_value}.|n")
+            except ValueError:
+                character.msg("|rError updating Glamour pool - invalid Faerie Blood value.|n")
+                return
+                
+    # Handle Ghoul's domitor clan changes
+    elif stat_name == 'domitor clan':
+        if character.get_stat('identity', 'lineage', 'Type', temp=False) == 'Ghoul':
+            # Initialize disciplines based on domitor clan
+            if new_value and new_value.lower() != 'none':
+                clan_disciplines = get_clan_disciplines(new_value)
+                if clan_disciplines:
+                    if 'powers' not in character.db.stats:
+                        character.db.stats['powers'] = {}
+                    if 'discipline' not in character.db.stats['powers']:
+                        character.db.stats['powers']['discipline'] = {}
+                    
+                    for discipline in clan_disciplines:
+                        if discipline not in character.db.stats['powers']['discipline']:
+                            character.db.stats['powers']['discipline'][discipline] = {'perm': 0, 'temp': 0}
+                    character.msg(f"|gInitialized {', '.join(clan_disciplines)} disciplines based on domitor clan.|n")
+    
+    # Handle Kinfolk gnosis merit changes
+    elif stat_name == 'gnosis merit':
+        if character.get_stat('identity', 'lineage', 'Type', temp=False) == 'Kinfolk':
+            try:
+                merit_value = int(new_value)
+                if merit_value >= 5:  # 5+ point merit
+                    # Calculate Gnosis value: 5pt merit = Gnosis 1, 6pt = 2, 7pt = 3
+                    gnosis_value = min(3, max(1, merit_value - 4))
+                    character.set_stat('pools', 'dual', 'Gnosis', gnosis_value, temp=False)
+                    character.set_stat('pools', 'dual', 'Gnosis', gnosis_value, temp=True)
+                    character.msg(f"|gGnosis set to {gnosis_value} based on Gnosis Merit {merit_value}.|n")
+                else:
+                    # Remove Gnosis if merit is too low
+                    character.set_stat('pools', 'dual', 'Gnosis', 0, temp=False)
+                    character.set_stat('pools', 'dual', 'Gnosis', 0, temp=True)
+                    character.msg("|gGnosis removed - requires at least a 5-point Gnosis Merit.|n")
+            except ValueError:
+                character.msg("|rError updating Gnosis pool - invalid Merit value.|n")
+                return
 
 def calculate_ghoul_discipline_cost(current_rating: int, new_rating: int, is_clan_discipline: bool) -> int:
     """

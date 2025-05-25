@@ -2033,7 +2033,7 @@ class CmdStats(MuxCommand):
             return 'identity', 'personal'
         elif stat_title in IDENTITY_LINEAGE:
             return 'identity', 'lineage'
-        elif stat_title in ['House', 'Fae Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
+        elif stat_title in ['House', 'Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
                           'Type', 'Tribe', 'Breed', 'Auspice', 'Clan', 'Generation', 'Affiliation',
                           'Tradition', 'Convention', 'Methodology', 'Traditions Subfaction',
                           'Nephandi Faction', 'Possessed Type', 'Companion Type', 'Pryio', 'Lodge',
@@ -2283,7 +2283,7 @@ class CmdStats(MuxCommand):
             return 'identity', 'personal'
         elif stat_title in IDENTITY_LINEAGE:
             return 'identity', 'lineage'
-        elif stat_title in ['House', 'Fae Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
+        elif stat_title in ['House', 'Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
                           'Type', 'Tribe', 'Breed', 'Auspice', 'Clan', 'Generation', 'Affiliation',
                           'Tradition', 'Convention', 'Methodology', 'Traditions Subfaction',
                           'Nephandi Faction', 'Possessed Type', 'Companion Type', 'Pryio', 'Lodge',

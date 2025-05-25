@@ -239,6 +239,16 @@ class CmdHangout(MuxCommand):
     def func(self):
         """Execute the hangout command."""
         
+        # Check if the room is a Quiet Room
+        if hasattr(self.caller.location, 'db') and self.caller.location.db.roomtype == "Quiet Room":
+            self.caller.msg("|rYou cannot use the +hangout command from a Quiet Room.|n")
+            return
+            
+        # Check if the room is an RP Room
+        if hasattr(self.caller.location, 'db') and self.caller.location.db.roomtype and "RP Room" in self.caller.location.db.roomtype:
+            self.caller.msg("|rYou cannot use the +hangout command from an RP Room. Please return to the grid first.|n")
+            return
+        
         # Basic +hangout command - show active hangouts
         if not self.args and not self.switches:
             hangouts = HangoutDB.get_visible_hangouts(self.caller)
@@ -276,6 +286,10 @@ class CmdHangout(MuxCommand):
                 if current_location and hasattr(current_location, 'db') and current_location.db.roomtype == "OOC Area":
                     self.caller.msg("You cannot teleport directly from the OOC area. Use +ic first to return to IC areas.")
                     return
+                # Check if player is in an RP Room
+                if current_location and hasattr(current_location, 'db') and current_location.db.roomtype and "RP Room" in current_location.db.roomtype:
+                    self.caller.msg("|rYou cannot teleport from an RP Room using +hangout. Please return to the grid first.|n")
+                    return
                     
                 hangout_id = int(self.args)
                 hangouts = HangoutDB.get_visible_hangouts(self.caller)
@@ -301,21 +315,28 @@ class CmdHangout(MuxCommand):
                 # Announce departure to the old room
                 old_location.msg_contents(f"{self.caller.name} has left for hangout {hangout_id}.")
                     
-                # Ensure we're not leaving a ghost character behind by clearing any session references
-                # to the old location
+                # Ensure all sessions know we're moving to prevent ghosts
                 for session in self.caller.sessions.all():
-                    if hasattr(session, 'puppet') and session.puppet == self.caller:
-                        # Make sure the session knows we're moving
+                    if session:
                         session.msg(text=f"Moving to {hangout.key}...")
                 
                 # Move the character
                 self.caller.move_to(room, quiet=True)
+
+                # Make sure location is fully updated
+                self.caller.location = room
+                
+                # Force locations in ndb for all sessions to update
+                for session in self.caller.sessions.all():
+                    if session and hasattr(session, 'puppet') and session.puppet == self.caller:
+                        session.ndb._prod_location = room
                 
                 # Announce arrival to the new room
                 room.msg_contents(f"{self.caller.name} has arrived.")
                 
                 # Message to the character
                 self.caller.msg(f"You teleport to {hangout.key}.")
+                
                 return
                 
             except ValueError:

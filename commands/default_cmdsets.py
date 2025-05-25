@@ -38,7 +38,7 @@ from commands.CmdInit import CmdInit
 from commands.CmdRoomLog import CmdRoomLog
 
 from commands.CmdUmbraInteraction import CmdUmbraInteraction
-from commands.communication import CmdMeet, CmdPlusIc, CmdPlusOoc, CmdOOC, CmdSummon, CmdJoin
+from commands.communication import CmdMeet, CmdPlusIc, CmdPlusOoc, CmdOOC, CmdSummon, CmdJoin, CmdCheckComm
 from commands.admin import CmdApprove, CmdUnapprove, CmdAdminLook, CmdTestLock, CmdPuppetFreeze, CmdMassUnapprove, CmdReturn, CmdCheckGhosts, CmdForceDeleteObject
 from commands.CmdPump import CmdPump
 from commands.CmdSpendGain import CmdSpendGain
@@ -123,7 +123,6 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdHurt())
         self.add(CmdHeal())
         self.add(CmdEvents())
-        self.add(CmdMail())  # Our fixed mail command
         self.add(CmdMailCharacter())  # Our fixed mail character command
         self.add(CmdRoll())
         self.add(CmdShift())
@@ -188,6 +187,7 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdRoom())
         self.add(CmdTableTalk())
         self.add(CmdSummon())
+        self.add(CmdCheckComm())
 
 
 class AccountCmdSet(cmdset_account.AccountCmdSet):
@@ -213,9 +213,13 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdHelp())
         self.add(CmdHelpNum())
         
+        # Add mail command to AccountCmdSet
+        self.add(CmdMail())
+        
         self.add(CmdNotes())
         self.add(CmdSummon())
         self.add(CmdJoin())
+        self.add(CmdCheckComm())
         self.add(CmdApprove())
         self.add(CmdUnapprove())
         self.add(CmdMassUnapprove())

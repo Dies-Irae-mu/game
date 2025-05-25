@@ -33,7 +33,7 @@ from world.wod20th.utils.mage_utils import (
 )
 from world.wod20th.utils.shifter_utils import (
     SHIFTER_RENOWN, initialize_shifter_type, SHIFTER_TYPE_CHOICES, BREED_CHOICES_DICT,
-    AUSPICE_CHOICES, GAROU_TRIBE_CHOICES, BASTET_TRIBE_CHOICES, 
+    AUSPICE_CHOICES, GAROU_TRIBE_CHOICES, BASTET_TRIBE_CHOICES, GURAHL_TRIBE_CHOICES,
     update_shifter_pools_on_stat_change, SHIFTER_IDENTITY_STATS, 
     BREED_CHOICES, ASPECT_CHOICES_DICT, AUSPICE_CHOICES_DICT,
     validate_shifter_stats
@@ -54,7 +54,7 @@ from world.wod20th.utils.possessed_utils import (
 )
 from world.wod20th.utils.companion_utils import (
     initialize_companion_stats, COMPANION_TYPE_CHOICES,
-    COMPANION_POWERS, validate_companion_stats
+    COMPANION_POWERS, validate_companion_stats, validate_elemental_affinity
 )
 from world.wod20th.utils.virtue_utils import (
     calculate_willpower, calculate_path, PATH_VIRTUES
@@ -75,7 +75,7 @@ REQUIRED_INSTANCES = ['Library', 'Status', 'Influence', 'Wonder', 'Secret Weapon
                       'Sphere Natural', 'Phobia', 'Addiction', 'Allies', 'Contacts', 'Caretaker',
                       'Alternate Identity', 'Equipment', 'Professional Certification', 'Allergic',
                       'Impediment', 'Enemy', 'Mentor', 'Old Flame', 'Additional Discipline', 
-                      'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish', 'Chimerical Item', 'Chimerical Companion',
+                      'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish', 'Chimerical Companion',
                       'Dreamers', 'Digital Dreamers', 'Addiction', 'Phobia', 'Derangement',
                       'Obsession', 'Compulsion', 'Bigot', 'Ability Deficit', 'Sect Enmity', 'Camp Enmity',
                       'Retainers', 'Sphere Inept', 'Art Affinity', 'Immunity'
@@ -154,19 +154,19 @@ class CmdSelfStat(MuxCommand):
         
         # Provide more specific guidance based on the stat type
         if category == 'merits':
-            self.caller.msg(f"|rThe merit '{stat_name}' requires an instance. Use format: {stat_name}(instance)/{stat_type}=value|n")
-            self.caller.msg(f"|yFor example: {stat_name}(Sabbat)/{stat_type}=3|n")
-            self.caller.msg(f"|yThe category is '{category}' and the stat type is one of: 'physical', 'social', 'mental', or 'supernatural'.|n")
+            self.caller.msg(f"|rWarning|n: The merit '{stat_name}' requires an instance.")
+            self.caller.msg(f"For example: {stat_name}(Sabbat)/{stat_type}=3")
+            self.caller.msg(f"The category is '{category}' and the stat type is one of: 'physical', 'social', 'mental', or 'supernatural'.")
         elif category == 'flaws':
-            self.caller.msg(f"|rThe flaw '{stat_name}' requires an instance. Use format: {stat_name}(instance)/{stat_type}=value|n")
-            self.caller.msg(f"|yFor example: {stat_name}(Sabbat)/{stat_type}=3|n")
-            self.caller.msg(f"|yThe category is '{category}' and the stat type is one of: 'physical', 'social', 'mental', or 'supernatural'.|n")
+            self.caller.msg(f"|rWarning|n: The flaw '{stat_name}' requires an instance.")
+            self.caller.msg(f"For example: {stat_name}(Sabbat)/{stat_type}=3")
+            self.caller.msg(f"The category is '{category}' and the stat type is one of: 'physical', 'social', 'mental', or 'supernatural'.")
         elif category == 'backgrounds':
-            self.caller.msg(f"|rThe background '{stat_name}' requires an instance. Use format: {stat_name}(instance)/background=value|n")
-            self.caller.msg(f"|yFor example: {stat_name}(Camarilla)/background=3|n")
+            self.caller.msg(f"|rWarning|n: The background '{stat_name}' requires an instance.")
+            self.caller.msg(f"For example: {stat_name}(Camarilla)/background=3")
         else:
-            self.caller.msg(f"|rThe stat '{stat_name}' requires an instance. Use format: {stat_name}(instance)=value|n")
-            self.caller.msg(f"|yFor example: {stat_name}(Specific)/category=value|n")
+            self.caller.msg(f"|rWarning|n: The stat '{stat_name}' requires an instance.")
+            self.caller.msg(f"For example: {stat_name}(Specific)/category=value")
         
         # Add usage information
         self.caller.msg(f"|yUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
@@ -182,10 +182,28 @@ class CmdSelfStat(MuxCommand):
         Returns:
             Tuple of (is_valid, matched_value, error_message)
         """
+        from world.wod20th.utils.shifter_utils import BREED_CHOICES_DICT
+        
         valid_breeds = BREED_CHOICES_DICT.get(shifter_type, [])
-        is_valid, matched_value = self.case_insensitive_in(value, set(valid_breeds))
-        error_msg = f"|rInvalid breed for {shifter_type}. Valid breeds are: {', '.join(sorted(valid_breeds))}|n"
-        return is_valid, matched_value, error_msg
+        if not valid_breeds:
+            return False, None, f"No valid breeds found for {shifter_type}"
+        
+        # Try direct match first (case-insensitive)
+        value_lower = value.lower()
+        for breed in valid_breeds:
+            if breed.lower() == value_lower:
+                return True, breed, ""
+        
+        # Try word matching for multi-word breeds
+        for breed in valid_breeds:
+            breed_words = breed.lower().split()
+            value_words = value_lower.split()
+            if all(w in breed_words for w in value_words):
+                return True, breed, ""
+                
+        # If no match found, suggest similar values
+        error_msg = f"Invalid breed for {shifter_type}. Valid breeds are: {', '.join(sorted(valid_breeds))}"
+        return False, None, error_msg
 
     def _validate_splat_type(self, splat: str) -> tuple[bool, str]:
         """
@@ -359,15 +377,15 @@ class CmdSelfStat(MuxCommand):
         
         # Check if this is a splat-specific background
         if stat_title in (bg.title() for bg in VAMPIRE_BACKGROUNDS):
-            return True, "Vampire", f"The background '{stat_name}' is only available to Vampire characters."
+            return True, "Vampire", f"|rWarning|n: The background '{stat_name}' is only available to Vampire characters."
         elif stat_title in (bg.title() for bg in CHANGELING_BACKGROUNDS):
-            return True, "Changeling", f"The background '{stat_name}' is only available to Changeling characters."
+            return True, "Changeling", f"|rWarning|n: The background '{stat_name}' is only available to Changeling characters."
         elif stat_title in (bg.title() for bg in MAGE_BACKGROUNDS + TECHNOCRACY_BACKGROUNDS + TRADITIONS_BACKGROUNDS + NEPHANDI_BACKGROUNDS):
-            return True, "Mage", f"The background '{stat_name}' is only available to Mage characters."
+            return True, "Mage", f"|rWarning|n: The background '{stat_name}' is only available to Mage characters."
         elif stat_title in (bg.title() for bg in SHIFTER_BACKGROUNDS):
-            return True, "Shifter", f"The background '{stat_name}' is only available to Shifter characters."
+            return True, "Shifter", f"|rWarning|n: The background '{stat_name}' is only available to Shifter characters."
         elif stat_title in (bg.title() for bg in SORCERER_BACKGROUNDS):
-            return True, "Mortal+", f"The background '{stat_name}' is only available to Mortal+ characters."
+            return True, "Mortal+", f"|rWarning|n: The background '{stat_name}' is only available to Mortal+ characters."
             
         return False, "", ""
 
@@ -385,16 +403,16 @@ class CmdSelfStat(MuxCommand):
         # Get kinfolk's tribe
         kinfolk_tribe = self.caller.get_stat('identity', 'lineage', 'Tribe', temp=False)
         if not kinfolk_tribe:
-            return False, "Must set tribe before learning gifts", None
+            return False, "|rWarning|n: Must set tribe before learning gifts", None
         
         # If value provided, validate gift level (Kinfolk can only learn level 1-2)
         if value is not None:
             try:
                 gift_value = int(value)
                 if gift_value > 2:
-                    return False, "Kinfolk can only learn level 1-2 gifts", None
+                    return False, "|rWarning|n: Kinfolk can only learn level 1-2 gifts", None
             except ValueError:
-                return False, "Gift value must be a number", None
+                return False, "|rWarning|n: Gift value must be a number", None
         
         # Check if it's a homid gift
         if gift.shifter_type:
@@ -414,7 +432,7 @@ class CmdSelfStat(MuxCommand):
                 if kinfolk_tribe.lower() in [t.lower() for t in allowed_tribes]:
                     return True, "", gift.name
         
-        return False, f"Kinfolk can only learn Homid gifts or gifts from their tribe ({kinfolk_tribe})", None
+        return False, f"|rWarning|n: Kinfolk can only learn Homid gifts or gifts from their tribe ({kinfolk_tribe})", None
 
     def _check_gift_alias(self, gift_name: str) -> tuple[bool, str]:
         """
@@ -616,7 +634,14 @@ class CmdSelfStat(MuxCommand):
             return False, "", None
         
         if stat and stat.category == 'backgrounds':
-            # For backgrounds, validate the value is numeric and in range
+            # For backgrounds, check splat-specific restrictions first
+            is_restricted, required_splat, error_msg = self.get_background_splat_restriction(stat_name)
+            char_splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            
+            if is_restricted and char_splat != required_splat:
+                return False, error_msg, None
+                
+            # Then validate the value is numeric and in range
             try:
                 bg_value = int(value)
                 if bg_value < 0 or bg_value > 10:
@@ -678,7 +703,7 @@ class CmdSelfStat(MuxCommand):
                         allowed_types = [merit.shifter_type.lower()]
                     
                     # Check if character's type is allowed
-                    if allowed_types and char_type.lower() not in allowed_types:
+                    if allowed_types and isinstance(char_type, str) and char_type.lower() not in allowed_types:
                         # Check if they already have this merit
                         current_value = self.caller.get_stat('merits', stat_type, merit.name, temp=False)
                         if current_value is None:  # Only block if they don't already have it
@@ -1142,1552 +1167,7 @@ class CmdSelfStat(MuxCommand):
             return 'identity', 'personal'
         elif stat_title in IDENTITY_LINEAGE:
             return 'identity', 'lineage'
-        elif stat_title in ['House', 'Fae Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
-                          'Type', 'Tribe', 'Breed', 'Kinfolk Breed', 'Auspice', 'Clan', 'Generation', 'Affiliation',
-                          'Tradition', 'Convention', 'Methodology', 'Traditions Subfaction',
-                          'Nephandi Faction', 'Possessed Type', 'Companion Type', 'Pryio', 'Lodge',
-                          'Camp', 'Fang House', 'Crown', 'Plague', 'Ananasi Faction', 'Ananasi Cabal',
-                          'Kitsune Path', 'Kitsune Faction', 'Ajaba Faction', 'Rokea Faction',
-                          'Stream', 'Varna', 'Deed Name', 'Aspect', 'Jamak Spirit', 'Rank', 'Elemental Affinity', 'Fuel', 'Sect']:
-            return 'identity', 'lineage'
-        elif stat_title in ['Full Name', 'Concept', 'Date of Birth', 'Date of Chrysalis', 'Date of Awakening',
-                          'First Change Date', 'Date of Embrace', 'Date of Possession', 'Nature', 'Demeanor',
-                          'Path of Enlightenment', 'Fae Name', 'Tribal Name', 'Occupation']:
-            return 'identity', 'personal'
-            
-        # If not in direct mappings, check if it's a valid identity stat for the character's splat
-        splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
-        if not splat:
-            return None, None
-            
-        # Get subtype and affiliation if applicable
-        subtype = None
-        affiliation = None
-        
-        if splat.lower() == 'shifter':
-            subtype = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-        elif splat.lower() == 'mage':
-            affiliation = self.caller.get_stat('identity', 'lineage', 'Affiliation', temp=False)
-        elif splat.lower() == 'changeling':
-            subtype = self.caller.get_stat('identity', 'lineage', 'Kith', temp=False)
-        elif splat.lower() == 'possessed':
-            subtype = self.caller.get_stat('identity', 'lineage', 'Possessed Type', temp=False)
-        elif splat.lower() == 'mortal+':
-            subtype = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-            
-        valid_stats = get_identity_stats(splat, subtype, affiliation)
-        
-        # If the stat is in the valid stats list, determine its category
-        if stat_title in valid_stats:
-            # Personal stats are typically the base stats and dates
-            if any(word.lower() in stat_lower for word in ['name', 'date', 'nature', 'demeanor', 'concept']):
-                return 'identity', 'personal'
-            # Everything else is lineage
-            return 'identity', 'lineage'
-            
-        return None, None
-
-    def parse(self):
-        """Parse the arguments."""
-        self.stat_name = ""
-        self.instance = None
-        self.category = None
-        self.value_change = None
-        self.temp = False
-        self.stat_type = None
-        self.is_specialty = False
-        self.specialty = None
-        # Initialize alias tracking
-        self.original_alias = None
-        self.alias_used = None
-        
-        args = self.args.strip()
-        if not args:
-            return
-
-        # Split into parts before and after =
-        if '=' in args:
-            first_part, self.value_change = args.split('=', 1)
-            first_part = first_part.strip()
-            self.value_change = self.value_change.strip()
-            
-            # Handle special case for stats with colon in their values
-            # Check if this might be a stat that allows colons in the value
-            special_colon_stats = ['elemental affinity']
-            potential_stat_name = first_part.lower()
-            
-            # If the original stat name is a known special case and the value contains a colon
-            if potential_stat_name in special_colon_stats and ':' in self.value_change:
-                # Keep the value with the colon as is - don't try to parse it further
-                self.stat_name = first_part.strip()
-                # Don't modify the value, let the validation handle it
-                return
-        else:
-            first_part = args
-            self.value_change = None
-
-        try:
-            # Check for specialty syntax first: ability[specialty]
-            if '[' in first_part and ']' in first_part:
-                ability_part, specialty = first_part.split('[', 1)
-                if not specialty.endswith(']'):
-                    raise ValueError("Malformed specialty syntax. Use: ability[specialty]")
-                specialty = specialty[:-1].strip()  # Remove the closing bracket
-                self.stat_name = ability_part.strip()
-                self.is_specialty = True
-                self.specialty = specialty
-                return  # Exit early for specialty handling
-
-            # Handle instance format: stat(instance)/category
-            if '(' in first_part and ')' in first_part:
-                # Extract stat name and everything after the opening parenthesis
-                parts = first_part.split('(', 1)
-                self.stat_name = parts[0].strip()
-                
-                # Extract instance and category
-                instance_and_rest = parts[1]
-                if ')' not in instance_and_rest:
-                    raise ValueError("Malformed instance syntax. Missing closing parenthesis. Use: stat(instance)/category")
-                
-                # Split at the closing parenthesis
-                instance_parts = instance_and_rest.split(')', 1)
-                self.instance = instance_parts[0].strip()
-                
-                # Check if there's a category specified after the instance
-                if len(instance_parts) > 1 and '/' in instance_parts[1]:
-                    category_part = instance_parts[1].split('/', 1)[1].strip()
-                    
-                    # Handle explicit category.type notation
-                    if '.' in category_part:
-                        cat_parts = category_part.split('.', 1)
-                        self.category = cat_parts[0].strip()
-                        self.stat_type = cat_parts[1].strip()
-                    else:
-                        # Use the standard mapping for other formats
-                        self.map_category_and_type(category_part)
-                    
-                    # If category mapping failed, exit early
-                    if not self.category or not self.stat_type:
-                        return
-                else:
-                    # No category specified, detect based on stat name
-                    self.detect_category_and_type()
-            else:
-                # Handle non-instance format: stat/category
-                if '/' in first_part:
-                    parts = first_part.split('/', 1)
-                    self.stat_name = parts[0].strip()
-                    category_part = parts[1].strip()
-                    
-                    # Handle explicit category.type notation
-                    if '.' in category_part:
-                        cat_parts = category_part.split('.', 1)
-                        self.category = cat_parts[0].strip()
-                        self.stat_type = cat_parts[1].strip()
-                    else:
-                        # Use the standard mapping for other formats
-                        self.map_category_and_type(category_part)
-                    
-                    # If category mapping failed, exit early
-                    if not self.category or not self.stat_type:
-                        return
-                else:
-                    self.stat_name = first_part.strip()
-                    # No category specified, detect based on stat name
-                    self.detect_category_and_type()
-                
-                # Check if this stat requires an instance
-                if self._requires_instance(self.stat_name, self.category):
-                    self._display_instance_requirement_message(self.stat_name)
-                    self.stat_name = None  # Set to None to indicate parsing failed
-                    return
-                
-                # Special handling for Gnosis
-                if self.stat_name.lower() == 'gnosis':
-                    splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
-                    char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-                    
-                    if splat and splat.lower() in ['shifter', 'possessed']:
-                        self.category = 'pools'
-                        self.stat_type = 'dual'
-                    elif splat and splat.lower() == 'mortal+' and char_type and char_type.lower() == 'kinfolk':
-                        self.category = 'merits'
-                        self.stat_type = 'supernatural'
-            
-            # Special handling for Nature and Time
-            if not self.category:
-                splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
-                char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-                
-                if self.stat_name.lower() == 'nature':
-                    # For Changelings and Kinain, Nature is a realm power
-                    if splat == 'Changeling' or (splat == 'Mortal+' and char_type == 'Kinain'):
-                        self.category = 'powers'
-                        self.stat_type = 'realm'
-                    else:
-                        self.category = 'identity'
-                        self.stat_type = 'personal'
-                elif self.stat_name.lower() == 'demeanor':
-                    self.category = 'identity'
-                    self.stat_type = 'personal'
-                elif self.stat_name.lower() == 'time':
-                    if splat == 'Mage':
-                        self.category = 'powers'
-                        self.stat_type = 'sphere'
-                    else:
-                        self.category = 'attributes'
-                        self.stat_type = 'physical'
-            
-        except Exception as e:
-            self.caller.msg(f"|rError parsing command: {str(e)}|n")
-            self.stat_name = None  # Set to None to indicate parsing failed
-
-    def map_category_and_type(self, category_or_type: str):
-        """Map user-provided category/type to correct internal values."""
-        # Convert to title case for consistent comparison
-        stat_title = self.stat_name.title()
-        stat_lower = self.stat_name.lower()
-
-        # Special handling for Rank vs Organizational Rank
-        if stat_lower == 'rank':
-            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
-            if splat and splat.lower() == 'shifter':
-                self.category = 'identity'
-                self.stat_type = 'lineage'
-                return
-            # If not a shifter, treat as Organizational Rank background
-            self.stat_name = 'Organizational Rank'
-            self.category = 'backgrounds'
-            self.stat_type = 'background'
-            return
-
-        category_or_type = category_or_type.lower()
-        
-        # Direct category mappings based on STAT_TYPE_TO_CATEGORY structure
-        category_map = {
-            # Attributes
-            'physical': ('attributes', 'physical'),
-            'social': ('attributes', 'social'),
-            'mental': ('attributes', 'mental'),
-            
-            # Abilities
-            'ability': ('abilities', 'talent'),  # Default to talent, will be adjusted in validation
-            'talent': ('abilities', 'talent'),
-            'skill': ('abilities', 'skill'),
-            'knowledge': ('abilities', 'knowledge'),
-            'secondary_talent': ('secondary_abilities', 'secondary_talent'),
-            'secondary_skill': ('secondary_abilities', 'secondary_skill'),
-            'secondary_knowledge': ('secondary_abilities', 'secondary_knowledge'),
-            
-            # Identity
-            'personal': ('identity', 'personal'),
-            'lineage': ('identity', 'lineage'),
-            'identity': ('identity', 'identity'),
-            'archetype': ('identity', 'personal'),
-            
-            # Powers
-            'discipline': ('powers', 'discipline'),
-            'combodiscipline': ('powers', 'combodiscipline'),
-            'thaumaturgy': ('powers', 'thaumaturgy'),
-            'gift': ('powers', 'gift'),
-            'rite': ('powers', 'rite'),
-            'sphere': ('powers', 'sphere'),
-            'rote': ('powers', 'rote'),
-            'art': ('powers', 'art'),
-            'realm': ('powers', 'realm'),
-            'blessing': ('powers', 'blessing'),
-            'charm': ('powers', 'charm'),
-            'sorcery': ('powers', 'sorcery'),
-            'faith': ('powers', 'faith'),
-            'numina': ('powers', 'numina'),
-            'hedge_ritual': ('powers', 'hedge_ritual'),
-            'special_advantage': ('powers', 'special_advantage'),
-            
-            # Merits and Flaws
-            'physical_merit': ('merits', 'physical'),
-            'social_merit': ('merits', 'social'),
-            'mental_merit': ('merits', 'mental'),
-            'supernatural_merit': ('merits', 'supernatural'),
-            'physical_flaw': ('flaws', 'physical'),
-            'social_flaw': ('flaws', 'social'),
-            'mental_flaw': ('flaws', 'mental'),
-            'supernatural_flaw': ('flaws', 'supernatural'),
-            
-            # Virtues
-            'virtue': ('virtues', 'moral'),
-            'conscience': ('virtues', 'moral'),
-            'conviction': ('virtues', 'moral'),
-            'self-control': ('virtues', 'moral'),
-            'instinct': ('virtues', 'moral'),
-            'courage': ('virtues', 'moral'),
-            
-            # Backgrounds
-            'background': ('backgrounds', 'background'),
-            
-            # Advantages
-            'renown': ('advantages', 'renown'),
-            
-            # Pools
-            'willpower': ('pools', 'dual'),
-            'rage': ('pools', 'dual'),
-            'gnosis': ('pools', 'dual'),
-            'glamour': ('pools', 'dual'),
-            'banality': ('pools', 'dual'),
-            'blood': ('pools', 'dual'),
-            'quintessence': ('pools', 'dual'),
-            'paradox': ('pools', 'dual'),
-            'essence energy': ('pools', 'dual'),
-            'path': ('pools', 'moral'),
-            'road': ('pools', 'moral'),
-            'arete': ('pools', 'advantage'),
-            'enlightenment': ('pools', 'advantage'),
-            'resonance': ('pools', 'resonance'),
-            'dynamic': ('virtues', 'synergy'),
-            'static': ('virtues', 'synergy'),
-            'entropic': ('virtues', 'synergy'),
-            
-            # Common aliases
-            'disciplines': ('powers', 'discipline'),
-            'gifts': ('powers', 'gift'),
-            'spheres': ('powers', 'sphere'),
-            'realms': ('powers', 'realm'),
-            'arts': ('powers', 'art'),
-            'blessings': ('powers', 'blessing'),
-            'charms': ('powers', 'charm'),
-            'advantages': ('powers', 'special_advantage'),
-            'backgrounds': ('backgrounds', 'background'),
-            'pools': ('pools', 'dual'),
-            'virtues': ('virtues', 'moral'),
-            
-            # Special cases
-            'date of birth': ('identity', 'personal'),
-            'date of embrace': ('identity', 'personal'),
-            'date of chrysalis': ('identity', 'personal'),
-            'date of awakening': ('identity', 'personal'),
-            'first change date': ('identity', 'personal'),
-            'date of possession': ('identity', 'personal'),
-            'occupation': ('identity', 'personal'),
-            'patron totem': ('identity', 'lineage'),
-            'totem': ('backgrounds', 'background'),
-            'possessed wings': ('powers', 'blessing'),
-            'companion wings': ('powers', 'special_advantage'),
-            'possessed size': ('powers', 'blessing'),
-            'companion size': ('powers', 'special_advantage'),
-            'spirit type': ('identity', 'lineage'),
-            'anchor': ('identity', 'lineage'),
-            'essence energy': ('pools', 'dual'),
-            'organizational rank': ('backgrounds', 'background'),
-            'jamak spirit': ('identity', 'lineage'),
-            'fuel': ('identity', 'lineage'),
-            'elemental affinity': ('identity', 'lineage'),
-            'element': ('identity', 'lineage') #alias for elemental affinity
-        }
-        
-        # Try exact match first
-        if category_or_type in category_map:
-            self.category, self.stat_type = category_map[category_or_type]
-            
-            # Validate that the stat belongs in this category
-            if not self._validate_stat_in_category(self.stat_name, self.category, self.stat_type):
-                # Don't set category/type to None here - let _validate_stat_in_category handle redirection
-                return
-            return
-            
-        # Try case-insensitive match
-        category_or_type_lower = category_or_type.lower()
-        for key, value in category_map.items():
-            if key.lower() == category_or_type_lower:
-                self.category, self.stat_type = value
-                
-                # Validate that the stat belongs in this category
-                if not self._validate_stat_in_category(self.stat_name, self.category, self.stat_type):
-                    # Don't set category/type to None here - let _validate_stat_in_category handle redirection
-                    return
-                return
-                
-        # If still not found, set both and let validation handle errors
-        if '.' in category_or_type:
-            parts = category_or_type.split('.', 1)
-            self.category = parts[0]
-            self.stat_type = parts[1]
-        else:
-            self.category = category_or_type
-            self.stat_type = category_or_type
-
-    def _validate_stat_in_category(self, stat_name: str, category: str, stat_type: str) -> bool:
-        """
-        Validate that a stat belongs in the specified category and type.
-        
-        Args:
-            stat_name: The name of the stat to check
-            category: The category to check against
-            stat_type: The stat type to check against
-            
-        Returns:
-            bool: True if the stat belongs in the category/type, False otherwise
-        """
-        # Convert to title case for consistent comparison
-        stat_title = stat_name.title()
-        stat_lower = stat_name.lower()
-
-        # Special handling for Obedience stat
-        if stat_lower == 'obedience':
-            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
-            if splat == 'Shifter':
-                # Get shifter type
-                shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-                if shifter_type == 'Ananasi':
-                    # For Ananasi, Obedience is a renown stat
-                    if category == 'advantages' and stat_type == 'renown':
-                        return True
-                    self.caller.msg(f"|rFor Ananasi characters, Obedience is a renown stat and cannot be set as a {category}.{stat_type}.|n")
-                    self.category = 'advantages'
-from evennia.commands.default.muxcommand import MuxCommand
-from world.wod20th.utils.sheet_constants import (
-    KITH, KNOWLEDGES, SECONDARY_KNOWLEDGES, SECONDARY_SKILLS, 
-    SECONDARY_TALENTS, SKILLS, TALENTS, CLAN, BREED, GAROU_TRIBE,
-    SEEMING, PATHS_OF_ENLIGHTENMENT, SECT, AFFILIATION, TRADITION,
-    CONVENTION, NEPHANDI_FACTION
-)
-from world.wod20th.utils.stat_mappings import (
-    ALL_RITES, CATEGORIES, KINAIN_BACKGROUNDS, STAT_TYPES, STAT_TYPE_TO_CATEGORY,
-    IDENTITY_STATS, SPLAT_STAT_OVERRIDES, ALL_RITES,
-    POOL_TYPES, POWER_CATEGORIES, ABILITY_TYPES,
-    ATTRIBUTE_CATEGORIES, SPECIAL_ADVANTAGES, COMBAT_SPECIAL_ADVANTAGES,
-    STAT_VALIDATION, VALID_SPLATS, GENERATION_MAP,
-    GENERATION_FLAWS, BLOOD_POOL_MAP, get_identity_stats,
-    UNIVERSAL_BACKGROUNDS, VAMPIRE_BACKGROUNDS,
-    CHANGELING_BACKGROUNDS, MAGE_BACKGROUNDS,
-    TECHNOCRACY_BACKGROUNDS, TRADITIONS_BACKGROUNDS,
-    NEPHANDI_BACKGROUNDS, SHIFTER_BACKGROUNDS,
-    SORCERER_BACKGROUNDS, IDENTITY_PERSONAL, IDENTITY_LINEAGE,
-    ARTS, REALMS, VALID_DATES, MERIT_VALUES, FLAW_VALUES,
-    MERIT_CATEGORIES, FLAW_CATEGORIES, MERIT_SPLAT_RESTRICTIONS,
-    FLAW_SPLAT_RESTRICTIONS, ARTS, REALMS, ALL_MERITS, ALL_FLAWS,
-    KINFOLK_BREED_CHOICES
-)
-from world.wod20th.utils.vampire_utils import (
-    calculate_blood_pool, initialize_vampire_stats, update_vampire_virtues_on_path_change, 
-    CLAN_CHOICES, get_clan_disciplines, validate_vampire_stats, validate_vampire_path
-)
-from world.wod20th.utils.mage_utils import (
-    initialize_mage_stats, AFFILIATION, TRADITION, CONVENTION,
-    TRADITION_SUBFACTION, METHODOLOGIES, NEPHANDI_FACTION, 
-    MAGE_SPHERES, update_mage_pools_on_stat_change, validate_mage_stats
-)
-from world.wod20th.utils.shifter_utils import (
-    SHIFTER_RENOWN, initialize_shifter_type, SHIFTER_TYPE_CHOICES, BREED_CHOICES_DICT,
-    AUSPICE_CHOICES, GAROU_TRIBE_CHOICES, BASTET_TRIBE_CHOICES, 
-    update_shifter_pools_on_stat_change, SHIFTER_IDENTITY_STATS, 
-    BREED_CHOICES, ASPECT_CHOICES_DICT, AUSPICE_CHOICES_DICT,
-    validate_shifter_stats
-)
-from world.wod20th.utils.changeling_utils import (
-    FAE_COURTS, HOUSES, PHYLA, initialize_changeling_stats, KITH, SEEMING,
-    SEELIE_LEGACIES, UNSEELIE_LEGACIES, KINAIN_LEGACIES,
-    validate_changeling_stats
-)
-from world.wod20th.utils.mortalplus_utils import (
-    initialize_mortalplus_stats, MORTALPLUS_TYPE_CHOICES,
-    MORTALPLUS_TYPES, MORTALPLUS_POOLS, MORTALPLUS_POWERS,
-    validate_mortalplus_stats
-)
-from world.wod20th.utils.possessed_utils import (
-    initialize_possessed_stats, POSSESSED_TYPE_CHOICES,
-    POSSESSED_TYPES, POSSESSED_POWERS, validate_possessed_stats
-)
-from world.wod20th.utils.companion_utils import (
-    initialize_companion_stats, COMPANION_TYPE_CHOICES,
-    COMPANION_POWERS, validate_companion_stats
-)
-from world.wod20th.utils.virtue_utils import (
-    calculate_willpower, calculate_path, PATH_VIRTUES
-)
-from world.wod20th.utils.stat_initialization import (
-    find_similar_stats, check_stat_exists
-)
-from world.wod20th.utils.archetype_utils import (
-    ARCHETYPES, validate_archetype, get_archetype_info
-)
-from world.wod20th.utils.banality import get_default_banality
-import re
-from evennia.utils.search import search_object
-
-REQUIRED_INSTANCES = ['Library', 'Status', 'Influence', 'Wonder', 'Secret Weapon', 'Companion', 
-                      'Familiar', 'Enhancement', 'Laboratory', 'Favor', 'Acute Senses', 
-                      'Enchanting Feature', 'Secret Code Language', 'Hideaway', 'Safehouse', 
-                      'Sphere Natural', 'Phobia', 'Addiction', 'Allies', 'Contacts', 'Caretaker',
-                      'Alternate Identity', 'Equipment', 'Professional Certification', 'Allergic',
-                      'Impediment', 'Enemy', 'Mentor', 'Old Flame', 'Additional Discipline', 
-                      'Totem', 'Boon', 'Treasure', 'Geas', 'Fetish', 'Chimerical Item', 'Chimerical Companion',
-                      'Dreamers', 'Digital Dreamers', 'Addiction', 'Phobia', 'Derangement',
-                      'Obsession', 'Compulsion', 'Bigot', 'Ability Deficit', 'Sect Enmity', 'Camp Enmity',
-                      'Retainers', 'Sphere Inept', 'Art Affinity', 'Immunity', 'Rote Sorcerer'
-                     ] 
-
-# Add the REQUIRED_SPECIALTIES constant
-REQUIRED_SPECIALTIES = {
-    'Crafts': 'mechanics, blacksmithing, woodworking, etc.',
-    'Artistry': 'painting, sculpture, graphic design, etc.',
-    'Pilot': 'boat, plane, tank, etc.',
-    'Area Knowledge': 'an area of San Diego',
-    'Martial Arts': 'requires a style',
-    'Performance': 'singing, dancing, guitar, etc.',
-    'Fencing': 'western or kenjutsu',
-    'Science': 'biology, chemistry, physics, etc.',
-    'Hypertech': 'electronics, computers, robotics, etc.'
-}
-
-class CmdSelfStat(MuxCommand):
-    """
-    Usage:
-      +selfstat <stat>[(<instance>)]/<type>=[+-]<value>
-      +selfstat <stat>[(<instance>)]/<type>=
-
-    Examples:
-      +selfstat Strength/Physical=+1
-      +selfstat Firearms/Skill=-1
-      +selfstat Status(Ventrue)/Social= (removes the stat)
-      +selfstat Nature/Personal=Architect
-      +selfstat Demeanor/Personal=Bon Vivant
-
-    Staff command:
-      +staffstat <character>=<stat>[(<instance>)]/<type>=[+-]<value>
-      +staffstat <character>=<stat>[(<instance>)]/<type>=
-      +staffstat <character>=<stat>=<value>
-
-    Examples:
-      +staffstat Bob=Strength/Physical:3
-      +staffstat Bob=Strength:3        (same as above)
-      +staffstat Jane=Status(Camarilla):2
-      +staffstat Mike=Path of Enlightenment:Night
-      +staffstat Sarah=Nature/Personal:Architect
-
-    This version of the selfstat command allows staff to set stats on other characters, 
-    bypassing normal restrictions like character approval status and validation limits.
-    """
-
-    key = "+selfstat"
-    aliases = ["selfstat"]
-    locks = "cmd:all()"  # All players can use this command
-    help_category = "Chargen & Character Info"
-    def __init__(self):
-        """Initialize the command."""
-        super().__init__()
-        self.switches = []
-        self.is_specialty = False  # Add this line
-        self.specialty = None      # Add this line
-        # Initialize alias tracking
-        self.original_alias = None
-        self.alias_used = None
-        self.stat_name = ""
-        self.instance = None
-        self.category = None
-        self.value_change = None
-        self.stat_type = None
-        
-    # Helper Methods
-    def _display_instance_requirement_message(self, stat_name: str) -> None:
-        """Display message indicating an instance is required for a stat."""
-        from world.wod20th.models import Stat
-        stat = Stat.objects.filter(name__iexact=stat_name).first()
-        
-        # Get the category and type if available
-        category = stat.category if stat else self.category
-        stat_type = stat.stat_type if stat else self.stat_type
-        
-        # Provide more specific guidance based on the stat type
-        if category == 'merits':
-            self.caller.msg(f"|rThe merit '{stat_name}' requires an instance. Use format: {stat_name}(instance)/{stat_type}=value|n")
-            self.caller.msg(f"|yFor example: {stat_name}(Sabbat)/{stat_type}=3|n")
-            self.caller.msg(f"|yThe category is '{category}' and the stat type is one of: 'physical', 'social', 'mental', or 'supernatural'.|n")
-        elif category == 'flaws':
-            self.caller.msg(f"|rThe flaw '{stat_name}' requires an instance. Use format: {stat_name}(instance)/{stat_type}=value|n")
-            self.caller.msg(f"|yFor example: {stat_name}(Sabbat)/{stat_type}=3|n")
-            self.caller.msg(f"|yThe category is '{category}' and the stat type is one of: 'physical', 'social', 'mental', or 'supernatural'.|n")
-        elif category == 'backgrounds':
-            self.caller.msg(f"|rThe background '{stat_name}' requires an instance. Use format: {stat_name}(instance)/background=value|n")
-            self.caller.msg(f"|yFor example: {stat_name}(Camarilla)/background=3|n")
-        else:
-            self.caller.msg(f"|rThe stat '{stat_name}' requires an instance. Use format: {stat_name}(instance)=value|n")
-            self.caller.msg(f"|yFor example: {stat_name}(Specific)/category=value|n")
-        
-        # Add usage information
-        self.caller.msg(f"|yUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
-		
-    def _validate_breed(self, shifter_type: str, value: str) -> tuple[bool, str, str]:
-        """
-        Validate breed value for a given shifter type.
-        
-        Args:
-            shifter_type: The type of shifter
-            value: The breed value to validate
-            
-        Returns:
-            Tuple of (is_valid, matched_value, error_message)
-        """
-        valid_breeds = BREED_CHOICES_DICT.get(shifter_type, [])
-        is_valid, matched_value = self.case_insensitive_in(value, set(valid_breeds))
-        error_msg = f"|rInvalid breed for {shifter_type}. Valid breeds are: {', '.join(sorted(valid_breeds))}|n"
-        return is_valid, matched_value, error_msg
-
-    def _validate_splat_type(self, splat: str) -> tuple[bool, str]:
-        """
-        Validate a splat type.
-        
-        Args:
-            splat: The splat type to validate
-            
-        Returns:
-            Tuple of (is_valid, error_message)
-        """
-        valid_splats = {'Vampire', 'Mage', 'Shifter', 'Changeling', 'Mortal+', 'Possessed', 'Companion', 'Mortal'}
-        is_valid = splat.title() in valid_splats
-        error_msg = f"|rInvalid splat type. Valid types are: {', '.join(sorted(valid_splats))}|n"
-        return is_valid, error_msg
-
-    def _validate_kith(self, value: str) -> tuple[bool, str, str]:
-        """
-        Validate a kith value.
-        
-        Args:
-            value: The kith value to validate
-            
-        Returns:
-            Tuple of (is_valid, matched_value, error_message)
-        """
-        is_valid, matched_value = self.case_insensitive_in(value, KITH)
-        error_msg = f"|rInvalid kith. Valid kiths are: {', '.join(sorted(KITH))}|n"
-        return is_valid, matched_value, error_msg
-
-    @property
-    def affiliation(self) -> str:
-        """Get the character's affiliation."""
-        return self.caller.get_stat('identity', 'lineage', 'Affiliation', temp=False)
-
-    @property
-    def character_type(self) -> str:
-        """Get the character's type."""
-        return self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-
-    @property
-    def splat(self) -> str:
-        """Get the character's splat."""
-        return self.caller.get_stat('identity', 'personal', 'Splat', temp=False)
-
-    def case_insensitive_in(self, value: str, valid_set: set) -> tuple[bool, str]:
-        """
-        Check if a value exists in a set while ignoring case.
-        Returns (bool, matched_value) where matched_value is the correctly-cased version if found.
-        """
-        if not value:
-            return False, None
-            
-        # Try title case
-        if value.title() in valid_set:
-            return True, value.title()
-            
-        # Try case-insensitive match
-        value_lower = value.lower()
-        for valid_value in valid_set:
-            if valid_value.lower() == value_lower:
-                return True, valid_value
-            
-        # If no match found, suggest similar values
-        similar_values = []
-        for valid_value in valid_set:
-            # Check if the input is a substring of any valid value
-            if value_lower in valid_value.lower():
-                similar_values.append(valid_value)
-            # Check if input matches the beginning of any word in the valid value
-            elif any(word.lower().startswith(value_lower) 
-                    for word in valid_value.split()):
-                similar_values.append(valid_value)
-                
-        if similar_values:
-            return False, f"Invalid value. Did you mean one of these?: {', '.join(sorted(similar_values))}"
-        else:
-            return False, f"Invalid value. Valid options are: {', '.join(sorted(valid_set))}"
-
-    def case_insensitive_in_nested(self, value: str, nested_dict: dict, parent_value: str) -> tuple[bool, str]:
-        """
-        Check if a value exists in a nested dictionary's list, ignoring case.
-        Returns (bool, matched_value) where matched_value is the correctly-cased version if found.
-        """
-        if not value or not parent_value:
-            return False, None
-            
-        # Get valid values for this parent
-        valid_values = nested_dict.get(parent_value, [])
-        if not valid_values:
-            # If no values found for this parent, check all values
-            all_values = set()
-            for values in nested_dict.values():
-                all_values.update(values)
-            # Try to find similar values across all categories
-            similar_values = []
-            value_lower = value.lower()
-            for valid_value in all_values:
-                if value_lower in valid_value.lower() or any(word.lower().startswith(value_lower) for word in valid_value.split()):
-                    similar_values.append(valid_value)
-            if similar_values:
-                return False, f"Invalid value. Similar values found in other categories: {', '.join(sorted(similar_values))}"
-            return False, f"Invalid value. No valid options found for {parent_value}"
-            
-        # Try direct match first
-        is_valid, matched_value = self.case_insensitive_in(value, set(valid_values))
-        if is_valid:
-            return True, matched_value
-            
-        # If no match, suggest similar values for this parent
-        value_lower = value.lower()
-        similar_values = []
-        for valid_value in valid_values:
-            if value_lower in valid_value.lower() or any(word.lower().startswith(value_lower) for word in valid_value.split()):
-                similar_values.append(valid_value)
-                
-        if similar_values:
-            return False, f"Invalid value for {parent_value}. Did you mean one of these?: {', '.join(sorted(similar_values))}"
-        else:
-            return False, f"Invalid value for {parent_value}. Valid options are: {', '.join(sorted(valid_values))}"
-
-    def _remove_stat_from_other_categories(self, stat_name: str, target_category: str, target_type: str) -> None:
-        """
-        Remove a stat from all categories except the target category and type.
-        
-        Args:
-            stat_name: The name of the stat to remove
-            target_category: The category to keep the stat in
-            target_type: The type within the category to keep the stat in
-        """
-        if not hasattr(self.caller, 'db') or not hasattr(self.caller.db, 'stats'):
-            return
-            
-        # Categories to check
-        categories_to_check = ['attributes', 'abilities', 'secondary_abilities', 'identity', 
-                               'powers', 'merits', 'flaws', 'backgrounds', 'virtues', 
-                               'advantages', 'pools']
-        
-        for category in categories_to_check:
-            if category in self.caller.db.stats:
-                for stat_type in self.caller.db.stats[category]:
-                    # Skip the target category and type - we want to keep this one
-                    if category == target_category and stat_type == target_type:
-                        continue
-                        
-                    # Check if the stat exists in this category/type
-                    if stat_name in self.caller.db.stats[category][stat_type]:
-                        # Remove the stat
-                        del self.caller.db.stats[category][stat_type][stat_name]
-                        self.caller.msg(f"|yRemoved duplicate '{stat_name}' from {category}.{stat_type}|n")
-
-    def get_stat_category(self, stat_name: str, stat_type: str, splat: str = None) -> str:
-        """
-        Get the appropriate category for a stat based on stat type and splat.
-        """
-        # Check for splat-specific overrides first
-        if splat and splat in SPLAT_STAT_OVERRIDES:
-            if stat_name in SPLAT_STAT_OVERRIDES[splat]:
-                return SPLAT_STAT_OVERRIDES[splat][stat_name][1]
-
-        # Use the standard mapping
-        return STAT_TYPE_TO_CATEGORY.get(stat_type, 'other')
-
-    def get_background_splat_restriction(self, stat_name: str) -> tuple[bool, str, str]:
-        """
-        Check if a background is restricted to a specific splat type.
-        Returns (is_restricted, splat_name, error_message).
-        """
-        # Convert stat name to title case for comparison
-        stat_title = stat_name.title()
-        
-        # Check if this is a splat-specific background
-        if stat_title in (bg.title() for bg in VAMPIRE_BACKGROUNDS):
-            return True, "Vampire", f"The background '{stat_name}' is only available to Vampire characters."
-        elif stat_title in (bg.title() for bg in CHANGELING_BACKGROUNDS):
-            return True, "Changeling", f"The background '{stat_name}' is only available to Changeling characters."
-        elif stat_title in (bg.title() for bg in MAGE_BACKGROUNDS + TECHNOCRACY_BACKGROUNDS + TRADITIONS_BACKGROUNDS + NEPHANDI_BACKGROUNDS):
-            return True, "Mage", f"The background '{stat_name}' is only available to Mage characters."
-        elif stat_title in (bg.title() for bg in SHIFTER_BACKGROUNDS):
-            return True, "Shifter", f"The background '{stat_name}' is only available to Shifter characters."
-        elif stat_title in (bg.title() for bg in SORCERER_BACKGROUNDS):
-            return True, "Mortal+", f"The background '{stat_name}' is only available to Mortal+ characters."
-            
-        return False, "", ""
-
-    def _validate_kinfolk_gift(self, gift, value=None) -> tuple[bool, str, str]:
-        """
-        Validate if a Kinfolk can learn a specific gift.
-        
-        Args:
-            gift: The gift object to validate
-            value: Optional value to validate for the gift level
-            
-        Returns:
-            Tuple of (is_valid, error_message, corrected_value)
-        """
-        # Get kinfolk's tribe
-        kinfolk_tribe = self.caller.get_stat('identity', 'lineage', 'Tribe', temp=False)
-        if not kinfolk_tribe:
-            return False, "Must set tribe before learning gifts", None
-        
-        # If value provided, validate gift level (Kinfolk can only learn level 1-2)
-        if value is not None:
-            try:
-                gift_value = int(value)
-                if gift_value > 2:
-                    return False, "Kinfolk can only learn level 1-2 gifts", None
-            except ValueError:
-                return False, "Gift value must be a number", None
-        
-        # Check if it's a homid gift
-        if gift.shifter_type:
-            allowed_types = gift.shifter_type if isinstance(gift.shifter_type, list) else [gift.shifter_type]
-            if 'homid' in [t.lower() for t in allowed_types]:
-                return True, "", gift.name
-        
-        # Check if it's a tribal gift
-        if gift.tribe:
-            # Handle both string and list cases for tribe
-            if isinstance(gift.tribe, str):
-                if gift.tribe.lower() == kinfolk_tribe.lower():
-                    return True, "", gift.name
-            else:
-                # Handle list case
-                allowed_tribes = gift.tribe if isinstance(gift.tribe, list) else [gift.tribe]
-                if kinfolk_tribe.lower() in [t.lower() for t in allowed_tribes]:
-                    return True, "", gift.name
-        
-        return False, f"Kinfolk can only learn Homid gifts or gifts from their tribe ({kinfolk_tribe})", None
-
-    def _check_gift_alias(self, gift_name: str) -> tuple[bool, str]:
-        """
-        Check if a gift name is an alias and return the canonical name.
-        """
-        # We DO NOT set original_alias here at all
-        # Original alias should only be set in validate_stat_value
-        
-        # We track alias_used but only if we find a match
-        character = self.caller
-        if hasattr(self, 'target') and self.target:
-            character = self.target
-        
-        # Get character's splat and type
-        splat = character.get_stat('other', 'splat', 'Splat', temp=False)
-        char_type = character.get_stat('identity', 'lineage', 'Type', temp=False)
-        
-        # Special handling for Obedience which could be both a gift and a renown type
-        if gift_name.lower() == 'obedience':
-            # For Ananasi, prioritize renown over gift
-            if char_type == 'Ananasi':
-                return False, None
-
-        # Check direct aliases in character's gift_aliases attribute
-        if hasattr(character.db, 'gift_aliases') and character.db.gift_aliases:
-            for canonical, alias_info in character.db.gift_aliases.items():
-                # Handle different formats of gift aliases
-                aliases_to_check = []
-                
-                # New format: dict with 'aliases' list
-                if isinstance(alias_info, dict) and 'aliases' in alias_info:
-                    if isinstance(alias_info['aliases'], list):
-                        aliases_to_check.extend(alias_info['aliases'])
-                    elif isinstance(alias_info['aliases'], str):
-                        aliases_to_check.append(alias_info['aliases'])
-                
-                # Legacy format: dict with 'alias' string
-                elif isinstance(alias_info, dict) and 'alias' in alias_info:
-                    aliases_to_check.append(alias_info['alias'])
-                
-                # Very old format: direct string
-                elif isinstance(alias_info, str):
-                    aliases_to_check.append(alias_info)
-                
-                # Check if any alias matches
-                for alias in aliases_to_check:
-                    if isinstance(alias, str) and alias.lower() == gift_name.lower():
-                        # Only set alias_used if we found a match
-                        self.alias_used = gift_name
-                        self.caller.msg(f"|y'{gift_name}' is a stored alias for the gift '{canonical}'.|n")
-                        return True, canonical
-        
-        # Check if character can use gifts
-        can_use_gifts = (
-            splat == 'Shifter' or 
-            splat == 'Possessed' or 
-            (splat == 'Mortal+' and char_type == 'Kinfolk')
-        )
-        
-        if not can_use_gifts:
-            return False, None
-            
-        # Check if the gift exists in the database
-        from world.wod20th.models import Stat
-        import difflib
-        
-        # Try an exact match first
-        gift = Stat.objects.filter(
-            name__iexact=gift_name,
-            category='powers',
-            stat_type='gift'
-        ).first()
-        
-        if gift:
-            # For staff, we allow setting any gift regardless of character type
-            self.alias_used = gift_name
-            return True, gift.name  # Found exact match
-
-        # Check for aliases in the database
-        gifts_with_alias = Stat.objects.filter(
-            category='powers',
-            stat_type='gift'
-        )
-        
-        for potential_gift in gifts_with_alias:
-            if potential_gift.gift_alias:
-                # Handle different formats of gift_alias
-                if isinstance(potential_gift.gift_alias, list):
-                    # Check each alias in the list
-                    for alias in potential_gift.gift_alias:
-                        if isinstance(alias, str) and alias.lower() == gift_name.lower():
-                            self.alias_used = gift_name
-                            self.caller.msg(f"|y'{gift_name}' is a database alias for the gift '{potential_gift.name}'.|n")
-                            return True, potential_gift.name
-                elif isinstance(potential_gift.gift_alias, str) and potential_gift.gift_alias.lower() == gift_name.lower():
-                    self.alias_used = gift_name
-                    self.caller.msg(f"|y'{gift_name}' is a database alias for the gift '{potential_gift.name}'.|n")
-                    return True, potential_gift.name
-            
-        # If not found by exact match, try a more focused partial match
-        # Only for search terms with substantial length
-        if len(gift_name) > 3:
-            # Get all potentially matching gifts
-            potential_matches = Stat.objects.filter(
-                category='powers',
-                stat_type='gift'
-            )
-            
-            # Find the best match using similarity ratio
-            best_match = None
-            best_score = 0.7  # Minimum 70% similarity required
-            
-            for potential in potential_matches:
-                similarity = difflib.SequenceMatcher(None, gift_name.lower(), potential.name.lower()).ratio()
-                if similarity > best_score:
-                    best_score = similarity
-                    best_match = potential
-            
-            if best_match:
-                gift = best_match
-                self.alias_used = gift_name
-                self.caller.msg(f"|yFound similar gift: '{gift.name}'. Setting it to {self.value_change}.|n")
-                return True, gift.name
-         
-        return False, None
-    
-    
-    def validate_stat_value(self, stat_name: str, value: str, category: str = None, stat_type: str = None) -> tuple:
-        """
-        Validate a stat value based on its type and category.
-        Returns (is_valid, error_message, corrected_value)
-        """
-        # Check for None values in all parameters
-        if stat_name is None:
-            return False, "Stat name cannot be None", None
-        if value is None:
-            return False, f"Value cannot be None for {stat_name}", None
-        if category is None:
-            # This is expected in some cases when auto-detecting the category
-            pass
-        if stat_type is None:
-            # This is expected in some cases when auto-detecting the stat_type
-            pass
-            
-        # Special handling for hedge rituals
-        if category == 'powers' and stat_type == 'hedge_ritual':
-            try:
-                ritual_value = int(value)
-                if ritual_value < 0 or ritual_value > 5:
-                    return False, f"Hedge ritual level must be between 0 and 5", None
-                return True, "", str(ritual_value)
-            except ValueError:
-                return False, "Hedge ritual level must be a number", None
-            
-        # Get character's splat and type - try direct access first
-        splat = None
-        if (hasattr(self.caller, 'db') and 
-            hasattr(self.caller.db, 'stats') and 
-            'other' in self.caller.db.stats and 
-            'splat' in self.caller.db.stats['other'] and 
-            'Splat' in self.caller.db.stats['other']['splat']):
-            splat = self.caller.db.stats['other']['splat']['Splat'].get('perm')
-        
-        # If direct access failed, try get_stat
-        if not splat:
-            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
-            
-        char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-
-        # Only allow Mortals to set Occupation
-        if stat_name.lower() == 'occupation' and splat != 'Mortal':
-            return False, "Only Mortals can set an Occupation.", None
-
-        # Special handling for Arcane
-        if stat_name.lower() == 'arcane':
-            try:
-                value_int = int(value)
-                if value_int < 0 or value_int > 5:
-                    return False, f"Arcane must be between 0 and 5", None
-                
-                # For Vampires, validate as a merit
-                if splat == 'Vampire':
-                    if category != 'merits' or stat_type != 'social':
-                        return False, "For Vampires, Arcane must be set as a social merit", None
-                # For non-Vampires, validate as a background
-                else:
-                    if category != 'backgrounds' or stat_type != 'background':
-                        return False, "For non-Vampires, Arcane must be set as a background", None
-                return True, "", str(value_int)
-            except ValueError:
-                return False, "Arcane value must be a number", None
-
-        # Get the stat definition from the database
-        from world.wod20th.models import Stat
-        stat = Stat.objects.filter(name__iexact=stat_name).first()
-        
-        # Check if this stat requires an instance
-        if self._requires_instance(stat_name, category) and not self.instance:
-            self._display_instance_requirement_message(stat_name)
-            return False, "", None
-        
-        if stat and stat.category == 'backgrounds':
-            # For backgrounds, validate the value is numeric and in range
-            try:
-                bg_value = int(value)
-                if bg_value < 0 or bg_value > 10:
-                    return False, f"{stat_name} must be between 0 and 10", None
-                return True, "", str(bg_value)
-            except ValueError:
-                return False, f"{stat_name} value must be a number", None
-
-        # Special handling for merits
-        if category == 'merits':
-            # Get character's splat type if needed for restriction checks
-            char_type = None
-            if splat == 'Shifter':
-                char_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-            elif splat == 'Mortal+':
-                char_type = self.caller.get_stat('identity', 'lineage', 'MortalPlus Type', temp=False)
-            elif splat == 'Companion':
-                char_type = self.caller.get_stat('identity', 'lineage', 'Companion Type', temp=False)
-            elif splat == 'Possessed':
-                char_type = self.caller.get_stat('identity', 'lineage', 'Possessed Type', temp=False)
-                
-            # Get the merit from the database
-            from world.wod20th.models import Stat
-            merit = Stat.objects.filter(
-                name__iexact=stat_name,
-                category='merits',
-                stat_type=stat_type
-            ).first()
-            
-            if merit:
-                # Update stat_name to use proper case from database
-                self.stat_name = merit.name
-                
-                # Check if this is a shifter-specific merit
-                if merit.shifter_type:
-                    if splat != 'Shifter':
-                        # Remove the stat if it was set
-                        if category in self.caller.db.stats and stat_type in self.caller.db.stats[category]:
-                            if self.stat_name in self.caller.db.stats[category][stat_type]:
-                                del self.caller.db.stats[category][stat_type][self.stat_name]
-                        return False, f"The merit '{merit.name}' is only available to Shifter characters.", None
-                    
-                    # Handle shifter_type the same way as gifts
-                    allowed_types = []
-                    if isinstance(merit.shifter_type, list):
-                        # Handle negation cases (e.g., "!Ananasi")
-                        for t in merit.shifter_type:
-                            if isinstance(t, str):
-                                if t.startswith('!'):
-                                    if char_type.lower() == t[1:].lower():
-                                        # Remove the stat if it was set
-                                        if category in self.caller.db.stats and stat_type in self.caller.db.stats[category]:
-                                            if self.stat_name in self.caller.db.stats[category][stat_type]:
-                                                del self.caller.db.stats[category][stat_type][self.stat_name]
-                                        return False, f"The merit '{merit.name}' is not available to {char_type} characters.", None
-                                else:
-                                    allowed_types.append(t.lower())
-                    else:
-                        allowed_types = [merit.shifter_type.lower()]
-                    
-                    # Check if character's type is allowed
-                    if allowed_types and char_type.lower() not in allowed_types:
-                        # Check if they already have this merit
-                        current_value = self.caller.get_stat('merits', stat_type, merit.name, temp=False)
-                        if current_value is None:  # Only block if they don't already have it
-                            # Format the list of types nicely
-                            type_list = [t.title() for t in allowed_types]
-                            if len(type_list) == 1:
-                                type_str = type_list[0]
-                            elif len(type_list) == 2:
-                                type_str = f"{type_list[0]} and {type_list[1]}"
-                            else:
-                                type_str = f"{', '.join(type_list[:-1])}, and {type_list[-1]}"
-                            # Remove the stat if it was set
-                            if category in self.caller.db.stats and stat_type in self.caller.db.stats[category]:
-                                if self.stat_name in self.caller.db.stats[category][stat_type]:
-                                    del self.caller.db.stats[category][stat_type][self.stat_name]
-                            return False, f"The merit '{merit.name}' is only available to {type_str} characters.", None
-                
-                # Validate merit value
-                try:
-                    merit_value = int(value)
-                    if merit_value not in merit.values:
-                        # Remove the stat if it was set
-                        if category in self.caller.db.stats and stat_type in self.caller.db.stats[category]:
-                            if self.stat_name in self.caller.db.stats[category][stat_type]:
-                                del self.caller.db.stats[category][stat_type][self.stat_name]
-                        return False, f"Invalid value for merit {merit.name}. Valid values are: {', '.join(map(str, merit.values))}", None
-                    return True, "", str(merit_value)
-                except ValueError:
-                    # Remove the stat if it was set
-                    if category in self.caller.db.stats and stat_type in self.caller.db.stats[category]:
-                        if self.stat_name in self.caller.db.stats[category][stat_type]:
-                            del self.caller.db.stats[category][stat_type][self.stat_name]
-                    return False, "Merit value must be a number", None
-
-        # Special handling for Companions' special advantages
-        if splat == 'Companion' and (category == 'powers' and stat_type == 'special_advantage'):
-            # Get proper case name from SPECIAL_ADVANTAGES
-            proper_name = next((name for name in SPECIAL_ADVANTAGES.keys() if name.lower() == stat_name.lower()), 
-                              next((name for name in COMBAT_SPECIAL_ADVANTAGES.keys() if name.lower() == stat_name.lower()), None))
-            if not proper_name:
-                return False, f"'{stat_name}' is not a valid special advantage", None
-
-            # Check if this advantage requires an instance
-            if self._requires_instance(proper_name):
-                if not self.instance:
-                    # This will be handled earlier in the command flow
-                    return False, f"'{proper_name}' requires an instance", None
-                # When we have an instance, use it as part of the stat name
-                proper_name = f"{proper_name}({self.instance})"
-
-            # Get the advantage info
-            advantage_key = proper_name
-            advantage_info = SPECIAL_ADVANTAGES.get(advantage_key, COMBAT_SPECIAL_ADVANTAGES.get(advantage_key))
-            if not advantage_info:
-                return False, f"No information found for {proper_name}", None
-                
-            try:
-                advantage_value = int(value)
-                if 'valid_values' not in advantage_info:
-                    return False, f"No valid values defined for {proper_name}", None
-                if advantage_value not in advantage_info['valid_values']:
-                    valid_values_str = ', '.join(map(str, advantage_info['valid_values']))
-                    return False, f"Invalid value for {proper_name}. Valid values are: {valid_values_str}", None
-                
-                # Update stat_name to proper case
-                self.stat_name = proper_name
-                return True, "", str(advantage_value)
-            except ValueError:
-                return False, "Special advantage value must be a number", None
-
-        # Special handling for gifts
-        if category == 'powers' and stat_type == 'gift':
-            # Check if character can use gifts
-            can_use_gifts = (
-                splat == 'Shifter' or 
-                splat == 'Possessed' or 
-                (splat == 'Mortal+' and char_type == 'Kinfolk')
-            )
-            
-            if not can_use_gifts:
-                return False, "Only Shifters, Possessed, and Kinfolk can have gifts", None
-            
-            # Use the raw input name captured at the beginning of command processing
-            # This ensures we preserve the original user input (e.g., "Qyrl's Blood")
-            if hasattr(self, 'raw_input_name') and self.raw_input_name:
-                original_input = self.raw_input_name
-            else:
-                # Fallback to stat_name if raw_input_name is not available
-                original_input = stat_name
-            
-            # Debug the state before gift alias check
-            self.debug_gift_alias(stat_name, None)
-                
-            # Check for gift aliases first
-            is_alias, canonical_name = self._check_gift_alias(stat_name)
-            
-            # Debug the state after gift alias check
-            self.debug_gift_alias(stat_name, canonical_name)
-            
-            if is_alias:
-                # Set original_alias to the user's input (e.g., "Qyrl's Blood")
-                self.original_alias = original_input
-                
-                # Set alias_used to track what specific alias matched (useful for multiple aliases)
-                if not hasattr(self, 'alias_used'):
-                    self.alias_used = stat_name
-                    
-                # Update stat_name to canonical name (e.g., "Shroud")
-                stat_name = canonical_name
-                self.stat_name = canonical_name
-                
-                # Debug after updating values
-                self.debug_gift_alias(stat_name, canonical_name)
-            
-            if not canonical_name:
-                return False, f"Could not find a valid gift name for '{stat_name}'", None
-            
-            # Get the gift from the database
-            from world.wod20th.models import Stat
-            gift = Stat.objects.filter(
-                name__iexact=stat_name,
-                category='powers',
-                stat_type='gift'
-            ).first()
-            
-            if not gift:
-                return False, f"'{stat_name}' is not a valid gift", None
-                
-            # For Shifters, check shifter_type
-            if splat == 'Shifter' and gift.shifter_type:
-                allowed_types = []
-                if isinstance(gift.shifter_type, list):
-                    allowed_types = [t.lower() for t in gift.shifter_type]
-                else:
-                    allowed_types = [gift.shifter_type.lower()]
-                
-                if char_type.lower() not in allowed_types:
-                    # Only display the error message once here, not in _check_gift_alias
-                    return False, f"The gift '{gift.name}' is not available to {char_type}. Available to: {', '.join(t.title() for t in allowed_types)}", None
-                
-            elif splat == 'Mortal+' and char_type == 'Kinfolk':
-                # Validate Kinfolk gift access and level
-                is_valid, error_msg, canonical_name = self._validate_kinfolk_gift(gift, value)
-                if not is_valid:
-                    return False, error_msg, None
-                return True, "", value
-            
-            # Validate the gift value
-            try:
-                gift_value = int(value)
-                # First check if the gift has specific valid values
-                if gift.values:
-                    valid_values = gift.values if isinstance(gift.values, list) else [gift.values]
-                    if gift_value not in valid_values:
-                        return False, f"Invalid value for {gift.name}. Valid values are: {', '.join(map(str, valid_values))}", None
-                # If no specific values defined, use default range check
-                elif gift_value < 0 or gift_value > 5:
-                    return False, "Gift values must be between 0 and 5", None
-                # Return the canonical name and the original alias
-                return True, "", str(gift_value)
-            except ValueError:
-                return False, "Gift value must be a number", None
-
-        if not splat:
-            return False, "Character must have a splat set", None
-
-        # Special handling for Ferocity based on splat
-        if stat_name.lower() == 'ferocity':
-            if splat == 'Shifter':
-                # Get shifter type
-                shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-                if not shifter_type:
-                    return False, "Must set shifter type before setting Ferocity.", None
-                
-                # Check if this shifter type has access to Ferocity renown
-                valid_renown = SHIFTER_RENOWN.get(shifter_type, [])
-                if 'Ferocity' not in valid_renown:
-                    return False, f"{shifter_type} characters do not have access to Ferocity renown.", None
-                
-                # For Shifters, Ferocity is a Renown type
-                try:
-                    ferocity_value = int(value)
-                    if ferocity_value < 0 or ferocity_value > 10:
-                        return False, "Ferocity renown must be between 0 and 10", None
-                    self.category = 'advantages'
-                    self.stat_type = 'renown'
-                    return True, "", str(ferocity_value)
-                except ValueError:
-                    return False, "Ferocity renown value must be a number", None
-            elif splat == 'Companion':
-                # For Companions, Ferocity is a special advantage
-                self.category = 'powers'
-                self.stat_type = 'special_advantage'
-                # Let companion validation handle it
-                result = validate_companion_stats(self.caller, stat_name, value, self.category, self.stat_type)
-                if len(result) == 3:
-                    is_valid, error_msg, proper_value = result
-                    if proper_value and stat_name.lower() == 'elemental affinity':
-                        # For elemental affinity, use the proper_value as the actual value to set
-                        return is_valid, error_msg, proper_value
-                    return is_valid, error_msg, str(proper_value) if proper_value else None
-                return False, "Invalid value for Ferocity", None
-        
-        # Special handling for Obedience based on splat
-        if stat_name.lower() == 'obedience':
-            if splat == 'Shifter':
-                # Get shifter type
-                shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-                if not shifter_type:
-                    return False, "Must set shifter type before setting Obedience.", None
-                
-                # Check if this shifter type has access to Obedience renown
-                valid_renown = SHIFTER_RENOWN.get(shifter_type, [])
-                if 'Obedience' not in valid_renown:
-                    return False, f"{shifter_type} characters do not have access to Obedience renown.", None
-                
-                # For Shifters, Obedience is a Renown type
-                try:
-                    obedience_value = int(value)
-                    if obedience_value < 0 or obedience_value > 10:
-                        return False, "Obedience renown must be between 0 and 10", None
-                    self.category = 'advantages'
-                    self.stat_type = 'renown'
-                    return True, "", str(obedience_value)
-                except ValueError:
-                    return False, "Obedience renown value must be a number", None
-
-        # Special handling for Path of Enlightenment and Enlightenment
-        if stat_name.lower() in ['path of enlightenment', 'enlightenment']:
-            # For Vampires and Ghouls
-            if splat == 'Vampire' or (splat == 'Mortal+' and char_type == 'Ghoul'):
-                # Always use Path of Enlightenment in identity.personal
-                self.stat_name = 'Path of Enlightenment'
-                self.category = 'identity'
-                self.stat_type = 'personal'
-                
-                # Validate the path value
-                from world.wod20th.utils.vampire_utils import validate_vampire_path
-                is_valid, error_msg = validate_vampire_path(value)
-                if not is_valid:
-                    return False, error_msg, None
-                
-                # If valid, return success
-                return True, "", value
-            
-            # For Technocracy Mages
-            elif splat == 'Mage':
-                affiliation = self.caller.get_stat('identity', 'lineage', 'Affiliation', temp=False)
-                if affiliation == 'Technocracy':
-                    try:
-                        val = int(value)
-                        if val < 1 or val > 10:
-                            return False, "Enlightenment must be between 1 and 10 for Technocracy mages", None
-                        # Set in pools/advantage
-                        self.category = 'pools'
-                        self.stat_type = 'advantage'
-                        return True, "", str(val)
-                    except ValueError:
-                        return False, "Enlightenment must be a number", None
-                else:
-                    return False, "Only Technocracy mages can have Enlightenment", None
-            
-            else:
-                return False, "Only Technocracy mages, Vampires, and Ghouls can have Enlightenment", None
-
-        # Special handling for Berserker
-        if stat_name.lower() == 'berserker':
-            # For Possessed characters, always handle as blessing regardless of category
-            if splat == 'Possessed':
-                # Call possessed_utils validation directly
-                result = validate_possessed_stats(self.caller, stat_name, value, 'powers', 'blessing')
-                if result[0]:  # If validation was successful
-                    self.category = 'powers'  # Set the correct category
-                    self.stat_type = 'blessing'  # Set the correct stat type
-                return result  # Return early after validation
-            
-            # For Shifter characters, always handle as merit
-            elif splat == 'Shifter':
-                self.category = 'merits'
-                self.stat_type = 'mental'
-                try:
-                    val = int(value)
-                    if val != 2:
-                        return False, "Berserker merit must be 2 points for Shifters", None
-                    return True, "", str(val)
-                except ValueError:
-                    return False, "Merit value must be a number", None
-            
-            # For other splats, reject
-            else:
-                return False, "Berserker is only available to Possessed (as a blessing) or Shifters (as a merit)", None
-
-        # Define categories that must be numeric
-        numeric_categories = {
-            'attributes': True,
-            'abilities': True,
-            'backgrounds': True,
-            'powers': True,
-            'merits': True,
-            'flaws': True,
-            'virtues': True,
-            'pools': True
-        }
-
-        # Check if this stat belongs to a numeric category
-        if category in numeric_categories:
-            # Special case for charms, which are powers but not numeric
-            if stat_type == 'charm':
-                return True, "", value
-                
-            try:
-                numeric_value = int(value)
-                # Add range validation based on category
-                if category == 'attributes':
-                    if numeric_value < 1 or numeric_value > 10:
-                        return False, f"{stat_name} must be between 1 and 10", None
-                elif category in ['abilities', 'powers', 'virtues']:
-                    if numeric_value < 0 or numeric_value > 5:
-                        return False, f"{stat_name} must be between 0 and 5", None
-                elif category == 'backgrounds':
-                    if numeric_value < 0 or numeric_value > 10:
-                        return False, f"{stat_name} must be between 0 and 10", None
-                elif category == 'pools':
-                    if numeric_value < 0 or numeric_value > 10:
-                        return False, f"{stat_name} must be between 0 and 10", None
-                return True, "", str(numeric_value)
-            except ValueError:
-                return False, f"{stat_name} must be a number", None
-
-        # Handle Shifter-specific validation
-        if splat == 'Shifter':
-            from world.wod20th.utils.shifter_utils import validate_shifter_stats
-            result = validate_shifter_stats(self.caller, stat_name, value, category, stat_type)
-            if len(result) == 2:
-                is_valid, error_msg = result
-                return is_valid, error_msg, value if is_valid else None
-            return result
-            
-        # Call appropriate validation function based on splat
-        if splat == 'Vampire':
-            result = validate_vampire_stats(self.caller, stat_name, value, category, stat_type)
-            if len(result) == 2:
-                is_valid, error_msg = result
-                return is_valid, error_msg, value if is_valid else None
-            return result
-        elif splat == 'Mage':
-            result = validate_mage_stats(self.caller, stat_name, value, category, stat_type)
-            if len(result) == 2:
-                is_valid, error_msg = result
-                return is_valid, error_msg, value if is_valid else None
-            return result
-        elif splat == 'Changeling':
-            result = validate_changeling_stats(self.caller, stat_name, value, category, stat_type)
-            if len(result) == 2:
-                is_valid, error_msg = result
-                return is_valid, error_msg, value if is_valid else None
-            return result
-        elif splat == 'Mortal+':
-            result = validate_mortalplus_stats(self.caller, stat_name, value, category, stat_type)
-            if len(result) == 2:
-                is_valid, error_msg = result
-                return is_valid, error_msg, value if is_valid else None
-            return result
-        elif splat == 'Possessed':
-            result = validate_possessed_stats(self.caller, stat_name, value, category, stat_type)
-            # Remove the length check since we know it's always a 3-tuple
-            is_valid, error_msg, corrected_value = result
-            return is_valid, error_msg, corrected_value
-        elif splat == 'Companion':
-            result = validate_companion_stats(self.caller, stat_name, value, category, stat_type)
-            if len(result) == 3:
-                is_valid, error_msg, proper_value = result
-                if proper_value and stat_name.lower() == 'elemental affinity':
-                    # For elemental affinity, use the proper_value as the actual value to set
-                    return is_valid, error_msg, proper_value
-                elif proper_value:  # For other stats, use the proper_value as the stat name
-                    self.stat_name = proper_value
-                return is_valid, error_msg, value if is_valid else None
-            return result
-        
-        return True, "", value
-
-    def get_identity_category(self, stat_name: str) -> str:
-        """
-        Determine whether an identity stat belongs in personal or lineage.
-        """
-        # First check if it's in the direct mappings
-        stat_name = stat_name.lower()
-        if stat_name in IDENTITY_PERSONAL:
-            return 'personal'
-        elif stat_name in IDENTITY_LINEAGE:
-            return 'lineage'
-            
-        # If not found in direct mappings, check if it's a valid identity stat for the character's splat
-        splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
-        if not splat:
-            return None
-            
-        # Get subtype and affiliation if applicable
-        subtype = None
-        affiliation = None
-        
-        if splat.lower() == 'shifter':
-            subtype = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-        elif splat.lower() == 'mage':
-            affiliation = self.caller.get_stat('identity', 'lineage', 'Affiliation', temp=False)
-        elif splat.lower() == 'changeling':
-            subtype = self.caller.get_stat('identity', 'lineage', 'Kith', temp=False)
-        elif splat.lower() == 'possessed':
-            subtype = self.caller.get_stat('identity', 'lineage', 'Possessed Type', temp=False)
-        elif splat.lower() == 'mortal+':
-            subtype = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
-            
-        valid_stats = get_identity_stats(splat, subtype, affiliation)
-        
-        # If the stat is in the valid stats list, determine its category
-        if stat_name.title() in valid_stats:
-            # Personal stats are typically the base stats and dates
-            if any(word in stat_name for word in ['name', 'date', 'nature', 'demeanor', 'concept']):
-                return 'personal'
-            # Everything else is lineage
-            return 'lineage'
-            
-        return None
-
-    def _detect_identity_category(self, stat_name: str) -> tuple[str, str]:
-        """
-        Detect if a stat is an identity stat and which category it belongs to.
-        
-        Args:
-            stat_name: The name of the stat to check
-            
-        Returns:
-            Tuple of (category, type) or (None, None) if not an identity stat
-        """
-        # Convert to title case for consistent comparison
-        stat_title = stat_name.title()
-        stat_lower = stat_name.lower()
-
-        # Special handling for Rank
-        if stat_lower == 'rank':
-            splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
-            if splat and splat.lower() == 'shifter':
-                return 'identity', 'lineage'
-            return None, None
-
-        # Handle date stats explicitly
-        date_stats = {
-            'date of birth',
-            'date of embrace',
-            'date of chrysalis',
-            'date of awakening',
-            'first change date',
-            'date of possession'
-        }
-        if stat_lower in date_stats:
-            return 'identity', 'personal'
-
-        # Check direct mappings
-        if stat_title in IDENTITY_PERSONAL:
-            return 'identity', 'personal'
-        elif stat_title in IDENTITY_LINEAGE:
-            return 'identity', 'lineage'
-        elif stat_title in ['House', 'Fae Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
+        elif stat_title in ['House', 'Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
                           'Type', 'Tribe', 'Breed', 'Kinfolk Breed', 'Auspice', 'Clan', 'Generation', 'Affiliation',
                           'Tradition', 'Convention', 'Methodology', 'Traditions Subfaction',
                           'Nephandi Faction', 'Possessed Type', 'Companion Type', 'Pryio', 'Lodge',
@@ -3563,7 +2043,7 @@ class CmdSelfStat(MuxCommand):
             return 'identity', 'personal'
         elif stat_title in IDENTITY_LINEAGE:
             return 'identity', 'lineage'
-        elif stat_title in ['House', 'Fae Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
+        elif stat_title in ['House', 'Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
                           'Type', 'Tribe', 'Breed', 'Auspice', 'Clan', 'Generation', 'Affiliation',
                           'Tradition', 'Convention', 'Methodology', 'Traditions Subfaction',
                           'Nephandi Faction', 'Possessed Type', 'Companion Type', 'Pryio', 'Lodge',
@@ -3723,7 +2203,7 @@ class CmdSelfStat(MuxCommand):
             return 'identity', 'personal'
         elif stat_title in IDENTITY_LINEAGE:
             return 'identity', 'lineage'
-        elif stat_title in ['House', 'Fae Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
+        elif stat_title in ['House', 'Court', 'Kith', 'Seeming', 'Seelie Legacy', 'Unseelie Legacy',
                           'Type', 'Tribe', 'Breed', 'Auspice', 'Clan', 'Generation', 'Affiliation',
                           'Tradition', 'Convention', 'Methodology', 'Traditions Subfaction',
                           'Nephandi Faction', 'Possessed Type', 'Companion Type', 'Pryio', 'Lodge',
@@ -4029,6 +2509,24 @@ class CmdSelfStat(MuxCommand):
             self.caller.msg("|rUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
             return
 
+        # Check if parsing failed (stat_name is None)
+        if self.stat_name is None:
+            # The error message was already shown in the parse method
+            return
+
+        # Special handling for "+selfstat type" to reinitialize stats while keeping current splat
+        if self.stat_name.lower() == 'type' and self.value_change is None:
+            # Get the current splat
+            current_splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            if current_splat:
+                # Call initialize_stats to reinitialize while keeping the splat
+                self.initialize_stats(current_splat, reinitialize=True)
+                self.caller.msg(f"|gReinitialized stats for {current_splat} character.|n")
+                return
+            else:
+                self.caller.msg("|rError: No splat set. Use +selfstat splat=<splat> to set a splat first.|n")
+            return
+
         # Capture the raw input for gift aliases before any transformations
         if '=' in self.args:
             raw_input, raw_value = self.args.split('=', 1)
@@ -4240,7 +2738,7 @@ class CmdSelfStat(MuxCommand):
 
         # Special handling for type setting
         if self.stat_name.lower() in ['type', 'possessed type', 'mortal+ type']:
-            # Check if this is a Mortal+ type
+            # First check if this is a Mortal+ type
             if splat and splat.lower() == 'mortal+':
                 # Get valid Mortal+ types
                 valid_types = [t[1] for t in MORTALPLUS_TYPE_CHOICES if t[1] != 'None']
@@ -4251,7 +2749,45 @@ class CmdSelfStat(MuxCommand):
                 # Initialize mortal+-specific stats for the chosen type
                 initialize_mortalplus_stats(self.caller, mortalplus_type)
                 self.caller.msg(f"|gSet Mortal+ type to {mortalplus_type} and initialized appropriate stats.|n")
-                return
+                
+                # Skip further stat setting since initialize_mortalplus_stats already sets the Type
+                self.category = 'identity'
+                self.stat_type = 'lineage'
+                return  # Return early to avoid further processing
+                
+            elif splat and splat.lower() == 'possessed':
+                # Convert tuple list to just the type names for validation
+                valid_types = [t[0] for t in POSSESSED_TYPE_CHOICES if t[0] != 'None']
+                if self.value_change.title() not in valid_types:
+                    self.caller.msg(f"|rInvalid Possessed type. Valid types are: {', '.join(valid_types)}|n")
+                    return
+                
+                # Initialize possessed-specific stats for the chosen type first
+                # This will also set the Type stat and handle any banality updates
+                initialize_possessed_stats(self.caller, self.value_change.title())
+                self.caller.msg(f"|gSet Possessed type to {self.value_change.title()} and initialized appropriate stats.|n")
+                
+                # Skip further stat setting since initialize_possessed_stats already sets the Type
+                self.category = 'identity'
+                self.stat_type = 'lineage'
+                return  # Return early to avoid further processing
+                
+            elif splat and splat.lower() == 'shifter':
+                # Convert tuple list to just the type names for validation
+                valid_types = [t[1] for t in SHIFTER_TYPE_CHOICES if t[1] != 'None']
+                if self.value_change.title() not in valid_types:
+                    self.caller.msg(f"|rInvalid shifter type. Valid types are: {', '.join(valid_types)}|n")
+                    return
+                
+                # Initialize shifter-specific stats for the chosen type first
+                # This will also set the Type stat and handle any banality updates
+                initialize_shifter_type(self.caller, self.value_change.title())
+                self.caller.msg(f"|gSet shifter type to {self.value_change.title()} and initialized appropriate stats.|n")
+                
+                # Skip the normal set_stat call since initialize_shifter_type already sets the Type stat
+                self.category = 'identity'
+                self.stat_type = 'lineage'
+                return  # Return early to avoid further processing
 
         # Special handling for Nature/Demeanor
         elif self.stat_name.lower() in ['nature', 'demeanor']:
@@ -4295,45 +2831,6 @@ class CmdSelfStat(MuxCommand):
                 self.category = 'identity'
                 self.stat_type = 'lineage'
 
-        # When setting type for the first time or resetting stats
-        if self.stat_name.lower() in ['type', 'possessed type', 'mortal+ type']:
-            # First check if this is a Mortal+ type
-            if splat and splat.lower() == 'mortal+':
-                # Get valid Mortal+ types
-                valid_types = [t[1] for t in MORTALPLUS_TYPE_CHOICES if t[1] != 'None']
-                mortalplus_type = next((t for t in valid_types if t.lower() == self.value_change.lower()), None)
-                if not mortalplus_type:
-                    self.caller.msg(f"|rInvalid Mortal+ type. Valid types are: {', '.join(sorted(valid_types))}|n")
-                    return
-                # Initialize mortal+-specific stats for the chosen type
-                initialize_mortalplus_stats(self.caller, mortalplus_type)
-                self.caller.msg(f"|gSet Mortal+ type to {mortalplus_type} and initialized appropriate stats.|n")
-            elif splat and splat.lower() == 'possessed':
-                # Convert tuple list to just the type names for validation
-                valid_types = [t[0] for t in POSSESSED_TYPE_CHOICES if t[0] != 'None']
-                if self.value_change.title() not in valid_types:
-                    self.caller.msg(f"|rInvalid Possessed type. Valid types are: {', '.join(valid_types)}|n")
-                    return
-                # Set the type in identity/lineage
-                self.caller.set_stat('identity', 'lineage', 'Possessed Type', self.value_change.title(), temp=False)
-                self.caller.set_stat('identity', 'lineage', 'Possessed Type', self.value_change.title(), temp=True)
-                # Initialize possessed-specific stats for the chosen type
-                initialize_possessed_stats(self.caller, self.value_change.title())
-                self.caller.msg(f"|gSet Possessed type to {self.value_change.title()} and initialized appropriate stats.|n")
-                return
-            elif splat and splat.lower() == 'shifter':
-                # Convert tuple list to just the type names for validation
-                valid_types = [t[1] for t in SHIFTER_TYPE_CHOICES if t[1] != 'None']
-                if self.value_change.title() not in valid_types:
-                    self.caller.msg(f"|rInvalid shifter type. Valid types are: {', '.join(valid_types)}|n")
-                    return
-                # Set the type in identity/lineage
-                self.caller.set_stat('identity', 'lineage', 'Type', self.value_change.title(), temp=False)
-                self.caller.set_stat('identity', 'lineage', 'Type', self.value_change.title(), temp=True)
-                # Initialize shifter-specific stats for the chosen type
-                initialize_shifter_type(self.caller, self.value_change.title())
-                self.caller.msg(f"|gSet shifter type to {self.value_change.title()} and initialized appropriate stats.|n")
-                return
         # Special handling for mage affiliation/tradition/convention setting
         if self.stat_name.lower() in ['affiliation', 'tradition', 'convention', 'nephandi faction']:
             if splat and splat.lower() == 'mage':
@@ -4345,8 +2842,14 @@ class CmdSelfStat(MuxCommand):
                         return
                     self.value_change = matched_value
                     # Initialize mage-specific stats for the chosen affiliation
+                    # This will also set the Affiliation stat and handle any banality updates
                     initialize_mage_stats(self.caller, matched_value)
-                    return ('identity', 'lineage')
+                    self.caller.msg(f"|gSet Mage Affiliation to {matched_value} and initialized appropriate stats.|n")
+                    
+                    # Skip further stat setting since initialize_mage_stats already sets the Affiliation
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                    return  # Return early to avoid further processing
 
                 # Handle tradition/convention/faction based on affiliation
                 if not self.affiliation:
@@ -4422,6 +2925,11 @@ class CmdSelfStat(MuxCommand):
                     self.caller.msg(error_msg)
                     return
                 self.value_change = matched_value
+                # Initialize changeling stats with the new kith
+                initialize_changeling_stats(self.caller, matched_value)
+                self.category = 'identity'
+                self.stat_type = 'lineage'
+                return
 
         # When setting clan for vampires
         if self.stat_name.lower() == 'clan':
@@ -4456,7 +2964,9 @@ class CmdSelfStat(MuxCommand):
                     self.value_change = matched_value
                     # Initialize changeling stats with the new kith
                     initialize_changeling_stats(self.caller, matched_value)
-                    return ('identity', 'lineage')
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                    return
 
                 elif self.stat_name.lower() == 'seeming':
                     is_valid, matched_value = self.case_insensitive_in(self.value_change, SEEMING)
@@ -4464,7 +2974,8 @@ class CmdSelfStat(MuxCommand):
                         self.caller.msg(f"|rInvalid seeming. Valid seemings are: {', '.join(sorted(SEEMING))}|n")
                         return
                     self.value_change = matched_value
-                    return ('identity', 'lineage')
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
 
                 elif self.stat_name.lower() == 'phyla':
                     kith = self.caller.get_stat('identity', 'lineage', 'Kith', temp=False)
@@ -4474,7 +2985,8 @@ class CmdSelfStat(MuxCommand):
                             self.caller.msg(f"|rInvalid phyla. Valid phyla are: {', '.join(sorted(PHYLA))}|n")
                             return
                         self.value_change = matched_value
-                        return ('identity', 'lineage')
+                        self.category = 'identity'
+                        self.stat_type = 'lineage'
                     else:
                         self.caller.msg("|rOnly Inanimae can set their Phyla.|n")
                         return
@@ -4485,7 +2997,8 @@ class CmdSelfStat(MuxCommand):
                         self.caller.msg(f"|rInvalid Seelie Legacy. Valid legacies are: {', '.join(sorted(SEELIE_LEGACIES))}|n")
                         return
                     self.value_change = matched_value
-                    return ('identity', 'lineage')
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
 
                 elif self.stat_name.lower() == 'unseelie legacy':
                     is_valid, matched_value = self.case_insensitive_in(self.value_change, UNSEELIE_LEGACIES)
@@ -4493,14 +3006,16 @@ class CmdSelfStat(MuxCommand):
                         self.caller.msg(f"|rInvalid Unseelie Legacy. Valid legacies are: {', '.join(sorted(UNSEELIE_LEGACIES))}|n")
                         return
                     self.value_change = matched_value
-                    return ('identity', 'lineage')
-                elif self.stat_name.lower() == 'fae court':
-                    is_valid, matched_value = self.case_insensitive_in(self.value_change, UNSEELIE_LEGACIES)
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                elif self.stat_name.lower() == 'court':
+                    is_valid, matched_value = self.case_insensitive_in(self.value_change, FAE_COURTS)
                     if not is_valid:
-                        self.caller.msg(f"|rInvalid Fae Court. Valid courts are: {', '.join(sorted(FAE_COURTS))}|n")
+                        self.caller.msg(f"|rInvalid Court. Valid courts are: {', '.join(sorted(FAE_COURTS))}|n")
                         return
                     self.value_change = matched_value
-                    return ('identity', 'lineage')
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
                 elif self.stat_name.lower() == 'house':
                     is_valid, matched_value = self.case_insensitive_in(self.value_change, HOUSES)
                     if not is_valid:
@@ -4530,9 +3045,11 @@ class CmdSelfStat(MuxCommand):
                     
                     # Determine if it's an Art or Realm
                     if self.stat_name.lower() in [art.lower() for art in ARTS]:
-                        return ('powers', 'art')
+                        self.category = 'powers'
+                        self.stat_type = 'art'
                     else:
-                        return ('powers', 'realm')
+                        self.category = 'powers'
+                        self.stat_type = 'realm'
                 except ValueError:
                     self.caller.msg(f"|r{self.stat_name} rating must be a number.|n")
                     return
@@ -4548,10 +3065,11 @@ class CmdSelfStat(MuxCommand):
                     self.caller.msg(error_msg)
                     return
                 self.value_change = matched_value
-                return ('identity', 'lineage')
+                self.category = 'identity'
+                self.stat_type = 'lineage'
 
         # When setting Shifter-specific stats
-        elif self.stat_name.lower() in ['breed', 'auspice', 'tribe', 'aspect', 'rank']:
+        elif self.stat_name.lower() in ['breed', 'auspice', 'tribe', 'aspect', 'rank', 'kitsune path', 'varna']:
             splat = self.caller.get_stat('identity', 'personal', 'Splat', temp=False)
             shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
             
@@ -4564,63 +3082,231 @@ class CmdSelfStat(MuxCommand):
                             self.caller.msg("|rRank must be between 0 and 5.|n")
                             return
                         self.value_change = rank_value
-                        return ('identity', 'lineage')
+                        self.category = 'identity'
+                        self.stat_type = 'lineage'
                     except ValueError:
                         self.caller.msg("|rRank must be a number.|n")
                         return
+                
+                # Handle Kitsune Path
+                elif self.stat_name.lower() == 'kitsune path' and shifter_type.lower() == 'kitsune':
+                    # Set the Kitsune Path first
+                    self.caller.set_stat('identity', 'lineage', 'Kitsune Path', self.value_change, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'Kitsune Path', self.value_change, temp=True)
+                    
+                    # Update pools based on Kitsune Path
+                    update_shifter_pools_on_stat_change(self.caller, 'kitsune path', self.value_change)
+                    
+                    # Display appropriate message
+                    KITSUNE_PATH_RAGE = {
+                        'kataribe': 2,
+                        'gukutsushi': 2,
+                        'doshi': 3,
+                        'eji': 4
+                    }
+                    path_lower = self.value_change.lower()
+                    if path_lower in KITSUNE_PATH_RAGE:
+                        self.caller.msg(f"|gRage set to {KITSUNE_PATH_RAGE[path_lower]} for {self.value_change} path.|n")
+                    
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                    return
+                    
+                # Handle Varna
+                elif self.stat_name.lower() == 'varna' and shifter_type.lower() == 'mokole':
+                    # Set the Varna first
+                    self.caller.set_stat('identity', 'lineage', 'Varna', self.value_change, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'Varna', self.value_change, temp=True)
+                    
+                    # Update pools based on Varna
+                    update_shifter_pools_on_stat_change(self.caller, 'varna', self.value_change)
+                    
+                    # Display appropriate message
+                    MOKOLE_VARNA_RAGE = {
+                        'champsa': 3,
+                        'gharial': 4,
+                        'halpatee': 4,
+                        'karna': 3,
+                        'makara': 3,
+                        'ora': 5,
+                        'piasa': 4,
+                        'syrta': 4,
+                        'unktehi': 5
+                    }
+                    varna_lower = self.value_change.lower()
+                    if varna_lower in MOKOLE_VARNA_RAGE:
+                        self.caller.msg(f"|gRage set to {MOKOLE_VARNA_RAGE[varna_lower]} for {self.value_change} varna.|n")
+                    
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                    return
+               
                 # Breed validation
-                if self.stat_name.lower() == 'breed':
+                elif self.stat_name.lower() == 'breed':
                     is_valid, matched_value, error_msg = self._validate_breed(shifter_type, self.value_change)
                     if not is_valid:
-                        self.caller.msg(error_msg)
+                        self.caller.msg(f"|r{error_msg}|n")
                         return
+                    
                     self.value_change = matched_value
                     # Set the breed first
                     self.caller.set_stat('identity', 'lineage', 'Breed', matched_value, temp=False)
                     self.caller.set_stat('identity', 'lineage', 'Breed', matched_value, temp=True)
+                    
                     # Then update pools based on breed
                     update_shifter_pools_on_stat_change(self.caller, 'breed', matched_value)
-                    return ('identity', 'lineage')
-
+                    
+                    # Display appropriate message based on shifter type
+                    if shifter_type.lower() == 'garou':
+                        if matched_value.lower() == 'homid':
+                            self.caller.msg("|gGnosis set to 1 for homid breed.|n")
+                        elif matched_value.lower() == 'metis':
+                            self.caller.msg("|gGnosis set to 3 for metis breed.|n")
+                        elif matched_value.lower() == 'lupus':
+                            self.caller.msg("|gGnosis set to 5 for lupus breed.|n")
+                    elif shifter_type.lower() == 'bastet':
+                        if matched_value.lower() == 'homid':
+                            self.caller.msg("|gGnosis set to 1 for homid breed.|n")
+                        elif matched_value.lower() == 'metis':
+                            self.caller.msg("|gGnosis set to 3 for metis breed.|n")
+                        elif matched_value.lower() == 'feline':
+                            self.caller.msg("|gGnosis set to 5 for feline breed.|n")
+                    elif shifter_type.lower() == 'ananasi':
+                        if matched_value.lower() == 'homid':
+                            self.caller.msg("|gGnosis set to 1 and Willpower set to 3 for homid breed.|n")
+                        elif matched_value.lower() in ['arachnid', 'animal-born']:
+                            self.caller.msg("|gGnosis set to 5 and Willpower set to 4 for arachnid breed.|n")
+                        self.caller.msg("|gBlood set to 10 for Ananasi. Rage removed.|n")
+                    elif shifter_type.lower() == 'nuwisha':
+                        if matched_value.lower() == 'homid':
+                            self.caller.msg("|gGnosis set to 1 for homid breed.|n")
+                        elif matched_value.lower() in ['latrani', 'animal-born']:
+                            self.caller.msg("|gGnosis set to 5 for latrani breed.|n")
+                        self.caller.msg("|gRage removed for Nuwisha.|n")
+                            
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                
                 # Auspice validation
                 elif self.stat_name.lower() == 'auspice':
-                    valid_auspices = AUSPICE_CHOICES_DICT.get(shifter_type, [])
-                    is_valid, matched_value = self.case_insensitive_in(self.value_change, set(valid_auspices))
+                    is_valid, matched_value, error_msg = self._validate_auspice(shifter_type, self.value_change)
                     if not is_valid:
-                        valid_auspices_str = ', '.join(sorted(valid_auspices))
-                        self.caller.msg(f"|rInvalid auspice for {shifter_type}. Valid auspices are: {valid_auspices_str}|n")
+                        self.caller.msg(f"|r{error_msg}|n")
                         return
+                    
                     self.value_change = matched_value
+                    # Set the auspice first
+                    self.caller.set_stat('identity', 'lineage', 'Auspice', matched_value, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'Auspice', matched_value, temp=True)
+                    
                     # Update pools based on auspice
                     update_shifter_pools_on_stat_change(self.caller, 'auspice', matched_value)
-                    return ('identity', 'lineage')
-
-                # Tribe validation for Garou
-                elif self.stat_name.lower() == 'tribe' and shifter_type == 'Garou':
-                    valid_tribes = [t[1] for t in GAROU_TRIBE_CHOICES if t[1] != 'None']
-                    is_valid, matched_value = self.case_insensitive_in(self.value_change, set(valid_tribes))
+                    
+                    # Display appropriate message based on shifter type
+                    if shifter_type.lower() == 'garou':
+                        GAROU_AUSPICE_RAGE = {
+                            'ahroun': 5, 'galliard': 4, 'philodox': 3,
+                            'theurge': 2, 'ragabash': 1
+                        }
+                        auspice_lower = matched_value.lower()
+                        if auspice_lower in GAROU_AUSPICE_RAGE:
+                            self.caller.msg(f"|gRage set to {GAROU_AUSPICE_RAGE[auspice_lower]} for {matched_value} auspice.|n")
+                    elif shifter_type.lower() == 'rokea':
+                        ROKEA_AUSPICE_RAGE = {
+                            'brightwater': 5, 'dimwater': 4, 'darkwater': 3
+                        }
+                        auspice_lower = matched_value.lower()
+                        if auspice_lower in ROKEA_AUSPICE_RAGE:
+                            self.caller.msg(f"|gRage set to {ROKEA_AUSPICE_RAGE[auspice_lower]} for {matched_value} auspice.|n")
+                    elif shifter_type.lower() == 'nagah':
+                        NAGAH_AUSPICE_RAGE = {
+                            'kamakshi': 3, 'kartikeya': 4, 'kamsa': 3, 'kali': 4
+                        }
+                        auspice_lower = matched_value.lower()
+                        if auspice_lower in NAGAH_AUSPICE_RAGE:
+                            self.caller.msg(f"|gRage set to {NAGAH_AUSPICE_RAGE[auspice_lower]} for {matched_value} auspice.|n")
+                    elif shifter_type.lower() == 'mokole':
+                        MOKOLE_AUSPICE_WILLPOWER = {
+                            'rising sun': 3, 'noonday sun': 5, 'setting sun': 3,
+                            'shrouded sun': 4, 'midnight sun': 4, 'decorated sun': 5,
+                            'solar eclipse': 5
+                        }
+                        auspice_lower = matched_value.lower()
+                        if auspice_lower in MOKOLE_AUSPICE_WILLPOWER:
+                            self.caller.msg(f"|gWillpower set to {MOKOLE_AUSPICE_WILLPOWER[auspice_lower]} for {matched_value} auspice.|n")
+                    elif shifter_type.lower() == 'gurahl':
+                        GURAHL_AUSPICE_STATS = {
+                            'arcas': {'rage': 4, 'willpower': 3},
+                            'uzmati': {'rage': 3, 'willpower': 4},
+                            'kojubat': {'rage': 2, 'willpower': 5},
+                            'kieh': {'rage': 1, 'willpower': 6},
+                            'rishi': {'rage': 5, 'willpower': 2}
+                        }
+                        auspice_lower = matched_value.lower()
+                        if auspice_lower in GURAHL_AUSPICE_STATS:
+                            stats = GURAHL_AUSPICE_STATS[auspice_lower]
+                            self.caller.msg(f"|gRage set to {stats['rage']} and Willpower set to {stats['willpower']} for {matched_value} auspice.|n")
+                    
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                
+                # Tribe validation
+                elif self.stat_name.lower() == 'tribe':
+                    is_valid, matched_value, error_msg = self._validate_tribe(shifter_type, self.value_change)
                     if not is_valid:
-                        valid_tribes_str = ', '.join(sorted(valid_tribes))
-                        self.caller.msg(f"|rInvalid Garou tribe. Valid tribes are: {valid_tribes_str}|n")
+                        self.caller.msg(f"|r{error_msg}|n")
                         return
+                    
                     self.value_change = matched_value
+                    # Set the tribe first
+                    self.caller.set_stat('identity', 'lineage', 'Tribe', matched_value, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'Tribe', matched_value, temp=True)
+                    
                     # Update pools based on tribe
                     update_shifter_pools_on_stat_change(self.caller, 'tribe', matched_value)
-                    return ('identity', 'lineage')
-
-                # Tribe validation for Bastet
-                elif self.stat_name.lower() == 'tribe' and shifter_type == 'Bastet':
-                    valid_tribes = [t[1] for t in BASTET_TRIBE_CHOICES if t[1] != 'None']
-                    is_valid, matched_value = self.case_insensitive_in(self.value_change, set(valid_tribes))
-                    if not is_valid:
-                        valid_tribes_str = ', '.join(sorted(valid_tribes))
-                        self.caller.msg(f"|rInvalid Bastet tribe. Valid tribes are: {valid_tribes_str}|n")
-                        return
-                    self.value_change = matched_value
-                    # Update pools based on tribe
-                    update_shifter_pools_on_stat_change(self.caller, 'tribe', matched_value)
-                    return ('identity', 'lineage')
-
+                    
+                    # Display appropriate message based on shifter type
+                    if shifter_type.lower() == 'garou':
+                        # Handle Black Spiral Dancer special renown
+                        if matched_value.lower() == 'black spiral dancers':
+                            self.caller.msg("|gRenown set to Power, Infamy, and Cunning for Black Spiral Dancers.|n")
+                        else:
+                            # Check if changing from BSD
+                            if 'advantages' in self.caller.db.stats and 'renown' in self.caller.db.stats['advantages']:
+                                current_renown = set(self.caller.db.stats['advantages']['renown'].keys())
+                                if current_renown == {'Power', 'Infamy', 'Cunning'}:
+                                    self.caller.msg("|gRenown reset to Glory, Honor, and Wisdom for standard Garou.|n")
+                        
+                        # Willpower message for Garou tribes
+                        GAROU_TRIBE_WILLPOWER = {
+                            'black furies': 3, 'bone gnawers': 4, 'children of gaia': 4,
+                            'fianna': 3, 'get of fenris': 3, 'glass walkers': 3,
+                            'red talons': 3, 'shadow lords': 3, 'silent striders': 3,
+                            'silver fangs': 3, 'stargazers': 4, 'uktena': 3, 'wendigo': 4,
+                            'black spiral dancers': 3
+                        }
+                        tribe_lower = matched_value.lower()
+                        if tribe_lower in GAROU_TRIBE_WILLPOWER:
+                            self.caller.msg(f"|gWillpower set to {GAROU_TRIBE_WILLPOWER[tribe_lower]} for {matched_value} tribe.|n")
+                    elif shifter_type.lower() == 'bastet':
+                        BASTET_TRIBE_STATS = {
+                            'balam': {'rage': 4, 'willpower': 3},
+                            'bubasti': {'rage': 1, 'willpower': 5},
+                            'ceilican': {'rage': 3, 'willpower': 3},
+                            'khan': {'rage': 5, 'willpower': 2},
+                            'pumonca': {'rage': 4, 'willpower': 4},
+                            'qualmi': {'rage': 2, 'willpower': 5},
+                            'simba': {'rage': 5, 'willpower': 2},
+                            'swara': {'rage': 2, 'willpower': 4}
+                        }
+                        tribe_lower = matched_value.lower()
+                        if tribe_lower in BASTET_TRIBE_STATS:
+                            stats = BASTET_TRIBE_STATS[tribe_lower]
+                            self.caller.msg(f"|gRage set to {stats['rage']} and Willpower set to {stats['willpower']} for {matched_value} tribe.|n")
+                    
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                
                 # Aspect validation
                 elif self.stat_name.lower() == 'aspect':
                     valid_aspects = ASPECT_CHOICES_DICT.get(shifter_type, [])
@@ -4629,10 +3315,38 @@ class CmdSelfStat(MuxCommand):
                         valid_aspects_str = ', '.join(sorted(valid_aspects))
                         self.caller.msg(f"|rInvalid aspect for {shifter_type}. Valid aspects are: {valid_aspects_str}|n")
                         return
+                    
                     self.value_change = matched_value
+                    # Set the aspect first
+                    self.caller.set_stat('identity', 'lineage', 'Aspect', matched_value, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'Aspect', matched_value, temp=True)
+                    
                     # Update pools based on aspect
                     update_shifter_pools_on_stat_change(self.caller, 'aspect', matched_value)
-                    return ('identity', 'lineage')
+                    
+                    # Display appropriate message based on shifter type
+                    if shifter_type.lower() == 'ajaba':
+                        AJABA_ASPECT_STATS = {
+                            'dawn': {'rage': 5, 'gnosis': 1},
+                            'midnight': {'rage': 3, 'gnosis': 3},
+                            'dusk': {'rage': 1, 'gnosis': 5}
+                        }
+                        aspect_lower = matched_value.lower()
+                        if aspect_lower in AJABA_ASPECT_STATS:
+                            stats = AJABA_ASPECT_STATS[aspect_lower]
+                            self.caller.msg(f"|gRage set to {stats['rage']} and Gnosis set to {stats['gnosis']} for {matched_value} aspect.|n")
+                    elif shifter_type.lower() == 'ratkin':
+                        RATKIN_ASPECT_RAGE = {
+                            'tunnel runner': 1, 'shadow seer': 2, 'knife skulker': 3,
+                            'warrior': 5, 'engineer': 2, 'plague lord': 3,
+                            'munchmausen': 4, 'twitcher': 5
+                        }
+                        aspect_lower = matched_value.lower()
+                        if aspect_lower in RATKIN_ASPECT_RAGE:
+                            self.caller.msg(f"|gRage set to {RATKIN_ASPECT_RAGE[aspect_lower]} for {matched_value} aspect.|n")
+                    
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
 
         # Special handling for Kinfolk Breed
         elif self.stat_name.lower() == 'kinfolk breed':
@@ -4657,7 +3371,8 @@ class CmdSelfStat(MuxCommand):
                 self.caller.set_stat('identity', 'lineage', 'Kinfolk Breed', matched_value, temp=False)
                 self.caller.set_stat('identity', 'lineage', 'Kinfolk Breed', matched_value, temp=True)
                 self.caller.msg(f"|gSet Kinfolk Breed to {matched_value}.|n")
-                return ('identity', 'lineage')
+                self.category = 'identity'
+                self.stat_type = 'lineage'
             else:
                 # Add debug information
                 self.caller.msg(f"|rOnly Mortal+ Kinfolk characters can set Kinfolk Breed. Current splat: {splat}, Type: {char_type}|n")
@@ -4677,7 +3392,8 @@ class CmdSelfStat(MuxCommand):
                 self.value_change = matched_value
                 # Initialize companion stats with the new type
                 initialize_companion_stats(self.caller, matched_value)
-                return ('identity', 'lineage')
+                self.category = 'identity'
+                self.stat_type = 'lineage'
 
         # When setting Companion special advantages
         elif self.stat_name.lower() in [adv.lower() for adv in SPECIAL_ADVANTAGES.keys()] or self.stat_name.lower() in [adv.lower() for adv in COMBAT_SPECIAL_ADVANTAGES.keys()]:
@@ -4695,7 +3411,7 @@ class CmdSelfStat(MuxCommand):
                 # Check if this advantage requires an instance
                 if self._requires_instance(proper_name):
                     if not self.instance:
-                        self.caller.msg(f"|rThe special advantage '{proper_name}' requires an instance. Use format: {proper_name}(instance)/special_advantage=value|n")
+                        self.caller.msg(f"|rWarning|n: The special advantage '{proper_name}' requires an instance.")
                         self.caller.msg(f"|yFor example: {proper_name}(poison)/special_advantage=5|n")
                         self.caller.msg(f"|yUsage: +selfstat <stat>[(<instance>)]/[<category>]=[+-]<value>|n")
                         return
@@ -4723,7 +3439,9 @@ class CmdSelfStat(MuxCommand):
                     
                     # Set the proper name for storage
                     self.stat_name = proper_name
-                    return ('powers', 'special_advantage')
+                    self.category = 'powers'
+                    self.stat_type = 'special_advantage'
+                    return
                 except ValueError:
                     self.caller.msg("|rSpecial advantage value must be a number.|n")
                     return
@@ -4742,7 +3460,9 @@ class CmdSelfStat(MuxCommand):
                 self.value_change = matched_value
                 # Initialize possessed stats with the new type
                 initialize_possessed_stats(self.caller, matched_value)
-                return ('identity', 'lineage')
+                self.category = 'identity'
+                self.stat_type = 'lineage'
+                return
 
         # When setting Possessed powers (blessings and charms)
         elif self.stat_name.lower() in ['blessing', 'charm']:
@@ -4819,7 +3539,12 @@ class CmdSelfStat(MuxCommand):
                 self.caller.msg(f"\n|rPlease specify a complete stat name or provide more specific search criteria.|n")
                 return
             
-            self.caller.msg(f"|rStat '{self.stat_name}' not found.|n")
+            # Check if the stat exists in the database at all first
+            if not Stat.objects.filter(name__iexact=self.stat_name).exists():
+                self.caller.msg(f"|rStat '{self.stat_name}' not found in the stat database, please reach out to staff if this is incorrect.|n")
+            else:
+                # Stat exists in database but not on character's sheet
+                self.caller.msg(f"|rStat '{self.stat_name}' not found on your sheet.|n")
             return
             
         # Handle instances for background stats
@@ -4838,9 +3563,12 @@ class CmdSelfStat(MuxCommand):
         if self.value_change == '':
             # For backgrounds, validate splat access even during removal
             if stat and stat.stat_type == 'background':
+                # Get character's actual splat for background restriction checking
+                char_splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+                
                 # Check splat-specific background restrictions
                 is_restricted, required_splat, error_msg = self.get_background_splat_restriction(self.stat_name)
-                if is_restricted and splat != required_splat:
+                if is_restricted and char_splat != required_splat:
                     self.caller.msg(error_msg)
                     return
             # Get the canonical name for the stat
@@ -4859,10 +3587,6 @@ class CmdSelfStat(MuxCommand):
                         del self.caller.db.stats[category][stat_type][canonical_name]
                         self.caller.msg(f"Removed stat '{canonical_name}'.")
                         return
-            
-            # If we get here, the stat wasn't found
-            self.caller.msg(f"Stat '{canonical_name}' not found.")
-            
             # Special handling for special advantages during removal
             if 'powers' in self.caller.db.stats and 'special_advantage' in self.caller.db.stats['powers']:
                 # Case-insensitive search for special advantages, using full_stat_name to include instances
@@ -4911,7 +3635,12 @@ class CmdSelfStat(MuxCommand):
                         # Update any dependent stats after removal
                         self._update_dependent_stats(full_stat_name, None)
                         return
-            self.caller.msg(f"|rStat '{full_stat_name}' not found.|n")
+            # Check if the stat exists in the database
+            if not Stat.objects.filter(name__iexact=self.stat_name).exists():
+                self.caller.msg(f"|rStat '{full_stat_name}' not found in the stat database, please reach out to staff if this is incorrect.|n")
+            else:
+                # Stat exists in database but not on character's sheet
+                self.caller.msg(f"|rStat '{full_stat_name}' not found on your sheet.|n")
             return
 
         # Validate the stat if it's being set (not removed)
@@ -5619,9 +4348,17 @@ class CmdSelfStat(MuxCommand):
                             if splat.lower() not in [s.lower() for s in allowed_splats]:
                                 self.caller.msg(f"|rThe merit '{stat_name}' is only available to {', '.join(allowed_splats)} characters.|n")
                                 return
-                        if restriction['splat_type'] and char_type and restriction['splat_type'].lower() != char_type.lower():
-                            self.caller.msg(f"|rThe merit '{stat_name}' is only available to {restriction['splat_type']} characters.|n")
-                            return
+                        if restriction['splat_type'] and char_type:
+                            # Handle when splat_type is a list
+                            if isinstance(restriction['splat_type'], list):
+                                allowed_types = [t.lower() for t in restriction['splat_type']]
+                                if isinstance(char_type, str) and char_type.lower() not in allowed_types:
+                                    self.caller.msg(f"|rThe merit '{stat_name}' is only available to {', '.join(restriction['splat_type'])} characters.|n")
+                                    return
+                            # Handle when splat_type is a string
+                            elif isinstance(restriction['splat_type'], str) and isinstance(char_type, str) and restriction['splat_type'].lower() != char_type.lower():
+                                self.caller.msg(f"|rThe merit '{stat_name}' is only available to {restriction['splat_type']} characters.|n")
+                                return
 
                     # Find the merit type and store the merit
                     for merit_type, merits in MERIT_CATEGORIES.items():
@@ -6209,4 +4946,300 @@ class CmdSelfStat(MuxCommand):
                         f"original_alias={getattr(self, 'original_alias', None)}, "
                         f"alias_used={getattr(self, 'alias_used', None)}, "
                         f"stat_name={stat_name}, canonical_name={canonical_name}")
+
+    def initialize_stats(self, splat, reinitialize=False):
+        """Initialize the basic stats structure based on splat type."""
+        # Convert input splat to title case for display but lowercase for comparison
+        splat_title = splat.title()
+        if splat_title == "Mortal+":  # Special case for Mortal+
+            splat_title = "Mortal+"
+        splat_lower = splat.lower()
         
+        # If we're reinitializing, we need to use the current splat
+        if reinitialize:
+            current_splat = self.caller.get_stat('other', 'splat', 'Splat', temp=False)
+            if current_splat:
+                splat_title = current_splat
+                splat_lower = current_splat.lower()
+        
+        # Clear gift_aliases when changing splat
+        if hasattr(self.caller.db, 'gift_aliases'):
+            self.caller.db.gift_aliases = {}
+            
+        # Clear specialties when changing splat
+        if hasattr(self.caller.db, 'specialties'):
+            self.caller.db.specialties = {}
+            
+        # Initialize basic stats structure
+        self.caller.db.stats = {
+            'attributes': {'physical': {}, 'social': {}, 'mental': {}},
+            'abilities': {'talent': {}, 'skill': {}, 'knowledge': {}, 
+                         'secondary_talent': {}, 'secondary_skill': {}, 'secondary_knowledge': {}},
+            'secondary_abilities': {'secondary_talent': {}, 'secondary_skill': {}, 'secondary_knowledge': {}},
+            'advantages': {'backgrounds': {}},
+            'virtues': {},
+            'pools': {'dual': {}, 'advantage': {}},
+            'powers': {},
+            'backgrounds': {'background': {}},
+            'merits': {'physical': {}, 'mental': {}, 'social': {}, 'supernatural': {}, 'other': {}},
+            'flaws': {'physical': {}, 'mental': {}, 'social': {}, 'supernatural': {}, 'other': {}},
+            'other': {'splat': {}},
+            'identity': {'personal': {}, 'lineage': {}}
+        }
+        
+        # Set the splat
+        self.caller.db.stats['other']['splat']['Splat'] = {'perm': splat_title, 'temp': splat_title}
+        self.caller.db.stats['identity']['personal']['Splat'] = {'perm': splat_title, 'temp': splat_title}
+        
+        # Set base attributes to 1
+        for category in ['physical', 'social', 'mental']:
+            for attribute in ATTRIBUTE_CATEGORIES.get(category, []):
+                self.caller.db.stats['attributes'][category][attribute] = {'perm': 1, 'temp': 1}
+        
+        # Initialize type-specific stats
+        if splat_lower == 'mortal':
+            # Initialize virtues for mortals
+            if 'virtues' not in self.caller.db.stats:
+                self.caller.db.stats['virtues'] = {'moral': {}}
+            if 'moral' not in self.caller.db.stats['virtues']:
+                self.caller.db.stats['virtues']['moral'] = {}
+            
+            # Set default virtues to 1
+            for virtue in ['Conscience', 'Self-Control', 'Courage']:
+                self.caller.db.stats['virtues']['moral'][virtue] = {'perm': 1, 'temp': 1}
+            
+            # Initialize pools
+            if 'pools' not in self.caller.db.stats:
+                self.caller.db.stats['pools'] = {'dual': {}, 'moral': {}}
+            if 'dual' not in self.caller.db.stats['pools']:
+                self.caller.db.stats['pools']['dual'] = {}
+            if 'moral' not in self.caller.db.stats['pools']:
+                self.caller.db.stats['pools']['moral'] = {}
+            
+            # Set Willpower equal to Courage
+            self.caller.db.stats['pools']['dual']['Willpower'] = {'perm': 1, 'temp': 1}
+            
+            # Set default Banality
+            self.caller.db.stats['pools']['dual']['Banality'] = {'perm': 6, 'temp': 6}
+            
+            # Initialize identity structure for Path of Enlightenment
+            if 'identity' not in self.caller.db.stats:
+                self.caller.db.stats['identity'] = {'personal': {}, 'lineage': {}}
+            if 'personal' not in self.caller.db.stats['identity']:
+                self.caller.db.stats['identity']['personal'] = {}
+                
+            # Set Path of Enlightenment to Humanity
+            self.caller.db.stats['identity']['personal']['Path of Enlightenment'] = {'perm': 'Humanity', 'temp': 'Humanity'}
+            
+            # Calculate initial Path rating using virtue_utils
+            from world.wod20th.utils.virtue_utils import calculate_path
+            path_rating = calculate_path(self.caller)
+            
+            # Set initial Path rating
+            self.caller.db.stats['pools']['moral']['Path'] = {'perm': path_rating, 'temp': path_rating}
+            
+            # Get virtue values for feedback message
+            conscience = self.caller.db.stats['virtues']['moral']['Conscience']['perm']
+            self_control = self.caller.db.stats['virtues']['moral']['Self-Control']['perm']
+            self.caller.msg(f"|gInitialized Mortal character with Humanity (Path rating: {path_rating} = Conscience {conscience} + Self-Control {self_control}).|n")
+
+        # Show appropriate message based on whether we're initializing or reinitializing
+        if reinitialize:
+            self.caller.msg(f"|gReinitialized {splat_title} character sheet.|n")
+        else:
+            self.caller.msg(f"|gInitialized {splat_title} character sheet.|n")
+
+    def _validate_auspice(self, shifter_type: str, value: str) -> tuple[bool, str, str]:
+        """
+        Validate auspice value for a given shifter type.
+        
+        Args:
+            shifter_type: The type of shifter
+            value: The auspice value to validate
+            
+        Returns:
+            Tuple of (is_valid, matched_value, error_message)
+        """
+        from world.wod20th.utils.shifter_utils import AUSPICE_CHOICES_DICT
+        
+        valid_auspices = AUSPICE_CHOICES_DICT.get(shifter_type, [])
+        if not valid_auspices:
+            return False, None, f"{shifter_type} characters do not have auspices"
+        
+        # Try direct match first (case-insensitive)
+        value_lower = value.lower()
+        for auspice in valid_auspices:
+            if auspice.lower() == value_lower:
+                return True, auspice, ""
+        
+        # Try word matching for multi-word auspices
+        for auspice in valid_auspices:
+            auspice_words = auspice.lower().split()
+            value_words = value_lower.split()
+            if all(w in auspice_words for w in value_words):
+                return True, auspice, ""
+                
+        # If no match found, return error with valid auspices
+        error_msg = f"Invalid auspice for {shifter_type}. Valid auspices are: {', '.join(sorted(valid_auspices))}"
+        return False, None, error_msg
+
+    def _validate_tribe(self, shifter_type: str, value: str) -> tuple[bool, str, str]:
+        """
+        Validate tribe value for a given shifter type.
+        
+        Args:
+            shifter_type: The type of shifter
+            value: The tribe value to validate
+            
+        Returns:
+            Tuple of (is_valid, matched_value, error_message)
+        """
+        from world.wod20th.utils.shifter_utils import GAROU_TRIBE_CHOICES, BASTET_TRIBE_CHOICES, GURAHL_TRIBE_CHOICES
+        
+        valid_tribes = []
+        if shifter_type.lower() == 'garou':
+            valid_tribes = [t[1] for t in GAROU_TRIBE_CHOICES if t[1] != 'None']
+        elif shifter_type.lower() == 'bastet':
+            valid_tribes = [t[1] for t in BASTET_TRIBE_CHOICES if t[1] != 'None']
+        elif shifter_type.lower() == 'gurahl':
+            valid_tribes = [t[1] for t in GURAHL_TRIBE_CHOICES if t[1] != 'None']
+
+        else:
+            return False, None, f"{shifter_type} characters do not have tribes"
+        
+        # Try direct match first (case-insensitive)
+        value_lower = value.lower()
+        for tribe in valid_tribes:
+            if tribe.lower() == value_lower:
+                return True, tribe, ""
+        
+        # Try word matching for multi-word tribes (e.g., "Shadow Lords")
+        for tribe in valid_tribes:
+            tribe_words = tribe.lower().split()
+            value_words = value_lower.split()
+            if all(w in tribe_words for w in value_words):
+                return True, tribe, ""
+                
+        # If no match found, return error with valid tribes
+        error_msg = f"Invalid tribe for {shifter_type}. Valid tribes are: {', '.join(sorted(valid_tribes))}"
+        return False, None, error_msg
+
+    def _validate_clan(self, value: str) -> tuple[bool, str, str]:
+        """
+        Validate a vampire clan name.
+        
+        Args:
+            value: The clan name to validate
+            
+        Returns:
+            Tuple of (is_valid, matched_value, error_message)
+        """
+        from world.wod20th.utils.vampire_utils import CLAN
+        
+        # Try direct match first (case-insensitive)
+        value_lower = value.lower()
+        for clan in CLAN:
+            if clan.lower() == value_lower:
+                return True, clan, ""
+        
+        # Try word matching for multi-word clans
+        for clan in CLAN:
+            clan_words = clan.lower().split()
+            value_words = value_lower.split()
+            if all(w in clan_words for w in value_words):
+                return True, clan, ""
+                
+        # If no match found, suggest similar values
+        error_msg = f"Invalid clan. Valid clans are: {', '.join(sorted(CLAN))}"
+        return False, None, error_msg
+
+    def _update_clan_stats(self, clan: str) -> None:
+        """
+        Update clan-specific stats when a clan is set.
+        
+        Args:
+            clan: The clan name that was set
+        """
+        from world.wod20th.utils.vampire_utils import get_clan_disciplines, initialize_vampire_stats
+        
+        # Call initialize_vampire_stats with the clan to set up in-clan disciplines and other clan-specific values
+        initialize_vampire_stats(self.caller, clan)
+        
+        # Get in-clan disciplines and inform the user
+        clan_disciplines = get_clan_disciplines(clan)
+        if clan_disciplines:
+            self.caller.msg(f"|gIn-clan disciplines for {clan}: {', '.join(clan_disciplines)}|n")
+
+    def _validate_kitsune_path_mokole_varna(self, stat_name: str, value: str) -> tuple[bool, str, str]:
+        if self.stat_name.lower() in ['breed', 'auspice', 'tribe', 'aspect', 'rank', 'kitsune path', 'varna']:
+            splat = self.caller.get_stat('identity', 'personal', 'Splat', temp=False)
+            shifter_type = self.caller.get_stat('identity', 'lineage', 'Type', temp=False)
+            
+            if splat and splat.lower() == 'shifter' and shifter_type:
+                # Additional handling for Kitsune Path
+                if self.stat_name.lower() == 'kitsune path' and shifter_type.lower() == 'kitsune':
+                    # Set the stat first
+                    self.caller.set_stat('identity', 'lineage', 'Kitsune Path', self.value_change, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'Kitsune Path', self.value_change, temp=True)
+                    
+                    # Update pools based on Kitsune Path
+                    update_shifter_pools_on_stat_change(self.caller, 'kitsune path', self.value_change)
+                    
+                    # Display appropriate message
+                    KITSUNE_PATH_RAGE = {
+                        'kataribe': 2,
+                        'gukutsushi': 2,
+                        'doshi': 3,
+                        'eji': 4
+                    }
+                    path_lower = self.value_change.lower()
+                    if path_lower in KITSUNE_PATH_RAGE:
+                        self.caller.msg(f"|gRage set to {KITSUNE_PATH_RAGE[path_lower]} for {self.value_change} path.|n")
+                    
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                    return
+                
+                # Additional handling for Varna
+                elif self.stat_name.lower() == 'varna' and shifter_type.lower() == 'mokole':
+                    # Set the stat first
+                    self.caller.set_stat('identity', 'lineage', 'Varna', self.value_change, temp=False)
+                    self.caller.set_stat('identity', 'lineage', 'Varna', self.value_change, temp=True)
+                    
+                    # Update pools based on Varna
+                    update_shifter_pools_on_stat_change(self.caller, 'varna', self.value_change)
+                    
+                    # Display appropriate message
+                    MOKOLE_VARNA_RAGE = {
+                        'champsa': 3,
+                        'gharial': 4,
+                        'halpatee': 4,
+                        'karna': 3,
+                        'makara': 3,
+                        'ora': 5,
+                        'piasa': 4,
+                        'syrta': 4,
+                        'unktehi': 5
+                    }
+                    varna_lower = self.value_change.lower()
+                    if varna_lower in MOKOLE_VARNA_RAGE:
+                        self.caller.msg(f"|gRage set to {MOKOLE_VARNA_RAGE[varna_lower]} for {self.value_change} varna.|n")
+                    
+                    self.category = 'identity'
+                    self.stat_type = 'lineage'
+                    return
+                
+                # Handle Rank
+                elif self.stat_name.lower() == 'rank':
+                    try:
+                        rank_value = int(self.value_change)
+                        if rank_value < 0 or rank_value > 5:
+                            self.caller.msg("|rRank must be between 0 and 5.|n")
+                            return
+                        self.value_change = rank_value
+                        self.category = 'identity'
+                        self.stat_type = 'lineage'
+                    except ValueError:
+                        self.caller.msg("|rRank must be a number.|n")
+                        return
+
