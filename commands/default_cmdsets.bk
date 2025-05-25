@@ -23,8 +23,7 @@ from commands.CmdInfo import CmdInfo
 from commands.CmdHurt import CmdHurt
 from commands.CmdHeal import CmdHeal
 from commands.CmdLanguage import CmdLanguage
-# import evennia.contrib.game_systems.mail as mail
-from commands.mail_commands import CmdMail, CmdMailCharacter
+import evennia.contrib.game_systems.mail as mail
 from commands.CmdRoll import CmdRoll
 from commands.CmdSay import CmdSay
 from commands.CmdEmit import CmdEmit
@@ -38,8 +37,8 @@ from commands.CmdInit import CmdInit
 from commands.CmdRoomLog import CmdRoomLog
 
 from commands.CmdUmbraInteraction import CmdUmbraInteraction
-from commands.communication import CmdMeet, CmdPlusIc, CmdPlusOoc, CmdOOC, CmdSummon, CmdJoin, CmdCheckComm
-from commands.admin import CmdApprove, CmdUnapprove, CmdAdminLook, CmdTestLock, CmdPuppetFreeze, CmdMassUnapprove, CmdReturn, CmdCheckGhosts, CmdForceDeleteObject
+from commands.communication import CmdMeet, CmdPlusIc, CmdPlusOoc, CmdOOC, CmdSummon, CmdJoin
+from commands.admin import CmdApprove, CmdUnapprove, CmdAdminLook, CmdTestLock, CmdPuppetFreeze, CmdMassUnapprove, CmdReturn, CmdCheckGhosts
 from commands.CmdPump import CmdPump
 from commands.CmdSpendGain import CmdSpendGain
 from commands.where import CmdWhere
@@ -87,7 +86,6 @@ from commands.CmdSpecialties import CmdSpecialties
 from commands.CmdMultidesc import CmdMultidesc
 from world.wod20th.scripts.weekly_xp import CmdDebugXP
 from commands.CmdTableTalk import CmdTableTalk
-from commands.CmdNPCGroup import CmdOrganization
 
 class CharacterCmdSet(cmdset_character.CharacterCmdSet):
     """
@@ -104,10 +102,14 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         """
         # Call super() to load all default commands
         super().at_cmdset_creation()
-        
+
         # Add our custom channel command
         self.add(CustomCmdChannel())
-        
+
+        # Mail commands
+        self.add(mail.CmdMail())
+        self.add(mail.CmdMailCharacter())
+
         # Add all our custom commands
         self.add(CmdHelp())
         self.add(CmdHelpNum())
@@ -123,8 +125,8 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdHurt())
         self.add(CmdHeal())
         self.add(CmdEvents())
-        self.add(CmdMailCharacter())  # Our fixed mail character command
-       # self.add(CmdMail())
+       # self.add(CmdMail())  # Our fixed mail command
+       # self.add(CmdMailCharacter())  # Our fixed mail character command
         self.add(CmdRoll())
         self.add(CmdShift())
         self.add(CmdWeather())
@@ -188,7 +190,6 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdRoom())
         self.add(CmdTableTalk())
         self.add(CmdSummon())
-        self.add(CmdCheckComm())
 
 
 class AccountCmdSet(cmdset_account.AccountCmdSet):
@@ -214,13 +215,9 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdHelp())
         self.add(CmdHelpNum())
         
-        # Add mail command to AccountCmdSet
-        self.add(CmdMail())
-        
         self.add(CmdNotes())
         self.add(CmdSummon())
         self.add(CmdJoin())
-        self.add(CmdCheckComm())
         self.add(CmdApprove())
         self.add(CmdUnapprove())
         self.add(CmdMassUnapprove())
@@ -229,7 +226,6 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         self.add(CmdTestLock())
         self.add(CmdResetBBS())
         self.add(CmdNPC())
-        self.add(CmdOrganization())
         self.add(CmdRoomLog())
         self.add(CmdDesc())
         self.add(CmdStaffStat())
@@ -245,7 +241,6 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         # This allows using these commands even when not in the same room as the target
         self.add(CmdEquip())
         self.add(CmdInventory())
-        self.add(CmdForceDeleteObject())
 
 class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):
     """
