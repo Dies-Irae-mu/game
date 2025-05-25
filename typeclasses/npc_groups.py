@@ -398,4 +398,3 @@ class NPCGroup(DefaultObject):
                         break
                 string += f"  |w{npc.key}|n{position}\n"
                 
-        return string 

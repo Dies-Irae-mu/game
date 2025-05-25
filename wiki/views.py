@@ -12,8 +12,12 @@ from django.urls import reverse
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 import markdown2
+<<<<<<< HEAD
 import mermaid as md
 from mermaid.graph import Graph
+=======
+import re
+>>>>>>> 625be5d8841cab6feb3e0fd52134e219972f2a63
 
 logger = logging.getLogger(__name__)
 
