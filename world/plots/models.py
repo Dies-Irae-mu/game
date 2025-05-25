@@ -55,6 +55,7 @@ class Session(SharedMemoryModel):
     participants = models.ManyToManyField('objects.ObjectDB', related_name='sessions')
     description = models.TextField()
     secrets = models.TextField()
+    event_id = models.IntegerField(null=True, blank=True)  # Store the associated event ID
 
 """
 +--------------------------------+ +Plot Info +--------------------------------+

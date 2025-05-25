@@ -428,6 +428,7 @@ class RoomParent(DefaultRoom):
     def msg_contents(self, text=None, exclude=None, from_obj=None, mapping=None, **kwargs):
         """
         Send a message to all objects inside the room, excluding the sender and those in a different plane.
+        Players in Quiet Rooms will not receive any room messages.
         """
         # Suppress movement messages if this is a Quiet Room
         if self.db.roomtype == "Quiet Room" and text:
@@ -474,6 +475,10 @@ class RoomParent(DefaultRoom):
             contents = [obj for obj in contents if obj not in exclude]
 
         for obj in contents:
+            # Skip sending to players who are in Quiet Rooms
+            if hasattr(obj, 'location') and obj.location and hasattr(obj.location, 'db') and getattr(obj.location.db, 'roomtype', None) == "Quiet Room":
+                continue
+
             if hasattr(obj, 'is_character') and obj.is_character:
                 # Check if the character is in the same plane (Umbra or material)
                 if from_obj and hasattr(from_obj, 'tags'):
@@ -1208,7 +1213,7 @@ class RoomParent(DefaultRoom):
         
         # If this is a Quiet Room, notify the character
         elif self.db.roomtype == "Quiet Room" and moved_obj.has_account:
-            moved_obj.msg("|rYou have entered a Quiet Room. Communication commands are disabled here.|n")
+            moved_obj.msg("|rYou have entered a Quiet Room. Communication commands are disabled here and you will not see any room messages.|n")
             
     def at_object_leave(self, moved_obj, target_location, **kwargs):
         """Called when an object leaves the room."""
@@ -1469,6 +1474,18 @@ class RoomParent(DefaultRoom):
         # If scene has been inactive for too long, end it
         if (datetime.now() - last_activity).total_seconds() / 60 > timeout_minutes:
             self.end_scene()
+
+    def msg_contents_quiet_filter(self, text=None, exclude=None, from_obj=None, mapping=None, **kwargs):
+        """
+        Special version that completely suppresses messages for characters in Quiet Rooms.
+        Used to override default messaging functions related to connections and disconnections.
+        """
+        # Completely suppress any message in Quiet Rooms
+        if self.db.roomtype == "Quiet Room":
+            return
+            
+        # Otherwise use normal message distribution
+        self.msg_contents(text, exclude, from_obj, mapping, **kwargs)
 
 class Room(RoomParent):
     pass

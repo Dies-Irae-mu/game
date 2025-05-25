@@ -3,7 +3,7 @@ from evennia.utils import gametime, create
 from evennia.scripts.models import ScriptDB
 from evennia.utils import logger
 from evennia import create_script
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 class Event(DefaultScript):
     """
@@ -17,7 +17,7 @@ class Event(DefaultScript):
 
         # Event properties will be set after creation
 
-    def setup(self, title, description, organizer, date_time, associated_mission=None):
+    def setup(self, title, description, organizer, date_time, genre=None, difficulty=None, associated_plot=None, expiration_date=None):
         """
         Set up the event properties after creation.
         """
@@ -27,16 +27,33 @@ class Event(DefaultScript):
         self.db.participants = []
         self.db.date_time = date_time
         self.db.status = "scheduled"
-        self.db.associated_mission = associated_mission
+        self.db.genre = genre
+        self.db.difficulty = difficulty
+        self.db.associated_plot = associated_plot
+        
+        # Set expiration date (defaults to 2 days after the event if not specified)
+        if expiration_date:
+            self.db.expiration_date = expiration_date
+        else:
+            self.db.expiration_date = date_time + timedelta(days=2)
 
 
     def at_repeat(self):
         """
         Called every self.interval seconds.
         """
+        current_time = datetime.now(timezone.utc)
+        
+        # Auto-start event when it's time
         if self.db.status == "scheduled" and self.db.date_time:
-            if gametime.gametime(absolute=True) > self.db.date_time:
+            if current_time >= self.db.date_time:
                 self.start_event()
+        
+        # Check if event should be expired
+        if hasattr(self.db, 'expiration_date') and self.db.expiration_date:
+            if current_time >= self.db.expiration_date:
+                self.db.status = "expired"
+                logger.log_info(f"Event '{self.db.title}' has expired.")
 
     def start_event(self):
         """
@@ -54,8 +71,8 @@ class Event(DefaultScript):
         for participant in self.db.participants:
             participant.msg(f"The event '{self.db.title}' has been completed!")
         
-        if self.db.associated_mission:
-            self.db.associated_mission.complete_mission()
+        if self.db.associated_plot:
+            self.db.associated_plot.complete_session()
 
     def cancel_event(self):
         """
@@ -86,12 +103,12 @@ class EventScheduler(DefaultScript):
         self.persistent = True
         self.db.events = []
 
-    def create_event(self, title, description, organizer, date_time, associated_mission=None):
+    def create_event(self, title, description, organizer, date_time, genre=None, difficulty=None, associated_plot=None, expiration_date=None):
         """
         Create a new event with given properties.
         """
         event = create_script(Event, key=f"Event_{title}")
-        event.setup(title, description, organizer, date_time, associated_mission)
+        event.setup(title, description, organizer, date_time, genre, difficulty, associated_plot, expiration_date)
         if event not in self.db.events:
             self.db.events.append(event)
         self.save()
@@ -113,14 +130,37 @@ class EventScheduler(DefaultScript):
             if e.db.date_time.tzinfo is None:
                 e.db.date_time = e.db.date_time.replace(tzinfo=timezone.utc)
             
-            if e.db.status == "scheduled" and e.db.date_time > current_time:
+            # Fix for potential None in expiration_date
+            include_event = False
+            if e.db.status in ["scheduled", "in_progress"]:
+                # Check expiration date if it exists and is not None
+                if not hasattr(e.db, 'expiration_date') or e.db.expiration_date is None:
+                    include_event = True
+                elif current_time < e.db.expiration_date:
+                    include_event = True
+                    
+            if include_event:
                 upcoming.append(e)
                 logger.log_info(f"Event included: {e.db.title}")
             else:
-                logger.log_info(f"Event not included: {e.db.title}, Reason: {'Status not scheduled' if e.db.status != 'scheduled' else 'Date not in future'}")
+                logger.log_info(f"Event not included: {e.db.title}, Reason: {'Status not scheduled/in_progress' if e.db.status not in ['scheduled', 'in_progress'] else 'Expired'}")
         
         logger.log_info(f"Retrieved {len(upcoming)} upcoming events out of {len(self.db.events)} total events")
         return upcoming
+    
+    def get_recent_completed_events(self):
+        """
+        Get completed events that haven't expired yet.
+        """
+        current_time = datetime.now(timezone.utc)
+        recent_completed = []
+        
+        for e in self.db.events:
+            # Check the completed status and make sure expiration_date exists and is not None
+            if e.db.status == "completed" and hasattr(e.db, 'expiration_date') and e.db.expiration_date is not None and e.db.expiration_date > current_time:
+                recent_completed.append(e)
+                
+        return recent_completed
     
     def get_event_by_id(self, event_id):
         """
@@ -136,7 +176,7 @@ class EventScheduler(DefaultScript):
         Join a character to an event.
         """
         event = self.get_event_by_id(event_id)
-        if event:
+        if event and event.db.status in ["scheduled", "in_progress"]:
             return event.join_event(character)
         return False
 

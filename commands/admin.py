@@ -18,6 +18,7 @@ from evennia import default_cmds
 from evennia.utils.search import search_object
 from evennia.utils import evtable
 from evennia.utils.utils import crop
+from evennia.objects.models import ObjectDB
 
 
 class CmdApprove(AdminCommand):
@@ -387,16 +388,101 @@ class CmdPuppetFreeze(MuxCommand):
         # Store previous location for unfreezing
         char.db.pre_freeze_location = char.location
         
-        # Handle housing - use existing vacate command
-        vacate_cmd = CmdVacate()
-        vacate_cmd.caller = admin
-        vacate_cmd.args = f"force {char.name}"
-        vacate_cmd.func()
+        # Handle housing - vacate any residences owned by the character
+        from evennia.objects.models import ObjectDB
+        
+        # Track if we found any residences to vacate
+        vacated_residences = False
+        
+        # Search for any residences the character owns
+        try:
+            for room in ObjectDB.objects.filter(db_typeclass_path__contains="rooms.Room"):
+                # Check if this room is a housing area safely
+                try:
+                    is_housing = hasattr(room, 'is_housing_area') and callable(room.is_housing_area)
+                    if is_housing:
+                        # Check if room has housing_data attribute directly rather than calling is_housing_area()
+                        if not hasattr(room.db, 'housing_data'):
+                            continue
+                            
+                        tenants = room.db.housing_data.get('current_tenants', {})
+                        for res_id, tenant_id in tenants.items():
+                            if tenant_id == char.id:
+                                try:
+                                    residence = ObjectDB.objects.get(id=res_id)
+                                    # We found a residence - vacate it
+                                    
+                                    # Move any occupants to the building
+                                    for obj in residence.contents:
+                                        if obj.has_account:
+                                            obj.msg("This residence is being vacated due to character freeze. You are being moved out.")
+                                            obj.move_to(room)
+                                            
+                                    # Clean up child rooms if they exist
+                                    if hasattr(residence.db, 'child_rooms'):
+                                        for child_room in residence.db.child_rooms:
+                                            if child_room:
+                                                for obj in child_room.contents:
+                                                    if obj.has_account:
+                                                        obj.move_to(room)
+                                                # Delete all exits in the child room
+                                                for exit in child_room.exits:
+                                                    exit.delete()
+                                                child_room.delete()
+
+                                    # Update building data safely
+                                    try:
+                                        if room and hasattr(room.db, 'housing_data'):
+                                            if str(residence.id) in room.db.housing_data['current_tenants']:
+                                                del room.db.housing_data['current_tenants'][str(residence.id)]
+                                            # Handle apartment numbers for both numeric and string values
+                                            try:
+                                                number = int(residence.key.split()[-1])
+                                                if number in room.db.housing_data['apartment_numbers']:
+                                                    room.db.housing_data['apartment_numbers'].remove(number)
+                                            except (ValueError, IndexError):
+                                                # If it's not a numeric apartment number, try to remove the full name
+                                                if residence.key in room.db.housing_data['apartment_numbers']:
+                                                    room.db.housing_data['apartment_numbers'].remove(residence.key)
+                                    except Exception as e:
+                                        # If we can't update the housing data, just log it and continue
+                                        admin.msg(f"Warning: Could not update housing data: {e}")
+                                    
+                                    # Clear home location if this was their home
+                                    if char.home == residence:
+                                        char.home = None
+                                    
+                                    # Delete all exits in the main residence
+                                    for exit in residence.exits:
+                                        exit.delete()
+                                        
+                                    # Delete the entrance exit from the building
+                                    for exit in room.contents:
+                                        if (hasattr(exit, 'destination') and 
+                                            exit.destination == residence):
+                                            exit.delete()
+                                            
+                                    # Delete the residence
+                                    residence.delete()
+                                    vacated_residences = True
+                                    
+                                except ObjectDB.DoesNotExist:
+                                    continue
+                                except Exception as e:
+                                    # Log error but continue with the freeze process
+                                    admin.msg(f"Warning: Error vacating residence {res_id}: {e}")
+                except Exception as e:
+                    # Log error but continue checking other rooms
+                    admin.msg(f"Warning: Error checking room {room.id}: {e}")
+                    continue
+        except Exception as e:
+            # Log general error but continue with freeze process
+            admin.msg(f"Warning: Error in residence vacating process: {e}")
         
         # Move to freeze room - use global search
-        freeze_room = self.caller.search("#1935", global_search=True)
+        freeze_room = admin.search("#1935", global_search=True)
         if not freeze_room:
-            self.caller.msg("Error: Freeze room #1935 not found!")
+            admin.msg("Error: Freeze room not found or not dbref #1935! Update admin.py to use the correct dbref.")
             return False
             
         # Set room type to prevent exit/speaking
@@ -410,7 +496,8 @@ class CmdPuppetFreeze(MuxCommand):
             'reason': reason,
             'admin': admin,
             'date': datetime.now(),
-            'pre_freeze_location': char.location
+            'pre_freeze_location': char.location,
+            'vacated_residences': vacated_residences
         }
         
         return True
@@ -456,6 +543,21 @@ class CmdPuppetFreeze(MuxCommand):
             name, reason = self.args.split("=", 1)
             name = name.strip()
             reason = reason.strip()
+            
+            # Use our new search helper
+            char = search_character(self.caller, name)
+            if not char:
+                return
+                
+            if self.freeze_character(char, reason, self.caller):
+                self.caller.msg(f"Character {char.name} has been frozen. Reason: {reason}")
+            return
+        
+        # Check if it's a manual freeze without a reason
+        if self.args.strip().lower() not in ["start", "stop", "status", "check"]:
+            name = self.args.strip()
+            # Use a default reason
+            reason = "Character frozen by admin"
             
             # Use our new search helper
             char = search_character(self.caller, name)

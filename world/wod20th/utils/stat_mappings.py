@@ -150,7 +150,7 @@ IDENTITY_STATS = {
         'Occupation', 'Signature', 'Essence', 'Affinity Sphere', 'Nephandi Faction',
         'Possessed Type', 'Mortal+ Type', 'Varna', 'Ananasi Faction', 'Ananasi Cabal',
         'Patron Totem', 'Pack', 'Society', 'Fellowship', 'Domitor', 'Companion Type', 
-        'Motivation', 'Form', 'Phyla', 'Seeming', 'House', 'Fae Court', 'Nunnehi Camp',
+        'Motivation', 'Form', 'Phyla', 'Seeming', 'House', 'Court', 'Nunnehi Camp',
         'Nunnehi Seeming', 'Nunnehi Family', 'Nunnehi Totem', 'Affinity Realm', 'Elemental Affinity',
         'Fuel'
     ]
@@ -1323,7 +1323,7 @@ def get_identity_stats(splat: str, subtype: str = None, affiliation: str = None)
             'Seeming',
             'Seelie Legacy',
             'Unseelie Legacy',
-            'Fae Court',
+            'Court',
             'House',
             'Affinity Realm'
         ]

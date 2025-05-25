@@ -135,13 +135,13 @@ def get_changeling_identity_stats(kith: str = None) -> List[str]:
                 'Anchor',
                 'Seelie Legacy',
                 'Unseelie Legacy',
-                'Fae Court'
+                'Court'
             ]
     
     # Default stats for standard changelings
     return base_stats + [
         'House',
-        'Fae Court',
+        'Court',
         'Seelie Legacy',
         'Unseelie Legacy'
     ]
@@ -282,7 +282,7 @@ def initialize_changeling_stats(character, kith):
         # Special handling for Nunnehi
         elif kith.lower() == 'nunnehi':
             # Remove inappropriate stats
-            for stat in ['Fae Court', 'House', 'Seelie Legacy', 'Unseelie Legacy']:
+            for stat in ['Court', 'House', 'Seelie Legacy', 'Unseelie Legacy']:
                 if stat in character.db.stats['identity']['lineage']:
                     del character.db.stats['identity']['lineage'][stat]
                 if stat in character.db.stats['identity']['legacy']:
@@ -311,7 +311,7 @@ def initialize_changeling_stats(character, kith):
             # For non-Nunnehi, initialize standard Changeling stats
             lineage_stats = {
                 'House': '',
-                'Fae Court': ''
+                'Court': ''
             }
             for stat, value in lineage_stats.items():
                 character.set_stat('identity', 'lineage', stat, value, temp=False)

@@ -69,11 +69,17 @@ class CmdOOC(MuxCommand):
             message = f"|r<|n|yOOC|n|r>|n {self.caller.name} says, \"{ooc_message}\""
             self_message = f"|r<|n|yOOC|n|r>|n You say, \"{ooc_message}\""
 
-        # Filter receivers based on Umbra state
-        filtered_receivers = [
-            obj for obj in location.contents
-            if obj.has_account and obj.db.in_umbra == self.caller.db.in_umbra
-        ]
+        # Filter receivers based on reality layers using tags, matching other commands
+        filtered_receivers = []
+        for obj in location.contents:
+            if not obj.has_account:
+                continue
+            
+            # Check if they share the same reality layer
+            if (self.caller.tags.get("in_umbra", category="state") and obj.tags.get("in_umbra", category="state")) or \
+               (self.caller.tags.get("in_material", category="state") and obj.tags.get("in_material", category="state")) or \
+               (self.caller.tags.get("in_dreaming", category="state") and obj.tags.get("in_dreaming", category="state")):
+                filtered_receivers.append(obj)
 
         # Send the message to filtered receivers
         for receiver in filtered_receivers:
@@ -100,6 +106,16 @@ class CmdPlusIc(MuxCommand):
 
     def func(self):
         caller = self.caller
+        
+        # Check if the room is a Quiet Room
+        if hasattr(caller.location, 'db') and caller.location.db.roomtype == "Quiet Room":
+            caller.msg("|rYou cannot use the +ic command from a Quiet Room.|n")
+            return
+            
+        # Check if the room is an RP Room
+        if hasattr(caller.location, 'db') and caller.location.db.roomtype and "RP Room" in caller.location.db.roomtype:
+            caller.msg("|rYou cannot use the +ic command from an RP Room. Please return to the OOC nexus first.|n")
+            return
 
         # Check if the character is approved - check both tag and attribute
         is_approved = (caller.tags.has("approved", category="approval") or 
@@ -132,22 +148,28 @@ class CmdPlusIc(MuxCommand):
             caller.msg("Error: Unable to find a valid IC location.")
             return
 
-        # Message the old location
+        # Message the old location before leaving
         old_location = caller.location
         old_location.msg_contents(f"{caller.name} returns to IC areas.", exclude=caller)
 
-        # Properly handle session disconnection and reconnection
-        # First force unpuppet from all sessions to completely detach from current location
+        # Notify the player they're moving
+        caller.msg(f"Returning to IC ({target_location.name})...")
+        
+        # Ensure all sessions know we're moving to prevent ghosts
         for session in caller.sessions.all():
-            if hasattr(session, 'puppet') and session.puppet == caller:
-                # Tell client we're moving
-                session.msg(text=f"Returning to IC ({target_location.name})...")
-                
+            if session:
+                session.msg(text=f"Moving to {target_location.name}...")
+            
         # Move the character to the new location
         caller.move_to(target_location, quiet=True)
         
-        # Force location update in case of any cached references
+        # Make sure location is fully updated for all sessions
         caller.location = target_location
+
+        # Force locations in ndb for all sessions to update
+        for session in caller.sessions.all():
+            if session and hasattr(session, 'puppet') and session.puppet == caller:
+                session.ndb._prod_location = target_location
         
         # Announce arrival at new location
         caller.msg(f"You return to the IC area ({target_location.name}).")
@@ -173,6 +195,17 @@ class CmdPlusOoc(MuxCommand):
 
     def func(self):
         caller = self.caller
+        
+        # Check if the room is a Quiet Room
+        if hasattr(caller.location, 'db') and caller.location.db.roomtype == "Quiet Room":
+            caller.msg("|rYou cannot use the +ooc command from a Quiet Room.|n")
+            return
+            
+        # Check if the room is an RP Room
+        if hasattr(caller.location, 'db') and caller.location.db.roomtype and "RP Room" in caller.location.db.roomtype:
+            caller.msg("|rYou cannot use the +ooc command from an RP Room. Please return to the grid first.|n")
+            return
+            
         current_location = caller.location
 
         # Store the current location as an attribute
@@ -188,20 +221,27 @@ class CmdPlusOoc(MuxCommand):
         # Set roomtype to OOC Area to enable checks in other commands
         ooc_nexus.db.roomtype = "OOC Area"
             
-        # Message the current location
+        # Message the current location before leaving
         current_location.msg_contents(f"{caller.name} heads to OOC areas.", exclude=caller)
         
-        # Properly handle session disconnection and reconnection
-        # First notify all sessions we're moving
+        # Notify the player they're moving
+        caller.msg("Moving to OOC area...")
+        
+        # Ensure all sessions know we're moving to prevent ghosts
         for session in caller.sessions.all():
-            if hasattr(session, 'puppet') and session.puppet == caller:
+            if session:
                 session.msg(text=f"Moving to OOC area...")
                 
         # Move the character to the new location
         caller.move_to(ooc_nexus, quiet=True)
         
-        # Force location update in case of any cached references
+        # Make sure location is fully updated
         caller.location = ooc_nexus
+        
+        # Force locations in ndb for all sessions to update
+        for session in caller.sessions.all():
+            if session and hasattr(session, 'puppet') and session.puppet == caller:
+                session.ndb._prod_location = ooc_nexus
         
         # Announce arrival at new location
         caller.msg(f"You move to the OOC area.")
@@ -242,6 +282,11 @@ class CmdMeet(MuxCommand):
     def func(self):
         caller = self.caller
         
+        # Check if the room is a Quiet Room
+        if hasattr(caller.location, 'db') and caller.location.db.roomtype == "Quiet Room":
+            caller.msg("|rYou cannot use the +meet command from a Quiet Room.|n")
+            return
+        
         # Check if caller is staff - admin, builder, or storyteller
         is_staff = False
         if hasattr(caller, 'check_permstring'):
@@ -260,6 +305,7 @@ class CmdMeet(MuxCommand):
             caller.msg("Usage: +meet <player> or +meet/accept or +meet/reject")
             return
 
+        # Handle accepting meet requests
         if "accept" in self.switches:
             if not caller.ndb.meet_request:
                 caller.msg("You have no pending meet requests.")
@@ -267,23 +313,38 @@ class CmdMeet(MuxCommand):
             requester = caller.ndb.meet_request
             old_location = caller.location
             
-            # Properly handle session disconnection and reconnection
+            # Notify the player they're moving
+            caller.msg(f"Moving to {requester.name}'s location...")
+            
+            # Announce departure before moving
+            old_location.msg_contents(f"{caller.name} has left to meet {requester.name}.", exclude=caller)
+            
+            # Ensure all sessions know we're moving to prevent ghosts
             for session in caller.sessions.all():
-                if hasattr(session, 'puppet') and session.puppet == caller:
+                if session:
                     session.msg(text=f"Moving to {requester.name}'s location...")
             
+            # Move the character to the new location
             caller.move_to(requester.location, quiet=True)
             
-            # Force location update in case of any cached references
+            # Make sure location is fully updated
             caller.location = requester.location
             
+            # Force locations in ndb for all sessions to update
+            for session in caller.sessions.all():
+                if session and hasattr(session, 'puppet') and session.puppet == caller:
+                    session.ndb._prod_location = requester.location
+            
+            # Announce arrival at new location
             caller.msg(f"You accept the meet request from {requester.name} and join them.")
             requester.msg(f"{caller.name} has accepted your meet request and joined you.")
-            old_location.msg_contents(f"{caller.name} has left to meet {requester.name}.", exclude=caller)
             requester.location.msg_contents(f"{caller.name} appears, joining {requester.name}.", exclude=[caller, requester])
+            
+            # Clear the meet request
             caller.ndb.meet_request = None
             return
 
+        # Handle rejecting meet requests
         if "reject" in self.switches:
             if not caller.ndb.meet_request:
                 caller.msg("You have no pending meet requests.")
@@ -293,6 +354,17 @@ class CmdMeet(MuxCommand):
             requester.msg(f"{caller.name} has rejected your meet request.")
             caller.ndb.meet_request = None
             return
+        
+        # For new meet requests, check location restrictions
+        # Only proceed if not in OOC area or Quiet Room (or if staff)
+        if not is_staff:
+            if current_location and hasattr(current_location, 'db'):
+                if current_location.db.roomtype == "OOC Area":
+                    caller.msg("|rYou cannot send meet requests from OOC areas. Use +ic first to return to IC areas.|n")
+                    return
+                if current_location.db.roomtype == "Quiet Room":
+                    caller.msg("|rYou cannot send meet requests from a Quiet Room.|n")
+                    return
 
         target = self.search_for_character(self.args)
         if not target:
@@ -383,19 +455,31 @@ class CmdSummon(AdminCommand):
         # Store location for +return command
         target.db.pre_summon_location = old_location
         
-        # Properly handle session disconnection and reconnection
+        # First, let the target know they're being summoned
+        target.msg(f"You are being summoned by {caller.name}...")
+        
+        # Ensure all sessions know we're moving to prevent ghosts
         for session in target.sessions.all():
-            if hasattr(session, 'puppet') and session.puppet == target:
-                session.msg(text=f"You are being summoned by {caller.name}...")
+            if session:
+                session.msg(text=f"Being summoned by {caller.name}...")
+        
+        # Announce departure at the old location before moving
+        old_location.msg_contents(f"{target.name} has been summoned by {caller.name}.", exclude=target)
                 
+        # Move the character to the new location
         target.move_to(caller.location, quiet=True)
         
-        # Force location update in case of any cached references
+        # Make sure location is fully updated
         target.location = caller.location
         
+        # Force locations in ndb for all sessions to update
+        for session in target.sessions.all():
+            if session and hasattr(session, 'puppet') and session.puppet == target:
+                session.ndb._prod_location = caller.location
+        
+        # Announce arrival at the new location
         caller.msg(f"You have summoned {target.name} to your location.")
         target.msg(f"{caller.name} has summoned you.")
-        old_location.msg_contents(f"{target.name} has been summoned by {caller.name}.", exclude=target)
         caller.location.msg_contents(f"{target.name} appears, summoned by {caller.name}.", exclude=[caller, target])
 
 class CmdJoin(AdminCommand):
@@ -476,17 +560,123 @@ class CmdJoin(AdminCommand):
                 caller.tags.add("in_material", category="state")
                 caller.msg("You shift into the Material realm.")
 
+        # Notify caller they are joining the target
+        caller.msg(f"Joining {target.name}...")
+        
+        # Ensure all sessions know we're moving to prevent ghosts
         for session in caller.sessions.all():
-            if hasattr(session, 'puppet') and session.puppet == caller:
+            if session:
                 session.msg(text=f"Joining {target.name}...")
-
-        # Message to old location before moving
+        
+        # Announce departure at the old location before moving
         old_location.msg_contents(f"{caller.name} has left to join {target.name}.", exclude=caller)
 
+        # Move the character to the new location
         caller.move_to(target.location, quiet=True)
         
-        # Force location update in case of any cached references
+        # Make sure location is fully updated
         caller.location = target.location
         
+        # Force locations in ndb for all sessions to update
+        for session in caller.sessions.all():
+            if session and hasattr(session, 'puppet') and session.puppet == caller:
+                session.ndb._prod_location = target.location
+        
+        # Announce arrival at the new location
         caller.msg(f"You have joined {target.name} at their location.")
         target.location.msg_contents(f"{caller.name} appears in the room.", exclude=caller)
+
+class CmdCheckComm(AdminCommand):
+    """
+    Check communication status between characters.
+
+    Usage:
+      +checkcomm <character>
+      
+    Checks if the specified character can communicate with you by analyzing:
+    - Reality layers (Umbra/Material/Dreaming)
+    - Room type restrictions
+    - Any other potential communication barriers
+    
+    This is a staff-only command for troubleshooting communication issues.
+    """
+
+    key = "+checkcomm"
+    locks = "cmd:perm(builders) or perm(storyteller) or perm(admin) or perm(staff)"
+    help_category = "Admin Commands"
+
+    def func(self):
+        caller = self.caller
+        
+        if not self.args:
+            caller.msg("Usage: +checkcomm <character>")
+            return
+            
+        target = self.search_for_character(self.args)
+        if not target:
+            caller.msg(f"Could not find character '{self.args}'.")
+            return
+            
+        # Begin analysis
+        results = []
+        
+        # 1. Check if in same location
+        if caller.location != target.location:
+            results.append("|rFAIL|n: Characters are not in the same room.")
+            caller.msg("\n".join(results))
+            return
+        
+        # 2. Check reality layers via tags
+        caller_umbra = caller.tags.get("in_umbra", category="state")
+        caller_material = caller.tags.get("in_material", category="state")
+        caller_dreaming = caller.tags.get("in_dreaming", category="state")
+        
+        target_umbra = target.tags.get("in_umbra", category="state")
+        target_material = target.tags.get("in_material", category="state")
+        target_dreaming = target.tags.get("in_dreaming", category="state")
+        
+        # Reality layer check
+        if caller_umbra and target_umbra:
+            results.append("|gPASS|n: Both characters are in the Umbra.")
+        elif caller_material and target_material:
+            results.append("|gPASS|n: Both characters are in the Material realm.")
+        elif caller_dreaming and target_dreaming:
+            results.append("|gPASS|n: Both characters are in the Dreaming realm.")
+        else:
+            results.append("|rFAIL|n: Characters are in different reality layers:")
+            results.append(f"  - {caller.name}: {'Umbra' if caller_umbra else 'Material' if caller_material else 'Dreaming' if caller_dreaming else 'Unknown'}")
+            results.append(f"  - {target.name}: {'Umbra' if target_umbra else 'Material' if target_material else 'Dreaming' if target_dreaming else 'Unknown'}")
+        
+        # 3. Check reality layers via DB attributes (old method)
+        caller_db_umbra = hasattr(caller.db, 'in_umbra') and caller.db.in_umbra
+        target_db_umbra = hasattr(target.db, 'in_umbra') and target.db.in_umbra
+        
+        if caller_db_umbra != caller_umbra or target_db_umbra != target_umbra:
+            results.append("|yWARNING|n: DB attributes for reality don't match tags:")
+            results.append(f"  - {caller.name}: tag={caller_umbra}, db={caller_db_umbra}")
+            results.append(f"  - {target.name}: tag={target_umbra}, db={target_db_umbra}")
+        
+        # 4. Check room type restrictions
+        room = caller.location
+        room_type = getattr(room.db, 'roomtype', 'Unknown')
+        
+        results.append(f"Room type: {room_type}")
+        
+        if room_type == "Quiet Room":
+            results.append("|rFAIL|n: Room is a Quiet Room where communication is disabled.")
+        elif room_type == "freezer":
+            results.append("|rFAIL|n: Room is a freezer where communication is disabled.")
+        
+        # 5. Check if umbra_only or fae_only room with wrong character type
+        if getattr(room.db, 'umbra_only', False) and not caller_umbra:
+            results.append("|rFAIL|n: Room is Umbra-only but caller is not in Umbra.")
+        if getattr(room.db, 'umbra_only', False) and not target_umbra:
+            results.append("|rFAIL|n: Room is Umbra-only but target is not in Umbra.")
+            
+        if getattr(room.db, 'fae_only', False) and not caller_dreaming:
+            results.append("|rFAIL|n: Room is Fae-only but caller is not in Dreaming.")
+        if getattr(room.db, 'fae_only', False) and not target_dreaming:
+            results.append("|rFAIL|n: Room is Fae-only but target is not in Dreaming.")
+        
+        # Report findings
+        caller.msg("\n".join(results))
