@@ -30,7 +30,7 @@ class FeaturedImageInline(admin.StackedInline):
 class WikiPageAdmin(admin.ModelAdmin):
     """Admin interface for wiki pages."""
     
-    list_display = ('title', 'page_type', 'creator', 'created_at', 'last_editor', 'updated_at', 'is_featured', 'featured_order', 'published')
+    list_display = ('title', 'page_type', 'creator', 'created_at', 'last_editor', 'updated_at', 'is_featured', 'featured_order', 'published', 'formatted_lock_settings')
     list_filter = ('page_type', 'created_at', 'updated_at', 'is_featured', 'is_index', 'published')
     search_fields = ('title', 'content', 'brief_description')
     prepopulated_fields = {'slug': ('title',)}
@@ -46,11 +46,30 @@ class WikiPageAdmin(admin.ModelAdmin):
         (None, {
             'fields': ('title', 'slug', 'page_type', 'brief_description', 'content', 'right_content')
         }),
+        ('Access Restrictions', {
+            'fields': ('lock_settings',),
+            'description': 'Define who can access this page based on character attributes. The lock settings are stored as a JSON object where keys are lock types (e.g., has_splat, has_clan) and values are the specific criteria (e.g., Vampire, Brujah).'
+        }),
         ('Options', {
             'fields': ('is_featured', 'is_index', 'related_to'),
             'classes': ('collapse',)
         })
     )
+
+    def formatted_lock_settings(self, obj):
+        """Format lock settings for display in admin list view."""
+        if not obj.lock_settings:
+            return "No restrictions"
+            
+        formatted = []
+        for lock_type, value in obj.lock_settings.items():
+            # Format the lock type for display
+            display_name = lock_type.replace('_', ' ').replace('has ', 'Has ').title()
+            formatted.append(f"{display_name}: {value}")
+            
+        return format_html("<br>".join(formatted))
+        
+    formatted_lock_settings.short_description = "Access Restrictions"
 
     def save_model(self, request, obj, form, change):
         """Override save_model to pass the current user to the model's save method."""

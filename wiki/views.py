@@ -12,11 +12,14 @@ from django.urls import reverse
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 import markdown2
+<<<<<<< HEAD
 import mermaid as md
 from mermaid.graph import Graph
+=======
+import re
+>>>>>>> 625be5d8841cab6feb3e0fd52134e219972f2a63
 
 logger = logging.getLogger(__name__)
-
 
 # Create your views here.
 
@@ -67,6 +70,9 @@ def page_detail(request, slug):
             can_edit = True
         else:
             can_edit = page.can_edit(request.user)
+    
+    if page.content:
+        page.processed_content = ''
     
     context = {
         'page': page,
@@ -568,8 +574,9 @@ def preview_markdown(request):
         'footnotes'
     ])
     
+    # Convert markdown to HTML
     html = markdowner.convert(content)
-    
+
     return JsonResponse({
         'success': True,
         'html': html
@@ -623,6 +630,10 @@ def group_detail(request, slug):
         else:
             can_edit = page.can_edit(request.user)
     
+    # Process mermaid diagrams in content
+    if page.content:
+        page.processed_content = ''
+    
     context = {
         'page': page,
         'featured_articles': featured_articles,
@@ -670,6 +681,10 @@ def plot_detail(request, slug):
             can_edit = True
         else:
             can_edit = page.can_edit(request.user)
+    
+    # Process mermaid diagrams in content
+    if page.content:
+        page.processed_content = ''
     
     context = {
         'page': page,
