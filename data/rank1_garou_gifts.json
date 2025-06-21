@@ -671,7 +671,7 @@
     {
         "name": "Persuasion",
         "description": "The Garou can persuade others to do her bidding. A magpie-spirit teaches this Gift.",
-        "system": "The player rolls Charisma + Expression (difficulty 7). Success allows the character to persuade a single target to do her bidding for the duration of the scene.",
+        "system": "The player rolls Charisma + Subterfuge (difficulty 7). Success allows the character to persuade a single target to do her bidding for the duration of the scene.",
         "source": "Core book revised",
         "game_line": "Werewolf: The Apocalypse",
         "category": "powers",
@@ -1307,7 +1307,7 @@
         "tribe": "Shadow Lords"
     },
     {
-        "name": "Visions of Duat",
+        "name": "Visions of Dust",
         "description": "The werewolf's eyes become cloudy and pale as she attunes her vision to the ashen landscape of the Underworld. An owl-spirit teaches this Gift. The White Howler version is called Death Sight.",
         "system": "The player spends one Gnosis point and rolls Perception + Occult (difficulty 7). For the rest of the scene, the character can see (and hear) ghosts and detect haunted areas with another Perception + Occult roll (difficulty corresponds to the severity of the haunting). This Gift bestows no power to touch or communicate with the dead, however — that usually requires the use of the Descent into the Underworld rite (see p. 213). A botch causes the Garou's eyes to shine as beacons in the underworld, drawing the notice of broken, vengeful shades.",
         "source": "20th Anniversary Edition",
